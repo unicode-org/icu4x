@@ -74,7 +74,8 @@ macro_rules! impl_byte_slice_size {
 
             impl_ule_from_array!(
                 $unsigned,
-                RawBytesULE<$size>
+                RawBytesULE<$size>,
+                RawBytesULE([0; $size])
             );
         }
     };

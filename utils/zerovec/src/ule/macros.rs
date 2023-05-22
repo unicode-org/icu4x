@@ -2,18 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+/// Given `Self` (`$aligned`), `Self::ULE` (`$unaligned`), and a conversion function (`$single` or
+/// `Self::from_aligned`), implement `from_array` for arrays of `$aligned` to `$unaligned`.
+///
+/// The `$default` argument is due to current compiler limitations.
+/// Pass any (cheap to construct) value.
 #[macro_export]
 macro_rules! impl_ule_from_array {
-    ($aligned:ty, $unaligned:ty, $single:path) => {
+    ($aligned:ty, $unaligned:ty, $default:expr, $single:path) => {
         #[doc = concat!("Convert an array of `", stringify!($aligned), "` to an array of `", stringify!($unaligned), "`.")]
         pub const fn from_array<const N: usize>(arr: [$aligned; N]) -> [Self; N] {
-            if N == 0 {
-                // Safety: The pointer is aligned and to a zero-sized type.
-                return unsafe { *(core::ptr::NonNull::dangling().as_ptr() as *const [Self; N]) };
-            }
-            let mut result = [$single(arr[0]); N];
-            // Starting at i=1 since result[0] is already initialized with the above line
-            let mut i = 1;
+            let mut result = [$default; N];
+            let mut i = 0;
             // Won't panic because i < N and arr has length N
             #[allow(clippy::indexing_slicing)]
             while i < N {
@@ -23,7 +23,7 @@ macro_rules! impl_ule_from_array {
             result
         }
     };
-    ($aligned:ty, $unaligned:ty) => {
-        impl_ule_from_array!($aligned, $unaligned, Self::from_aligned);
+    ($aligned:ty, $unaligned:ty, $default:expr) => {
+        impl_ule_from_array!($aligned, $unaligned, $default, Self::from_aligned);
     };
 }
