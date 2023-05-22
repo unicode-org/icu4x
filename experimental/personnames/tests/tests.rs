@@ -9,7 +9,7 @@ use icu_locid::locale;
 use icu_personnames::api::{
     FieldModifier, NameField, PersonName, PersonNamesFormatterError, PreferredOrder,
 };
-use icu_personnames::provided_struct::{FieldModifierSupportPersonName, SimplePersonName};
+use icu_personnames::provided_struct::DefaultPersonName;
 use icu_personnames::PersonNamesFormatter;
 
 #[test]
@@ -22,7 +22,7 @@ fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatte
         String::from("Hide"),
     );
 
-    let person_name: &dyn PersonName = &FieldModifierSupportPersonName::try_new_unstable(
+    let person_name: &dyn PersonName = &DefaultPersonName::try_new_unstable(
         person_data,
         Some(locale!("en")),
         Some(PreferredOrder::GivenFirst),
@@ -59,62 +59,6 @@ fn test_field_modifier_person_name_should_have_given_or_surname() {
     let mut person_data: BTreeMap<NameField, String> = BTreeMap::new();
     person_data.insert(NameField::Title(None), String::from("Dr"));
 
-    let person_name = FieldModifierSupportPersonName::try_new_unstable(person_data, None, None);
-    assert!(person_name.is_err());
-}
-
-#[test]
-fn test_simple_person_name_structure() -> Result<(), PersonNamesFormatterError> {
-    let person_name: &dyn PersonName = &SimplePersonName::try_new_unstable(
-        Some(locale!("en")),
-        Some(PreferredOrder::GivenFirst),
-        Some(String::from("Henry")),
-        Some(String::from("Jekyll")),
-        None,
-        None,
-        None,
-        None,
-        None,
-    )? as &dyn PersonName;
-
-    assert_eq!(person_name.name_locale(), Some(&locale!("en")));
-    assert_eq!(
-        person_name.preferred_order(),
-        Some(&PreferredOrder::GivenFirst)
-    );
-
-    // has_name_field tests
-    assert!(person_name.has_name_field(discriminant(&NameField::Surname(None))));
-    assert!(!person_name.has_name_field(discriminant(&NameField::Surname2(None))));
-
-    // has_name_field_with_modifier
-    assert!(person_name.has_name_field_with_modifier(&NameField::Given(None)));
-    assert!(!person_name.has_name_field_with_modifier(&NameField::Surname2(None)));
-    assert!(!person_name
-        .has_name_field_with_modifier(&NameField::Surname(Some(FieldModifier::AllCaps))));
-
-    // get
-    assert_eq!(person_name.get(&NameField::Given(None)), Some("Henry"));
-    assert_eq!(person_name.get(&NameField::Surname(None)), Some("Jekyll"));
-    assert_eq!(
-        person_name.get(&NameField::Surname(Some(FieldModifier::Informal))),
-        None
-    );
-    Ok(())
-}
-
-#[test]
-fn test_simple_person_name_should_have_given_or_surname() {
-    let person_name = SimplePersonName::try_new_unstable(
-        Some(locale!("en")),
-        Some(PreferredOrder::GivenFirst),
-        None,
-        None,
-        Some(String::from("dr")),
-        None,
-        None,
-        None,
-        None,
-    );
+    let person_name = DefaultPersonName::try_new_unstable(person_data, None, None);
     assert!(person_name.is_err());
 }
