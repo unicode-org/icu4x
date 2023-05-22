@@ -4,7 +4,6 @@
 
 use crate::CodePointTrieBuilder;
 use crate::CodePointTrieBuilderData;
-use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 use lazy_static::lazy_static;
 use wasmer::{Array, Instance, Module, Store, WasmPtr};
@@ -59,14 +58,8 @@ where
     let exit_result = construct_ucptrie.call(
         builder.default_value.into() as i32,
         builder.error_value.into() as i32,
-        match builder.trie_type {
-            TrieType::Small => 0,
-            TrieType::Fast => 1,
-        },
-        // size_of::<T::ULE>() * 8 fits in i32
-        (std::mem::size_of::<T::ULE>() * 8)
-            .try_into()
-            .expect("width always fits in i32"),
+        builder.get_trie_type() as i32,
+        builder.get_width() as i32,
         values_base_ptr
             .offset()
             .try_into()

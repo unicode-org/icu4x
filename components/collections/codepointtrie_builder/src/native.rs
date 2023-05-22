@@ -107,20 +107,17 @@ where
         }
     }
 
-    let trie_type = match cpt_builder.trie_type {
-        TrieType::Fast => 0,
-        TrieType::Small => 1,
-    };
-    let width = match mem::size_of::<T::ULE>() {
-        2 => 0, // UCPTRIE_VALUE_BITS_16
-        4 => 1, // UCPTRIE_VALUE_BITS_32
-        1 => 2, // UCPTRIE_VALUE_BITS_8
-        other => panic!("Don't know how to make trie with width {other}"),
-    };
     // safety: `builder` is a valid UMutableCPTrie
     // safety: we're passing a valid error pointer
     // leak-safety: we clean up `built` except in panicky codepaths
-    let built = unsafe { umutablecptrie_buildImmutable(builder, trie_type, width, &mut error) };
+    let built = unsafe {
+        umutablecptrie_buildImmutable(
+            builder,
+            cpt_builder.get_trie_type(),
+            cpt_builder.get_width(),
+            &mut error,
+        )
+    };
     if error != 0 {
         panic!("cpt builder returned error code {}", error);
     }

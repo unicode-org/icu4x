@@ -16,37 +16,11 @@
  * - standard output is the build UCPTrie as a TOML file
  */
 
-const int32_t TRIE_SMALL = 0;
-const int32_t TRIE_FAST = 1;
 extern "C" {
 int construct_ucptrie(const int32_t defaultValue, const int32_t errorValue,
-                      const int32_t trieTypeInt, const int32_t valueWidthInt,
+                      const UCPTrieType trieType,
+                      const UCPTrieValueWidth valueWidth,
                       const uint32_t* values, const uint32_t n) {
-  UCPTrieType trieType;
-  if (trieTypeInt == TRIE_SMALL) {
-    trieType = UCPTRIE_TYPE_SMALL;
-  } else if (trieTypeInt == TRIE_FAST) {
-    trieType = UCPTRIE_TYPE_FAST;
-  } else {
-    fprintf(stderr,
-            "Expected '0' for small or '1' for fast as 3rd argument. Got %d",
-            trieTypeInt);
-    return 1;
-  }
-
-  UCPTrieValueWidth valueWidth;
-  if (valueWidthInt == 8) {
-    valueWidth = UCPTRIE_VALUE_BITS_8;
-  } else if (valueWidthInt == 16) {
-    valueWidth = UCPTRIE_VALUE_BITS_16;
-  } else if (valueWidthInt == 32) {
-    valueWidth = UCPTRIE_VALUE_BITS_32;
-  } else {
-    fprintf(stderr, "Expected '8', '16', or '32' for 4th argument. Got %d",
-            valueWidthInt);
-    return 1;
-  }
-
   icu::ErrorCode status;
 
   icu::LocalUMutableCPTriePointer builder = icu::LocalUMutableCPTriePointer(
