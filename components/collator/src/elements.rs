@@ -26,7 +26,6 @@ use icu_normalizer::provider::DecompositionTablesV1;
 use icu_properties::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
-use zerovec::ule::CharULE;
 use zerovec::ule::RawBytesULE;
 use zerovec::ZeroSlice;
 
@@ -157,9 +156,8 @@ const SINGLE_REPLACEMENT_CHARACTER_U16: &ZeroSlice<u16> =
 
 pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
 
-const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> = ZeroSlice::from_ule_slice(&[unsafe {
-    core::mem::transmute::<[u8; 3], CharULE>([0xFDu8, 0xFFu8, 0u8])
-}]);
+const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> =
+    ZeroSlice::<char>::from_ule_slice(&<char as AsULE>::ULE::from_array([REPLACEMENT_CHARACTER]));
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
