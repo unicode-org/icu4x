@@ -650,6 +650,20 @@ macro_rules! impl_data_provider {
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::ScriptDisplayNamesV1Marker::KEY, req))
             }
         }
+        #[cfg(feature = "icu_displaynames")]
+        #[clippy::msrv = "1.61"]
+        impl DataProvider<::icu_displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::VariantDisplayNamesV1Marker>, DataError> {
+                displaynames::variants_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::VariantDisplayNamesV1Marker::KEY, req))
+            }
+        }
         #[cfg(feature = "icu_list")]
         #[clippy::msrv = "1.61"]
         impl DataProvider<::icu_list::provider::AndListV1Marker> for $provider {
@@ -3261,6 +3275,9 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_displaynames")]
                 const SCRIPTDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_displaynames::provider::ScriptDisplayNamesV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_displaynames")]
+                const VARIANTDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_displaynames::provider::VariantDisplayNamesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_list")]
                 const ANDLISTV1MARKER: ::icu_provider::DataKeyHash = ::icu_list::provider::AndListV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_list")]
@@ -3756,6 +3773,8 @@ macro_rules! impl_any_provider {
                     REGIONDISPLAYNAMESV1MARKER => displaynames::regions_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_displaynames")]
                     SCRIPTDISPLAYNAMESV1MARKER => displaynames::scripts_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_displaynames")]
+                    VARIANTDISPLAYNAMESV1MARKER => displaynames::variants_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_list")]
                     ANDLISTV1MARKER => list::and_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_list")]

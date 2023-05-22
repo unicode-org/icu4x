@@ -18,11 +18,11 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
     ) -> Result<DataResponse<ScriptDisplayNamesV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
-        let data: &cldr_serde::script_displaynames::Resource =
-            self.source
-                .cldr()?
-                .displaynames()
-                .read_and_parse(&langid, "scripts.json")?;
+        let data: &cldr_serde::displaynames::script::Resource = self
+            .source
+            .cldr()?
+            .displaynames()
+            .read_and_parse(&langid, "scripts.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -63,10 +63,10 @@ const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short display names data variants for a given script. For example: "az-alt-short".
 const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 
-impl TryFrom<&cldr_serde::script_displaynames::Resource> for ScriptDisplayNamesV1<'static> {
+impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNamesV1<'static> {
     type Error = ParserError;
 
-    fn try_from(other: &cldr_serde::script_displaynames::Resource) -> Result<Self, Self::Error> {
+    fn try_from(other: &cldr_serde::displaynames::script::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
         for lang_data_entry in other.main.0.iter() {
