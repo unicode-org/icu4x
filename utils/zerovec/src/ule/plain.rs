@@ -68,14 +68,13 @@ macro_rules! impl_byte_slice_size {
 
             #[doc = concat!("Converts a `", stringify!($unsigned), "` to a `RawBytesULE`. This is equivalent to calling [`AsULE::to_unaligned()`] on the appropriately sized type.")]
             #[inline]
-            pub const fn from_unsigned_int(value: $unsigned) -> Self {
+            pub const fn from_aligned(value: $unsigned) -> Self {
                 Self(value.to_le_bytes())
             }
 
             impl_ule_from_array!(
                 $unsigned,
-                RawBytesULE<$size>,
-                RawBytesULE::<$size>::from_unsigned_int
+                RawBytesULE<$size>
             );
         }
     };

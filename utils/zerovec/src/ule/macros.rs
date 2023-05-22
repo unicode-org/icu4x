@@ -21,4 +21,7 @@ macro_rules! impl_ule_from_array {
             result
         }
     };
+    ($aligned:ty, $unaligned:ty) => {
+        impl_ule_from_array!($aligned, $unaligned, Self::from_aligned);
+    };
 }

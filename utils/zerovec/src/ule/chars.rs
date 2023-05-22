@@ -47,12 +47,12 @@ impl CharULE {
     ///
     /// See the type-level documentation for [`CharULE`] for more information.
     #[inline]
-    pub const fn from_char(c: char) -> Self {
+    pub const fn from_aligned(c: char) -> Self {
         let [u0, u1, u2, _u3] = (c as u32).to_le_bytes();
         Self([u0, u1, u2])
     }
 
-    impl_ule_from_array!(char, CharULE, CharULE::from_char);
+    impl_ule_from_array!(char, CharULE);
 }
 
 // Safety (based on the safety checklist on the ULE trait):
@@ -87,7 +87,7 @@ impl AsULE for char {
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        CharULE::from_char(self)
+        CharULE::from_aligned(self)
     }
 
     #[inline]
