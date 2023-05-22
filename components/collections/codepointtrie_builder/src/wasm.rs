@@ -22,25 +22,8 @@ where
     T: TrieValue + Into<u32>,
 {
     // Set up the execution environment with a WasiState
-    let args = &[
-        format!("{}", builder.default_value.into()),
-        format!("{}", builder.error_value.into()),
-        match builder.trie_type {
-            TrieType::Fast => "fast",
-            TrieType::Small => "small",
-        }
-        .to_owned(),
-        format!("{}", std::mem::size_of::<T::ULE>() * 8),
-    ];
-
-    let trie_type_int = match builder.trie_type {
-        TrieType::Small => 0,
-        TrieType::Fast => 1,
-    };
-
     let mut wasi_env = WasiState::new("list_to_ucptrie")
         .stdout(Box::new(Pipe::new()))
-        .args(args)
         .finalize()
         .expect("valid arguments + in-memory filesystem");
 
@@ -48,9 +31,10 @@ where
     let import_object = wasi_env.import_object(&MODULE).expect("walid wasm file");
     let instance = Instance::new(&MODULE, &import_object).expect("valid wasm file");
 
-    let memory = instance.exports.get_memory("memory").expect("memory");
-
     let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
+
+    // Allocate memory inside wasm and copy values.
+    let memory = instance.exports.get_memory("memory").expect("memory");
     let malloc = instance
         .exports
         .get_native_function::<i32, WasmPtr<u32, Array>>("malloc")
@@ -75,7 +59,10 @@ where
     let exit_result = construct_ucptrie.call(
         builder.default_value.into() as i32,
         builder.error_value.into() as i32,
-        trie_type_int,
+        match builder.trie_type {
+            TrieType::Small => 0,
+            TrieType::Fast => 1,
+        },
         // size_of::<T::ULE>() * 8 fits in i32
         (std::mem::size_of::<T::ULE>() * 8)
             .try_into()
@@ -89,7 +76,8 @@ where
 
     match exit_result {
         Ok(0) => {}
-        e => panic!("list_to_ucptrie failed in C++; args were {args:?}: {e:?}"),
+        e => panic!("list_to_ucptrie failed in C++; with default_value: {0:?}, error_value: {1:?}, trie_type: {2:?}, {e:?}",
+                    builder.default_value.into(), builder.error_value.into(), builder.trie_type),
     }
 
     // To read from the stdout/stderr, we again need a mutable reference to the pipe
