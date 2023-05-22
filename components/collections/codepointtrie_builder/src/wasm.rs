@@ -52,14 +52,14 @@ where
 
     let construct_ucptrie = instance
         .exports
-        .get_native_function::<(i32, i32, i32, i32, i32, i32), i32>("construct_ucptrie")
+        .get_native_function::<(u32, u32, i32, i32, i32, i32), i32>("construct_ucptrie")
         .expect("'construct_ucptrie' is exported");
 
     let exit_result = construct_ucptrie.call(
-        builder.default_value.into() as i32,
-        builder.error_value.into() as i32,
-        builder.get_trie_type() as i32,
-        builder.get_width() as i32,
+        builder.default_value.into(),
+        builder.error_value.into(),
+        builder.get_c_trie_type() as i32,
+        builder.get_c_width() as i32,
         values_base_ptr
             .offset()
             .try_into()

@@ -21,7 +21,7 @@ extern "C" {
  * values: A pointer to an array containing the value for each codepoint.
  * n: The length of values array.
  */
-int construct_ucptrie(const int32_t defaultValue, const int32_t errorValue,
+int construct_ucptrie(const uint32_t defaultValue, const uint32_t errorValue,
                       const UCPTrieType trieType,
                       const UCPTrieValueWidth valueWidth,
                       const uint32_t* values, const uint32_t n) {
