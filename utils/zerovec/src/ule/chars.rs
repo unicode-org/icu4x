@@ -131,6 +131,15 @@ mod test {
     }
 
     #[test]
+    fn test_from_array_zst() {
+        const CHARS: [char; 0] = [];
+        const CHARS_ULE: [CharULE; 0] = CharULE::from_array(CHARS);
+        let bytes = CharULE::as_byte_slice(&CHARS_ULE);
+        let empty: &[u8] = &[];
+        assert_eq!(bytes, empty);
+    }
+
+    #[test]
     fn test_parse() {
         // 1-byte, 2-byte, 3-byte, and two 4-byte character in UTF-8 (not as relevant in UTF-32)
         let chars = ['w', 'ω', '文', '𑄃', '🙃'];
