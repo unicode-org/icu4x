@@ -8,6 +8,7 @@ macro_rules! impl_ule_from_array {
         #[doc = concat!("Convert an array of `", stringify!($aligned), "` to an array of `", stringify!($unaligned), "`.")]
         pub const fn from_array<const N: usize>(arr: [$aligned; N]) -> [Self; N] {
             if N == 0 {
+                // Safety: The pointer is aligned and to a zero-sized type.
                 return unsafe { *(core::ptr::NonNull::dangling().as_ptr() as *const [Self; N]) };
             }
             let mut result = [$single(arr[0]); N];
