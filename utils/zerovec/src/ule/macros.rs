@@ -11,7 +11,8 @@ macro_rules! impl_ule_from_array {
                 return unsafe { *(core::ptr::NonNull::dangling().as_ptr() as *const [Self; N]) };
             }
             let mut result = [$single(arr[0]); N];
-            let mut i = 0;
+            // Starting at i=1 since result[0] is already initialized with the above line
+            let mut i = 1;
             // Won't panic because i < N and arr has length N
             #[allow(clippy::indexing_slicing)]
             while i < N {
