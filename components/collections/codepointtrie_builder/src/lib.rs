@@ -150,7 +150,8 @@ where
     }
 
     /// Get the width of the ucptrie.
-    pub fn get_width(&self) -> u32 {
+    /// Returns the UCPTrieValueWidth value for the trie.
+    pub(crate) fn get_c_width(&self) -> u32 {
         match core::mem::size_of::<T::ULE>() {
             2 => 0, // UCPTRIE_VALUE_BITS_16
             4 => 1, // UCPTRIE_VALUE_BITS_32
@@ -160,7 +161,8 @@ where
     }
 
     /// Get the trie type.
-    pub fn get_trie_type(&self) -> u32 {
+    /// Returns the UCPTrieType value for the trie.
+    pub(crate) fn get_c_trie_type(&self) -> u32 {
         match self.trie_type {
             TrieType::Fast => 0,
             TrieType::Small => 1,
@@ -185,9 +187,9 @@ fn test_cpt_builder() {
         trie_type: TrieType::Fast,
     };
 
-    assert_eq!(builder.get_width(), 1); // 32 bits
-    assert_eq!(builder.get_trie_type(), 0); //TrieType::Fast
-                                            //
+    assert_eq!(builder.get_c_width(), 1); // 32 bits
+    assert_eq!(builder.get_c_trie_type(), 0); //TrieType::Fast
+
     let cpt = builder.build();
 
     assert_eq!(cpt.get32(0), 0);
