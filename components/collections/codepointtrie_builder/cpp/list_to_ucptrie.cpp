@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include <string.h>
-
 #include <iostream>
 
 #include "unicode/errorcode.h"
@@ -18,16 +16,16 @@
  * - standard output is the build UCPTrie as a TOML file
  */
 
-constexpr char TRIE_SMALL[] = "small";
-constexpr char TRIE_FAST[] = "fast";
+const int32_t TRIE_SMALL = 0;
+const int32_t TRIE_FAST = 1;
 extern "C" {
 int construct_ucptrie(const int32_t defaultValue, const int32_t errorValue,
                       const int32_t trieTypeInt, const int32_t valueWidthInt,
                       const uint32_t* values, const uint32_t n) {
   UCPTrieType trieType;
-  if (trieTypeInt == 0) {
+  if (trieTypeInt == TRIE_SMALL) {
     trieType = UCPTRIE_TYPE_SMALL;
-  } else if (trieTypeInt == 1) {
+  } else if (trieTypeInt == TRIE_FAST) {
     trieType = UCPTRIE_TYPE_FAST;
   } else {
     fprintf(stderr,
