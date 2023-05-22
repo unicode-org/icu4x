@@ -52,7 +52,7 @@ impl CharULE {
         Self([u0, u1, u2])
     }
 
-    impl_ule_from_array!(char, CharULE, CharULE::from_char, Self([0; 3]));
+    impl_ule_from_array!(char, CharULE, CharULE::from_char);
 }
 
 // Safety (based on the safety checklist on the ULE trait):

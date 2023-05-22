@@ -60,15 +60,13 @@ macro_rules! impl_byte_slice_size {
                 unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
             }
 
-            /// Gets this `RawBytesULE` as a `$unsigned`. This is equivalent to calling
-            /// [`AsULE::from_unaligned()`] on the appropriately sized type.
+            #[doc = concat!("Gets this `RawBytesULE` as a `", stringify!($unsigned), "`. This is equivalent to calling [`AsULE::from_unaligned()`] on the appropriately sized type.")]
             #[inline]
             pub fn as_unsigned_int(&self) -> $unsigned {
                 <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
             }
 
-            /// Convert a `$unsigned` to `RawBytesULE`. This is equivalent to calling
-            /// [`AsULE::to_unaligned()`] on the appropriately sized type.
+            #[doc = concat!("Converts a `", stringify!($unsigned), "` to a `RawBytesULE`. This is equivalent to calling [`AsULE::to_unaligned()`] on the appropriately sized type.")]
             #[inline]
             pub const fn from_unsigned_int(value: $unsigned) -> Self {
                 Self(value.to_le_bytes())
@@ -77,8 +75,7 @@ macro_rules! impl_byte_slice_size {
             impl_ule_from_array!(
                 $unsigned,
                 RawBytesULE<$size>,
-                RawBytesULE::<$size>::from_unsigned_int,
-                Self([0; $size])
+                RawBytesULE::<$size>::from_unsigned_int
             );
         }
     };

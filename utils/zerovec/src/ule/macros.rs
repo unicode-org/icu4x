@@ -4,10 +4,13 @@
 
 #[macro_export]
 macro_rules! impl_ule_from_array {
-    ($source:ty, $dest:ty, $single:path, $zero:expr) => {
-        /// Convert an array of `$source` to an array of `$dest`.
-        pub const fn from_array<const N: usize>(arr: [$source; N]) -> [Self; N] {
-            let mut result = [$zero; N];
+    ($aligned:ty, $unaligned:ty, $single:path) => {
+        #[doc = concat!("Convert an array of `", stringify!($aligned), "` to an array of `", stringify!($unaligned), "`.")]
+        pub const fn from_array<const N: usize>(arr: [$aligned; N]) -> [Self; N] {
+            if N == 0 {
+                return unsafe { *(&arr as *const _ as *const [Self; N]) };
+            }
+            let mut result = [$single(arr[0]); N];
             let mut i = 0;
             // Won't panic because i < N and arr has length N
             #[allow(clippy::indexing_slicing)]
