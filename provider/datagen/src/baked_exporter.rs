@@ -2,19 +2,82 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use databake::{quote, CrateEnv, TokenStream};
+//! A data exporter that bakes the data into Rust code.
+//!
+//! This module can be used as a target for the `icu_datagen` crate.
+//!
+//! # Examples
+//!
+//! ```
+//! use icu_datagen::prelude::*;
+//! use icu_datagen::baked_exporter::*;
+//!
+//! let demo_path = std::env::temp_dir().join("icu4x_baked_demo");
+//! # let _ = std::fs::remove_dir_all(&demo_path);
+//!
+//! // Set up the exporter
+//! let mut exporter = BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
+//!
+//! // Export something
+//! DatagenProvider::default()
+//!     .export(
+//!         [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect(),
+//!         exporter
+//!     ).unwrap();
+//! #
+//! # let _ = std::fs::remove_dir_all(&demo_path);
+//! ```
+//!
+//! The resulting module structure can now be used like this:
+//!
+//! ```
+//! use icu_locid::langid;
+//! use icu_provider::prelude::*;
+//! use icu_provider::hello_world::*;
+//!
+//! pub struct MyDataProvider;
+//!
+//! mod baked {
+//!     # macro_rules! include {
+//!     #   ($path:literal) => {}
+//!     # }
+//!     # macro_rules! impl_data_provider {
+//!     #   ($p:path) => {
+//!     #     use icu_provider::prelude::*;
+//!     #     use icu_provider::hello_world::*;
+//!     #     impl DataProvider<HelloWorldV1Marker> for $p {
+//!     #       fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+//!     #         HelloWorldProvider.load(req)
+//!     #       }
+//!     #     }
+//!     #   }
+//!     # }
+//!     include!("/path/to/mod/");
+//!     impl_data_provider!(super::MyDataProvider);
+//! }
+//!
+//! # fn main() {
+//! let response: DataPayload<HelloWorldV1Marker> = MyDataProvider
+//!     .load(DataRequest {
+//!         locale: &langid!("en").into(),
+//!         metadata: Default::default(),
+//!     })
+//!     .unwrap()
+//!     .take_payload()
+//!     .unwrap();
+//!
+//! assert_eq!(response.get().message, "Hello World");
+//! # }
+//! ```
+
+use databake::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use rayon::prelude::*;
-use std::collections::BTreeMap;
-use std::collections::BTreeSet;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 use std::sync::Mutex;
-
-use crate::BakedOptions;
 
 macro_rules! move_out {
     ($field:expr) => {{
@@ -27,8 +90,37 @@ macro_rules! move_out {
 // TokenStream isn't Send/Sync
 type SyncTokenStream = String;
 
+/// Options for configuring the output of [`BakedExporter`].
+#[non_exhaustive]
+#[derive(Debug)]
+pub struct Options {
+    /// Whether to run `rustfmt` on the generated files.
+    pub pretty: bool,
+    /// Whether to gate each key on its crate name. This allows using the module
+    /// even if some keys are not required and their dependencies are not included.
+    /// Requires use_separate_crates.
+    pub insert_feature_gates: bool,
+    /// Whether to use separate crates to name types instead of the `icu` metacrate
+    pub use_separate_crates: bool,
+    /// Whether to overwrite existing data. By default, errors if it is present.
+    pub overwrite: bool,
+}
+
+#[allow(clippy::derivable_impls)] // want to be explicit about bool defaults
+impl Default for Options {
+    fn default() -> Self {
+        Self {
+            pretty: false,
+            insert_feature_gates: false,
+            use_separate_crates: false,
+            overwrite: false,
+        }
+    }
+}
+
 #[allow(clippy::type_complexity)]
-pub(crate) struct BakedDataExporter {
+/// See the module-level documentation for details.
+pub struct BakedExporter {
     // Input arguments
     mod_directory: PathBuf,
     pretty: bool,
@@ -54,9 +146,22 @@ struct ImplData {
     feature: SyncTokenStream,
 }
 
-impl BakedDataExporter {
-    pub fn new(mod_directory: PathBuf, options: BakedOptions) -> Result<Self, DataError> {
-        let BakedOptions {
+impl std::fmt::Debug for BakedExporter {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("BakedExporter")
+            .field("mod_directory", &self.mod_directory)
+            .field("pretty", &self.pretty)
+            .field("insert_feature_gates", &self.insert_feature_gates)
+            .field("use_separate_crates", &self.use_separate_crates)
+            // skip formatting intermediate data
+            .finish()
+    }
+}
+
+impl BakedExporter {
+    /// Constructs a new [`BakedExporter`] with the given output directory and options.
+    pub fn new(mod_directory: PathBuf, options: Options) -> Result<Self, DataError> {
+        let Options {
             pretty,
             insert_feature_gates,
             use_separate_crates,
@@ -179,6 +284,7 @@ impl BakedDataExporter {
     }
 
     fn write_intermediate_mod_files(&mut self) -> Result<(), DataError> {
+        use rayon::prelude::*;
         move_out!(self.mod_files)
             .into_inner()
             .expect("poison")
@@ -199,7 +305,7 @@ impl BakedDataExporter {
     }
 }
 
-impl DataExporter for BakedDataExporter {
+impl DataExporter for BakedExporter {
     fn put_payload(
         &self,
         key: DataKey,
@@ -377,6 +483,8 @@ impl DataExporter for BakedDataExporter {
     }
 
     fn close(&mut self) -> Result<(), DataError> {
+        log::info!("Writing module structure...");
+
         // These are BTreeMaps keyed on the marker to keep the output sorted and stable
         let mut data_impls = BTreeMap::new();
         let mut any_consts = BTreeMap::new();

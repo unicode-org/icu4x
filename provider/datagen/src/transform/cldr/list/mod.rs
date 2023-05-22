@@ -128,13 +128,14 @@ macro_rules! implement {
 
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self
-                    .source
-                    .cldr()?
-                    .misc()
-                    .list_langs()?
-                    .map(DataLocale::from)
-                    .collect())
+                Ok(self.source.options.locales.filter_by_langid_equality(
+                    self.source
+                        .cldr()?
+                        .misc()
+                        .list_langs()?
+                        .map(DataLocale::from)
+                        .collect(),
+                ))
             }
         }
     };

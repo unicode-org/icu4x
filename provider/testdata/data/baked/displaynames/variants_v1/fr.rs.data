@@ -1,0 +1,13 @@
+::icu_displaynames::provider::VariantDisplayNamesV1 {
+    names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"1606nict1694acad1901\0\0\0\x001994\0\0\0\x001996\0\0\0\0arevela\0arevmda\0baku1926biske\0\0\0boont\0\0\0fonipa\0\0fonupa\0\0lipaw\0\0\0monoton\0nedis\0\0\0njiva\0\0\0osojs\0\0\0polyton\0posix\0\0\0revised\0rozaj\0\0\0saaho\0\0\0scotlandscouse\0\0solba\0\0\0tarask\0\0valenciawadegile")
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x1C\0\0\0\0\0\x11\0.\0R\0r\0\x8F\0\xA1\0\xB5\0\xD5\0\xF3\0\x05\x01'\x01E\x01^\x01i\x01}\x01\x96\x01\xB4\x01\xBF\x01\xCB\x01\xE0\x01\xF1\x01\xFE\x01\x18\x02'\x02F\x02^\x02g\x02fran\xC3\xA7oys de 1606fran\xC3\xA7ois acad\xC3\xA9mique de 1694orthographe allemande traditionnelleorthographe normalis\xC3\xA9e de Resiaorthographe allemande de 1996arm\xC3\xA9nien orientalarm\xC3\xA9nien occidentalalphabet latin alta\xC3\xAFque unifi\xC3\xA9dialecte de San Giorgio / Biladialecte boontlingalphabet phon\xC3\xA9tique internationalalphabet phon\xC3\xA9tique ouraliquedialecte lipovaz de Resiamonotoniquedialecte de Natisonedialecte de Gniva / Njivadialecte d\xE2\x80\x99Oseacco / Osojanepolytoniqueinformatiqueorthographe r\xC3\xA9vis\xC3\xA9edialecte de Resiadialecte sahoanglais standard \xC3\xA9cossaisdialecte scousedialecte de Stolvizza / Solbicaorthographe taraskievicavalencienWade-Giles")
+            },
+        )
+    },
+}

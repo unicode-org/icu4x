@@ -6,10 +6,12 @@
 name = "icu_capi"
 description = "C interface to ICU4X"
 version = "1.2.2"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 resolver = "2"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -127,8 +129,8 @@ icu_testdata = { version = "1.2.0", path = "../../provider/testdata", optional =
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Since this crate is published, Diplomat must be published preceding a new ICU4X release but may use git versions in between
 # ALSO MAKE SURE TO UPDATE /tools/ffi_coverage/Cargo.toml!
-diplomat = { version = "0.5.2" }
-diplomat-runtime = { version = "0.5.2" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "8d125999893fedfdf30595e97334c21ec4b18da9" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "8d125999893fedfdf30595e97334c21ec4b18da9" }
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

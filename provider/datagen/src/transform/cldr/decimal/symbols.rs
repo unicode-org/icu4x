@@ -58,6 +58,7 @@ impl IterableDataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
     }
 }
 
+#[derive(Debug)]
 struct NumbersWithNumsys<'a>(pub &'a cldr_serde::numbers::Numbers, pub TinyAsciiStr<8>);
 
 impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {

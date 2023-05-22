@@ -18,7 +18,7 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     ) -> Result<DataResponse<LanguageDisplayNamesV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
-        let data: &cldr_serde::language_displaynames::Resource = self
+        let data: &cldr_serde::displaynames::language::Resource = self
             .source
             .cldr()?
             .displaynames()
@@ -41,7 +41,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
     ) -> Result<DataResponse<LocaleDisplayNamesV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
-        let data: &cldr_serde::language_displaynames::Resource = self
+        let data: &cldr_serde::displaynames::language::Resource = self
             .source
             .cldr()?
             .displaynames()
@@ -60,43 +60,45 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .source
-            .cldr()?
-            .displaynames()
-            .list_langs()?
-            .filter(|langid| {
-                // The directory might exist without languages.json
-                self.source
-                    .cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(langid, "languages.json")
-                    .unwrap_or_default()
-            })
-            .map(DataLocale::from)
-            .collect())
+        Ok(self.source.options.locales.filter_by_langid_equality(
+            self.source
+                .cldr()?
+                .displaynames()
+                .list_langs()?
+                .filter(|langid| {
+                    // The directory might exist without languages.json
+                    self.source
+                        .cldr()
+                        .unwrap()
+                        .displaynames()
+                        .file_exists(langid, "languages.json")
+                        .unwrap_or_default()
+                })
+                .map(DataLocale::from)
+                .collect(),
+        ))
     }
 }
 
 impl IterableDataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .source
-            .cldr()?
-            .displaynames()
-            .list_langs()?
-            .filter(|langid| {
-                // The directory might exist without languages.json
-                self.source
-                    .cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(langid, "languages.json")
-                    .unwrap_or_default()
-            })
-            .map(DataLocale::from)
-            .collect())
+        Ok(self.source.options.locales.filter_by_langid_equality(
+            self.source
+                .cldr()?
+                .displaynames()
+                .list_langs()?
+                .filter(|langid| {
+                    // The directory might exist without languages.json
+                    self.source
+                        .cldr()
+                        .unwrap()
+                        .displaynames()
+                        .file_exists(langid, "languages.json")
+                        .unwrap_or_default()
+                })
+                .map(DataLocale::from)
+                .collect(),
+        ))
     }
 }
 
@@ -109,8 +111,8 @@ const ALT_LONG_SUBSTRING: &str = "-alt-long";
 /// Substring used to denote menu display names data variants for a given language. For example: "az-alt-menu".
 const ALT_MENU_SUBSTRING: &str = "-alt-menu";
 
-impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNamesV1<'static> {
-    fn from(other: &cldr_serde::language_displaynames::Resource) -> Self {
+impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNamesV1<'static> {
+    fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
         let mut long_names = BTreeMap::new();
@@ -160,8 +162,8 @@ impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNames
     }
 }
 
-impl From<&cldr_serde::language_displaynames::Resource> for LocaleDisplayNamesV1<'static> {
-    fn from(other: &cldr_serde::language_displaynames::Resource) -> Self {
+impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNamesV1<'static> {
+    fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
         let mut long_names = BTreeMap::new();
