@@ -8,7 +8,7 @@ macro_rules! impl_ule_from_array {
         #[doc = concat!("Convert an array of `", stringify!($aligned), "` to an array of `", stringify!($unaligned), "`.")]
         pub const fn from_array<const N: usize>(arr: [$aligned; N]) -> [Self; N] {
             if N == 0 {
-                return unsafe { *(&arr as *const _ as *const [Self; N]) };
+                return unsafe { *(core::ptr::NonNull::dangling().as_ptr() as *const [Self; N]) };
             }
             let mut result = [$single(arr[0]); N];
             let mut i = 0;
