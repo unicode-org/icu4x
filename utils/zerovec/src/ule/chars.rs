@@ -40,6 +40,40 @@ use core::convert::TryFrom;
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub struct CharULE([u8; 3]);
 
+impl CharULE {
+    /// Converts an array of [`char`] to an array of [`CharULE`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ule::{CharULE, ULE};
+    ///
+    /// const CHARS: [char; 2] = ['a', '🙃'];
+    /// const CHARS_ULE: [CharULE; 2] = CharULE::from_array(CHARS);
+    /// assert_eq!(CharULE::as_byte_slice(&CHARS_ULE), &[0x61, 0x00, 0x00, 0x43, 0xF6, 0x01]);
+    /// ```
+    pub const fn from_array<const N: usize>(arr: [char; N]) -> [Self; N] {
+        let mut result = [CharULE([0; 3]); N];
+        let mut i = 0;
+        // Won't panic because i < N and arr has length N
+        #[allow(clippy::indexing_slicing)]
+        while i < N {
+            result[i] = CharULE::from_char(arr[i]);
+            i += 1;
+        }
+        result
+    }
+
+    /// Converts a [`char`] to a [`CharULE`].
+    ///
+    /// See the type-level documentation for [`CharULE`] for more information.
+    #[inline]
+    pub const fn from_char(c: char) -> Self {
+        let [u0, u1, u2, _u3] = (c as u32).to_le_bytes();
+        CharULE([u0, u1, u2])
+    }
+}
+
 // Safety (based on the safety checklist on the ULE trait):
 //  1. CharULE does not include any uninitialized or padding bytes.
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
@@ -72,8 +106,7 @@ impl AsULE for char {
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        let [u0, u1, u2, _u3] = u32::from(self).to_le_bytes();
-        CharULE([u0, u1, u2])
+        CharULE::from_char(self)
     }
 
     #[inline]
