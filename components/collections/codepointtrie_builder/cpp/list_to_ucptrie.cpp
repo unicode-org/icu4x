@@ -8,15 +8,19 @@
 #include "unicode/umutablecptrie.h"
 #include "writesrc.h"
 
-/**
- * list_to_ucptrie: converts a stream of integers to a UCPTrie
- *
- * - standard input should be a stream of integers, each integer representing
- the value for consecutive code points, starting from code point 0.
- * - standard output is the build UCPTrie as a TOML file
- */
-
 extern "C" {
+/**
+ * Construct a UCPTrie and write it to STDOUT in TOML.
+ *
+ * Parameters:
+ * defaultValue: The initial value set for all codepoints.
+ * errorValue: The value for out of range codepoints.
+ * trieType: The type of UCPTrie. Can be '0' for FAST, '1' for SMALL.
+ * valueWidth: The width of the values. Can be '0', '1', '2' for 16,
+ *  32, 8 bits respectively.
+ * values: A pointer to an array containing the value for each codepoint.
+ * n: The length of values array.
+ */
 int construct_ucptrie(const int32_t defaultValue, const int32_t errorValue,
                       const UCPTrieType trieType,
                       const UCPTrieValueWidth valueWidth,
