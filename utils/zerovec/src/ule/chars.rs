@@ -6,6 +6,7 @@
 //! ULE implementation for the `char` type.
 
 use super::*;
+use crate::impl_ule_from_array;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 
@@ -41,37 +42,17 @@ use core::convert::TryFrom;
 pub struct CharULE([u8; 3]);
 
 impl CharULE {
-    /// Converts an array of [`char`] to an array of [`CharULE`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use zerovec::ule::{CharULE, ULE};
-    ///
-    /// const CHARS: [char; 2] = ['a', '🙃'];
-    /// const CHARS_ULE: [CharULE; 2] = CharULE::from_array(CHARS);
-    /// assert_eq!(CharULE::as_byte_slice(&CHARS_ULE), &[0x61, 0x00, 0x00, 0x43, 0xF6, 0x01]);
-    /// ```
-    pub const fn from_array<const N: usize>(arr: [char; N]) -> [Self; N] {
-        let mut result = [CharULE([0; 3]); N];
-        let mut i = 0;
-        // Won't panic because i < N and arr has length N
-        #[allow(clippy::indexing_slicing)]
-        while i < N {
-            result[i] = CharULE::from_char(arr[i]);
-            i += 1;
-        }
-        result
-    }
-
-    /// Converts a [`char`] to a [`CharULE`].
+    /// Converts a [`char`] to a [`CharULE`]. This is equivalent to calling
+    /// [`AsULE::to_unaligned()`]
     ///
     /// See the type-level documentation for [`CharULE`] for more information.
     #[inline]
     pub const fn from_char(c: char) -> Self {
         let [u0, u1, u2, _u3] = (c as u32).to_le_bytes();
-        CharULE([u0, u1, u2])
+        Self([u0, u1, u2])
     }
+
+    impl_ule_from_array!(char, CharULE, CharULE::from_char, Self([0; 3]));
 }
 
 // Safety (based on the safety checklist on the ULE trait):
@@ -138,6 +119,16 @@ impl Ord for CharULE {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn test_from_array() {
+        const CHARS: [char; 2] = ['a', '🙃'];
+        const CHARS_ULE: [CharULE; 2] = CharULE::from_array(CHARS);
+        assert_eq!(
+            CharULE::as_byte_slice(&CHARS_ULE),
+            &[0x61, 0x00, 0x00, 0x43, 0xF6, 0x01]
+        );
+    }
 
     #[test]
     fn test_parse() {
