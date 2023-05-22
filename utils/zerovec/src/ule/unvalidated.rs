@@ -230,7 +230,7 @@ where
 /// let real = ['h', 'i', '👋'];
 ///
 /// let chars: &ZeroSlice<UnvalidatedChar> = ZeroSlice::parse_byte_slice(&data).expect("invalid data length");
-/// let parsed: Vec<_> = chars.iter().map(|c| unsafe { c.as_char_unchecked() }).collect();
+/// let parsed: Vec<_> = chars.iter().map(|c| unsafe { c.to_char_unchecked() }).collect();
 /// assert_eq!(&parsed, &real);
 ///
 /// let real_chars: ZeroVec<_> = real.iter().copied().map(UnvalidatedChar::from_char).collect();
@@ -250,7 +250,7 @@ impl UnvalidatedChar {
     /// use zerovec::ule::UnvalidatedChar;
     ///
     /// let a = UnvalidatedChar::from_char('a');
-    /// assert_eq!(a.try_as_char().unwrap(), 'a');
+    /// assert_eq!(a.try_to_char().unwrap(), 'a');
     /// ```
     #[inline]
     pub const fn from_char(c: char) -> Self {
@@ -266,13 +266,13 @@ impl UnvalidatedChar {
     /// use zerovec::ule::{AsULE, UnvalidatedChar};
     ///
     /// let a = UnvalidatedChar::from_char('a');
-    /// assert_eq!(a.try_as_char(), Ok('a'));
+    /// assert_eq!(a.try_to_char(), Ok('a'));
     ///
     /// let b = UnvalidatedChar::from_unaligned([0xFF, 0xFF, 0xFF].into());
-    /// assert!(matches!(b.try_as_char(), Err(_)));
+    /// assert!(matches!(b.try_to_char(), Err(_)));
     /// ```
     #[inline]
-    pub fn try_as_char(self) -> Result<char, core::char::CharTryFromError> {
+    pub fn try_to_char(self) -> Result<char, core::char::CharTryFromError> {
         let [u0, u1, u2] = self.0;
         char::try_from(u32::from_le_bytes([u0, u1, u2, 0]))
     }
@@ -286,11 +286,11 @@ impl UnvalidatedChar {
     /// use zerovec::ule::{AsULE, UnvalidatedChar};
     ///
     /// let a = UnvalidatedChar::from_unaligned([0xFF, 0xFF, 0xFF].into());
-    /// assert_eq!(a.as_char_lossy(), char::REPLACEMENT_CHARACTER);
+    /// assert_eq!(a.to_char_lossy(), char::REPLACEMENT_CHARACTER);
     /// ```
     #[inline]
-    pub fn as_char_lossy(self) -> char {
-        self.try_as_char().unwrap_or(char::REPLACEMENT_CHARACTER)
+    pub fn to_char_lossy(self) -> char {
+        self.try_to_char().unwrap_or(char::REPLACEMENT_CHARACTER)
     }
 
     /// Convert a [`UnvalidatedChar`] to a `char` without checking that it is
@@ -306,10 +306,10 @@ impl UnvalidatedChar {
     /// use zerovec::ule::UnvalidatedChar;
     ///
     /// let a = UnvalidatedChar::from_char('a');
-    /// assert_eq!(unsafe { a.as_char_unchecked() }, 'a');
+    /// assert_eq!(unsafe { a.to_char_unchecked() }, 'a');
     /// ```
     #[inline]
-    pub unsafe fn as_char_unchecked(self) -> char {
+    pub unsafe fn to_char_unchecked(self) -> char {
         let [u0, u1, u2] = self.0;
         char::from_u32_unchecked(u32::from_le_bytes([u0, u1, u2, 0]))
     }
@@ -336,7 +336,7 @@ unsafe impl EqULE for UnvalidatedChar {}
 impl fmt::Debug for UnvalidatedChar {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Debug as a char if possible
-        match self.try_as_char() {
+        match self.try_to_char() {
             Ok(c) => fmt::Debug::fmt(&c, f),
             Err(_) => fmt::Debug::fmt(&self.0, f),
         }
@@ -344,12 +344,19 @@ impl fmt::Debug for UnvalidatedChar {
 }
 
 impl PartialOrd for UnvalidatedChar {
-    // custom implementation to be consistent with char's Ord on BE platforms
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        match (self.try_as_char(), other.try_as_char()) {
-            (Ok(c1), Ok(c2)) => Some(c1.cmp(&c2)),
-            _ => None,
-        }
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for UnvalidatedChar {
+    // custom implementation, as derived Ord would compare lexicographically
+    fn cmp(&self, other: &Self) -> Ordering {
+        let [a0, a1, a2] = self.0;
+        let a = u32::from_le_bytes([a0, a1, a2, 0]);
+        let [b0, b1, b2] = other.0;
+        let b = u32::from_le_bytes([b0, b1, b2, 0]);
+        a.cmp(&b)
     }
 }
 
@@ -360,12 +367,12 @@ impl From<char> for UnvalidatedChar {
     }
 }
 
-impl TryInto<char> for UnvalidatedChar {
+impl TryFrom<UnvalidatedChar> for char {
     type Error = core::char::CharTryFromError;
 
     #[inline]
-    fn try_into(self) -> Result<char, Self::Error> {
-        self.try_as_char()
+    fn try_from(value: UnvalidatedChar) -> Result<char, Self::Error> {
+        value.try_to_char()
     }
 }
 
@@ -378,12 +385,12 @@ impl serde::Serialize for UnvalidatedChar {
     {
         use serde::ser::Error;
         let c = self
-            .try_as_char()
+            .try_to_char()
             .map_err(|_| S::Error::custom("invalid Unicode scalar value in UnvalidatedChar"))?;
         if serializer.is_human_readable() {
             serializer.serialize_char(c)
         } else {
-            serializer.serialize_bytes(self.to_unaligned().as_bytes())
+            self.0.serialize(serializer)
         }
     }
 }
@@ -395,19 +402,12 @@ impl<'de> serde::Deserialize<'de> for UnvalidatedChar {
     where
         D: serde::Deserializer<'de>,
     {
-        use serde::de::Error;
         if deserializer.is_human_readable() {
             let c = <char>::deserialize(deserializer)?;
             Ok(UnvalidatedChar::from_char(c))
         } else {
-            let bytes = <&[u8]>::deserialize(deserializer)?;
-            if bytes.len() != 3 {
-                return Err(D::Error::custom("expected 3 bytes for UnvalidatedChar"));
-            }
-            // Won't panic because the length is checked above
-            #[allow(clippy::indexing_slicing)]
-            let (u0, u1, u2) = (bytes[0], bytes[1], bytes[2]);
-            Ok(UnvalidatedChar([u0, u1, u2]))
+            let bytes = <[u8; 3]>::deserialize(deserializer)?;
+            Ok(UnvalidatedChar(bytes))
         }
     }
 }
@@ -416,6 +416,39 @@ impl<'de> serde::Deserialize<'de> for UnvalidatedChar {
 mod test {
     use super::*;
     use crate::ZeroVec;
+
+    #[test]
+    fn test_serde_fail() {
+        let uc = UnvalidatedChar([0xFF, 0xFF, 0xFF]);
+        serde_json::to_string(&uc).expect_err("serialize invalid char bytes");
+        bincode::serialize(&uc).expect_err("serialize invalid char bytes");
+    }
+
+    #[test]
+    fn test_serde_json() {
+        let c = '🙃';
+        let uc = UnvalidatedChar::from_char(c);
+        let json_ser = serde_json::to_string(&uc).unwrap();
+
+        assert_eq!(json_ser, r#""🙃""#);
+
+        let json_de: UnvalidatedChar = serde_json::from_str(&json_ser).unwrap();
+
+        assert_eq!(uc, json_de);
+    }
+
+    #[test]
+    fn test_serde_bincode() {
+        let c = '🙃';
+        let uc = UnvalidatedChar::from_char(c);
+        let bytes_ser = bincode::serialize(&uc).unwrap();
+
+        assert_eq!(bytes_ser, [0x43, 0xF6, 0x01]);
+
+        let bytes_de: UnvalidatedChar = bincode::deserialize(&bytes_ser).unwrap();
+
+        assert_eq!(uc, bytes_de);
+    }
 
     #[test]
     fn test_representation() {
