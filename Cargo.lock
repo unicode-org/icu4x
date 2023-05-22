@@ -883,6 +883,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "212d0f5754cb6769937f4501cc0e67f4f4483c8d2c3e1e922ee9edbe4ab4c7c0"
 
 [[package]]
+name = "discriminant"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "473bff546170059ffa8114a0d559f5411344d878c6bc83a783939d36252c54cb"
+
+[[package]]
 name = "displaydoc"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1742,6 +1748,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
+ "icu_personnames",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1961,6 +1968,21 @@ dependencies = [
  "displaydoc",
  "iai",
  "writeable",
+]
+
+[[package]]
+name = "icu_personnames"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "discriminant",
+ "icu_collections",
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "yoke",
+ "zerofrom",
+ "zerovec",
 ]
 
 [[package]]
