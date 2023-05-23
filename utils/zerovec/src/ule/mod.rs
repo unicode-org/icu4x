@@ -14,6 +14,7 @@ mod chars;
 #[cfg(doc)]
 pub mod custom;
 mod encode;
+mod macros;
 mod multi;
 mod niche;
 mod option;
@@ -29,7 +30,7 @@ pub use multi::MultiFieldsULE;
 pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};
 pub use plain::RawBytesULE;
-pub use unvalidated::UnvalidatedStr;
+pub use unvalidated::{UnvalidatedChar, UnvalidatedStr};
 
 use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;

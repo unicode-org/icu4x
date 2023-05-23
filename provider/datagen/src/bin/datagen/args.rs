@@ -121,21 +121,19 @@ pub struct Cli {
     icuexport_tag: String,
 
     #[arg(long, value_name = "PATH")]
-    #[cfg_attr(not(feature = "networking"), arg(default_value = "builtin"))]
     #[arg(
         help = "Path to a local icuexport directory (see https://github.com/unicode-org/icu/releases).\n\
                   Note that some keys do not support versions before release-71-1."
     )]
     icuexport_root: Option<PathBuf>,
 
-    #[arg(long, value_name = "TAG")]
+    #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download segmentation LSTM models from this GitHub tag (https://github.com/unicode-org/lstm_word_segmentation/tags)\n\
                   Use 'latest' for the latest version verified to work with this version of the binary.\n\
                   Ignored if '--segmenter-lstm-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
-    #[cfg_attr(feature = "networking", arg(default_value = "latest"))]
     segmenter_lstm_tag: String,
 
     #[arg(long, value_name = "PATH")]
@@ -333,7 +331,7 @@ impl Cli {
             #[cfg(feature = "networking")]
             (_, tag) => config::PathOrTag::Tag(String::from(tag)),
             #[cfg(not(feature = "networking"))]
-            _ => eyre::bail!("--{root_arg} flag is mandatory unless datagen is built with the `\"networking\"` Cargo feature"),
+            _ => config::PathOrTag::None,
         })
     }
 
