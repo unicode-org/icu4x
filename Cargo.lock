@@ -2113,6 +2113,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_testdata",
  "itertools",
+ "lazy_static",
  "libm",
  "serde",
  "serde_json",
