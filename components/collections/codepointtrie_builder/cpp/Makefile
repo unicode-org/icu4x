@@ -7,7 +7,7 @@ ICU4C_BUILD ?= $(ICU4C_SOURCE)
 EMCC := emcc
 
 .PHONY: all clean
-all: list_to_ucptrie list_to_ucptrie.wasm
+all: list_to_ucptrie.wasm
 
 icu4c_obj/wasm/%.o: $(ICU4C_SOURCE)/%.cpp
 	mkdir -p icu4c_obj/wasm/common
