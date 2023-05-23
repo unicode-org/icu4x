@@ -9,7 +9,7 @@ use icu_locid::Locale;
 use crate::api::{NameField, PersonName, PersonNamesFormatterError, PreferredOrder};
 
 ///
-/// FieldModifierSupportPersonName provide the full capability of PersonName as per specifications.
+/// DefaultPersonName, default implementation provided for PersonNameFormatter.
 ///
 pub struct DefaultPersonName {
     person_data: BTreeMap<NameField, String>,
