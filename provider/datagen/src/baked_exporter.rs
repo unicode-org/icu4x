@@ -284,7 +284,7 @@ impl BakedExporter {
     }
 
     fn write_intermediate_mod_files(&mut self) -> Result<(), DataError> {
-        use rayon::prelude::*;
+        use crate::rayon_prelude::*;
         move_out!(self.mod_files)
             .into_inner()
             .expect("poison")
