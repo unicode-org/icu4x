@@ -5,7 +5,7 @@
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Range;
-use lazy_static::lazy_static;
+use once_cell::sync::Lazy;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
@@ -476,11 +476,10 @@ macro_rules! f32c {
     };
 }
 
-lazy_static! {
-    static ref DOT_1_PTR: unsafe fn(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 = initialize_dot1();
-    static ref DOT_2_PTR: unsafe fn(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 =
-        initialize_dot2();
-}
+static DOT_1_PTR: Lazy<unsafe fn(xs: &[f32], ys: &ZeroSlice<f32>) -> f32> =
+    Lazy::new(initialize_dot1);
+static DOT_2_PTR: Lazy<unsafe fn(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32> =
+    Lazy::new(initialize_dot2);
 
 fn initialize_dot1() -> unsafe fn(&[f32], &ZeroSlice<f32>) -> f32 {
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
@@ -652,7 +651,7 @@ unsafe fn dot_1_avx_fma(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
     // SAFETY: No safety requirement
     sums = unsafe { _mm_add_ss(sums, shuf) };
     // SAFETY: No safety requirement
-    unsafe { _mm_cvtss_f32(sums)  + remainder}
+    unsafe { _mm_cvtss_f32(sums) + remainder }
 }
 
 #[target_feature(enable = "avx,fma")]
@@ -710,5 +709,5 @@ unsafe fn dot_2_avx_fma(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
     // SAFETY: No safety requirement
     sums = unsafe { _mm_add_ss(sums, shuf) };
     // SAFETY: No safety requirement
-    unsafe { _mm_cvtss_f32(sums)  + remainder}
+    unsafe { _mm_cvtss_f32(sums) + remainder }
 }
