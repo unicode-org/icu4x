@@ -43,14 +43,19 @@ fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatte
     // has_name_field_with_modifier
     assert!(person_name.has_name_field_with_modifier(&NameField::Given(None)));
     assert!(!person_name.has_name_field_with_modifier(&NameField::Surname2(None)));
-    assert!(!person_name
-        .has_name_field_with_modifier(&NameField::Surname(Some(FieldModifier::AllCaps as FieldModifierMask))));
+    assert!(
+        !person_name.has_name_field_with_modifier(&NameField::Surname(Some(
+            FieldModifier::AllCaps as FieldModifierMask
+        )))
+    );
 
     // get
     assert_eq!(person_name.get(&NameField::Given(None)), Some("Henry"));
     assert_eq!(person_name.get(&NameField::Surname(None)), Some("Jekyll"));
     assert_eq!(
-        person_name.get(&NameField::Surname(Some(FieldModifier::Informal as FieldModifierMask))),
+        person_name.get(&NameField::Surname(Some(
+            FieldModifier::Informal as FieldModifierMask
+        ))),
         Some("Hide")
     );
     Ok(())

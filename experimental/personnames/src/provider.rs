@@ -30,10 +30,7 @@ use zerovec::VarZeroVec;
     derive(serde::Serialize, databake::Bake),
     databake(path = icu_personnames::provider))
 ]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Deserialize)
-)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PersonNamesFormattingDefinitionV1<'data> {
     /// <nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>
     #[cfg_attr(feature = "serde", serde(borrow))]
