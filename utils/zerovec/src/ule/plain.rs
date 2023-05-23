@@ -6,6 +6,7 @@
 //! ULE implementation for Plain Old Data types, including all sized integers.
 
 use super::*;
+use crate::impl_ule_from_array;
 use crate::ZeroSlice;
 use core::num::{NonZeroI8, NonZeroU8};
 
@@ -61,25 +62,23 @@ impl<const N: usize> From<[u8; N]> for RawBytesULE<N> {
 macro_rules! impl_byte_slice_size {
     ($unsigned:ty, $size:literal) => {
         impl RawBytesULE<$size> {
-            /// Gets this RawBytesULE as an unsigned int. This is equivalent to calling
-            /// [AsULE::from_unaligned()] on the appropriately sized type.
+            #[doc = concat!("Gets this `RawBytesULE` as a `", stringify!($unsigned), "`. This is equivalent to calling [`AsULE::from_unaligned()`] on the appropriately sized type.")]
             #[inline]
             pub fn as_unsigned_int(&self) -> $unsigned {
                 <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
             }
 
-            /// Convert an array of native-endian aligned integers to an array of RawBytesULE.
-            pub const fn from_array<const N: usize>(arr: [$unsigned; N]) -> [Self; N] {
-                let mut result = [RawBytesULE([0; $size]); N];
-                let mut i = 0;
-                // Won't panic because i < N and arr has length N
-                #[allow(clippy::indexing_slicing)]
-                while i < N {
-                    result[i].0 = arr[i].to_le_bytes();
-                    i += 1;
-                }
-                result
+            #[doc = concat!("Converts a `", stringify!($unsigned), "` to a `RawBytesULE`. This is equivalent to calling [`AsULE::to_unaligned()`] on the appropriately sized type.")]
+            #[inline]
+            pub const fn from_aligned(value: $unsigned) -> Self {
+                Self(value.to_le_bytes())
             }
+
+            impl_ule_from_array!(
+                $unsigned,
+                RawBytesULE<$size>,
+                RawBytesULE([0; $size])
+            );
         }
     };
 }

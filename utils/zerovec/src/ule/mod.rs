@@ -14,6 +14,7 @@ mod chars;
 #[cfg(doc)]
 pub mod custom;
 mod encode;
+mod macros;
 mod multi;
 mod niche;
 mod option;
