@@ -694,8 +694,8 @@ unsafe fn dot_1_neon(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
 
     debug_assert_eq!(xs.len(), ys.len());
 
-    let xc = xs.chunks_exact(8);
-    let yc = ys.as_ule_slice().chunks_exact(8);
+    let xc = xs.chunks_exact(12);
+    let yc = ys.as_ule_slice().chunks_exact(12);
 
     let remainder = xc
         .remainder()
@@ -707,13 +707,14 @@ unsafe fn dot_1_neon(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
     // TODO: Use array_chunks once stable to avoid the unwrap.
     // <https://github.com/rust-lang/rust/issues/74985>
     #[allow(clippy::unwrap_used)]
-    let xc = xc.map(|xx| *<&[_; 8]>::try_from(xx).unwrap());
+    let xc = xc.map(|xx| *<&[_; 12]>::try_from(xx).unwrap());
     #[allow(clippy::unwrap_used)]
-    let yc = yc.map(|yy| *<&[_; 8]>::try_from(yy).unwrap());
+    let yc = yc.map(|yy| *<&[_; 12]>::try_from(yy).unwrap());
 
     // https://developer.arm.com/documentation/102197/0100/Calculating-dot-products-using-Neon-Intrinsics
     let mut sum0 = unsafe { vdupq_n_f32(0.0) };
     let mut sum1 = unsafe { vdupq_n_f32(0.0) };
+    let mut sum2 = unsafe { vdupq_n_f32(0.0) };
 
     for (x, y) in xc.zip(yc) {
         let xv0 = unsafe { vld1q_f32(x.as_ptr()) };
@@ -725,8 +726,13 @@ unsafe fn dot_1_neon(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
         let yv1 = unsafe { vld1q_f32(y[4..].as_ptr() as *const f32) };
 
         sum1 = unsafe { vfmaq_f32(sum1, xv1, yv1) };
+
+        let xv2 = unsafe { vld1q_f32(x[8..].as_ptr()) };
+        let yv2 = unsafe { vld1q_f32(y[8..].as_ptr() as *const f32) };
+
+        sum2 = unsafe { vfmaq_f32(sum2, xv2, yv2) };
     }
-    unsafe { vaddvq_f32(sum0) + vaddvq_f32(sum1) + remainder }
+    unsafe { vaddvq_f32(sum0) + vaddvq_f32(sum1) + remainder + vaddvq_f32(sum2) }
 }
 
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
@@ -796,8 +802,8 @@ unsafe fn dot_2_neon(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
 
     debug_assert_eq!(xs.len(), ys.len());
 
-    let xc = xs.as_ule_slice().chunks_exact(8);
-    let yc = ys.as_ule_slice().chunks_exact(8);
+    let xc = xs.chunks_exact(12);
+    let yc = ys.as_ule_slice().chunks_exact(12);
 
     let remainder = xc
         .remainder()
@@ -809,13 +815,14 @@ unsafe fn dot_2_neon(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
     // TODO: Use array_chunks once stable to avoid the unwrap.
     // <https://github.com/rust-lang/rust/issues/74985>
     #[allow(clippy::unwrap_used)]
-    let xc = xc.map(|xx| *<&[_; 8]>::try_from(xx).unwrap());
+    let xc = xc.map(|xx| *<&[_; 12]>::try_from(xx).unwrap());
     #[allow(clippy::unwrap_used)]
-    let yc = yc.map(|yy| *<&[_; 8]>::try_from(yy).unwrap());
+    let yc = yc.map(|yy| *<&[_; 12]>::try_from(yy).unwrap());
 
     // https://developer.arm.com/documentation/102197/0100/Calculating-dot-products-using-Neon-Intrinsics
     let mut sum0 = unsafe { vdupq_n_f32(0.0) };
     let mut sum1 = unsafe { vdupq_n_f32(0.0) };
+    let mut sum2 = unsafe { vdupq_n_f32(0.0) };
 
     for (x, y) in xc.zip(yc) {
         let xv0 = unsafe { vld1q_f32(x.as_ptr() as *const f32) };
@@ -827,6 +834,11 @@ unsafe fn dot_2_neon(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
         let yv1 = unsafe { vld1q_f32(y[4..].as_ptr() as *const f32) };
 
         sum1 = unsafe { vfmaq_f32(sum1, xv1, yv1) };
+
+        let xv2 = unsafe { vld1q_f32(x[8..].as_ptr() as *const f32) };
+        let yv2 = unsafe { vld1q_f32(y[8..].as_ptr() as *const f32) };
+
+        sum2 = unsafe { vfmaq_f32(sum2, xv2, yv2) };
     }
-    unsafe { vaddvq_f32(sum0) + vaddvq_f32(sum1) + remainder }
+    unsafe { vaddvq_f32(sum0) + vaddvq_f32(sum1) + remainder + vaddvq_f32(sum2) }
 }
