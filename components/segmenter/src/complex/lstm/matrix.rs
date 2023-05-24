@@ -802,7 +802,7 @@ unsafe fn dot_2_neon(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
 
     debug_assert_eq!(xs.len(), ys.len());
 
-    let xc = xs.chunks_exact(12);
+    let xc = xs.as_ule_slice().chunks_exact(12);
     let yc = ys.as_ule_slice().chunks_exact(12);
 
     let remainder = xc
