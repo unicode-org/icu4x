@@ -488,6 +488,12 @@ fn initialize_dot1() -> unsafe fn(&[f32], &ZeroSlice<f32>) -> f32 {
             return dot_1_avx_fma;
         }
     }
+    #[cfg(target_arch = "aarch64")]
+    {
+        // if std::is_aarch64_feature_detected!("neon"){
+        return dot_1_neon;
+        // }
+    }
 
     unrolled_dot_1
 }
@@ -499,7 +505,12 @@ fn initialize_dot2() -> unsafe fn(&ZeroSlice<f32>, &ZeroSlice<f32>) -> f32 {
             return dot_2_avx_fma;
         }
     }
-
+    #[cfg(target_arch = "aarch64")]
+    {
+        // if std::is_aarch64_feature_detected!("neon"){
+        return dot_2_neon;
+        // }
+    }
     unrolled_dot_2
 }
 
@@ -508,7 +519,14 @@ fn dot_1(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
     {
         unsafe { dot_1_avx_fma(xs, ys) }
     }
-    #[cfg(not(all(target_feature = "avx", target_feature = "fma")))]
+    #[cfg(target_feature = "neon")]
+    {
+        unsafe { dot_1_neon(xs, ys) }
+    }
+    #[cfg(all(
+        not(all(target_feature = "avx", target_feature = "fma")),
+        not(target_feature = "neon")
+    ))]
     {
         // runtime dispatch
         unsafe { DOT_1_PTR(xs, ys) }
@@ -520,7 +538,14 @@ fn dot_2(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
     {
         unsafe { dot_2_avx_fma(xs, ys) }
     }
-    #[cfg(not(all(target_feature = "avx", target_feature = "fma")))]
+    #[cfg(target_feature = "neon")]
+    {
+        unsafe { dot_2_neon(xs, ys) }
+    }
+    #[cfg(all(
+        not(all(target_feature = "avx", target_feature = "fma")),
+        not(target_feature = "neon")
+    ))]
     {
         // runtime dispatch
         unsafe { DOT_2_PTR(xs, ys) }
@@ -601,6 +626,7 @@ fn unrolled_dot_2(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
     sum + (p.0 + p.4) + (p.1 + p.5) + (p.2 + p.6) + (p.3 + p.7)
 }
 
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 #[target_feature(enable = "avx,fma")]
 unsafe fn dot_1_avx_fma(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
     #[cfg(target_arch = "x86")]
@@ -660,6 +686,44 @@ unsafe fn dot_1_avx_fma(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
     unsafe { _mm_cvtss_f32(sums) + remainder }
 }
 
+#[cfg(any(target_arch = "aarch64"))]
+#[cfg(target_endian = "little")]
+#[target_feature(enable = "neon")]
+unsafe fn dot_1_neon(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
+    use core::arch::aarch64::*;
+
+    debug_assert_eq!(xs.len(), ys.len());
+
+    let xc = xs.chunks_exact(4);
+    let yc = ys.as_ule_slice().chunks_exact(4);
+
+    let remainder = xc
+        .remainder()
+        .iter()
+        .zip(yc.remainder().iter())
+        .map(|(x, y)| x * f32c!(*y))
+        .sum::<f32>();
+
+    // TODO: Use array_chunks once stable to avoid the unwrap.
+    // <https://github.com/rust-lang/rust/issues/74985>
+    #[allow(clippy::unwrap_used)]
+    let xc = xc.map(|xx| *<&[_; 4]>::try_from(xx).unwrap());
+    #[allow(clippy::unwrap_used)]
+    let yc = yc.map(|yy| *<&[_; 4]>::try_from(yy).unwrap());
+
+    // https://developer.arm.com/documentation/102197/0100/Calculating-dot-products-using-Neon-Intrinsics
+    let mut sum = unsafe { vdupq_n_f32(0.0) };
+
+    for (x, y) in xc.zip(yc) {
+        let xv = unsafe { vld1q_f32(x.as_ptr()) };
+        let yv = unsafe { vld1q_f32(y.as_ptr() as *const f32) };
+
+        sum = unsafe { vfmaq_f32(sum, xv, yv) };
+    }
+    unsafe { vaddvq_f32(sum) + remainder }
+}
+
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 #[target_feature(enable = "avx,fma")]
 unsafe fn dot_2_avx_fma(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
     debug_assert_eq!(xs.len(), ys.len());
@@ -716,4 +780,41 @@ unsafe fn dot_2_avx_fma(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
     sums = unsafe { _mm_add_ss(sums, shuf) };
     // SAFETY: No safety requirement
     unsafe { _mm_cvtss_f32(sums) + remainder }
+}
+
+#[cfg(any(target_arch = "aarch64"))]
+#[cfg(target_endian = "little")]
+#[target_feature(enable = "neon")]
+unsafe fn dot_2_neon(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
+    use core::arch::aarch64::*;
+
+    debug_assert_eq!(xs.len(), ys.len());
+
+    let xc = xs.as_ule_slice().chunks_exact(4);
+    let yc = ys.as_ule_slice().chunks_exact(4);
+
+    let remainder = xc
+        .remainder()
+        .iter()
+        .zip(yc.remainder().iter())
+        .map(|(x, y)| f32c!(*x) * f32c!(*y))
+        .sum::<f32>();
+
+    // TODO: Use array_chunks once stable to avoid the unwrap.
+    // <https://github.com/rust-lang/rust/issues/74985>
+    #[allow(clippy::unwrap_used)]
+    let xc = xc.map(|xx| *<&[_; 4]>::try_from(xx).unwrap());
+    #[allow(clippy::unwrap_used)]
+    let yc = yc.map(|yy| *<&[_; 4]>::try_from(yy).unwrap());
+
+    // https://developer.arm.com/documentation/102197/0100/Calculating-dot-products-using-Neon-Intrinsics
+    let mut sum = unsafe { vdupq_n_f32(0.0) };
+
+    for (x, y) in xc.zip(yc) {
+        let xv = unsafe { vld1q_f32(x.as_ptr() as *const f32) };
+        let yv = unsafe { vld1q_f32(y.as_ptr() as *const f32) };
+
+        sum = unsafe { vfmaq_f32(sum, xv, yv) };
+    }
+    unsafe { vaddvq_f32(sum) + remainder }
 }
