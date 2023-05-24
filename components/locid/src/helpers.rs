@@ -488,7 +488,7 @@ macro_rules! impl_tinystr_subtag {
             fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                 env.insert("icu_locid");
                 let string = self.as_str();
-                databake::quote! {::icu_locid::$macro_name!(#string) }
+                databake::quote! { icu_locid::$macro_name!(#string) }
             }
         }
 

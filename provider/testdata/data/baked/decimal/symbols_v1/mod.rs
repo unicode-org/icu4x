@@ -1,7 +1,7 @@
 // @generated
 #![cfg(feature = "icu_decimal")]
 type DataStruct =
-    <::icu_decimal::provider::DecimalSymbolsV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <icu_decimal::provider::DecimalSymbolsV1Marker as icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
     static KEYS: [&str; 24usize] = [
         "ar",

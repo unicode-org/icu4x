@@ -1,8 +1,8 @@
 // @generated
 #![cfg(feature = "icu_datetime_experimental")]
 type DataStruct = &'static [(
-    &'static [::icu_datetime::fields::Field],
-    ::icu_datetime::pattern::runtime::PatternPlurals<'static>,
+    &'static [icu_datetime::fields::Field],
+    icu_datetime::pattern::runtime::PatternPlurals<'static>,
 )];
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
     static KEYS: [&str; 133usize] = [
