@@ -10,7 +10,7 @@ impl<const N: usize> Bake for TinyAsciiStr<N> {
         env.insert("tinystr");
         let string = self.as_str();
         quote! {
-            ::tinystr::tinystr!(#N, #string)
+            tinystr::tinystr!(#N, #string)
         }
     }
 }

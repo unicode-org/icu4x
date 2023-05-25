@@ -117,7 +117,7 @@ impl DataPayload<ExportMarker> {
     /// let tokens = export.tokenize(&env);
     /// assert_eq!(
     ///     quote! {
-    ///         ::icu_provider::hello_world::HelloWorldV1 {
+    ///         icu_provider::hello_world::HelloWorldV1 {
     ///             message: alloc::borrow::Cow::Borrowed("(und) Hello World"),
     ///         }
     ///     }

@@ -1,7 +1,7 @@
-::icu_datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: icu_datetime::provider::calendar::months::ContextsV1 {
+        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("จ\u{e34}ตรา"),
                 alloc::borrow::Cow::Borrowed("ว\u{e34}สาขา"),
                 alloc::borrow::Cow::Borrowed("เชษฐา"),
@@ -15,7 +15,7 @@
                 alloc::borrow::Cow::Borrowed("มาฆะ"),
                 alloc::borrow::Cow::Borrowed("ผลค\u{e38}ณ\u{e35}"),
             ]),
-            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("1"),
                 alloc::borrow::Cow::Borrowed("2"),
                 alloc::borrow::Cow::Borrowed("3"),
@@ -30,7 +30,7 @@
                 alloc::borrow::Cow::Borrowed("12"),
             ]),
             short: None,
-            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("จ\u{e34}ตรา"),
                 alloc::borrow::Cow::Borrowed("ว\u{e34}สาขา"),
                 alloc::borrow::Cow::Borrowed("เชษฐา"),
@@ -47,9 +47,9 @@
         },
         stand_alone: None,
     },
-    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("อา."),
                 alloc::borrow::Cow::Borrowed("จ."),
                 alloc::borrow::Cow::Borrowed("อ."),
@@ -58,7 +58,7 @@
                 alloc::borrow::Cow::Borrowed("ศ."),
                 alloc::borrow::Cow::Borrowed("ส."),
             ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("อา"),
                 alloc::borrow::Cow::Borrowed("จ"),
                 alloc::borrow::Cow::Borrowed("อ"),
@@ -67,7 +67,7 @@
                 alloc::borrow::Cow::Borrowed("ศ"),
                 alloc::borrow::Cow::Borrowed("ส"),
             ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("อา."),
                 alloc::borrow::Cow::Borrowed("จ."),
                 alloc::borrow::Cow::Borrowed("อ."),
@@ -76,7 +76,7 @@
                 alloc::borrow::Cow::Borrowed("ศ."),
                 alloc::borrow::Cow::Borrowed("ส."),
             ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("ว\u{e31}นอาท\u{e34}ตย\u{e4c}"),
                 alloc::borrow::Cow::Borrowed("ว\u{e31}นจ\u{e31}นทร\u{e4c}"),
                 alloc::borrow::Cow::Borrowed("ว\u{e31}นอ\u{e31}งคาร"),
@@ -88,13 +88,13 @@
         },
         stand_alone: None,
     },
-    eras: ::icu_datetime::provider::calendar::Eras {
+    eras: icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    zerovec::VarZeroVec::from_bytes_unchecked(
                         b"\x01\0\0\0\0\0\xE0\xB8\xA1.\xE0\xB8\xA8.",
                     )
                 },
@@ -102,10 +102,10 @@
         },
         abbr: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    zerovec::VarZeroVec::from_bytes_unchecked(
                         b"\x01\0\0\0\0\0\xE0\xB8\xA1.\xE0\xB8\xA8.",
                     )
                 },
@@ -113,10 +113,10 @@
         },
         narrow: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    zerovec::VarZeroVec::from_bytes_unchecked(
                         b"\x01\0\0\0\0\0\xE0\xB8\xA1.\xE0\xB8\xA8.",
                     )
                 },
