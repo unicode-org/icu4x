@@ -157,7 +157,7 @@ where
 
 /// A trait for any type that has a 1:1 mapping with an unaligned little-endian (ULE) type.
 ///
-/// If you need to implement this trait, consider using [`#[make_varule]`](crate::make_ule) instead.
+/// If you need to implement this trait, consider using [`#[make_ule]`](crate::make_ule) instead.
 pub trait AsULE: Copy {
     /// The ULE type corresponding to `Self`.
     ///
