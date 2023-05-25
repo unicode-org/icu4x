@@ -716,11 +716,15 @@ unsafe fn dot_1_neon(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
     let mut sum1 = unsafe { vdupq_n_f32(0.0) };
 
     for (x, y) in xc.zip(yc) {
-        let xv01 = unsafe { vld2q_f32(x.as_ptr()) };
-        let yv01 = unsafe { vld2q_f32(y.as_ptr() as *const f32) };
+        let xv0 = unsafe { vld1q_f32(x.as_ptr()) };
+        let yv0 = unsafe { vld1q_f32(y.as_ptr() as *const f32) };
 
-        sum0 = unsafe { vfmaq_f32(sum0, xv01.0, yv01.0) };
-        sum1 = unsafe { vfmaq_f32(sum1, xv01.1, yv01.1) };
+        sum0 = unsafe { vfmaq_f32(sum0, xv0, yv0) };
+
+        let xv1 = unsafe { vld1q_f32(x[4..].as_ptr()) };
+        let yv1 = unsafe { vld1q_f32(y[4..].as_ptr() as *const f32) };
+
+        sum1 = unsafe { vfmaq_f32(sum1, xv1, yv1) };
     }
     unsafe { vaddvq_f32(sum0) + vaddvq_f32(sum1) + remainder }
 }
@@ -814,11 +818,15 @@ unsafe fn dot_2_neon(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
     let mut sum1 = unsafe { vdupq_n_f32(0.0) };
 
     for (x, y) in xc.zip(yc) {
-        let xv01 = unsafe { vld2q_f32(x.as_ptr() as *const f32) };
-        let yv01 = unsafe { vld2q_f32(y.as_ptr() as *const f32) };
+        let xv0 = unsafe { vld1q_f32(x.as_ptr() as *const f32) };
+        let yv0 = unsafe { vld1q_f32(y.as_ptr() as *const f32) };
 
-        sum0 = unsafe { vfmaq_f32(sum0, xv01.0, yv01.0) };
-        sum1 = unsafe { vfmaq_f32(sum1, xv01.1, yv01.1) };
+        sum0 = unsafe { vfmaq_f32(sum0, xv0, yv0) };
+
+        let xv1 = unsafe { vld1q_f32(x[4..].as_ptr() as *const f32) };
+        let yv1 = unsafe { vld1q_f32(y[4..].as_ptr() as *const f32) };
+
+        sum1 = unsafe { vfmaq_f32(sum1, xv1, yv1) };
     }
     unsafe { vaddvq_f32(sum0) + vaddvq_f32(sum1) + remainder }
 }
