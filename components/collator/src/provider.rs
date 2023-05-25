@@ -22,8 +22,8 @@ use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
-use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
+use zerovec::{zeroslice, ZeroSlice};
 
 use crate::elements::CollationElement;
 use crate::elements::CollationElement32;
@@ -39,9 +39,8 @@ use super::CaseFirst;
 use super::MaxVariable;
 
 const SINGLE_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([FFFD_CE32_VALUE]));
-const SINGLE_U64: &ZeroSlice<u64> =
-    ZeroSlice::<u64>::from_ule_slice(&<u64 as AsULE>::ULE::from_array([FFFD_CE_VALUE]));
+    zeroslice![u32; <u32 as AsULE>::ULE::from_array; FFFD_CE32_VALUE];
+const SINGLE_U64: &ZeroSlice<u64> = zeroslice![u64; <u64 as AsULE>::ULE::from_array; FFFD_CE_VALUE];
 
 fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
     // Collation::getThreeBytePrimaryForOffsetData

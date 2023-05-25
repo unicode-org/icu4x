@@ -567,6 +567,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::zeroslice;
 
     #[test]
     fn test_split_first() {
@@ -576,21 +577,16 @@ mod test {
         }
         {
             // single element slice
-            const DATA: &ZeroSlice<u16> =
-                ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([211]));
-            assert_eq!((211, ZeroSlice::new_empty()), DATA.split_first().unwrap());
+            const DATA: &ZeroSlice<u16> = zeroslice![u16; <u16 as AsULE>::ULE::from_array; 211];
+            assert_eq!((211, zeroslice![]), DATA.split_first().unwrap());
         }
         {
             // slice with many elements.
             const DATA: &ZeroSlice<u16> =
-                ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
-                    211, 281, 421, 32973,
-                ]));
+                zeroslice![u16; <u16 as AsULE>::ULE::from_array; 211, 281, 421, 32973];
             const EXPECTED_VALUE: (u16, &ZeroSlice<u16>) = (
                 211,
-                ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
-                    281, 421, 32973,
-                ])),
+                zeroslice![u16; <u16 as AsULE>::ULE::from_array; 281, 421, 32973],
             );
 
             assert_eq!(EXPECTED_VALUE, DATA.split_first().unwrap());
