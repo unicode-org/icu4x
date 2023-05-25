@@ -6,7 +6,9 @@
 //! ULE implementation for Plain Old Data types, including all sized integers.
 
 use super::*;
+use crate::impl_const_as_ule_array;
 use crate::impl_ule_from_array;
+use crate::ule::constconvert::ConstConvert;
 use crate::ZeroSlice;
 use core::num::{NonZeroI8, NonZeroU8};
 
@@ -132,6 +134,19 @@ macro_rules! impl_byte_slice_type {
         // EqULE is true because $type and RawBytesULE<$size>
         // have the same byte sequence on little-endian
         unsafe impl EqULE for $type {}
+
+        impl ConstConvert<$type, RawBytesULE<$size>> {
+            #[allow(dead_code)]
+            pub const fn aligned_to_unaligned(value: $type) -> RawBytesULE<$size> {
+                RawBytesULE(value.to_le_bytes())
+            }
+
+            impl_const_as_ule_array!($type, RawBytesULE<$size>, RawBytesULE([0; $size]));
+        }
+
+        impl ConstAsULE for $type {
+            type ConstConvert = ConstConvert<$type, RawBytesULE<$size>>;
+        }
     };
 }
 

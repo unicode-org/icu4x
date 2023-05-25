@@ -27,3 +27,25 @@ macro_rules! impl_ule_from_array {
         impl_ule_from_array!($aligned, $unaligned, $default, Self::from_aligned);
     };
 }
+
+#[macro_export]
+macro_rules! impl_const_as_ule_array {
+    ($aligned:ty, $unaligned:ty, $default:expr, $single:path) => {
+        #[doc = concat!("Convert an array of `", stringify!($aligned), "` to an array of `", stringify!($unaligned), "`.")]
+        #[allow(dead_code)]
+        pub const fn aligned_to_unaligned_array<const N: usize>(arr: [$aligned; N]) -> [$unaligned; N] {
+            let mut result = [$default; N];
+            let mut i = 0;
+            // Won't panic because i < N and arr has length N
+            #[allow(clippy::indexing_slicing)]
+            while i < N {
+                result[i] = $single(arr[i]);
+                i += 1;
+            }
+            result
+        }
+    };
+    ($aligned:ty, $unaligned:ty, $default:expr) => {
+        $crate::impl_const_as_ule_array!($aligned, $unaligned, $default, Self::aligned_to_unaligned);
+    };
+}

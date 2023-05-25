@@ -11,6 +11,7 @@
 //! See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for details on how these traits
 //! works under the hood.
 mod chars;
+mod constconvert;
 #[cfg(doc)]
 pub mod custom;
 mod encode;
@@ -237,6 +238,37 @@ where
     fn slice_to_unaligned(_: &[Self]) -> Option<&[Self::ULE]> {
         None
     }
+}
+
+/// A trait for any type that can be const-mapped to its ULE type. It is particularly
+/// useful in combination with [`zeroslice!`](crate::zeroslice).
+///
+/// This trait serves only as a redirection to a type that contains the required associated const
+/// functions for conversion. This is currently necessary due to the lack of const traits in Rust.
+///
+/// # Implementation
+///
+/// Using the [`#[make_ule]`](crate::make_ule) will implement this trait for you and you do not
+/// have to read further.
+///
+/// If you implement `ConstAsULE` manually for your type `T`, the associated type `ConstConvert`
+/// must have the following associated `const` functions:
+/// * `ConstConvert::aligned_to_unaligned(T) -> T::ULE`
+/// * `ConstConvert::aligned_to_unaligned_array<const N: usize>([T; N]) -> [T::ULE; N]`
+///
+/// For `T::ULE` types that only have one canonical aligned type, `T`, the associated type
+/// `ConstConvert` can safely be set to `T::ULE` and the required functions can be implemented
+/// there.
+///
+/// Issues arise when `T::ULE` has multiple or no canonical aligned types, as is the case with e.g.
+/// `RawBytesULE<4>` and `i32`/`u32`. In this case, `ConstConvert` must be set to a different type
+/// for each `impl ConstAsULE for T`. This crate does that by providing associated functions on a
+/// custom type for each pair of `T` and `T::ULE`, namely
+/// `crate::ule::constconvert::ConstConvert<T, T::ULE>`. Unfortunately, you will not be able
+/// to reuse this type for your own `ConstAsULE` implementations, since you cannot provide
+/// implementations for types outside of your crate.
+pub trait ConstAsULE: AsULE {
+    type ConstConvert;
 }
 
 /// Variable-width, byte-aligned data that can be cast to and from a little-endian byte slice.

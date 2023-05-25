@@ -159,6 +159,15 @@ fn make_ule_enum_impl(
 
     let doc = format!("[`ULE`](zerovec::ule::ULE) type for {name}");
 
+    let aligned_to_unaligned_doc = format!("Converts a [`{name}`] to a [`{ule_name}`]. This is equivalent to calling [`AsULE::to_unaligned`].");
+
+    // avoids multiple-import issues
+    // TODO: is it okay to add this macro to the make_ule user's scope or is there a way around it?
+    let ule_array_macro_alias: TokenStream2 =
+        format!("__impl_const_as_ule_array_{}_{}", name, ule_name)
+            .parse()
+            .unwrap();
+
     // Safety (based on the safety checklist on the ULE trait):
     //  1. ULE type does not include any uninitialized or padding bytes.
     //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant
@@ -176,6 +185,26 @@ fn make_ule_enum_impl(
         #maybe_ord_derives
         #[doc = #doc]
         #vis struct #ule_name(u8);
+
+        use zerovec::impl_const_as_ule_array as #ule_array_macro_alias;
+
+        impl #ule_name {
+            #[doc = #aligned_to_unaligned_doc]
+            pub const fn aligned_to_unaligned(a: #name) -> #ule_name {
+                // safety: the enum is repr(u8) and can be cast to a u8
+                unsafe {
+                    ::core::mem::transmute(a)
+                }
+            }
+
+
+            #ule_array_macro_alias!(
+                #name,
+                #ule_name,
+                // safety: the enum is repr(u8), can be cast to a u8 and contains at least one variant
+                unsafe { ::core::mem::transmute(0u8) }
+            );
+        }
 
         unsafe impl zerovec::ule::ULE for #ule_name {
             #[inline]
@@ -206,6 +235,11 @@ fn make_ule_enum_impl(
                     ::core::mem::transmute(other)
                 }
             }
+        }
+
+        impl zerovec::ule::ConstAsULE for #name {
+            // The unique canonical relationship is #name <=> #ule_name
+            type ConstConvert = #ule_name;
         }
 
         impl #name {
@@ -333,6 +367,8 @@ fn make_ule_struct_impl(
     } else {
         quote!()
     };
+
+    // TODO: implement ConstAsULE for struct types
 
     quote!(
         #asule_impl
