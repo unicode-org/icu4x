@@ -2,10 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::BTreeMap;
-use std::mem::{discriminant, Discriminant};
-
 use icu_locid::Locale;
+use litemap::LiteMap;
+use std::mem::{discriminant, Discriminant};
 
 use crate::api::{NameField, PersonName, PersonNamesFormatterError, PreferredOrder};
 
@@ -13,7 +12,7 @@ use crate::api::{NameField, PersonName, PersonNamesFormatterError, PreferredOrde
 /// DefaultPersonName, default implementation provided for PersonNameFormatter.
 ///
 pub struct DefaultPersonName {
-    person_data: BTreeMap<NameField, String>,
+    person_data: LiteMap<NameField, String>,
     locale: Option<Locale>,
     preferred_order: Option<PreferredOrder>,
 }
@@ -32,7 +31,7 @@ impl PersonName for DefaultPersonName {
     }
 
     fn available_name_fields(&self) -> Vec<&NameField> {
-        self.person_data.keys().collect()
+        self.person_data.iter_keys().collect()
     }
 
     fn has_name_field(&self, lookup_name_field: Discriminant<NameField>) -> bool {
@@ -67,7 +66,7 @@ impl DefaultPersonName {
     /// Returns a new person name structure.
     ///
     pub fn new(
-        person_data: BTreeMap<NameField, String>,
+        person_data: LiteMap<NameField, String>,
         locale: Option<Locale>,
         preferred_order: Option<PreferredOrder>,
     ) -> Result<DefaultPersonName, PersonNamesFormatterError> {

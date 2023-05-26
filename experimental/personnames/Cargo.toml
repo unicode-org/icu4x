@@ -31,6 +31,7 @@ icu_provider = { path = "../../provider/core", features = ["macros"] }
 zerovec = { path = "../../utils/zerovec", features = ["serde", "derive"] }
 databake = { path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true}
+litemap = { version = "0.7.0", path = "../../utils/litemap" }
 
 
 [features]

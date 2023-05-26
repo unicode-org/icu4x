@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::btree_map::BTreeMap;
-use std::mem::discriminant;
-
 use icu_locid::locale;
 use icu_personnames::api::FieldModifier;
 use icu_personnames::api::FieldModifierMask;
@@ -13,10 +10,12 @@ use icu_personnames::api::PersonName;
 use icu_personnames::api::PersonNamesFormatterError;
 use icu_personnames::api::PreferredOrder;
 use icu_personnames::provided_struct::DefaultPersonName;
+use litemap::LiteMap;
+use std::mem::discriminant;
 
 #[test]
 fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatterError> {
-    let mut person_data: BTreeMap<NameField, String> = BTreeMap::new();
+    let mut person_data: LiteMap<NameField, String> = LiteMap::new();
     person_data.insert(NameField::Given(None), String::from("Henry"));
     person_data.insert(NameField::Surname(None), String::from("Jekyll"));
     person_data.insert(
@@ -63,7 +62,7 @@ fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatte
 
 #[test]
 fn test_field_modifier_person_name_should_have_given_or_surname() {
-    let mut person_data: BTreeMap<NameField, String> = BTreeMap::new();
+    let mut person_data: LiteMap<NameField, String> = LiteMap::new();
     person_data.insert(NameField::Title(None), String::from("Dr"));
 
     let person_name = DefaultPersonName::new(person_data, None, None);
