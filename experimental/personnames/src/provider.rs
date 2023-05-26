@@ -27,8 +27,8 @@ use zerovec::VarZeroVec;
 #[icu_provider::data_struct(PersonNamesFormattingDefinitionV1Marker = "personnames/personnames@1")]
 #[derive(PartialEq, Clone)]
 #[cfg_attr(feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_personnames::provider))
+derive(serde::Serialize, databake::Bake),
+databake(path = icu_personnames::provider))
 ]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PersonNamesFormattingDefinitionV1<'data> {
@@ -72,20 +72,20 @@ pub struct PersonNamesFormattingDefinitionV1<'data> {
 #[repr(u32)]
 pub enum PersonNamesFormattingAttributes {
     // Order
-    GivenFirst,
-    SurnameFirst,
-    Sorting,
+    GivenFirst = 1 << 0,
+    SurnameFirst = 1 << 1,
+    Sorting = 1 << 2,
     // Length
-    Short,
-    Medium,
-    Long,
+    Short = 1 << 3,
+    Medium = 1 << 4,
+    Long = 1 << 5,
     // Usage
-    Addressing,
-    Referring,
-    Monogram,
+    Addressing = 1 << 6,
+    Referring = 1 << 7,
+    Monogram = 1 << 8,
     // Formality
-    Formal,
-    Informal,
+    Formal = 1 << 9,
+    Informal = 1 << 10,
 }
 
 type PersonNamesFormattingAttributesMask = u32;
@@ -96,9 +96,9 @@ type PersonNamesFormattingAttributesMask = u32;
 #[zerovec::make_varule(PersonNamesFormattingDataVARULE)]
 #[zerovec::skip_derive(ZeroMapKV, Ord)]
 #[cfg_attr(feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_personnames::provider),
-    zerovec::derive(Serialize))
+derive(serde::Serialize, databake::Bake),
+databake(path = icu_personnames::provider),
+zerovec::derive(Serialize))
 ]
 #[cfg_attr(
     feature = "serde",

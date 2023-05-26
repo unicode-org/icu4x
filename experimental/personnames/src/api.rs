@@ -41,13 +41,13 @@ pub enum PersonNamesFormatterError {
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#modifiers
 #[repr(u32)]
 pub enum FieldModifier {
-    Informal,
-    Prefix,
-    Core,
-    AllCaps,
-    InitialCap,
-    Initial,
-    Monogram,
+    Informal = 1 << 0,
+    Prefix = 1 << 1,
+    Core = 1 << 2,
+    AllCaps = 1 << 3,
+    InitialCap = 1 << 4,
+    Initial = 1 << 5,
+    Monogram = 1 << 6,
 }
 
 /// Field Modifiers Mask. (must be the same as FieldModifier repr)
