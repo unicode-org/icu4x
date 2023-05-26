@@ -21,12 +21,17 @@ impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
     pub fn try_into_tinystr(&self) -> Result<TinyAsciiStr<N>, TinyStrError> {
         TinyAsciiStr::try_from_raw(self.0)
     }
+
+    #[doc(hidden)]
+    pub const fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
+        Self(bytes)
+    }
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     // Converts into a [`UnvalidatedTinyAsciiStr`]
-    pub fn to_unvalidated(self) -> UnvalidatedTinyAsciiStr<N> {
+    pub const fn to_unvalidated(self) -> UnvalidatedTinyAsciiStr<N> {
         UnvalidatedTinyAsciiStr(*self.all_bytes())
     }
 }

@@ -30,7 +30,7 @@ use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 /// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
 
@@ -83,7 +83,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 /// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MetazoneId(pub TinyAsciiStr<4>);
 
