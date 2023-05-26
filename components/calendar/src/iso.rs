@@ -134,6 +134,7 @@ impl Calendar for Iso {
         let years_since_400 = date.0.year % 400;
         let leap_years_since_400 = years_since_400 / 4 - years_since_400 / 100;
         // The number of days to the current year
+        //Can never cause an overflow because years_since_400 has a maximum value of 399.
         let days_to_current_year = 365 * years_since_400 + leap_years_since_400;
         // The weekday offset from January 1 this year and January 1 2000
         let year_offset = days_to_current_year % 7;
@@ -202,8 +203,8 @@ impl Calendar for Iso {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year - 1;
-        let next_year = date.0.year + 1;
+        let prev_year = date.0.year.saturating_sub(1);
+        let next_year = date.0.year.saturating_add(1);
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
@@ -383,22 +384,22 @@ impl Iso {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> i32 {
         // Calculate days per year
-        let mut fixed: i32 = EPOCH - 1 + 365 * (date.0.year - 1);
+        let mut fixed: i32 = (EPOCH - 1 + 365).saturating_mul(date.0.year.saturating_sub(1));
         // Adjust for leap year logic
-        fixed += quotient(date.0.year - 1, 4) - quotient(date.0.year - 1, 100)
-            + quotient(date.0.year - 1, 400);
+        fixed = fixed.saturating_add(quotient(date.0.year.saturating_sub(1), 4) - quotient(date.0.year.saturating_sub(1), 100)
+            + quotient(date.0.year.saturating_sub(1), 400));
         // Days of current year
-        fixed += quotient(367 * (date.0.month as i32) - 362, 12);
+        fixed = fixed.saturating_add(quotient(367 * (date.0.month as i32) - 362, 12));
         // Leap year adjustment for the current year
-        fixed += if date.0.month <= 2 {
+        fixed = fixed.saturating_add(if date.0.month <= 2 {
             0
         } else if Self::is_leap_year(date.0.year) {
             -1
         } else {
             -2
-        };
+        });
         // Days passed in current month
-        fixed + (date.0.day as i32)
+        fixed.saturating_add(date.0.day as i32)
     }
 
     fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<i32> {
@@ -522,6 +523,20 @@ impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
 mod test {
     use super::*;
     use crate::types::IsoWeekday;
+
+    #[test]
+    fn fixed_from_iso_overflow(){
+
+        let date = Date::try_new_iso_date(i32::MAX/365+2,6,4).unwrap();
+        assert_eq!(
+            Iso::fixed_from_iso(date.inner),
+            i32::MAX,
+        );
+
+        
+
+    }
+
 
     #[test]
     fn test_day_of_week() {
