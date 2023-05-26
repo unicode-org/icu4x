@@ -11,7 +11,6 @@
 //! See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for details on how these traits
 //! works under the hood.
 mod chars;
-mod constconvert;
 #[cfg(doc)]
 pub mod custom;
 mod encode;

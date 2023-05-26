@@ -6,7 +6,6 @@
 //! ULE implementation for the `char` type.
 
 use super::*;
-use crate::impl_const_as_ule_array;
 use crate::impl_ule_from_array;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
@@ -54,19 +53,6 @@ impl CharULE {
     }
 
     impl_ule_from_array!(char, CharULE, Self([0; 3]));
-
-    /// Converts a [`char`] to a [`CharULE`]. This is equivalent to calling
-    /// [`AsULE::to_unaligned()`]
-    ///
-    /// See the type-level documentation for [`CharULE`] for more information.
-    #[allow(dead_code)]
-    #[inline]
-    pub const fn aligned_to_unaligned(c: char) -> CharULE {
-        let [u0, u1, u2, _u3] = (c as u32).to_le_bytes();
-        CharULE([u0, u1, u2])
-    }
-
-    impl_const_as_ule_array!(char, CharULE, CharULE([0; 3]));
 }
 
 // Safety (based on the safety checklist on the ULE trait):
@@ -101,7 +87,7 @@ impl AsULE for char {
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        <Self as ConstAsULE>::ConstConvert::aligned_to_unaligned(self)
+        <Self as AsULE>::ULE::from_aligned(self)
     }
 
     #[inline]
@@ -116,11 +102,6 @@ impl AsULE for char {
             ]))
         }
     }
-}
-
-impl ConstAsULE for char {
-    // The unique canonical relationship is char <=> CharULE
-    type ConstConvert = CharULE;
 }
 
 impl PartialOrd for CharULE {

@@ -90,7 +90,7 @@ pub mod maps;
 // module. Please do not change the crate-module-qualified
 // name of that struct without coordination.
 mod props;
-
+mod expandme;
 pub mod bidi_data;
 pub mod exemplar_chars;
 pub mod provider;

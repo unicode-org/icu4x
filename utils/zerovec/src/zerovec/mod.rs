@@ -929,8 +929,11 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///                 `const fn from_array<const N: usize>(arr: [char; N]) -> [<char as AsULE>::ULE; N]`.
 /// * `$x` - The elements that the `ZeroSlice` will hold.
 ///
-/// The `$array_fn` argument is optional if the `$aligned` type correctly implements [`ConstAsULE`].
-/// This is the case for types created with [`#[make_ule]`](crate::make_ule).
+/// The `$array_fn` argument is optional if the `$aligned` type was created with [`#[make_ule]`](crate::make_ule).
+/// For manually implemented ULE types, they must have an associated
+/// `pub const fn from_array<const N: usize>(arr: [T; N]) -> [<T as AsULE>::ULE; N]`. This means you must use
+/// newtypes for the ULE types if more than one AsULE type maps to your ULE. See [`UnvalidatedChar`]
+/// for an example of this.
 ///
 /// # Examples
 ///
@@ -978,8 +981,41 @@ macro_rules! zeroslice {
             {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &$array_fn([$($x),+]); X}
         )
     );
+    (u8; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![u8; core::convert::identity; $($x),+]
+    );
+    (i8; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![i8; core::convert::identity; $($x),+]
+    );
+    (u16; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![u16; <u16 as $crate::ule::AsULE>::ULE::from_unsigned_array; $($x),+]
+    );
+    (i16; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![i16; <i16 as $crate::ule::AsULE>::ULE::from_signed_array; $($x),+]
+    );
+    (u32; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![u32; <u32 as $crate::ule::AsULE>::ULE::from_unsigned_array; $($x),+]
+    );
+    (i32; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![i32; <i32 as $crate::ule::AsULE>::ULE::from_signed_array; $($x),+]
+    );
+    (u64; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![u64; <u64 as $crate::ule::AsULE>::ULE::from_unsigned_array; $($x),+]
+    );
+    (i64; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![i64; <i64 as $crate::ule::AsULE>::ULE::from_signed_array; $($x),+]
+    );
+    (u128; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![u128; <u128 as $crate::ule::AsULE>::ULE::from_unsigned_array; $($x),+]
+    );
+    (i128; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![i128; <i128 as $crate::ule::AsULE>::ULE::from_signed_array; $($x),+]
+    );
+    (UnvalidatedChar; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![UnvalidatedChar; <UnvalidatedChar as $crate::ule::AsULE>::ULE::from_unvalidated_char_array; $($x),+]
+    );
     ($aligned:ty; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![$aligned; <$aligned as $crate::ule::ConstAsULE>::ConstConvert::aligned_to_unaligned_array; $($x),+]
+        $crate::zeroslice![$aligned; <$aligned as $crate::ule::AsULE>::ULE::from_array; $($x),+]
     );
 }
 
@@ -1015,6 +1051,23 @@ macro_rules! zerovec {
 mod tests {
     use super::*;
     use crate::samples::*;
+
+    #[test]
+    fn test_macro_special_cases_compile() {
+        let _zeroslice: &ZeroSlice<u8> = zeroslice![u8; 0];
+        let _zeroslice: &ZeroSlice<i8> = zeroslice![i8; 0];
+        let _zeroslice: &ZeroSlice<u16> = zeroslice![u16; 0];
+        let _zeroslice: &ZeroSlice<i16> = zeroslice![i16; 0];
+        let _zeroslice: &ZeroSlice<u32> = zeroslice![u32; 0];
+        let _zeroslice: &ZeroSlice<i32> = zeroslice![i32; 0];
+        let _zeroslice: &ZeroSlice<u64> = zeroslice![u64; 0];
+        let _zeroslice: &ZeroSlice<i64> = zeroslice![i64; 0];
+        let _zeroslice: &ZeroSlice<u128> = zeroslice![u128; 0];
+        let _zeroslice: &ZeroSlice<i128> = zeroslice![i128; 0];
+
+        let _zeroslice: &ZeroSlice<UnvalidatedChar> =
+            zeroslice![UnvalidatedChar; UnvalidatedChar::from_char('a')];
+    }
 
     #[test]
     fn test_get() {

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{AsULE, RawBytesULE, VarULE};
+use crate::impl_ule_from_array;
 use crate::ule::EqULE;
 use crate::{map::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroVecError};
 use alloc::boxed::Box;
@@ -320,6 +321,22 @@ impl UnvalidatedChar {
         let [u0, u1, u2] = self.0;
         char::from_u32_unchecked(u32::from_le_bytes([u0, u1, u2, 0]))
     }
+}
+
+impl RawBytesULE<3> {
+    #[doc(hidden)]
+    #[inline]
+    pub const fn from_unvalidated_char(uc: UnvalidatedChar) -> Self {
+        RawBytesULE(uc.0)
+    }
+
+    impl_ule_from_array!(
+        UnvalidatedChar,
+        RawBytesULE<3>,
+        RawBytesULE([0; 3]),
+        Self::from_unvalidated_char,
+        from_unvalidated_char_array
+    );
 }
 
 impl AsULE for UnvalidatedChar {

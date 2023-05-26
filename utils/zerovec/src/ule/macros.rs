@@ -9,9 +9,9 @@
 /// Pass any (cheap to construct) value.
 #[macro_export]
 macro_rules! impl_ule_from_array {
-    ($aligned:ty, $unaligned:ty, $default:expr, $single:path) => {
+    ($aligned:ty, $unaligned:ty, $default:expr, $single:path, $fn_name:ident) => {
         #[doc = concat!("Convert an array of `", stringify!($aligned), "` to an array of `", stringify!($unaligned), "`.")]
-        pub const fn from_array<const N: usize>(arr: [$aligned; N]) -> [Self; N] {
+        pub const fn $fn_name<const N: usize>(arr: [$aligned; N]) -> [Self; N] {
             let mut result = [$default; N];
             let mut i = 0;
             // Won't panic because i < N and arr has length N
@@ -24,7 +24,7 @@ macro_rules! impl_ule_from_array {
         }
     };
     ($aligned:ty, $unaligned:ty, $default:expr) => {
-        impl_ule_from_array!($aligned, $unaligned, $default, Self::from_aligned);
+        $crate::impl_ule_from_array!($aligned, $unaligned, $default, Self::from_aligned, from_array);
     };
 }
 

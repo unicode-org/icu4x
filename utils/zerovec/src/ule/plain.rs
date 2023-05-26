@@ -6,9 +6,7 @@
 //! ULE implementation for Plain Old Data types, including all sized integers.
 
 use super::*;
-use crate::impl_const_as_ule_array;
 use crate::impl_ule_from_array;
-use crate::ule::constconvert::ConstConvert;
 use crate::ZeroSlice;
 use core::num::{NonZeroI8, NonZeroU8};
 
@@ -113,7 +111,7 @@ macro_rules! impl_const_constructors {
 }
 
 macro_rules! impl_byte_slice_type {
-    ($type:ty, $size:literal) => {
+    ($single_fn:ident, $array_fn_name:ident, $type:ty, $size:literal) => {
         impl From<$type> for RawBytesULE<$size> {
             #[inline]
             fn from(value: $type) -> Self {
@@ -135,18 +133,31 @@ macro_rules! impl_byte_slice_type {
         // have the same byte sequence on little-endian
         unsafe impl EqULE for $type {}
 
-        impl ConstConvert<$type, RawBytesULE<$size>> {
-            #[allow(dead_code)]
-            pub const fn aligned_to_unaligned(value: $type) -> RawBytesULE<$size> {
-                RawBytesULE(value.to_le_bytes())
+        impl RawBytesULE<$size> {
+            pub const fn $single_fn(v: $type) -> Self {
+                RawBytesULE(v.to_le_bytes())
             }
 
-            impl_const_as_ule_array!($type, RawBytesULE<$size>, RawBytesULE([0; $size]));
+            impl_ule_from_array!(
+                $type,
+                RawBytesULE<$size>,
+                RawBytesULE([0; $size]),
+                Self::$single_fn,
+                $array_fn_name
+            );
         }
+    };
+}
 
-        impl ConstAsULE for $type {
-            type ConstConvert = ConstConvert<$type, RawBytesULE<$size>>;
-        }
+macro_rules! impl_byte_slice_unsigned_type {
+    ($type:ty, $size:literal) => {
+        impl_byte_slice_type!(from_unsigned, from_unsigned_array, $type, $size);
+    };
+}
+
+macro_rules! impl_byte_slice_signed_type {
+    ($type:ty, $size:literal) => {
+        impl_byte_slice_type!(from_signed, from_signed_array, $type, $size);
     };
 }
 
@@ -155,15 +166,15 @@ impl_byte_slice_size!(u32, 4);
 impl_byte_slice_size!(u64, 8);
 impl_byte_slice_size!(u128, 16);
 
-impl_byte_slice_type!(u16, 2);
-impl_byte_slice_type!(u32, 4);
-impl_byte_slice_type!(u64, 8);
-impl_byte_slice_type!(u128, 16);
+impl_byte_slice_unsigned_type!(u16, 2);
+impl_byte_slice_unsigned_type!(u32, 4);
+impl_byte_slice_unsigned_type!(u64, 8);
+impl_byte_slice_unsigned_type!(u128, 16);
 
-impl_byte_slice_type!(i16, 2);
-impl_byte_slice_type!(i32, 4);
-impl_byte_slice_type!(i64, 8);
-impl_byte_slice_type!(i128, 16);
+impl_byte_slice_signed_type!(i16, 2);
+impl_byte_slice_signed_type!(i32, 4);
+impl_byte_slice_signed_type!(i64, 8);
+impl_byte_slice_signed_type!(i128, 16);
 
 impl_const_constructors!(u8, 1);
 impl_const_constructors!(u16, 2);

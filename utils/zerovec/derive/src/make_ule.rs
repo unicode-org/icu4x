@@ -159,14 +159,7 @@ fn make_ule_enum_impl(
 
     let doc = format!("[`ULE`](zerovec::ule::ULE) type for {name}");
 
-    let aligned_to_unaligned_doc = format!("Converts a [`{name}`] to a [`{ule_name}`]. This is equivalent to calling [`AsULE::to_unaligned`].");
-
-    // avoids multiple-import issues
-    // TODO: is it okay to add this macro to the make_ule user's scope or is there a way around it?
-    let ule_array_macro_alias: TokenStream2 =
-        format!("__impl_const_as_ule_array_{}_{}", name, ule_name)
-            .parse()
-            .unwrap();
+    let from_aligned_doc = format!("Converts a [`{name}`] to a [`{ule_name}`]. This is equivalent to calling [`AsULE::to_unaligned`].");
 
     // Safety (based on the safety checklist on the ULE trait):
     //  1. ULE type does not include any uninitialized or padding bytes.
@@ -186,19 +179,16 @@ fn make_ule_enum_impl(
         #[doc = #doc]
         #vis struct #ule_name(u8);
 
-        use zerovec::impl_const_as_ule_array as #ule_array_macro_alias;
-
         impl #ule_name {
-            #[doc = #aligned_to_unaligned_doc]
-            pub const fn aligned_to_unaligned(a: #name) -> #ule_name {
+            #[doc = #from_aligned_doc]
+            pub const fn from_aligned(a: #name) -> #ule_name {
                 // safety: the enum is repr(u8) and can be cast to a u8
                 unsafe {
                     ::core::mem::transmute(a)
                 }
             }
 
-
-            #ule_array_macro_alias!(
+            zerovec::impl_ule_from_array!(
                 #name,
                 #ule_name,
                 // safety: the enum is repr(u8), can be cast to a u8 and contains at least one variant
@@ -235,11 +225,6 @@ fn make_ule_enum_impl(
                     ::core::mem::transmute(other)
                 }
             }
-        }
-
-        impl zerovec::ule::ConstAsULE for #name {
-            // The unique canonical relationship is #name <=> #ule_name
-            type ConstConvert = #ule_name;
         }
 
         impl #name {
@@ -302,6 +287,7 @@ fn make_ule_struct_impl(
 
     let mut as_ule_conversions = vec![];
     let mut from_ule_conversions = vec![];
+    let mut const_from_aligned_conversions = vec![];
 
     for (i, field) in struc.fields.iter().enumerate() {
         let ty = &field.ty;
@@ -312,10 +298,13 @@ fn make_ule_struct_impl(
             from_ule_conversions.push(
                 quote!(#ident: <#ty as zerovec::ule::AsULE>::from_unaligned(unaligned.#ident)),
             );
+            // TODO: need to match here and below on #ty, and then call the appropriate function, as in zeroslice! macro.
+            const_from_aligned_conversions.push(quote!(#ident: <#ty as zerovec::ule::AsULE>::ULE::from_aligned(aligned.#ident)));
         } else {
             as_ule_conversions.push(quote!(<#ty as zerovec::ule::AsULE>::to_unaligned(self.#i)));
             from_ule_conversions
                 .push(quote!(<#ty as zerovec::ule::AsULE>::from_unaligned(unaligned.#i)));
+            const_from_aligned_conversions.push(quote!(<#ty as zerovec::ule::AsULE>::ULE::from_aligned(aligned.#i)));
         };
     }
 
@@ -368,7 +357,18 @@ fn make_ule_struct_impl(
         quote!()
     };
 
-    // TODO: implement ConstAsULE for struct types
+
+    let const_from_aligned_conversions = utils::wrap_field_inits(&const_from_aligned_conversions, &struc.fields);
+    let ule_impl = quote!(
+        impl #ule_name {
+            pub const fn from_aligned(aligned: #name) -> Self {
+                Self #const_from_aligned_conversions
+            }
+
+            // TODO: need to come up with a safe zero expression for the array initializer.
+            // zerovec::impl_ule_from_array!(#name, #ule_name, )
+        }
+    );
 
     quote!(
         #asule_impl
@@ -380,5 +380,7 @@ fn make_ule_struct_impl(
         #maybe_ord_impls
 
         #maybe_hash
+
+        #ule_impl
     )
 }
