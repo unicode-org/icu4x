@@ -245,7 +245,7 @@ impl databake::Bake for ListJoinerPattern<'_> {
         let string = (&*self.string).bake(env);
         let index_1 = self.index_1.bake(env);
         databake::quote! {
-            ::icu_list::provider::ListJoinerPattern::from_parts(#string, #index_1)
+            icu_list::provider::ListJoinerPattern::from_parts(#string, #index_1)
         }
     }
 }

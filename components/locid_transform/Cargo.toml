@@ -58,7 +58,7 @@ default = []
 std = []
 bench = ["serde"]
 serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locid/databake"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locid/databake", "tinystr/databake"]
 
 [[bench]]
 name = "locale_canonicalizer"

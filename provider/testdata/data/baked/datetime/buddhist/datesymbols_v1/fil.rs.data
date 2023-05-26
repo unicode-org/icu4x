@@ -1,7 +1,7 @@
-::icu_datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: icu_datetime::provider::calendar::months::ContextsV1 {
+        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Ene"),
                 alloc::borrow::Cow::Borrowed("Peb"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -15,7 +15,7 @@
                 alloc::borrow::Cow::Borrowed("Nob"),
                 alloc::borrow::Cow::Borrowed("Dis"),
             ]),
-            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Ene"),
                 alloc::borrow::Cow::Borrowed("Peb"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -30,7 +30,7 @@
                 alloc::borrow::Cow::Borrowed("Dis"),
             ]),
             short: None,
-            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Enero"),
                 alloc::borrow::Cow::Borrowed("Pebrero"),
                 alloc::borrow::Cow::Borrowed("Marso"),
@@ -46,10 +46,10 @@
             ]),
         },
         stand_alone: Some(
-            ::icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
+            icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                 abbreviated: None,
                 narrow: Some(
-                    ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                    icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                         alloc::borrow::Cow::Borrowed("E"),
                         alloc::borrow::Cow::Borrowed("P"),
                         alloc::borrow::Cow::Borrowed("M"),
@@ -69,9 +69,9 @@
             },
         ),
     },
-    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Lin"),
                 alloc::borrow::Cow::Borrowed("Lun"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -80,7 +80,7 @@
                 alloc::borrow::Cow::Borrowed("Biy"),
                 alloc::borrow::Cow::Borrowed("Sab"),
             ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Lin"),
                 alloc::borrow::Cow::Borrowed("Lun"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -89,7 +89,7 @@
                 alloc::borrow::Cow::Borrowed("Biy"),
                 alloc::borrow::Cow::Borrowed("Sab"),
             ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Li"),
                 alloc::borrow::Cow::Borrowed("Lu"),
                 alloc::borrow::Cow::Borrowed("Ma"),
@@ -98,7 +98,7 @@
                 alloc::borrow::Cow::Borrowed("Bi"),
                 alloc::borrow::Cow::Borrowed("Sa"),
             ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Linggo"),
                 alloc::borrow::Cow::Borrowed("Lunes"),
                 alloc::borrow::Cow::Borrowed("Martes"),
@@ -110,26 +110,26 @@
         },
         stand_alone: None,
     },
-    eras: ::icu_datetime::provider::calendar::Eras {
+    eras: icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0BE") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0BE") },
             )
         },
         abbr: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0BE") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0BE") },
             )
         },
         narrow: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0BE") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0BE") },
             )
         },
     },
