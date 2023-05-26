@@ -67,7 +67,6 @@ impl DefaultPersonName {
     /// Returns a new person name structure.
     ///
     pub fn new(
-        &self,
         person_data: BTreeMap<NameField, String>,
         locale: Option<Locale>,
         preferred_order: Option<PreferredOrder>,
