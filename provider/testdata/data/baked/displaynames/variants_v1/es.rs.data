@@ -1,0 +1,13 @@
+icu_displaynames::provider::VariantDisplayNamesV1 {
+    names: unsafe {
+        #[allow(unused_unsafe)]
+        zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                zerovec :: ZeroVec :: from_bytes_unchecked (b"1901\0\0\0\x001996\0\0\0\0arevela\0fonipa\0\0monoton\0pinyin\0\0polyton\0posix\0\0\0revised\0scotlandvalenciawadegile")
+            },
+            unsafe {
+                zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x0C\0\0\0\0\0\x1F\0:\0J\0n\0y\0\x8D\0\x98\0\xA1\0\xB5\0\xCF\0\xD9\0Ortograf\xC3\xADa alemana tradicionalOrtograf\xC3\xADa alemana de 1996Armenio orientalAlfabeto fon\xC3\xA9tico internacional IPAMonot\xC3\xB3nicoRomanizaci\xC3\xB3n pinyinPolit\xC3\xB3nicoOrdenadorOrtograf\xC3\xADa revisadaIngl\xC3\xA9s escoc\xC3\xA9s est\xC3\xA1ndarValencianoRomanizaci\xC3\xB3n Wade-Giles")
+            },
+        )
+    },
+}

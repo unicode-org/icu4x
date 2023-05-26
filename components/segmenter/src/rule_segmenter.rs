@@ -151,6 +151,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                             .get_break_state_from_table(break_state as u8, self.data.eot_property)
                             == NOT_MATCH_RULE
                         {
+                            self.boundary_property = previous_left_prop;
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
                             return self.get_current_position();

@@ -18,6 +18,10 @@ impl DataProvider<HelloWorldV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<HelloWorldV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        HelloWorldProvider.supported_locales()
+        Ok(self
+            .source
+            .options
+            .locales
+            .filter_by_langid_equality(HelloWorldProvider.supported_locales()?))
     }
 }

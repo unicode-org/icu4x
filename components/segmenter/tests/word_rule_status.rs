@@ -37,6 +37,44 @@ fn rule_status() {
 }
 
 #[test]
+fn rule_status_letter_eof() {
+    let segmenter =
+        WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let mut iter = segmenter.segment_str("one.");
+
+    assert_eq!(iter.next(), Some(0), "SOT");
+    assert_eq!(iter.word_type(), WordType::None, "none");
+    assert!(!iter.is_word_like(), "SOT is false");
+
+    assert_eq!(iter.next(), Some(3), "after one");
+    assert_eq!(iter.word_type(), WordType::Letter, "letter");
+    assert!(iter.is_word_like(), "Letter is true");
+
+    assert_eq!(iter.next(), Some(4), "after full stop");
+    assert_eq!(iter.word_type(), WordType::None, "none");
+    assert!(!iter.is_word_like(), "None is false");
+}
+
+#[test]
+fn rule_status_numeric_eof() {
+    let segmenter =
+        WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let mut iter = segmenter.segment_str("42.");
+
+    assert_eq!(iter.next(), Some(0), "SOT");
+    assert_eq!(iter.word_type(), WordType::None, "none");
+    assert!(!iter.is_word_like(), "SOT is false");
+
+    assert_eq!(iter.next(), Some(2), "after 42");
+    assert_eq!(iter.word_type(), WordType::Number, "Number");
+    assert!(iter.is_word_like(), "Number is true");
+
+    assert_eq!(iter.next(), Some(3), "after full stop");
+    assert_eq!(iter.word_type(), WordType::None, "none");
+    assert!(!iter.is_word_like(), "None is false");
+}
+
+#[test]
 fn rule_status_th() {
     let segmenter =
         WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");

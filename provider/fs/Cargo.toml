@@ -6,10 +6,12 @@
 name = "icu_provider_fs"
 description = "ICU4X data provider that reads from structured data files"
 version = "1.2.1"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -45,6 +47,7 @@ criterion = "0.4"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locid = { path = "../../components/locid", features = ["serde"] }
 icu_provider = { path = "../core", features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_1", "datagen"] }
+icu_datagen = { path = "../datagen" }
 
 [features]
 # Enables the "export" module and FilesystemExporter

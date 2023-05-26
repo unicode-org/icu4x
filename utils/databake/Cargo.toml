@@ -6,6 +6,7 @@
 name = "databake"
 description = "Trait that lets structs represent themselves as (const) Rust expressions"
 version = "0.1.5"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -36,5 +37,5 @@ derive = ["dep:databake-derive"]
 [dependencies]
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
-syn = { version = "1.0.73", features = ["derive", "fold"] }
+syn = { version = "2", features = ["derive", "fold"] }
 databake-derive = { version = "0.1.5", path = "./derive", optional = true}

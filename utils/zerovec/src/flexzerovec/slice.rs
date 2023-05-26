@@ -298,8 +298,7 @@ impl FlexZeroSlice {
     /// assert_eq!(pairs_it.next(), None);
     /// ```
     pub fn iter_pairs(&self) -> impl Iterator<Item = (usize, Option<usize>)> + '_ {
-        self.iter()
-            .zip(self.iter().skip(1).map(Some).chain(core::iter::once(None)))
+        self.iter().zip(self.iter().skip(1).map(Some).chain([None]))
     }
 
     /// Creates a `Vec<usize>` from a [`FlexZeroSlice`] (or `FlexZeroVec`).

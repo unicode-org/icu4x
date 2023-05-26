@@ -20,6 +20,7 @@ use core::fmt;
 use core::iter::FromIterator;
 use core::marker::PhantomData;
 use core::mem;
+use core::num::NonZeroUsize;
 use core::ops::Deref;
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
@@ -554,6 +555,34 @@ where
             Some(ZeroSlice::from_ule_slice(ule_slice))
         }
     }
+
+    /// If the ZeroVec is owned, returns the capacity of the vector.
+    ///
+    /// Otherwise, if the ZeroVec is borrowed, returns `None`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// let mut zv = ZeroVec::<u8>::new_borrowed(&[0, 1, 2, 3]);
+    /// assert!(!zv.is_owned());
+    /// assert_eq!(zv.owned_capacity(), None);
+    ///
+    /// // Convert to owned without appending anything
+    /// zv.with_mut(|v| ());
+    /// assert!(zv.is_owned());
+    /// assert_eq!(zv.owned_capacity(), Some(4.try_into().unwrap()));
+    ///
+    /// // Double the size by appending
+    /// zv.with_mut(|v| v.push(0));
+    /// assert!(zv.is_owned());
+    /// assert_eq!(zv.owned_capacity(), Some(8.try_into().unwrap()));
+    /// ```
+    #[inline]
+    pub fn owned_capacity(&self) -> Option<NonZeroUsize> {
+        NonZeroUsize::try_from(self.vector.capacity).ok()
+    }
 }
 
 impl<'a> ZeroVec<'a, u8> {
@@ -888,6 +917,87 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
     {
         ZeroVec::new_owned(iter.into_iter().map(|t| t.to_unaligned()).collect())
     }
+}
+
+/// Convenience wrapper for [`ZeroSlice::from_ule_slice`]. The value will be created at compile-time.
+///
+/// # Arguments
+///
+/// * `$aligned` - The type of an element in its canonical, aligned form, e.g., `char`.
+/// * `$array_fn` - A const function that converts an array of `$aligned` elements into an array
+///                 of their unaligned equivalents, e.g.,
+///                 `const fn from_array<const N: usize>(arr: [char; N]) -> [<char as AsULE>::ULE; N]`.
+/// * `$x` - The elements that the `ZeroSlice` will hold.
+///
+/// # Examples
+///
+/// Using array-conversion functions provided by this crate:
+///
+/// ```
+/// use zerovec::{ZeroSlice, zeroslice, ule::AsULE};
+///
+/// const SIGNATURE: &ZeroSlice<char> = zeroslice![char; <char as AsULE>::ULE::from_array; 'b', 'y', 'e', '✌'];
+/// const EMPTY: &ZeroSlice<u32> = zeroslice![];
+/// let empty: &ZeroSlice<u32> = zeroslice![];
+/// let nums = zeroslice![u32; <u32 as AsULE>::ULE::from_array; 1, 2, 3, 4, 5];
+/// assert_eq!(nums.last().unwrap(), 5);
+/// ```
+///
+/// Using a custom array-conversion function:
+///
+/// ```
+/// use zerovec::{ZeroSlice, zeroslice};
+///
+/// mod conversion {
+///     use zerovec::ule::RawBytesULE;
+///     pub(super) const fn i16_array_to_be_array<const N: usize>(arr: [i16; N]) -> [RawBytesULE<2>; N] {
+///         let mut result = [RawBytesULE([0; 2]); N];
+///         let mut i = 0;
+///         while i < N {
+///             result[i] = RawBytesULE(arr[i].to_be_bytes());
+///             i += 1;
+///         }
+///         result
+///     }
+/// }
+///
+/// const NUMBERS: &ZeroSlice<i16> = zeroslice![i16; conversion::i16_array_to_be_array; 1, -2, 3, -4, 5];
+/// ```
+#[macro_export]
+macro_rules! zeroslice {
+    () => (
+        $crate::ZeroSlice::new_empty()
+    );
+    ($aligned:ty; $array_fn:expr; $($x:expr),+ $(,)?) => (
+        $crate::ZeroSlice::<$aligned>::from_ule_slice(
+            {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &$array_fn([$($x),+]); X}
+        )
+    );
+}
+
+/// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice![...].as_zerovec()`.
+///
+/// See [`zeroslice!`](crate::zeroslice) for more information.
+///
+/// # Examples
+///
+/// ```
+/// use zerovec::{ZeroVec, zerovec, ule::AsULE};
+///
+/// const SIGNATURE: ZeroVec<char> = zerovec![char; <char as AsULE>::ULE::from_array; 'a', 'y', 'e', '✌'];
+/// assert!(!SIGNATURE.is_owned());
+///
+/// const EMPTY: ZeroVec<u32> = zerovec![];
+/// assert!(!EMPTY.is_owned());
+/// ```
+#[macro_export]
+macro_rules! zerovec {
+    () => (
+        $crate::ZeroVec::new()
+    );
+    ($aligned:ty; $array_fn:expr; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![$aligned; $array_fn; $($x),+].as_zerovec()
+    );
 }
 
 #[cfg(test)]

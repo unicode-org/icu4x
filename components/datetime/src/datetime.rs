@@ -691,13 +691,13 @@ where {
 }
 
 #[cfg(test)]
+#[cfg(feature = "serde")]
 mod tests {
     use super::*;
     use icu_calendar::DateTime;
     use icu_calendar::Gregorian;
 
     #[test]
-    #[cfg(feature = "serde")]
     fn works_with_default_options() {
         assert_eq!(
             TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(

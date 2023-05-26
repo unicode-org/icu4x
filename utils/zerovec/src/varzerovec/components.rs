@@ -369,7 +369,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                     .copied()
                     .map(F::rawbytes_to_usize)
                     .skip(1)
-                    .chain(core::iter::once(self.things.len())),
+                    .chain([self.things.len()]),
             )
             .map(move |(start, end)| unsafe { self.things.get_unchecked(start..end) })
             .map(|bytes| unsafe { T::from_byte_slice_unchecked(bytes) })

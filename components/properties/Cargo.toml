@@ -6,10 +6,12 @@
 name = "icu_properties"
 description = "Definitions for Unicode properties"
 version = "1.2.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -44,5 +46,5 @@ icu_testdata = { path = "../../provider/testdata", default-features = false, fea
 [features]
 std = ["icu_collections/std", "icu_provider/std"]
 serde = ["dep:serde", "tinystr/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "tinystr/databake"]
 bidi = [ "dep:unicode-bidi" ]

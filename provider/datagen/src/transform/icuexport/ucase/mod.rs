@@ -21,7 +21,7 @@ impl DataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
             .icuexport()?
             .read_and_parse_toml::<ucase_serde::Main>(&format!(
                 "ucase/{}/ucase.toml",
-                self.source.trie_type()
+                self.source.options.trie_type
             ))?
             .ucase;
 

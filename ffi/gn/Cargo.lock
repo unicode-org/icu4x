@@ -36,7 +36,7 @@ dependencies = [
  "argh_shared",
  "proc-macro2",
  "quote",
- "syn",
+ "syn 1.0.109",
 ]
 
 [[package]]
@@ -102,27 +102,24 @@ checksum = "524cbf6897b527295dff137cec09ecf3a05f4fddffd7dfcd1585403449e74198"
 
 [[package]]
 name = "diplomat"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33e9eae368e4141b5f1c594afe819c85bad0aec8fd1f4cc9ac1888837a957491"
+version = "0.5.2"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8d125999893fedfdf30595e97334c21ec4b18da9#8d125999893fedfdf30595e97334c21ec4b18da9"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
  "quote",
- "syn",
+ "syn 2.0.15",
 ]
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e401cc0e98682b1a24220a4f3185bb5ddd8ccb2cd861d09fe23455b401e3cce"
+version = "0.5.2"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8d125999893fedfdf30595e97334c21ec4b18da9#8d125999893fedfdf30595e97334c21ec4b18da9"
 
 [[package]]
 name = "diplomat_core"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ba145991e24046639916a3199216e29493659398fc2f25673f48aee29b122b2"
+version = "0.5.2"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8d125999893fedfdf30595e97334c21ec4b18da9#8d125999893fedfdf30595e97334c21ec4b18da9"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -130,18 +127,18 @@ dependencies = [
  "serde",
  "smallvec",
  "strck_ident",
- "syn",
+ "syn 2.0.15",
 ]
 
 [[package]]
 name = "displaydoc"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3bf95dc3f046b9da4f2d51833c0d3547d8564ef6910f5c1ed130306a75b92886"
+checksum = "487585f4d0c6655fe74905e2504d8ad6908e4db67f744eb140876906c2f3175d"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 2.0.15",
 ]
 
 [[package]]
@@ -246,7 +243,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "1.2.1"
+version = "1.2.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -439,7 +436,7 @@ version = "1.2.0"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 2.0.15",
 ]
 
 [[package]]
@@ -635,22 +632,22 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.156"
+version = "1.0.160"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "314b5b092c0ade17c00142951e50ced110ec27cea304b1037c6969246c2469a4"
+checksum = "bb2f3770c8bce3bcda7e149193a069a0f4365bda1fa5cd88e03bca26afc1216c"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.156"
+version = "1.0.160"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7e29c4601e36bcec74a223228dce795f4cd3616341a4af93520ca1a837c087d"
+checksum = "291a097c63d8497e00160b166a967a4a79c64f3facdd01cbd7502231688d77df"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 2.0.15",
 ]
 
 [[package]]
@@ -704,14 +701,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "synstructure"
-version = "0.12.6"
+name = "syn"
+version = "2.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f36bdaa60a83aca3921b5259d5400cbf5e90fc51931376a9bd4a0eb79aa7210f"
+checksum = "a34fcf3e8b60f57e6a14301a2e916d323af98b0ea63c599441eec8558660c822"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "unicode-ident",
+]
+
+[[package]]
+name = "synstructure"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "285ba80e733fac80aa4270fbcdf83772a79b80aa35c97075320abfee4a915b06"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.15",
  "unicode-xid",
 ]
 
@@ -955,7 +963,7 @@ version = "0.7.1"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 2.0.15",
  "synstructure",
 ]
 
@@ -972,7 +980,7 @@ version = "0.1.2"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 2.0.15",
  "synstructure",
 ]
 
@@ -991,6 +999,6 @@ version = "0.9.4"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 2.0.15",
  "synstructure",
 ]

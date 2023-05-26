@@ -385,6 +385,11 @@ macro_rules! impl_tinystr_subtag {
                 self.0.as_str()
             }
 
+            #[doc(hidden)]
+            pub const fn into_tinystr(&self) -> tinystr::TinyAsciiStr<$len_end> {
+                self.0
+            }
+
             /// Compare with BCP-47 bytes.
             ///
             /// The return value is equivalent to what would happen if you first converted
@@ -425,7 +430,7 @@ macro_rules! impl_tinystr_subtag {
 
         impl From<$name> for tinystr::TinyAsciiStr<$len_end> {
             fn from(input: $name) -> Self {
-                input.0
+                input.into_tinystr()
             }
         }
 
@@ -483,7 +488,7 @@ macro_rules! impl_tinystr_subtag {
             fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                 env.insert("icu_locid");
                 let string = self.as_str();
-                databake::quote! {::icu_locid::$macro_name!(#string) }
+                databake::quote! { icu_locid::$macro_name!(#string) }
             }
         }
 

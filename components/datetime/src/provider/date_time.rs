@@ -412,7 +412,9 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
             fields::FieldLength::Narrow => &self.eras.narrow,
             _ => &self.eras.abbr,
         };
-        symbols.get(&era_code.0).unwrap_or(&era_code.0)
+        symbols
+            .get(era_code.0.as_str().into())
+            .unwrap_or(&era_code.0)
     }
 }
 

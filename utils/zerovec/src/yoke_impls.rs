@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // This way we can copy-paste Yokeable impls
+#![allow(unknown_lints)] // forgetting_copy_types
+#![allow(renamed_and_removed_lints)] // forgetting_copy_types
+#![allow(forgetting_copy_types)]
 #![allow(clippy::forget_copy)]
 #![allow(clippy::forget_non_drop)]
 

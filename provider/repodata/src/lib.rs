@@ -24,4 +24,8 @@ pub mod paths {
     pub fn icuexport() -> PathBuf {
         data_root().join("icuexport")
     }
+
+    pub fn lstm() -> PathBuf {
+        data_root().join("lstm")
+    }
 }
