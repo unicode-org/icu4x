@@ -123,22 +123,12 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
             nfd: nfd.to_owned(),
             nfkc: nfkc.to_owned(),
             nfkd: nfkd.to_owned(),
-            nfc_u16: as_utf16(nfc),
-            nfd_u16: as_utf16(nfd),
-            nfkc_u16: as_utf16(nfkc),
-            nfkd_u16: as_utf16(nfkd),
+            nfc_u16: nfc.encode_utf16().collect(),
+            nfd_u16: nfd.encode_utf16().collect(),
+            nfkc_u16: nfkc.encode_utf16().collect(),
+            nfkd_u16: nfkd.encode_utf16().collect(),
         }
     })
-}
-
-fn as_utf16(data: &str) -> Vec<u16> {
-    let mut data_utf16 = Vec::new();
-    let mut buf = [0; 2];
-    for c in data.chars() {
-        let enc = c.encode_utf16(&mut buf);
-        data_utf16.extend_from_slice(enc);
-    }
-    data_utf16
 }
 
 fn function_under_bench(normalizer: &DecomposingNormalizer, text: &str) {
