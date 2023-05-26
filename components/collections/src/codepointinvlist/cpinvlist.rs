@@ -103,7 +103,7 @@ impl databake::Bake for CodePointInversionList<'_> {
         // Safe because our parts are safe.
         databake::quote! { unsafe {
             #[allow(unused_unsafe)]
-            ::icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(#inv_list, #size)
+            icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(#inv_list, #size)
         }}
     }
 }
@@ -994,7 +994,7 @@ mod tests {
                 #[allow(unused_unsafe)]
                 crate::codepointinvlist::CodePointInversionList::from_parts_unchecked(
                     unsafe {
-                        ::zerovec::ZeroVec::from_bytes_unchecked(
+                        zerovec::ZeroVec::from_bytes_unchecked(
                             b"0\0\0\0:\0\0\0A\0\0\0G\0\0\0a\0\0\0g\0\0\0"
                         )
                     },

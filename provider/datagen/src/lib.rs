@@ -104,6 +104,19 @@ use memchr::memmem;
 use std::collections::HashSet;
 use std::path::Path;
 
+#[cfg(feature = "rayon")]
+pub(crate) use rayon::prelude as rayon_prelude;
+
+#[cfg(not(feature = "rayon"))]
+pub(crate) mod rayon_prelude {
+    pub trait IntoParallelIterator: IntoIterator + Sized {
+        fn into_par_iter(self) -> <Self as IntoIterator>::IntoIter {
+            self.into_iter()
+        }
+    }
+    impl<T: IntoIterator> IntoParallelIterator for T {}
+}
+
 /// [`DataProvider`] backed by [`SourceData`]
 ///
 /// If `source` does not contain a specific data source, `DataProvider::load` will
@@ -181,7 +194,7 @@ impl DatagenProvider {
             keys: HashSet<DataKey>,
             exporter: &mut dyn DataExporter,
         ) -> Result<(), DataError> {
-            use rayon::prelude::*;
+            use rayon_prelude::*;
 
             keys.into_par_iter().try_for_each(|key| {
                 provider

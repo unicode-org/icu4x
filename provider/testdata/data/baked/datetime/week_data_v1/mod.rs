@@ -1,7 +1,6 @@
 // @generated
 #![cfg(feature = "icu_calendar")]
-type DataStruct =
-    <::icu_calendar::provider::WeekDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
+type DataStruct = <icu_calendar::provider::WeekDataV1Marker as icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
     static KEYS: [&str; 155usize] = [
         "und", "und-AD", "und-AE", "und-AF", "und-AG", "und-AI", "und-AL", "und-AM", "und-AN",

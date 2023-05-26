@@ -46,5 +46,5 @@ icu_testdata = { path = "../../provider/testdata", default-features = false, fea
 [features]
 std = ["icu_collections/std", "icu_provider/std"]
 serde = ["dep:serde", "tinystr/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "tinystr/databake"]
 bidi = [ "dep:unicode-bidi" ]

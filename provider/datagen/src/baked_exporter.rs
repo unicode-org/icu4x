@@ -284,7 +284,7 @@ impl BakedExporter {
     }
 
     fn write_intermediate_mod_files(&mut self) -> Result<(), DataError> {
-        use rayon::prelude::*;
+        use crate::rayon_prelude::*;
         move_out!(self.mod_files)
             .into_inner()
             .expect("poison")
@@ -371,12 +371,12 @@ impl DataExporter for BakedExporter {
         let struct_type = if is_datetime_skeletons {
             quote! {
                 &'static [(
-                    &'static [::icu_datetime::fields::Field],
-                    ::icu_datetime::pattern::runtime::PatternPlurals<'static>
+                    &'static [icu_datetime::fields::Field],
+                    icu_datetime::pattern::runtime::PatternPlurals<'static>
                 )]
             }
         } else {
-            quote! { <#marker as ::icu_provider::DataMarker>::Yokeable }
+            quote! { <#marker as icu_provider::DataMarker>::Yokeable }
         };
 
         let mut map = BTreeMap::new();
@@ -534,7 +534,7 @@ impl DataExporter for BakedExporter {
                 data.marker.clone(),
                 quote! {
                     #feature
-                    const #hash_ident: ::icu_provider::DataKeyHash = #marker::KEY.hashed();
+                    const #hash_ident: icu_provider::DataKeyHash = #marker::KEY.hashed();
                 },
             );
             any_cases.insert(
@@ -601,7 +601,7 @@ impl DataExporter for BakedExporter {
                 )*
 
                 #[clippy::msrv = "1.61"]
-                use ::icu_provider::prelude::*;
+                use icu_provider::prelude::*;
 
                 /// Implement [`DataProvider<M>`] on the given struct using the data
                 /// hardcoded in this module. This allows the struct to be used with
