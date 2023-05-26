@@ -20,7 +20,6 @@ members = [
     "components/properties",
     "components/segmenter",
     "components/timezone",
-    "experimental/personnames",
     "experimental/bies",
     "experimental/casemapping",
     "experimental/compactdecimal",
