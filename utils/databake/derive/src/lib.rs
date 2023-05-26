@@ -75,7 +75,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
         quote! {
             #(#recursive_bakes)*
-            databake::quote! { ::#path::#constructor }
+            databake::quote! { #path::#constructor }
         }
     });
 

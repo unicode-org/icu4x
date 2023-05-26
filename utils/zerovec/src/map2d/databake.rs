@@ -20,7 +20,7 @@ where
         let joiner = self.joiner.bake(env);
         let keys1 = self.keys1.bake(env);
         let values = self.values.bake(env);
-        quote! { unsafe { #[allow(unused_unsafe)] ::zerovec::ZeroMap2d::from_parts_unchecked(#keys0, #joiner, #keys1, #values) } }
+        quote! { unsafe { #[allow(unused_unsafe)] zerovec::ZeroMap2d::from_parts_unchecked(#keys0, #joiner, #keys1, #values) } }
     }
 }
 
@@ -39,7 +39,7 @@ where
         let joiner = self.joiner.bake(env);
         let keys1 = self.keys1.bake(env);
         let values = self.values.bake(env);
-        quote! { unsafe { #[allow(unused_unsafe)] ::zerovec::maps::ZeroMap2dBorrowed::from_parts_unchecked(#keys0, #joiner, #keys1, #values) } }
+        quote! { unsafe { #[allow(unused_unsafe)] zerovec::maps::ZeroMap2dBorrowed::from_parts_unchecked(#keys0, #joiner, #keys1, #values) } }
     }
 }
 
