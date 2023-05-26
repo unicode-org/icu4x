@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::mem::{discriminant, Discriminant};
+use std::mem::Discriminant;
 
 use icu_locid::Locale;
 
@@ -19,37 +19,12 @@ pub trait PersonName {
 
     /// Return all available name field.
     fn available_name_fields(&self) -> Vec<&NameField>;
-}
 
-/// Implementation for all PersonName struct.
-///
-/// see https://www.unicode.org/reports/tr35/tr35-personNames.html#person-name-object
-impl dyn PersonName {
-    /// Validate that the provided fields are valid.
-    /// If the person name is not valid, it will not be formatted.
-    ///
-    /// This function will always be called before formatting.
-    pub fn is_valid(&self) -> bool {
-        self.available_name_fields()
-            .into_iter()
-            .all(|field| field.is_valid())
-            && (self.has_name_field(discriminant(&NameField::Given(None)))
-                || self.has_name_field(discriminant(&NameField::Surname(None))))
-    }
-
-    /// Returns true if person have the name field, regardless of the modifier.
-    pub fn has_name_field(&self, lookup_name_field: Discriminant<NameField>) -> bool {
-        self.available_name_fields()
-            .into_iter()
-            .any(|field| discriminant(field) == lookup_name_field)
-    }
+    /// Returns true if the provided field name is available.
+    fn has_name_field(&self, lookup_name_field: Discriminant<NameField>) -> bool;
 
     /// Returns true if person have the name field matching the type and modifier.
-    pub fn has_name_field_with_modifier(&self, lookup_name_field: &NameField) -> bool {
-        self.available_name_fields()
-            .into_iter()
-            .any(|field| field == lookup_name_field)
-    }
+    fn has_name_field_with_modifier(&self, lookup_name_field: &NameField) -> bool;
 }
 
 ///

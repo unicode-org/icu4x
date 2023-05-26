@@ -24,7 +24,7 @@ fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatte
         String::from("Hide"),
     );
 
-    let person_name: &dyn PersonName = &DefaultPersonName::try_new_unstable(
+    let person_name: &dyn PersonName = &DefaultPersonName::new(
         person_data,
         Some(locale!("en")),
         Some(PreferredOrder::GivenFirst),
@@ -66,6 +66,6 @@ fn test_field_modifier_person_name_should_have_given_or_surname() {
     let mut person_data: BTreeMap<NameField, String> = BTreeMap::new();
     person_data.insert(NameField::Title(None), String::from("Dr"));
 
-    let person_name = DefaultPersonName::try_new_unstable(person_data, None, None);
+    let person_name = DefaultPersonName::new(person_data, None, None);
     assert!(person_name.is_err());
 }
