@@ -28,8 +28,6 @@ all-features = true
 icu_collections = { path = "../../components/collections"}
 icu_locid = { path = "../../components/locid" }
 icu_provider = { path = "../../provider/core", features = ["macros"] }
-yoke = { path = "../../utils/yoke" }
-zerofrom = { path = "../../utils/zerofrom" }
 zerovec = { path = "../../utils/zerovec", features = ["serde", "derive"] }
 databake = { path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true}
