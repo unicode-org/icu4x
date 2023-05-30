@@ -7,7 +7,7 @@
 use crate::options::*;
 use crate::provider::*;
 use alloc::borrow::Cow;
-use icu_locid::{subtags::Language, subtags::Region, subtags::Script, Locale};
+use icu_locid::{subtags::Language, subtags::Region, subtags::Script, subtags::Variant, Locale};
 use icu_provider::prelude::*;
 
 /// Lookup of the locale-specific display names by region code.
@@ -161,6 +161,77 @@ impl ScriptDisplayNames {
     }
 }
 
+/// Lookup of the locale-specific display names by variant.
+///
+/// # Example
+///
+/// ```
+/// use icu_displaynames::{DisplayNamesOptions, VariantDisplayNames};
+/// use icu_locid::{locale, subtags_variant as variant};
+///
+/// let locale = locale!("en-001");
+/// let options: DisplayNamesOptions = Default::default();
+/// let display_name = VariantDisplayNames::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale.into(),
+///     options,
+/// )
+/// .expect("Data should load successfully");
+///
+/// assert_eq!(display_name.of(variant!("POSIX")), Some("Computer"));
+/// ```
+#[derive(Default)]
+pub struct VariantDisplayNames {
+    #[allow(dead_code)] //TODO: Add DisplayNamesOptions support for Variants.
+    options: DisplayNamesOptions,
+    variant_data: DataPayload<VariantDisplayNamesV1Marker>,
+}
+
+#[allow(dead_code)] // not public at the moment
+impl VariantDisplayNames {
+    /// Creates a new [`VariantDisplayNames`] from locale data and an options bag.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    pub fn try_new_unstable<D: DataProvider<VariantDisplayNamesV1Marker> + ?Sized>(
+        data_provider: &D,
+        locale: &DataLocale,
+        options: DisplayNamesOptions,
+    ) -> Result<Self, DataError> {
+        let variant_data = data_provider
+            .load(DataRequest {
+                locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+
+        Ok(Self {
+            options,
+            variant_data,
+        })
+    }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: DisplayNamesOptions,
+        error: DataError,
+        functions: [
+            Self::try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider
+        ]
+    );
+
+    /// Returns the display name of a variant.
+    pub fn of(&self, variant: Variant) -> Option<&str> {
+        let data = self.variant_data.get();
+        data.names.get(&variant.into_tinystr().to_unvalidated())
+        // TODO: Respect options.fallback
+    }
+}
+
 /// Lookup of the locale-specific display names by language code.
 ///
 /// # Example
@@ -274,7 +345,8 @@ pub struct LocaleDisplayNamesFormatter {
     #[allow(dead_code)] // TODO use this
     script_data: DataPayload<ScriptDisplayNamesV1Marker>,
     region_data: DataPayload<RegionDisplayNamesV1Marker>,
-    // variant_data: DataPayload<VariantDisplayNamesV1Marker>,
+    #[allow(dead_code)] // TODO add support for variants
+    variant_data: DataPayload<VariantDisplayNamesV1Marker>,
     // key_data: DataPayload<KeyDisplayNamesV1Marker>,
     // measuerment_data: DataPayload<MeasurementSystemsDisplayNamesV1Marker>,
     // subdivisions_data: DataPayload<SubdivisionsDisplayNamesV1Marker>,
@@ -297,7 +369,8 @@ impl LocaleDisplayNamesFormatter {
         D: DataProvider<LocaleDisplayNamesV1Marker>
             + DataProvider<LanguageDisplayNamesV1Marker>
             + DataProvider<ScriptDisplayNamesV1Marker>
-            + DataProvider<RegionDisplayNamesV1Marker>,
+            + DataProvider<RegionDisplayNamesV1Marker>
+            + DataProvider<VariantDisplayNamesV1Marker>,
     {
         let req = DataRequest {
             locale,
@@ -310,6 +383,7 @@ impl LocaleDisplayNamesFormatter {
             locale_data: data_provider.load(req)?.take_payload()?,
             script_data: data_provider.load(req)?.take_payload()?,
             region_data: data_provider.load(req)?.take_payload()?,
+            variant_data: data_provider.load(req)?.take_payload()?,
         })
     }
 
