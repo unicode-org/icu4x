@@ -386,8 +386,11 @@ impl Iso {
         // Calculate days per year
         let mut fixed: i32 = (EPOCH - 1 + 365).saturating_mul(date.0.year.saturating_sub(1));
         // Adjust for leap year logic
-        fixed = fixed.saturating_add(quotient(date.0.year.saturating_sub(1), 4) - quotient(date.0.year.saturating_sub(1), 100)
-            + quotient(date.0.year.saturating_sub(1), 400));
+        fixed = fixed.saturating_add(
+            quotient(date.0.year.saturating_sub(1), 4)
+                - quotient(date.0.year.saturating_sub(1), 100)
+                + quotient(date.0.year.saturating_sub(1), 400),
+        );
         // Days of current year
         fixed = fixed.saturating_add(quotient(367 * (date.0.month as i32) - 362, 12));
         // Leap year adjustment for the current year
@@ -525,18 +528,11 @@ mod test {
     use crate::types::IsoWeekday;
 
     #[test]
-    fn fixed_from_iso_overflow(){
-
-        let date = Date::try_new_iso_date(i32::MAX/365+2,6,4).unwrap();
-        assert_eq!(
-            Iso::fixed_from_iso(date.inner),
-            i32::MAX,
-        );
-
-        
-
+    fn fixed_from_iso_overflow() {
+        //Creates new date maxxing out the year (i32)
+        let date = Date::try_new_iso_date(i32::MAX / 365 + 2, 6, 4).unwrap();
+        assert_eq!(Iso::fixed_from_iso(date.inner), i32::MAX,);
     }
-
 
     #[test]
     fn test_day_of_week() {
