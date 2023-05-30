@@ -454,7 +454,7 @@ impl AbstractFs {
             let root = std::env::var_os("ICU4X_SOURCE_CACHE")
                 .map(PathBuf::from)
                 .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
-                .join(resource.split("://").skip(1).next().unwrap());
+                .join(resource.rsplit("//").next().unwrap());
 
             if !root.exists() {
                 log::info!("Downloading {resource}");
