@@ -198,6 +198,16 @@ where
         }
     }
 
+    #[doc(hidden)]
+    pub fn from_static_ref(data: &'static M::Yokeable) -> Self
+    where
+        <M as DataMarker>::Yokeable: zerofrom::ZeroFrom<'static, <M as DataMarker>::Yokeable>,
+    {
+        Self {
+            yoke: Yoke::new_owned(zerofrom::ZeroFrom::zero_from(data)),
+        }
+    }
+
     /// Convert a DataPayload that was created via [`DataPayload::from_owned()`] back into the
     /// concrete type used to construct it.
     pub fn try_unwrap_owned(self) -> Result<M::Yokeable, DataError> {

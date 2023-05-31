@@ -377,8 +377,7 @@ impl DataExporter for BakedExporter {
 
         let into_any_payload = if is_datetime_skeletons {
             quote! {
-                .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
-                .map(icu_provider::DataPayload::<#marker>::from_owned)
+                .map(icu_provider::DataPayload::<#marker>::from_static_ref)
                 .map(icu_provider::DataPayload::wrap_into_any_payload)
             }
         } else {
@@ -514,8 +513,7 @@ impl DataExporter for BakedExporter {
                                     req: icu_provider::DataRequest,
                                 ) -> Result<icu_provider::DataResponse<#markers>, icu_provider::DataError> {
                                     #lookups
-                                        .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
-                                        .map(icu_provider::DataPayload::from_owned)
+                                        .map(icu_provider::DataPayload::from_static_ref)
                                         .map(|payload| {
                                             icu_provider::DataResponse {
                                                 metadata: Default::default(),
