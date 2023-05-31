@@ -140,7 +140,7 @@ args = [
     "run",
     "--bin=icu4x-datagen",
     "--",
-    "--keys=all",
+    "--keys=experimental-all",
     "--locales=full",
     "--format=blob",
     "--out=/dev/null",
