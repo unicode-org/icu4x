@@ -546,7 +546,8 @@ impl DataExporter for BakedExporter {
                                     req: icu_provider::DataRequest,
                                 ) -> Result<icu_provider::DataResponse<#markers>, icu_provider::DataError> {
                                     #lookups
-                                        .map(icu_provider::DataPayload::from_static_ref)
+                                        .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
+                                        .map(icu_provider::DataPayload::from_owned)
                                         .map(|payload| {
                                             icu_provider::DataResponse {
                                                 metadata: Default::default(),
