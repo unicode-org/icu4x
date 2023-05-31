@@ -181,6 +181,7 @@ fn make_ule_enum_impl(
 
         impl #ule_name {
             #[doc = #from_aligned_doc]
+            #[inline]
             pub const fn from_aligned(a: #name) -> #ule_name {
                 // safety: the enum is repr(u8) and can be cast to a u8
                 unsafe {
@@ -299,12 +300,14 @@ fn make_ule_struct_impl(
                 quote!(#ident: <#ty as zerovec::ule::AsULE>::from_unaligned(unaligned.#ident)),
             );
             // TODO: need to match here and below on #ty, and then call the appropriate function, as in zeroslice! macro.
-            const_from_aligned_conversions.push(quote!(#ident: <#ty as zerovec::ule::AsULE>::ULE::from_aligned(aligned.#ident)));
+            const_from_aligned_conversions
+                .push(quote!(#ident: zerovec::const_ule_conversion_fn!(#ty)(aligned.#ident)));
         } else {
             as_ule_conversions.push(quote!(<#ty as zerovec::ule::AsULE>::to_unaligned(self.#i)));
             from_ule_conversions
                 .push(quote!(<#ty as zerovec::ule::AsULE>::from_unaligned(unaligned.#i)));
-            const_from_aligned_conversions.push(quote!(<#ty as zerovec::ule::AsULE>::ULE::from_aligned(aligned.#i)));
+            const_from_aligned_conversions
+                .push(quote!(zerovec::const_ule_conversion_fn!(#ty)(aligned.#i)));
         };
     }
 
@@ -357,16 +360,20 @@ fn make_ule_struct_impl(
         quote!()
     };
 
+    let ule_doc = "The same as [`AsULE::to_unaligned`].";
 
-    let const_from_aligned_conversions = utils::wrap_field_inits(&const_from_aligned_conversions, &struc.fields);
+    let const_from_aligned_conversions =
+        utils::wrap_field_inits(&const_from_aligned_conversions, &struc.fields);
     let ule_impl = quote!(
-        impl #ule_name {
+        impl #ule_name {    
+            #[doc = #ule_doc]
+            #[inline]
             pub const fn from_aligned(aligned: #name) -> Self {
                 Self #const_from_aligned_conversions
             }
 
             // TODO: need to come up with a safe zero expression for the array initializer.
-            // zerovec::impl_ule_from_array!(#name, #ule_name, )
+            // zerovec::impl_ule_from_array!(#name, #ule_name, unsafe { core::mem::transmute([0; core::mem::size_of::<#ule_name>()]) })
         }
     );
 

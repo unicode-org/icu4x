@@ -976,46 +976,17 @@ macro_rules! zeroslice {
     () => (
         $crate::ZeroSlice::new_empty()
     );
+    ($aligned:tt; $($x:expr),+ $(,)?) => (
+        $crate::ZeroSlice::<$aligned>::from_ule_slice(
+            {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &[
+                $($crate::const_ule_conversion_fn!($aligned)($x)),*
+            ]; X}
+        )
+    );
     ($aligned:ty; $array_fn:expr; $($x:expr),+ $(,)?) => (
         $crate::ZeroSlice::<$aligned>::from_ule_slice(
             {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &$array_fn([$($x),+]); X}
         )
-    );
-    (u8; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![u8; core::convert::identity; $($x),+]
-    );
-    (i8; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![i8; core::convert::identity; $($x),+]
-    );
-    (u16; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![u16; <u16 as $crate::ule::AsULE>::ULE::from_unsigned_array; $($x),+]
-    );
-    (i16; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![i16; <i16 as $crate::ule::AsULE>::ULE::from_signed_array; $($x),+]
-    );
-    (u32; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![u32; <u32 as $crate::ule::AsULE>::ULE::from_unsigned_array; $($x),+]
-    );
-    (i32; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![i32; <i32 as $crate::ule::AsULE>::ULE::from_signed_array; $($x),+]
-    );
-    (u64; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![u64; <u64 as $crate::ule::AsULE>::ULE::from_unsigned_array; $($x),+]
-    );
-    (i64; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![i64; <i64 as $crate::ule::AsULE>::ULE::from_signed_array; $($x),+]
-    );
-    (u128; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![u128; <u128 as $crate::ule::AsULE>::ULE::from_unsigned_array; $($x),+]
-    );
-    (i128; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![i128; <i128 as $crate::ule::AsULE>::ULE::from_signed_array; $($x),+]
-    );
-    (UnvalidatedChar; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![UnvalidatedChar; <UnvalidatedChar as $crate::ule::AsULE>::ULE::from_unvalidated_char_array; $($x),+]
-    );
-    ($aligned:ty; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![$aligned; <$aligned as $crate::ule::AsULE>::ULE::from_array; $($x),+]
     );
 }
 

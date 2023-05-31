@@ -89,10 +89,10 @@ pub mod maps;
 // of the `CanonicalCombiningClass` struct inside the `props`
 // module. Please do not change the crate-module-qualified
 // name of that struct without coordination.
-mod props;
-mod expandme;
 pub mod bidi_data;
 pub mod exemplar_chars;
+mod expandme;
+mod props;
 pub mod provider;
 pub(crate) mod runtime;
 #[allow(clippy::exhaustive_structs)] // TODO

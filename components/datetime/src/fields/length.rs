@@ -58,7 +58,7 @@ pub enum FieldLength {
 
 impl FieldLength {
     #[inline]
-    pub(crate) fn idx(&self) -> u8 {
+    pub(crate) const fn idx(&self) -> u8 {
         match self {
             FieldLength::One => 1,
             FieldLength::TwoDigit => 2,
@@ -66,7 +66,7 @@ impl FieldLength {
             FieldLength::Wide => 4,
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
-            FieldLength::Fixed(p) => 128 + p.min(&127), /* truncate to at most 127 digits to avoid overflow */
+            FieldLength::Fixed(p) => 128 + if *p >= 127 { 127 } else { *p }, /* truncate to at most 127 digits to avoid overflow */
         }
     }
 
@@ -124,6 +124,12 @@ impl FieldLengthULE {
         FieldLength::from_idx(byte)
             .map(|_| ())
             .map_err(|_| ZeroVecError::parse::<FieldLength>())
+    }
+
+    /// The same as [`AsULE::to_unaligned`].
+    #[inline]
+    pub const fn from_aligned(fl: FieldLength) -> Self {
+        Self(fl.idx())
     }
 }
 

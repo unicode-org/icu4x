@@ -49,3 +49,43 @@ macro_rules! impl_const_as_ule_array {
         $crate::impl_const_as_ule_array!($aligned, $unaligned, $default, Self::aligned_to_unaligned);
     };
 }
+
+#[macro_export]
+macro_rules! const_ule_conversion_fn {
+    (u8) => {
+        core::convert::identity
+    };
+    (i8) => {
+        core::convert::identity
+    };
+    (u16) => {
+        <u16 as $crate::ule::AsULE>::ULE::from_unsigned
+    };
+    (i16) => {
+        <i16 as $crate::ule::AsULE>::ULE::from_signed
+    };
+    (u32) => {
+        <u32 as $crate::ule::AsULE>::ULE::from_unsigned
+    };
+    (i32) => {
+        <i32 as $crate::ule::AsULE>::ULE::from_signed
+    };
+    (u64) => {
+        <u64 as $crate::ule::AsULE>::ULE::from_unsigned
+    };
+    (i64) => {
+        <i64 as $crate::ule::AsULE>::ULE::from_signed
+    };
+    (u128) => {
+        <u128 as $crate::ule::AsULE>::ULE::from_unsigned
+    };
+    (i128) => {
+        <i128 as $crate::ule::AsULE>::ULE::from_signed
+    };
+    (UnvalidatedChar) => {
+        <UnvalidatedChar as $crate::ule::AsULE>::ULE::from_unvalidated_char
+    };
+    ($aligned:ty) => {
+        <$aligned as $crate::ule::AsULE>::ULE::from_aligned
+    };
+}

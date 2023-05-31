@@ -96,7 +96,7 @@ impl FieldSymbol {
     /// This model limits the available number of possible types and symbols to 16 each.
 
     #[inline]
-    pub(crate) fn idx(&self) -> u8 {
+    pub(crate) const fn idx(&self) -> u8 {
         let (high, low) = match self {
             FieldSymbol::Era => (0, 0),
             FieldSymbol::Year(year) => (1, year.idx()),
@@ -185,6 +185,12 @@ impl FieldSymbolULE {
         FieldSymbol::from_idx(byte)
             .map(|_| ())
             .map_err(|_| ZeroVecError::parse::<FieldSymbol>())
+    }
+
+    /// The same as [`AsULE::to_unaligned`].
+    #[inline]
+    pub const fn from_aligned(fs: FieldSymbol) -> Self {
+        Self(fs.idx())
     }
 }
 
@@ -378,7 +384,7 @@ macro_rules! field_type {
             /// and does not guarantee index stability between ICU4X
             /// versions.
             #[inline]
-            pub(crate) fn idx(self) -> u8 {
+            pub(crate) const fn idx(self) -> u8 {
                 self as u8
             }
 
