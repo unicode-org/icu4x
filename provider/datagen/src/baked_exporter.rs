@@ -401,7 +401,8 @@ impl DataExporter for BakedExporter {
 
         let into_any_payload = if is_datetime_skeletons {
             quote! {
-                .map(icu_provider::DataPayload::<#marker>::from_static_ref)
+                .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
+                .map(icu_provider::DataPayload::<#marker>::from_owned)
                 .map(icu_provider::DataPayload::wrap_into_any_payload)
             }
         } else {
