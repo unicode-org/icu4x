@@ -337,12 +337,13 @@ where
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
         M::Yokeable: Clone,
     {
-        DataPayload(match self.0 {
-            DataPayloadInner::Yoke(yoke) => DataPayloadInner::Yoke(yoke.map_project(f)),
-            DataPayloadInner::Ref(r) => {
-                DataPayloadInner::Yoke(Yoke::new_owned(r.clone()).map_project(f))
+        DataPayload(DataPayloadInner::Yoke(
+            match self.0 {
+                DataPayloadInner::Yoke(yoke) => yoke,
+                DataPayloadInner::Ref(r) => Yoke::new_owned(r.clone()),
             }
-        })
+            .map_project(f),
+        ))
     }
 
     /// Version of [`DataPayload::map_project()`] that borrows `self` instead of moving `self`.
@@ -383,17 +384,16 @@ where
             PhantomData<&'a ()>,
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
     {
-        match &self.0 {
-            DataPayloadInner::Yoke(yoke) => {
-                DataPayload(DataPayloadInner::Yoke(yoke.map_project_cloned(f)))
-            }
+        DataPayload(DataPayloadInner::Yoke(match &self.0 {
+            DataPayloadInner::Yoke(yoke) => yoke.map_project_cloned(f),
             DataPayloadInner::Ref(r) => {
                 let output: <M2::Yokeable as Yokeable<'static>>::Output =
                     f(Yokeable::transform(*r), PhantomData);
+                // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable
                 let yokeable: M2::Yokeable = unsafe { M2::Yokeable::make(output) };
-                DataPayload(DataPayloadInner::Yoke(Yoke::new_owned(yokeable)))
+                Yoke::new_owned(yokeable)
             }
-        }
+        }))
     }
 
     /// Version of [`DataPayload::map_project()`] that bubbles up an error from `f`.
@@ -442,12 +442,13 @@ where
         ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
         M::Yokeable: Clone,
     {
-        Ok(DataPayload(match self.0 {
-            DataPayloadInner::Yoke(yoke) => DataPayloadInner::Yoke(yoke.try_map_project(f)?),
-            DataPayloadInner::Ref(r) => {
-                DataPayloadInner::Yoke(Yoke::new_owned(r.clone()).try_map_project(f)?)
+        Ok(DataPayload(DataPayloadInner::Yoke(
+            match self.0 {
+                DataPayloadInner::Yoke(yoke) => yoke,
+                DataPayloadInner::Ref(r) => Yoke::new_owned(r.clone()),
             }
-        }))
+            .try_map_project(f)?,
+        )))
     }
 
     /// Version of [`DataPayload::map_project_cloned()`] that  bubbles up an error from `f`.
@@ -498,17 +499,15 @@ where
             PhantomData<&'a ()>,
         ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
     {
-        Ok(match &self.0 {
-            DataPayloadInner::Yoke(yoke) => {
-                DataPayload(DataPayloadInner::Yoke(yoke.try_map_project_cloned(f)?))
-            }
+        Ok(DataPayload(DataPayloadInner::Yoke(match &self.0 {
+            DataPayloadInner::Yoke(yoke) => yoke.try_map_project_cloned(f)?,
             DataPayloadInner::Ref(r) => {
                 let output: <M2::Yokeable as Yokeable<'static>>::Output =
                     f(Yokeable::transform(*r), PhantomData)?;
-                let yokeable: M2::Yokeable = unsafe { M2::Yokeable::make(output) };
-                DataPayload(DataPayloadInner::Yoke(Yoke::new_owned(yokeable)))
+                // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable
+                Yoke::new_owned(unsafe { M2::Yokeable::make(output) })
             }
-        })
+        })))
     }
 
     /// Convert between two [`DataMarker`] types that are compatible with each other.
