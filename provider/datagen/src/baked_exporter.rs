@@ -127,9 +127,9 @@ pub struct BakedExporter {
     insert_feature_gates: bool,
     use_separate_crates: bool,
     // Temporary storage for put_payload: key -> (bake -> {locale})
-    data: Mutex<BTreeMap<DataKey, HashMap<SyncTokenStream, BTreeSet<String>>>>,
+    data: Mutex<HashMap<DataKey, BTreeMap<SyncTokenStream, BTreeSet<String>>>>,
     /// Information to generate implementations. This is populated by `flush` and consumed by `close`.
-    impl_data: Mutex<BTreeMap<String, ImplData>>,
+    impl_data: Mutex<BTreeMap<&'static str, ImplData>>,
     // List of dependencies used by baking.
     dependencies: CrateEnv,
 }
@@ -264,14 +264,16 @@ impl DataExporter for BakedExporter {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let payload = payload.tokenize(&self.dependencies);
+        let payload = payload.to_string();
+        let locale = locale.to_string();
         self.data
             .lock()
             .expect("poison")
             .entry(key)
             .or_default()
-            .entry(payload.to_string())
+            .entry(payload)
             .or_default()
-            .insert(locale.to_string());
+            .insert(locale);
         Ok(())
     }
 
@@ -296,11 +298,9 @@ impl DataExporter for BakedExporter {
             }
         };
 
-        let values = self
-            .data
-            .lock()
-            .expect("poison")
-            .remove(&key)
+        let values = self.data.lock().expect("poison").remove(&key);
+
+        let values = values
             .unwrap_or_default()
             .into_iter()
             .map(|(payload_bake_string, locales)| {
@@ -409,18 +409,20 @@ impl DataExporter for BakedExporter {
             }
         };
 
-        self.impl_data.lock().expect("poison").insert(
-            key.path().get().into(),
-            ImplData {
-                feature: feature.to_string(),
-                lookup: lookup.to_string(),
-                marker: quote!(#marker).to_string(),
-                singleton: singleton.map(|t| t.to_string()),
-                macro_ident: format!("impl_{ident}"),
-                hash_ident: ident.to_ascii_uppercase(),
-                into_any_payload: into_any_payload.to_string(),
-            },
-        );
+        let data = ImplData {
+            feature: feature.to_string(),
+            lookup: lookup.to_string(),
+            marker: quote!(#marker).to_string(),
+            singleton: singleton.map(|t| t.to_string()),
+            macro_ident: format!("impl_{ident}"),
+            hash_ident: ident.to_ascii_uppercase(),
+            into_any_payload: into_any_payload.to_string(),
+        };
+
+        self.impl_data
+            .lock()
+            .expect("poison")
+            .insert(key.path().get(), data);
 
         Ok(())
     }
