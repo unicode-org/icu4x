@@ -338,19 +338,17 @@ impl DataExporter for BakedExporter {
                     .parse::<TokenStream>()
                     .unwrap();
 
-                singleton = Some(
-                    quote! {
-                        #[doc(hidden)]
-                        #[macro_export]
-                        macro_rules! #singleton_ident_prefixed {
-                            () => {
-                                #bake
-                            }
+                singleton = Some(quote! {
+                    #[doc(hidden)]
+                    #[macro_export]
+                    macro_rules! #singleton_ident_prefixed {
+                        () => {
+                            #bake
                         }
-                        #[doc(hidden)]
-                        pub use #singleton_ident_prefixed as #singleton_ident;
                     }
-                );
+                    #[doc(hidden)]
+                    pub use #singleton_ident_prefixed as #singleton_ident;
+                });
 
                 let cmp = if locale == "und" {
                     quote! {
