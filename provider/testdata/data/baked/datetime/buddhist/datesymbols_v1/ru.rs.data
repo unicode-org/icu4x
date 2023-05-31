@@ -1,7 +1,7 @@
-::icu_datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: icu_datetime::provider::calendar::months::ContextsV1 {
+        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("янв."),
                 alloc::borrow::Cow::Borrowed("февр."),
                 alloc::borrow::Cow::Borrowed("мар."),
@@ -15,7 +15,7 @@
                 alloc::borrow::Cow::Borrowed("нояб."),
                 alloc::borrow::Cow::Borrowed("дек."),
             ]),
-            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Я"),
                 alloc::borrow::Cow::Borrowed("Ф"),
                 alloc::borrow::Cow::Borrowed("М"),
@@ -30,7 +30,7 @@
                 alloc::borrow::Cow::Borrowed("Д"),
             ]),
             short: None,
-            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("января"),
                 alloc::borrow::Cow::Borrowed("февраля"),
                 alloc::borrow::Cow::Borrowed("марта"),
@@ -46,9 +46,9 @@
             ]),
         },
         stand_alone: Some(
-            ::icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
+            icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                 abbreviated: Some(
-                    ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                    icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                         alloc::borrow::Cow::Borrowed("янв."),
                         alloc::borrow::Cow::Borrowed("февр."),
                         alloc::borrow::Cow::Borrowed("март"),
@@ -66,7 +66,7 @@
                 narrow: None,
                 short: None,
                 wide: Some(
-                    ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                    icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                         alloc::borrow::Cow::Borrowed("январь"),
                         alloc::borrow::Cow::Borrowed("февраль"),
                         alloc::borrow::Cow::Borrowed("март"),
@@ -84,9 +84,9 @@
             },
         ),
     },
-    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("вс"),
                 alloc::borrow::Cow::Borrowed("пн"),
                 alloc::borrow::Cow::Borrowed("вт"),
@@ -95,7 +95,7 @@
                 alloc::borrow::Cow::Borrowed("пт"),
                 alloc::borrow::Cow::Borrowed("сб"),
             ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("В"),
                 alloc::borrow::Cow::Borrowed("П"),
                 alloc::borrow::Cow::Borrowed("В"),
@@ -104,7 +104,7 @@
                 alloc::borrow::Cow::Borrowed("П"),
                 alloc::borrow::Cow::Borrowed("С"),
             ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("вс"),
                 alloc::borrow::Cow::Borrowed("пн"),
                 alloc::borrow::Cow::Borrowed("вт"),
@@ -113,7 +113,7 @@
                 alloc::borrow::Cow::Borrowed("пт"),
                 alloc::borrow::Cow::Borrowed("сб"),
             ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("воскресенье"),
                 alloc::borrow::Cow::Borrowed("понедельник"),
                 alloc::borrow::Cow::Borrowed("вторник"),
@@ -125,31 +125,29 @@
         },
         stand_alone: None,
     },
-    eras: ::icu_datetime::provider::calendar::Eras {
+    eras: icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
                 unsafe {
-                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x01\0\0\0\0\0\xD0\xB1\xD1\x83\xD0\xB4\xD0\xB4\xD0\xB8\xD0\xB9\xD1\x81\xD0\xBA\xD0\xB0\xD1\x8F \xD1\x8D\xD1\x80\xD0\xB0")
+                    zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x01\0\0\0\0\0\xD0\xB1\xD1\x83\xD0\xB4\xD0\xB4\xD0\xB8\xD0\xB9\xD1\x81\xD0\xBA\xD0\xB0\xD1\x8F \xD1\x8D\xD1\x80\xD0\xB0")
                 },
             )
         },
         abbr: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0BE") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0BE") },
             )
         },
         narrow: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0be") },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(
-                        b"\x01\0\0\0\0\0\xD0\xB1\xD1\x8D",
-                    )
+                    zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xB1\xD1\x8D")
                 },
             )
         },

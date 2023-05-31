@@ -52,6 +52,8 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "networking")]
         config::PathOrTag::Tag(tag) => source_data.with_cldr_for_tag(&tag, Default::default())?,
+        #[cfg(not(feature = "networking"))]
+        config::PathOrTag::None => source_data,
     };
 
     source_data = match config.icu_export {
@@ -62,10 +64,11 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "networking")]
         config::PathOrTag::Tag(tag) => source_data.with_icuexport_for_tag(&tag)?,
+        #[cfg(not(feature = "networking"))]
+        config::PathOrTag::None => source_data,
     };
 
     source_data = match config.segmenter_lstm {
-        config::PathOrTag::Path(path) if path.as_os_str() == "builtin" => source_data,
         config::PathOrTag::Path(path) => source_data.with_icuexport(path)?,
         #[cfg(feature = "networking")]
         config::PathOrTag::Latest => {
@@ -73,6 +76,8 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "networking")]
         config::PathOrTag::Tag(tag) => source_data.with_segmenter_lstm_for_tag(&tag)?,
+        #[cfg(not(feature = "networking"))]
+        config::PathOrTag::None => source_data,
     };
 
     let provider = DatagenProvider::try_new(options, source_data)?;

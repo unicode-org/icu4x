@@ -1,6 +1,6 @@
 // @generated
 #![cfg(feature = "icu_properties")]
-type DataStruct = < :: icu_properties :: provider :: BidiClassValueToShortNameV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < icu_properties :: provider :: BidiClassValueToShortNameV1Marker as icu_provider :: DataMarker > :: Yokeable ;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
     locale.is_empty().then(|| &UND)
 }

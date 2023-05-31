@@ -77,6 +77,8 @@ pub enum PathOrTag {
     Tag(String),
     #[cfg(feature = "networking")]
     Latest,
+    #[cfg(not(feature = "networking"))]
+    None,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, PartialEq)]

@@ -106,7 +106,7 @@ impl databake::Bake for DateSkeletonPatternsV1Marker {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_datetime");
         databake::quote! {
-            ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
+            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
         }
     }
 }
