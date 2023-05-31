@@ -92,7 +92,7 @@ pub enum AnyCalendar {
 }
 
 /// The inner date type for [`AnyCalendar`]
-#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 #[non_exhaustive]
 pub enum AnyDateInner {
     /// A date for a [`Gregorian`] calendar
