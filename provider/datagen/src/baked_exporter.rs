@@ -142,6 +142,8 @@ struct ImplData {
     feature: SyncTokenStream,
     macro_ident: SyncTokenStream,
     hash_ident: SyncTokenStream,
+    // These are required for the skeletons special case
+    into_data_payload: SyncTokenStream,
     into_any_payload: SyncTokenStream,
 }
 
@@ -399,10 +401,20 @@ impl DataExporter for BakedExporter {
             }
         };
 
-        let into_any_payload = if is_datetime_skeletons {
+        let into_data_payload = if is_datetime_skeletons {
             quote! {
                 .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
                 .map(icu_provider::DataPayload::<#marker>::from_owned)
+            }
+        } else {
+            quote! {
+                .map(icu_provider::DataPayload::from_static_ref)
+            }
+        };
+
+        let into_any_payload = if is_datetime_skeletons {
+            quote! {
+                #into_data_payload
                 .map(icu_provider::DataPayload::wrap_into_any_payload)
             }
         } else {
@@ -418,6 +430,7 @@ impl DataExporter for BakedExporter {
             singleton: singleton.map(|t| t.to_string()),
             macro_ident: format!("impl_{ident}"),
             hash_ident: ident.to_ascii_uppercase(),
+            into_data_payload: into_data_payload.to_string(),
             into_any_payload: into_any_payload.to_string(),
         };
 
@@ -478,6 +491,10 @@ impl DataExporter for BakedExporter {
         let hash_idents = data
             .values()
             .map(|data| data.hash_ident.parse::<TokenStream>().unwrap())
+            .collect::<Vec<_>>();
+        let into_data_payloads = data
+            .values()
+            .map(|data| data.into_data_payload.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
         let into_any_payloads = data
             .values()
@@ -550,8 +567,7 @@ impl DataExporter for BakedExporter {
                                     req: icu_provider::DataRequest,
                                 ) -> Result<icu_provider::DataResponse<#markers>, icu_provider::DataError> {
                                     #lookups
-                                        .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
-                                        .map(icu_provider::DataPayload::from_owned)
+                                        #into_data_payloads
                                         .map(|payload| {
                                             icu_provider::DataResponse {
                                                 metadata: Default::default(),

@@ -71,11 +71,11 @@ pub struct DataResponseMetadata {
 ///
 /// assert_eq!("Demo", payload.get().message);
 /// ```
-pub struct DataPayload<M>
-where
-    M: DataMarker,
-{
-    pub(crate) yoke: Yoke<M::Yokeable, Option<Cart>>,
+pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
+
+pub(crate) enum DataPayloadInner<M: DataMarker> {
+    Yoke(Yoke<M::Yokeable, Option<Cart>>),
+    Ref(&'static M::Yokeable),
 }
 
 /// The type of the "cart" that is used by `DataPayload`.
@@ -136,9 +136,10 @@ where
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
-        Self {
-            yoke: self.yoke.clone(),
-        }
+        Self(match &self.0 {
+            DataPayloadInner::Yoke(yoke) => DataPayloadInner::Yoke(yoke.clone()),
+            DataPayloadInner::Ref(r) => DataPayloadInner::Ref(*r),
+        })
     }
 }
 
@@ -193,17 +194,23 @@ where
     /// ```
     #[inline]
     pub fn from_owned(data: M::Yokeable) -> Self {
-        Self {
-            yoke: Yoke::new_owned(data),
-        }
+        Self(DataPayloadInner::Yoke(Yoke::new_owned(data)))
+    }
+
+    #[doc(hidden)]
+    #[inline]
+    pub fn from_static_ref(data: &'static M::Yokeable) -> Self {
+        Self(DataPayloadInner::Ref(data))
     }
 
     /// Convert a DataPayload that was created via [`DataPayload::from_owned()`] back into the
     /// concrete type used to construct it.
     pub fn try_unwrap_owned(self) -> Result<M::Yokeable, DataError> {
-        self.yoke
-            .try_into_yokeable()
-            .map_err(|_| DataErrorKind::InvalidState.with_str_context("try_unwrap_owned"))
+        match self.0 {
+            DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),
+            DataPayloadInner::Ref(_) => None,
+        }
+        .ok_or(DataErrorKind::InvalidState.with_str_context("try_unwrap_owned"))
     }
 
     /// Mutate the data contained in this DataPayload.
@@ -244,8 +251,15 @@ where
     pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut <M::Yokeable as Yokeable<'a>>::Output),
+        M::Yokeable: Clone,
     {
-        self.yoke.with_mut(f)
+        if let DataPayloadInner::Ref(r) = self.0 {
+            self.0 = DataPayloadInner::Yoke(Yoke::new_owned(M::Yokeable::clone(r)));
+        }
+        match &mut self.0 {
+            DataPayloadInner::Yoke(yoke) => yoke.with_mut(f),
+            _ => unreachable!(),
+        }
     }
 
     /// Borrows the underlying data.
@@ -266,7 +280,10 @@ where
     #[inline]
     #[allow(clippy::needless_lifetimes)]
     pub fn get<'a>(&'a self) -> &'a <M::Yokeable as Yokeable<'a>>::Output {
-        self.yoke.get()
+        match &self.0 {
+            DataPayloadInner::Yoke(yoke) => yoke.get(),
+            DataPayloadInner::Ref(r) => Yokeable::transform(*r),
+        }
     }
 
     /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::map_project`].
@@ -318,10 +335,14 @@ where
             <M::Yokeable as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+        M::Yokeable: Clone,
     {
-        DataPayload {
-            yoke: self.yoke.map_project(f),
-        }
+        DataPayload(match self.0 {
+            DataPayloadInner::Yoke(yoke) => DataPayloadInner::Yoke(yoke.map_project(f)),
+            DataPayloadInner::Ref(r) => {
+                DataPayloadInner::Yoke(Yoke::new_owned(r.clone()).map_project(f))
+            }
+        })
     }
 
     /// Version of [`DataPayload::map_project()`] that borrows `self` instead of moving `self`.
@@ -362,8 +383,16 @@ where
             PhantomData<&'a ()>,
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
     {
-        DataPayload {
-            yoke: self.yoke.map_project_cloned(f),
+        match &self.0 {
+            DataPayloadInner::Yoke(yoke) => {
+                DataPayload(DataPayloadInner::Yoke(yoke.map_project_cloned(f)))
+            }
+            DataPayloadInner::Ref(r) => {
+                let output: <M2::Yokeable as Yokeable<'static>>::Output =
+                    f(Yokeable::transform(*r), PhantomData);
+                let yokeable: M2::Yokeable = unsafe { M2::Yokeable::make(output) };
+                DataPayload(DataPayloadInner::Yoke(Yoke::new_owned(yokeable)))
+            }
         }
     }
 
@@ -411,10 +440,14 @@ where
             <M::Yokeable as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
+        M::Yokeable: Clone,
     {
-        Ok(DataPayload {
-            yoke: self.yoke.try_map_project(f)?,
-        })
+        Ok(DataPayload(match self.0 {
+            DataPayloadInner::Yoke(yoke) => DataPayloadInner::Yoke(yoke.try_map_project(f)?),
+            DataPayloadInner::Ref(r) => {
+                DataPayloadInner::Yoke(Yoke::new_owned(r.clone()).try_map_project(f)?)
+            }
+        }))
     }
 
     /// Version of [`DataPayload::map_project_cloned()`] that  bubbles up an error from `f`.
@@ -465,8 +498,16 @@ where
             PhantomData<&'a ()>,
         ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
     {
-        Ok(DataPayload {
-            yoke: self.yoke.try_map_project_cloned(f)?,
+        Ok(match &self.0 {
+            DataPayloadInner::Yoke(yoke) => {
+                DataPayload(DataPayloadInner::Yoke(yoke.try_map_project_cloned(f)?))
+            }
+            DataPayloadInner::Ref(r) => {
+                let output: <M2::Yokeable as Yokeable<'static>>::Output =
+                    f(Yokeable::transform(*r), PhantomData)?;
+                let yokeable: M2::Yokeable = unsafe { M2::Yokeable::make(output) };
+                DataPayload(DataPayloadInner::Yoke(Yoke::new_owned(yokeable)))
+            }
         })
     }
 
@@ -497,7 +538,10 @@ where
     where
         M2: DataMarker<Yokeable = M::Yokeable>,
     {
-        DataPayload { yoke: self.yoke }
+        DataPayload(match self.0 {
+            DataPayloadInner::Yoke(yoke) => DataPayloadInner::Yoke(yoke),
+            DataPayloadInner::Ref(r) => DataPayloadInner::Ref(r),
+        })
     }
 }
 
@@ -507,19 +551,17 @@ impl DataPayload<BufferMarker> {
         let yoke = Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b);
         // Safe because cart is wrapped
         let yoke = unsafe { yoke.replace_cart(|b| Some(Cart(b))) };
-        Self { yoke }
+        Self(DataPayloadInner::Yoke(yoke))
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_yoked_buffer(yoke: Yoke<&'static [u8], Option<Cart>>) -> Self {
-        Self { yoke }
+        Self(DataPayloadInner::Yoke(yoke))
     }
 
     /// Converts a static byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_static_buffer(buffer: &'static [u8]) -> Self {
-        Self {
-            yoke: Yoke::new_owned(buffer),
-        }
+    pub fn from_static_buffer(buffer: &'static &'static [u8]) -> Self {
+        Self(DataPayloadInner::Ref(buffer))
     }
 }
 
