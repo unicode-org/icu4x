@@ -52,7 +52,6 @@ fn main() {
     ));
 
     let mut options = BakedOptions::default();
-    options.pretty = true;
     options.insert_feature_gates = true;
     options.use_separate_crates = true;
     options.overwrite = true;
