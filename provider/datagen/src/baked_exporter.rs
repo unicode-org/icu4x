@@ -126,8 +126,8 @@ pub struct BakedExporter {
     pretty: bool,
     insert_feature_gates: bool,
     use_separate_crates: bool,
-    // Temporary storage for put_payload: key -> (bake -> [locale])
-    data: Mutex<HashMap<DataKey, HashMap<SyncTokenStream, Vec<String>>>>,
+    // Temporary storage for put_payload: key -> (bake -> {locale})
+    data: Mutex<BTreeMap<DataKey, HashMap<SyncTokenStream, BTreeSet<String>>>>,
     /// Information to generate implementations. This is populated by `flush` and consumed by `close`.
     impl_data: Mutex<BTreeMap<String, ImplData>>,
     // List of dependencies used by baking.
@@ -138,6 +138,7 @@ pub struct BakedExporter {
 struct ImplData {
     marker: SyncTokenStream,
     lookup: SyncTokenStream,
+    singleton: Option<SyncTokenStream>,
     feature: SyncTokenStream,
     macro_ident: SyncTokenStream,
     hash_ident: SyncTokenStream,
@@ -270,7 +271,7 @@ impl DataExporter for BakedExporter {
             .or_default()
             .entry(payload.to_string())
             .or_default()
-            .push(locale.to_string());
+            .insert(locale.to_string());
         Ok(())
     }
 
@@ -295,12 +296,17 @@ impl DataExporter for BakedExporter {
             }
         };
 
-        let raw = self
+        let values = self
             .data
             .lock()
             .expect("poison")
             .remove(&key)
-            .unwrap_or_default();
+            .unwrap_or_default()
+            .into_iter()
+            .map(|(payload_bake_string, locales)| {
+                (payload_bake_string.parse::<TokenStream>().unwrap(), locales)
+            })
+            .collect::<Vec<_>>();
 
         let struct_type = if is_datetime_skeletons {
             quote! {
@@ -313,28 +319,38 @@ impl DataExporter for BakedExporter {
             quote! { <#marker as icu_provider::DataMarker>::Yokeable }
         };
 
-        let mut map = BTreeMap::new();
-        let mut statics = BTreeMap::new();
+        let ident = key
+            .path()
+            .to_ascii_lowercase()
+            .replace('@', "_v")
+            .replace('/', "_");
 
-        for (payload_bake_string, locales) in raw {
-            let first_locale = locales.iter().min().unwrap();
-            let ident =
-                syn::parse_str::<syn::Ident>(&first_locale.to_ascii_uppercase().replace('-', "_"))
-                    .unwrap();
-            let payload: TokenStream = payload_bake_string.parse().unwrap();
-            let statik = quote! { static #ident: #struct_type = #payload; };
-            statics.insert(first_locale.clone(), statik);
-            map.extend(locales.into_iter().map(|l| (l, ident.clone())));
-        }
+        let mut singleton = None;
 
-        let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
-
-        let statics = statics.values();
-
-        let lookup = match keys.len() {
+        let lookup = match values.iter().map(|(_, l)| l.len()).sum() {
             0 => quote!(None),
             1 => {
-                let locale = &keys[0];
+                let (bake, locale) = values.into_iter().next().unwrap();
+                let locale = locale.into_iter().next().unwrap();
+
+                let singleton_ident = format!("singleton_{ident}").parse::<TokenStream>().unwrap();
+                let singleton_ident_prefixed = format!("__singleton_{ident}")
+                    .parse::<TokenStream>()
+                    .unwrap();
+
+                singleton = Some(
+                    quote! {
+                        #[doc(hidden)]
+                        #[macro_export]
+                        macro_rules! #singleton_ident_prefixed {
+                            () => {
+                                #bake
+                            }
+                        }
+                        #[doc(hidden)]
+                        pub use #singleton_ident_prefixed as #singleton_ident;
+                    }
+                );
 
                 let cmp = if locale == "und" {
                     quote! {
@@ -351,11 +367,25 @@ impl DataExporter for BakedExporter {
                     }
                 };
                 quote! {
-                    // These are singleton repetitions
-                    #cmp.then(|| {#(#statics)* #(&#values)*})
+                    #cmp.then(|| {static ANCHOR: #struct_type = #singleton_ident!(); &ANCHOR})
                 }
             }
             _ => {
+                let mut map = BTreeMap::new();
+                let mut statics = Vec::new();
+
+                for (bake, locales) in values {
+                    let first_locale = locales.iter().next().unwrap();
+                    let anchor = syn::parse_str::<syn::Ident>(
+                        &first_locale.to_ascii_uppercase().replace('-', "_"),
+                    )
+                    .unwrap();
+                    statics.push(quote! { static #anchor: #struct_type = #bake; });
+                    map.extend(locales.into_iter().map(|l| (l, anchor.clone())));
+                }
+
+                let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
+
                 quote! {
                     [#(#keys),*]
                         .binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
@@ -368,12 +398,6 @@ impl DataExporter for BakedExporter {
                 }
             }
         };
-
-        let ident = key
-            .path()
-            .to_ascii_lowercase()
-            .replace('@', "_v")
-            .replace('/', "_");
 
         let into_any_payload = if is_datetime_skeletons {
             quote! {
@@ -392,6 +416,7 @@ impl DataExporter for BakedExporter {
                 feature: feature.to_string(),
                 lookup: lookup.to_string(),
                 marker: quote!(#marker).to_string(),
+                singleton: singleton.map(|t| t.to_string()),
                 macro_ident: format!("impl_{ident}"),
                 hash_ident: ident.to_ascii_uppercase(),
                 into_any_payload: into_any_payload.to_string(),
@@ -413,6 +438,14 @@ impl DataExporter for BakedExporter {
         let lookups = data
             .values()
             .map(|data| data.lookup.parse::<TokenStream>().unwrap())
+            .collect::<Vec<_>>();
+        let singletons = data
+            .values()
+            .map(|data| {
+                data.singleton
+                    .as_ref()
+                    .map(|s| s.parse::<TokenStream>().unwrap())
+            })
             .collect::<Vec<_>>();
         let markers = data
             .values()
@@ -499,6 +532,7 @@ impl DataExporter for BakedExporter {
                 pub use __impl_data_provider as impl_data_provider;
 
                 #(
+                    #singletons
                     #[doc = #docs]
                     /// hardcoded in this file. This allows the struct to be used with
                     /// `icu`'s `_unstable` constructors.
