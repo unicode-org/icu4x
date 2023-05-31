@@ -258,6 +258,13 @@ impl UnvalidatedChar {
         Self([u0, u1, u2])
     }
 
+    #[inline]
+    #[doc(hidden)]
+    pub const fn from_u24(c: u32) -> Self {
+        let [u0, u1, u2, _u3] = c.to_le_bytes();
+        Self([u0, u1, u2])
+    }
+
     /// Attempt to convert a [`UnvalidatedChar`] to a `char`.
     ///
     /// # Examples
@@ -412,6 +419,28 @@ impl<'de> serde::Deserialize<'de> for UnvalidatedChar {
     }
 }
 
+#[cfg(feature = "databake")]
+impl databake::Bake for UnvalidatedChar {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        match self.try_to_char() {
+            Ok(ch) => {
+                env.insert("zerovec");
+                let ch = ch.bake(env);
+                databake::quote! {
+                    zerovec::ule::UnvalidatedChar::from_char(#ch)
+                }
+            }
+            Err(_) => {
+                env.insert("zerovec");
+                let u24 = u32::from_le_bytes([self.0[0], self.0[1], self.0[2], 0]);
+                databake::quote! {
+                    zerovec::ule::UnvalidatedChar::from_u24(#u24)
+                }
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -478,5 +507,12 @@ mod test {
             &[119, 0, 0, 201, 3, 0, 135, 101, 0, 3, 17, 1, 67, 246, 1],
             ule_bytes
         );
+    }
+
+    #[test]
+    fn test_char_bake() {
+        databake::test_bake!(UnvalidatedChar, const: crate::ule::UnvalidatedChar::from_char('b'), zerovec);
+        // surrogate code point
+        databake::test_bake!(UnvalidatedChar, const: crate::ule::UnvalidatedChar::from_u24(55296u32), zerovec);
     }
 }

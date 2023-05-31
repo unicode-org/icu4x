@@ -51,6 +51,8 @@ impl IterableDataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvide
                         .file_exists(langid, "variants.json")
                         .unwrap_or_default()
                 })
+                // TODO(#3463)
+                .filter(|langid| langid != &icu_locid::langid!("fi"))
                 .map(DataLocale::from)
                 .collect(),
         ))

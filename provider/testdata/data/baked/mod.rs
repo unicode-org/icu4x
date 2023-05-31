@@ -52,8 +52,8 @@ macro_rules! impl_data_provider {
     ($ provider : path) => {
         #[cfg(feature = "icu_calendar")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_calendar::provider::JapaneseErasV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_calendar::provider::JapaneseErasV1Marker>, DataError> {
+        impl DataProvider<icu_calendar::provider::JapaneseErasV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_calendar::provider::JapaneseErasV1Marker>, DataError> {
                 calendar::japanese_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -61,13 +61,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_calendar::provider::JapaneseErasV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_calendar::provider::JapaneseErasV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_calendar")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_calendar::provider::JapaneseExtendedErasV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_calendar::provider::JapaneseExtendedErasV1Marker>, DataError> {
+        impl DataProvider<icu_calendar::provider::JapaneseExtendedErasV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_calendar::provider::JapaneseExtendedErasV1Marker>, DataError> {
                 calendar::japanext_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -75,13 +75,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_calendar")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_calendar::provider::WeekDataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_calendar::provider::WeekDataV1Marker>, DataError> {
+        impl DataProvider<icu_calendar::provider::WeekDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_calendar::provider::WeekDataV1Marker>, DataError> {
                 datetime::week_data_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -89,13 +89,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_calendar::provider::WeekDataV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_calendar::provider::WeekDataV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_casemapping")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_casemapping::provider::CaseMappingV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_casemapping::provider::CaseMappingV1Marker>, DataError> {
+        impl DataProvider<icu_casemapping::provider::CaseMappingV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_casemapping::provider::CaseMappingV1Marker>, DataError> {
                 props::casemap_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -103,13 +103,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_casemapping::provider::CaseMappingV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_casemapping::provider::CaseMappingV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_collator")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_collator::provider::CollationDataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationDataV1Marker>, DataError> {
+        impl DataProvider<icu_collator::provider::CollationDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_collator::provider::CollationDataV1Marker>, DataError> {
                 collator::data_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -117,13 +117,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationDataV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_collator::provider::CollationDataV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_collator")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_collator::provider::CollationDiacriticsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationDiacriticsV1Marker>, DataError> {
+        impl DataProvider<icu_collator::provider::CollationDiacriticsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_collator::provider::CollationDiacriticsV1Marker>, DataError> {
                 collator::dia_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -131,13 +131,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationDiacriticsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_collator::provider::CollationDiacriticsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_collator")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_collator::provider::CollationJamoV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationJamoV1Marker>, DataError> {
+        impl DataProvider<icu_collator::provider::CollationJamoV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_collator::provider::CollationJamoV1Marker>, DataError> {
                 collator::jamo_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -145,13 +145,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationJamoV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_collator::provider::CollationJamoV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_collator")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_collator::provider::CollationMetadataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationMetadataV1Marker>, DataError> {
+        impl DataProvider<icu_collator::provider::CollationMetadataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_collator::provider::CollationMetadataV1Marker>, DataError> {
                 collator::meta_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -159,13 +159,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationMetadataV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_collator::provider::CollationMetadataV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_collator")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_collator::provider::CollationReorderingV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationReorderingV1Marker>, DataError> {
+        impl DataProvider<icu_collator::provider::CollationReorderingV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_collator::provider::CollationReorderingV1Marker>, DataError> {
                 collator::reord_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -173,13 +173,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationReorderingV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_collator::provider::CollationReorderingV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_collator")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_collator::provider::CollationSpecialPrimariesV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationSpecialPrimariesV1Marker>, DataError> {
+        impl DataProvider<icu_collator::provider::CollationSpecialPrimariesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_collator::provider::CollationSpecialPrimariesV1Marker>, DataError> {
                 collator::prim_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -187,16 +187,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_compactdecimal")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>, DataError> {
                 compactdecimal::long_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -205,17 +202,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_compactdecimal")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker>, DataError> {
                 compactdecimal::short_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -224,14 +218,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker>, DataError> {
                 datetime::buddhist::datelengths_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -239,13 +233,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker>, DataError> {
                 datetime::buddhist::datesymbols_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -253,13 +247,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::CopticDateLengthsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::CopticDateLengthsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::CopticDateLengthsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::CopticDateLengthsV1Marker>, DataError> {
                 datetime::coptic::datelengths_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -267,13 +261,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::CopticDateLengthsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::CopticDateLengthsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::CopticDateSymbolsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::CopticDateSymbolsV1Marker>, DataError> {
                 datetime::coptic::datesymbols_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -281,13 +275,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime_experimental")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>, DataError> {
                 datetime::skeletons_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -295,13 +289,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker>, DataError> {
                 datetime::ethiopic::datelengths_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -309,13 +303,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker>, DataError> {
                 datetime::ethiopic::datesymbols_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -323,13 +317,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::GregorianDateLengthsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::GregorianDateLengthsV1Marker>, DataError> {
                 datetime::gregory::datelengths_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -337,13 +331,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker>, DataError> {
                 datetime::gregory::datesymbols_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -351,13 +345,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::IndianDateLengthsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::IndianDateLengthsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::IndianDateLengthsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::IndianDateLengthsV1Marker>, DataError> {
                 datetime::indian::datelengths_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -365,13 +359,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::IndianDateLengthsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::IndianDateLengthsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::IndianDateSymbolsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::IndianDateSymbolsV1Marker>, DataError> {
                 datetime::indian::datesymbols_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -379,13 +373,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::IndianDateSymbolsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker>, DataError> {
                 datetime::japanese::datelengths_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -393,13 +387,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker>, DataError> {
                 datetime::japanese::datesymbols_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -407,16 +401,16 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker> for $provider {
+        impl DataProvider<icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker>, DataError> {
                 datetime::japanext::datelengths_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -425,17 +419,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker> for $provider {
+        impl DataProvider<icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker>, DataError> {
                 datetime::japanext::datesymbols_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -444,14 +438,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::TimeLengthsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::TimeLengthsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::TimeLengthsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::TimeLengthsV1Marker>, DataError> {
                 datetime::timelengths_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -459,13 +453,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::TimeSymbolsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::calendar::TimeSymbolsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::calendar::TimeSymbolsV1Marker>, DataError> {
                 datetime::timesymbols_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -473,13 +467,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::time_zones::ExemplarCitiesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::time_zones::ExemplarCitiesV1Marker>, DataError> {
                 time_zone::exemplar_cities_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -487,16 +481,16 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker> for $provider {
+        impl DataProvider<icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker>, DataError> {
                 time_zone::generic_long_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -505,17 +499,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker> for $provider {
+        impl DataProvider<icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker>, DataError> {
                 time_zone::generic_short_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -524,17 +518,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker> for $provider {
+        impl DataProvider<icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker>, DataError> {
                 time_zone::specific_long_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -543,17 +537,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker> for $provider {
+        impl DataProvider<icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker>, DataError> {
                 time_zone::specific_short_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -562,14 +556,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_datetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>, DataError> {
+        impl DataProvider<icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>, DataError> {
                 time_zone::formats_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -577,13 +571,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_decimal")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_decimal::provider::DecimalSymbolsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_decimal::provider::DecimalSymbolsV1Marker>, DataError> {
+        impl DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_decimal::provider::DecimalSymbolsV1Marker>, DataError> {
                 decimal::symbols_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -591,13 +585,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_decimal::provider::DecimalSymbolsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_decimal::provider::DecimalSymbolsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_displaynames")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_displaynames::provider::LanguageDisplayNamesV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::LanguageDisplayNamesV1Marker>, DataError> {
+        impl DataProvider<icu_displaynames::provider::LanguageDisplayNamesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_displaynames::provider::LanguageDisplayNamesV1Marker>, DataError> {
                 displaynames::languages_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -605,13 +599,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::LanguageDisplayNamesV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_displaynames::provider::LanguageDisplayNamesV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_displaynames")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_displaynames::provider::LocaleDisplayNamesV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::LocaleDisplayNamesV1Marker>, DataError> {
+        impl DataProvider<icu_displaynames::provider::LocaleDisplayNamesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_displaynames::provider::LocaleDisplayNamesV1Marker>, DataError> {
                 displaynames::locales_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -619,13 +613,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::LocaleDisplayNamesV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_displaynames::provider::LocaleDisplayNamesV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_displaynames")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_displaynames::provider::RegionDisplayNamesV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::RegionDisplayNamesV1Marker>, DataError> {
+        impl DataProvider<icu_displaynames::provider::RegionDisplayNamesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_displaynames::provider::RegionDisplayNamesV1Marker>, DataError> {
                 displaynames::regions_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -633,13 +627,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::RegionDisplayNamesV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_displaynames::provider::RegionDisplayNamesV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_displaynames")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_displaynames::provider::ScriptDisplayNamesV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::ScriptDisplayNamesV1Marker>, DataError> {
+        impl DataProvider<icu_displaynames::provider::ScriptDisplayNamesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_displaynames::provider::ScriptDisplayNamesV1Marker>, DataError> {
                 displaynames::scripts_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -647,13 +641,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::ScriptDisplayNamesV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_displaynames::provider::ScriptDisplayNamesV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_displaynames")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::VariantDisplayNamesV1Marker>, DataError> {
+        impl DataProvider<icu_displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_displaynames::provider::VariantDisplayNamesV1Marker>, DataError> {
                 displaynames::variants_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -661,13 +655,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::VariantDisplayNamesV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_displaynames::provider::VariantDisplayNamesV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_list")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_list::provider::AndListV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_list::provider::AndListV1Marker>, DataError> {
+        impl DataProvider<icu_list::provider::AndListV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_list::provider::AndListV1Marker>, DataError> {
                 list::and_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -675,13 +669,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_list::provider::AndListV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_list::provider::AndListV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_list")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_list::provider::OrListV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_list::provider::OrListV1Marker>, DataError> {
+        impl DataProvider<icu_list::provider::OrListV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_list::provider::OrListV1Marker>, DataError> {
                 list::or_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -689,13 +683,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_list::provider::OrListV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_list::provider::OrListV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_list")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_list::provider::UnitListV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_list::provider::UnitListV1Marker>, DataError> {
+        impl DataProvider<icu_list::provider::UnitListV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_list::provider::UnitListV1Marker>, DataError> {
                 list::unit_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -703,13 +697,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_list::provider::UnitListV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_list::provider::UnitListV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_locid_transform")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_locid_transform::provider::AliasesV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_locid_transform::provider::AliasesV1Marker>, DataError> {
+        impl DataProvider<icu_locid_transform::provider::AliasesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_locid_transform::provider::AliasesV1Marker>, DataError> {
                 locid_transform::aliases_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -717,13 +711,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_locid_transform::provider::AliasesV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_locid_transform::provider::AliasesV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_locid_transform")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_locid_transform::provider::LikelySubtagsExtendedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_locid_transform::provider::LikelySubtagsExtendedV1Marker>, DataError> {
+        impl DataProvider<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker>, DataError> {
                 locid_transform::likelysubtags_ext_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -731,13 +725,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_locid_transform::provider::LikelySubtagsExtendedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_locid_transform::provider::LikelySubtagsExtendedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_locid_transform")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker>, DataError> {
+        impl DataProvider<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker>, DataError> {
                 locid_transform::likelysubtags_l_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -745,16 +739,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_locid_transform")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker>, DataError> {
+        impl DataProvider<icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker>, DataError> {
                 locid_transform::likelysubtags_sr_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -763,14 +754,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_locid_transform")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_locid_transform::provider::LikelySubtagsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_locid_transform::provider::LikelySubtagsV1Marker>, DataError> {
+        impl DataProvider<icu_locid_transform::provider::LikelySubtagsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_locid_transform::provider::LikelySubtagsV1Marker>, DataError> {
                 locid_transform::likelysubtags_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -778,13 +769,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_locid_transform::provider::LikelySubtagsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_normalizer")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_normalizer::provider::CanonicalCompositionsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CanonicalCompositionsV1Marker>, DataError> {
+        impl DataProvider<icu_normalizer::provider::CanonicalCompositionsV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_normalizer::provider::CanonicalCompositionsV1Marker>, DataError> {
                 normalizer::comp_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -792,13 +783,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_normalizer")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionDataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CanonicalDecompositionDataV1Marker>, DataError> {
+        impl DataProvider<icu_normalizer::provider::CanonicalDecompositionDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_normalizer::provider::CanonicalDecompositionDataV1Marker>, DataError> {
                 normalizer::nfd_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -806,13 +797,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_normalizer")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker>, DataError> {
+        impl DataProvider<icu_normalizer::provider::CanonicalDecompositionTablesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_normalizer::provider::CanonicalDecompositionTablesV1Marker>, DataError> {
                 normalizer::nfdex_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -820,16 +811,16 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_normalizer")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker> for $provider {
+        impl DataProvider<icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker>, DataError> {
                 normalizer::nfkd_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -838,17 +829,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_normalizer")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker>, DataError> {
+        impl DataProvider<icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker>, DataError> {
                 normalizer::nfkdex_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -857,17 +845,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_normalizer")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker> for $provider {
+        impl DataProvider<icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker>, DataError> {
                 normalizer::decomp_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -876,14 +864,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_normalizer")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker>, DataError> {
+        impl DataProvider<icu_normalizer::provider::Uts46DecompositionSupplementV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_normalizer::provider::Uts46DecompositionSupplementV1Marker>, DataError> {
                 normalizer::uts46d_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -891,13 +879,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_plurals")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_plurals::provider::CardinalV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_plurals::provider::CardinalV1Marker>, DataError> {
+        impl DataProvider<icu_plurals::provider::CardinalV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_plurals::provider::CardinalV1Marker>, DataError> {
                 plurals::cardinal_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -905,13 +893,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_plurals::provider::CardinalV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_plurals::provider::CardinalV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_plurals")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_plurals::provider::OrdinalV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_plurals::provider::OrdinalV1Marker>, DataError> {
+        impl DataProvider<icu_plurals::provider::OrdinalV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_plurals::provider::OrdinalV1Marker>, DataError> {
                 plurals::ordinal_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -919,13 +907,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_plurals::provider::OrdinalV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_plurals::provider::OrdinalV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::AlnumV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::AlnumV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::AlnumV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::AlnumV1Marker>, DataError> {
                 props::alnum_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -933,13 +921,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::AlnumV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::AlnumV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::AlphabeticV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::AlphabeticV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::AlphabeticV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::AlphabeticV1Marker>, DataError> {
                 props::alpha_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -947,13 +935,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::AlphabeticV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::AlphabeticV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::AsciiHexDigitV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::AsciiHexDigitV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::AsciiHexDigitV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::AsciiHexDigitV1Marker>, DataError> {
                 props::ahex_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -961,13 +949,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::AsciiHexDigitV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::AsciiHexDigitV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::BasicEmojiV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BasicEmojiV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::BasicEmojiV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::BasicEmojiV1Marker>, DataError> {
                 props::basic_emoji_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -975,13 +963,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BasicEmojiV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::BasicEmojiV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::BidiClassNameToValueV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassNameToValueV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::BidiClassNameToValueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::BidiClassNameToValueV1Marker>, DataError> {
                 propnames::from::bc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -989,13 +977,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BidiClassNameToValueV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::BidiClassNameToValueV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::BidiClassV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::BidiClassV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::BidiClassV1Marker>, DataError> {
                 props::bc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1003,13 +991,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BidiClassV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::BidiClassV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::BidiClassValueToLongNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassValueToLongNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::BidiClassValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::BidiClassValueToLongNameV1Marker>, DataError> {
                 propnames::to::long::linear::bc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1017,13 +1005,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BidiClassValueToLongNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::BidiClassValueToLongNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::BidiClassValueToShortNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassValueToShortNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::BidiClassValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::BidiClassValueToShortNameV1Marker>, DataError> {
                 propnames::to::short::linear::bc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1031,13 +1019,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BidiClassValueToShortNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::BidiClassValueToShortNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::BidiControlV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiControlV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::BidiControlV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::BidiControlV1Marker>, DataError> {
                 props::bidi_c_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1045,13 +1033,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BidiControlV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::BidiControlV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::BidiMirroredV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiMirroredV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::BidiMirroredV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::BidiMirroredV1Marker>, DataError> {
                 props::bidi_m_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1059,13 +1047,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BidiMirroredV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::BidiMirroredV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::BlankV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BlankV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::BlankV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::BlankV1Marker>, DataError> {
                 props::blank_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1073,16 +1061,16 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BlankV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::BlankV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::CanonicalCombiningClassNameToValueV1Marker> for $provider {
+        impl DataProvider<icu_properties::provider::CanonicalCombiningClassNameToValueV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassNameToValueV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_properties::provider::CanonicalCombiningClassNameToValueV1Marker>, DataError> {
                 propnames::from::ccc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1091,14 +1079,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::CanonicalCombiningClassNameToValueV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_properties::provider::CanonicalCombiningClassNameToValueV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::CanonicalCombiningClassV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::CanonicalCombiningClassV1Marker>, DataError> {
                 props::ccc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1106,16 +1094,16 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::CanonicalCombiningClassV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::CanonicalCombiningClassV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker> for $provider {
+        impl DataProvider<icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker>, DataError> {
                 propnames::to::long::sparse::ccc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1124,17 +1112,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker> for $provider {
+        impl DataProvider<icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker>, DataError> {
                 propnames::to::short::sparse::ccc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1143,17 +1131,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(
-                            ::icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker::KEY,
-                            req,
-                        )
+                        DataErrorKind::MissingLocale.with_req(icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::CaseIgnorableV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CaseIgnorableV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::CaseIgnorableV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::CaseIgnorableV1Marker>, DataError> {
                 props::ci_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1161,13 +1146,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::CaseIgnorableV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::CaseIgnorableV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::CaseSensitiveV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CaseSensitiveV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::CaseSensitiveV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::CaseSensitiveV1Marker>, DataError> {
                 props::sensitive_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1175,13 +1160,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::CaseSensitiveV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::CaseSensitiveV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::CasedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CasedV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::CasedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::CasedV1Marker>, DataError> {
                 props::cased_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1189,13 +1174,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::CasedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::CasedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ChangesWhenCasefoldedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenCasefoldedV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ChangesWhenCasefoldedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ChangesWhenCasefoldedV1Marker>, DataError> {
                 props::cwcf_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1203,13 +1188,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ChangesWhenCasemappedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenCasemappedV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ChangesWhenCasemappedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ChangesWhenCasemappedV1Marker>, DataError> {
                 props::cwcm_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1217,13 +1202,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ChangesWhenCasemappedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ChangesWhenCasemappedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ChangesWhenLowercasedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenLowercasedV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ChangesWhenLowercasedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ChangesWhenLowercasedV1Marker>, DataError> {
                 props::cwl_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1231,13 +1216,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ChangesWhenLowercasedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ChangesWhenLowercasedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker>, DataError> {
                 props::cwkcf_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1245,13 +1230,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ChangesWhenTitlecasedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenTitlecasedV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ChangesWhenTitlecasedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ChangesWhenTitlecasedV1Marker>, DataError> {
                 props::cwt_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1259,13 +1244,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ChangesWhenTitlecasedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ChangesWhenTitlecasedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ChangesWhenUppercasedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenUppercasedV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ChangesWhenUppercasedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ChangesWhenUppercasedV1Marker>, DataError> {
                 props::cwu_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1273,13 +1258,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ChangesWhenUppercasedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ChangesWhenUppercasedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::DashV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::DashV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::DashV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::DashV1Marker>, DataError> {
                 props::dash_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1287,13 +1272,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::DashV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::DashV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::DefaultIgnorableCodePointV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::DefaultIgnorableCodePointV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::DefaultIgnorableCodePointV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::DefaultIgnorableCodePointV1Marker>, DataError> {
                 props::di_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1301,13 +1286,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::DefaultIgnorableCodePointV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::DefaultIgnorableCodePointV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::DeprecatedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::DeprecatedV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::DeprecatedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::DeprecatedV1Marker>, DataError> {
                 props::dep_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1315,13 +1300,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::DeprecatedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::DeprecatedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::DiacriticV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::DiacriticV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::DiacriticV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::DiacriticV1Marker>, DataError> {
                 props::dia_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1329,13 +1314,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::DiacriticV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::DiacriticV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::EastAsianWidthNameToValueV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthNameToValueV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::EastAsianWidthNameToValueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::EastAsianWidthNameToValueV1Marker>, DataError> {
                 propnames::from::ea_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1343,13 +1328,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EastAsianWidthNameToValueV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::EastAsianWidthNameToValueV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::EastAsianWidthV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::EastAsianWidthV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::EastAsianWidthV1Marker>, DataError> {
                 props::ea_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1357,13 +1342,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EastAsianWidthV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::EastAsianWidthV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::EastAsianWidthValueToLongNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthValueToLongNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::EastAsianWidthValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::EastAsianWidthValueToLongNameV1Marker>, DataError> {
                 propnames::to::long::linear::ea_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1371,13 +1356,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EastAsianWidthValueToLongNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::EastAsianWidthValueToLongNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::EastAsianWidthValueToShortNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthValueToShortNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::EastAsianWidthValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::EastAsianWidthValueToShortNameV1Marker>, DataError> {
                 propnames::to::short::linear::ea_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1385,15 +1370,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EastAsianWidthValueToShortNameV1Marker::KEY, req)
-                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::EastAsianWidthValueToShortNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::EmojiComponentV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiComponentV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::EmojiComponentV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::EmojiComponentV1Marker>, DataError> {
                 props::ecomp_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1401,13 +1384,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EmojiComponentV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::EmojiComponentV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::EmojiModifierBaseV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiModifierBaseV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::EmojiModifierBaseV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::EmojiModifierBaseV1Marker>, DataError> {
                 props::ebase_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1415,13 +1398,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EmojiModifierBaseV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::EmojiModifierBaseV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::EmojiModifierV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiModifierV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::EmojiModifierV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::EmojiModifierV1Marker>, DataError> {
                 props::emod_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1429,13 +1412,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EmojiModifierV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::EmojiModifierV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::EmojiPresentationV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiPresentationV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::EmojiPresentationV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::EmojiPresentationV1Marker>, DataError> {
                 props::epres_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1443,13 +1426,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EmojiPresentationV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::EmojiPresentationV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::EmojiV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::EmojiV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::EmojiV1Marker>, DataError> {
                 props::emoji_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1457,13 +1440,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EmojiV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::EmojiV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker>, DataError> {
                 props::exemplarchars::auxiliary_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1471,13 +1454,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ExemplarCharactersIndexV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersIndexV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ExemplarCharactersIndexV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ExemplarCharactersIndexV1Marker>, DataError> {
                 props::exemplarchars::index_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1485,13 +1468,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersIndexV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ExemplarCharactersIndexV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ExemplarCharactersMainV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersMainV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ExemplarCharactersMainV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ExemplarCharactersMainV1Marker>, DataError> {
                 props::exemplarchars::main_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1499,13 +1482,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersMainV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ExemplarCharactersMainV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ExemplarCharactersNumbersV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersNumbersV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ExemplarCharactersNumbersV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ExemplarCharactersNumbersV1Marker>, DataError> {
                 props::exemplarchars::numbers_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1513,13 +1496,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersNumbersV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ExemplarCharactersNumbersV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ExemplarCharactersPunctuationV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersPunctuationV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ExemplarCharactersPunctuationV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ExemplarCharactersPunctuationV1Marker>, DataError> {
                 props::exemplarchars::punctuation_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1527,13 +1510,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersPunctuationV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ExemplarCharactersPunctuationV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ExtendedPictographicV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExtendedPictographicV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ExtendedPictographicV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ExtendedPictographicV1Marker>, DataError> {
                 props::extpict_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1541,13 +1524,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExtendedPictographicV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ExtendedPictographicV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ExtenderV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExtenderV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ExtenderV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ExtenderV1Marker>, DataError> {
                 props::ext_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1555,13 +1538,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExtenderV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ExtenderV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::FullCompositionExclusionV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::FullCompositionExclusionV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::FullCompositionExclusionV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::FullCompositionExclusionV1Marker>, DataError> {
                 props::comp_ex_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1569,13 +1552,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::FullCompositionExclusionV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::FullCompositionExclusionV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GeneralCategoryNameToValueV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryNameToValueV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::GeneralCategoryNameToValueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::GeneralCategoryNameToValueV1Marker>, DataError> {
                 propnames::from::gc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1583,13 +1566,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GeneralCategoryNameToValueV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::GeneralCategoryNameToValueV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GeneralCategoryV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::GeneralCategoryV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::GeneralCategoryV1Marker>, DataError> {
                 props::gc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1597,13 +1580,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GeneralCategoryV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::GeneralCategoryV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GeneralCategoryValueToLongNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryValueToLongNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::GeneralCategoryValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::GeneralCategoryValueToLongNameV1Marker>, DataError> {
                 propnames::to::long::linear::gc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1611,15 +1594,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GeneralCategoryValueToLongNameV1Marker::KEY, req)
-                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::GeneralCategoryValueToLongNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GeneralCategoryValueToShortNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryValueToShortNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::GeneralCategoryValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::GeneralCategoryValueToShortNameV1Marker>, DataError> {
                 propnames::to::short::linear::gc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1627,15 +1608,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GeneralCategoryValueToShortNameV1Marker::KEY, req)
-                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::GeneralCategoryValueToShortNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GraphV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::GraphV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::GraphV1Marker>, DataError> {
                 props::graph_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1643,13 +1622,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::GraphV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GraphemeBaseV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeBaseV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::GraphemeBaseV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::GraphemeBaseV1Marker>, DataError> {
                 props::gr_base_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1657,13 +1636,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeBaseV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::GraphemeBaseV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker>, DataError> {
                 propnames::from::gcb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1671,15 +1650,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker::KEY, req)
-                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GraphemeClusterBreakV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::GraphemeClusterBreakV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::GraphemeClusterBreakV1Marker>, DataError> {
                 props::gcb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1687,16 +1664,16 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeClusterBreakV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::GraphemeClusterBreakV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker> for $provider {
+        impl DataProvider<icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker>, DataError> {
                 propnames::to::long::linear::gcb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1705,17 +1682,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker> for $provider {
+        impl DataProvider<icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker>, DataError> {
                 propnames::to::short::linear::gcb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1724,14 +1701,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GraphemeExtendV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeExtendV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::GraphemeExtendV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::GraphemeExtendV1Marker>, DataError> {
                 props::gr_ext_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1739,13 +1716,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeExtendV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::GraphemeExtendV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::GraphemeLinkV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeLinkV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::GraphemeLinkV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::GraphemeLinkV1Marker>, DataError> {
                 props::gr_link_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1753,13 +1730,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeLinkV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::GraphemeLinkV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::HexDigitV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::HexDigitV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::HexDigitV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::HexDigitV1Marker>, DataError> {
                 props::hex_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1767,13 +1744,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::HexDigitV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::HexDigitV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::HyphenV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::HyphenV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::HyphenV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::HyphenV1Marker>, DataError> {
                 props::hyphen_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1781,13 +1758,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::HyphenV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::HyphenV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::IdContinueV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::IdContinueV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::IdContinueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::IdContinueV1Marker>, DataError> {
                 props::idc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1795,13 +1772,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::IdContinueV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::IdContinueV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::IdStartV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::IdStartV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::IdStartV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::IdStartV1Marker>, DataError> {
                 props::ids_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1809,13 +1786,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::IdStartV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::IdStartV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::IdeographicV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::IdeographicV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::IdeographicV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::IdeographicV1Marker>, DataError> {
                 props::ideo_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1823,13 +1800,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::IdeographicV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::IdeographicV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::IdsBinaryOperatorV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::IdsBinaryOperatorV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::IdsBinaryOperatorV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::IdsBinaryOperatorV1Marker>, DataError> {
                 props::idsb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1837,13 +1814,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::IdsBinaryOperatorV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::IdsBinaryOperatorV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::IdsTrinaryOperatorV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::IdsTrinaryOperatorV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::IdsTrinaryOperatorV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::IdsTrinaryOperatorV1Marker>, DataError> {
                 props::idst_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1851,13 +1828,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::IdsTrinaryOperatorV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::IdsTrinaryOperatorV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::JoinControlV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::JoinControlV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::JoinControlV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::JoinControlV1Marker>, DataError> {
                 props::join_c_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1865,13 +1842,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::JoinControlV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::JoinControlV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::LineBreakNameToValueV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LineBreakNameToValueV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::LineBreakNameToValueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::LineBreakNameToValueV1Marker>, DataError> {
                 propnames::from::lb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1879,13 +1856,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::LineBreakNameToValueV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::LineBreakNameToValueV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::LineBreakV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LineBreakV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::LineBreakV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::LineBreakV1Marker>, DataError> {
                 props::lb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1893,13 +1870,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::LineBreakV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::LineBreakV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::LineBreakValueToLongNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LineBreakValueToLongNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::LineBreakValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::LineBreakValueToLongNameV1Marker>, DataError> {
                 propnames::to::long::linear::lb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1907,13 +1884,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::LineBreakValueToLongNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::LineBreakValueToLongNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::LineBreakValueToShortNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LineBreakValueToShortNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::LineBreakValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::LineBreakValueToShortNameV1Marker>, DataError> {
                 propnames::to::short::linear::lb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1921,13 +1898,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::LineBreakValueToShortNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::LineBreakValueToShortNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::LogicalOrderExceptionV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LogicalOrderExceptionV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::LogicalOrderExceptionV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::LogicalOrderExceptionV1Marker>, DataError> {
                 props::loe_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1935,13 +1912,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::LogicalOrderExceptionV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::LogicalOrderExceptionV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::LowercaseV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LowercaseV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::LowercaseV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::LowercaseV1Marker>, DataError> {
                 props::lower_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1949,13 +1926,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::LowercaseV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::LowercaseV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::MathV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::MathV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::MathV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::MathV1Marker>, DataError> {
                 props::math_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1963,13 +1940,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::MathV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::MathV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::NfcInertV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfcInertV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::NfcInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::NfcInertV1Marker>, DataError> {
                 props::nfcinert_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1977,13 +1954,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::NfcInertV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::NfcInertV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::NfdInertV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfdInertV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::NfdInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::NfdInertV1Marker>, DataError> {
                 props::nfdinert_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -1991,13 +1968,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::NfdInertV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::NfdInertV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::NfkcInertV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfkcInertV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::NfkcInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::NfkcInertV1Marker>, DataError> {
                 props::nfkcinert_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2005,13 +1982,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::NfkcInertV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::NfkcInertV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::NfkdInertV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfkdInertV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::NfkdInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::NfkdInertV1Marker>, DataError> {
                 props::nfkdinert_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2019,13 +1996,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::NfkdInertV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::NfkdInertV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::NoncharacterCodePointV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NoncharacterCodePointV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::NoncharacterCodePointV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::NoncharacterCodePointV1Marker>, DataError> {
                 props::nchar_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2033,13 +2010,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::NoncharacterCodePointV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::NoncharacterCodePointV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::PatternSyntaxV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::PatternSyntaxV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::PatternSyntaxV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::PatternSyntaxV1Marker>, DataError> {
                 props::pat_syn_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2047,13 +2024,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::PatternSyntaxV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::PatternSyntaxV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::PatternWhiteSpaceV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::PatternWhiteSpaceV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::PatternWhiteSpaceV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::PatternWhiteSpaceV1Marker>, DataError> {
                 props::pat_ws_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2061,13 +2038,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::PatternWhiteSpaceV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::PatternWhiteSpaceV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::PrependedConcatenationMarkV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::PrependedConcatenationMarkV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::PrependedConcatenationMarkV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::PrependedConcatenationMarkV1Marker>, DataError> {
                 props::pcm_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2075,13 +2052,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::PrependedConcatenationMarkV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::PrependedConcatenationMarkV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::PrintV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::PrintV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::PrintV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::PrintV1Marker>, DataError> {
                 props::print_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2089,13 +2066,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::PrintV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::PrintV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::QuotationMarkV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::QuotationMarkV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::QuotationMarkV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::QuotationMarkV1Marker>, DataError> {
                 props::qmark_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2103,13 +2080,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::QuotationMarkV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::QuotationMarkV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::RadicalV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::RadicalV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::RadicalV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::RadicalV1Marker>, DataError> {
                 props::radical_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2117,13 +2094,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::RadicalV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::RadicalV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::RegionalIndicatorV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::RegionalIndicatorV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::RegionalIndicatorV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::RegionalIndicatorV1Marker>, DataError> {
                 props::ri_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2131,13 +2108,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::RegionalIndicatorV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::RegionalIndicatorV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ScriptNameToValueV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptNameToValueV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ScriptNameToValueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ScriptNameToValueV1Marker>, DataError> {
                 propnames::from::sc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2145,13 +2122,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ScriptNameToValueV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ScriptNameToValueV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ScriptV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ScriptV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ScriptV1Marker>, DataError> {
                 props::sc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2159,13 +2136,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ScriptV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ScriptV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ScriptValueToLongNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptValueToLongNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ScriptValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ScriptValueToLongNameV1Marker>, DataError> {
                 propnames::to::long::linear::sc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2173,13 +2150,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ScriptValueToLongNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ScriptValueToLongNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ScriptValueToShortNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptValueToShortNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ScriptValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ScriptValueToShortNameV1Marker>, DataError> {
                 propnames::to::short::linear4::sc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2187,13 +2164,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ScriptValueToShortNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ScriptValueToShortNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::ScriptWithExtensionsPropertyV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>, DataError> {
                 props::scx_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2201,13 +2178,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::ScriptWithExtensionsPropertyV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::SegmentStarterV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SegmentStarterV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::SegmentStarterV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::SegmentStarterV1Marker>, DataError> {
                 props::segstart_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2215,13 +2192,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SegmentStarterV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::SegmentStarterV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::SentenceBreakNameToValueV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceBreakNameToValueV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::SentenceBreakNameToValueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::SentenceBreakNameToValueV1Marker>, DataError> {
                 propnames::from::sb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2229,13 +2206,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SentenceBreakNameToValueV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::SentenceBreakNameToValueV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::SentenceBreakV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceBreakV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::SentenceBreakV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::SentenceBreakV1Marker>, DataError> {
                 props::sb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2243,13 +2220,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SentenceBreakV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::SentenceBreakV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::SentenceBreakValueToLongNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceBreakValueToLongNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::SentenceBreakValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::SentenceBreakValueToLongNameV1Marker>, DataError> {
                 propnames::to::long::linear::sb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2257,13 +2234,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SentenceBreakValueToLongNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::SentenceBreakValueToLongNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::SentenceBreakValueToShortNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceBreakValueToShortNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::SentenceBreakValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::SentenceBreakValueToShortNameV1Marker>, DataError> {
                 propnames::to::short::linear::sb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2271,13 +2248,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SentenceBreakValueToShortNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::SentenceBreakValueToShortNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::SentenceTerminalV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceTerminalV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::SentenceTerminalV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::SentenceTerminalV1Marker>, DataError> {
                 props::sterm_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2285,13 +2262,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SentenceTerminalV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::SentenceTerminalV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::SoftDottedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SoftDottedV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::SoftDottedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::SoftDottedV1Marker>, DataError> {
                 props::sd_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2299,13 +2276,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SoftDottedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::SoftDottedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::TerminalPunctuationV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::TerminalPunctuationV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::TerminalPunctuationV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::TerminalPunctuationV1Marker>, DataError> {
                 props::term_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2313,13 +2290,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::TerminalPunctuationV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::TerminalPunctuationV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::UnifiedIdeographV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::UnifiedIdeographV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::UnifiedIdeographV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::UnifiedIdeographV1Marker>, DataError> {
                 props::uideo_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2327,13 +2304,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::UnifiedIdeographV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::UnifiedIdeographV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::UppercaseV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::UppercaseV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::UppercaseV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::UppercaseV1Marker>, DataError> {
                 props::upper_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2341,13 +2318,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::UppercaseV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::UppercaseV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::VariationSelectorV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::VariationSelectorV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::VariationSelectorV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::VariationSelectorV1Marker>, DataError> {
                 props::vs_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2355,13 +2332,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::VariationSelectorV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::VariationSelectorV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::WhiteSpaceV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WhiteSpaceV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::WhiteSpaceV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::WhiteSpaceV1Marker>, DataError> {
                 props::wspace_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2369,13 +2346,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::WhiteSpaceV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::WhiteSpaceV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::WordBreakNameToValueV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WordBreakNameToValueV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::WordBreakNameToValueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::WordBreakNameToValueV1Marker>, DataError> {
                 propnames::from::wb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2383,13 +2360,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::WordBreakNameToValueV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::WordBreakNameToValueV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::WordBreakV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WordBreakV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::WordBreakV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::WordBreakV1Marker>, DataError> {
                 props::wb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2397,13 +2374,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::WordBreakV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::WordBreakV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::WordBreakValueToLongNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WordBreakValueToLongNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::WordBreakValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::WordBreakValueToLongNameV1Marker>, DataError> {
                 propnames::to::long::linear::wb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2411,13 +2388,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::WordBreakValueToLongNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::WordBreakValueToLongNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::WordBreakValueToShortNameV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WordBreakValueToShortNameV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::WordBreakValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::WordBreakValueToShortNameV1Marker>, DataError> {
                 propnames::to::short::linear::wb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2425,13 +2402,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::WordBreakValueToShortNameV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::WordBreakValueToShortNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::XdigitV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::XdigitV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::XdigitV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::XdigitV1Marker>, DataError> {
                 props::xdigit_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2439,13 +2416,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::XdigitV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::XdigitV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::XidContinueV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::XidContinueV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::XidContinueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::XidContinueV1Marker>, DataError> {
                 props::xidc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2453,13 +2430,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::XidContinueV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::XidContinueV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::XidStartV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::XidStartV1Marker>, DataError> {
+        impl DataProvider<icu_properties::provider::XidStartV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_properties::provider::XidStartV1Marker>, DataError> {
                 props::xids_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2467,16 +2444,16 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::XidStartV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_properties::provider::XidStartV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker> for $provider {
+        impl DataProvider<icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker>, DataError> {
                 props::bidiauxiliaryprops_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2485,17 +2462,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_properties")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_properties::provider::names::GeneralCategoryMaskNameToValueV1Marker> for $provider {
+        impl DataProvider<icu_properties::provider::names::GeneralCategoryMaskNameToValueV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_properties::provider::names::GeneralCategoryMaskNameToValueV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_properties::provider::names::GeneralCategoryMaskNameToValueV1Marker>, DataError> {
                 propnames::from::gcm_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2504,13 +2481,13 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::names::GeneralCategoryMaskNameToValueV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_properties::provider::names::GeneralCategoryMaskNameToValueV1Marker::KEY, req)
                     })
             }
         }
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_provider::hello_world::HelloWorldV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_provider::hello_world::HelloWorldV1Marker>, DataError> {
+        impl DataProvider<icu_provider::hello_world::HelloWorldV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_provider::hello_world::HelloWorldV1Marker>, DataError> {
                 core::helloworld_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2518,15 +2495,15 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_provider::hello_world::HelloWorldV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_provider::hello_world::HelloWorldV1Marker::KEY, req))
             }
         }
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker> for $provider {
+        impl DataProvider<icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker>, DataError> {
                 fallback::supplement::co_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2536,18 +2513,18 @@ macro_rules! impl_data_provider {
                     })
                     .ok_or_else(|| {
                         DataErrorKind::MissingLocale.with_req(
-                            ::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker::KEY,
+                            icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker::KEY,
                             req,
                         )
                     })
             }
         }
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker> for $provider {
+        impl DataProvider<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker>, DataError> {
                 fallback::likelysubtags_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2557,18 +2534,18 @@ macro_rules! impl_data_provider {
                     })
                     .ok_or_else(|| {
                         DataErrorKind::MissingLocale.with_req(
-                            ::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY,
+                            icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY,
                             req,
                         )
                     })
             }
         }
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker> for $provider {
+        impl DataProvider<icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker>, DataError> {
                 fallback::parents_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2577,14 +2554,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::LongDayRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_relativetime::provider::LongDayRelativeTimeFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_relativetime::provider::LongDayRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_relativetime::provider::LongDayRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::long::day_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2592,18 +2569,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::LongDayRelativeTimeFormatDataV1Marker::KEY, req)
-                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::LongDayRelativeTimeFormatDataV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::LongHourRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::LongHourRelativeTimeFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_relativetime::provider::LongHourRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_relativetime::provider::LongHourRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::long::hour_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2612,17 +2584,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::LongHourRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::LongHourRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::long::minute_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2631,17 +2603,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::long::month_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2650,17 +2619,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::long::quarter_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2669,17 +2638,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::long::second_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2688,17 +2657,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::long::week_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2707,17 +2673,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::LongYearRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::LongYearRelativeTimeFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_relativetime::provider::LongYearRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_relativetime::provider::LongYearRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::long::year_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2726,17 +2689,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::LongYearRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::LongYearRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::narrow::day_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2745,17 +2705,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::narrow::hour_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2764,17 +2724,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::narrow::minute_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2783,17 +2743,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::narrow::month_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2802,17 +2762,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::narrow::quarter_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2821,17 +2781,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::narrow::second_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2840,17 +2800,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::narrow::week_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2859,17 +2819,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::narrow::year_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2878,17 +2838,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::short::day_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2897,17 +2854,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::short::hour_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2916,17 +2870,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::short::minute_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2935,17 +2889,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::short::month_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2954,17 +2908,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::short::quarter_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2973,17 +2927,17 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker> for $provider {
+        impl DataProvider<icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker> for $provider {
             fn load(
                 &self,
                 req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker>, DataError> {
+            ) -> Result<DataResponse<icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::short::second_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -2992,17 +2946,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::short::week_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -3011,17 +2962,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_relativetime")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<::icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker>, DataError> {
+        impl DataProvider<icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker>, DataError> {
                 relativetime::short::year_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -3030,14 +2978,14 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::KEY, req)
                     })
             }
         }
         #[cfg(feature = "icu_segmenter")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker>, DataError> {
+        impl DataProvider<icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker>, DataError> {
                 segmenter::dictionary::wl_ext_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -3045,13 +2993,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_segmenter")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker>, DataError> {
+        impl DataProvider<icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker>, DataError> {
                 segmenter::dictionary::w_auto_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -3059,13 +3007,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_segmenter")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker>, DataError> {
+        impl DataProvider<icu_segmenter::provider::GraphemeClusterBreakDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_segmenter::provider::GraphemeClusterBreakDataV1Marker>, DataError> {
                 segmenter::grapheme_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -3073,13 +3021,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_segmenter")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_segmenter::provider::LineBreakDataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::LineBreakDataV1Marker>, DataError> {
+        impl DataProvider<icu_segmenter::provider::LineBreakDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_segmenter::provider::LineBreakDataV1Marker>, DataError> {
                 segmenter::line_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -3087,13 +3035,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::LineBreakDataV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_segmenter::provider::LineBreakDataV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_segmenter")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::LstmForWordLineAutoV1Marker>, DataError> {
+        impl DataProvider<icu_segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_segmenter::provider::LstmForWordLineAutoV1Marker>, DataError> {
                 segmenter::lstm::wl_auto_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -3101,13 +3049,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_segmenter")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_segmenter::provider::SentenceBreakDataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::SentenceBreakDataV1Marker>, DataError> {
+        impl DataProvider<icu_segmenter::provider::SentenceBreakDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_segmenter::provider::SentenceBreakDataV1Marker>, DataError> {
                 segmenter::sentence_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -3115,13 +3063,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::SentenceBreakDataV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_segmenter::provider::SentenceBreakDataV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_segmenter")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_segmenter::provider::WordBreakDataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::WordBreakDataV1Marker>, DataError> {
+        impl DataProvider<icu_segmenter::provider::WordBreakDataV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_segmenter::provider::WordBreakDataV1Marker>, DataError> {
                 segmenter::word_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -3129,13 +3077,13 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::WordBreakDataV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_segmenter::provider::WordBreakDataV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_timezone")]
         #[clippy::msrv = "1.61"]
-        impl DataProvider<::icu_timezone::provider::MetazonePeriodV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_timezone::provider::MetazonePeriodV1Marker>, DataError> {
+        impl DataProvider<icu_timezone::provider::MetazonePeriodV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_timezone::provider::MetazonePeriodV1Marker>, DataError> {
                 time_zone::metazone_period_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -3143,7 +3091,7 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_timezone::provider::MetazonePeriodV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_timezone::provider::MetazonePeriodV1Marker::KEY, req))
             }
         }
     };
@@ -3167,528 +3115,515 @@ macro_rules! impl_any_provider {
         impl AnyProvider for $provider {
             fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
                 #[cfg(feature = "icu_calendar")]
-                const JAPANESEERASV1MARKER: ::icu_provider::DataKeyHash = ::icu_calendar::provider::JapaneseErasV1Marker::KEY.hashed();
+                const JAPANESEERASV1MARKER: icu_provider::DataKeyHash = icu_calendar::provider::JapaneseErasV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_calendar")]
-                const JAPANESEEXTENDEDERASV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY.hashed();
+                const JAPANESEEXTENDEDERASV1MARKER: icu_provider::DataKeyHash = icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_calendar")]
-                const WEEKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_calendar::provider::WeekDataV1Marker::KEY.hashed();
+                const WEEKDATAV1MARKER: icu_provider::DataKeyHash = icu_calendar::provider::WeekDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_casemapping")]
-                const CASEMAPPINGV1MARKER: ::icu_provider::DataKeyHash = ::icu_casemapping::provider::CaseMappingV1Marker::KEY.hashed();
+                const CASEMAPPINGV1MARKER: icu_provider::DataKeyHash = icu_casemapping::provider::CaseMappingV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_collator")]
-                const COLLATIONDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationDataV1Marker::KEY.hashed();
+                const COLLATIONDATAV1MARKER: icu_provider::DataKeyHash = icu_collator::provider::CollationDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_collator")]
-                const COLLATIONDIACRITICSV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationDiacriticsV1Marker::KEY.hashed();
+                const COLLATIONDIACRITICSV1MARKER: icu_provider::DataKeyHash = icu_collator::provider::CollationDiacriticsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_collator")]
-                const COLLATIONJAMOV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationJamoV1Marker::KEY.hashed();
+                const COLLATIONJAMOV1MARKER: icu_provider::DataKeyHash = icu_collator::provider::CollationJamoV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_collator")]
-                const COLLATIONMETADATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationMetadataV1Marker::KEY.hashed();
+                const COLLATIONMETADATAV1MARKER: icu_provider::DataKeyHash = icu_collator::provider::CollationMetadataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_collator")]
-                const COLLATIONREORDERINGV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationReorderingV1Marker::KEY.hashed();
+                const COLLATIONREORDERINGV1MARKER: icu_provider::DataKeyHash = icu_collator::provider::CollationReorderingV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_collator")]
-                const COLLATIONSPECIALPRIMARIESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY.hashed();
+                const COLLATIONSPECIALPRIMARIESV1MARKER: icu_provider::DataKeyHash =
+                    icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_compactdecimal")]
-                const LONGCOMPACTDECIMALFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY.hashed();
+                const LONGCOMPACTDECIMALFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_compactdecimal")]
-                const SHORTCOMPACTDECIMALFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY.hashed();
+                const SHORTCOMPACTDECIMALFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const BUDDHISTDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker::KEY.hashed();
+                const BUDDHISTDATELENGTHSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const BUDDHISTDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker::KEY.hashed();
+                const BUDDHISTDATESYMBOLSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const COPTICDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::CopticDateLengthsV1Marker::KEY.hashed();
+                const COPTICDATELENGTHSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::CopticDateLengthsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const COPTICDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY.hashed();
+                const COPTICDATESYMBOLSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime_experimental")]
-                const DATESKELETONPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.hashed();
+                const DATESKELETONPATTERNSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const ETHIOPIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker::KEY.hashed();
+                const ETHIOPIANDATELENGTHSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const ETHIOPIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker::KEY.hashed();
+                const ETHIOPIANDATESYMBOLSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const GREGORIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY.hashed();
+                const GREGORIANDATELENGTHSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const GREGORIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY.hashed();
+                const GREGORIANDATESYMBOLSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const INDIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::IndianDateLengthsV1Marker::KEY.hashed();
+                const INDIANDATELENGTHSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::IndianDateLengthsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const INDIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker::KEY.hashed();
+                const INDIANDATESYMBOLSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::IndianDateSymbolsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const JAPANESEDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker::KEY.hashed();
+                const JAPANESEDATELENGTHSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const JAPANESEDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker::KEY.hashed();
+                const JAPANESEDATESYMBOLSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const JAPANESEEXTENDEDDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker::KEY.hashed();
+                const JAPANESEEXTENDEDDATELENGTHSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const JAPANESEEXTENDEDDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker::KEY.hashed();
+                const JAPANESEEXTENDEDDATESYMBOLSV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const TIMELENGTHSV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY.hashed();
+                const TIMELENGTHSV1MARKER: icu_provider::DataKeyHash = icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const TIMESYMBOLSV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY.hashed();
+                const TIMESYMBOLSV1MARKER: icu_provider::DataKeyHash = icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const EXEMPLARCITIESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY.hashed();
+                const EXEMPLARCITIESV1MARKER: icu_provider::DataKeyHash = icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const METAZONEGENERICNAMESLONGV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker::KEY.hashed();
+                const METAZONEGENERICNAMESLONGV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const METAZONEGENERICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker::KEY.hashed();
+                const METAZONEGENERICNAMESSHORTV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const METAZONESPECIFICNAMESLONGV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker::KEY.hashed();
+                const METAZONESPECIFICNAMESLONGV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const METAZONESPECIFICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker::KEY.hashed();
+                const METAZONESPECIFICNAMESSHORTV1MARKER: icu_provider::DataKeyHash =
+                    icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
-                const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.hashed();
+                const TIMEZONEFORMATSV1MARKER: icu_provider::DataKeyHash = icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_decimal")]
-                const DECIMALSYMBOLSV1MARKER: ::icu_provider::DataKeyHash = ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.hashed();
+                const DECIMALSYMBOLSV1MARKER: icu_provider::DataKeyHash = icu_decimal::provider::DecimalSymbolsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_displaynames")]
-                const LANGUAGEDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_displaynames::provider::LanguageDisplayNamesV1Marker::KEY.hashed();
+                const LANGUAGEDISPLAYNAMESV1MARKER: icu_provider::DataKeyHash =
+                    icu_displaynames::provider::LanguageDisplayNamesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_displaynames")]
-                const LOCALEDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_displaynames::provider::LocaleDisplayNamesV1Marker::KEY.hashed();
+                const LOCALEDISPLAYNAMESV1MARKER: icu_provider::DataKeyHash = icu_displaynames::provider::LocaleDisplayNamesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_displaynames")]
-                const REGIONDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_displaynames::provider::RegionDisplayNamesV1Marker::KEY.hashed();
+                const REGIONDISPLAYNAMESV1MARKER: icu_provider::DataKeyHash = icu_displaynames::provider::RegionDisplayNamesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_displaynames")]
-                const SCRIPTDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_displaynames::provider::ScriptDisplayNamesV1Marker::KEY.hashed();
+                const SCRIPTDISPLAYNAMESV1MARKER: icu_provider::DataKeyHash = icu_displaynames::provider::ScriptDisplayNamesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_displaynames")]
-                const VARIANTDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_displaynames::provider::VariantDisplayNamesV1Marker::KEY.hashed();
+                const VARIANTDISPLAYNAMESV1MARKER: icu_provider::DataKeyHash = icu_displaynames::provider::VariantDisplayNamesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_list")]
-                const ANDLISTV1MARKER: ::icu_provider::DataKeyHash = ::icu_list::provider::AndListV1Marker::KEY.hashed();
+                const ANDLISTV1MARKER: icu_provider::DataKeyHash = icu_list::provider::AndListV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_list")]
-                const ORLISTV1MARKER: ::icu_provider::DataKeyHash = ::icu_list::provider::OrListV1Marker::KEY.hashed();
+                const ORLISTV1MARKER: icu_provider::DataKeyHash = icu_list::provider::OrListV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_list")]
-                const UNITLISTV1MARKER: ::icu_provider::DataKeyHash = ::icu_list::provider::UnitListV1Marker::KEY.hashed();
+                const UNITLISTV1MARKER: icu_provider::DataKeyHash = icu_list::provider::UnitListV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_locid_transform")]
-                const ALIASESV1MARKER: ::icu_provider::DataKeyHash = ::icu_locid_transform::provider::AliasesV1Marker::KEY.hashed();
+                const ALIASESV1MARKER: icu_provider::DataKeyHash = icu_locid_transform::provider::AliasesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_locid_transform")]
-                const LIKELYSUBTAGSEXTENDEDV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_locid_transform::provider::LikelySubtagsExtendedV1Marker::KEY.hashed();
+                const LIKELYSUBTAGSEXTENDEDV1MARKER: icu_provider::DataKeyHash =
+                    icu_locid_transform::provider::LikelySubtagsExtendedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_locid_transform")]
-                const LIKELYSUBTAGSFORLANGUAGEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker::KEY.hashed();
+                const LIKELYSUBTAGSFORLANGUAGEV1MARKER: icu_provider::DataKeyHash =
+                    icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_locid_transform")]
-                const LIKELYSUBTAGSFORSCRIPTREGIONV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker::KEY.hashed();
+                const LIKELYSUBTAGSFORSCRIPTREGIONV1MARKER: icu_provider::DataKeyHash =
+                    icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_locid_transform")]
-                const LIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash = ::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY.hashed();
+                const LIKELYSUBTAGSV1MARKER: icu_provider::DataKeyHash = icu_locid_transform::provider::LikelySubtagsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
-                const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY.hashed();
+                const CANONICALCOMPOSITIONSV1MARKER: icu_provider::DataKeyHash =
+                    icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
-                const CANONICALDECOMPOSITIONDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY.hashed();
+                const CANONICALDECOMPOSITIONDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
-                const CANONICALDECOMPOSITIONTABLESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY.hashed();
+                const CANONICALDECOMPOSITIONTABLESV1MARKER: icu_provider::DataKeyHash =
+                    icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
-                const COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY.hashed();
+                const COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER: icu_provider::DataKeyHash =
+                    icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
-                const COMPATIBILITYDECOMPOSITIONTABLESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY.hashed();
+                const COMPATIBILITYDECOMPOSITIONTABLESV1MARKER: icu_provider::DataKeyHash =
+                    icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
-                const NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY.hashed();
+                const NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER: icu_provider::DataKeyHash =
+                    icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
-                const UTS46DECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY.hashed();
+                const UTS46DECOMPOSITIONSUPPLEMENTV1MARKER: icu_provider::DataKeyHash =
+                    icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_plurals")]
-                const CARDINALV1MARKER: ::icu_provider::DataKeyHash = ::icu_plurals::provider::CardinalV1Marker::KEY.hashed();
+                const CARDINALV1MARKER: icu_provider::DataKeyHash = icu_plurals::provider::CardinalV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_plurals")]
-                const ORDINALV1MARKER: ::icu_provider::DataKeyHash = ::icu_plurals::provider::OrdinalV1Marker::KEY.hashed();
+                const ORDINALV1MARKER: icu_provider::DataKeyHash = icu_plurals::provider::OrdinalV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const ALNUMV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::AlnumV1Marker::KEY.hashed();
+                const ALNUMV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::AlnumV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const ALPHABETICV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::AlphabeticV1Marker::KEY.hashed();
+                const ALPHABETICV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::AlphabeticV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const ASCIIHEXDIGITV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::AsciiHexDigitV1Marker::KEY.hashed();
+                const ASCIIHEXDIGITV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::AsciiHexDigitV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const BASICEMOJIV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BasicEmojiV1Marker::KEY.hashed();
+                const BASICEMOJIV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::BasicEmojiV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const BIDICLASSNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::BidiClassNameToValueV1Marker::KEY.hashed();
+                const BIDICLASSNAMETOVALUEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::BidiClassNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const BIDICLASSV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BidiClassV1Marker::KEY.hashed();
+                const BIDICLASSV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::BidiClassV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const BIDICLASSVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::BidiClassValueToLongNameV1Marker::KEY.hashed();
+                const BIDICLASSVALUETOLONGNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::BidiClassValueToLongNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const BIDICLASSVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::BidiClassValueToShortNameV1Marker::KEY.hashed();
+                const BIDICLASSVALUETOSHORTNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::BidiClassValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const BIDICONTROLV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BidiControlV1Marker::KEY.hashed();
+                const BIDICONTROLV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::BidiControlV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const BIDIMIRROREDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BidiMirroredV1Marker::KEY.hashed();
+                const BIDIMIRROREDV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::BidiMirroredV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const BLANKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BlankV1Marker::KEY.hashed();
+                const BLANKV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::BlankV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CANONICALCOMBININGCLASSNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::CanonicalCombiningClassNameToValueV1Marker::KEY.hashed();
+                const CANONICALCOMBININGCLASSNAMETOVALUEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::CanonicalCombiningClassNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CANONICALCOMBININGCLASSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::CanonicalCombiningClassV1Marker::KEY.hashed();
+                const CANONICALCOMBININGCLASSV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::CanonicalCombiningClassV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CANONICALCOMBININGCLASSVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker::KEY.hashed();
+                const CANONICALCOMBININGCLASSVALUETOLONGNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CANONICALCOMBININGCLASSVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker::KEY.hashed();
+                const CANONICALCOMBININGCLASSVALUETOSHORTNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CASEIGNORABLEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CaseIgnorableV1Marker::KEY.hashed();
+                const CASEIGNORABLEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::CaseIgnorableV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CASESENSITIVEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CaseSensitiveV1Marker::KEY.hashed();
+                const CASESENSITIVEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::CaseSensitiveV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CASEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CasedV1Marker::KEY.hashed();
+                const CASEDV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::CasedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CHANGESWHENCASEFOLDEDV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY.hashed();
+                const CHANGESWHENCASEFOLDEDV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CHANGESWHENCASEMAPPEDV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ChangesWhenCasemappedV1Marker::KEY.hashed();
+                const CHANGESWHENCASEMAPPEDV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ChangesWhenCasemappedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CHANGESWHENLOWERCASEDV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ChangesWhenLowercasedV1Marker::KEY.hashed();
+                const CHANGESWHENLOWERCASEDV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ChangesWhenLowercasedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CHANGESWHENNFKCCASEFOLDEDV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker::KEY.hashed();
+                const CHANGESWHENNFKCCASEFOLDEDV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CHANGESWHENTITLECASEDV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ChangesWhenTitlecasedV1Marker::KEY.hashed();
+                const CHANGESWHENTITLECASEDV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ChangesWhenTitlecasedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const CHANGESWHENUPPERCASEDV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ChangesWhenUppercasedV1Marker::KEY.hashed();
+                const CHANGESWHENUPPERCASEDV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ChangesWhenUppercasedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const DASHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::DashV1Marker::KEY.hashed();
+                const DASHV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::DashV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const DEFAULTIGNORABLECODEPOINTV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::DefaultIgnorableCodePointV1Marker::KEY.hashed();
+                const DEFAULTIGNORABLECODEPOINTV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::DefaultIgnorableCodePointV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const DEPRECATEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::DeprecatedV1Marker::KEY.hashed();
+                const DEPRECATEDV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::DeprecatedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const DIACRITICV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::DiacriticV1Marker::KEY.hashed();
+                const DIACRITICV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::DiacriticV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EASTASIANWIDTHNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::EastAsianWidthNameToValueV1Marker::KEY.hashed();
+                const EASTASIANWIDTHNAMETOVALUEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::EastAsianWidthNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EASTASIANWIDTHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EastAsianWidthV1Marker::KEY.hashed();
+                const EASTASIANWIDTHV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::EastAsianWidthV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EASTASIANWIDTHVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::EastAsianWidthValueToLongNameV1Marker::KEY.hashed();
+                const EASTASIANWIDTHVALUETOLONGNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::EastAsianWidthValueToLongNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EASTASIANWIDTHVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::EastAsianWidthValueToShortNameV1Marker::KEY.hashed();
+                const EASTASIANWIDTHVALUETOSHORTNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::EastAsianWidthValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EMOJICOMPONENTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiComponentV1Marker::KEY.hashed();
+                const EMOJICOMPONENTV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::EmojiComponentV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EMOJIMODIFIERBASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiModifierBaseV1Marker::KEY.hashed();
+                const EMOJIMODIFIERBASEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::EmojiModifierBaseV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EMOJIMODIFIERV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiModifierV1Marker::KEY.hashed();
+                const EMOJIMODIFIERV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::EmojiModifierV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EMOJIPRESENTATIONV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiPresentationV1Marker::KEY.hashed();
+                const EMOJIPRESENTATIONV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::EmojiPresentationV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EMOJIV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiV1Marker::KEY.hashed();
+                const EMOJIV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::EmojiV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EXEMPLARCHARACTERSAUXILIARYV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker::KEY.hashed();
+                const EXEMPLARCHARACTERSAUXILIARYV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EXEMPLARCHARACTERSINDEXV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ExemplarCharactersIndexV1Marker::KEY.hashed();
+                const EXEMPLARCHARACTERSINDEXV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ExemplarCharactersIndexV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EXEMPLARCHARACTERSMAINV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ExemplarCharactersMainV1Marker::KEY.hashed();
+                const EXEMPLARCHARACTERSMAINV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ExemplarCharactersMainV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EXEMPLARCHARACTERSNUMBERSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ExemplarCharactersNumbersV1Marker::KEY.hashed();
+                const EXEMPLARCHARACTERSNUMBERSV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ExemplarCharactersNumbersV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EXEMPLARCHARACTERSPUNCTUATIONV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ExemplarCharactersPunctuationV1Marker::KEY.hashed();
+                const EXEMPLARCHARACTERSPUNCTUATIONV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ExemplarCharactersPunctuationV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EXTENDEDPICTOGRAPHICV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ExtendedPictographicV1Marker::KEY.hashed();
+                const EXTENDEDPICTOGRAPHICV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::ExtendedPictographicV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const EXTENDERV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ExtenderV1Marker::KEY.hashed();
+                const EXTENDERV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::ExtenderV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const FULLCOMPOSITIONEXCLUSIONV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::FullCompositionExclusionV1Marker::KEY.hashed();
+                const FULLCOMPOSITIONEXCLUSIONV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::FullCompositionExclusionV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GENERALCATEGORYNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::GeneralCategoryNameToValueV1Marker::KEY.hashed();
+                const GENERALCATEGORYNAMETOVALUEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::GeneralCategoryNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GENERALCATEGORYV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GeneralCategoryV1Marker::KEY.hashed();
+                const GENERALCATEGORYV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::GeneralCategoryV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GENERALCATEGORYVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::GeneralCategoryValueToLongNameV1Marker::KEY.hashed();
+                const GENERALCATEGORYVALUETOLONGNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::GeneralCategoryValueToLongNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GENERALCATEGORYVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::GeneralCategoryValueToShortNameV1Marker::KEY.hashed();
+                const GENERALCATEGORYVALUETOSHORTNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::GeneralCategoryValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GRAPHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphV1Marker::KEY.hashed();
+                const GRAPHV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::GraphV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GRAPHEMEBASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeBaseV1Marker::KEY.hashed();
+                const GRAPHEMEBASEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::GraphemeBaseV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GRAPHEMECLUSTERBREAKNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker::KEY.hashed();
+                const GRAPHEMECLUSTERBREAKNAMETOVALUEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GRAPHEMECLUSTERBREAKV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::GraphemeClusterBreakV1Marker::KEY.hashed();
+                const GRAPHEMECLUSTERBREAKV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::GraphemeClusterBreakV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GRAPHEMECLUSTERBREAKVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker::KEY.hashed();
+                const GRAPHEMECLUSTERBREAKVALUETOLONGNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GRAPHEMECLUSTERBREAKVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker::KEY.hashed();
+                const GRAPHEMECLUSTERBREAKVALUETOSHORTNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GRAPHEMEEXTENDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeExtendV1Marker::KEY.hashed();
+                const GRAPHEMEEXTENDV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::GraphemeExtendV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GRAPHEMELINKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeLinkV1Marker::KEY.hashed();
+                const GRAPHEMELINKV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::GraphemeLinkV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const HEXDIGITV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::HexDigitV1Marker::KEY.hashed();
+                const HEXDIGITV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::HexDigitV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const HYPHENV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::HyphenV1Marker::KEY.hashed();
+                const HYPHENV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::HyphenV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const IDCONTINUEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdContinueV1Marker::KEY.hashed();
+                const IDCONTINUEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::IdContinueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const IDSTARTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdStartV1Marker::KEY.hashed();
+                const IDSTARTV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::IdStartV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const IDEOGRAPHICV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdeographicV1Marker::KEY.hashed();
+                const IDEOGRAPHICV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::IdeographicV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const IDSBINARYOPERATORV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdsBinaryOperatorV1Marker::KEY.hashed();
+                const IDSBINARYOPERATORV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::IdsBinaryOperatorV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const IDSTRINARYOPERATORV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdsTrinaryOperatorV1Marker::KEY.hashed();
+                const IDSTRINARYOPERATORV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::IdsTrinaryOperatorV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const JOINCONTROLV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::JoinControlV1Marker::KEY.hashed();
+                const JOINCONTROLV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::JoinControlV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const LINEBREAKNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::LineBreakNameToValueV1Marker::KEY.hashed();
+                const LINEBREAKNAMETOVALUEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::LineBreakNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const LINEBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::LineBreakV1Marker::KEY.hashed();
+                const LINEBREAKV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::LineBreakV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const LINEBREAKVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::LineBreakValueToLongNameV1Marker::KEY.hashed();
+                const LINEBREAKVALUETOLONGNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::LineBreakValueToLongNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const LINEBREAKVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::LineBreakValueToShortNameV1Marker::KEY.hashed();
+                const LINEBREAKVALUETOSHORTNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::LineBreakValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const LOGICALORDEREXCEPTIONV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::LogicalOrderExceptionV1Marker::KEY.hashed();
+                const LOGICALORDEREXCEPTIONV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::LogicalOrderExceptionV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const LOWERCASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::LowercaseV1Marker::KEY.hashed();
+                const LOWERCASEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::LowercaseV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const MATHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::MathV1Marker::KEY.hashed();
+                const MATHV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::MathV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const NFCINERTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::NfcInertV1Marker::KEY.hashed();
+                const NFCINERTV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::NfcInertV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const NFDINERTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::NfdInertV1Marker::KEY.hashed();
+                const NFDINERTV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::NfdInertV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const NFKCINERTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::NfkcInertV1Marker::KEY.hashed();
+                const NFKCINERTV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::NfkcInertV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const NFKDINERTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::NfkdInertV1Marker::KEY.hashed();
+                const NFKDINERTV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::NfkdInertV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const NONCHARACTERCODEPOINTV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::NoncharacterCodePointV1Marker::KEY.hashed();
+                const NONCHARACTERCODEPOINTV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::NoncharacterCodePointV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const PATTERNSYNTAXV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::PatternSyntaxV1Marker::KEY.hashed();
+                const PATTERNSYNTAXV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::PatternSyntaxV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const PATTERNWHITESPACEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::PatternWhiteSpaceV1Marker::KEY.hashed();
+                const PATTERNWHITESPACEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::PatternWhiteSpaceV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const PREPENDEDCONCATENATIONMARKV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::PrependedConcatenationMarkV1Marker::KEY.hashed();
+                const PREPENDEDCONCATENATIONMARKV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::PrependedConcatenationMarkV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const PRINTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::PrintV1Marker::KEY.hashed();
+                const PRINTV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::PrintV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const QUOTATIONMARKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::QuotationMarkV1Marker::KEY.hashed();
+                const QUOTATIONMARKV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::QuotationMarkV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const RADICALV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::RadicalV1Marker::KEY.hashed();
+                const RADICALV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::RadicalV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const REGIONALINDICATORV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::RegionalIndicatorV1Marker::KEY.hashed();
+                const REGIONALINDICATORV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::RegionalIndicatorV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SCRIPTNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ScriptNameToValueV1Marker::KEY.hashed();
+                const SCRIPTNAMETOVALUEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::ScriptNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SCRIPTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ScriptV1Marker::KEY.hashed();
+                const SCRIPTV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::ScriptV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SCRIPTVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ScriptValueToLongNameV1Marker::KEY.hashed();
+                const SCRIPTVALUETOLONGNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ScriptValueToLongNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SCRIPTVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ScriptValueToShortNameV1Marker::KEY.hashed();
+                const SCRIPTVALUETOSHORTNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ScriptValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SCRIPTWITHEXTENSIONSPROPERTYV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker::KEY.hashed();
+                const SCRIPTWITHEXTENSIONSPROPERTYV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::ScriptWithExtensionsPropertyV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SEGMENTSTARTERV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SegmentStarterV1Marker::KEY.hashed();
+                const SEGMENTSTARTERV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::SegmentStarterV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SENTENCEBREAKNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::SentenceBreakNameToValueV1Marker::KEY.hashed();
+                const SENTENCEBREAKNAMETOVALUEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::SentenceBreakNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SENTENCEBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SentenceBreakV1Marker::KEY.hashed();
+                const SENTENCEBREAKV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::SentenceBreakV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SENTENCEBREAKVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::SentenceBreakValueToLongNameV1Marker::KEY.hashed();
+                const SENTENCEBREAKVALUETOLONGNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::SentenceBreakValueToLongNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SENTENCEBREAKVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::SentenceBreakValueToShortNameV1Marker::KEY.hashed();
+                const SENTENCEBREAKVALUETOSHORTNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::SentenceBreakValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SENTENCETERMINALV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SentenceTerminalV1Marker::KEY.hashed();
+                const SENTENCETERMINALV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::SentenceTerminalV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const SOFTDOTTEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SoftDottedV1Marker::KEY.hashed();
+                const SOFTDOTTEDV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::SoftDottedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const TERMINALPUNCTUATIONV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::TerminalPunctuationV1Marker::KEY.hashed();
+                const TERMINALPUNCTUATIONV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::TerminalPunctuationV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const UNIFIEDIDEOGRAPHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::UnifiedIdeographV1Marker::KEY.hashed();
+                const UNIFIEDIDEOGRAPHV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::UnifiedIdeographV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const UPPERCASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::UppercaseV1Marker::KEY.hashed();
+                const UPPERCASEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::UppercaseV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const VARIATIONSELECTORV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::VariationSelectorV1Marker::KEY.hashed();
+                const VARIATIONSELECTORV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::VariationSelectorV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const WHITESPACEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::WhiteSpaceV1Marker::KEY.hashed();
+                const WHITESPACEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::WhiteSpaceV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const WORDBREAKNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::WordBreakNameToValueV1Marker::KEY.hashed();
+                const WORDBREAKNAMETOVALUEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::WordBreakNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const WORDBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::WordBreakV1Marker::KEY.hashed();
+                const WORDBREAKV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::WordBreakV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const WORDBREAKVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::WordBreakValueToLongNameV1Marker::KEY.hashed();
+                const WORDBREAKVALUETOLONGNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::WordBreakValueToLongNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const WORDBREAKVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::WordBreakValueToShortNameV1Marker::KEY.hashed();
+                const WORDBREAKVALUETOSHORTNAMEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::WordBreakValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const XDIGITV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::XdigitV1Marker::KEY.hashed();
+                const XDIGITV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::XdigitV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const XIDCONTINUEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::XidContinueV1Marker::KEY.hashed();
+                const XIDCONTINUEV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::XidContinueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const XIDSTARTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::XidStartV1Marker::KEY.hashed();
+                const XIDSTARTV1MARKER: icu_provider::DataKeyHash = icu_properties::provider::XidStartV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const BIDIAUXILIARYPROPERTIESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker::KEY.hashed();
+                const BIDIAUXILIARYPROPERTIESV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
-                const GENERALCATEGORYMASKNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_properties::provider::names::GeneralCategoryMaskNameToValueV1Marker::KEY.hashed();
-                const HELLOWORLDV1MARKER: ::icu_provider::DataKeyHash = ::icu_provider::hello_world::HelloWorldV1Marker::KEY.hashed();
-                const COLLATIONFALLBACKSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker::KEY.hashed();
-                const LOCALEFALLBACKLIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY.hashed();
-                const LOCALEFALLBACKPARENTSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY.hashed();
+                const GENERALCATEGORYMASKNAMETOVALUEV1MARKER: icu_provider::DataKeyHash =
+                    icu_properties::provider::names::GeneralCategoryMaskNameToValueV1Marker::KEY.hashed();
+                const HELLOWORLDV1MARKER: icu_provider::DataKeyHash = icu_provider::hello_world::HelloWorldV1Marker::KEY.hashed();
+                const COLLATIONFALLBACKSUPPLEMENTV1MARKER: icu_provider::DataKeyHash =
+                    icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker::KEY.hashed();
+                const LOCALEFALLBACKLIKELYSUBTAGSV1MARKER: icu_provider::DataKeyHash =
+                    icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY.hashed();
+                const LOCALEFALLBACKPARENTSV1MARKER: icu_provider::DataKeyHash =
+                    icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const LONGDAYRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::LongDayRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const LONGDAYRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::LongDayRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const LONGHOURRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::LongHourRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const LONGHOURRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::LongHourRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const LONGMINUTERELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const LONGMINUTERELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const LONGMONTHRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const LONGMONTHRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const LONGQUARTERRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const LONGQUARTERRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const LONGSECONDRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const LONGSECONDRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const LONGWEEKRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const LONGWEEKRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const LONGYEARRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::LongYearRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const LONGYEARRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::LongYearRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const NARROWDAYRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const NARROWDAYRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const NARROWHOURRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const NARROWHOURRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const NARROWMINUTERELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const NARROWMINUTERELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const NARROWMONTHRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const NARROWMONTHRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const NARROWQUARTERRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const NARROWQUARTERRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const NARROWSECONDRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const NARROWSECONDRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const NARROWWEEKRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const NARROWWEEKRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const NARROWYEARRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const NARROWYEARRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const SHORTDAYRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const SHORTDAYRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const SHORTHOURRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const SHORTHOURRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const SHORTMINUTERELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const SHORTMINUTERELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const SHORTMONTHRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const SHORTMONTHRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const SHORTQUARTERRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const SHORTQUARTERRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const SHORTSECONDRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const SHORTSECONDRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const SHORTWEEKRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const SHORTWEEKRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_relativetime")]
-                const SHORTYEARRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::KEY.hashed();
+                const SHORTYEARRELATIVETIMEFORMATDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
-                const DICTIONARYFORWORDLINEEXTENDEDV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY.hashed();
+                const DICTIONARYFORWORDLINEEXTENDEDV1MARKER: icu_provider::DataKeyHash =
+                    icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
-                const DICTIONARYFORWORDONLYAUTOV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY.hashed();
+                const DICTIONARYFORWORDONLYAUTOV1MARKER: icu_provider::DataKeyHash =
+                    icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
-                const GRAPHEMECLUSTERBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY.hashed();
+                const GRAPHEMECLUSTERBREAKDATAV1MARKER: icu_provider::DataKeyHash =
+                    icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
-                const LINEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::LineBreakDataV1Marker::KEY.hashed();
+                const LINEBREAKDATAV1MARKER: icu_provider::DataKeyHash = icu_segmenter::provider::LineBreakDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
-                const LSTMFORWORDLINEAUTOV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY.hashed();
+                const LSTMFORWORDLINEAUTOV1MARKER: icu_provider::DataKeyHash = icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
-                const SENTENCEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::SentenceBreakDataV1Marker::KEY.hashed();
+                const SENTENCEBREAKDATAV1MARKER: icu_provider::DataKeyHash = icu_segmenter::provider::SentenceBreakDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
-                const WORDBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::WordBreakDataV1Marker::KEY.hashed();
+                const WORDBREAKDATAV1MARKER: icu_provider::DataKeyHash = icu_segmenter::provider::WordBreakDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_timezone")]
-                const METAZONEPERIODV1MARKER: ::icu_provider::DataKeyHash = ::icu_timezone::provider::MetazonePeriodV1Marker::KEY.hashed();
+                const METAZONEPERIODV1MARKER: icu_provider::DataKeyHash = icu_timezone::provider::MetazonePeriodV1Marker::KEY.hashed();
                 match key.hashed() {
                     #[cfg(feature = "icu_calendar")]
                     JAPANESEERASV1MARKER => calendar::japanese_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
@@ -3723,10 +3658,7 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_datetime")]
                     COPTICDATESYMBOLSV1MARKER => datetime::coptic::datesymbols_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime_experimental")]
-                    DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1::lookup(&req.locale)
-                        .map(zerofrom::ZeroFrom::zero_from)
-                        .map(DataPayload::<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>::from_owned)
-                        .map(DataPayload::wrap_into_any_payload),
+                    DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
                     ETHIOPIANDATELENGTHSV1MARKER => datetime::ethiopic::datelengths_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]

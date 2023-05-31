@@ -1,4 +1,4 @@
-::icu_plurals::provider::PluralRulesV1 {
+icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: None,
     two: None,
