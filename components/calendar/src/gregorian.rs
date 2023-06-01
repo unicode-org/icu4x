@@ -364,6 +364,16 @@ mod tests {
                 expected_day: 1,
             },
             TestCase {
+                fixed_date: -366,
+                iso_year: -1,
+                iso_month: 12,
+                iso_day: 31,
+                expected_year: 2,
+                expected_era: Era(tinystr!(16, "bce")),
+                expected_month: 12,
+                expected_day: 31,
+            },
+            TestCase {
                 fixed_date: -1461,
                 iso_year: -4,
                 iso_month: 12,
