@@ -268,20 +268,10 @@ mod tests {
             Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day)
                 .expect("Failed to initialize ISO date for {case:?}");
         let greg_date_man: Date<Gregorian> = Date::new_from_iso(iso_date_man, Gregorian);
-        assert_eq!(greg_date_man.year().number, case.expected_year,
-            "Failed year check from ISO: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}");
-        assert_eq!(
-            greg_date_man.year().era,
-            case.expected_era,
-            "Failed era check from ISO: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}"
-        );
-        assert_eq!(greg_date_man.month().ordinal, case.expected_month,
-            "Failed month check from ISO: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}");
-        assert_eq!(
-            greg_date_man.day_of_month().0,
-            case.expected_day,
-            "Failed day check from ISO: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}"
-        );
+        assert_eq!(iso_from_fixed, iso_date_man,
+            "ISO from fixed not equal to ISO generated from manually-input ymd\nCase: {case:?}\nFixed: {iso_from_fixed:?}\nMan: {iso_date_man:?}");
+        assert_eq!(greg_date_from_fixed, greg_date_man,
+            "Greg. date from fixed not equal to Greg. generated from manually-input ymd\nCase: {case:?}\nFixed: {greg_date_from_fixed:?}\nMan: {greg_date_man:?}");
     }
 
     #[test]
