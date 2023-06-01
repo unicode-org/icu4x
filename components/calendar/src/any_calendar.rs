@@ -91,6 +91,7 @@ pub enum AnyCalendar {
     Iso(Iso),
 }
 
+// TODO(#3469): Decide on the best way to implement Ord.
 /// The inner date type for [`AnyCalendar`]
 #[derive(Clone, PartialEq, Eq, Debug)]
 #[non_exhaustive]
