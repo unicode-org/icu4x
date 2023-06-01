@@ -528,7 +528,7 @@ impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{date, types::IsoWeekday};
+    use crate::types::IsoWeekday;
 
     #[test]
     fn iso_overflow() {
@@ -539,12 +539,49 @@ mod test {
             day: u8,
             fixed: i32,
             saturating: bool,
-        };
+        }
 
-        //Calculates the max possible year representable using i32::MAX as the fixed date
+        // Calculates the max possible year representable using i32::MAX as the fixed date
         let max_year = Iso::iso_from_fixed(i32::MAX).year().number;
 
+        /*
+        Calculates the minimum possible year representable using i32::MIN as the fixed date
+        Cannot be tested yet due to hard coded date not being available yet (Line 436)
+        let min_year = Iso::iso_from_fixed(i32::MIN).year().number;
+        */
+
         let cases = [
+            /*
+            TestCase {
+                // Earliest date that can be represented before causing a minimum overflow
+                year: min_year,
+                month: 1,
+                day: 1,
+                fixed: i32::MIN,
+                saturating: false,
+            },
+            TestCase {
+                year: min_year - 1,
+                month: 12,
+                day: 31,
+                fixed: i32::MIN,
+                saturating: true,
+            },
+            TestCase {
+                year: min_year - 1,
+                month: 12,
+                day: 30,
+                fixed: i32::MIN + 1,
+                saturating: true,
+            },
+            TestCase {
+                year: min_year - 1,
+                month: 12,
+                day: 1,
+                fixed: i32::MIN + 30,
+                saturating: true,
+            },
+            */
             TestCase {
                 year: max_year,
                 month: 6,
@@ -567,7 +604,7 @@ mod test {
                 saturating: false,
             },
             TestCase {
-                // Latest date that can be represented before causing overflow
+                // Latest date that can be represented before causing a maximum overflow
                 year: max_year,
                 month: 7,
                 day: 11,
@@ -585,6 +622,13 @@ mod test {
                 year: max_year,
                 month: 8,
                 day: 11,
+                fixed: i32::MAX,
+                saturating: true,
+            },
+            TestCase {
+                year: max_year,
+                month: 12,
+                day: 31,
                 fixed: i32::MAX,
                 saturating: true,
             },
