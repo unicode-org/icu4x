@@ -163,7 +163,7 @@ impl Date<Gregorian> {
     ///
     /// Years are specified as ISO years.
     ///
-    /// ```rust 
+    /// ```rust
     /// use icu::calendar::Date;
     /// use std::convert::TryFrom;
     ///
@@ -233,21 +233,90 @@ pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
         }
     }
 }
-
-
 #[cfg(test)]
-
 mod test {
     use super::*;
 
     #[test]
-    fn day_of_year_info_overflow(){
-        let date_max = Date::try_new_gregorian_date(i32::MAX, 4, 4).unwrap();
-        //Compares the next_year variable to i32::MAX to check for overflow
-        assert_eq!(Calendar::day_of_year_info(&Gregorian, &date_max.inner).next_year.number,i32::MAX,);
-        
-        //Compares the prev_year variable to i32::MIN to check for overflow
-        let date_min = Date::try_new_gregorian_date(i32::MIN, 4, 4).unwrap();
-        assert_eq!(Calendar::day_of_year_info(&Gregorian, &date_min.inner).prev_year.number,i32::MIN.saturating_neg(),);
+    fn gregorian_overflow() {
+        #[derive(Debug)]
+        struct TestCase {
+            year: i32,
+            month: u8,
+            day: u8,
+            fixed: i32,
+        }
+
+        let cases = [
+            TestCase {
+                year: i32::MAX,
+                month: 7,
+                day: 11,
+                fixed: i32::MAX,
+            },
+            TestCase {
+                year: i32::MAX,
+                month: 7,
+                day: 12,
+                fixed: i32::MAX,
+            },
+            TestCase {
+                year: i32::MAX,
+                month: 8,
+                day: 10,
+                fixed: i32::MAX,
+            },
+            TestCase {
+                year: i32::MAX - 1,
+                month: 7,
+                day: 11,
+                fixed: i32::MAX,
+            },
+            TestCase {
+                year: i32::MIN,
+                month: 1,
+                day: 1,
+                fixed: i32::MIN,
+            },
+            TestCase {
+                year: i32::MIN,
+                month: 12,
+                day: 31,
+                fixed: i32::MIN,
+            },
+            TestCase {
+                year: i32::MIN,
+                month: 2,
+                day: 2,
+                fixed: i32::MIN,
+            },
+            TestCase {
+                year: i32::MIN + 1,
+                month: 1,
+                day: 1,
+                fixed: i32::MIN,
+            },
+        ];
+
+        for case in cases {
+            let date = Date::try_new_gregorian_date(case.year, case.month, case.day).unwrap();
+            if case.fixed == i32::MAX {
+                assert_eq!(
+                    Calendar::day_of_year_info(&Gregorian, &date.inner)
+                        .next_year
+                        .number,
+                    case.fixed,
+                    "{case:?}",
+                );
+            } else {
+                assert_eq!(
+                    Calendar::day_of_year_info(&Gregorian, &date.inner)
+                        .prev_year
+                        .number,
+                    case.fixed.saturating_neg(),
+                    "{case:?}",
+                );
+            }
+        }
     }
 }
