@@ -199,7 +199,7 @@ where
 
     #[doc(hidden)]
     #[inline]
-    pub fn from_static_ref(data: &'static M::Yokeable) -> Self {
+    pub const fn from_static_ref(data: &'static M::Yokeable) -> Self {
         Self(DataPayloadInner::StaticRef(data))
     }
 
