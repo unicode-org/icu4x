@@ -20,5 +20,6 @@ pub mod numbering_systems;
 pub mod numbers;
 pub mod parent_locales;
 pub mod plurals;
+pub mod script_metadata;
 pub mod time_zones;
 pub mod week_data;

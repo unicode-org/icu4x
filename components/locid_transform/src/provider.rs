@@ -135,6 +135,28 @@ pub struct AliasesV1<'data> {
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, SemivalidatedSubdivision>,
 }
 
+#[icu_provider::data_struct(DirectionalityV1Marker = "locid_transform/directionality@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+feature = "datagen",
+derive(serde::Serialize, databake::Bake),
+databake(path = icu_locid_transform::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+/// This directionality data is used to determine the script directionality of a locale.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[yoke(prove_covariance_manually)]
+pub struct DirectionalityV1<'data> {
+    /// Script directionality.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub rtl: ZeroMap<'data, UnvalidatedScript, Option<bool>>,
+}
+
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locid_transform/likelysubtags@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
