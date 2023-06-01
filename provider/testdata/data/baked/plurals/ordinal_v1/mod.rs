@@ -1,7 +1,6 @@
 // @generated
 #![cfg(feature = "icu_plurals")]
-type DataStruct =
-    <::icu_plurals::provider::OrdinalV1Marker as ::icu_provider::DataMarker>::Yokeable;
+type DataStruct = <icu_plurals::provider::OrdinalV1Marker as icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
     static KEYS: [&str; 12usize] = [
         "ar", "bn", "en", "es", "fil", "fr", "ja", "ru", "sr", "th", "tr", "und",

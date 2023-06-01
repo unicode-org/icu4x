@@ -38,7 +38,7 @@ impl databake::Bake for SerdeDFA<'_> {
         // Safe because of `to_bytes_little_endian`/`to_bytes_big_endian`'s invariant.
         databake::quote! {
             unsafe {
-                ::icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
+                icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
                     if cfg!(target_endian = "little") {
                         #le_bytes
                     } else {

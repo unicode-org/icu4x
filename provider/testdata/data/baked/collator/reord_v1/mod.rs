@@ -1,7 +1,7 @@
 // @generated
 #![cfg(feature = "icu_collator")]
 type DataStruct =
-    <::icu_collator::provider::CollationReorderingV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <icu_collator::provider::CollationReorderingV1Marker as icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
     static KEYS: [&str; 10usize] = [
         "ar",
