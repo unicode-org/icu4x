@@ -433,6 +433,9 @@ impl Iso {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: i32) -> i32 {
+        if date == i32::MIN {
+            todo!("hard-code the correct year here")
+        }
         let date = date - EPOCH;
         // 400 year cycles have 146097 days
         let (n_400, date) = div_rem_euclid(date, 146097);
@@ -525,13 +528,83 @@ impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::types::IsoWeekday;
+    use crate::{types::IsoWeekday, date};
 
     #[test]
-    fn fixed_from_iso_overflow() {
-        //Creates new date maxxing out the year (i32)
-        let date = Date::try_new_iso_date(i32::MAX / 365 + 2, 6, 4).unwrap();
-        assert_eq!(Iso::fixed_from_iso(date.inner), i32::MAX,);
+    fn iso_overflow(){
+
+        #[derive(Debug)]
+        struct TestCase {
+            year: i32,
+            month: u8,
+            day: u8,
+            fixed: i32,
+            saturating: bool
+        };
+
+        //Calculates the max possible year representable using i32::MAX as the fixed date
+        let max_year = Iso::iso_from_fixed(i32::MAX).year().number;
+
+        let cases = [
+
+            TestCase {
+                year: max_year,
+                month: 6,
+                day: 11,
+                fixed: i32::MAX - 30,
+                saturating: false,
+            },
+            TestCase {
+                year: max_year,
+                month: 7,
+                day: 9,
+                fixed: i32::MAX -2,
+                saturating: false,
+            },
+            TestCase {
+                year: max_year,
+                month: 7,
+                day: 10,
+                fixed: i32::MAX -1,
+                saturating: false,
+            },
+            TestCase { // Latest date that can be represented before causing overflow
+                year: max_year,
+                month: 7,
+                day: 11,
+                fixed: i32::MAX,
+                saturating: false,
+            },
+            TestCase {
+                year: max_year,
+                month: 7,
+                day: 12,
+                fixed: i32::MAX,
+                saturating: true,
+            },
+            TestCase {
+                year: max_year,
+                month: 8,
+                day: 11,
+                fixed: i32::MAX,
+                saturating: true,
+            },
+            TestCase {
+                year: max_year+1,
+                month: 7,
+                day: 11,
+                fixed: i32::MAX,
+                saturating: true,
+            },
+        ];
+
+        for case in cases {
+            let date = Date::try_new_iso_date(case.year, case.month, case.day).unwrap();
+            if !case.saturating {
+                assert_eq!(Iso::iso_from_fixed(case.fixed), date, "{case:?}");
+            }
+            assert_eq!(Iso::fixed_from_iso(date.inner), case.fixed, "{case:?}");
+        }
     }
 
     #[test]
