@@ -52,7 +52,7 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Gregorian;
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd)]
 /// The inner date type used for representing [`Date`]s of [`Gregorian`]. See [`Date`] and [`Gregorian`] for more details.
 pub struct GregorianDateInner(IsoDateInner);
 
@@ -232,4 +232,202 @@ pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
             related_iso: None,
         }
     }
+}
+
+#[cfg(test)]
+mod gregorian_negagtive_nums_tests {
+
+    use icu::calendar::{gregorian::Gregorian, Date, Iso, types::Era};
+    use tinystr::tinystr;
+
+    #[derive(Debug)]
+    struct TestCase {
+        fixed_date: i32,
+        iso_year: i32,
+        iso_month: u8,
+        iso_day: u8,
+        expected_year: i32,
+        expected_era: Era,
+        expected_month: u32,
+        expected_day: u32
+    }
+
+    fn check_test_case(case: TestCase) {
+        let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(case.fixed_date);
+        let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
+        assert_eq!(greg_date_from_fixed.year().number, case.expected_year, 
+            "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
+        assert_eq!(greg_date_from_fixed.year().era, case.expected_era,
+            "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
+        assert_eq!(greg_date_from_fixed.month().ordinal, case.expected_month, 
+            "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
+        assert_eq!(greg_date_from_fixed.day_of_month().0, case.expected_day, 
+            "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
+
+        let iso_date_man: Date<Iso> = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day)
+            .expect("Failed to initialize ISO date for {case:?}");
+        let greg_date_man: Date<Gregorian> = Date::new_from_iso(iso_date_man, Gregorian);
+        assert_eq!(greg_date_man.year().number, case.expected_year, 
+            "Failed year check from fixed: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}");
+        assert_eq!(greg_date_man.year().era, case.expected_era,  
+            "Failed year check from fixed: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}");
+        assert_eq!(greg_date_man.month().ordinal, case.expected_month,  
+            "Failed year check from fixed: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}");
+        assert_eq!(greg_date_man.day_of_month().0, case.expected_day,  
+            "Failed year check from fixed: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}");
+    }
+
+    #[test]
+    fn test_gregorian_ce() {
+        // Tests that the Gregorian calendar gives the correct expected
+        // day, month, and year for positive years (AD/CE/gregory era)
+
+        let cases = [
+            TestCase {
+                fixed_date: 1,
+                iso_year: 1,
+                iso_month: 1,
+                iso_day: 1,
+                expected_year: 1,
+                expected_era: Era(tinystr!(16, "ce")),
+                expected_month: 1,
+                expected_day: 1
+            },
+
+            TestCase {
+                fixed_date: 181,
+                iso_year: 1,
+                iso_month: 6,
+                iso_day: 30,
+                expected_year: 1,
+                expected_era: Era(tinystr!(16, "ce")),
+                expected_month: 6,
+                expected_day: 30
+            },
+
+            TestCase {
+                fixed_date: 1155,
+                iso_year: 4,
+                iso_month: 2,
+                iso_day: 29,
+                expected_year: 4,
+                expected_era: Era(tinystr!(16, "ce")),
+                expected_month: 2,
+                expected_day: 29
+            },
+
+            TestCase {
+                fixed_date: 1344,
+                iso_year: 4,
+                iso_month: 9,
+                iso_day: 5,
+                expected_year: 4,
+                expected_era: Era(tinystr!(16, "ce")),
+                expected_month: 9,
+                expected_day: 5
+            },
+
+            TestCase {
+                fixed_date: 36219,
+                iso_year: 100,
+                iso_month: 3,
+                iso_day: 1,
+                expected_year: 100,
+                expected_era: Era(tinystr!(16, "ce")),
+                expected_month: 3,
+                expected_day: 1
+            }
+        ];
+
+        for case in cases {
+            check_test_case(case);
+        }
+    }
+
+    #[test]
+    fn test_gregorian_bce() {
+        // Tests that the Gregorian calendar gives the correct expected
+        // day, month, and year for negative years (BC/BCE/pre-gregory era)
+
+        let cases = [
+            TestCase {
+                fixed_date: 0,
+                iso_year: 0,
+                iso_month: 12,
+                iso_day: 31,
+                expected_year: 1,
+                expected_era: Era(tinystr!(16, "bce")),
+                expected_month: 12,
+                expected_day: 31
+            },
+
+            TestCase {
+                fixed_date: -365, // This is a leap year
+                iso_year: 0,
+                iso_month: 1,
+                iso_day: 1,
+                expected_year: 1,
+                expected_era: Era(tinystr!(16, "bce")),
+                expected_month: 1,
+                expected_day: 1
+            },
+
+            TestCase {
+                fixed_date: -1461,
+                iso_year: -4,
+                iso_month: 12,
+                iso_day: 31,
+                expected_year: 5,
+                expected_era: Era(tinystr!(16, "bce")),
+                expected_month: 12,
+                expected_day: 31
+            },
+
+            TestCase {
+                fixed_date: -1826,
+                iso_year: -4,
+                iso_month: 1,
+                iso_day: 1,
+                expected_year: 5,
+                expected_era: Era(tinystr!(16, "bce")),
+                expected_month: 1,
+                expected_day: 1
+            }
+        ];
+
+        for case in cases {
+            check_test_case(case);
+        }
+    }
+
+    #[test]
+    fn check_gregorian_directionality() {
+        // Tests that for a large range of fixed dates, if a fixed date
+        // is less than another, the corresponding YMD should also be less
+        // than the other, without exception.
+        for i in -10000..10000 {
+            for j in -10000..10000 {
+                let iso_i: Date<Iso> = Iso::iso_from_fixed(i);
+                let iso_j: Date<Iso> = Iso::iso_from_fixed(j);
+
+                let greg_i: Date<Gregorian> = Date::new_from_iso(iso_i, Gregorian);
+                let greg_j: Date<Gregorian> = Date::new_from_iso(iso_j, Gregorian);
+
+                if i < j {
+                    assert!(iso_i < iso_j, "ISO directionality inconsistent with i < j for i: {i}, j: {j}");
+                    assert!(greg_i < greg_j, "Gregorian directionality inconsistent with i < j for i: {i}, j: {j}");
+                }
+                else if j < i {
+                    assert!(iso_j < iso_i, "ISO directionality inconsistent with j < i for j: {j}, i: {i}");
+                    assert!(greg_j < greg_i, "Gregorian directionality inconsistent with j < i for j: {j}, i: {i}");
+                }
+                else {
+                    assert!(iso_i == iso_j, "ISO directionality inconsistent with i == j for i: {i}, j: {j}");
+                    assert!(greg_i == greg_j, "Gregorian directionality inconsistent with i == j for i: {i}, j: {j}");
+                }
+            }
+        }
+    }
+
+
 }

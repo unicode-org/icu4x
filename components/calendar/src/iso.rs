@@ -52,11 +52,11 @@ const EPOCH: i32 = 1;
 ///
 /// This calendar supports one era, `"default"`
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Hash, PartialOrd)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Iso;
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd)]
 /// The inner date type used for representing [`Date`]s of [`Iso`]. See [`Date`] and [`Iso`] for more details.
 pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
 
@@ -456,7 +456,7 @@ impl Iso {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
-    pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
+    pub fn iso_from_fixed(date: i32) -> Date<Iso> { // Temporary fix to visibility issue: don't leave, please address
         let year = Self::iso_year_from_fixed(date);
         let prior_days = date - Self::iso_new_year(year);
         #[allow(clippy::unwrap_used)] // valid day and month

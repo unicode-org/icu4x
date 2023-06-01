@@ -7,7 +7,7 @@ use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub year: i32,
@@ -18,6 +18,7 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub marker: PhantomData<C>,
 }
 
+
 pub trait CalendarArithmetic: Calendar {
     fn month_days(year: i32, month: u8) -> u8;
     fn months_for_every_year(year: i32) -> u8;
@@ -25,7 +26,7 @@ pub trait CalendarArithmetic: Calendar {
 
     /// Calculate the days in a given year
     /// Can be overridden with simpler implementations for solar calendars
-    /// (typically, 366 in leap, 365 otgerwuse) Leave this as the default
+    /// (typically, 366 in leap, 365 otherwise) Leave this as the default
     /// for lunar calendars
     ///
     /// The name has `provided` in it to avoid clashes with Calendar
