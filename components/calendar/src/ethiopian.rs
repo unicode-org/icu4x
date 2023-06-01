@@ -74,11 +74,11 @@ pub enum EthiopianEraStyle {
 /// the `"incar"` and `"pre-incar"` eras, 1 Incarnation is 9 CE. In the Amete Alem scheme, it instead has a single era,
 /// `"mundi`, where 1 Anno Mundi is 5493 BCE. Dates before that use negative year numbers.
 // The bool specifies whether dates should be in the Amete Alem era scheme
-#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Ethiopian(pub(crate) bool);
 
 /// The inner date type used for representing [`Date`]s of [`Ethiopian`]. See [`Date`] and [`Ethiopian`] for more details.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct EthiopianDateInner(ArithmeticDate<Ethiopian>);
 
 impl CalendarArithmetic for Ethiopian {
