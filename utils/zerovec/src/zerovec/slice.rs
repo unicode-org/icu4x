@@ -22,12 +22,10 @@ use core::ops::Range;
 ///
 /// ```
 /// use zerovec::ule::AsULE;
-/// use zerovec::ZeroSlice;
+/// use zerovec::{ZeroSlice, zeroslice};
 ///
 /// const DATA: &ZeroSlice<u16> =
-///     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
-///         211, 281, 421, 32973,
-///     ]));
+///     zeroslice![u16; <u16 as AsULE>::ULE::from_unsigned; 211, 281, 421, 32973];
 ///
 /// assert_eq!(DATA.get(1), Some(281));
 /// ```
@@ -372,17 +370,17 @@ where
     ///
     /// ```
     /// use zerovec::ule::AsULE;
-    /// use zerovec::ZeroSlice;
+    /// use zerovec::{ZeroSlice, zeroslice};
     ///
     /// const DATA: &ZeroSlice<u16> =
-    ///     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
-    ///         211, 281, 421, 32973,
-    ///     ]));
+    ///     zeroslice![u16; <u16 as AsULE>::ULE::from_unsigned;
+    ///         211, 281, 421, 32973
+    ///     ];
     /// const EXPECTED_VALUE: (u16, &ZeroSlice<u16>) = (
     ///     211,
-    ///     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
+    ///     zeroslice![u16; <u16 as AsULE>::ULE::from_unsigned;
     ///         281, 421, 32973,
-    ///     ])),
+    ///     ],
     /// );
     /// assert_eq!(EXPECTED_VALUE, DATA.split_first().unwrap());
     /// ```
