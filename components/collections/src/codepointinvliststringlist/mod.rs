@@ -44,7 +44,7 @@ impl databake::Bake for CodePointInversionListAndStringList<'_> {
         let str_list = self.str_list.bake(env);
         // Safe because our parts are safe.
         databake::quote! {
-            ::icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(#cp_inv_list, #str_list)
+            icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(#cp_inv_list, #str_list)
         }
     }
 }

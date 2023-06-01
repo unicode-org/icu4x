@@ -57,6 +57,9 @@ impl IterableDataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvide
     }
 }
 
+/// Substring used to denote alternative display names data variants for a given variant. For example: "FONUPA-alt-secondary".
+const ALT_SUBSTRING: &str = "-alt-";
+
 impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNamesV1<'static> {
     type Error = ParserError;
 
@@ -64,7 +67,10 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
         let mut names = BTreeMap::new();
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.variants.iter() {
-                names.insert(Variant::from_str(entry.0)?.into_tinystr(), entry.1.as_str());
+                // TODO: Support alt variants for variant display names.
+                if !entry.0.contains(ALT_SUBSTRING) {
+                    names.insert(Variant::from_str(entry.0)?.into_tinystr(), entry.1.as_str());
+                }
             }
         }
         Ok(Self {

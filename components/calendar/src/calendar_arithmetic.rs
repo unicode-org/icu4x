@@ -7,7 +7,7 @@ use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub year: i32,
@@ -250,4 +250,39 @@ pub fn ordinal_solar_month_from_code(code: types::MonthCode) -> Option<u8> {
         return Some(10 + bytes[2] - b'0');
     }
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Iso;
+
+    #[test]
+    fn test_ord() {
+        let dates_in_order = [
+            ArithmeticDate::<Iso>::new(-10, 1, 1),
+            ArithmeticDate::<Iso>::new(-10, 1, 2),
+            ArithmeticDate::<Iso>::new(-10, 2, 1),
+            ArithmeticDate::<Iso>::new(-1, 1, 1),
+            ArithmeticDate::<Iso>::new(-1, 1, 2),
+            ArithmeticDate::<Iso>::new(-1, 2, 1),
+            ArithmeticDate::<Iso>::new(0, 1, 1),
+            ArithmeticDate::<Iso>::new(0, 1, 2),
+            ArithmeticDate::<Iso>::new(0, 2, 1),
+            ArithmeticDate::<Iso>::new(1, 1, 1),
+            ArithmeticDate::<Iso>::new(1, 1, 2),
+            ArithmeticDate::<Iso>::new(1, 2, 1),
+            ArithmeticDate::<Iso>::new(10, 1, 1),
+            ArithmeticDate::<Iso>::new(10, 1, 2),
+            ArithmeticDate::<Iso>::new(10, 2, 1),
+        ];
+        for (i, i_date) in dates_in_order.iter().enumerate() {
+            for (j, j_date) in dates_in_order.iter().enumerate() {
+                let result1 = i_date.cmp(j_date);
+                let result2 = j_date.cmp(i_date);
+                assert_eq!(result1.reverse(), result2);
+                assert_eq!(i.cmp(&j), i_date.cmp(j_date));
+            }
+        }
+    }
 }

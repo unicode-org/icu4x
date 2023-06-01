@@ -1,7 +1,7 @@
-::icu_datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: icu_datetime::provider::calendar::months::ContextsV1 {
+        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Chaitra"),
                 alloc::borrow::Cow::Borrowed("Vaisakha"),
                 alloc::borrow::Cow::Borrowed("Jyaistha"),
@@ -15,7 +15,7 @@
                 alloc::borrow::Cow::Borrowed("Magha"),
                 alloc::borrow::Cow::Borrowed("Phalguna"),
             ]),
-            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("1"),
                 alloc::borrow::Cow::Borrowed("2"),
                 alloc::borrow::Cow::Borrowed("3"),
@@ -30,7 +30,7 @@
                 alloc::borrow::Cow::Borrowed("12"),
             ]),
             short: None,
-            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Chaitra"),
                 alloc::borrow::Cow::Borrowed("Vaisakha"),
                 alloc::borrow::Cow::Borrowed("Jyaistha"),
@@ -47,9 +47,9 @@
         },
         stand_alone: None,
     },
-    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("الأحد"),
                 alloc::borrow::Cow::Borrowed("الاثنين"),
                 alloc::borrow::Cow::Borrowed("الثلاثاء"),
@@ -58,7 +58,7 @@
                 alloc::borrow::Cow::Borrowed("الجمعة"),
                 alloc::borrow::Cow::Borrowed("السبت"),
             ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("ح"),
                 alloc::borrow::Cow::Borrowed("ن"),
                 alloc::borrow::Cow::Borrowed("ث"),
@@ -67,7 +67,7 @@
                 alloc::borrow::Cow::Borrowed("ج"),
                 alloc::borrow::Cow::Borrowed("س"),
             ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("أحد"),
                 alloc::borrow::Cow::Borrowed("إثنين"),
                 alloc::borrow::Cow::Borrowed("ثلاثاء"),
@@ -76,7 +76,7 @@
                 alloc::borrow::Cow::Borrowed("جمعة"),
                 alloc::borrow::Cow::Borrowed("سبت"),
             ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("الأحد"),
                 alloc::borrow::Cow::Borrowed("الاثنين"),
                 alloc::borrow::Cow::Borrowed("الثلاثاء"),
@@ -88,26 +88,26 @@
         },
         stand_alone: None,
     },
-    eras: ::icu_datetime::provider::calendar::Eras {
+    eras: icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka") },
             )
         },
         abbr: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka") },
             )
         },
         narrow: unsafe {
             #[allow(unused_unsafe)]
-            ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka") },
+            zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+                unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka") },
             )
         },
     },
