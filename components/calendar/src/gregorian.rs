@@ -413,34 +413,10 @@ mod tests {
                 let greg_i: Date<Gregorian> = Date::new_from_iso(iso_i, Gregorian);
                 let greg_j: Date<Gregorian> = Date::new_from_iso(iso_j, Gregorian);
 
-                if i < j {
-                    assert!(
-                        iso_i < iso_j,
-                        "ISO directionality inconsistent with i < j for i: {i}, j: {j}"
-                    );
-                    assert!(
-                        greg_i < greg_j,
-                        "Gregorian directionality inconsistent with i < j for i: {i}, j: {j}"
-                    );
-                } else if j < i {
-                    assert!(
-                        iso_j < iso_i,
-                        "ISO directionality inconsistent with j < i for j: {j}, i: {i}"
-                    );
-                    assert!(
-                        greg_j < greg_i,
-                        "Gregorian directionality inconsistent with j < i for j: {j}, i: {i}"
-                    );
-                } else {
-                    assert!(
-                        iso_i == iso_j,
-                        "ISO directionality inconsistent with i == j for i: {i}, j: {j}"
-                    );
-                    assert!(
-                        greg_i == greg_j,
-                        "Gregorian directionality inconsistent with i == j for i: {i}, j: {j}"
-                    );
-                }
+                assert_eq!(i.cmp(&j), iso_i.cmp(&iso_j),
+                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}");
+                assert_eq!(i.cmp(&j), greg_i.cmp(&greg_j),
+                    "Gregorian directionality inconsistent with directionality for i: {i}, j: {j}");
             }
         }
     }
