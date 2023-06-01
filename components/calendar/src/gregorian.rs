@@ -235,7 +235,7 @@ pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
 }
 
 #[cfg(test)]
-mod gregorian_negagtive_nums_tests {
+mod tests {
 
     use icu::calendar::{gregorian::Gregorian, types::Era, Date, Iso};
     use tinystr::tinystr;
