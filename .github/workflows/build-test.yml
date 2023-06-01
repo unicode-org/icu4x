@@ -29,9 +29,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-env:
-  RUST_CACHED_PATH_ROOT: /tmp/icu4x
-
 jobs:
 
   # ci-job-check & ci-job-features
@@ -146,7 +143,7 @@ jobs:
       uses: actions/cache@v3
       with:
         key: download-cache
-        path: /tmp/icu4x
+        path: /tmp/icu4x-source-cache
 
     # Actual job
     - name: Run `cargo make ci-job-test-cargo-tutorial`
@@ -191,7 +188,7 @@ jobs:
       uses: actions/cache@v3
       with:
         key: download-cache
-        path: /tmp/icu4x
+        path: /tmp/icu4x-source-cache
     - name: Install rustfmt
       run: rustup component add rustfmt
 
@@ -271,7 +268,7 @@ jobs:
       uses: actions/cache@v3
       with:
         key: download-cache
-        path: /tmp/icu4x
+        path: /tmp/icu4x-source-cache
 
     # Actual job
     - name: Run `cargo make ci-job-full-datagen`
@@ -325,7 +322,7 @@ jobs:
       uses: actions/cache@v3
       with:
         key: download-cache
-        path: /tmp/icu4x
+        path: /tmp/icu4x-source-cache
     - name: Warm up datagen
       # We do this so its compilation doesn't go on the time bugdet of the 
       # first test that uses it.

@@ -6,9 +6,10 @@ use clap::{ArgAction, Parser};
 use eyre::WrapErr;
 use icu_datagen::SourceData;
 use icu_locid::*;
+use icu_provider::DataError;
 use simple_logger::SimpleLogger;
 use std::fs::{self, File};
-use std::io::{self, Cursor};
+use std::io::{self, BufWriter, Cursor};
 use std::path::PathBuf;
 use zip::ZipArchive;
 
@@ -57,10 +58,26 @@ fn main() -> eyre::Result<()> {
 
     let output_path = &args.out;
 
-    let cached = cached_path::CacheBuilder::new()
-        .freshness_lifetime(u64::MAX)
-        .build()
-        .unwrap();
+    fn cached(resource: &str) -> Result<PathBuf, DataError> {
+        let root = std::env::var_os("ICU4X_SOURCE_CACHE")
+            .map(PathBuf::from)
+            .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
+            .join(resource.rsplit("//").next().unwrap());
+
+        if !root.exists() {
+            log::info!("Downloading {resource}");
+            std::fs::create_dir_all(root.parent().unwrap())?;
+            std::io::copy(
+                &mut ureq::get(resource)
+                    .call()
+                    .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+                    .into_reader(),
+                &mut BufWriter::new(File::create(&root)?),
+            )?;
+        }
+
+        Ok(root)
+    }
 
     fn extract(zip: PathBuf, paths: Vec<String>, root: PathBuf) -> eyre::Result<()> {
         let mut zip = ZipArchive::new(Cursor::new(
@@ -109,25 +126,23 @@ fn main() -> eyre::Result<()> {
     }
 
     extract(
-        cached
-            .cached_path(&format!(
+        cached(&format!(
             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
             SourceData::LATEST_TESTED_CLDR_TAG,
             SourceData::LATEST_TESTED_CLDR_TAG
         ))
-            .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
+        .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
         expand_paths(CLDR_JSON_GLOB, false),
         output_path.join("cldr"),
     )?;
 
     extract(
-        cached
-            .cached_path(&format!(
-                "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-                SourceData::LATEST_TESTED_ICUEXPORT_TAG,
-                SourceData::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
-            ))
-            .with_context(|| "Failed to download ICU ZIP".to_owned())?,
+        cached(&format!(
+            "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
+            SourceData::LATEST_TESTED_ICUEXPORT_TAG,
+            SourceData::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
+        ))
+        .with_context(|| "Failed to download ICU ZIP".to_owned())?,
         expand_paths(ICUEXPORTDATA_GLOB, true),
         output_path.join("icuexport"),
     )?;
@@ -151,12 +166,11 @@ fn main() -> eyre::Result<()> {
     }
 
     extract(
-        cached
-            .cached_path(&format!(
-                "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
-                SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG,
-            ))
-            .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
+        cached(&format!(
+            "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
+            SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+        ))
+        .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
         LSTM_GLOB.iter().copied().map(String::from).collect(),
         output_path.join("lstm"),
     )?;

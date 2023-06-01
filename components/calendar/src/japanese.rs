@@ -105,7 +105,7 @@ pub struct Japanese {
 #[derive(Clone, Debug, Default)]
 pub struct JapaneseExtended(Japanese);
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 /// The inner date type used for representing [`Date`]s of [`Japanese`]. See [`Date`] and [`Japanese`] for more details.
 pub struct JapaneseDateInner {
     inner: IsoDateInner,
