@@ -919,7 +919,8 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
     }
 }
 
-/// Convenience wrapper for [`ZeroSlice::from_ule_slice`]. The value will be created at compile-time.
+/// Convenience wrapper for [`ZeroSlice::from_ule_slice`]. The value will be created at compile-time,
+/// meaning that all arguments must also be constant.
 ///
 /// # Arguments
 ///
@@ -974,7 +975,8 @@ macro_rules! zeroslice {
     );
 }
 
-/// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice![...].as_zerovec()`.
+/// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice![...].as_zerovec()`. The value
+/// will be created at compile-time, meaning that all arguments must also be constant.
 ///
 /// See [`zeroslice!`](crate::zeroslice) for more information.
 ///
