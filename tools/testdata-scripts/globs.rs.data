@@ -47,6 +47,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-numbers-full/main/$LOCALES/currencies.json",
     "cldr-numbers-full/main/$LOCALES/numbers.json",
     "cldr-person-names-full/main/$LOCALES/personNames.json",
+    "cldr-segments-full/segments/$LOCALES/suppressions.json",
 ];
 
 const ICUEXPORTDATA_GLOB: &[&str] = &[

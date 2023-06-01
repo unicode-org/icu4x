@@ -55,6 +55,10 @@ impl CldrCache {
         CldrDirLang(self, "cldr-localenames".to_owned())
     }
 
+    pub fn segments(&self) -> CldrDirLang<'_> {
+        CldrDirLang(&self, "cldr-segments".to_owned())
+    }
+
     #[cfg(feature = "icu_transliteration")]
     pub fn transforms(&self) -> CldrDirTransform<'_> {
         CldrDirTransform(self, "cldr-transforms".to_owned())
@@ -184,7 +188,15 @@ impl<'a> CldrDirLang<'a> {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         let dir_suffix = self.0.dir_suffix()?;
-        let path = format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1);
+        let path = format!(
+            "{}-{dir_suffix}/{}/{lang}/{file_name}",
+            self.1,
+            if self.1 == "cldr-segments" {
+                "/segments"
+            } else {
+                "/main"
+            }
+        );
         if self.0.serde_cache.file_exists(&path)? {
             self.0.serde_cache.read_and_parse_json(&path)
         } else if let Some(new_langid) = self.0.add_script(lang)? {
@@ -198,7 +210,15 @@ impl<'a> CldrDirLang<'a> {
 
     pub fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier> + '_, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
-        let path = format!("{}-{dir_suffix}/main", self.1);
+        let path = format!(
+            "{}-{dir_suffix}/{}",
+            self.1,
+            if self.1 == "cldr-segments" {
+                "/segments"
+            } else {
+                "/main"
+            }
+        );
         Ok(self
             .0
             .serde_cache
@@ -217,7 +237,15 @@ impl<'a> CldrDirLang<'a> {
         file_name: &str,
     ) -> Result<bool, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
-        let path = format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1);
+        let path = format!(
+            "{}-{dir_suffix}/{}/{lang}/{file_name}",
+            self.1,
+            if self.1 == "cldr-segments" {
+                "/segments"
+            } else {
+                "/main"
+            }
+        );
         if self.0.serde_cache.file_exists(&path)? {
             Ok(true)
         } else if let Some(new_langid) = self.0.add_script(lang)? {
