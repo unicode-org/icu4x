@@ -235,7 +235,7 @@ pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
 }
 
 #[cfg(test)]
-mod gregorian_negagtive_nums_tests {
+mod tests {
 
     use super::*;
     use types::Era;
@@ -269,18 +269,18 @@ mod gregorian_negagtive_nums_tests {
                 .expect("Failed to initialize ISO date for {case:?}");
         let greg_date_man: Date<Gregorian> = Date::new_from_iso(iso_date_man, Gregorian);
         assert_eq!(greg_date_man.year().number, case.expected_year,
-            "Failed year check from fixed: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}");
+            "Failed year check from ISO: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}");
         assert_eq!(
             greg_date_man.year().era,
             case.expected_era,
-            "Failed era check from fixed: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}"
+            "Failed era check from ISO: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}"
         );
         assert_eq!(greg_date_man.month().ordinal, case.expected_month,
-            "Failed month check from fixed: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}");
+            "Failed month check from ISO: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}");
         assert_eq!(
             greg_date_man.day_of_month().0,
             case.expected_day,
-            "Failed day check from fixed: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}"
+            "Failed day check from ISO: {case:?}\nISO: {iso_date_man:?}\nGreg: {greg_date_man:?}"
         );
     }
 
