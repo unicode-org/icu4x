@@ -6,6 +6,7 @@
 //! ULE implementation for the `char` type.
 
 use super::*;
+use crate::impl_ule_from_array;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 
@@ -50,6 +51,8 @@ impl CharULE {
         let [u0, u1, u2, _u3] = (c as u32).to_le_bytes();
         Self([u0, u1, u2])
     }
+
+    impl_ule_from_array!(char, CharULE, Self([0; 3]));
 }
 
 // Safety (based on the safety checklist on the ULE trait):
@@ -118,30 +121,46 @@ mod test {
     use super::*;
 
     #[test]
+    fn test_from_array() {
+        const CHARS: [char; 2] = ['a', '🙃'];
+        const CHARS_ULE: [CharULE; 2] = CharULE::from_array(CHARS);
+        assert_eq!(
+            CharULE::as_byte_slice(&CHARS_ULE),
+            &[0x61, 0x00, 0x00, 0x43, 0xF6, 0x01]
+        );
+    }
+
+    #[test]
+    fn test_from_array_zst() {
+        const CHARS: [char; 0] = [];
+        const CHARS_ULE: [CharULE; 0] = CharULE::from_array(CHARS);
+        let bytes = CharULE::as_byte_slice(&CHARS_ULE);
+        let empty: &[u8] = &[];
+        assert_eq!(bytes, empty);
+    }
+
+    #[test]
     fn test_parse() {
-        let conversion_functions = [char::to_unaligned, CharULE::from_aligned];
-        for f in &conversion_functions {
-            // 1-byte, 2-byte, 3-byte, and two 4-byte character in UTF-8 (not as relevant in UTF-32)
-            let chars = ['w', 'ω', '文', '𑄃', '🙃'];
-            let char_ules: Vec<CharULE> = chars.iter().copied().map(f).collect();
-            let char_bytes: &[u8] = CharULE::as_byte_slice(&char_ules);
+        // 1-byte, 2-byte, 3-byte, and two 4-byte character in UTF-8 (not as relevant in UTF-32)
+        let chars = ['w', 'ω', '文', '𑄃', '🙃'];
+        let char_ules: Vec<CharULE> = chars.iter().copied().map(char::to_unaligned).collect();
+        let char_bytes: &[u8] = CharULE::as_byte_slice(&char_ules);
 
-            // Check parsing
-            let parsed_ules: &[CharULE] = CharULE::parse_byte_slice(char_bytes).unwrap();
-            assert_eq!(char_ules, parsed_ules);
-            let parsed_chars: Vec<char> = parsed_ules
-                .iter()
-                .copied()
-                .map(char::from_unaligned)
-                .collect();
-            assert_eq!(&chars, parsed_chars.as_slice());
+        // Check parsing
+        let parsed_ules: &[CharULE] = CharULE::parse_byte_slice(char_bytes).unwrap();
+        assert_eq!(char_ules, parsed_ules);
+        let parsed_chars: Vec<char> = parsed_ules
+            .iter()
+            .copied()
+            .map(char::from_unaligned)
+            .collect();
+        assert_eq!(&chars, parsed_chars.as_slice());
 
-            // Compare to golden expected data
-            assert_eq!(
-                &[119, 0, 0, 201, 3, 0, 135, 101, 0, 3, 17, 1, 67, 246, 1],
-                char_bytes
-            );
-        }
+        // Compare to golden expected data
+        assert_eq!(
+            &[119, 0, 0, 201, 3, 0, 135, 101, 0, 3, 17, 1, 67, 246, 1],
+            char_bytes
+        );
     }
 
     #[test]
