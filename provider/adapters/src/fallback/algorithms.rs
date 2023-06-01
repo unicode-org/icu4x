@@ -4,13 +4,17 @@
 
 use icu_locid::extensions::unicode::Key;
 use icu_locid::extensions_unicode_key as key;
+use icu_locid::extensions_unicode_value as value;
 use icu_locid::subtags::Language;
+use icu_locid::subtags_language as language;
 use icu_locid::LanguageIdentifier;
 use icu_provider::FallbackPriority;
 
 use super::*;
 
 const SUBDIVISION_KEY: Key = key!("sd");
+const COLLATION_KEY: Key = key!("co");
+const ZH: Language = language!("zh");
 
 impl<'a> LocaleFallbackerWithConfig<'a> {
     pub(crate) fn normalize(&self, locale: &mut DataLocale) {
@@ -74,6 +78,18 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 _ => false,
             }
         });
+        // 4. Remove default extension subtags
+
+        // Remove the explicit collation variant if it is the default.
+        // "standard" is the default for all languages except zh.
+        if locale.get_unicode_ext(&COLLATION_KEY)
+            == Some(match locale.language() {
+                ZH => value!("pinyin"),
+                _ => value!("standard"),
+            })
+        {
+            locale.retain_unicode_ext(|&k| k != COLLATION_KEY);
+        }
         // 4. If there is an invalid "sd" subtag, drop it
         // For now, ignore it, and let fallback do it for us
     }
