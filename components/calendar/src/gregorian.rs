@@ -413,10 +413,16 @@ mod tests {
                 let greg_i: Date<Gregorian> = Date::new_from_iso(iso_i, Gregorian);
                 let greg_j: Date<Gregorian> = Date::new_from_iso(iso_j, Gregorian);
 
-                assert_eq!(i.cmp(&j), iso_i.cmp(&iso_j),
-                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}");
-                assert_eq!(i.cmp(&j), greg_i.cmp(&greg_j),
-                    "Gregorian directionality inconsistent with directionality for i: {i}, j: {j}");
+                assert_eq!(
+                    i.cmp(&j),
+                    iso_i.cmp(&iso_j),
+                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}"
+                );
+                assert_eq!(
+                    i.cmp(&j),
+                    greg_i.cmp(&greg_j),
+                    "Gregorian directionality inconsistent with directionality for i: {i}, j: {j}"
+                );
             }
         }
     }
