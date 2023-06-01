@@ -322,6 +322,15 @@ impl UnvalidatedChar {
     }
 }
 
+impl RawBytesULE<3> {
+    /// Converts a [`UnvalidatedChar`] to its ULE type. This is equivalent to calling
+    /// [`AsULE::to_unaligned`].
+    #[inline]
+    pub const fn from_unvalidated_char(uc: UnvalidatedChar) -> Self {
+        RawBytesULE(uc.0)
+    }
+}
+
 impl AsULE for UnvalidatedChar {
     type ULE = RawBytesULE<3>;
 

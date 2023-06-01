@@ -924,9 +924,8 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 /// # Arguments
 ///
 /// * `$aligned` - The type of an element in its canonical, aligned form, e.g., `char`.
-/// * `$array_fn` - A const function that converts an array of `$aligned` elements into an array
-///                 of their unaligned equivalents, e.g.,
-///                 `const fn from_array<const N: usize>(arr: [char; N]) -> [<char as AsULE>::ULE; N]`.
+/// * `$convert` - A const function that converts an `$aligned` into its unaligned equivalent, e.g.,
+///                 `const fn from_aligned(a: CanonicalType) -> CanonicalType::ULE`.
 /// * `$x` - The elements that the `ZeroSlice` will hold.
 ///
 /// # Examples
@@ -935,42 +934,42 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///
 /// ```
 /// use zerovec::{ZeroSlice, zeroslice, ule::AsULE};
+/// use zerovec::ule::UnvalidatedChar;
 ///
-/// const SIGNATURE: &ZeroSlice<char> = zeroslice![char; <char as AsULE>::ULE::from_array; 'b', 'y', 'e', '✌'];
+/// const SIGNATURE: &ZeroSlice<char> = zeroslice![char; <char as AsULE>::ULE::from_aligned; 'b', 'y', 'e', '✌'];
 /// const EMPTY: &ZeroSlice<u32> = zeroslice![];
+/// const UC: &ZeroSlice<UnvalidatedChar> =
+///     zeroslice![
+///         UnvalidatedChar;
+///         <UnvalidatedChar as AsULE>::ULE::from_unvalidated_char;
+///         UnvalidatedChar::from_char('a'),
+///     ];
 /// let empty: &ZeroSlice<u32> = zeroslice![];
-/// let nums = zeroslice![u32; <u32 as AsULE>::ULE::from_array; 1, 2, 3, 4, 5];
+/// let nums = zeroslice![u32; <u32 as AsULE>::ULE::from_unsigned; 1, 2, 3, 4, 5];
 /// assert_eq!(nums.last().unwrap(), 5);
 /// ```
 ///
 /// Using a custom array-conversion function:
 ///
 /// ```
-/// use zerovec::{ZeroSlice, zeroslice};
+/// use zerovec::{ZeroSlice, zeroslice, ule::AsULE, ule::RawBytesULE};
 ///
-/// mod conversion {
-///     use zerovec::ule::RawBytesULE;
-///     pub(super) const fn i16_array_to_be_array<const N: usize>(arr: [i16; N]) -> [RawBytesULE<2>; N] {
-///         let mut result = [RawBytesULE([0; 2]); N];
-///         let mut i = 0;
-///         while i < N {
-///             result[i] = RawBytesULE(arr[i].to_be_bytes());
-///             i += 1;
-///         }
-///         result
-///     }
+/// const fn be_convert(num: i16) -> <i16 as AsULE>::ULE {
+///     RawBytesULE(num.to_be_bytes())
 /// }
 ///
-/// const NUMBERS: &ZeroSlice<i16> = zeroslice![i16; conversion::i16_array_to_be_array; 1, -2, 3, -4, 5];
+/// const NUMBERS_BE: &ZeroSlice<i16> = zeroslice![i16; be_convert; 1, -2, 3, -4, 5];
 /// ```
 #[macro_export]
 macro_rules! zeroslice {
     () => (
         $crate::ZeroSlice::new_empty()
     );
-    ($aligned:ty; $array_fn:expr; $($x:expr),+ $(,)?) => (
+    ($aligned:ty; $convert:expr; $($x:expr),+ $(,)?) => (
         $crate::ZeroSlice::<$aligned>::from_ule_slice(
-            {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &$array_fn([$($x),+]); X}
+            {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &[
+                $($convert($x)),*
+            ]; X}
         )
     );
 }
@@ -984,7 +983,7 @@ macro_rules! zeroslice {
 /// ```
 /// use zerovec::{ZeroVec, zerovec, ule::AsULE};
 ///
-/// const SIGNATURE: ZeroVec<char> = zerovec![char; <char as AsULE>::ULE::from_array; 'a', 'y', 'e', '✌'];
+/// const SIGNATURE: ZeroVec<char> = zerovec![char; <char as AsULE>::ULE::from_aligned; 'a', 'y', 'e', '✌'];
 /// assert!(!SIGNATURE.is_owned());
 ///
 /// const EMPTY: ZeroVec<u32> = zerovec![];
@@ -995,8 +994,8 @@ macro_rules! zerovec {
     () => (
         $crate::ZeroVec::new()
     );
-    ($aligned:ty; $array_fn:expr; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![$aligned; $array_fn; $($x),+].as_zerovec()
+    ($aligned:ty; $convert:expr; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![$aligned; $convert; $($x),+].as_zerovec()
     );
 }
 
