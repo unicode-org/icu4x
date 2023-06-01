@@ -134,7 +134,7 @@ impl Calendar for Iso {
         let years_since_400 = date.0.year % 400;
         let leap_years_since_400 = years_since_400 / 4 - years_since_400 / 100;
         // The number of days to the current year
-        //Can never cause an overflow because years_since_400 has a maximum value of 399.
+        // Can never cause an overflow because years_since_400 has a maximum value of 399.
         let days_to_current_year = 365 * years_since_400 + leap_years_since_400;
         // The weekday offset from January 1 this year and January 1 2000
         let year_offset = days_to_current_year % 7;
@@ -528,25 +528,23 @@ impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{types::IsoWeekday, date};
+    use crate::{date, types::IsoWeekday};
 
     #[test]
-    fn iso_overflow(){
-
+    fn iso_overflow() {
         #[derive(Debug)]
         struct TestCase {
             year: i32,
             month: u8,
             day: u8,
             fixed: i32,
-            saturating: bool
+            saturating: bool,
         };
 
         //Calculates the max possible year representable using i32::MAX as the fixed date
         let max_year = Iso::iso_from_fixed(i32::MAX).year().number;
 
         let cases = [
-
             TestCase {
                 year: max_year,
                 month: 6,
@@ -558,17 +556,18 @@ mod test {
                 year: max_year,
                 month: 7,
                 day: 9,
-                fixed: i32::MAX -2,
+                fixed: i32::MAX - 2,
                 saturating: false,
             },
             TestCase {
                 year: max_year,
                 month: 7,
                 day: 10,
-                fixed: i32::MAX -1,
+                fixed: i32::MAX - 1,
                 saturating: false,
             },
-            TestCase { // Latest date that can be represented before causing overflow
+            TestCase {
+                // Latest date that can be represented before causing overflow
                 year: max_year,
                 month: 7,
                 day: 11,
@@ -590,7 +589,7 @@ mod test {
                 saturating: true,
             },
             TestCase {
-                year: max_year+1,
+                year: max_year + 1,
                 month: 7,
                 day: 11,
                 fixed: i32::MAX,
