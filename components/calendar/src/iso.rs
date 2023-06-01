@@ -456,7 +456,8 @@ impl Iso {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
-    pub fn iso_from_fixed(date: i32) -> Date<Iso> { // Temporary fix to visibility issue: don't leave, please address
+    pub fn iso_from_fixed(date: i32) -> Date<Iso> {
+        // Temporary fix to visibility issue: don't leave, please address
         let year = Self::iso_year_from_fixed(date);
         let prior_days = date - Self::iso_new_year(year);
         #[allow(clippy::unwrap_used)] // valid day and month

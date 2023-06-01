@@ -18,7 +18,6 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub marker: PhantomData<C>,
 }
 
-
 pub trait CalendarArithmetic: Calendar {
     fn month_days(year: i32, month: u8) -> u8;
     fn months_for_every_year(year: i32) -> u8;
