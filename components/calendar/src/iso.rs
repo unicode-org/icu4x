@@ -37,6 +37,7 @@ use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
 const EPOCH: i32 = 1;
+const MIN_YEAR: i32 = -5879610;
 
 /// The [ISO Calendar]
 ///
@@ -433,8 +434,8 @@ impl Iso {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: i32) -> i32 {
-        if date == i32::MIN {
-            todo!("hard-code the correct year here")
+        if date != i32::MIN {
+            return MIN_YEAR;
         }
         let date = date - EPOCH;
         // 400 year cycles have 146097 days
@@ -465,7 +466,7 @@ impl Iso {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
         let year = Self::iso_year_from_fixed(date);
-        let prior_days = date - Self::iso_new_year(year);
+        let prior_days = date.saturating_sub(Self::iso_new_year(year));
         #[allow(clippy::unwrap_used)] // valid day and month
         let correction = if date < Self::fixed_from_iso_integers(year, 3, 1).unwrap() {
             0
@@ -474,9 +475,16 @@ impl Iso {
         } else {
             2
         };
-        let month = quotient(12 * (prior_days + correction) + 373, 367) as u8; // in 1..12 < u8::MAX
+        let month = quotient(
+            (12i32)
+                .saturating_mul(prior_days.saturating_add(correction))
+                .saturating_add(373),
+            367,
+        ) as u8; // in 1..12 < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
-        let day = (date - Self::fixed_from_iso_integers(year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
+        let day = date
+            .saturating_sub(Self::fixed_from_iso_integers(year, month, 1).unwrap())
+            .saturating_add(1) as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
         Date::try_new_iso_date(year, month, day).unwrap()
     }
@@ -543,14 +551,11 @@ mod test {
         // Calculates the max possible year representable using i32::MAX as the fixed date
         let max_year = Iso::iso_from_fixed(i32::MAX).year().number;
 
-        /*
-        Calculates the minimum possible year representable using i32::MIN as the fixed date
-        *Cannot be tested yet due to hard coded date not being available yet (see line 436)
-        let min_year = Iso::iso_from_fixed(i32::MIN).year().number;
-        */
+        // Calculates the minimum possible year representable using i32::MIN as the fixed date
+        // *Cannot be tested yet due to hard coded date not being available yet (see line 436)
+        let min_year = MIN_YEAR;
 
         let cases = [
-            /*
             TestCase {
                 // Earliest date that can be represented before causing a minimum overflow
                 year: min_year,
@@ -580,7 +585,6 @@ mod test {
                 fixed: i32::MIN + 30,
                 saturating: true,
             },
-            */
             TestCase {
                 year: max_year,
                 month: 6,
@@ -647,6 +651,13 @@ mod test {
             }
             assert_eq!(Iso::fixed_from_iso(date.inner), case.fixed, "{case:?}");
         }
+    }
+
+    // Calculates the minimum possible year representable using i32::MIN as the fixed date
+    // Used as the value for the const MIN_YEAR
+    #[test]
+    fn min_year() {
+        assert_eq!(Iso::iso_from_fixed(i32::MIN).year().number, MIN_YEAR);
     }
 
     #[test]
