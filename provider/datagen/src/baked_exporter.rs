@@ -338,6 +338,8 @@ impl DataExporter for BakedExporter {
                     .parse::<TokenStream>()
                     .unwrap();
 
+                // Exposing singleton structs separately allows us to get rid of fallibility by using
+                // the struct directly.
                 singleton = Some(quote! {
                     #[doc(hidden)]
                     #[macro_export]
