@@ -114,7 +114,7 @@ impl<'zf, B: ToOwned + ?Sized> ZeroFrom<'zf, Cow<'_, B>> for Cow<'zf, B> {
 }
 
 impl<'zf, T: ?Sized> ZeroFrom<'zf, &'_ T> for &'zf T {
-#[inline]
+    #[inline]
     fn zero_from(other: &'zf &'_ T) -> &'zf T {
         other
     }
