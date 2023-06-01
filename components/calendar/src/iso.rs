@@ -383,14 +383,14 @@ impl Iso {
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> i32 {
+        let year_saturation = date.0.year.saturating_sub(1);
         // Calculate days per year
-        let mut fixed: i32 = (EPOCH - 1 + 365).saturating_mul(date.0.year.saturating_sub(1));
+        let mut fixed: i32 = (EPOCH - 1) + (365i32).saturating_mul(year_saturation);
+
+        let offset = quotient(year_saturation, 4) - quotient(year_saturation, 100)
+            + quotient(year_saturation, 400);
         // Adjust for leap year logic
-        fixed = fixed.saturating_add(
-            quotient(date.0.year.saturating_sub(1), 4)
-                - quotient(date.0.year.saturating_sub(1), 100)
-                + quotient(date.0.year.saturating_sub(1), 400),
-        );
+        fixed = fixed.saturating_add(offset);
         // Days of current year
         fixed = fixed.saturating_add(quotient(367 * (date.0.month as i32) - 362, 12));
         // Leap year adjustment for the current year
@@ -540,13 +540,12 @@ mod test {
             fixed: i32,
             saturating: bool,
         }
-
         // Calculates the max possible year representable using i32::MAX as the fixed date
         let max_year = Iso::iso_from_fixed(i32::MAX).year().number;
 
         /*
         Calculates the minimum possible year representable using i32::MIN as the fixed date
-        Cannot be tested yet due to hard coded date not being available yet (Line 436)
+        *Cannot be tested yet due to hard coded date not being available yet (see line 436)
         let min_year = Iso::iso_from_fixed(i32::MIN).year().number;
         */
 
