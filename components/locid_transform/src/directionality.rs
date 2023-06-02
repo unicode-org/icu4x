@@ -4,8 +4,7 @@
 
 use crate::provider::*;
 use crate::{LocaleExpander, LocaleTransformError};
-use icu_locid::subtags::Script;
-use icu_locid::{subtags_script, Locale};
+use icu_locid::{subtags_script as script, Locale};
 use icu_provider::{DataPayload, DataProvider};
 
 /// Represents the direction of a script.
@@ -116,20 +115,23 @@ impl LocaleDirectionality {
     pub fn get(&self, locale: impl Into<Locale>) -> Direction {
         let mut locale = locale.into();
 
-        // 1. Maximize the locale to utilize the likely subtags data
-        let _transform_result = self.expander.maximize(&mut locale);
-        // 2. Get script subtag of the locale
-        let script = script_of_locale(&locale);
+        let script = locale
+            .id
+            .script
+            .or_else(|| {
+                self.expander.maximize(&mut locale);
+                locale.id.script
+            })
+            .unwrap_or(script!("Zzzz"));
 
-        // 3. Get the directionality of the script
-        let directionality = self
+        let direction = self
             .rtl
             .get()
             .rtl
             .get(&script.into_tinystr().to_unvalidated());
-        match directionality {
-            Some(&directionality) => {
-                <Direction as zerovec::ule::AsULE>::from_unaligned(directionality)
+        match direction {
+            Some(&direction) => {
+                <Direction as zerovec::ule::AsULE>::from_unaligned(direction)
             }
             // TODO: Do we make `LocaleDirectionality::get` fallible despite the DataPayload
             // being defined to contain all scripts?
@@ -149,12 +151,5 @@ impl LocaleDirectionality {
     /// See [`LocaleDirectionality::get`] for more information.
     pub fn is_left_to_right(&self, locale: impl Into<Locale>) -> bool {
         self.get(locale) == Direction::LeftToRight
-    }
-}
-
-fn script_of_locale(locale: &Locale) -> Script {
-    match locale.id.script {
-        Some(script) => script,
-        None => subtags_script!("Zzzz"),
     }
 }
