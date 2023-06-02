@@ -238,10 +238,6 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, CalendarError> {
-        if month > 12 {
-            return Err(CalendarError::OutOfRange);
-        }
-
         if !(1..=12).contains(&month) {
             return Err(CalendarError::OutOfRange);
         }
@@ -388,12 +384,12 @@ impl Iso {
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> i32 {
-        let year_saturation = (date.0.year as i64) - 1;
+        let prev_year = (date.0.year as i64) - 1;
         // Calculate days per year
-        let mut fixed: i64 = (EPOCH as i64 - 1) + 365 * year_saturation;
-
-        let offset = quotient64(year_saturation, 4) - quotient64(year_saturation, 100)
-            + quotient64(year_saturation, 400);
+        let mut fixed: i64 = (EPOCH as i64 - 1) + 365 * prev_year;
+        // Calculate leap year offset
+        let offset = quotient64(prev_year, 4) - quotient64(prev_year, 100)
+            + quotient64(prev_year, 400);
         // Adjust for leap year logic
         fixed += offset;
         // Days of current year
@@ -471,14 +467,13 @@ impl Iso {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
         let year = Self::iso_year_from_fixed(date);
-        // Gets the next possible ISO year
-        let next_year = year.saturating_add(1);
-        // Calculates the fixed days difference between the next year and the current year
-        let year_length = Self::fixed_from_iso_integers(next_year, 12, 31)
-            .unwrap()
-            .saturating_sub(Self::fixed_from_iso_integers(year, 12, 31).unwrap());
-        // Increase the date by the fixed days difference and set to next_year, but only if the current year is MIN_YEAR.
+        // Increase the date by 365 (see below why) and set it to next_year, only if the current year is MIN_YEAR
         let (fixed_date, adjusted_year) = if year == MIN_YEAR {
+            // Gets the next possible ISO year
+            let next_year = year.saturating_add(1);
+            // Note: The min year, -5879610, is not a leap year, and neither are either of the adjacent years,
+            // so we add 365 to keep these calculations in range of an i32.
+            let year_length = 365;
             (date.saturating_add(year_length), next_year)
         } else {
             (date, year)
@@ -493,16 +488,9 @@ impl Iso {
         } else {
             2
         };
-        let month = quotient(
-            (12i32)
-                .saturating_mul(prior_days.saturating_add(correction))
-                .saturating_add(373),
-            367,
-        ) as u8; // in 1..12 < u8::MAX
+        let month = quotient(12 * (prior_days + correction) + 373, 367) as u8; // in 1..12 < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
-        let day = fixed_date
-            .saturating_sub(Self::fixed_from_iso_integers(adjusted_year, month, 1).unwrap())
-            .saturating_add(1) as u8; // <= days_in_month < u8::MAX
+        let day = (fixed_date - Self::fixed_from_iso_integers(adjusted_year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
         Date::try_new_iso_date(year, month, day).unwrap()
     }
