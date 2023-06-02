@@ -126,7 +126,7 @@ When finished, run from the top level:
 $ cargo make testdata
 ```
 
-If everything is hooked together properly, baked Rust files for your new data struct should appear under *provider/testdata/data/baked*, the file *provider/testdata/data/testdata.postcard* should have changed, and JSON files should appear under *provider/repodata/data/json*.
+If everything is hooked together properly, baked Rust code for your new data struct should appear under *provider/testdata/data/baked/macros.rs*, the file *provider/testdata/data/testdata.postcard* should have changed, and JSON files should appear under *provider/repodata/data/json*.
 
 
 ## Example
