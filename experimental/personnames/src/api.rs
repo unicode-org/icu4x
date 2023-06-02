@@ -71,9 +71,9 @@ pub enum FieldCapsStyle {
     InitialCap,
 }
 
-impl Into<FieldModifier> for FieldCapsStyle {
-    fn into(self) -> FieldModifier {
-        match self {
+impl From<FieldCapsStyle> for FieldModifier {
+    fn from(value: FieldCapsStyle) -> Self {
+        match value {
             FieldCapsStyle::Auto => FieldModifier::None,
             FieldCapsStyle::AllCaps => FieldModifier::AllCaps,
             FieldCapsStyle::InitialCap => FieldModifier::InitialCap,
@@ -88,9 +88,9 @@ pub enum FieldPart {
     Prefix,
 }
 
-impl Into<FieldModifier> for FieldPart {
-    fn into(self) -> FieldModifier {
-        match self {
+impl From<FieldPart> for FieldModifier {
+    fn from(value: FieldPart) -> Self {
+        match value {
             FieldPart::Auto => FieldModifier::None,
             FieldPart::Core => FieldModifier::Core,
             FieldPart::Prefix => FieldModifier::Prefix,
@@ -105,9 +105,9 @@ pub enum FieldLength {
     Monogram,
 }
 
-impl Into<FieldModifier> for FieldLength {
-    fn into(self) -> FieldModifier {
-        match self {
+impl From<FieldLength> for FieldModifier {
+    fn from(value: FieldLength) -> Self {
+        match value {
             FieldLength::Auto => FieldModifier::None,
             FieldLength::Initial => FieldModifier::Initial,
             FieldLength::Monogram => FieldModifier::Monogram,
@@ -121,9 +121,9 @@ pub enum FieldFormality {
     Informal,
 }
 
-impl Into<FieldModifier> for FieldFormality {
-    fn into(self) -> FieldModifier {
-        match self {
+impl From<FieldFormality> for FieldModifier {
+    fn from(value: FieldFormality) -> Self {
+        match value {
             FieldFormality::Auto => FieldModifier::None,
             FieldFormality::Informal => FieldModifier::Informal,
         }
