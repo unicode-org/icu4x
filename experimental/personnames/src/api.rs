@@ -6,16 +6,16 @@ use icu_locid::Locale;
 
 /// Trait for providing person name data.
 pub trait PersonName {
-    /// Return the name locale of person name.
+    /// Returns the name locale of person name.
     fn name_locale(&self) -> Option<&Locale>;
 
-    /// return the preferred order of person name.
+    /// Returns the preferred order of person name.
     fn preferred_order(&self) -> Option<&PreferredOrder>;
 
-    /// return the value of the given field name, it *must* match the name field.
+    /// Returns the value of the given field name, it *must* match the name field.
     fn get(&self, field: &NameField) -> Option<&str>;
 
-    /// Return all available name field.
+    /// Returns all available name field.
     fn available_name_fields(&self) -> Vec<&NameField>;
 
     /// Returns true if the provided field name is available.
@@ -37,6 +37,7 @@ pub enum PersonNamesFormatterError {
 /// Field Modifiers.
 ///
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#modifiers
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 enum FieldModifier {
     None,
     Informal,
@@ -63,12 +64,7 @@ impl FieldModifier {
     }
 }
 
-/// Field Modifiers Set. (must be the same as FieldModifier repr)
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Debug, Hash)]
-pub struct FieldModifierSet {
-    value: u32,
-}
-
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum FieldCapsStyle {
     Auto,
     AllCaps,
@@ -85,6 +81,7 @@ impl Into<FieldModifier> for FieldCapsStyle {
     }
 }
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum FieldPart {
     Auto,
     Core,
@@ -101,6 +98,7 @@ impl Into<FieldModifier> for FieldPart {
     }
 }
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum FieldLength {
     Auto,
     Initial,
@@ -117,6 +115,7 @@ impl Into<FieldModifier> for FieldLength {
     }
 }
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum FieldFormality {
     Auto,
     Informal,
@@ -129,6 +128,12 @@ impl Into<FieldModifier> for FieldFormality {
             FieldFormality::Informal => FieldModifier::Informal,
         }
     }
+}
+
+/// Field Modifiers Set. (must be the same as FieldModifier repr)
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Debug, Hash)]
+pub struct FieldModifierSet {
+    value: u32,
 }
 
 impl FieldModifierSet {
