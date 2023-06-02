@@ -404,7 +404,7 @@ impl Iso {
         };
         // Days passed in current month
         fixed += date.0.day as i64;
-        i32::try_from(fixed).unwrap_or_else(|_| if fixed < 0 { i32::MIN } else { i32::MAX })
+        i32::try_from(fixed).unwrap_or(if fixed < 0 { i32::MIN } else { i32::MAX })
     }
 
     fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<i32> {
