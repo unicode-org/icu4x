@@ -83,10 +83,13 @@ impl LocaleDirectionality {
     where
         P: DataProvider<ScriptDirectionV1Marker> + ?Sized,
     {
-        let rtl: DataPayload<ScriptDirectionV1Marker> =
+        let script_direction: DataPayload<ScriptDirectionV1Marker> =
             provider.load(Default::default())?.take_payload()?;
 
-        Ok(LocaleDirectionality { script_direction: rtl, expander })
+        Ok(LocaleDirectionality {
+            script_direction,
+            expander,
+        })
     }
 
     /// Returns the script direction of the given locale.
