@@ -54,7 +54,7 @@ const JULIAN_EPOCH: i32 = -1;
 /// # Era codes
 ///
 /// This calendar supports two era codes: `"bce"`, and `"ce"`, corresponding to the BCE/BC and CE/AD eras
-#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Julian;
 
@@ -201,9 +201,15 @@ impl Julian {
         Self
     }
 
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1684-L1687
     #[inline(always)]
-    const fn is_leap_year_const(year: i32) -> bool {
-        year % 4 == 0
+    const fn is_leap_year_const(year: i32) -> bool { // This does not match Dershowitz, Nachum, and Edward M. Reingold
+        // year % 4 == 0 
+        year % 4 == if year > 0 {      
+                            0
+                        } else {
+                            3
+                        }
     }
 
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
@@ -419,48 +425,22 @@ mod test {
         assert_eq!(iso_date, recovered_iso);
     }
 
-    #[derive(Debug)]
-    struct TestCase {
-        fixed_date: i32,
-        iso_year: i32,
-        iso_month: u8,
-        iso_day: u8,
-        expected_year: i32,
-        expected_era: Era,
-        expected_month: u32,
-        expected_day: u32,
-    }
-
-    fn check_test_case(case: TestCase) {
-        let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(case.fixed_date);
-        let julian_from_fixed: Date<Julian> = Date::new_from_iso(iso_from_fixed, Julian);
-        assert_eq!(julian_from_fixed.year().number, case.expected_year,
-            "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-        assert_eq!(julian_from_fixed.year().era, case.expected_era,
-            "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-        assert_eq!(julian_from_fixed.month().ordinal, case.expected_month,
-            "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-        assert_eq!(julian_from_fixed.day_of_month().0, case.expected_day,
-            "Failed day check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-
-        let iso_date_man: Date<Iso> =
-            Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day)
-                .expect("Failed to initialize ISO date for {case:?}");
-        let julian_date_man: Date<Julian> = Date::new_from_iso(iso_date_man, Julian);
-        assert_eq!(julian_date_man.year().number, case.expected_year,
-            "Failed year check from ISO: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-        assert_eq!(julian_date_man.year().era, case.expected_era,
-            "Failed era check from ISO: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-        assert_eq!(julian_date_man.month().ordinal, case.expected_month,
-            "Failed month check from ISO: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-        assert_eq!(julian_date_man.day_of_month().0, case.expected_day,
-            "Failed day check from ISO: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-    }
-
     #[test]
     fn test_julian_near_era_change() {
         // Tests that the Julian calendar gives the correct expected
         // day, month, and year for positive years (CE)
+
+        #[derive(Debug)]
+        struct TestCase {
+            fixed_date: i32,
+            iso_year: i32,
+            iso_month: u8,
+            iso_day: u8,
+            expected_year: i32,
+            expected_era: Era,
+            expected_month: u32,
+            expected_day: u32,
+        }
 
         let cases = [
             TestCase {
@@ -538,11 +518,55 @@ mod test {
                 expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 12,
                 expected_day: 31
+            },
+
+            TestCase {
+                fixed_date: -1462,
+                iso_year: -4,
+                iso_month: 12,
+                iso_day: 30,
+                expected_year: 4,
+                expected_era: Era(tinystr!(16, "bce")),
+                expected_month: 1,
+                expected_day: 1
+            },
+
+            TestCase {
+                fixed_date: -1463,
+                iso_year: -4,
+                iso_month: 12,
+                iso_day: 29,
+                expected_year: 5,
+                expected_era: Era(tinystr!(16, "bce")),
+                expected_month: 12,
+                expected_day: 31
             }
         ];
 
         for case in cases {
-            check_test_case(case);
+            let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(case.fixed_date);
+            let julian_from_fixed: Date<Julian> = Date::new_from_iso(iso_from_fixed, Julian);
+            assert_eq!(julian_from_fixed.year().number, case.expected_year,
+                "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
+            assert_eq!(julian_from_fixed.year().era, case.expected_era,
+                "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
+            assert_eq!(julian_from_fixed.month().ordinal, case.expected_month,
+                "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
+            assert_eq!(julian_from_fixed.day_of_month().0, case.expected_day,
+                "Failed day check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
+
+            let iso_date_man: Date<Iso> =
+                Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day)
+                    .expect("Failed to initialize ISO date for {case:?}");
+            let julian_date_man: Date<Julian> = Date::new_from_iso(iso_date_man, Julian);
+            assert_eq!(julian_date_man.year().number, case.expected_year,
+                "Failed year check from ISO: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
+            assert_eq!(julian_date_man.year().era, case.expected_era,
+                "Failed era check from ISO: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
+            assert_eq!(julian_date_man.month().ordinal, case.expected_month,
+                "Failed month check from ISO: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
+            assert_eq!(julian_date_man.day_of_month().0, case.expected_day,
+                "Failed day check from ISO: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
         }
     }
 
@@ -554,6 +578,25 @@ mod test {
             let julian = Julian::julian_from_fixed(fixed);
             let new_fixed = Julian::fixed_from_julian(julian.0);
             assert_eq!(fixed, new_fixed);
+        }
+    }
+
+    #[test]
+    fn test_julian_directionality() {
+        // Tests that for a large range of fixed dates, if a fixed date
+        // is less than another, the corresponding YMD should also be less
+        // than the other, without exception.
+        for i in -1000..=1000 {
+            for j in -1000..=1000 {
+                let julian_i = Julian::julian_from_fixed(i).0;
+                let julian_j = Julian::julian_from_fixed(j).0;
+
+                assert_eq!(
+                    i.cmp(&j),
+                    julian_i.cmp(&julian_j),
+                    "Julian directionality inconsistent with directionality for i: {i}, j: {j}"
+                );
+            }
         }
     }
 }
