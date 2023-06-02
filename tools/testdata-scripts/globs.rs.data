@@ -32,6 +32,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-localenames-full/main/$LOCALES/languages.json",
     "cldr-localenames-full/main/$LOCALES/scripts.json",
     "cldr-localenames-full/main/$LOCALES/variants.json",
+    "cldr-person-names-full/main/$LOCALES/personNames.json",
     // Extra data for icu_datagen tests:
     "cldr-dates-full/main/cs/ca-gregorian.json",
     "cldr-dates-full/main/cs/timeZoneNames.json",

@@ -53,12 +53,12 @@ use tinystr::tinystr;
 ///
 /// This calendar supports two era codes: `"bd"`, and `"ad"`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
 /// eras. 1 A.M. is equivalent to 284 C.E.
-#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;
 
 /// The inner date type used for representing [`Date`]s of [`Coptic`]. See [`Date`] and [`Coptic`] for more details.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
 impl CalendarArithmetic for Coptic {

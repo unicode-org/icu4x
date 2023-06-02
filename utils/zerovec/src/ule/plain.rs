@@ -111,7 +111,7 @@ macro_rules! impl_const_constructors {
 }
 
 macro_rules! impl_byte_slice_type {
-    ($type:ty, $size:literal) => {
+    ($single_fn:ident, $type:ty, $size:literal) => {
         impl From<$type> for RawBytesULE<$size> {
             #[inline]
             fn from(value: $type) -> Self {
@@ -132,6 +132,24 @@ macro_rules! impl_byte_slice_type {
         // EqULE is true because $type and RawBytesULE<$size>
         // have the same byte sequence on little-endian
         unsafe impl EqULE for $type {}
+
+        impl RawBytesULE<$size> {
+            pub const fn $single_fn(v: $type) -> Self {
+                RawBytesULE(v.to_le_bytes())
+            }
+        }
+    };
+}
+
+macro_rules! impl_byte_slice_unsigned_type {
+    ($type:ty, $size:literal) => {
+        impl_byte_slice_type!(from_unsigned, $type, $size);
+    };
+}
+
+macro_rules! impl_byte_slice_signed_type {
+    ($type:ty, $size:literal) => {
+        impl_byte_slice_type!(from_signed, $type, $size);
     };
 }
 
@@ -140,15 +158,15 @@ impl_byte_slice_size!(u32, 4);
 impl_byte_slice_size!(u64, 8);
 impl_byte_slice_size!(u128, 16);
 
-impl_byte_slice_type!(u16, 2);
-impl_byte_slice_type!(u32, 4);
-impl_byte_slice_type!(u64, 8);
-impl_byte_slice_type!(u128, 16);
+impl_byte_slice_unsigned_type!(u16, 2);
+impl_byte_slice_unsigned_type!(u32, 4);
+impl_byte_slice_unsigned_type!(u64, 8);
+impl_byte_slice_unsigned_type!(u128, 16);
 
-impl_byte_slice_type!(i16, 2);
-impl_byte_slice_type!(i32, 4);
-impl_byte_slice_type!(i64, 8);
-impl_byte_slice_type!(i128, 16);
+impl_byte_slice_signed_type!(i16, 2);
+impl_byte_slice_signed_type!(i32, 4);
+impl_byte_slice_signed_type!(i64, 8);
+impl_byte_slice_signed_type!(i128, 16);
 
 impl_const_constructors!(u8, 1);
 impl_const_constructors!(u16, 2);

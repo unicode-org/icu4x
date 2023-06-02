@@ -10,6 +10,8 @@ use icu_provider::prelude::*;
 use std::any::Any;
 use std::collections::{BTreeMap, HashSet};
 use std::fmt::Debug;
+use std::fs::File;
+use std::io::BufWriter;
 use std::io::Cursor;
 use std::io::Read;
 use std::path::Path;
@@ -449,19 +451,23 @@ impl AbstractFs {
                 return Ok(());
             };
 
-            let root = {
-                lazy_static::lazy_static! {
-                    static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
-                        .freshness_lifetime(u64::MAX)
-                        .progress_bar(None)
-                        .build()
-                        .unwrap();
-                }
+            let root = std::env::var_os("ICU4X_SOURCE_CACHE")
+                .map(PathBuf::from)
+                .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
+                .join(resource.rsplit("//").next().unwrap());
 
-                CACHE
-                    .cached_path(resource)
-                    .map_err(|e| DataError::custom("Download").with_display_context(&e))?
-            };
+            if !root.exists() {
+                log::info!("Downloading {resource}");
+                std::fs::create_dir_all(root.parent().unwrap())?;
+                std::io::copy(
+                    &mut ureq::get(resource)
+                        .call()
+                        .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+                        .into_reader(),
+                    &mut BufWriter::new(File::create(&root)?),
+                )?;
+            }
+
             *lock = Ok(
                 ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
                     DataError::custom("Invalid ZIP file")
