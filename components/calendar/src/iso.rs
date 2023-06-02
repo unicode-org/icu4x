@@ -31,7 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{div_rem_euclid, quotient};
+use crate::helpers::{div_rem_euclid, quotient, quotient64};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
@@ -238,6 +238,10 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, CalendarError> {
+        if month > 12 {
+            return Err(CalendarError::OutOfRange);
+        }
+
         if !(1..=12).contains(&month) {
             return Err(CalendarError::OutOfRange);
         }
@@ -384,26 +388,29 @@ impl Iso {
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> i32 {
-        let year_saturation = date.0.year.saturating_sub(1);
+        let year_saturation = (date.0.year as i64) - 1;
         // Calculate days per year
-        let mut fixed: i32 = (EPOCH - 1) + (365i32).saturating_mul(year_saturation);
+        let mut fixed: i64 = (EPOCH as i64 - 1) + 365 * year_saturation;
 
-        let offset = quotient(year_saturation, 4) - quotient(year_saturation, 100)
-            + quotient(year_saturation, 400);
+        let offset = quotient64(year_saturation, 4) - quotient64(year_saturation, 100)
+            + quotient64(year_saturation, 400);
         // Adjust for leap year logic
-        fixed = fixed.saturating_add(offset);
+        fixed += offset;
         // Days of current year
-        fixed = fixed.saturating_add(quotient(367 * (date.0.month as i32) - 362, 12));
+        fixed += quotient64(367 * (date.0.month as i64) - 362, 12);
         // Leap year adjustment for the current year
-        fixed = fixed.saturating_add(if date.0.month <= 2 {
+        fixed += if date.0.month <= 2 {
             0
         } else if Self::is_leap_year(date.0.year) {
             -1
         } else {
             -2
-        });
+        };
         // Days passed in current month
-        fixed.saturating_add(date.0.day as i32)
+        fixed += date.0.day as i64;
+        i32::try_from(fixed).unwrap_or_else(|_| if fixed < 0 {
+            i32::MIN
+        } else { i32::MAX })
     }
 
     fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<i32> {
@@ -434,7 +441,7 @@ impl Iso {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: i32) -> i32 {
-        if date != i32::MIN {
+        if date == i32::MIN {
             return MIN_YEAR;
         }
         let date = date - EPOCH;
@@ -466,9 +473,18 @@ impl Iso {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
         let year = Self::iso_year_from_fixed(date);
-        let prior_days = date.saturating_sub(Self::iso_new_year(year));
+        let next_year = year.saturating_add(1);
+        let year_length = Self::fixed_from_iso_integers(next_year, 12, 31)
+            .unwrap()
+            .saturating_sub(Self::fixed_from_iso_integers(year, 12, 31).unwrap());
+        let (fixed_date, adjusted_year)  = if year == MIN_YEAR {
+            (date.saturating_add(year_length), next_year)
+        } else {
+            (date,year)
+        };
+        let prior_days = fixed_date.saturating_sub(Self::iso_new_year(adjusted_year));
         #[allow(clippy::unwrap_used)] // valid day and month
-        let correction = if date < Self::fixed_from_iso_integers(year, 3, 1).unwrap() {
+        let correction = if date < Self::fixed_from_iso_integers(adjusted_year, 3, 1).unwrap() {
             0
         } else if Self::is_leap_year(year) {
             1
@@ -482,8 +498,8 @@ impl Iso {
             367,
         ) as u8; // in 1..12 < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
-        let day = date
-            .saturating_sub(Self::fixed_from_iso_integers(year, month, 1).unwrap())
+        let day = fixed_date
+            .saturating_sub(Self::fixed_from_iso_integers(adjusted_year, month, 1).unwrap())
             .saturating_add(1) as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
         Date::try_new_iso_date(year, month, day).unwrap()
@@ -557,12 +573,33 @@ mod test {
 
         let cases = [
             TestCase {
-                // Earliest date that can be represented before causing a minimum overflow
+            // Earliest date that can be represented before causing a minimum overflow
+            year: min_year,
+            month: 6,
+            day: 22,
+            fixed: i32::MIN,
+            saturating: false,
+            },
+            TestCase {
                 year: min_year,
-                month: 1,
-                day: 1,
-                fixed: i32::MIN,
+                month: 6,
+                day: 23,
+                fixed: i32::MIN + 1,
                 saturating: false,
+            },
+            TestCase {
+                year: min_year,
+                month: 6,
+                day: 21,
+                fixed: i32::MIN,
+                saturating: true,
+            },
+            TestCase {
+                year: min_year,
+                month: 5,
+                day: 21,
+                fixed: i32::MIN,
+                saturating: true,
             },
             TestCase {
                 year: min_year - 1,
@@ -575,15 +612,29 @@ mod test {
                 year: min_year - 1,
                 month: 12,
                 day: 30,
-                fixed: i32::MIN + 1,
+                fixed: i32::MIN,
                 saturating: true,
             },
             TestCase {
                 year: min_year - 1,
                 month: 12,
                 day: 1,
-                fixed: i32::MIN + 30,
+                fixed: i32::MIN,
                 saturating: true,
+            },
+            TestCase {
+                year: min_year,
+                month: 12,
+                day: 31,
+                fixed: -2147483456,
+                saturating: false,
+            },
+            TestCase {
+                year: min_year + 1,
+                month: 1,
+                day: 1,
+                fixed: -2147483455,
+                saturating: false,
             },
             TestCase {
                 year: max_year,
