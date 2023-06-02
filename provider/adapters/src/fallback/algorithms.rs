@@ -79,7 +79,6 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
             }
         });
         // 4. Remove default extension subtags
-
         // Remove the explicit collation variant if it is the default.
         // "standard" is the default for all languages except zh.
         if locale.get_unicode_ext(&COLLATION_KEY)
@@ -90,7 +89,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
         {
             locale.retain_unicode_ext(|&k| k != COLLATION_KEY);
         }
-        // 4. If there is an invalid "sd" subtag, drop it
+        // 5. If there is an invalid "sd" subtag, drop it
         // For now, ignore it, and let fallback do it for us
     }
 }
@@ -416,6 +415,22 @@ mod tests {
             // TODO(#1964): add "zh" as a target.
             expected_language_chain: &["yue-HK", "yue", "zh-Hant"],
             expected_region_chain: &["yue-HK", "und-HK"],
+        },
+        TestCase {
+            input: "de-u-co-standard",
+            requires_data: true,
+            extension_key: Some(key!("co")),
+            fallback_supplement: Some(FallbackSupplement::Collation),
+            expected_language_chain: &["de"],
+            expected_region_chain: &["de-DE", "und-DE"],
+        },
+        TestCase {
+            input: "zh-u-co-pinyin",
+            requires_data: true,
+            extension_key: Some(key!("co")),
+            fallback_supplement: Some(FallbackSupplement::Collation),
+            expected_language_chain: &["zh"],
+            expected_region_chain: &["zh-CN", "und-CN"],
         },
     ];
 
