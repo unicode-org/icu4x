@@ -130,9 +130,7 @@ impl LocaleDirectionality {
             .rtl
             .get(&script.into_tinystr().to_unvalidated());
         match direction {
-            Some(&direction) => {
-                <Direction as zerovec::ule::AsULE>::from_unaligned(direction)
-            }
+            Some(&direction) => <Direction as zerovec::ule::AsULE>::from_unaligned(direction),
             // TODO: Do we make `LocaleDirectionality::get` fallible despite the DataPayload
             // being defined to contain all scripts?
             None => Direction::Unknown,
