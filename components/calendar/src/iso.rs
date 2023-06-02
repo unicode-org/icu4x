@@ -388,8 +388,8 @@ impl Iso {
         // Calculate days per year
         let mut fixed: i64 = (EPOCH as i64 - 1) + 365 * prev_year;
         // Calculate leap year offset
-        let offset = quotient64(prev_year, 4) - quotient64(prev_year, 100)
-            + quotient64(prev_year, 400);
+        let offset =
+            quotient64(prev_year, 4) - quotient64(prev_year, 100) + quotient64(prev_year, 400);
         // Adjust for leap year logic
         fixed += offset;
         // Days of current year
@@ -470,11 +470,11 @@ impl Iso {
         // Increase the date by 365 (see below why) and set it to next_year, only if the current year is MIN_YEAR
         let (fixed_date, adjusted_year) = if year == MIN_YEAR {
             // Gets the next possible ISO year
-            let next_year = year.saturating_add(1);
+            let next_year = year + 1;
             // Note: The min year, -5879610, is not a leap year, and neither are either of the adjacent years,
             // so we add 365 to keep these calculations in range of an i32.
             let year_length = 365;
-            (date.saturating_add(year_length), next_year)
+            (date + year_length, next_year)
         } else {
             (date, year)
         };
@@ -490,7 +490,8 @@ impl Iso {
         };
         let month = quotient(12 * (prior_days + correction) + 373, 367) as u8; // in 1..12 < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
-        let day = (fixed_date - Self::fixed_from_iso_integers(adjusted_year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
+        let day = (fixed_date - Self::fixed_from_iso_integers(adjusted_year, month, 1).unwrap() + 1)
+            as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
         Date::try_new_iso_date(year, month, day).unwrap()
     }
