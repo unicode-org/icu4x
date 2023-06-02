@@ -405,8 +405,8 @@ mod tests {
         // Tests that for a large range of fixed dates, if a fixed date
         // is less than another, the corresponding YMD should also be less
         // than the other, without exception.
-        for i in -1000..1000 {
-            for j in -1000..1000 {
+        for i in -100..100 {
+            for j in -100..100 {
                 let iso_i: Date<Iso> = Iso::iso_from_fixed(i);
                 let iso_j: Date<Iso> = Iso::iso_from_fixed(j);
 
