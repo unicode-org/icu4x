@@ -203,13 +203,10 @@ impl Julian {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1684-L1687
     #[inline(always)]
-    const fn is_leap_year_const(year: i32) -> bool { // This does not match Dershowitz, Nachum, and Edward M. Reingold
-        // year % 4 == 0 
-        year % 4 == if year > 0 {      
-                            0
-                        } else {
-                            3
-                        }
+    const fn is_leap_year_const(year: i32) -> bool {
+        // This does not match Dershowitz, Nachum, and Edward M. Reingold
+        // year % 4 == 0
+        year % 4 == if year > 0 { 0 } else { 3 }
     }
 
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
@@ -451,9 +448,8 @@ mod test {
                 expected_year: 1,
                 expected_era: Era(tinystr!(16, "ce")),
                 expected_month: 1,
-                expected_day: 3
+                expected_day: 3,
             },
-
             TestCase {
                 fixed_date: 0,
                 iso_year: 0,
@@ -462,9 +458,8 @@ mod test {
                 expected_year: 1,
                 expected_era: Era(tinystr!(16, "ce")),
                 expected_month: 1,
-                expected_day: 2
+                expected_day: 2,
             },
-
             TestCase {
                 fixed_date: -1,
                 iso_year: 0,
@@ -473,9 +468,8 @@ mod test {
                 expected_year: 1,
                 expected_era: Era(tinystr!(16, "ce")),
                 expected_month: 1,
-                expected_day: 1
+                expected_day: 1,
             },
-
             TestCase {
                 fixed_date: -2,
                 iso_year: 0,
@@ -484,9 +478,8 @@ mod test {
                 expected_year: 1,
                 expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 12,
-                expected_day: 31
+                expected_day: 31,
             },
-
             TestCase {
                 fixed_date: -3,
                 iso_year: 0,
@@ -495,9 +488,8 @@ mod test {
                 expected_year: 1,
                 expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 12,
-                expected_day: 30
+                expected_day: 30,
             },
-
             TestCase {
                 fixed_date: -367,
                 iso_year: -1,
@@ -506,9 +498,8 @@ mod test {
                 expected_year: 1,
                 expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 1,
-                expected_day: 1
+                expected_day: 1,
             },
-
             TestCase {
                 fixed_date: -368,
                 iso_year: -1,
@@ -517,9 +508,8 @@ mod test {
                 expected_year: 2,
                 expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 12,
-                expected_day: 31
+                expected_day: 31,
             },
-
             TestCase {
                 fixed_date: -1462,
                 iso_year: -4,
@@ -528,9 +518,8 @@ mod test {
                 expected_year: 4,
                 expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 1,
-                expected_day: 1
+                expected_day: 1,
             },
-
             TestCase {
                 fixed_date: -1463,
                 iso_year: -4,
@@ -539,8 +528,8 @@ mod test {
                 expected_year: 5,
                 expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 12,
-                expected_day: 31
-            }
+                expected_day: 31,
+            },
         ];
 
         for case in cases {
