@@ -337,7 +337,6 @@ mod test {
                 day: 31,
                 prev_year: 2019,
             },
-            
         ];
 
         for case in cases {
