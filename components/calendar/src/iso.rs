@@ -408,9 +408,7 @@ impl Iso {
         };
         // Days passed in current month
         fixed += date.0.day as i64;
-        i32::try_from(fixed).unwrap_or_else(|_| if fixed < 0 {
-            i32::MIN
-        } else { i32::MAX })
+        i32::try_from(fixed).unwrap_or_else(|_| if fixed < 0 { i32::MIN } else { i32::MAX })
     }
 
     fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<i32> {
@@ -473,15 +471,19 @@ impl Iso {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
         let year = Self::iso_year_from_fixed(date);
+        // Gets the next possible ISO year
         let next_year = year.saturating_add(1);
+        // Calculates the fixed days difference between the next year and the current year
         let year_length = Self::fixed_from_iso_integers(next_year, 12, 31)
             .unwrap()
             .saturating_sub(Self::fixed_from_iso_integers(year, 12, 31).unwrap());
-        let (fixed_date, adjusted_year)  = if year == MIN_YEAR {
+        // Increase the date by the fixed days difference and set to next_year, but only if the current year is MIN_YEAR.
+        let (fixed_date, adjusted_year) = if year == MIN_YEAR {
             (date.saturating_add(year_length), next_year)
         } else {
-            (date,year)
+            (date, year)
         };
+        // Calculates the prior days of the adjusted year, then applies a correction based on leap year conditions for the correct ISO date conversion.
         let prior_days = fixed_date.saturating_sub(Self::iso_new_year(adjusted_year));
         #[allow(clippy::unwrap_used)] // valid day and month
         let correction = if date < Self::fixed_from_iso_integers(adjusted_year, 3, 1).unwrap() {
@@ -573,12 +575,12 @@ mod test {
 
         let cases = [
             TestCase {
-            // Earliest date that can be represented before causing a minimum overflow
-            year: min_year,
-            month: 6,
-            day: 22,
-            fixed: i32::MIN,
-            saturating: false,
+                // Earliest date that can be represented before causing a minimum overflow
+                year: min_year,
+                month: 6,
+                day: 22,
+                fixed: i32::MIN,
+                saturating: false,
             },
             TestCase {
                 year: min_year,
