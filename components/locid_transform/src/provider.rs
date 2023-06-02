@@ -136,7 +136,7 @@ pub struct AliasesV1<'data> {
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, SemivalidatedSubdivision>,
 }
 
-#[icu_provider::data_struct(DirectionalityV1Marker = "locid_transform/directionality@1")]
+#[icu_provider::data_struct(ScriptDirectionV1Marker = "locid_transform/script_dir@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -152,7 +152,7 @@ pub struct AliasesV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[yoke(prove_covariance_manually)]
-pub struct DirectionalityV1<'data> {
+pub struct ScriptDirectionV1<'data> {
     /// Script directionality.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub rtl: ZeroMap<'data, UnvalidatedScript, Direction>,

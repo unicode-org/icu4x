@@ -15,7 +15,6 @@
     "Bhks": "LeftToRight",
     "Bopo": "LeftToRight",
     "Brah": "LeftToRight",
-    "Brai": "Unknown",
     "Bugi": "LeftToRight",
     "Buhd": "LeftToRight",
     "Cakm": "LeftToRight",
@@ -166,9 +165,6 @@
     "Xsux": "LeftToRight",
     "Yezi": "RightToLeft",
     "Yiii": "LeftToRight",
-    "Zanb": "LeftToRight",
-    "Zinh": "Unknown",
-    "Zyyy": "Unknown",
-    "Zzzz": "Unknown"
+    "Zanb": "LeftToRight"
   }
 }

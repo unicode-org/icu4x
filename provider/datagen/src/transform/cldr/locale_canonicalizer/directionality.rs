@@ -10,8 +10,8 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 
-impl DataProvider<DirectionalityV1Marker> for crate::DatagenProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<DirectionalityV1Marker>, DataError> {
+impl DataProvider<ScriptDirectionV1Marker> for crate::DatagenProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ScriptDirectionV1Marker>, DataError> {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
         if !req.locale.is_empty() {
@@ -25,25 +25,26 @@ impl DataProvider<DirectionalityV1Marker> for crate::DatagenProvider {
             .read_and_parse("scriptMetadata.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(DirectionalityV1::from(data))),
+            payload: Some(DataPayload::from_owned(ScriptDirectionV1::from(data))),
         })
     }
 }
 
-impl IterableDataProvider<DirectionalityV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<ScriptDirectionV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl From<&cldr_serde::directionality::Resource> for DirectionalityV1<'_> {
+impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
     fn from(other: &cldr_serde::directionality::Resource) -> Self {
         let mut map = BTreeMap::new();
         for (script, metadata) in &other.script_metadata {
             let rtl = match metadata.rtl {
                 cldr_serde::directionality::Rtl::Yes => Direction::RightToLeft,
                 cldr_serde::directionality::Rtl::No => Direction::LeftToRight,
-                cldr_serde::directionality::Rtl::Unknown => Direction::Unknown,
+                // not storing, because it is the default return value for unknown keys downstream
+                cldr_serde::directionality::Rtl::Unknown => continue,
             };
             map.insert(script.to_unvalidated(), rtl);
         }
@@ -59,7 +60,7 @@ fn test_basic() {
     use zerovec::ule::AsULE;
 
     let provider = crate::DatagenProvider::for_test();
-    let data: DataPayload<DirectionalityV1Marker> = provider
+    let data: DataPayload<ScriptDirectionV1Marker> = provider
         .load(Default::default())
         .unwrap()
         .take_payload()
@@ -68,24 +69,23 @@ fn test_basic() {
     assert_eq!(
         data.get()
             .rtl
-            .get(&script!("Avst").into_tinystr().to_unvalidated())
+            .get_copied(&script!("Avst").into_tinystr().to_unvalidated())
             .unwrap(),
-        &Direction::RightToLeft.to_unaligned()
+        Direction::RightToLeft
     );
 
     assert_eq!(
         data.get()
             .rtl
-            .get(&script!("Latn").into_tinystr().to_unvalidated())
+            .get_copied(&script!("Latn").into_tinystr().to_unvalidated())
             .unwrap(),
-        &Direction::LeftToRight.to_unaligned()
+        Direction::LeftToRight
     );
 
     assert_eq!(
         data.get()
             .rtl
-            .get(&script!("Brai").into_tinystr().to_unvalidated())
-            .unwrap(),
-        &Direction::Unknown.to_unaligned()
+            .get_copied(&script!("Brai").into_tinystr().to_unvalidated()),
+        None
     );
 }

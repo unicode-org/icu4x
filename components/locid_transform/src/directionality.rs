@@ -4,7 +4,7 @@
 
 use crate::provider::*;
 use crate::{LocaleExpander, LocaleTransformError};
-use icu_locid::{subtags_script as script, Locale};
+use icu_locid::Locale;
 use icu_provider::{DataPayload, DataProvider};
 
 /// Represents the direction of a script.
@@ -26,8 +26,6 @@ pub enum Direction {
     LeftToRight = 0,
     /// The script is right-to-left.
     RightToLeft = 1,
-    /// The direction of the script is unknown or undefined.
-    Unknown = 2,
 }
 
 /// The `LocaleDirectionality` provides methods to determine the direction of a locale based
@@ -36,20 +34,20 @@ pub enum Direction {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::Locale;
-/// use icu_locid_transform::LocaleDirectionality;
+/// use icu_locid::locale;
+/// use icu_locid_transform::{Direction, LocaleDirectionality};
 ///
 /// let ld = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
 ///     .expect("create failed");
 ///
-/// let locale: Locale = "en".parse().unwrap();
-/// assert_eq!(ld.get(locale), icu_locid_transform::Direction::LeftToRight);
+/// let locale = locale!("en");
+/// assert_eq!(ld.get(locale), Some(Direction::LeftToRight));
 /// ```
 ///
 /// [`CLDR`]: http://cldr.unicode.org/
 #[derive(Debug)]
 pub struct LocaleDirectionality {
-    rtl: DataPayload<DirectionalityV1Marker>,
+    rtl: DataPayload<ScriptDirectionV1Marker>,
     expander: LocaleExpander,
 }
 
@@ -62,7 +60,7 @@ impl LocaleDirectionality {
     /// </div>
     pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleDirectionality, LocaleTransformError>
     where
-        P: DataProvider<DirectionalityV1Marker>
+        P: DataProvider<ScriptDirectionV1Marker>
             + DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
             + ?Sized,
@@ -77,16 +75,15 @@ impl LocaleDirectionality {
         error: LocaleTransformError
     );
 
-    // TODO: Do we need to allow user-provided LocaleExpanders? Can a LocaleExpander ever not
-    // have the right amount of data? Make this public if so
-    fn try_new_with_expander_unstable<P>(
+    /// Creates a [`LocaleDirectionality`] with a custom [`LocaleExpander`] object.
+    pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,
     ) -> Result<LocaleDirectionality, LocaleTransformError>
     where
-        P: DataProvider<DirectionalityV1Marker> + ?Sized,
+        P: DataProvider<ScriptDirectionV1Marker> + ?Sized,
     {
-        let rtl: DataPayload<DirectionalityV1Marker> =
+        let rtl: DataPayload<ScriptDirectionV1Marker> =
             provider.load(Default::default())?.take_payload()?;
 
         Ok(LocaleDirectionality { rtl, expander })
@@ -97,57 +94,54 @@ impl LocaleDirectionality {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
-    /// use icu_locid_transform::LocaleDirectionality;
+    /// use icu_locid::locale;
+    /// use icu_locid_transform::{Direction, LocaleDirectionality};
     ///
     /// let ld = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
     ///     .expect("create failed");
     ///
-    /// let locale: Locale = "en-US".parse().unwrap();
-    /// assert_eq!(ld.get(locale), icu_locid_transform::Direction::LeftToRight);
+    /// let locale = locale!("en-US");
+    /// assert_eq!(ld.get(locale), Some(Direction::LeftToRight));
     ///
-    /// let locale: Locale = "ar".parse().unwrap();
-    /// assert_eq!(ld.get(locale), icu_locid_transform::Direction::RightToLeft);
+    /// let locale = locale!("ar");
+    /// assert_eq!(ld.get(locale), Some(Direction::RightToLeft));
     ///
-    /// let locale: Locale = "fr-Brai-FR".parse().unwrap();
-    /// assert_eq!(ld.get(locale), icu_locid_transform::Direction::Unknown);
+    /// let locale = locale!("fr-Brai-FR");
+    /// assert_eq!(ld.get(locale), None);
     /// ```
-    pub fn get(&self, locale: impl Into<Locale>) -> Direction {
+    pub fn get(&self, locale: impl Into<Locale>) -> Option<Direction> {
         let mut locale = locale.into();
 
-        let script = locale
-            .id
-            .script
-            .or_else(|| {
-                self.expander.maximize(&mut locale);
-                locale.id.script
-            })
-            .unwrap_or(script!("Zzzz"));
+        let script = locale.id.script.or_else(|| {
+            self.expander.maximize(&mut locale);
+            locale.id.script
+        });
+        let script = match script {
+            Some(script) => script,
+            // If the locale has no script, we cannot determine the directionality.
+            None => return None,
+        };
 
         let direction = self
             .rtl
             .get()
             .rtl
-            .get(&script.into_tinystr().to_unvalidated());
-        match direction {
-            Some(&direction) => <Direction as zerovec::ule::AsULE>::from_unaligned(direction),
-            // TODO: Do we make `LocaleDirectionality::get` fallible despite the DataPayload
-            // being defined to contain all scripts?
-            None => Direction::Unknown,
-        }
+            .get_copied(&script.into_tinystr().to_unvalidated());
+
+        direction
     }
 
     /// Returns true if the given locale is right-to-left.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
     pub fn is_right_to_left(&self, locale: impl Into<Locale>) -> bool {
-        self.get(locale) == Direction::RightToLeft
+        self.get(locale) == Some(Direction::RightToLeft)
     }
 
     /// Returns true if the given locale is left-to-right.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
     pub fn is_left_to_right(&self, locale: impl Into<Locale>) -> bool {
-        self.get(locale) == Direction::LeftToRight
+        self.get(locale) == Some(Direction::LeftToRight)
     }
 }
