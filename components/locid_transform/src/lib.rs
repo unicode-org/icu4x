@@ -98,7 +98,7 @@ mod expander;
 pub mod provider;
 
 pub use canonicalizer::LocaleCanonicalizer;
-pub use directionality::LocaleDirectionality;
+pub use directionality::{Direction, LocaleDirectionality};
 pub use error::LocaleTransformError;
 pub use expander::LocaleExpander;
 

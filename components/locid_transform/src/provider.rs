@@ -15,6 +15,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use crate::Direction;
 use alloc::borrow::Cow;
 use icu_locid::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
@@ -138,9 +139,9 @@ pub struct AliasesV1<'data> {
 #[icu_provider::data_struct(DirectionalityV1Marker = "locid_transform/directionality@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
-feature = "datagen",
-derive(serde::Serialize, databake::Bake),
-databake(path = icu_locid_transform::provider),
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_locid_transform::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This directionality data is used to determine the script directionality of a locale.
@@ -154,7 +155,7 @@ databake(path = icu_locid_transform::provider),
 pub struct DirectionalityV1<'data> {
     /// Script directionality.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub rtl: ZeroMap<'data, UnvalidatedScript, Option<bool>>,
+    pub rtl: ZeroMap<'data, UnvalidatedScript, Direction>,
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locid_transform/likelysubtags@1")]

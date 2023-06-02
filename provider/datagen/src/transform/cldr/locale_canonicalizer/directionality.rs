@@ -5,9 +5,10 @@
 use crate::transform::cldr::cldr_serde;
 use icu_locid_transform::provider::*;
 
+use icu_locid_transform::Direction;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
-use icu_provider::datagen::IterableDataProvider;
 
 impl DataProvider<DirectionalityV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DirectionalityV1Marker>, DataError> {
@@ -40,9 +41,9 @@ impl From<&cldr_serde::script_metadata::Resource> for DirectionalityV1<'_> {
         let mut map = BTreeMap::new();
         for (script, metadata) in &other.script_metadata {
             let rtl = match metadata.rtl {
-                cldr_serde::script_metadata::Rtl::Yes => Some(true),
-                cldr_serde::script_metadata::Rtl::No => Some(false),
-                cldr_serde::script_metadata::Rtl::Unknown => None,
+                cldr_serde::script_metadata::Rtl::Yes => Direction::RightToLeft,
+                cldr_serde::script_metadata::Rtl::No => Direction::LeftToRight,
+                cldr_serde::script_metadata::Rtl::Unknown => Direction::Unknown,
             };
             map.insert(script.to_unvalidated(), rtl);
         }
@@ -69,7 +70,7 @@ fn test_basic() {
             .rtl
             .get(&script!("Avst").into_tinystr().to_unvalidated())
             .unwrap(),
-        &Some(true).to_unaligned()
+        &Direction::RightToLeft.to_unaligned()
     );
 
     assert_eq!(
@@ -77,7 +78,7 @@ fn test_basic() {
             .rtl
             .get(&script!("Latn").into_tinystr().to_unvalidated())
             .unwrap(),
-        &Some(false).to_unaligned()
+        &Direction::LeftToRight.to_unaligned()
     );
 
     assert_eq!(
@@ -85,6 +86,6 @@ fn test_basic() {
             .rtl
             .get(&script!("Brai").into_tinystr().to_unvalidated())
             .unwrap(),
-        &Option::<bool>::None.to_unaligned()
+        &Direction::Unknown.to_unaligned()
     );
 }
