@@ -163,6 +163,7 @@ where
 fn test_clone_eq() {
     use crate::hello_world::*;
     let p1 = DataPayload::<HelloWorldV1Marker>::from_static_str("Demo");
+    #[allow(clippy::redundant_clone)]
     let p2 = p1.clone();
     assert_eq!(p1, p2);
 }
