@@ -7,6 +7,7 @@ use icu_locid_transform::provider::*;
 
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
+use icu_provider::datagen::IterableDataProvider;
 
 impl DataProvider<DirectionalityV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DirectionalityV1Marker>, DataError> {
@@ -25,6 +26,12 @@ impl DataProvider<DirectionalityV1Marker> for crate::DatagenProvider {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(DirectionalityV1::from(data))),
         })
+    }
+}
+
+impl IterableDataProvider<DirectionalityV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 

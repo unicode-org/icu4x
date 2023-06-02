@@ -716,6 +716,20 @@ macro_rules! impl_data_provider {
         }
         #[cfg(feature = "icu_locid_transform")]
         #[clippy::msrv = "1.61"]
+        impl DataProvider<icu_locid_transform::provider::DirectionalityV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<icu_locid_transform::provider::DirectionalityV1Marker>, DataError> {
+                locid_transform::directionality_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(icu_locid_transform::provider::DirectionalityV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_locid_transform")]
+        #[clippy::msrv = "1.61"]
         impl DataProvider<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker>, DataError> {
                 locid_transform::likelysubtags_ext_v1::lookup(&req.locale)
@@ -3228,6 +3242,8 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_locid_transform")]
                 const ALIASESV1MARKER: icu_provider::DataKeyHash = icu_locid_transform::provider::AliasesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_locid_transform")]
+                const DIRECTIONALITYV1MARKER: icu_provider::DataKeyHash = icu_locid_transform::provider::DirectionalityV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_locid_transform")]
                 const LIKELYSUBTAGSEXTENDEDV1MARKER: icu_provider::DataKeyHash =
                     icu_locid_transform::provider::LikelySubtagsExtendedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_locid_transform")]
@@ -3715,6 +3731,8 @@ macro_rules! impl_any_provider {
                     UNITLISTV1MARKER => list::unit_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
                     ALIASESV1MARKER => locid_transform::aliases_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_locid_transform")]
+                    DIRECTIONALITYV1MARKER => locid_transform::directionality_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
                     LIKELYSUBTAGSEXTENDEDV1MARKER => locid_transform::likelysubtags_ext_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]

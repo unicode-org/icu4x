@@ -92,11 +92,13 @@
 extern crate alloc;
 
 mod canonicalizer;
+mod directionality;
 mod error;
 mod expander;
 pub mod provider;
 
 pub use canonicalizer::LocaleCanonicalizer;
+pub use directionality::LocaleDirectionality;
 pub use error::LocaleTransformError;
 pub use expander::LocaleExpander;
 

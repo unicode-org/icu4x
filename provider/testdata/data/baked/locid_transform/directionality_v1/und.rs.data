@@ -1,0 +1,13 @@
+icu_locid_transform::provider::DirectionalityV1 {
+    rtl: unsafe {
+        #[allow(unused_unsafe)]
+        zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                zerovec :: ZeroVec :: from_bytes_unchecked (b"AdlmAghbAhomArabArmiArmnAvstBaliBamuBassBatkBengBhksBopoBrahBraiBugiBuhdCakmCansCariChamCherChrsCoptCpmnCprtCyrlDevaDiakDogrDsrtDuplEgypElbaElymEthiGeorGlagGongGonmGothGranGrekGujrGuruHanbHangHaniHanoHansHantHatrHebrHiraHluwHmngHmnpHungItalJamoJavaJpanKaliKanaKawiKharKhmrKhojKitsKndaKoreKthiLanaLaooLatnLepcLimbLinaLinbLisuLyciLydiMahjMakaMandManiMarcMedfMendMercMeroMlymModiMongMrooMteiMultMymrNagmNandNarbNbatNewaNkooNshuOgamOlckOrkhOryaOsgeOsmaOugrPalmPaucPermPhagPhliPhlpPhnxPlrdPrtiRjngRohgRunrSamrSarbSaurSgnwShawShrdSiddSindSinhSogdSogoSoraSoyoSundSyloSyrcTagbTakrTaleTaluTamlTangTavtTeluTfngTglgThaaThaiTibtTirhTnsaTotoUgarVaiiVithWaraWchoXpeoXsuxYeziYiiiZanbZinhZyyyZzzz")
+            },
+            unsafe {
+                zerovec :: ZeroVec :: from_bytes_unchecked (b"\x01\x01\x01\0\x01\0\x01\x01\x01\x01\x01\0\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\0\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\0\x01\0\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\0\x01\0\x01\x01\x01\x01\x01\0\x01\0\x01\x01\x01\x01\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\x01\x01\0\x01\x01\x01\0\x01\0\x01\0\x01\x01\x01\0\x01\0\x01\0\x01\x01\x01\x01\x01\0\x01\0\x01\0\x01\x01\x01\x01\x01\x01\x01\0\x01\x01\x01\0\x01\x01\x01\0\x01\x01\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\0\x01\x01\x01\0\x01\0\0\0\0\0\0\0")
+            },
+        )
+    },
+}

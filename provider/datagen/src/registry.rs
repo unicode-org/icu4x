@@ -155,6 +155,7 @@ registry!(
     DiacriticV1Marker,
     DictionaryForWordLineExtendedV1Marker,
     DictionaryForWordOnlyAutoV1Marker,
+    DirectionalityV1Marker,
     EastAsianWidthV1Marker,
     EastAsianWidthNameToValueV1Marker,
     EastAsianWidthValueToLongNameV1Marker,
