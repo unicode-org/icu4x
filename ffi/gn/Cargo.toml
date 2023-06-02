@@ -34,6 +34,11 @@ rustflags = []
 rustflags = []
 
 [gn.package.libm."0.2.6"]
+
+[gn.package.icu_plurals."1.2.0"]
+rustflags = []
+
+[gn.package.icu_timezone."1.2.0"]
 rustflags = []
 
 # Build cargo-gnaw with the checked-in lockfile

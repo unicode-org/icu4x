@@ -17,6 +17,7 @@ categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
+    "data/macros.rs",
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
@@ -53,6 +54,7 @@ serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
 datagen = ["serde", "zerovec/databake", "dep:databake"]
 experimental = []
 bench = ["serde"]
+data = []
 
 [lib]
 path = "src/lib.rs"

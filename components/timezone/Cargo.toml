@@ -17,6 +17,7 @@ categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
+    "data/macros.rs",
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
@@ -47,3 +48,4 @@ icu_testdata = { path = "../../provider/testdata", default-features = false, fea
 std = ["icu_calendar/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
+data = []

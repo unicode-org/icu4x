@@ -133,19 +133,30 @@ args = [
 ]
 
 [tasks.full-data]
-description = "Builds a complete postcard file from latest CLDR and icu_exportdata."
+description = "Builds full baked data and verifies that all locales generate correctly"
 category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys=experimental-all",
-    "--locales=full",
-    "--format=blob",
-    "--out=/dev/null",
-    "--overwrite",
-]
+script_runner = "@duckscript"
+script = '''
+exec cargo build -p icu_datagen
+
+args = set "target/debug/icu4x-datagen --locales modern --format mod --overwrite --use-separate-crates --out"
+
+exec %{args} components/plurals/data --keys plurals/ordinal@1 plurals/cardinal@1
+exec %{args} components/timezone/data --keys time_zone/metazone_period@1
+
+output = exec git status --porcelain=v1
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    msg = array "" ""
+    array_push ${msg} "Baked data needs to be updated. Please run `cargo make full-data`"
+    array_push ${msg} ""
+    array_push ${msg} "${output.stdout}"
+    msg = array_join ${msg} "\n"
+    trigger_error ${msg}
+end
+
+exec target/debug/icu4x-datagen --locales basic moderate modern --keys experimental-all --format blob --out /dev/null --overwrite
+'''
 
 [tasks.download-repo-sources]
 description = "Download fresh CLDR JSON and icuexportdata, overwriting the existing CLDR JSON/icuexportdata."

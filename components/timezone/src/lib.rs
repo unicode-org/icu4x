@@ -134,3 +134,9 @@ pub use types::{GmtOffset, ZoneVariant};
 
 #[doc(no_inline)]
 pub use TimeZoneError as Error;
+
+#[cfg(feature = "data")]
+#[doc(hidden)]
+pub mod data {
+    include!(core::env!("MACROS_RS"));
+}
