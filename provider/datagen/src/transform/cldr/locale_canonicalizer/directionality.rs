@@ -18,7 +18,7 @@ impl DataProvider<DirectionalityV1Marker> for crate::DatagenProvider {
             return Err(DataErrorKind::ExtraneousLocale.into_error());
         }
 
-        let data: &cldr_serde::script_metadata::Resource = self
+        let data: &cldr_serde::directionality::Resource = self
             .source
             .cldr()?
             .core()
@@ -36,14 +36,14 @@ impl IterableDataProvider<DirectionalityV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl From<&cldr_serde::script_metadata::Resource> for DirectionalityV1<'_> {
-    fn from(other: &cldr_serde::script_metadata::Resource) -> Self {
+impl From<&cldr_serde::directionality::Resource> for DirectionalityV1<'_> {
+    fn from(other: &cldr_serde::directionality::Resource) -> Self {
         let mut map = BTreeMap::new();
         for (script, metadata) in &other.script_metadata {
             let rtl = match metadata.rtl {
-                cldr_serde::script_metadata::Rtl::Yes => Direction::RightToLeft,
-                cldr_serde::script_metadata::Rtl::No => Direction::LeftToRight,
-                cldr_serde::script_metadata::Rtl::Unknown => Direction::Unknown,
+                cldr_serde::directionality::Rtl::Yes => Direction::RightToLeft,
+                cldr_serde::directionality::Rtl::No => Direction::LeftToRight,
+                cldr_serde::directionality::Rtl::Unknown => Direction::Unknown,
             };
             map.insert(script.to_unvalidated(), rtl);
         }
