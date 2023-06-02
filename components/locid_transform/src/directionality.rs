@@ -41,13 +41,13 @@ pub enum Direction {
 ///     .expect("create failed");
 ///
 /// let locale = locale!("en");
-/// assert_eq!(ld.get(locale), Some(Direction::LeftToRight));
+/// assert_eq!(ld.get(&locale), Some(Direction::LeftToRight));
 /// ```
 ///
 /// [`CLDR`]: http://cldr.unicode.org/
 #[derive(Debug)]
 pub struct LocaleDirectionality {
-    rtl: DataPayload<ScriptDirectionV1Marker>,
+    script_direction: DataPayload<ScriptDirectionV1Marker>,
     expander: LocaleExpander,
 }
 
@@ -86,7 +86,7 @@ impl LocaleDirectionality {
         let rtl: DataPayload<ScriptDirectionV1Marker> =
             provider.load(Default::default())?.take_payload()?;
 
-        Ok(LocaleDirectionality { rtl, expander })
+        Ok(LocaleDirectionality { script_direction: rtl, expander })
     }
 
     /// Returns the script direction of the given locale.
@@ -101,20 +101,23 @@ impl LocaleDirectionality {
     ///     .expect("create failed");
     ///
     /// let locale = locale!("en-US");
-    /// assert_eq!(ld.get(locale), Some(Direction::LeftToRight));
+    /// assert_eq!(ld.get(&locale), Some(Direction::LeftToRight));
     ///
     /// let locale = locale!("ar");
-    /// assert_eq!(ld.get(locale), Some(Direction::RightToLeft));
+    /// assert_eq!(ld.get(&locale), Some(Direction::RightToLeft));
     ///
     /// let locale = locale!("fr-Brai-FR");
-    /// assert_eq!(ld.get(locale), None);
+    /// assert_eq!(ld.get(&locale), None);
     /// ```
-    pub fn get(&self, locale: impl Into<Locale>) -> Option<Direction> {
-        let mut locale = locale.into();
-
+    pub fn get(&self, locale: &Locale) -> Option<Direction> {
         let script = locale.id.script.or_else(|| {
-            self.expander.maximize(&mut locale);
-            locale.id.script
+            let expander = self.expander.as_borrowed();
+            match (locale.id.language.is_empty(), locale.id.region) {
+                (false, Some(region)) => expander.get_lr(locale.id.language, region),
+                (false, None) => expander.get_l(locale.id.language).map(|(s, _)| s),
+                (true, Some(region)) => expander.get_r(region).map(|(_, s)| s),
+                _ => None,
+            }
         });
         let script = match script {
             Some(script) => script,
@@ -122,26 +125,23 @@ impl LocaleDirectionality {
             None => return None,
         };
 
-        let direction = self
-            .rtl
+        self.script_direction
             .get()
             .rtl
-            .get_copied(&script.into_tinystr().to_unvalidated());
-
-        direction
+            .get_copied(&script.into_tinystr().to_unvalidated())
     }
 
     /// Returns true if the given locale is right-to-left.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
-    pub fn is_right_to_left(&self, locale: impl Into<Locale>) -> bool {
+    pub fn is_right_to_left(&self, locale: &Locale) -> bool {
         self.get(locale) == Some(Direction::RightToLeft)
     }
 
     /// Returns true if the given locale is left-to-right.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
-    pub fn is_left_to_right(&self, locale: impl Into<Locale>) -> bool {
+    pub fn is_left_to_right(&self, locale: &Locale) -> bool {
         self.get(locale) == Some(Direction::LeftToRight)
     }
 }
