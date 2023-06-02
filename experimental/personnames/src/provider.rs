@@ -63,7 +63,7 @@ pub struct PersonNamesFormattingDefinitionV1<'data> {
     /// <personName>...</personName>
     /// ```
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub person_names_patterns: VarZeroVec<'data, PersonNamesFormattingDataVARULE>,
+    pub person_names_patterns: VarZeroVec<'data, PersonNamesFormattingDataVarULE>,
 }
 
 /// Person Name Attributes.
@@ -93,7 +93,7 @@ type PersonNamesFormattingAttributesMask = u32;
 /// PersonName Formatting data.
 ///
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
-#[zerovec::make_varule(PersonNamesFormattingDataVARULE)]
+#[zerovec::make_varule(PersonNamesFormattingDataVarULE)]
 #[zerovec::skip_derive(ZeroMapKV, Ord)]
 #[cfg_attr(feature = "datagen",
 derive(serde::Serialize, databake::Bake),

@@ -3,23 +3,42 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::locale;
-use icu_personnames::api::FieldModifier;
-use icu_personnames::api::FieldModifierMask;
-use icu_personnames::api::NameField;
-use icu_personnames::api::PersonName;
+use icu_personnames::api::FieldModifierSet;
+use icu_personnames::api::NameFieldKind;
 use icu_personnames::api::PersonNamesFormatterError;
 use icu_personnames::api::PreferredOrder;
+use icu_personnames::api::{FieldCapsStyle, NameField};
+use icu_personnames::api::{FieldFormality, FieldLength, FieldPart, PersonName};
 use icu_personnames::provided_struct::DefaultPersonName;
 use litemap::LiteMap;
-use std::mem::discriminant;
 
 #[test]
 fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatterError> {
     let mut person_data: LiteMap<NameField, String> = LiteMap::new();
-    person_data.insert(NameField::Given(None), String::from("Henry"));
-    person_data.insert(NameField::Surname(None), String::from("Jekyll"));
     person_data.insert(
-        NameField::Surname(Some(FieldModifier::Informal as FieldModifierMask)),
+        NameField {
+            kind: NameFieldKind::Given,
+            modifier: FieldModifierSet::default(),
+        },
+        String::from("Henry"),
+    );
+    person_data.insert(
+        NameField {
+            kind: NameFieldKind::Surname,
+            modifier: FieldModifierSet::default(),
+        },
+        String::from("Jekyll"),
+    );
+    person_data.insert(
+        NameField {
+            kind: NameFieldKind::Surname,
+            modifier: FieldModifierSet::new(
+                FieldCapsStyle::Auto,
+                FieldPart::Auto,
+                FieldLength::Auto,
+                FieldFormality::Informal,
+            ),
+        },
         String::from("Hide"),
     );
 
@@ -35,26 +54,54 @@ fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatte
         Some(&PreferredOrder::GivenFirst)
     );
 
-    // has_name_field tests
-    assert!(person_name.has_name_field(discriminant(&NameField::Surname(None))));
-    assert!(!person_name.has_name_field(discriminant(&NameField::Surname2(None))));
+    // has_name_field_kind tests
+    assert!(person_name.has_name_field_kind(&NameFieldKind::Given));
+    assert!(!person_name.has_name_field_kind(&NameFieldKind::Surname2));
 
-    // has_name_field_with_modifier
-    assert!(person_name.has_name_field_with_modifier(&NameField::Given(None)));
-    assert!(!person_name.has_name_field_with_modifier(&NameField::Surname2(None)));
-    assert!(
-        !person_name.has_name_field_with_modifier(&NameField::Surname(Some(
-            FieldModifier::AllCaps as FieldModifierMask
-        )))
-    );
+    // has_name_field
+    assert!(person_name.has_name_field(&NameField {
+        kind: NameFieldKind::Given,
+        modifier: FieldModifierSet::default(),
+    }));
+    assert!(!person_name.has_name_field(&NameField {
+        kind: NameFieldKind::Surname2,
+        modifier: FieldModifierSet::default(),
+    }));
+    assert!(!person_name.has_name_field(&NameField {
+        kind: NameFieldKind::Surname,
+        modifier: FieldModifierSet::new(
+            FieldCapsStyle::AllCaps,
+            FieldPart::Auto,
+            FieldLength::Auto,
+            FieldFormality::Auto,
+        ),
+    }));
 
     // get
-    assert_eq!(person_name.get(&NameField::Given(None)), Some("Henry"));
-    assert_eq!(person_name.get(&NameField::Surname(None)), Some("Jekyll"));
     assert_eq!(
-        person_name.get(&NameField::Surname(Some(
-            FieldModifier::Informal as FieldModifierMask
-        ))),
+        person_name.get(&NameField {
+            kind: NameFieldKind::Given,
+            modifier: FieldModifierSet::default(),
+        }),
+        Some("Henry")
+    );
+    assert_eq!(
+        person_name.get(&NameField {
+            kind: NameFieldKind::Surname,
+            modifier: FieldModifierSet::default(),
+        }),
+        Some("Jekyll")
+    );
+    assert_eq!(
+        person_name.get(&NameField {
+            kind: NameFieldKind::Surname,
+            modifier: FieldModifierSet::new(
+                FieldCapsStyle::Auto,
+                FieldPart::Auto,
+                FieldLength::Auto,
+                FieldFormality::Informal,
+            ),
+        }),
         Some("Hide")
     );
     Ok(())
@@ -63,7 +110,13 @@ fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatte
 #[test]
 fn test_field_modifier_person_name_should_have_given_or_surname() {
     let mut person_data: LiteMap<NameField, String> = LiteMap::new();
-    person_data.insert(NameField::Title(None), String::from("Dr"));
+    person_data.insert(
+        NameField {
+            kind: NameFieldKind::Title,
+            modifier: FieldModifierSet::default(),
+        },
+        String::from("Dr"),
+    );
 
     let person_name = DefaultPersonName::new(person_data, None, None);
     assert!(person_name.is_err());

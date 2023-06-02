@@ -8,7 +8,6 @@ use crate::api::PersonNamesFormatterError;
 use crate::api::{PersonName, PersonNamesFormatterOptions};
 use crate::provider::PersonNamesFormattingDefinitionV1Marker;
 
-/// Immutable structure loaded with formatter configs
 pub struct PersonNamesFormatter {
     pub(crate) _data_payload: DataPayload<PersonNamesFormattingDefinitionV1Marker>,
     pub(crate) _options: PersonNamesFormatterOptions,

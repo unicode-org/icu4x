@@ -4,9 +4,9 @@
 
 use icu_locid::Locale;
 use litemap::LiteMap;
-use std::mem::{discriminant, Discriminant};
 
-use crate::api::{NameField, PersonName, PersonNamesFormatterError, PreferredOrder};
+use crate::api::NameFieldKind::{Given, Surname};
+use crate::api::{NameField, NameFieldKind, PersonName, PersonNamesFormatterError, PreferredOrder};
 
 ///
 /// DefaultPersonName, default implementation provided for PersonNameFormatter.
@@ -34,13 +34,13 @@ impl PersonName for DefaultPersonName {
         self.person_data.iter_keys().collect()
     }
 
-    fn has_name_field(&self, lookup_name_field: Discriminant<NameField>) -> bool {
+    fn has_name_field_kind(&self, lookup_name_field: &NameFieldKind) -> bool {
         self.available_name_fields()
             .into_iter()
-            .any(|field| discriminant(field) == lookup_name_field)
+            .any(|field| &field.kind == lookup_name_field)
     }
 
-    fn has_name_field_with_modifier(&self, lookup_name_field: &NameField) -> bool {
+    fn has_name_field(&self, lookup_name_field: &NameField) -> bool {
         self.available_name_fields()
             .into_iter()
             .any(|field| field == lookup_name_field)
@@ -53,9 +53,7 @@ fn validate_person_name<P: PersonName>(person_name: &P) -> bool {
     person_name
         .available_name_fields()
         .into_iter()
-        .all(|field| field.is_valid())
-        && (person_name.has_name_field(discriminant(&NameField::Given(None)))
-            || person_name.has_name_field(discriminant(&NameField::Surname(None))))
+        .any(|field| field.kind == Given || field.kind == Surname)
 }
 
 ///
