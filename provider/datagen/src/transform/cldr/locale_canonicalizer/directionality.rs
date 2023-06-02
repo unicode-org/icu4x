@@ -57,7 +57,6 @@ impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
 #[test]
 fn test_basic() {
     use icu_locid::subtags_script as script;
-    use zerovec::ule::AsULE;
 
     let provider = crate::DatagenProvider::for_test();
     let data: DataPayload<ScriptDirectionV1Marker> = provider

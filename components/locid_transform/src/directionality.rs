@@ -4,6 +4,7 @@
 
 use crate::provider::*;
 use crate::{LocaleExpander, LocaleTransformError};
+use icu_locid::subtags::Language;
 use icu_locid::Locale;
 use icu_provider::{DataPayload, DataProvider};
 
@@ -76,6 +77,11 @@ impl LocaleDirectionality {
     );
 
     /// Creates a [`LocaleDirectionality`] with a custom [`LocaleExpander`] object.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,
@@ -83,8 +89,7 @@ impl LocaleDirectionality {
     where
         P: DataProvider<ScriptDirectionV1Marker> + ?Sized,
     {
-        let script_direction: DataPayload<ScriptDirectionV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+        let script_direction = provider.load(Default::default())?.take_payload()?;
 
         Ok(LocaleDirectionality {
             script_direction,
@@ -115,18 +120,13 @@ impl LocaleDirectionality {
     pub fn get(&self, locale: &Locale) -> Option<Direction> {
         let script = locale.id.script.or_else(|| {
             let expander = self.expander.as_borrowed();
-            match (locale.id.language.is_empty(), locale.id.region) {
-                (false, Some(region)) => expander.get_lr(locale.id.language, region),
-                (false, None) => expander.get_l(locale.id.language).map(|(s, _)| s),
-                (true, Some(region)) => expander.get_r(region).map(|(_, s)| s),
-                _ => None,
+            match (locale.id.language, locale.id.region) {
+                (Language::UND, Some(region)) => expander.get_r(region).map(|(_, s)| s),
+                (Language::UND, None) => None,
+                (lang, Some(region)) => expander.get_lr(lang, region),
+                (lang, None) => expander.get_l(lang).map(|(s, _)| s),
             }
-        });
-        let script = match script {
-            Some(script) => script,
-            // If the locale has no script, we cannot determine the directionality.
-            None => return None,
-        };
+        })?;
 
         self.script_direction
             .get()
