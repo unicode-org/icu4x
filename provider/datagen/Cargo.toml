@@ -48,6 +48,7 @@ icu_properties = { version = "1.2.0", path = "../../components/properties", feat
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", features = ["datagen"] }
 icu_segmenter = { version = "1.2.0", path = "../../components/segmenter", features = ["datagen", "lstm"] }
 icu_timezone = { version = "1.2.0", path = "../../components/timezone", features = ["datagen"] }
+icu_personnames = { version = "0.1.0", path = "../../experimental/personnames", features = ["datagen"] }
 
 # ICU provider infrastructure
 icu_provider = { version = "1.2.0", path = "../core", features = ["std", "log_error_context", "datagen"]}
