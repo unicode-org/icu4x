@@ -238,85 +238,99 @@ mod test {
     use super::*;
 
     #[test]
-    fn gregorian_overflow() {
+    fn day_of_year_info_max() {
         #[derive(Debug)]
-        struct TestCase {
+        struct MaxCase {
             year: i32,
             month: u8,
             day: u8,
-            fixed: i32,
+            next_year: i32,
         }
-
         let cases = [
-            TestCase {
+            MaxCase {
                 year: i32::MAX,
                 month: 7,
                 day: 11,
-                fixed: i32::MAX,
+                next_year: i32::MAX,
             },
-            TestCase {
+            MaxCase {
                 year: i32::MAX,
                 month: 7,
                 day: 12,
-                fixed: i32::MAX,
+                next_year: i32::MAX,
             },
-            TestCase {
+            MaxCase {
                 year: i32::MAX,
                 month: 8,
                 day: 10,
-                fixed: i32::MAX,
+                next_year: i32::MAX,
             },
-            TestCase {
+            MaxCase {
                 year: i32::MAX - 1,
                 month: 7,
                 day: 11,
-                fixed: i32::MAX,
-            },
-            TestCase {
-                year: i32::MIN,
-                month: 1,
-                day: 1,
-                fixed: i32::MIN,
-            },
-            TestCase {
-                year: i32::MIN,
-                month: 12,
-                day: 31,
-                fixed: i32::MIN,
-            },
-            TestCase {
-                year: i32::MIN,
-                month: 2,
-                day: 2,
-                fixed: i32::MIN,
-            },
-            TestCase {
-                year: i32::MIN + 1,
-                month: 1,
-                day: 1,
-                fixed: i32::MIN,
+                next_year: i32::MAX,
             },
         ];
 
         for case in cases {
             let date = Date::try_new_gregorian_date(case.year, case.month, case.day).unwrap();
-            if case.fixed == i32::MAX {
-                assert_eq!(
-                    Calendar::day_of_year_info(&Gregorian, &date.inner)
-                        .next_year
-                        .number,
-                    case.fixed,
-                    "{case:?}",
-                );
-            } else {
-                assert_eq!(
-                    Calendar::day_of_year_info(&Gregorian, &date.inner)
-                        .prev_year
-                        .number,
-                    case.fixed.saturating_neg(),
-                    "{case:?}",
-                );
-            }
+
+            assert_eq!(
+                Calendar::day_of_year_info(&Gregorian, &date.inner)
+                    .next_year
+                    .number,
+                case.next_year,
+                "{case:?}",
+            );
+        }
+    }
+    #[test]
+    fn day_of_year_info_min() {
+        #[derive(Debug)]
+        struct MinCase {
+            year: i32,
+            month: u8,
+            day: u8,
+            prev_year: i32,
+        }
+        let cases = [
+            MinCase {
+                year: i32::MIN,
+                month: 1,
+                day: 1,
+                prev_year: i32::MIN,
+            },
+            MinCase {
+                year: i32::MIN,
+                month: 12,
+                day: 31,
+                prev_year: i32::MIN,
+            },
+            MinCase {
+                year: i32::MIN,
+                month: 2,
+                day: 2,
+                prev_year: i32::MIN,
+            },
+            MinCase {
+                year: i32::MIN + 1,
+                month: 1,
+                day: 1,
+                prev_year: i32::MIN,
+            },
+        ];
+
+        for case in cases {
+            let date = Date::try_new_gregorian_date(case.year, case.month, case.day).unwrap();
+
+            assert_eq!(
+                Calendar::day_of_year_info(&Gregorian, &date.inner)
+                    .prev_year
+                    .number,
+                case.prev_year.saturating_neg(),
+                "{case:?}",
+            );
         }
     }
 }
