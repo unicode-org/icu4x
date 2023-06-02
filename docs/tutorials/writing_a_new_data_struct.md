@@ -244,9 +244,6 @@ impl IterableDataProvider<FooV1Marker> for FooProvider {
         // This should list all supported locales.
     }
 }
-
-// Once we have DataProvider and IterableDataProvider, we can apply this macro:
-icu_provider::make_exportable_provider!(FooProvider, [FooV1Marker,]);
 ```
 
 The above example is an abridged snippet of code illustrating the most important boilerplate for implementing and ICU4X data transform.
