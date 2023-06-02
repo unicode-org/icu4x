@@ -58,58 +58,11 @@ pub struct PersonNamesFormattingDefinitionV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub initial_pattern_sequence: Option<Cow<'data, str>>,
 
-    /// Equivalent of PersonNames
     /// ```xml
-    /// <personName>...</personName>
+    /// <namePattern>{given} «{given2}» {surname}</namePattern>
+    /// <namePattern alt="2">«{given2}» {surname}</namePattern>
     /// ```
+    /// We consider that the person name has been choosen by the data provider through the options.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub person_names_patterns: VarZeroVec<'data, PersonNamesFormattingDataVarULE>,
-}
-
-/// Person Name Attributes.
-/// {order=givenFirst, length=long, usage=referring, formality=formal}
-/// see https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
-#[repr(u32)]
-pub enum PersonNamesFormattingAttributes {
-    // Order
-    GivenFirst = 1 << 0,
-    SurnameFirst = 1 << 1,
-    Sorting = 1 << 2,
-    // Length
-    Short = 1 << 3,
-    Medium = 1 << 4,
-    Long = 1 << 5,
-    // Usage
-    Addressing = 1 << 6,
-    Referring = 1 << 7,
-    Monogram = 1 << 8,
-    // Formality
-    Formal = 1 << 9,
-    Informal = 1 << 10,
-}
-
-type PersonNamesFormattingAttributesMask = u32;
-
-/// PersonName Formatting data.
-///
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
-#[zerovec::make_varule(PersonNamesFormattingDataVarULE)]
-#[zerovec::skip_derive(ZeroMapKV, Ord)]
-#[cfg_attr(feature = "datagen",
-derive(serde::Serialize, databake::Bake),
-databake(path = icu_personnames::provider),
-zerovec::derive(Serialize))
-]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Deserialize),
-    zerovec::derive(Deserialize)
-)]
-pub struct PersonNamesFormattingData<'data> {
-    /// Attributes
-    /// https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
-    pub attributes: PersonNamesFormattingAttributesMask,
-    /// https://www.unicode.org/reports/tr35/tr35-personNames.html#namepattern-syntax
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: VarZeroVec<'data, str>,
+    pub name_patterns: VarZeroVec<'data, str>,
 }
