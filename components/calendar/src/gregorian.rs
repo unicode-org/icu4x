@@ -228,7 +228,7 @@ pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
     } else {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "bce")),
-            number: 1_i32.saturating_sub(year),
+            number: year.saturating_sub(0),
             related_iso: None,
         }
     }
@@ -319,6 +319,25 @@ mod test {
                 day: 1,
                 prev_year: i32::MIN,
             },
+            MinCase {
+                year: 0,
+                month: 1,
+                day: 1,
+                prev_year: -1,
+            },
+            MinCase {
+                year: -2000,
+                month: 6,
+                day: 15,
+                prev_year: -2001,
+            },
+            MinCase {
+                year: 2020,
+                month: 12,
+                day: 31,
+                prev_year: 2019,
+            },
+            
         ];
 
         for case in cases {
@@ -328,7 +347,7 @@ mod test {
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .prev_year
                     .number,
-                case.prev_year.saturating_neg(),
+                case.prev_year,
                 "{case:?}",
             );
         }
