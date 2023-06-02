@@ -516,11 +516,44 @@ mod test {
                 expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 12,
                 expected_day: 30
+            },
+
+            TestCase {
+                fixed_date: -367,
+                iso_year: -1,
+                iso_month: 12,
+                iso_day: 30,
+                expected_year: 1,
+                expected_era: Era(tinystr!(16, "bce")),
+                expected_month: 1,
+                expected_day: 1
+            },
+
+            TestCase {
+                fixed_date: -368,
+                iso_year: -1,
+                iso_month: 12,
+                iso_day: 29,
+                expected_year: 2,
+                expected_era: Era(tinystr!(16, "bce")),
+                expected_month: 12,
+                expected_day: 31
             }
         ];
 
         for case in cases {
             check_test_case(case);
+        }
+    }
+
+    #[test]
+    fn test_julian_fixed_date_conversion() {
+        // Tests that converting from fixed date to Julian then
+        // back to fixed date yields the same fixed date
+        for fixed in -10000..=10000 {
+            let julian = Julian::julian_from_fixed(fixed);
+            let new_fixed = Julian::fixed_from_julian(julian.0);
+            assert_eq!(fixed, new_fixed);
         }
     }
 }
