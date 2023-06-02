@@ -101,8 +101,7 @@ use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use write16::Write16;
 use zerofrom::ZeroFrom;
-use zerovec::ule::AsULE;
-use zerovec::ZeroSlice;
+use zerovec::{zeroslice, ZeroSlice};
 
 #[derive(Debug)]
 enum SupplementPayloadHolder {
@@ -244,10 +243,9 @@ fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
 }
 
-const EMPTY_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
+const EMPTY_U16: &ZeroSlice<u16> = zeroslice![];
 
-const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
+const EMPTY_CHAR: &ZeroSlice<char> = zeroslice![];
 
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
