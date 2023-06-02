@@ -143,15 +143,11 @@ impl FieldModifierSet {
         length: FieldLength,
         formality: FieldFormality,
     ) -> Self {
-        let style_fm: FieldModifier = style.into();
-        let part_fm: FieldModifier = part.into();
-        let length_fm: FieldModifier = length.into();
-        let formality_fm: FieldModifier = formality.into();
         FieldModifierSet {
-            value: style_fm.bit_value()
-                | part_fm.bit_value()
-                | length_fm.bit_value()
-                | formality_fm.bit_value(),
+            value: FieldModifier::from(style).bit_value()
+                | FieldModifier::from(part).bit_value()
+                | FieldModifier::from(length).bit_value()
+                | FieldModifier::from(formality).bit_value(),
         }
     }
 }
