@@ -247,7 +247,7 @@ mod test {
             month: u8,
             day: u8,
             next_era_year: i32,
-            era: &'static str
+            era: &'static str,
         }
         let cases = [
             MaxCase {
@@ -335,7 +335,8 @@ mod test {
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .next_year
-                    .era.0,
+                    .era
+                    .0,
                 case.era,
                 "{case:?}",
             );
@@ -461,10 +462,10 @@ mod test {
                 year: i32::MIN + 3,
                 month: 12,
                 day: 31,
-                prev_era_year: i32::MAX ,
+                prev_era_year: i32::MAX,
                 era: "bce",
             },
-            MinCase { 
+            MinCase {
                 year: i32::MIN + 2,
                 month: 2,
                 day: 2,
@@ -542,7 +543,8 @@ mod test {
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .prev_year
-                    .era.0,
+                    .era
+                    .0,
                 case.era,
                 "{case:?}",
             );
