@@ -27,7 +27,7 @@ use icu_properties::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;
-use zerovec::ZeroSlice;
+use zerovec::{zeroslice, ZeroSlice};
 
 use crate::provider::CollationDataV1;
 
@@ -147,17 +147,13 @@ pub(crate) const FFFD_CE: CollationElement = CollationElement(FFFD_CE_VALUE);
 pub(crate) const FFFD_CE32_VALUE: u32 = 0xFFFD0505;
 pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VALUE);
 
-pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
+pub(crate) const EMPTY_U16: &ZeroSlice<u16> = zeroslice![];
 const SINGLE_REPLACEMENT_CHARACTER_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
-        REPLACEMENT_CHARACTER as u16
-    ]));
+    zeroslice![u16; <u16 as AsULE>::ULE::from_unsigned; REPLACEMENT_CHARACTER as u16];
 
-pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
-
+pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = zeroslice![];
 const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> =
-    ZeroSlice::<char>::from_ule_slice(&<char as AsULE>::ULE::from_array([REPLACEMENT_CHARACTER]));
+    zeroslice![char; <char as AsULE>::ULE::from_aligned; REPLACEMENT_CHARACTER];
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
