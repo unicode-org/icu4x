@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
-pub fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
+pub const fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
     debug_assert!(d > 0);
     let (a, b) = (n / d, n % d);
     if n >= 0 || b == 0 {
