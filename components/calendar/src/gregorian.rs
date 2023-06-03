@@ -138,8 +138,8 @@ impl Calendar for Gregorian {
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0 .0.year - 1;
-        let next_year = date.0 .0.year + 1;
+        let prev_year = date.0 .0.year.saturating_sub(1);
+        let next_year = date.0 .0.year.saturating_add(1);
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(date.0),
             days_in_year: Iso::days_in_year_direct(date.0 .0.year),
@@ -228,17 +228,120 @@ pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
     } else {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "bce")),
-            number: 1 - year,
+            number: 1_i32.saturating_sub(year),
             related_iso: None,
         }
     }
 }
 
 #[cfg(test)]
-mod tests {
-
+mod test {
     use super::*;
     use types::Era;
+
+    #[test]
+    fn day_of_year_info_max() {
+        #[derive(Debug)]
+        struct MaxCase {
+            year: i32,
+            month: u8,
+            day: u8,
+            next_era_year: i32,
+            era: &'static str,
+        }
+        let cases = [
+            MaxCase {
+                year: i32::MAX,
+                month: 7,
+                day: 11,
+                next_era_year: i32::MAX,
+                era: "ce",
+            },
+            MaxCase {
+                year: i32::MAX,
+                month: 7,
+                day: 12,
+                next_era_year: i32::MAX,
+                era: "ce",
+            },
+            MaxCase {
+                year: i32::MAX,
+                month: 8,
+                day: 10,
+                next_era_year: i32::MAX,
+                era: "ce",
+            },
+            MaxCase {
+                year: i32::MAX - 1,
+                month: 7,
+                day: 11,
+                next_era_year: i32::MAX,
+                era: "ce",
+            },
+            MaxCase {
+                year: -2,
+                month: 1,
+                day: 1,
+                next_era_year: 2,
+                era: "bce",
+            },
+            MaxCase {
+                year: -1,
+                month: 1,
+                day: 1,
+                next_era_year: 1,
+                era: "bce",
+            },
+            MaxCase {
+                year: 0,
+                month: 1,
+                day: 1,
+                next_era_year: 1,
+                era: "ce",
+            },
+            MaxCase {
+                year: 1,
+                month: 1,
+                day: 1,
+                next_era_year: 2,
+                era: "ce",
+            },
+            MaxCase {
+                year: 2000,
+                month: 6,
+                day: 15,
+                next_era_year: 2001,
+                era: "ce",
+            },
+            MaxCase {
+                year: 2020,
+                month: 12,
+                day: 31,
+                next_era_year: 2021,
+                era: "ce",
+            },
+        ];
+
+        for case in cases {
+            let date = Date::try_new_gregorian_date(case.year, case.month, case.day).unwrap();
+
+            assert_eq!(
+                Calendar::day_of_year_info(&Gregorian, &date.inner)
+                    .next_year
+                    .number,
+                case.next_era_year,
+                "{case:?}",
+            );
+            assert_eq!(
+                Calendar::day_of_year_info(&Gregorian, &date.inner)
+                    .next_year
+                    .era
+                    .0,
+                case.era,
+                "{case:?}",
+            );
+        }
+    }
 
     #[derive(Debug)]
     struct TestCase {
@@ -334,6 +437,117 @@ mod tests {
 
         for case in cases {
             check_test_case(case);
+        }
+    }
+
+    #[test]
+    fn day_of_year_info_min() {
+        #[derive(Debug)]
+        struct MinCase {
+            year: i32,
+            month: u8,
+            day: u8,
+            prev_era_year: i32,
+            era: &'static str,
+        }
+        let cases = [
+            MinCase {
+                year: i32::MIN + 4,
+                month: 1,
+                day: 1,
+                prev_era_year: i32::MAX - 1,
+                era: "bce",
+            },
+            MinCase {
+                year: i32::MIN + 3,
+                month: 12,
+                day: 31,
+                prev_era_year: i32::MAX,
+                era: "bce",
+            },
+            MinCase {
+                year: i32::MIN + 2,
+                month: 2,
+                day: 2,
+                prev_era_year: i32::MAX,
+                era: "bce",
+            },
+            MinCase {
+                year: i32::MIN + 1,
+                month: 1,
+                day: 1,
+                prev_era_year: i32::MAX,
+                era: "bce",
+            },
+            MinCase {
+                year: i32::MIN,
+                month: 1,
+                day: 1,
+                prev_era_year: i32::MAX,
+                era: "bce",
+            },
+            MinCase {
+                year: 3,
+                month: 1,
+                day: 1,
+                prev_era_year: 2,
+                era: "ce",
+            },
+            MinCase {
+                year: 2,
+                month: 1,
+                day: 1,
+                prev_era_year: 1,
+                era: "ce",
+            },
+            MinCase {
+                year: 1,
+                month: 1,
+                day: 1,
+                prev_era_year: 1,
+                era: "bce",
+            },
+            MinCase {
+                year: 0,
+                month: 1,
+                day: 1,
+                prev_era_year: 2,
+                era: "bce",
+            },
+            MinCase {
+                year: -2000,
+                month: 6,
+                day: 15,
+                prev_era_year: 2002,
+                era: "bce",
+            },
+            MinCase {
+                year: 2020,
+                month: 12,
+                day: 31,
+                prev_era_year: 2019,
+                era: "ce",
+            },
+        ];
+
+        for case in cases {
+            let date = Date::try_new_gregorian_date(case.year, case.month, case.day).unwrap();
+
+            assert_eq!(
+                Calendar::day_of_year_info(&Gregorian, &date.inner)
+                    .prev_year
+                    .number,
+                case.prev_era_year,
+                "{case:?}",
+            );
+            assert_eq!(
+                Calendar::day_of_year_info(&Gregorian, &date.inner)
+                    .prev_year
+                    .era
+                    .0,
+                case.era,
+                "{case:?}",
+            );
         }
     }
 
