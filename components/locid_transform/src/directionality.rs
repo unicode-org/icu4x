@@ -76,6 +76,27 @@ impl LocaleDirectionality {
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locid::locale;
+    /// use icu_locid_transform::{Direction, LocaleDirectionality, LocaleExpander};
+    ///
+    /// let ld_default = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
+    ///     .expect("create failed");
+    ///
+    /// assert_eq!(ld_default.get(&locale!("jbn")), None);
+    ///
+    /// let expander = LocaleExpander::try_new_extended_unstable(&icu_testdata::unstable())
+    ///     .expect("create failed");
+    /// let ld_extended = LocaleDirectionality::try_new_with_expander_unstable(
+    ///         &icu_testdata::unstable(),
+    ///         expander,
+    ///     ).expect("create failed");
+    ///
+    /// assert_eq!(ld_extended.get(&locale!("jbn")), Some(Direction::RightToLeft));
+    /// ```
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,
@@ -106,7 +127,7 @@ impl LocaleDirectionality {
     ///
     /// assert_eq!(ld.get(&locale!("ar")), Some(Direction::RightToLeft));
     ///
-    /// assert_eq!(ld.get(&locale!("fr-Brai-FR")), None);
+    /// assert_eq!(ld.get(&locale!("foo")), None);
     /// ```
     pub fn get(&self, locale: &Locale) -> Option<Direction> {
         let script = locale.id.script.or_else(|| {
