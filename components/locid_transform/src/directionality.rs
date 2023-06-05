@@ -6,7 +6,7 @@ use crate::provider::*;
 use crate::{LocaleExpander, LocaleTransformError};
 use icu_locid::subtags::Language;
 use icu_locid::Locale;
-use icu_provider::{DataPayload, DataProvider};
+use icu_provider::prelude::*;
 
 /// Represents the direction of a script.
 ///
@@ -41,8 +41,7 @@ pub enum Direction {
 /// let ld = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
 ///     .expect("create failed");
 ///
-/// let locale = locale!("en");
-/// assert_eq!(ld.get(&locale), Some(Direction::LeftToRight));
+/// assert_eq!(ld.get(&locale!("en")), Some(Direction::LeftToRight));
 /// ```
 ///
 /// [`CLDR`]: http://cldr.unicode.org/
@@ -70,13 +69,28 @@ impl LocaleDirectionality {
         Self::try_new_with_expander_unstable(provider, expander)
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: LocaleTransformError
-    );
+    // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
+    #[doc = icu_provider::gen_any_buffer_docs!(ANY, icu_provider, Self::try_new_unstable)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl AnyProvider + ?Sized),
+    ) -> Result<LocaleDirectionality, LocaleTransformError> {
+        let expander = LocaleExpander::try_new_with_any_provider(provider)?;
+        Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
+    }
+
+    // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
+    #[doc = icu_provider::gen_any_buffer_docs!(BUFFER, icu_provider, Self::try_new_unstable)]
+    #[cfg(feature = "serde")]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<LocaleDirectionality, LocaleTransformError> {
+        let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
+        Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
+    }
 
     /// Creates a [`LocaleDirectionality`] with a custom [`LocaleExpander`] object.
+    ///
+    /// For example, use this constructor if you wish to support all languages.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     /// <div class="stab unstable">
@@ -108,14 +122,11 @@ impl LocaleDirectionality {
     /// let ld = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
     ///     .expect("create failed");
     ///
-    /// let locale = locale!("en-US");
-    /// assert_eq!(ld.get(&locale), Some(Direction::LeftToRight));
+    /// assert_eq!(ld.get(&locale!("en-US")), Some(Direction::LeftToRight));
     ///
-    /// let locale = locale!("ar");
-    /// assert_eq!(ld.get(&locale), Some(Direction::RightToLeft));
+    /// assert_eq!(ld.get(&locale!("ar")), Some(Direction::RightToLeft));
     ///
-    /// let locale = locale!("fr-Brai-FR");
-    /// assert_eq!(ld.get(&locale), None);
+    /// assert_eq!(ld.get(&locale!("fr-Brai-FR")), None);
     /// ```
     pub fn get(&self, locale: &Locale) -> Option<Direction> {
         let script = locale.id.script.or_else(|| {
