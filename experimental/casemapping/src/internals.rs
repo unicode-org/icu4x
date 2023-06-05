@@ -22,7 +22,38 @@ use crate::exceptions::{CaseMappingExceptions, ExceptionSlot};
 #[cfg(feature = "datagen")]
 use crate::exceptions_builder::CaseMappingExceptionsBuilder;
 
-use crate::provider::data::{CaseType, DotType, MappingKind};
+use crate::provider::data::{DotType, MappingKind};
+
+// The case of a Unicode character
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub enum CaseType {
+    // Not a cased letter
+    None = 0,
+    // Lowercase letter
+    Lower = 1,
+    // Uppercase letter
+    Upper = 2,
+    // Titlecase letter
+    Title = 3,
+}
+
+impl CaseType {
+    pub(crate) const CASE_MASK: u16 = 0x3;
+
+    // The casetype is stored in the codepoint trie as two bits.
+    // After masking them to get a value between 0 and 3, this
+    // function converts to CaseType.
+    #[inline]
+    pub(crate) fn from_masked_bits(b: u16) -> Self {
+        debug_assert!(b & Self::CASE_MASK == b);
+        match b {
+            0 => CaseType::None,
+            1 => CaseType::Lower,
+            2 => CaseType::Upper,
+            _ => CaseType::Title,
+        }
+    }
+}
 
 /// The datatype stored in the codepoint trie for casemapping.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]

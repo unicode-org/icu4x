@@ -2,11 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use zerovec::ule::{AsULE, RawBytesULE, ULE};
+use zerovec::ZeroVecError;
+
 // The case of a Unicode character
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum CaseType {
-    // Not a cased letter
-    None = 0,
     // Lowercase letter
     Lower = 1,
     // Uppercase letter
@@ -21,14 +22,16 @@ impl CaseType {
     // The casetype is stored in the codepoint trie as two bits.
     // After masking them to get a value between 0 and 3, this
     // function converts to CaseType.
+    //
+    // Returns None for uncased
     #[inline]
-    pub(crate) fn from_masked_bits(b: u16) -> Self {
+    pub fn from_masked_bits(b: u16) -> Option<Self> {
         debug_assert!(b & Self::CASE_MASK == b);
         match b {
-            0 => CaseType::None,
-            1 => CaseType::Lower,
-            2 => CaseType::Upper,
-            _ => CaseType::Title,
+            0 => None,
+            1 => Some(CaseType::Lower),
+            2 => Some(CaseType::Upper),
+            _ => Some(CaseType::Title),
         }
     }
 }
@@ -67,11 +70,250 @@ impl DotType {
     }
 }
 
-
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub(crate) enum MappingKind {
     Lower = 0,
     Fold = 1,
     Upper = 2,
     Title = 3,
+}
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub struct CaseMappingData {
+    pub ignoreable: bool,
+    /// The delta between this code point and its upper/lowercase equivalent.
+    pub kind: CaseMappingDataKind,
+}
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub enum CaseMappingDataKind {
+    Exception(Option<CaseType>, u16),
+    Uncased(NonExceptionData),
+    Delta(NonExceptionData, CaseType, i16),
+}
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub struct NonExceptionData {
+    pub sensitive: bool,
+    pub dot_type: DotType,
+}
+
+/// Packed casemappingdata type
+///
+/// Data format, copied from ICU4C casepropsbuilder.cpp:
+///
+/// ```text
+/// Trie data word:
+/// Bits
+/// if(exception) {
+///     15..4   unsigned exception index
+/// } else {
+///     if(not uncased) {
+///         15..7   signed delta to simple case mapping code point
+///                 (add delta to input code point)
+///     } else {
+///         15..7   reserved, 0
+///     }
+///      6..5   0 normal character with cc=0
+///             1 soft-dotted character
+///             2 cc=230
+///             3 other cc
+///             The runtime code relies on these two bits to be adjacent with this encoding.
+/// }
+///     4   case-sensitive
+///     3   exception
+///     2   case-ignorable
+///  1..0   0 uncased
+///         1 lowercase
+///         2 uppercase
+///         3 titlecase
+///         The runtime code relies on the case-ignorable and case type bits 2..0
+///         to be the lowest bits with this encoding.
+///
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[repr(transparent)]
+pub struct CaseMappingDataULE(RawBytesULE<2>);
+
+impl CaseMappingDataULE {
+    // 1..0 case type
+    const CASE_TYPE_BITS: u16 = 0x3;
+    // 2 case-ignorable
+    const CASE_IGNOREABLE_BIT: u16 = 0x4;
+    // 3 exception
+    const EXCEPTION_BIT: u16 = 0x8;
+    // 4 case-sensitive
+    const CASE_SENSITIVE_BIT: u16 = 0x10;
+    // 15..4 unsigned exception index
+    const EXCEPTION_SHIFT: u16 = 4;
+    // 15..7 signed-delta to simple case mapping code point (or reserved)
+    const DELTA_SHIFT: u16 = 7;
+    // 6..5 dot type
+    const DOT_TYPE_BITS: u16 = 0x30;
+    const DOT_SHIFT: u16 = 5;
+}
+
+/// # Safety
+///
+/// Safety checklist for `ULE`:
+///
+/// 1. The type *must not* include any uninitialized or padding bytes: repr(transparent)
+///    wrapper around ULE type
+/// 2. The type must have an alignment of 1 byte: repr(transparent) wrapper around ULE type
+/// 3. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+///    would not represent a valid slice of this type: It does
+/// 4. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+///    cannot be used in its entirety (if its length is not a multiple of `size_of::<Self>()`):
+///    it does, due to the RawBytesULE parse call
+/// 5. All other methods *must* be left with their default impl, or else implemented according to
+///    their respective safety guidelines: They have been
+/// 6. The equality invariant is satisfied
+unsafe impl ULE for CaseMappingDataULE {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        let sixteens = RawBytesULE::<2>::parse_byte_slice(bytes)?;
+
+        for sixteen in sixteens {
+            let sixteen = sixteen.as_unsigned_int();
+            // The type has reserved bits in the
+            // uncased + not exception case
+            if sixteen & Self::EXCEPTION_BIT == 0 {
+                // not an exception
+                if sixteen & Self::CASE_TYPE_BITS == 0 {
+                    // uncased
+                    if sixteen >> Self::DELTA_SHIFT != 0 {
+                        // We have some used bits in the reserved zone!
+                        return Err(ZeroVecError::parse::<Self>());
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
+impl AsULE for CaseMappingData {
+    type ULE = CaseMappingDataULE;
+
+    fn from_unaligned(ule: Self::ULE) -> Self {
+        let sixteen = ule.0.as_unsigned_int();
+
+        let ignoreable = (sixteen & CaseMappingDataULE::CASE_IGNOREABLE_BIT) != 0;
+        let exception = (sixteen & CaseMappingDataULE::EXCEPTION_BIT) != 0;
+
+        let case_type = sixteen & CaseMappingDataULE::CASE_TYPE_BITS;
+        let case_type = CaseType::from_masked_bits(case_type);
+        let kind = if exception {
+            // No need to mask first since the exception bits start at 15
+            let exception = sixteen >> CaseMappingDataULE::EXCEPTION_SHIFT;
+            CaseMappingDataKind::Exception(case_type, exception)
+        } else {
+            let dot_type =
+                (sixteen & CaseMappingDataULE::DOT_TYPE_BITS) >> CaseMappingDataULE::DOT_SHIFT;
+            let dot_type = DotType::from_masked_bits(dot_type);
+
+            let sensitive = (sixteen & CaseMappingDataULE::CASE_SENSITIVE_BIT) != 0;
+            let ned = NonExceptionData {
+                dot_type,
+                sensitive,
+            };
+            if let Some(case_type) = case_type {
+                // no need to mask first since the delta bits start at 15
+                // We can also cast as i16 first so we do not have to
+                // sign-extend later
+                let delta = (sixteen as i16) >> CaseMappingDataULE::DELTA_SHIFT;
+                CaseMappingDataKind::Delta(ned, case_type, delta)
+            } else {
+                CaseMappingDataKind::Uncased(ned)
+            }
+        };
+        CaseMappingData { ignoreable, kind }
+    }
+
+    fn to_unaligned(self) -> Self::ULE {
+        let mut sixteen = 0;
+        if self.ignoreable {
+            sixteen |= CaseMappingDataULE::CASE_IGNOREABLE_BIT;
+        }
+        match self.kind {
+            CaseMappingDataKind::Exception(case_type, e) => {
+                sixteen |= CaseMappingDataULE::EXCEPTION_BIT;
+                sixteen |= e << CaseMappingDataULE::EXCEPTION_SHIFT;
+                sixteen |= case_type.map(|c| c as u16).unwrap_or(0);
+            }
+            CaseMappingDataKind::Uncased(ned) => {
+                sixteen |= (ned.dot_type as u16) << CaseMappingDataULE::DOT_SHIFT;
+                if ned.sensitive {
+                    sixteen |= CaseMappingDataULE::CASE_SENSITIVE_BIT;
+                }
+                // Remaining bytes are left at zero
+                // case_type is Uncased (0)
+            }
+            CaseMappingDataKind::Delta(ned, case_type, delta) => {
+                // First shift (which keeps the signedness), then cast to the
+                // right type
+                sixteen |= (delta << CaseMappingDataULE::DELTA_SHIFT) as u16;
+                sixteen |= (ned.dot_type as u16) << CaseMappingDataULE::DOT_SHIFT;
+                if ned.sensitive {
+                    sixteen |= CaseMappingDataULE::CASE_SENSITIVE_BIT;
+                }
+                sixteen |= case_type as u16;
+            }
+        }
+        CaseMappingDataULE(sixteen.to_unaligned())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_roundtrip() {
+        const TESTCASES: &[CaseMappingData] = &[
+            CaseMappingData {
+                ignoreable: true,
+                kind: CaseMappingDataKind::Exception(Some(CaseType::Title), 923),
+            },
+            CaseMappingData {
+                ignoreable: false,
+                kind: CaseMappingDataKind::Exception(None, 923),
+            },
+            CaseMappingData {
+                ignoreable: true,
+                kind: CaseMappingDataKind::Delta(
+                    NonExceptionData {
+                        sensitive: true,
+                        dot_type: DotType::SoftDotted,
+                    },
+                    CaseType::Upper,
+                    50,
+                ),
+            },
+            CaseMappingData {
+                ignoreable: false,
+                kind: CaseMappingDataKind::Delta(
+                    NonExceptionData {
+                        sensitive: true,
+                        dot_type: DotType::SoftDotted,
+                    },
+                    CaseType::Upper,
+                    -50,
+                ),
+            },
+            CaseMappingData {
+                ignoreable: false,
+                kind: CaseMappingDataKind::Uncased(NonExceptionData {
+                    sensitive: false,
+                    dot_type: DotType::SoftDotted,
+                }),
+            },
+        ];
+
+        for case in TESTCASES {
+            let ule = case.to_unaligned();
+            let roundtrip = CaseMappingData::from_unaligned(ule);
+            assert_eq!(*case, roundtrip);
+            let integer = ule.0.as_unsigned_int();
+            let roundtrip2 = CaseMappingData::try_from_icu_integer(integer).unwrap();
+            assert_eq!(*case, roundtrip2);
+        }
+    }
 }
