@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt::{Debug, Formatter};
+
 use icu_locid::Locale;
+use icu_locid_transform::LocaleExpander;
 
 /// Trait for providing person name data.
 pub trait PersonName {
@@ -12,8 +15,9 @@ pub trait PersonName {
     /// Returns the preferred order of person name.
     fn preferred_order(&self) -> Option<&PreferredOrder>;
 
-    /// Returns the value of the given field name, it *must* match the name field.
-    fn get(&self, field: &NameField) -> Option<&str>;
+    /// Returns the value of the given field name, it *must* match the name field requested.
+    /// The string should be in NFC.
+    fn get(&self, field: &NameField) -> &str;
 
     /// Returns all available name field.
     fn available_name_fields(&self) -> Vec<&NameField>;
@@ -32,13 +36,15 @@ pub trait PersonName {
 pub enum PersonNamesFormatterError {
     ParseError(String),
     InvalidPersonName,
+    InvalidLocale,
+    InvalidCldrData(String),
 }
 
 /// Field Modifiers.
 ///
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#modifiers>
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
-enum FieldModifier {
+pub(crate) enum FieldModifier {
     None,
     Informal,
     Prefix,
@@ -50,7 +56,7 @@ enum FieldModifier {
 }
 
 impl FieldModifier {
-    fn bit_value(&self) -> u32 {
+    pub(crate) fn bit_value(&self) -> u32 {
         match &self {
             FieldModifier::None => 0,
             FieldModifier::Informal => 1 << 0,
@@ -131,12 +137,85 @@ impl From<FieldFormality> for FieldModifier {
 }
 
 /// Field Modifiers Set. (must be the same as FieldModifier repr)
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Debug, Hash)]
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Copy)]
 pub struct FieldModifierSet {
-    value: u32,
+    pub(crate) value: u32,
 }
 
 impl FieldModifierSet {
+    /// Return true of the field modifier is set. (None will always return true.)
+    pub(crate) fn has_field(&self, modifier: FieldModifier) -> bool {
+        &self.value & modifier.bit_value() == modifier.bit_value()
+    }
+
+    /// Returns a copy of the field modifier set with the formality changed.
+    pub(crate) fn with_formality(&self, formality: FieldFormality) -> FieldModifierSet {
+        FieldModifierSet {
+            value: (&self.value & (u32::MAX ^ FieldModifier::Informal.bit_value()))
+                | FieldModifier::from(formality).bit_value(),
+        }
+    }
+    /// Returns a copy of the field modifier set with the part changed.
+    pub(crate) fn with_part(&self, part: FieldPart) -> FieldModifierSet {
+        FieldModifierSet {
+            value: (&self.value
+                & (u32::MAX
+                    ^ (FieldModifier::Core.bit_value() | FieldModifier::Prefix.bit_value())))
+                | FieldModifier::from(part).bit_value(),
+        }
+    }
+    /// Returns a copy of the field modifier set with the length changed.
+    pub(crate) fn with_length(&self, length: FieldLength) -> FieldModifierSet {
+        FieldModifierSet {
+            value: (&self.value
+                & (u32::MAX
+                    ^ (FieldModifier::Monogram.bit_value() | FieldModifier::Initial.bit_value())))
+                | FieldModifier::from(length).bit_value(),
+        }
+    }
+    /// Returns a copy of the field modifier set with the style changed.
+    pub(crate) fn with_style(&self, style: FieldCapsStyle) -> FieldModifierSet {
+        FieldModifierSet {
+            value: (&self.value
+                & (u32::MAX
+                    ^ (FieldModifier::AllCaps.bit_value()
+                        | FieldModifier::InitialCap.bit_value())))
+                | FieldModifier::from(style).bit_value(),
+        }
+    }
+    pub fn formality(formality: FieldFormality) -> Self {
+        Self::new(
+            FieldCapsStyle::Auto,
+            FieldPart::Auto,
+            FieldLength::Auto,
+            formality,
+        )
+    }
+    pub fn style(style: FieldCapsStyle) -> Self {
+        Self::new(
+            style,
+            FieldPart::Auto,
+            FieldLength::Auto,
+            FieldFormality::Auto,
+        )
+    }
+    pub fn part(part: FieldPart) -> Self {
+        Self::new(
+            FieldCapsStyle::Auto,
+            part,
+            FieldLength::Auto,
+            FieldFormality::Auto,
+        )
+    }
+    pub fn length(length: FieldLength) -> Self {
+        Self::new(
+            FieldCapsStyle::Auto,
+            FieldPart::Auto,
+            length,
+            FieldFormality::Auto,
+        )
+    }
+
     pub fn new(
         style: FieldCapsStyle,
         part: FieldPart,
@@ -163,16 +242,30 @@ impl Default for FieldModifierSet {
     }
 }
 
+impl Debug for FieldModifierSet {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        let mut debug = f.debug_struct("FieldModifierSet");
+        debug.field("Core", &self.has_field(FieldModifier::Core));
+        debug.field("Informal", &self.has_field(FieldModifier::Informal));
+        debug.field("Monogram", &self.has_field(FieldModifier::Monogram));
+        debug.field("Initial", &self.has_field(FieldModifier::Initial));
+        debug.field("Prefix", &self.has_field(FieldModifier::Prefix));
+        debug.field("AllCaps", &self.has_field(FieldModifier::AllCaps));
+        debug.field("InitialCap", &self.has_field(FieldModifier::InitialCap));
+        debug.finish()
+    }
+}
+
 /// Name Fields defined by Unicode specifications.
 ///
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#fields>
-#[derive(Eq, Ord, PartialOrd, PartialEq, Hash, Debug)]
+#[derive(Eq, Ord, PartialOrd, PartialEq, Hash, Debug, Clone, Copy)]
 pub struct NameField {
     pub kind: NameFieldKind,
     pub modifier: FieldModifierSet,
 }
 
-#[derive(Eq, Ord, PartialOrd, PartialEq, Hash, Debug)]
+#[derive(Eq, Ord, PartialOrd, PartialEq, Hash, Debug, Clone, Copy)]
 pub enum NameFieldKind {
     Title,
     Given,
@@ -227,9 +320,31 @@ pub enum FormattingFormality {
 /// Person name formatter options.
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub struct PersonNamesFormatterOptions {
+    /// the target locale will maximized when passed into the formatter.
     pub target_locale: Locale,
     pub order: FormattingOrder,
     pub length: FormattingLength,
     pub usage: FormattingUsage,
     pub formality: FormattingFormality,
+}
+
+impl PersonNamesFormatterOptions {
+    pub fn new(
+        target_locale: Locale,
+        order: FormattingOrder,
+        length: FormattingLength,
+        usage: FormattingUsage,
+        formality: FormattingFormality,
+    ) -> Self {
+        let lc = LocaleExpander::new();
+        let mut final_locale = target_locale.clone();
+        lc.maximize(&mut final_locale);
+        Self {
+            target_locale: final_locale,
+            order,
+            length,
+            usage,
+            formality,
+        }
+    }
 }

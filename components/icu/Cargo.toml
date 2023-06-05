@@ -38,6 +38,7 @@ icu_timezone = { workspace = true }
 # Experimental components
 icu_compactdecimal = { workspace = true, optional = true }
 icu_displaynames = { workspace = true, optional = true }
+icu_personnames = { workspace = true, optional = true }
 icu_relativetime = { workspace = true, optional = true }
 
 # For docs links and features
@@ -130,6 +131,7 @@ experimental = [
     "icu_compactdecimal",
     "icu_datetime_experimental",
     "icu_displaynames",
+    "icu_personnames",
     "icu_locid_transform/experimental",
     "icu_plurals/experimental",
     "icu_relativetime",

@@ -46,6 +46,7 @@ icu_segmenter_data = { path = "../../components/segmenter/data" }
 icu_timezone_data = { path = "../../components/timezone/data" }
 icu_compactdecimal_data = { path = "../../experimental/compactdecimal/data" }
 icu_displaynames_data = { path = "../../experimental/displaynames/data" }
+icu_personnames_data = { path = "../../experimental/personnames/data" }
 icu_relativetime_data = { path = "../../experimental/relativetime/data" }
 icu_singlenumberformatter_data = { path = "../../experimental/single_number_formatter/data"}
 icu_transliterate_data = { path = "../../experimental/transliterate/data" }

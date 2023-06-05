@@ -5,7 +5,6 @@
 use icu_locid::Locale;
 use litemap::LiteMap;
 
-use crate::api::NameFieldKind::{Given, Surname};
 use crate::api::{NameField, NameFieldKind, PersonName, PersonNamesFormatterError, PreferredOrder};
 
 ///
@@ -26,8 +25,11 @@ impl PersonName for DefaultPersonName {
         self.preferred_order.as_ref()
     }
 
-    fn get(&self, field: &NameField) -> Option<&str> {
-        self.person_data.get(field).map(String::as_ref)
+    fn get(&self, field: &NameField) -> &str {
+        self.person_data
+            .get(field)
+            .map(String::as_ref)
+            .unwrap_or("")
     }
 
     fn available_name_fields(&self) -> Vec<&NameField> {
@@ -47,15 +49,6 @@ impl PersonName for DefaultPersonName {
     }
 }
 
-/// Validate that the provided fields are valid.
-/// If the person name is not valid, it will not be formatted.
-fn validate_person_name<P: PersonName>(person_name: &P) -> bool {
-    person_name
-        .available_name_fields()
-        .into_iter()
-        .any(|field| field.kind == Given || field.kind == Surname)
-}
-
 ///
 /// Default person name functions.
 ///
@@ -73,7 +66,7 @@ impl DefaultPersonName {
             locale,
             preferred_order,
         };
-        if !validate_person_name(&result) {
+        if !crate::formatter::validate_person_name(&result.available_name_fields()) {
             return Err(PersonNamesFormatterError::InvalidPersonName);
         }
         Ok(result)

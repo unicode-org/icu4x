@@ -51,6 +51,10 @@ impl CldrCache {
         CldrDirNoLang(self, "cldr-bcp47/bcp47".to_string())
     }
 
+    pub fn personnames(&self) -> CldrDirLang<'_> {
+        CldrDirLang(self, "cldr-person-names".to_owned())
+    }
+
     pub fn displaynames(&self) -> CldrDirLang<'_> {
         CldrDirLang(self, "cldr-localenames".to_owned())
     }

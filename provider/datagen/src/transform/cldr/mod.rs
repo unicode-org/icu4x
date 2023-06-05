@@ -16,6 +16,8 @@ pub mod displaynames;
 pub mod fallback;
 pub mod list;
 pub mod locale_canonicalizer;
+#[cfg(feature = "icu_personnames")]
+pub mod personnames;
 pub mod plurals;
 #[cfg(feature = "icu_relativetime")]
 pub mod relativetime;

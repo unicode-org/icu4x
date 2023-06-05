@@ -101,7 +101,7 @@ exit_on_error true
 if array_is_empty ${@}
     exec --fail-on-error cargo build -p icu_datagen --no-default-features --features rayon,baked_exporter,bin,use_wasm,networking,experimental_components --release
     bin = set "target/release/icu4x-datagen"
-    components = array components/calendar components/casemap components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/compactdecimal experimental/displaynames experimental/relativetime experimental/transliterate experimental/unitsconversion
+    components = array components/calendar components/casemap components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/compactdecimal experimental/displaynames experimental/personnames experimental/relativetime experimental/transliterate experimental/unitsconversion
 else
     exec --fail-on-error cargo build -p icu_datagen --no-default-features --features rayon,baked_exporter,bin,use_wasm,networking,experimental_components
     bin = set "target/debug/icu4x-datagen"

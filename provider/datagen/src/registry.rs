@@ -240,6 +240,8 @@ registry!(
     icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker = "normalizer/nfkdex@1",
     icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker = "normalizer/decomp@1",
     icu_normalizer::provider::Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1",
+    #[cfg(any(all(), feature = "icu_personnames"))]
+    icu_personnames::provider::PersonNamesFormatV1Marker = "personnames/personnames@1",
     #[cfg(any(all(), feature = "icu_plurals"))]
     icu_plurals::provider::CardinalV1Marker = "plurals/cardinal@1",
     icu_plurals::provider::OrdinalV1Marker = "plurals/ordinal@1",

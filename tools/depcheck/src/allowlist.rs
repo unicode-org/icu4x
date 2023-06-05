@@ -97,6 +97,7 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
 /// for experimental crates.
 pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &[
     "icu_displaynames_data",
+    "icu_personnames_data",
     "icu_relativetime_data",
     "icu_compactdecimal_data",
 ];

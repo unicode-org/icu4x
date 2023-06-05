@@ -26,6 +26,7 @@ pub mod locale_resource;
 pub mod numbering_systems;
 pub mod numbers;
 pub mod parent_locales;
+pub mod personnames;
 pub mod plurals;
 pub mod time_zones;
 #[cfg(feature = "icu_transliterate")]

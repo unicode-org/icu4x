@@ -5,27 +5,45 @@
 [package]
 name = "icu_personnames"
 description = "API for formatting person names according to language-dependent conventions"
-version = "0.0.0"
+version = "0.1.0"
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
+homepage.workspace = true
 include.workspace = true
 license-file.workspace = true
 repository.workspace = true
+rust-version.workspace = true
+
+[package.metadata.workspaces]
+independent = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 icu_locid = { workspace = true }
+
 icu_provider = { workspace = true, features = ["macros"] }
+icu_properties = { workspace = true, features = ["compiled_data"] }
 zerovec = { workspace = true, features = ["serde", "derive"] }
-databake = { workspace = true, features = ["derive"], optional = true}
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true}
-litemap = { workspace = true }
+databake = { workspace = true, features = ["derive"], optional = true }
+icu_personnames_data = { workspace = true, optional = true }
+icu_locid_transform = { workspace = true }
+
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+litemap = { version = "0.7.0", path = "../../utils/litemap" }
+zerofrom = { version = "0.1.2", path = "../../utils/zerofrom" }
+regex = { version = "1.8.4" }
+lazy_static = "1.4"
 
 [features]
+default = ["compiled_data"]
 std = ["icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_provider/serde"]
 datagen = ["serde", "std", "dep:databake", "zerovec/databake"]
+compiled_data = ["dep:icu_personnames_data"]
+
+[[test]]
+name = "tests"
+path = "tests/tests.rs"
