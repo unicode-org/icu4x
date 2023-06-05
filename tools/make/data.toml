@@ -137,12 +137,17 @@ description = "Builds full baked data and verifies that all locales generate cor
 category = "ICU4X Data"
 script_runner = "@duckscript"
 script = '''
-exec cargo build -p icu_datagen
+exit_on_error true
+exec --fail-on-error cargo build -p icu_datagen
+root = pwd
 
-args = set "target/debug/icu4x-datagen --locales modern --format mod --overwrite --use-separate-crates --out"
+components = array "components/plurals" "components/timezone"
 
-exec %{args} components/plurals/data --keys plurals/ordinal@1 plurals/cardinal@1
-exec %{args} components/timezone/data --keys time_zone/metazone_period@1
+for component in ${components}
+    cd "${component}"
+    exec --fail-on-error ${root}/target/debug/icu4x-datagen --config data.json
+    cd "${root}"
+end
 
 output = exec git status --porcelain=v1
 output_length = length ${output.stdout}
