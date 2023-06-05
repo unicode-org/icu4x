@@ -4,9 +4,8 @@
 
 fn main() {
     if std::env::var("CARGO_FEATURE_DATA").is_ok() {
-        match std::env::var("ICU4X_DATA_DIR") {
-            Ok(path) => println!("cargo:rustc-env=MACROS_RS={}/macros.rs", path),
-            Err(_) => println!("cargo:rustc-env=MACROS_RS=../data/macros.rs"),
+        if std::env::var("ICU4X_DATA_DIR").is_ok() {
+            println!("cargo:rustc-cfg=icu4x_custom_data");
         }
         println!("cargo:rerun-if-env-changed=ICU4X_DATA_DIR");
     }

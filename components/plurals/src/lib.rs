@@ -86,7 +86,10 @@ pub mod rules;
 #[doc(hidden)]
 #[cfg(feature = "data")]
 pub mod data {
-    include!(core::env!("MACROS_RS"));
+    #[cfg(icu4x_custom_data)]
+    include!(concat!(core::env!("ICU4X_DATA_DIR"), "/macros.rs"));
+    #[cfg(not(icu4x_custom_data))]
+    include!("../data/macros.rs");
 
     use crate as icu_plurals;
     pub(crate) struct Provider;
