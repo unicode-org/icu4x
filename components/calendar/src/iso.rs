@@ -31,12 +31,13 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{div_rem_euclid, quotient};
+use crate::helpers::{div_rem_euclid, quotient, quotient64};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
 const EPOCH: i32 = 1;
+const MIN_YEAR: i32 = -5879610;
 
 /// The [ISO Calendar]
 ///
@@ -134,6 +135,7 @@ impl Calendar for Iso {
         let years_since_400 = date.0.year % 400;
         let leap_years_since_400 = years_since_400 / 4 - years_since_400 / 100;
         // The number of days to the current year
+        // Can never cause an overflow because years_since_400 has a maximum value of 399.
         let days_to_current_year = 365 * years_since_400 + leap_years_since_400;
         // The weekday offset from January 1 this year and January 1 2000
         let year_offset = days_to_current_year % 7;
@@ -202,8 +204,8 @@ impl Calendar for Iso {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year - 1;
-        let next_year = date.0.year + 1;
+        let prev_year = date.0.year.saturating_sub(1);
+        let next_year = date.0.year.saturating_add(1);
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
@@ -382,13 +384,16 @@ impl Iso {
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> i32 {
+        let prev_year = (date.0.year as i64) - 1;
         // Calculate days per year
-        let mut fixed: i32 = EPOCH - 1 + 365 * (date.0.year - 1);
+        let mut fixed: i64 = (EPOCH as i64 - 1) + 365 * prev_year;
+        // Calculate leap year offset
+        let offset =
+            quotient64(prev_year, 4) - quotient64(prev_year, 100) + quotient64(prev_year, 400);
         // Adjust for leap year logic
-        fixed += quotient(date.0.year - 1, 4) - quotient(date.0.year - 1, 100)
-            + quotient(date.0.year - 1, 400);
+        fixed += offset;
         // Days of current year
-        fixed += quotient(367 * (date.0.month as i32) - 362, 12);
+        fixed += quotient64(367 * (date.0.month as i64) - 362, 12);
         // Leap year adjustment for the current year
         fixed += if date.0.month <= 2 {
             0
@@ -398,7 +403,8 @@ impl Iso {
             -2
         };
         // Days passed in current month
-        fixed + (date.0.day as i32)
+        fixed += date.0.day as i64;
+        i32::try_from(fixed).unwrap_or(if fixed < 0 { i32::MIN } else { i32::MAX })
     }
 
     fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<i32> {
@@ -429,6 +435,9 @@ impl Iso {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: i32) -> i32 {
+        if date == i32::MIN {
+            return MIN_YEAR;
+        }
         let date = date - EPOCH;
         // 400 year cycles have 146097 days
         let (n_400, date) = div_rem_euclid(date, 146097);
@@ -458,9 +467,21 @@ impl Iso {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
         let year = Self::iso_year_from_fixed(date);
-        let prior_days = date - Self::iso_new_year(year);
+        // Increase the date by 365 (see below why) and set it to next_year, only if the current year is MIN_YEAR
+        let (fixed_date, adjusted_year) = if year == MIN_YEAR {
+            // Gets the next possible ISO year
+            let next_year = year + 1;
+            // Note: The min year, -5879610, is not a leap year, and neither are either of the adjacent years,
+            // so we add 365 to keep these calculations in range of an i32.
+            let year_length = 365;
+            (date + year_length, next_year)
+        } else {
+            (date, year)
+        };
+        // Calculates the prior days of the adjusted year, then applies a correction based on leap year conditions for the correct ISO date conversion.
+        let prior_days = fixed_date.saturating_sub(Self::iso_new_year(adjusted_year));
         #[allow(clippy::unwrap_used)] // valid day and month
-        let correction = if date < Self::fixed_from_iso_integers(year, 3, 1).unwrap() {
+        let correction = if date < Self::fixed_from_iso_integers(adjusted_year, 3, 1).unwrap() {
             0
         } else if Self::is_leap_year(year) {
             1
@@ -469,7 +490,8 @@ impl Iso {
         };
         let month = quotient(12 * (prior_days + correction) + 373, 367) as u8; // in 1..12 < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
-        let day = (date - Self::fixed_from_iso_integers(year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
+        let day = (fixed_date - Self::fixed_from_iso_integers(adjusted_year, month, 1).unwrap() + 1)
+            as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
         Date::try_new_iso_date(year, month, day).unwrap()
     }
@@ -522,6 +544,163 @@ impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
 mod test {
     use super::*;
     use crate::types::IsoWeekday;
+
+    #[test]
+    fn iso_overflow() {
+        #[derive(Debug)]
+        struct TestCase {
+            year: i32,
+            month: u8,
+            day: u8,
+            fixed: i32,
+            saturating: bool,
+        }
+        // Calculates the max possible year representable using i32::MAX as the fixed date
+        let max_year = Iso::iso_from_fixed(i32::MAX).year().number;
+
+        // Calculates the minimum possible year representable using i32::MIN as the fixed date
+        // *Cannot be tested yet due to hard coded date not being available yet (see line 436)
+        let min_year = MIN_YEAR;
+
+        let cases = [
+            TestCase {
+                // Earliest date that can be represented before causing a minimum overflow
+                year: min_year,
+                month: 6,
+                day: 22,
+                fixed: i32::MIN,
+                saturating: false,
+            },
+            TestCase {
+                year: min_year,
+                month: 6,
+                day: 23,
+                fixed: i32::MIN + 1,
+                saturating: false,
+            },
+            TestCase {
+                year: min_year,
+                month: 6,
+                day: 21,
+                fixed: i32::MIN,
+                saturating: true,
+            },
+            TestCase {
+                year: min_year,
+                month: 5,
+                day: 21,
+                fixed: i32::MIN,
+                saturating: true,
+            },
+            TestCase {
+                year: min_year - 1,
+                month: 12,
+                day: 31,
+                fixed: i32::MIN,
+                saturating: true,
+            },
+            TestCase {
+                year: min_year - 1,
+                month: 12,
+                day: 30,
+                fixed: i32::MIN,
+                saturating: true,
+            },
+            TestCase {
+                year: min_year - 1,
+                month: 12,
+                day: 1,
+                fixed: i32::MIN,
+                saturating: true,
+            },
+            TestCase {
+                year: min_year,
+                month: 12,
+                day: 31,
+                fixed: -2147483456,
+                saturating: false,
+            },
+            TestCase {
+                year: min_year + 1,
+                month: 1,
+                day: 1,
+                fixed: -2147483455,
+                saturating: false,
+            },
+            TestCase {
+                year: max_year,
+                month: 6,
+                day: 11,
+                fixed: i32::MAX - 30,
+                saturating: false,
+            },
+            TestCase {
+                year: max_year,
+                month: 7,
+                day: 9,
+                fixed: i32::MAX - 2,
+                saturating: false,
+            },
+            TestCase {
+                year: max_year,
+                month: 7,
+                day: 10,
+                fixed: i32::MAX - 1,
+                saturating: false,
+            },
+            TestCase {
+                // Latest date that can be represented before causing a maximum overflow
+                year: max_year,
+                month: 7,
+                day: 11,
+                fixed: i32::MAX,
+                saturating: false,
+            },
+            TestCase {
+                year: max_year,
+                month: 7,
+                day: 12,
+                fixed: i32::MAX,
+                saturating: true,
+            },
+            TestCase {
+                year: max_year,
+                month: 8,
+                day: 11,
+                fixed: i32::MAX,
+                saturating: true,
+            },
+            TestCase {
+                year: max_year,
+                month: 12,
+                day: 31,
+                fixed: i32::MAX,
+                saturating: true,
+            },
+            TestCase {
+                year: max_year + 1,
+                month: 7,
+                day: 11,
+                fixed: i32::MAX,
+                saturating: true,
+            },
+        ];
+
+        for case in cases {
+            let date = Date::try_new_iso_date(case.year, case.month, case.day).unwrap();
+            if !case.saturating {
+                assert_eq!(Iso::iso_from_fixed(case.fixed), date, "{case:?}");
+            }
+            assert_eq!(Iso::fixed_from_iso(date.inner), case.fixed, "{case:?}");
+        }
+    }
+
+    // Calculates the minimum possible year representable using i32::MIN as the fixed date
+    // Used as the value for the const MIN_YEAR
+    #[test]
+    fn min_year() {
+        assert_eq!(Iso::iso_from_fixed(i32::MIN).year().number, MIN_YEAR);
+    }
 
     #[test]
     fn test_day_of_week() {

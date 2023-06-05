@@ -25,7 +25,7 @@ pub trait CalendarArithmetic: Calendar {
 
     /// Calculate the days in a given year
     /// Can be overridden with simpler implementations for solar calendars
-    /// (typically, 366 in leap, 365 otgerwuse) Leave this as the default
+    /// (typically, 366 in leap, 365 otherwise) Leave this as the default
     /// for lunar calendars
     ///
     /// The name has `provided` in it to avoid clashes with Calendar
