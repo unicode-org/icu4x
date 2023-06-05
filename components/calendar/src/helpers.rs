@@ -13,6 +13,17 @@ pub fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
     }
 }
 
+/// [`div_rem_euclid`] for 64-bit inputs
+pub fn div_rem_euclid64(n: i64, d: i64) -> (i64, i64) {
+    debug_assert!(d > 0);
+    let (a, b) = (n / d, n % d);
+    if n >= 0 || b == 0 {
+        (a, b)
+    } else {
+        (a - 1, d + b)
+    }
+}
+
 /// Calculate `n / d` such that the remainder is always positive.
 /// This is equivalent to quotient() in the Reingold/Dershowitz Lisp code
 pub const fn quotient(n: i32, d: i32) -> i32 {
@@ -26,6 +37,8 @@ pub const fn quotient(n: i32, d: i32) -> i32 {
         a - 1
     }
 }
+
+/// [`quotient`] for 64-bit inputs
 pub const fn quotient64(n: i64, d: i64) -> i64 {
     debug_assert!(d > 0);
     // Code can use int_roundings once stabilized
@@ -91,4 +104,47 @@ fn test_div_rem_euclid() {
     assert_eq!(div_rem_euclid(i32::MAX, 1), (2147483647, 0));
     assert_eq!(div_rem_euclid(i32::MAX, 2), (1073741823, 1));
     assert_eq!(div_rem_euclid(i32::MAX, 3), (715827882, 1));
+}
+
+pub enum ConvertIntegerResult {
+    BelowMin(i64),
+    WithinRange(i32),
+    AboveMax(i64),
+}
+
+#[inline]
+pub const fn i64_to_i32(input: i64) -> ConvertIntegerResult {
+    if input < i32::MIN as i64 {
+        ConvertIntegerResult::BelowMin(input)
+    } else if input > i32::MAX as i64 {
+        ConvertIntegerResult::AboveMax(input)
+    } else {
+        ConvertIntegerResult::WithinRange(input as i32)
+    }
+}
+
+#[inline]
+pub const fn i64_to_saturated_i32(input: i64) -> i32 {
+    match i64_to_i32(input) {
+        ConvertIntegerResult::BelowMin(_) => i32::MIN,
+        ConvertIntegerResult::WithinRange(x) => x,
+        ConvertIntegerResult::AboveMax(_) => i32::MAX,
+    }
+}
+
+#[test]
+fn test_i64_to_saturated_i32() {
+    assert_eq!(i64_to_saturated_i32(i64::MIN), i32::MIN);
+    assert_eq!(i64_to_saturated_i32(-2147483649), -2147483648);
+    assert_eq!(i64_to_saturated_i32(-2147483648), -2147483648);
+    assert_eq!(i64_to_saturated_i32(-2147483647), -2147483647);
+    assert_eq!(i64_to_saturated_i32(-2147483646), -2147483646);
+    assert_eq!(i64_to_saturated_i32(-100), -100);
+    assert_eq!(i64_to_saturated_i32(0), 0);
+    assert_eq!(i64_to_saturated_i32(100), 100);
+    assert_eq!(i64_to_saturated_i32(2147483646), 2147483646);
+    assert_eq!(i64_to_saturated_i32(2147483647), 2147483647);
+    assert_eq!(i64_to_saturated_i32(2147483648), 2147483647);
+    assert_eq!(i64_to_saturated_i32(2147483649), 2147483647);
+    assert_eq!(i64_to_saturated_i32(i64::MAX), i32::MAX);
 }
