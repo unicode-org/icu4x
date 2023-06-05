@@ -136,6 +136,7 @@ pub struct AliasesV1<'data> {
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, SemivalidatedSubdivision>,
 }
 
+#[cfg(feature = "experimental")]
 #[icu_provider::data_struct(ScriptDirectionV1Marker = "locid_transform/script_dir@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(

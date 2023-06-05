@@ -113,6 +113,7 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
+experimental = ["icu_locid_transform/experimental"]
 
 [[bin]]
 name = "icu4x-datagen"

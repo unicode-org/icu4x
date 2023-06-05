@@ -3,5 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod aliases;
+#[cfg(feature = "experimental")]
 pub mod directionality;
 pub mod likely_subtags;
