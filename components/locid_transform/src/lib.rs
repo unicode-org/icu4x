@@ -100,9 +100,10 @@ pub mod provider;
 
 pub use canonicalizer::LocaleCanonicalizer;
 #[cfg(feature = "experimental")]
-pub use directionality::{Direction, LocaleDirectionality};
+pub use directionality::LocaleDirectionality;
 pub use error::LocaleTransformError;
 pub use expander::LocaleExpander;
+pub use provider::Direction;
 
 /// Used to track the result of a transformation operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]

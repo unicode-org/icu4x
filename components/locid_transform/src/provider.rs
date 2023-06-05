@@ -15,8 +15,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-#[cfg(feature = "experimental")]
-use crate::Direction;
 use alloc::borrow::Cow;
 use icu_locid::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
@@ -137,7 +135,28 @@ pub struct AliasesV1<'data> {
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, SemivalidatedSubdivision>,
 }
 
-#[cfg(feature = "experimental")]
+// TODO: move to directionality module when stabilizing
+/// Represents the direction of a script.
+///
+/// [`LocaleDirectionality`] can be used to get this information.
+#[zerovec::make_ule(DirectionULE)]
+#[zerovec::derive(Debug)]
+#[repr(u8)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[cfg_attr(
+feature = "datagen",
+derive(serde::Serialize, databake::Bake),
+databake(path = icu_locid_transform::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum Direction {
+    /// The script is left-to-right.
+    LeftToRight = 0,
+    /// The script is right-to-left.
+    RightToLeft = 1,
+}
+
 #[icu_provider::data_struct(ScriptDirectionV1Marker = "locid_transform/script_dir@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(

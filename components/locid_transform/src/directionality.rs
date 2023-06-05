@@ -3,31 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
+use crate::Direction;
 use crate::{LocaleExpander, LocaleTransformError};
 use icu_locid::subtags::Language;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
-
-/// Represents the direction of a script.
-///
-/// [`LocaleDirectionality`] can be used to get this information.
-#[zerovec::make_ule(DirectionULE)]
-#[zerovec::derive(Debug)]
-#[repr(u8)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_locid_transform::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[non_exhaustive]
-pub enum Direction {
-    /// The script is left-to-right.
-    LeftToRight = 0,
-    /// The script is right-to-left.
-    RightToLeft = 1,
-}
 
 /// The `LocaleDirectionality` provides methods to determine the direction of a locale based
 /// on [`CLDR`] data.
