@@ -84,7 +84,7 @@ fn test_basic() {
     assert_eq!(
         data.get()
             .rtl
-            .get_copied(&script!("Brai").into_tinystr().to_unvalidated()),
+            .get_copied(&script!("Zzzz").into_tinystr().to_unvalidated()),
         None
     );
 }
