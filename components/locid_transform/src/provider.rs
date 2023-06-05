@@ -15,6 +15,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(feature = "experimental")]
 use crate::Direction;
 use alloc::borrow::Cow;
 use icu_locid::subtags::{Language, Region, Script, Variant};
