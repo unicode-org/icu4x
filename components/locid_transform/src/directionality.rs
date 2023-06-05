@@ -111,12 +111,36 @@ impl LocaleDirectionality {
     pub fn get(&self, locale: &Locale) -> Option<Direction> {
         let script = locale.id.script.or_else(|| {
             let expander = self.expander.as_borrowed();
-            match (locale.id.language, locale.id.region) {
-                (Language::UND, Some(region)) => expander.get_r(region).map(|(_, s)| s),
-                (Language::UND, None) => None,
-                (lang, Some(region)) => expander.get_lr(lang, region),
-                (lang, None) => expander.get_l(lang).map(|(s, _)| s),
+            let locale_language = locale.id.language;
+            let locale_region = locale.id.region;
+
+            // proceed through _all possible cases_ in order of specificity
+            // (borrowed from LocaleExpander::maximize):
+            // 1. language + region
+            // 2. language
+            // 3. region
+            // we need to check all cases, because e.g. for "en-US" the default script is associated
+            // with "en" but not "en-US"
+            if locale_language != Language::UND {
+                if let Some(region) = locale_region {
+                    // 1. we know both language and region
+                    if let Some(script) = expander.get_lr(locale_language, region) {
+                        return Some(script);
+                    }
+                }
+                // 2. we know language, but we either do not know region or knowing region did not help
+                if let Some((script, _)) = expander.get_l(locale_language) {
+                    return Some(script);
+                }
             }
+            if let Some(region) = locale_region {
+                // 3. we know region, but we either do not know language or knowing language did not help
+                if let Some((_, script)) = expander.get_r(region) {
+                    return Some(script);
+                }
+            }
+            // we could not figure out the script from the given locale
+            None
         })?;
 
         self.script_direction
