@@ -149,7 +149,7 @@ for component in ${components}
     cd "${root}"
 end
 
-output = exec git status --porcelain=v1
+output = exec git diff
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
