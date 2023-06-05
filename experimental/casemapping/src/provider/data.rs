@@ -225,7 +225,9 @@ impl CaseMappingData {
     pub(crate) fn try_from_icu_integer(int: u16) -> Result<Self, ZeroVecError> {
         let raw = int.to_unaligned();
         CaseMappingDataULE::validate_byte_slice(raw.as_bytes())?;
-        Ok(Self::from_unaligned(CaseMappingDataULE(raw)))
+
+        let this = Self::from_unaligned(CaseMappingDataULE(raw));
+        Ok(this)
     }
 }
 
@@ -291,7 +293,7 @@ impl CaseMappingDataULE {
     // 15..7 signed-delta to simple case mapping code point (or reserved)
     const DELTA_SHIFT: u16 = 7;
     // 6..5 dot type
-    const DOT_TYPE_BITS: u16 = 0x30;
+    const DOT_TYPE_BITS: u16 = 0x60;
     const DOT_SHIFT: u16 = 5;
 }
 
@@ -352,7 +354,6 @@ impl AsULE for CaseMappingData {
             let dot_type =
                 (sixteen & CaseMappingDataULE::DOT_TYPE_BITS) >> CaseMappingDataULE::DOT_SHIFT;
             let dot_type = DotType::from_masked_bits(dot_type);
-
             let sensitive = (sixteen & CaseMappingDataULE::CASE_SENSITIVE_BIT) != 0;
             let ned = NonExceptionData {
                 dot_type,
@@ -459,5 +460,16 @@ mod tests {
             let roundtrip2 = CaseMappingData::try_from_icu_integer(integer).unwrap();
             assert_eq!(*case, roundtrip2);
         }
+    }
+    #[test]
+    fn test_integer_roundtrip() {
+        // Buggy roundtrip cases go here
+        fn test_single_integer(int: u16) {
+            let cmd = CaseMappingData::try_from_icu_integer(int).unwrap();
+            assert_eq!(int, cmd.to_unaligned().0.as_unsigned_int())
+        }
+
+        test_single_integer(84);
+        test_single_integer(2503);
     }
 }
