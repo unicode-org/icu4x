@@ -33,6 +33,7 @@ impl MetazoneCalculator {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "data")]
+    #[inline]
     pub fn new() -> Self {
         use crate as icu_timezone;
         const METAZONE_PERIOD: &crate::provider::MetazonePeriodV1 =
