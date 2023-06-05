@@ -2,11 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::num::TryFromIntError;
+use icu_collections::codepointtrie::TrieValue;
 use zerovec::ule::{AsULE, RawBytesULE, ULE};
 use zerovec::ZeroVecError;
 
 // The case of a Unicode character
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 pub enum CaseType {
     // Lowercase letter
     Lower = 1,
@@ -40,6 +45,9 @@ impl CaseType {
 // letters (like `i` and `j`) combine with accents placed above the
 // letter.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 pub enum DotType {
     // Normal characters with combining class 0
     NoDot = 0,
@@ -79,22 +87,153 @@ pub(crate) enum MappingKind {
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 pub struct CaseMappingData {
     pub ignoreable: bool,
     /// The delta between this code point and its upper/lowercase equivalent.
     pub kind: CaseMappingDataKind,
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum CaseMappingDataKind {
     Exception(Option<CaseType>, u16),
     Uncased(NonExceptionData),
     Delta(NonExceptionData, CaseType, i16),
 }
+
+
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct NonExceptionData {
     pub sensitive: bool,
     pub dot_type: DotType,
+}
+
+impl CaseMappingData {
+    #[inline]
+    pub(crate) fn case_type(&self) -> Option<CaseType> {
+        match self.kind {
+            CaseMappingDataKind::Exception(case_type, ..) => case_type,
+            CaseMappingDataKind::Delta(_, case_type, _) => Some(case_type),
+            CaseMappingDataKind::Uncased(..) => None,
+        }
+    }
+
+    #[inline]
+    pub(crate) fn is_upper_or_title(&self) -> bool {
+        match self.case_type() {
+            None | Some(CaseType::Lower) => false,
+            Some(CaseType::Upper) | Some(CaseType::Title) => true,
+        }
+    }
+
+    #[inline]
+    pub(crate) fn is_relevant_to(&self, kind: MappingKind) -> bool {
+        match kind {
+            MappingKind::Lower | MappingKind::Fold => self.is_upper_or_title(),
+            MappingKind::Upper | MappingKind::Title => self.case_type() == Some(CaseType::Lower),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn is_ignorable(&self) -> bool {
+        self.ignoreable
+    }
+
+    #[inline]
+    pub(crate) fn has_exception(&self) -> bool {
+        matches!(self.kind, CaseMappingDataKind::Exception(..))
+    }
+
+    // Returns true if this code point is case-sensitive.
+    // only in the non-exception case
+    // This is not currently exposed.
+    #[inline]
+    pub(crate) fn is_sensitive(&self) -> bool {
+        match self.kind {
+            CaseMappingDataKind::Exception(..) => false,
+            CaseMappingDataKind::Delta(ned, ..) => ned.sensitive,
+            CaseMappingDataKind::Uncased(ned) => ned.sensitive,
+        }
+    }
+
+    #[inline]
+    pub(crate) fn dot_type(&self) -> DotType {
+        match self.kind {
+            CaseMappingDataKind::Exception(..) => DotType::NoDot,
+            CaseMappingDataKind::Delta(ned, ..) => ned.dot_type,
+            CaseMappingDataKind::Uncased(ned) => ned.dot_type,
+        }
+    }
+
+    // The delta between this code point and its upper/lowercase equivalent.
+    // This should only be called for codepoints without exception data.
+    //
+    // Returns 0 for uncased types
+    #[inline]
+    pub(crate) fn delta(&self) -> i16 {
+        debug_assert!(!self.has_exception());
+        match self.kind {
+            CaseMappingDataKind::Exception(..) => 0,
+            CaseMappingDataKind::Delta(.., delta) => delta,
+            CaseMappingDataKind::Uncased(..) => 0,
+        }
+    }
+
+    // The index of the exception data for this codepoint in the exception
+    // table. This should only be called for codepoints with exception data.
+    #[inline]
+    pub(crate) fn exception_index(&self) -> u16 {
+        debug_assert!(self.has_exception());
+        if let CaseMappingDataKind::Exception(_, i) = self.kind {
+            i
+        } else {
+            0
+        }
+    }
+
+    // CaseMappingExceptionsBuilder moves the full mapping and closure
+    // strings out of the exception table itself. This means that the
+    // exception index for a code point in ICU4X will be different
+    // from the exception index for the same codepoint in ICU4C. Given
+    // a mapping from old to new, this function updates the exception
+    // index if necessary.
+    #[cfg(feature = "datagen")]
+    pub(crate) fn with_updated_exception(self, updates: &HashMap<u16, u16>) -> Self {
+        let kind = if let CaseMappingDataKind::Exception(ty, index) = self.kind {
+            if let Some(updated_exception) = updates.get(&index) {
+                CaseMappingDataKind::Exception(ty, *updated_exception)
+            } else {
+                self.kind
+            }
+        } else {
+            self.kind
+        };
+
+        Self {
+            kind,
+            ..self
+        }
+    }
+}
+
+impl TrieValue for CaseMappingData {
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u16::try_from(i).map(|u| AsULE::from_unaligned(CaseMappingDataULE(u.to_unaligned())))
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.to_unaligned().0.as_unsigned_int())
+    }
 }
 
 /// Packed casemappingdata type
