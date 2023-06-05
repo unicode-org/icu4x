@@ -139,6 +139,12 @@ pub struct AliasesV1<'data> {
 /// Represents the direction of a script.
 ///
 /// [`LocaleDirectionality`] can be used to get this information.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[zerovec::make_ule(DirectionULE)]
 #[zerovec::derive(Debug)]
 #[repr(u8)]
