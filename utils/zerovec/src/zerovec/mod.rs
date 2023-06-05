@@ -989,6 +989,16 @@ macro_rules! zeroslice {
 /// const EMPTY: ZeroVec<u32> = zerovec![];
 /// assert!(!EMPTY.is_owned());
 /// ```
+///
+/// Create owned `ZeroVec`s:
+///
+/// ```
+/// use zerovec::{ZeroVec, zerovec, ule::AsULE};
+///
+/// let x = 1u32;
+/// let owned: ZeroVec<u32> = zerovec![<u32 as AsULE>::ULE::from_unsigned; x].into_owned();
+/// println!("{:?}", owned);
+/// ```
 #[macro_export]
 macro_rules! zerovec {
     () => (
