@@ -38,10 +38,8 @@ use crate::elements::NO_CE_PRIMARY;
 use super::CaseFirst;
 use super::MaxVariable;
 
-const SINGLE_U32: &ZeroSlice<u32> =
-    zeroslice![u32; <u32 as AsULE>::ULE::from_unsigned; FFFD_CE32_VALUE];
-const SINGLE_U64: &ZeroSlice<u64> =
-    zeroslice![u64; <u64 as AsULE>::ULE::from_unsigned; FFFD_CE_VALUE];
+const SINGLE_U32: &ZeroSlice<u32> = zeroslice![<u32 as AsULE>::ULE::from_unsigned; FFFD_CE32_VALUE];
+const SINGLE_U64: &ZeroSlice<u64> = zeroslice![<u64 as AsULE>::ULE::from_unsigned; FFFD_CE_VALUE];
 
 fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
     // Collation::getThreeBytePrimaryForOffsetData

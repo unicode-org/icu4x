@@ -937,17 +937,15 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 /// use zerovec::{ZeroSlice, zeroslice, ule::AsULE};
 /// use zerovec::ule::UnvalidatedChar;
 ///
-/// const SIGNATURE: &ZeroSlice<char> = zeroslice![char; <char as AsULE>::ULE::from_aligned; 'b', 'y', 'e', '✌'];
-/// const EMPTY: &ZeroSlice<u32> = zeroslice![];
+/// const SIGNATURE: &ZeroSlice<char> = zeroslice![<char as AsULE>::ULE::from_aligned; 'b', 'y', 'e', '✌'];
 /// const UC: &ZeroSlice<UnvalidatedChar> =
 ///     zeroslice![
-///         UnvalidatedChar;
 ///         <UnvalidatedChar as AsULE>::ULE::from_unvalidated_char;
 ///         UnvalidatedChar::from_char('a'),
 ///     ];
-/// let empty: &ZeroSlice<u32> = zeroslice![];
-/// let nums = zeroslice![u32; <u32 as AsULE>::ULE::from_unsigned; 1, 2, 3, 4, 5];
-/// assert_eq!(nums.last().unwrap(), 5);
+/// const EMPTY: &ZeroSlice<u32> = zeroslice![];
+/// const NUMS: &ZeroSlice<u32> = zeroslice![<u32 as AsULE>::ULE::from_unsigned; 1, 2, 3, 4, 5];
+/// assert_eq!(NUMS.last().unwrap(), 5);
 /// ```
 ///
 /// Using a custom array-conversion function:
@@ -959,18 +957,18 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///     RawBytesULE(num.to_be_bytes())
 /// }
 ///
-/// const NUMBERS_BE: &ZeroSlice<i16> = zeroslice![i16; be_convert; 1, -2, 3, -4, 5];
+/// const NUMBERS_BE: &ZeroSlice<i16> = zeroslice![be_convert; 1, -2, 3, -4, 5];
 /// ```
 #[macro_export]
 macro_rules! zeroslice {
     () => (
         $crate::ZeroSlice::new_empty()
     );
-    ($aligned:ty; $convert:expr; $($x:expr),+ $(,)?) => (
-        $crate::ZeroSlice::<$aligned>::from_ule_slice(
-            {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &[
+    ($convert:expr; $($x:expr),+ $(,)?) => (
+        $crate::ZeroSlice::from_ule_slice(
+            &[
                 $($convert($x)),*
-            ]; X}
+            ]
         )
     );
 }
@@ -985,7 +983,7 @@ macro_rules! zeroslice {
 /// ```
 /// use zerovec::{ZeroVec, zerovec, ule::AsULE};
 ///
-/// const SIGNATURE: ZeroVec<char> = zerovec![char; <char as AsULE>::ULE::from_aligned; 'a', 'y', 'e', '✌'];
+/// const SIGNATURE: ZeroVec<char> = zerovec![<char as AsULE>::ULE::from_aligned; 'a', 'y', 'e', '✌'];
 /// assert!(!SIGNATURE.is_owned());
 ///
 /// const EMPTY: ZeroVec<u32> = zerovec![];
@@ -996,8 +994,8 @@ macro_rules! zerovec {
     () => (
         $crate::ZeroVec::new()
     );
-    ($aligned:ty; $convert:expr; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![$aligned; $convert; $($x),+].as_zerovec()
+    ($convert:expr; $($x:expr),+ $(,)?) => (
+        $crate::zeroslice![$convert; $($x),+].as_zerovec()
     );
 }
 
