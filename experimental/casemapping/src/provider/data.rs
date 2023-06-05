@@ -4,6 +4,8 @@
 
 use core::num::TryFromIntError;
 use icu_collections::codepointtrie::TrieValue;
+#[cfg(feature = "datagen")]
+use std::collections::HashMap;
 use zerovec::ule::{AsULE, RawBytesULE, ULE};
 use zerovec::ZeroVecError;
 
@@ -105,7 +107,6 @@ pub enum CaseMappingDataKind {
     Uncased(NonExceptionData),
     Delta(NonExceptionData, CaseType, i16),
 }
-
 
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -217,10 +218,14 @@ impl CaseMappingData {
             self.kind
         };
 
-        Self {
-            kind,
-            ..self
-        }
+        Self { kind, ..self }
+    }
+
+    /// Attempt to construct from ICU-format integer
+    pub(crate) fn try_from_icu_integer(int: u16) -> Result<Self, ZeroVecError> {
+        let raw = int.to_unaligned();
+        CaseMappingDataULE::validate_byte_slice(raw.as_bytes())?;
+        Ok(Self::from_unaligned(CaseMappingDataULE(raw)))
     }
 }
 

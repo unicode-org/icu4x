@@ -3,16 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::convert::TryFrom;
-use core::num::TryFromIntError;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(feature = "datagen")]
 use icu_collections::codepointtrie::CodePointTrieHeader;
-use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
-#[cfg(feature = "datagen")]
-use std::collections::HashMap;
-use zerovec::ule::{AsULE, RawBytesULE};
 use zerovec::ZeroMap;
 #[cfg(feature = "datagen")]
 use zerovec::ZeroVec;
@@ -22,7 +18,7 @@ use crate::exceptions::{CaseMappingExceptions, ExceptionSlot};
 #[cfg(feature = "datagen")]
 use crate::exceptions_builder::CaseMappingExceptionsBuilder;
 
-use crate::provider::data::{CaseMappingData, CaseType, DotType, MappingKind};
+use crate::provider::data::{CaseMappingData, DotType, MappingKind};
 
 /// Reverse case folding data. Maps from multi-character strings back
 /// to code-points that fold to those strings.
@@ -168,7 +164,11 @@ impl<'data> CaseMappingInternals<'data> {
         let trie_index = ZeroVec::alloc_from_slice(trie_index);
         let trie_data = trie_data
             .iter()
-            .map(|&i| CaseMappingData(i).with_updated_exception(&idx_map))
+            .map(|&i| {
+                CaseMappingData::try_from_icu_integer(i)
+                    .unwrap()
+                    .with_updated_exception(&idx_map)
+            })
             .collect::<ZeroVec<_>>();
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
 
@@ -707,7 +707,7 @@ impl<'data> CaseMappingInternals<'data> {
 
         let data = self.lookup_data(c);
         if !data.has_exception() {
-            if data.case_type() != CaseType::None {
+            if data.case_type().is_some() {
                 let delta = data.delta() as i32;
                 if delta != 0 {
                     // Add the one simple case mapping, no matter what type it is.
@@ -874,7 +874,7 @@ impl<'a> ContextIterator<'a> {
         for c in self.before.chars().rev() {
             let data = mapping.lookup_data(c);
             if !data.is_ignorable() {
-                return data.case_type() != CaseType::None;
+                return data.case_type().is_some();
             }
         }
         false
@@ -883,7 +883,7 @@ impl<'a> ContextIterator<'a> {
         for c in self.after.chars() {
             let data = mapping.lookup_data(c);
             if !data.is_ignorable() {
-                return data.case_type() != CaseType::None;
+                return data.case_type().is_some();
             }
         }
         false
