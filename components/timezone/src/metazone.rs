@@ -34,12 +34,12 @@ impl MetazoneCalculator {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "data")]
     #[inline]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         use crate as icu_timezone;
-        const METAZONE_PERIOD: &crate::provider::MetazonePeriodV1 =
-            &crate::data::singleton_time_zone_metazone_period_v1!();
         MetazoneCalculator {
-            metazone_period: DataPayload::from_static_ref(METAZONE_PERIOD),
+            metazone_period: DataPayload::from_owned(
+                crate::data::singleton_time_zone_metazone_period_v1!(),
+            ),
         }
     }
 

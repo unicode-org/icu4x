@@ -192,20 +192,9 @@ where
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
     #[inline]
-    pub fn from_owned(data: M::Yokeable) -> Self {
+    pub const fn from_owned(data: M::Yokeable) -> Self {
         Self {
             yoke: Yoke::new_owned(data),
-        }
-    }
-
-    #[doc(hidden)]
-    #[inline]
-    pub fn from_static_ref(data: &'static M::Yokeable) -> Self
-    where
-        M::Yokeable: zerofrom::ZeroFrom<'static, M::Yokeable>,
-    {
-        Self {
-            yoke: Yoke::new_owned(zerofrom::ZeroFrom::zero_from(data)),
         }
     }
 
