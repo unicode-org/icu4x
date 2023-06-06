@@ -213,7 +213,7 @@ impl BakedExporter {
                 .arg("--config")
                 .arg("normalize_doc_attributes=true")
                 .arg("--config")
-                .arg("max_width=5000000000") // better to format wide than to not format
+                .arg("max_width=50000000") // better to format wide than to not format
                 // currently unnecessary, may become necessary for format_macro_bodies
                 // in the future
                 .arg("--config")
