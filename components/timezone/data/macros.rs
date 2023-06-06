@@ -6,7 +6,8 @@ mod macros {
 }
 #[doc(inline)]
 pub use __impl_time_zone_metazone_period_v1 as impl_time_zone_metazone_period_v1;
-use __lookup_time_zone_metazone_period_v1 as lookup_time_zone_metazone_period_v1;
+#[doc(hidden)]
+pub use __lookup_time_zone_metazone_period_v1 as lookup_time_zone_metazone_period_v1;
 #[doc(inline)]
 pub use __singleton_time_zone_metazone_period_v1 as singleton_time_zone_metazone_period_v1;
 /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data

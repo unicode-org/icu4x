@@ -10,8 +10,10 @@ mod macros {
 pub use __impl_plurals_cardinal_v1 as impl_plurals_cardinal_v1;
 #[doc(inline)]
 pub use __impl_plurals_ordinal_v1 as impl_plurals_ordinal_v1;
-use __lookup_plurals_cardinal_v1 as lookup_plurals_cardinal_v1;
-use __lookup_plurals_ordinal_v1 as lookup_plurals_ordinal_v1;
+#[doc(hidden)]
+pub use __lookup_plurals_cardinal_v1 as lookup_plurals_cardinal_v1;
+#[doc(hidden)]
+pub use __lookup_plurals_ordinal_v1 as lookup_plurals_ordinal_v1;
 /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.

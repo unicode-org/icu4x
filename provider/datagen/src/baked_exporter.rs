@@ -590,7 +590,8 @@ impl DataExporter for BakedExporter {
                 .parse::<TokenStream>()
                 .unwrap();
             lookup_macro_reexports.push(quote! {
-                use #prefixed_lookup_macro_ident as #lookup_macro_ident;
+                #[doc(hidden)]
+                pub use #prefixed_lookup_macro_ident as #lookup_macro_ident;
             });
 
             if let Some((singleton_ident, prefixed_singleton_ident)) = &datum.singleton_macro_ident
