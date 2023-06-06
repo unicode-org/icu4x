@@ -15,7 +15,30 @@ pub(crate) struct RataDie(i64);
 
 impl RataDie {
     pub const fn new(fixed_date: i64) -> Self {
-        Self(fixed_date)
+        let result = Self(fixed_date);
+        #[cfg(debug_assertions)]
+        result.check();
+        result
+    }
+    #[cfg(debug_assertions)]
+    pub const fn check(&self) {
+        if self.0 > i64::MAX / 256 {
+            debug_assert!(
+                false,
+                "RataDie is not designed to store values near to the overflow boundary"
+            );
+        }
+        if self.0 < i64::MIN / 256 {
+            debug_assert!(
+                false,
+                "RataDie is not designed to store values near to the overflow boundary"
+            );
+        }
+    }
+    /// A valid RataDie that is intended to be below all dates representable in calendars
+    #[cfg(test)]
+    pub const fn big_negative() -> Self {
+        Self::new(i64::MIN / 256 / 256)
     }
     pub const fn to_fixed_date(self) -> i64 {
         self.0
@@ -30,13 +53,18 @@ impl RataDie {
 impl Add<i64> for RataDie {
     type Output = Self;
     fn add(self, rhs: i64) -> Self::Output {
-        Self(self.0 + rhs)
+        let result = Self(self.0 + rhs);
+        #[cfg(debug_assertions)]
+        result.check();
+        result
     }
 }
 
 impl AddAssign<i64> for RataDie {
     fn add_assign(&mut self, rhs: i64) {
         self.0 += rhs;
+        #[cfg(debug_assertions)]
+        self.check();
     }
 }
 
@@ -44,13 +72,18 @@ impl AddAssign<i64> for RataDie {
 impl Sub<i64> for RataDie {
     type Output = Self;
     fn sub(self, rhs: i64) -> Self::Output {
-        Self(self.0 - rhs)
+        let result = Self(self.0 - rhs);
+        #[cfg(debug_assertions)]
+        result.check();
+        result
     }
 }
 
 impl SubAssign<i64> for RataDie {
     fn sub_assign(&mut self, rhs: i64) {
         self.0 -= rhs;
+        #[cfg(debug_assertions)]
+        self.check();
     }
 }
 
