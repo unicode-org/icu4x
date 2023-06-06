@@ -70,6 +70,7 @@
 //! # }
 //! ```
 
+use core::fmt::Display;
 use databake::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -190,7 +191,16 @@ impl BakedExporter {
     /// Convert tokens to a string, potentially formatting them
     ///
     /// `is_expr` is true if the tokens are an expression rather than a full file
-    fn tokens_to_string(&self, tokens: TokenStream, is_expr: bool) -> Result<String, DataError> {
+    ///
+    /// `indent` is the amount to indent subsequent lines by. The first line is assumed to be indented
+    /// during interpolation
+    fn tokens_to_string(
+        &self,
+        tokens: impl Display,
+        is_expr: bool,
+        indent: u8,
+    ) -> Result<String, DataError> {
+        let mut indent: i8 = indent as i8;
         if self.pretty {
             use std::process::{Command, Stdio};
             let mut rustfmt = Command::new("rustfmt")
@@ -209,7 +219,6 @@ impl BakedExporter {
             } else {
                 write!(rustfmt_stdin, "{tokens}")?;
             }
-            
 
             drop(rustfmt_stdin); // EOF
             let output = rustfmt.wait_with_output()?;
@@ -218,14 +227,36 @@ impl BakedExporter {
                     .map_err(|_| DataError::custom("rustfmt output not utf-8"))?;
                 return Err(DataError::custom("rustfmt failed").with_display_context(&stderr));
             }
-            let out = if is_expr {
-                // todo handle indentation
-                output.stdout.strip_prefix(b"fn main() {\n").and_then(|s| s.strip_suffix(b"}\n")).unwrap_or(&output.stdout).into()
+            let mut formatted = if is_expr {
+                // This will automatically indent by 1. Account for that later.
+                indent -= 1;
+                let s = std::str::from_utf8(&output.stdout)
+                    .map_err(|_| DataError::custom("rustfmt output not utf-8"))?;
+
+                let stripped = s
+                    .strip_prefix("fn main() {\n")
+                    .and_then(|s| s.strip_suffix("}\n"))
+                    .unwrap_or(s)
+                    // strip any existing indentation,
+                    // it's handled during interpolation as mentioned in the docs of this function
+                    .trim_start_matches(' ');
+                stripped.into()
             } else {
-                output.stdout
+                String::from_utf8(output.stdout)
+                    .map_err(|_| DataError::custom("rustfmt output not utf-8"))?
             };
-            String::from_utf8(out)
-                .map_err(|_| DataError::custom("rustfmt output not utf-8"))
+
+            if indent != 0 {
+                let indentation: String = (0..(4 * indent.abs())).map(|_| ' ').collect();
+
+                if indent > 0 {
+                    formatted = formatted.replace('\n', &format!("\n{indentation}"));
+                } else {
+                    formatted = formatted.replace(&format!("\n{indentation}"), "\n");
+                }
+            }
+
+            Ok(formatted)
         } else {
             Ok(tokens.to_string())
         }
@@ -234,11 +265,11 @@ impl BakedExporter {
     fn write_to_file<P: AsRef<std::path::Path>>(
         &self,
         relative_path: P,
-        data: TokenStream,
+        data: impl Display,
     ) -> Result<(), DataError> {
         let path = self.mod_directory.join(&relative_path).with_extension("rs");
 
-        let mut formatted = self.tokens_to_string(data, false)?;
+        let mut formatted = data.to_string();
 
         if !self.use_separate_crates {
             formatted = formatted
@@ -355,19 +386,22 @@ impl DataExporter for BakedExporter {
                     .parse::<TokenStream>()
                     .unwrap();
 
+                let bake = self.tokens_to_string(bake, true, 2)?;
                 // Exposing singleton structs separately allows us to get rid of fallibility by using
                 // the struct directly.
-                singleton = Some(quote! {
-                    #[doc(hidden)]
-                    #[macro_export]
-                    macro_rules! #singleton_ident_prefixed {
-                        () => {
-                            #bake
-                        }
-                    }
-                    #[doc(hidden)]
-                    pub use #singleton_ident_prefixed as #singleton_ident;
-                });
+                singleton = Some(format!(
+                    r##"
+#[doc(hidden)]
+#[macro_export]
+macro_rules! {singleton_ident_prefixed} {{
+    () => {{
+        {bake}
+    }}
+}}
+#[doc(hidden)]
+pub use {singleton_ident_prefixed} as {singleton_ident};
+"##
+                ));
 
                 let cmp = if locale == "und" {
                     quote! {
@@ -432,7 +466,7 @@ impl DataExporter for BakedExporter {
             feature: feature.to_string(),
             lookup: lookup.to_string(),
             marker: quote!(#marker).to_string(),
-            singleton: singleton.map(|t| t.to_string()),
+            singleton,
             macro_ident: format!("impl_{ident}"),
             hash_ident: ident.to_ascii_uppercase(),
             into_any_payload: into_any_payload.to_string(),
@@ -447,6 +481,7 @@ impl DataExporter for BakedExporter {
     }
 
     fn close(&mut self) -> Result<(), DataError> {
+        use std::fmt::Write;
         log::info!("Writing macros.rs...");
 
         let data = move_out!(self.impl_data).into_inner().expect("poison");
@@ -459,39 +494,11 @@ impl DataExporter for BakedExporter {
             .values()
             .map(|data| data.lookup.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
-        let singletons = data
-            .values()
-            .map(|data| {
-                data.singleton
-                    .as_ref()
-                    .map(|s| s.parse::<TokenStream>().unwrap())
-            })
-            .collect::<Vec<_>>();
         let markers = data
             .values()
             .map(|data| data.marker.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
-        let docs = data.values().map(|data| {
-            format!(
-                " Implement [`DataProvider<{}>`](icu_provider::DataProvider) on the given struct using the data",
-                data.marker.rsplit(" :: ").next().unwrap()
-            )
-        });
-        let macro_idents = data
-            .values()
-            .map(|data| data.macro_ident.parse::<TokenStream>().unwrap())
-            .collect::<Vec<_>>();
-        // We prefix all macros with `__`, as these will be automatically exported at the crate root, which is annoying
-        // for crates that include the data but don't want it to be public. We then reexport them as items that use
-        // normal scoping that clients can control.
-        let prefixed_macro_idents = data
-            .values()
-            .map(|data| {
-                format!("__{}", data.macro_ident)
-                    .parse::<TokenStream>()
-                    .unwrap()
-            })
-            .collect::<Vec<_>>();
+
         let hash_idents = data
             .values()
             .map(|data| data.hash_ident.parse::<TokenStream>().unwrap())
@@ -526,108 +533,140 @@ impl DataExporter for BakedExporter {
             }
         };
 
+        let any_body = self.tokens_to_string(any_body, true, 4)?;
+
+        // This function uses string interpolation instead of quote!() since
+        // it rustfmt cannot format inside macro bodies (on stable, there is a nightly
+        // config for this). So instead we format things piece by piece and assemble them together using
+        // format!()
+        let mut data_provider_macro_body = String::new();
+        let mut prefixed_macros = String::new();
+
+        for datum in data.values() {
+            write!(
+                data_provider_macro_body,
+                // we can't call rustfmt with partial unfilled macro variables
+                "{}\n{}!(__DOLLAR_PROVIDER_HERE);\n",
+                datum.feature, datum.macro_ident
+            )
+            .unwrap();
+            if let Some(ref singleton) = datum.singleton {
+                writeln!(prefixed_macros, "{singleton}").unwrap();
+            }
+            let lookup = self.tokens_to_string(&datum.lookup, true, 4)?;
+            let marker_single = datum.marker.rsplit(" :: ").next().unwrap();
+            let macro_ident = &datum.macro_ident;
+            let prefixed_macro_ident = format!("__{}", macro_ident);
+            let marker = &datum.marker;
+            write!(
+                &mut prefixed_macros,
+                r##"
+/// Implement [`DataProvider<{marker_single}>`](icu_provider::DataProvider) on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! {prefixed_macro_ident} {{
+    ($provider:path) => {{
+        #[clippy::msrv = "1.61"]
+        impl icu_provider::DataProvider<{marker}> for $provider {{
+            fn load(
+                &self,
+                req: icu_provider::DataRequest,
+            ) -> Result<icu_provider::DataResponse<{marker}>, icu_provider::DataError> {{
+                {lookup}
+                    .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
+                    .map(icu_provider::DataPayload::from_owned)
+                    .map(|payload| {{
+                        icu_provider::DataResponse {{
+                            metadata: Default::default(),
+                            payload: Some(payload),
+                        }}
+                    }})
+                    .ok_or_else(|| icu_provider::DataErrorKind::MissingLocale.with_req(<{marker} as icu_provider::KeyedDataMarker>::KEY, req))
+                }}
+        }}
+    }}
+}}
+#[doc(inline)]
+pub use {prefixed_macro_ident} as {macro_ident};
+"##
+            ).unwrap();
+        }
+
+        data_provider_macro_body = self
+            .tokens_to_string(&data_provider_macro_body, true, 2)?
+            .replace("__DOLLAR_PROVIDER_HERE", "$provider");
+
         self.write_to_file(
             PathBuf::from("macros"),
-            quote! {
-                /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
-                /// hardcoded in this file. This allows the struct to be used with
-                /// `icu`'s `_unstable` constructors.
-                ///
-                /// ```compile_fail
-                /// struct MyDataProvider;
-                /// include!("/path/to/generated/macros.rs");
-                /// impl_data_provider(MyDataProvider);
-                /// ```
-                #[doc(hidden)]
-                #[macro_export]
-                macro_rules! __impl_data_provider {
-                    ($provider:path) => {
-                        #(
-                            #features
-                            #macro_idents ! ($provider);
-                        )*
-                    }
-                }
-                #[doc(inline)]
-                pub use __impl_data_provider as impl_data_provider;
+format!(r##"
+/// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+///
+/// ```compile_fail
+/// struct MyDataProvider;
+/// include!("/path/to/generated/macros.rs");
+/// impl_data_provider(MyDataProvider);
+/// ```
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_data_provider {{
+    ($provider:path) => {{
+        {data_provider_macro_body}
+    }}
+}}
+#[doc(inline)]
+pub use __impl_data_provider as impl_data_provider;
 
-                #(
-                    #singletons
-                    #[doc = #docs]
-                    /// hardcoded in this file. This allows the struct to be used with
-                    /// `icu`'s `_unstable` constructors.
-                    #[doc(hidden)]
-                    #[macro_export]
-                    macro_rules! #prefixed_macro_idents {
-                        ($provider:path) => {
-                            #[clippy::msrv = "1.61"]
-                            impl icu_provider::DataProvider<#markers> for $provider {
-                                fn load(
-                                    &self,
-                                    req: icu_provider::DataRequest,
-                                ) -> Result<icu_provider::DataResponse<#markers>, icu_provider::DataError> {
-                                    #lookups
-                                        .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
-                                        .map(icu_provider::DataPayload::from_owned)
-                                        .map(|payload| {
-                                            icu_provider::DataResponse {
-                                                metadata: Default::default(),
-                                                payload: Some(payload),
-                                            }
-                                        })
-                                        .ok_or_else(|| icu_provider::DataErrorKind::MissingLocale.with_req(<#markers as icu_provider::KeyedDataMarker>::KEY, req))
-                                    }
-                            }
-                        }
-                    }
-                    #[doc(inline)]
-                    pub use #prefixed_macro_idents as #macro_idents;
-                )*
+{prefixed_macros}
 
-                /// Implement [`AnyProvider`](icu_provider::AnyProvider) on the given struct using the data
-                /// hardcoded in this module. This allows the struct to be used with
-                /// `icu`'s `_any` constructors.
-                ///
-                /// ```compile_fail
-                /// struct MyAnyProvider;
-                /// include!("/path/to/generated/macros.rs");
-                /// impl_any_provider(MyAnyProvider);
-                /// ```
-                #[doc(hidden)]
-                #[macro_export]
-                macro_rules! __impl_any_provider {
-                    ($provider:path) => {
-                        #[clippy::msrv = "1.61"]
-                        impl icu_provider::AnyProvider for $provider {
-                            fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                                #any_body
-                            }
-                        }
-                    }
-                }
-                #[doc(inline)]
-                pub use __impl_any_provider as impl_any_provider;
-            },
+/// Implement [`AnyProvider`](icu_provider::AnyProvider) on the given struct using the data
+/// hardcoded in this module. This allows the struct to be used with
+/// `icu`'s `_any` constructors.
+///
+/// ```compile_fail
+/// struct MyAnyProvider;
+/// include!("/path/to/generated/macros.rs");
+/// impl_any_provider(MyAnyProvider);
+/// ```
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_any_provider {{
+    ($provider:path) => {{
+        #[clippy::msrv = "1.61"]
+        impl icu_provider::AnyProvider for $provider {{
+            fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {{
+                {any_body}
+            }}
+        }}
+    }}
+}}
+#[doc(inline)]
+pub use __impl_any_provider as impl_any_provider;
+
+"##)          
         )?;
 
         // For backwards compatibility
         self.write_to_file(
             PathBuf::from("mod"),
-            quote! {
-                include!("macros.rs");
-                #[clippy::msrv = "1.61"]
-                pub struct BakedDataProvider;
-                impl_data_provider!(BakedDataProvider);
-            },
+            r##"
+include!("macros.rs");
+#[clippy::msrv = "1.61"]
+pub struct BakedDataProvider;
+impl_data_provider!(BakedDataProvider);
+"##,
         )?;
 
         // For backwards compatibility
         self.write_to_file(
             PathBuf::from("any"),
-            quote! {
-                // This assumes that `mod.rs` is already included.
-                impl_any_provider!(BakedDataProvider);
-            },
+            r##"
+// This assumes that `mod.rs` is already included.
+impl_any_provider!(BakedDataProvider);
+"##,
         )?;
 
         self.print_deps();
