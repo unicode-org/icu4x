@@ -19,7 +19,7 @@ use alloc::borrow::Cow;
 use icu_locid::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
 use tinystr::{TinyAsciiStr, UnvalidatedTinyAsciiStr};
-use zerovec::{VarZeroVec, ZeroMap, ZeroSlice};
+use zerovec::{VarZeroVec, ZeroMap, ZeroSlice, ZeroVec};
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
@@ -135,34 +135,6 @@ pub struct AliasesV1<'data> {
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, SemivalidatedSubdivision>,
 }
 
-// TODO: move to directionality module when stabilizing
-/// Represents the direction of a script.
-///
-/// [`LocaleDirectionality`] can be used to get this information.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[zerovec::make_ule(DirectionULE)]
-#[zerovec::derive(Debug)]
-#[repr(u8)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
-#[cfg_attr(
-feature = "datagen",
-derive(serde::Serialize, databake::Bake),
-databake(path = icu_locid_transform::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[non_exhaustive]
-pub enum Direction {
-    /// The script is left-to-right.
-    LeftToRight = 0,
-    /// The script is right-to-left.
-    RightToLeft = 1,
-}
-
 #[icu_provider::data_struct(ScriptDirectionV1Marker = "locid_transform/script_dir@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
@@ -180,9 +152,12 @@ pub enum Direction {
 /// </div>
 #[yoke(prove_covariance_manually)]
 pub struct ScriptDirectionV1<'data> {
-    /// Script directionality.
+    /// Scripts in right-to-left direction.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub rtl: ZeroMap<'data, UnvalidatedScript, Direction>,
+    pub rtl: ZeroVec<'data, UnvalidatedScript>,
+    /// Scripts in left-to-right direction.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub ltr: ZeroVec<'data, UnvalidatedScript>,
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locid_transform/likelysubtags@1")]

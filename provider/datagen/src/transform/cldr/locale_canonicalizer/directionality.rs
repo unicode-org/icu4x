@@ -5,10 +5,8 @@
 use crate::transform::cldr::cldr_serde;
 use icu_locid_transform::provider::*;
 
-use icu_locid_transform::Direction;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use std::collections::BTreeMap;
 
 impl DataProvider<ScriptDirectionV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ScriptDirectionV1Marker>, DataError> {
@@ -38,18 +36,21 @@ impl IterableDataProvider<ScriptDirectionV1Marker> for crate::DatagenProvider {
 
 impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
     fn from(other: &cldr_serde::directionality::Resource) -> Self {
-        let mut map = BTreeMap::new();
+        let mut rtl = vec![];
+        let mut ltr = vec![];
         for (script, metadata) in &other.script_metadata {
-            let rtl = match metadata.rtl {
-                cldr_serde::directionality::Rtl::Yes => Direction::RightToLeft,
-                cldr_serde::directionality::Rtl::No => Direction::LeftToRight,
+            match metadata.rtl {
+                cldr_serde::directionality::Rtl::Yes => rtl.push(script.to_unvalidated()),
+                cldr_serde::directionality::Rtl::No => ltr.push(script.to_unvalidated()),
                 // not storing, because it is the default return value for unknown keys downstream
-                cldr_serde::directionality::Rtl::Unknown => continue,
-            };
-            map.insert(script.to_unvalidated(), rtl);
+                cldr_serde::directionality::Rtl::Unknown => (),
+            }
         }
+        rtl.sort_unstable();
+        ltr.sort_unstable();
         Self {
-            rtl: map.into_iter().collect(),
+            rtl: rtl.into_iter().collect(),
+            ltr: ltr.into_iter().collect(),
         }
     }
 }
@@ -65,26 +66,55 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    assert_eq!(
+    assert!(matches!(
         data.get()
             .rtl
-            .get_copied(&script!("Avst").into_tinystr().to_unvalidated())
-            .unwrap(),
-        Direction::RightToLeft
-    );
+            .binary_search(&script!("Avst").into_tinystr().to_unvalidated()),
+        Ok(_)
+    ));
+    assert!(matches!(
+        data.get()
+            .ltr
+            .binary_search(&script!("Avst").into_tinystr().to_unvalidated()),
+        Err(_)
+    ));
 
-    assert_eq!(
+    assert!(matches!(
         data.get()
             .rtl
-            .get_copied(&script!("Latn").into_tinystr().to_unvalidated())
-            .unwrap(),
-        Direction::LeftToRight
-    );
+            .binary_search(&script!("Arab").into_tinystr().to_unvalidated()),
+        Ok(_)
+    ));
+    assert!(matches!(
+        data.get()
+            .ltr
+            .binary_search(&script!("Arab").into_tinystr().to_unvalidated()),
+        Err(_)
+    ));
 
-    assert_eq!(
+    assert!(matches!(
+        data.get()
+            .ltr
+            .binary_search(&script!("Latn").into_tinystr().to_unvalidated()),
+        Ok(_)
+    ));
+    assert!(matches!(
         data.get()
             .rtl
-            .get_copied(&script!("Zzzz").into_tinystr().to_unvalidated()),
-        None
-    );
+            .binary_search(&script!("Latn").into_tinystr().to_unvalidated()),
+        Err(_)
+    ));
+
+    assert!(matches!(
+        data.get()
+            .ltr
+            .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated()),
+        Err(_)
+    ));
+    assert!(matches!(
+        data.get()
+            .rtl
+            .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated()),
+        Err(_)
+    ));
 }

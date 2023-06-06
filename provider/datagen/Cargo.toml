@@ -41,7 +41,7 @@ icu_datetime = { version = "1.2.0", path = "../../components/datetime", features
 icu_decimal = { version = "1.2.0", path = "../../components/decimal", features = ["datagen"] }
 icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", features = ["datagen"] }
 icu_list = { version = "1.2.0", path = "../../components/list", features = ["datagen"]}
-icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform", features = ["datagen", "experimental"] }
+icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform", features = ["datagen"] }
 icu_normalizer = { version = "1.2.0", path = "../../components/normalizer", features = ["datagen"] }
 icu_plurals = { version = "1.2.0", path = "../../components/plurals", features = ["datagen"] }
 icu_properties = { version = "1.2.0", path = "../../components/properties", features = ["datagen"]}

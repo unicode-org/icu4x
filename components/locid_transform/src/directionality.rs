@@ -3,11 +3,22 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
-use crate::Direction;
 use crate::{LocaleExpander, LocaleTransformError};
-use icu_locid::subtags::Language;
+use icu_locid::subtags::Script;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
+
+/// Represents the direction of a script.
+///
+/// [`LocaleDirectionality`] can be used to get this information.
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[non_exhaustive]
+pub enum Direction {
+    /// The script is left-to-right.
+    LeftToRight,
+    /// The script is right-to-left.
+    RightToLeft,
+}
 
 /// The `LocaleDirectionality` provides methods to determine the direction of a locale based
 /// on [`CLDR`] data.
@@ -114,7 +125,16 @@ impl LocaleDirectionality {
 
     /// Returns the script direction of the given locale.
     ///
+    /// Note that the direction is a property of the script of a locale, not of the language. As such,
+    /// when given a locale without an associated script tag (i.e., `locale!("en")` vs. `locale!("en-Latn")`),
+    /// this method first tries to infer the script using the language and region before returning its direction.
+    ///
+    /// If you already have a script struct and want to get its direction, you should use
+    /// `Locale::from(Some(my_script))` and call this method.
+    ///
     /// # Examples
+    ///
+    /// Using an existing locale:
     ///
     /// ```
     /// use icu_locid::locale;
@@ -129,58 +149,67 @@ impl LocaleDirectionality {
     ///
     /// assert_eq!(ld.get(&locale!("foo")), None);
     /// ```
+    ///
+    /// Using a script directly:
+    ///
+    /// ```
+    /// use icu_locid::subtags_script as script;
+    /// use icu_locid::Locale;
+    /// use icu_locid_transform::{Direction, LocaleDirectionality};
+    ///
+    /// let ld = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
+    ///     .expect("create failed");
+    ///
+    /// eprint!("{:?}", Locale::from(Some(script!("Latn"))));
+    ///
+    /// assert_eq!(ld.get(&Locale::from(Some(script!("Latn")))), Some(Direction::LeftToRight));
+    /// ```
     pub fn get(&self, locale: &Locale) -> Option<Direction> {
-        let script = locale.id.script.or_else(|| {
-            let expander = self.expander.as_borrowed();
-            let locale_language = locale.id.language;
-            let locale_region = locale.id.region;
+        let script = self.expander.get_likely_script(&locale.id)?;
+        eprintln!("likely script is {}", script);
 
-            // proceed through _all possible cases_ in order of specificity
-            // (borrowed from LocaleExpander::maximize):
-            // 1. language + region
-            // 2. language
-            // 3. region
-            // we need to check all cases, because e.g. for "en-US" the default script is associated
-            // with "en" but not "en-US"
-            if locale_language != Language::UND {
-                if let Some(region) = locale_region {
-                    // 1. we know both language and region
-                    if let Some(script) = expander.get_lr(locale_language, region) {
-                        return Some(script);
-                    }
-                }
-                // 2. we know language, but we either do not know region or knowing region did not help
-                if let Some((script, _)) = expander.get_l(locale_language) {
-                    return Some(script);
-                }
-            }
-            if let Some(region) = locale_region {
-                // 3. we know region, but we either do not know language or knowing language did not help
-                if let Some((_, script)) = expander.get_r(region) {
-                    return Some(script);
-                }
-            }
-            // we could not figure out the script from the given locale
+        if self.script_in_ltr(script) {
+            Some(Direction::LeftToRight)
+        } else if self.script_in_rtl(script) {
+            Some(Direction::RightToLeft)
+        } else {
             None
-        })?;
-
-        self.script_direction
-            .get()
-            .rtl
-            .get_copied(&script.into_tinystr().to_unvalidated())
+        }
     }
 
     /// Returns true if the given locale is right-to-left.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
     pub fn is_right_to_left(&self, locale: &Locale) -> bool {
-        self.get(locale) == Some(Direction::RightToLeft)
+        self.expander
+            .get_likely_script(&locale.id)
+            .map(|s| self.script_in_rtl(s))
+            .unwrap_or(false)
     }
 
     /// Returns true if the given locale is left-to-right.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
     pub fn is_left_to_right(&self, locale: &Locale) -> bool {
-        self.get(locale) == Some(Direction::LeftToRight)
+        self.expander
+            .get_likely_script(&locale.id)
+            .map(|s| self.script_in_ltr(s))
+            .unwrap_or(false)
+    }
+
+    fn script_in_rtl(&self, script: Script) -> bool {
+        self.script_direction
+            .get()
+            .rtl
+            .binary_search(&script.into_tinystr().to_unvalidated())
+            .is_ok()
+    }
+
+    fn script_in_ltr(&self, script: Script) -> bool {
+        self.script_direction
+            .get()
+            .ltr
+            .binary_search(&script.into_tinystr().to_unvalidated())
+            .is_ok()
     }
 }
