@@ -694,9 +694,7 @@ mod test {
     #[test]
     fn min_year() {
         assert_eq!(
-            Iso::iso_from_fixed(RataDie::big_negative())
-                .year()
-                .number,
+            Iso::iso_from_fixed(RataDie::big_negative()).year().number,
             i32::MIN
         );
     }
