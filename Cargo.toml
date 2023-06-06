@@ -27,6 +27,7 @@ members = [
     "experimental/harfbuzz",
     "experimental/ixdtf",
     "experimental/relativetime",
+    "experimental/transliteration",
     "ffi/capi_cdylib",
     "ffi/capi_staticlib",
     "ffi/diplomat",
