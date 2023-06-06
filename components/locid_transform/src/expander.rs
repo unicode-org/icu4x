@@ -516,6 +516,7 @@ impl LocaleExpander {
         }
     }
 
+    // TODO(3492): consider turning this and a future get_likely_region/get_likely_language public
     #[allow(dead_code)]
     #[inline]
     pub(crate) fn get_likely_script<T: AsRef<LanguageIdentifier>>(
