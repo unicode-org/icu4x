@@ -203,6 +203,12 @@ impl BakedExporter {
                 .arg("normalize_doc_attributes=true")
                 .arg("--config")
                 .arg("max_width=5000000000") // better to format wide than to not format
+                // currently unnecessary, may become necessary for format_macro_bodies
+                // in the future
+                .arg("--config")
+                .arg("unstable_features=true")
+                .arg("--config")
+                .arg("format_macro_bodies=true")
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
                 .spawn()?;
