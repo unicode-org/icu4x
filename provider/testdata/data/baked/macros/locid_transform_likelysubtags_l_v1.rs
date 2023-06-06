@@ -23,12 +23,14 @@ macro_rules! __singleton_locid_transform_likelysubtags_l_v1 {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __lookup_locid_transform_likelysubtags_l_v1 {
-    ($ req : expr) => {
-        $req.locale.is_empty().then(|| {
-            static ANCHOR: <icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DataMarker>::Yokeable = singleton_locid_transform_likelysubtags_l_v1!();
-            &ANCHOR
-        })
-    };
+    ($ locale : expr) => {{
+        static SINGLETON: <icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DataMarker>::Yokeable = singleton_locid_transform_likelysubtags_l_v1!();
+        if $locale.is_empty() {
+            Ok(&SINGLETON)
+        } else {
+            Err(icu_provider::DataErrorKind::ExtraneousLocale)
+        }
+    }};
 }
 /// Implement [`DataProvider<LikelySubtagsForLanguageV1Marker>`](icu_provider::DataProvider) on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
@@ -40,8 +42,10 @@ macro_rules! __impl_locid_transform_likelysubtags_l_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker>, icu_provider::DataError> {
-                let lookup = lookup_locid_transform_likelysubtags_l_v1!(req);
-                lookup.map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from).map(icu_provider::DataPayload::from_owned).map(|payload| icu_provider::DataResponse { metadata: Default::default(), payload: Some(payload) }).ok_or_else(|| icu_provider::DataErrorKind::MissingLocale.with_req(<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                match lookup_locid_transform_likelysubtags_l_v1!(req.locale) {
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_owned(icu_provider::prelude::zerofrom::ZeroFrom::zero_from(payload))) }),
+                    Err(e) => Err(e.with_req(<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
+                }
             }
         }
     };
