@@ -178,7 +178,8 @@ macro_rules! __impl_time_zone_specific_long_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker>, icu_provider::DataError> {
-                lookup_time_zone_specific_long_v1!(req).map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from).map(icu_provider::DataPayload::from_owned).map(|payload| icu_provider::DataResponse { metadata: Default::default(), payload: Some(payload) }).ok_or_else(|| icu_provider::DataErrorKind::MissingLocale.with_req(<icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                let lookup = lookup_time_zone_specific_long_v1!(req);
+                lookup.map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from).map(icu_provider::DataPayload::from_owned).map(|payload| icu_provider::DataResponse { metadata: Default::default(), payload: Some(payload) }).ok_or_else(|| icu_provider::DataErrorKind::MissingLocale.with_req(<icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
             }
         }
     };
