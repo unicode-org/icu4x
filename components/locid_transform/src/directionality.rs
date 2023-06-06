@@ -160,13 +160,10 @@ impl LocaleDirectionality {
     /// let ld = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
     ///     .expect("create failed");
     ///
-    /// eprint!("{:?}", Locale::from(Some(script!("Latn"))));
-    ///
     /// assert_eq!(ld.get(&Locale::from(Some(script!("Latn")))), Some(Direction::LeftToRight));
     /// ```
     pub fn get(&self, locale: &Locale) -> Option<Direction> {
         let script = self.expander.get_likely_script(&locale.id)?;
-        eprintln!("likely script is {}", script);
 
         if self.script_in_ltr(script) {
             Some(Direction::LeftToRight)
