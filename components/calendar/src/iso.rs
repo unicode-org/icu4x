@@ -37,7 +37,7 @@ use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit
 use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
-const EPOCH: i64 = 1;
+const EPOCH: RataDie = RataDie::new_from_fixed_date(1);
 
 /// The [ISO Calendar]
 ///
@@ -313,7 +313,7 @@ impl DateTime<Iso> {
         let hours_a_day = 24;
         let minutes_a_day = minutes_a_hour * hours_a_day;
         let unix_epoch = Iso::fixed_from_iso(Date::unix_epoch().inner);
-        let result = Iso::fixed_from_iso(*self.date.inner()).0 - unix_epoch.0 * minutes_a_day
+        let result = (Iso::fixed_from_iso(*self.date.inner()) - unix_epoch) * minutes_a_day
             + i64::from(self.time.hour.number()) * minutes_a_hour
             + i64::from(self.time.minute.number());
         i64_to_saturated_i32(result)
@@ -354,7 +354,7 @@ impl DateTime<Iso> {
         let (time, extra_days) = types::Time::from_minute_with_remainder_days(minute);
         let unix_epoch = Date::unix_epoch();
         let unix_epoch_days = Iso::fixed_from_iso(unix_epoch.inner);
-        let date = Iso::iso_from_fixed(RataDie(unix_epoch_days.0 + extra_days as i64));
+        let date = Iso::iso_from_fixed(unix_epoch_days + extra_days as i64);
         DateTime { date, time }
     }
 }
@@ -390,7 +390,7 @@ impl Iso {
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> RataDie {
         let prev_year = (date.0.year as i64) - 1;
         // Calculate days per year
-        let mut fixed: i64 = (EPOCH as i64 - 1) + 365 * prev_year;
+        let mut fixed: i64 = (EPOCH.to_fixed_date() - 1) + 365 * prev_year;
         // Calculate leap year offset
         let offset =
             quotient64(prev_year, 4) - quotient64(prev_year, 100) + quotient64(prev_year, 400);
@@ -408,7 +408,7 @@ impl Iso {
         };
         // Days passed in current month
         fixed += date.0.day as i64;
-        RataDie(fixed)
+        RataDie::new_from_fixed_date(fixed)
     }
 
     fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<RataDie> {
@@ -440,7 +440,7 @@ impl Iso {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: RataDie) -> i64 {
         // Shouldn't overflow because it's not possbile to construct extreme values of RataDie
-        let date = date.0 - EPOCH;
+        let date = date - EPOCH;
 
         // 400 year cycles have 146097 days
         let (n_400, date) = div_rem_euclid64(date, 146097);

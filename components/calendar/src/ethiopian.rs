@@ -229,7 +229,7 @@ impl Calendar for Ethiopian {
 }
 
 const ETHIOPIC_TO_COPTIC_OFFSET: i64 =
-    super::coptic::COPTIC_EPOCH.0 - Julian::fixed_from_julian_integers(8, 8, 29).0;
+    super::coptic::COPTIC_EPOCH.const_diff(Julian::fixed_from_julian_integers(8, 8, 29));
 
 impl Ethiopian {
     /// Construct a new Ethiopian Calendar for the Amete Mihret era naming scheme
