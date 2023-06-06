@@ -141,7 +141,9 @@ struct ImplData {
     singleton: Option<SyncTokenStream>,
     feature: SyncTokenStream,
     macro_ident: SyncTokenStream,
+    prefixed_macro_ident: SyncTokenStream,
     hash_ident: SyncTokenStream,
+    mod_ident: SyncTokenStream,
     into_any_payload: SyncTokenStream,
 }
 
@@ -423,7 +425,9 @@ impl DataExporter for BakedExporter {
             marker: quote!(#marker).to_string(),
             singleton: singleton.map(|t| t.to_string()),
             macro_ident: format!("impl_{ident}"),
+            prefixed_macro_ident: format!("__impl_{ident}"),
             hash_ident: ident.to_ascii_uppercase(),
+            mod_ident: ident,
             into_any_payload: into_any_payload.to_string(),
         };
 
@@ -475,12 +479,9 @@ impl DataExporter for BakedExporter {
         // normal scoping that clients can control.
         let prefixed_macro_idents = data
             .values()
-            .map(|data| {
-                format!("__{}", data.macro_ident)
-                    .parse::<TokenStream>()
-                    .unwrap()
-            })
+            .map(|data| data.prefixed_macro_ident.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
+
         let hash_idents = data
             .values()
             .map(|data| data.hash_ident.parse::<TokenStream>().unwrap())
