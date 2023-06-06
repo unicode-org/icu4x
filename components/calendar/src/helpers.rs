@@ -106,29 +106,29 @@ fn test_div_rem_euclid() {
     assert_eq!(div_rem_euclid(i32::MAX, 3), (715827882, 1));
 }
 
-pub enum ConvertIntegerResult {
+pub enum I32Result {
     BelowMin(i64),
     WithinRange(i32),
     AboveMax(i64),
 }
 
 #[inline]
-pub const fn i64_to_i32(input: i64) -> ConvertIntegerResult {
+pub const fn i64_to_i32(input: i64) -> I32Result {
     if input < i32::MIN as i64 {
-        ConvertIntegerResult::BelowMin(input)
+        I32Result::BelowMin(input)
     } else if input > i32::MAX as i64 {
-        ConvertIntegerResult::AboveMax(input)
+        I32Result::AboveMax(input)
     } else {
-        ConvertIntegerResult::WithinRange(input as i32)
+        I32Result::WithinRange(input as i32)
     }
 }
 
 #[inline]
 pub const fn i64_to_saturated_i32(input: i64) -> i32 {
     match i64_to_i32(input) {
-        ConvertIntegerResult::BelowMin(_) => i32::MIN,
-        ConvertIntegerResult::WithinRange(x) => x,
-        ConvertIntegerResult::AboveMax(_) => i32::MAX,
+        I32Result::BelowMin(_) => i32::MIN,
+        I32Result::WithinRange(x) => x,
+        I32Result::AboveMax(_) => i32::MAX,
     }
 }
 

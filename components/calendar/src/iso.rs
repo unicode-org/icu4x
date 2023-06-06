@@ -33,7 +33,7 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{
     div_rem_euclid, div_rem_euclid64, i64_to_i32, i64_to_saturated_i32, quotient, quotient64,
-    ConvertIntegerResult,
+    I32Result,
 };
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
@@ -474,16 +474,16 @@ impl Iso {
     pub(crate) fn iso_from_fixed(date: RataDie) -> Date<Iso> {
         let year = Self::iso_year_from_fixed(date);
         let year = match i64_to_i32(year) {
-            ConvertIntegerResult::BelowMin(_) => {
+            I32Result::BelowMin(_) => {
                 return Date::from_raw(IsoDateInner(ArithmeticDate::min_date()), Iso)
             }
-            ConvertIntegerResult::AboveMax(_) => {
+            I32Result::AboveMax(_) => {
                 return Date::from_raw(IsoDateInner(ArithmeticDate::max_date()), Iso)
             }
-            ConvertIntegerResult::WithinRange(y) => y,
+            I32Result::WithinRange(y) => y,
         };
         // Calculates the prior days of the adjusted year, then applies a correction based on leap year conditions for the correct ISO date conversion.
-        let prior_days = date.0 - Self::iso_new_year(year).0;
+        let prior_days = date - Self::iso_new_year(year);
         #[allow(clippy::unwrap_used)] // valid day and month
         let correction = if date < Self::fixed_from_iso_integers(year, 3, 1).unwrap() {
             0
@@ -494,7 +494,7 @@ impl Iso {
         };
         let month = quotient64(12 * (prior_days + correction) + 373, 367) as u8; // in 1..12 < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
-        let day = (date.0 - Self::fixed_from_iso_integers(year, month, 1).unwrap().0 + 1) as u8; // <= days_in_month < u8::MAX
+        let day = (date - Self::fixed_from_iso_integers(year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
         Date::try_new_iso_date(year, month, day).unwrap()
     }

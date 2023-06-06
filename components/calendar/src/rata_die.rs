@@ -21,13 +21,7 @@ impl RataDie {
     }
 }
 
-impl Add for RataDie {
-    type Output = Self;
-    fn add(self, rhs: Self) -> Self::Output {
-        Self(self.0 + rhs.0)
-    }
-}
-
+/// Shift a RataDie N days into the future
 impl Add<i64> for RataDie {
     type Output = Self;
     fn add(self, rhs: i64) -> Self::Output {
@@ -35,13 +29,7 @@ impl Add<i64> for RataDie {
     }
 }
 
-impl Sub for RataDie {
-    type Output = Self;
-    fn sub(self, rhs: Self) -> Self::Output {
-        Self(self.0 - rhs.0)
-    }
-}
-
+/// Shift a RataDie N days into the past
 impl Sub<i64> for RataDie {
     type Output = Self;
     fn sub(self, rhs: i64) -> Self::Output {
@@ -49,9 +37,10 @@ impl Sub<i64> for RataDie {
     }
 }
 
-impl Mul<i64> for RataDie {
-    type Output = Self;
-    fn mul(self, rhs: i64) -> Self::Output {
-        Self(self.0 * rhs)
+/// Calculate the number of days between two RataDie
+impl Sub for RataDie {
+    type Output = i64;
+    fn sub(self, rhs: Self) -> Self::Output {
+        self.0 - rhs.0
     }
 }

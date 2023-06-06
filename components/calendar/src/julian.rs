@@ -33,7 +33,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{i64_to_i32, quotient, quotient64, ConvertIntegerResult};
+use crate::helpers::{i64_to_i32, quotient, quotient64, I32Result};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
@@ -260,11 +260,11 @@ impl Julian {
         let approx = quotient64((4 * date.0) + 1464, 1461);
         let year = if approx <= 0 { approx - 1 } else { approx };
         let year = match i64_to_i32(year) {
-            ConvertIntegerResult::BelowMin(_) => return JulianDateInner(ArithmeticDate::min_date()),
-            ConvertIntegerResult::AboveMax(_) => return JulianDateInner(ArithmeticDate::max_date()),
-            ConvertIntegerResult::WithinRange(y) => y,
+            I32Result::BelowMin(_) => return JulianDateInner(ArithmeticDate::min_date()),
+            I32Result::AboveMax(_) => return JulianDateInner(ArithmeticDate::max_date()),
+            I32Result::WithinRange(y) => y,
         };
-        let prior_days = date.0 - Self::fixed_from_julian_integers(year, 1, 1).0;
+        let prior_days = date - Self::fixed_from_julian_integers(year, 1, 1);
         let correction = if date < Self::fixed_from_julian_integers(year, 3, 1) {
             0
         } else if Julian::is_leap_year(year) {
@@ -273,7 +273,7 @@ impl Julian {
             2
         };
         let month = quotient64(12 * (prior_days + correction) + 373, 367) as u8; // this expression is in 1..=12
-        let day = (date.0 - Self::fixed_from_julian_integers(year, month, 1).0 + 1) as u8; // as days_in_month is < u8::MAX
+        let day = (date - Self::fixed_from_julian_integers(year, month, 1) + 1) as u8; // as days_in_month is < u8::MAX
 
         #[allow(clippy::unwrap_used)] // day and month have the correct bounds
         *Date::try_new_julian_date(year, month, day).unwrap().inner()

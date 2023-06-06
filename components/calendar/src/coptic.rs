@@ -33,7 +33,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{i64_to_i32, quotient, quotient64, ConvertIntegerResult};
+use crate::helpers::{i64_to_i32, quotient, quotient64, I32Result};
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
@@ -229,15 +229,14 @@ impl Coptic {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
     pub(crate) fn coptic_from_fixed(date: RataDie) -> CopticDateInner {
-        let year = quotient64(4 * (date - COPTIC_EPOCH).0 + 1463, 1461);
+        let year = quotient64(4 * (date - COPTIC_EPOCH) + 1463, 1461);
         let year = match i64_to_i32(year) {
-            ConvertIntegerResult::BelowMin(_) => return CopticDateInner(ArithmeticDate::min_date()),
-            ConvertIntegerResult::AboveMax(_) => return CopticDateInner(ArithmeticDate::max_date()),
-            ConvertIntegerResult::WithinRange(y) => y,
+            I32Result::BelowMin(_) => return CopticDateInner(ArithmeticDate::min_date()),
+            I32Result::AboveMax(_) => return CopticDateInner(ArithmeticDate::max_date()),
+            I32Result::WithinRange(y) => y,
         };
-        let month =
-            (quotient64(date.0 - Self::fixed_from_coptic_integers(year, 1, 1).0, 30) + 1) as u8; // <= 12 < u8::MAX
-        let day = (date.0 + 1 - Self::fixed_from_coptic_integers(year, month, 1).0) as u8; // <= days_in_month < u8::MAX
+        let month = (quotient64(date - Self::fixed_from_coptic_integers(year, 1, 1), 30) + 1) as u8; // <= 12 < u8::MAX
+        let day = (date + 1 - Self::fixed_from_coptic_integers(year, month, 1)) as u8; // <= days_in_month < u8::MAX
 
         #[allow(clippy::unwrap_used)] // day and month have the correct bounds
         *Date::try_new_coptic_date(year, month, day).unwrap().inner()
