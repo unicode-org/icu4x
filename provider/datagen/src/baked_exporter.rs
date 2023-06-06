@@ -350,7 +350,7 @@ impl DataExporter for BakedExporter {
                 // the struct directly.
                 singleton = Some(quote! {
                     #[doc(hidden)]
-                    pub const #singleton_ident: &#struct_type = &#bake;
+                    pub const #singleton_ident: &'static #struct_type = &#bake;
                 })
                 .into_iter();
 

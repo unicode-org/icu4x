@@ -9,7 +9,7 @@ macro_rules! __impl_propnames_to_short_linear_gcb_v1 {
         #[clippy::msrv = "1.61"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_PROPNAMES_TO_SHORT_LINEAR_GCB_V1: &<icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x11\0\0\0\0\0\x02\0\x04\0\x06\0\x08\0\t\0\x0B\0\r\0\x10\0\x11\0\x12\0\x14\0\x16\0\x18\0\x1A\0\x1D\0\x1F\0XXCNCREXLLFLVLVTTVSMPPRIEBEBGEMGAZ") } };
+            pub const SINGLETON_PROPNAMES_TO_SHORT_LINEAR_GCB_V1: &'static <icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x11\0\0\0\0\0\x02\0\x04\0\x06\0\x08\0\t\0\x0B\0\r\0\x10\0\x11\0\x12\0\x14\0\x16\0\x18\0\x1A\0\x1D\0\x1F\0XXCNCREXLLFLVLVTTVSMPPRIEBEBGEMGAZ") } };
             #[doc(hidden)]
             pub fn lookup_propnames_to_short_linear_gcb_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
                 if locale.is_empty() {

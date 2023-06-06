@@ -9,7 +9,7 @@ macro_rules! __impl_props_pat_ws_v1 {
         #[clippy::msrv = "1.61"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_PROPS_PAT_WS_V1: &<icu_properties::provider::PatternWhiteSpaceV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
+            pub const SINGLETON_PROPS_PAT_WS_V1: &'static <icu_properties::provider::PatternWhiteSpaceV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
                 icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\t\0\0\0\x0E\0\0\0 \0\0\0!\0\0\0\x85\0\0\0\x86\0\0\0\x0E \0\0\x10 \0\0( \0\0* \0\0") }, 11usize)
             });

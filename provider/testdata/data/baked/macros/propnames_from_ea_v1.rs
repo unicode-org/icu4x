@@ -9,7 +9,7 @@ macro_rules! __impl_propnames_from_ea_v1 {
         #[clippy::msrv = "1.61"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_PROPNAMES_FROM_EA_V1: &<icu_properties::provider::EastAsianWidthNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::names::PropertyValueNameToEnumMapV1 {
+            pub const SINGLETON_PROPNAMES_FROM_EA_V1: &'static <icu_properties::provider::EastAsianWidthNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::names::PropertyValueNameToEnumMapV1 {
                 map: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0C\0\0\0\0\0\x01\0\n\0\x0B\0\x14\0\x15\0\x1E\0\x1F\0!\0'\0.\0/\0AAmbiguousFFullwidthHHalfwidthNNaNarrowNeutralWWide") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\x01\0\x03\0\x03\0\x02\0\x02\0\0\0\x04\0\x04\0\0\0\x05\0\x05\0") })

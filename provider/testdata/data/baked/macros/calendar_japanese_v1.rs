@@ -9,7 +9,7 @@ macro_rules! __impl_calendar_japanese_v1 {
         #[clippy::msrv = "1.61"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_CALENDAR_JAPANESE_V1: &<icu_calendar::provider::JapaneseErasV1Marker as icu_provider::DataMarker>::Yokeable = &icu_calendar::provider::JapaneseErasV1 { dates_to_eras: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"L\x07\0\0\t\x08meiji\0\0\0\0\0\0\0\0\0\0\0x\x07\0\0\x07\x1Etaisho\0\0\0\0\0\0\0\0\0\0\x86\x07\0\0\x0C\x19showa\0\0\0\0\0\0\0\0\0\0\0\xC5\x07\0\0\x01\x08heisei\0\0\0\0\0\0\0\0\0\0\xE3\x07\0\0\x05\x01reiwa\0\0\0\0\0\0\0\0\0\0\0") } };
+            pub const SINGLETON_CALENDAR_JAPANESE_V1: &'static <icu_calendar::provider::JapaneseErasV1Marker as icu_provider::DataMarker>::Yokeable = &icu_calendar::provider::JapaneseErasV1 { dates_to_eras: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"L\x07\0\0\t\x08meiji\0\0\0\0\0\0\0\0\0\0\0x\x07\0\0\x07\x1Etaisho\0\0\0\0\0\0\0\0\0\0\x86\x07\0\0\x0C\x19showa\0\0\0\0\0\0\0\0\0\0\0\xC5\x07\0\0\x01\x08heisei\0\0\0\0\0\0\0\0\0\0\xE3\x07\0\0\x05\x01reiwa\0\0\0\0\0\0\0\0\0\0\0") } };
             #[doc(hidden)]
             pub fn lookup_calendar_japanese_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_calendar::provider::JapaneseErasV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
                 if locale.is_empty() {

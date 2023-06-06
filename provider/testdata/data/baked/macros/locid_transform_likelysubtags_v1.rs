@@ -9,7 +9,7 @@ macro_rules! __impl_locid_transform_likelysubtags_v1 {
         #[clippy::msrv = "1.61"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_V1: &<icu_locid_transform::provider::LikelySubtagsV1Marker as icu_provider::DataMarker>::Yokeable = &icu_locid_transform::provider::LikelySubtagsV1 {
+            pub const SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_V1: &'static <icu_locid_transform::provider::LikelySubtagsV1Marker as icu_provider::DataMarker>::Yokeable = &icu_locid_transform::provider::LikelySubtagsV1 {
                 language_script: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"az\0Araben\0Shawff\0Adlmhi\0Latnkk\0Arabky\0Arabky\0Latnmn\0Mongpa\0Arabsd\0Devasd\0Khojsd\0Sindtg\0Arabuz\0ArabyueHanszh\0Bopozh\0Hanbzh\0Hant") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"IR\0GB\0GN\0IN\0CN\0CN\0TR\0CN\0PK\0IN\0IN\0IN\0PK\0AF\0CN\0TW\0TW\0TW\0") })

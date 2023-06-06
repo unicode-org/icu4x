@@ -9,7 +9,7 @@ macro_rules! __impl_propnames_to_long_linear_ea_v1 {
         #[clippy::msrv = "1.61"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_PROPNAMES_TO_LONG_LINEAR_EA_V1: &<icu_properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x07\0\x10\0\x19\0\"\0NeutralAmbiguousHalfwidthFullwidthNarrow") } };
+            pub const SINGLETON_PROPNAMES_TO_LONG_LINEAR_EA_V1: &'static <icu_properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x07\0\x10\0\x19\0\"\0NeutralAmbiguousHalfwidthFullwidthNarrow") } };
             #[doc(hidden)]
             pub fn lookup_propnames_to_long_linear_ea_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
                 if locale.is_empty() {

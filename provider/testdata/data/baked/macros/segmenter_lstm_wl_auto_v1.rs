@@ -9,7 +9,7 @@ macro_rules! __impl_segmenter_lstm_wl_auto_v1 {
         #[clippy::msrv = "1.61"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_SEGMENTER_LSTM_WL_AUTO_V1: &<icu_segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::DataMarker>::Yokeable = &icu_segmenter::provider::LstmDataV1::Float32(icu_segmenter::provider::LstmDataFloat32::from_parts_unchecked(
+            pub const SINGLETON_SEGMENTER_LSTM_WL_AUTO_V1: &'static <icu_segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::DataMarker>::Yokeable = &icu_segmenter::provider::LstmDataV1::Float32(icu_segmenter::provider::LstmDataFloat32::from_parts_unchecked(
                 icu_segmenter::provider::ModelType::Codepoints,
                 unsafe {
                     #[allow(unused_unsafe)]

@@ -9,7 +9,7 @@ macro_rules! __impl_collator_prim_v1 {
         #[clippy::msrv = "1.61"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_COLLATOR_PRIM_V1: &<icu_collator::provider::CollationSpecialPrimariesV1Marker as icu_provider::DataMarker>::Yokeable = &icu_collator::provider::CollationSpecialPrimariesV1 { last_primaries: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x06\x05\0\x0C\x8A\r\0\x0E") }, numeric_primary: 15u8 };
+            pub const SINGLETON_COLLATOR_PRIM_V1: &'static <icu_collator::provider::CollationSpecialPrimariesV1Marker as icu_provider::DataMarker>::Yokeable = &icu_collator::provider::CollationSpecialPrimariesV1 { last_primaries: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x06\x05\0\x0C\x8A\r\0\x0E") }, numeric_primary: 15u8 };
             #[doc(hidden)]
             pub fn lookup_collator_prim_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_collator::provider::CollationSpecialPrimariesV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
                 if locale.is_empty() {
