@@ -1,2 +1,2 @@
 // @generated
-impl_any_provider ! (BakedDataProvider) ;
+impl_any_provider!(BakedDataProvider);
