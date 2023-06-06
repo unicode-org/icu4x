@@ -40,7 +40,7 @@ impl RataDie {
     pub const fn big_negative() -> Self {
         Self::new(i64::MIN / 256 / 256)
     }
-    pub const fn to_fixed_date(self) -> i64 {
+    pub const fn to_i64_date(self) -> i64 {
         self.0
     }
     /// Calculate the number of days between two RataDie in a const-friendly way

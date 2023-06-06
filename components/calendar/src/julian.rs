@@ -222,7 +222,7 @@ impl Julian {
         } else {
             date.year
         };
-        let mut fixed: i64 = JULIAN_EPOCH.to_fixed_date() - 1
+        let mut fixed: i64 = JULIAN_EPOCH.to_i64_date() - 1
             + 365 * (year as i64 - 1)
             + quotient64(year as i64 - 1, 4);
         fixed += quotient64(367 * (date.month as i64) - 362, 12);
@@ -258,7 +258,7 @@ impl Julian {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738
     fn julian_from_fixed(date: RataDie) -> JulianDateInner {
-        let approx = quotient64((4 * date.to_fixed_date()) + 1464, 1461);
+        let approx = quotient64((4 * date.to_i64_date()) + 1464, 1461);
         let year = if approx <= 0 { approx - 1 } else { approx };
         let year = match i64_to_i32(year) {
             I32Result::BelowMin(_) => return JulianDateInner(ArithmeticDate::min_date()),

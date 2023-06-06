@@ -390,7 +390,7 @@ impl Iso {
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> RataDie {
         let prev_year = (date.0.year as i64) - 1;
         // Calculate days per year
-        let mut fixed: i64 = (EPOCH.to_fixed_date() - 1) + 365 * prev_year;
+        let mut fixed: i64 = (EPOCH.to_i64_date() - 1) + 365 * prev_year;
         // Calculate leap year offset
         let offset =
             quotient64(prev_year, 4) - quotient64(prev_year, 100) + quotient64(prev_year, 400);
