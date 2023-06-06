@@ -137,11 +137,7 @@ pub struct BakedExporter {
 /// Data required to write the implementations
 struct ImplData {
     marker: SyncTokenStream,
-    /// The name of the lookup macro (unprefixed)
-    lookup_macro_ident: SyncTokenStream,
-    prefixed_lookup_macro_ident: SyncTokenStream,
-    /// If a singleton macro was defined, its name, and the prefixed name
-    singleton_macro_ident: Option<(SyncTokenStream, SyncTokenStream)>,
+    lookup_ident: SyncTokenStream,
     feature: SyncTokenStream,
     macro_ident: SyncTokenStream,
     prefixed_macro_ident: SyncTokenStream,
@@ -336,36 +332,32 @@ impl DataExporter for BakedExporter {
             .replace('@', "_v")
             .replace('/', "_");
 
-        let lookup_macro_ident = format!("lookup_{ident}").parse::<TokenStream>().unwrap();
-        let prefixed_lookup_macro_ident =
-            format!("__lookup_{ident}").parse::<TokenStream>().unwrap();
-        let mut singleton_macro_ident = None;
+        let lookup_ident = format!("lookup_{ident}").parse::<TokenStream>().unwrap();
 
-        let lookup_macro = match values.iter().map(|(_, l)| l.len()).sum() {
-            0 => quote! {
-                #[doc(hidden)]
-                #[macro_export]
-                macro_rules! #prefixed_lookup_macro_ident {
-                    ($req:expr) => {
-                        Err(icu_provider::DataErrorKind::MissingLocale)
-                    }
-                }
-            },
+        let mut singleton = None.into_iter();
+
+        let lookup = match values.iter().map(|(_, l)| l.len()).sum() {
+            0 => quote!(Err(icu_provider::DataErrorKind::MissingLocale)),
             1 => {
                 let (bake, locale) = values.into_iter().next().unwrap();
                 let locale = locale.into_iter().next().unwrap();
 
-                let singleton_ident = format!("singleton_{ident}");
-                let prefixed_singleton_ident = format!("__singleton_{ident}");
-                let singleton_ident_ts = singleton_ident.parse::<TokenStream>().unwrap();
-                let prefixed_singleton_ident_ts =
-                    prefixed_singleton_ident.parse::<TokenStream>().unwrap();
-                singleton_macro_ident = Some((singleton_ident, prefixed_singleton_ident));
+                let singleton_ident = format!("SINGLETON_{}", ident.to_ascii_uppercase())
+                    .parse::<TokenStream>()
+                    .unwrap();
 
-                let cmp = if locale == "und" {
+                // Exposing singleton structs separately allows us to get rid of fallibility by using
+                // the struct directly.
+                singleton = Some(quote! {
+                    #[doc(hidden)]
+                    pub const #singleton_ident: &#struct_type = &#bake;
+                })
+                .into_iter();
+
+                if locale == "und" {
                     quote! {
-                        if $locale.is_empty() {
-                            Ok(&SINGLETON)
+                        if locale.is_empty() {
+                            Ok(Self::#singleton_ident)
                         } else {
                             Err(icu_provider::DataErrorKind::ExtraneousLocale)
                         }
@@ -373,40 +365,20 @@ impl DataExporter for BakedExporter {
                 } else if icu_locid::Locale::try_from_bytes_with_single_variant_single_keyword_unicode_extension(locale.as_bytes()).is_ok() {
                     self.dependencies.insert("icu_locid");
                     quote! {
-                        if icu_provider::DataLocale::from(icu_locid::locale!(#locale)).eq(&$locale) {
-                            Ok(&SINGLETON)
+                        if icu_provider::DataLocale::from(icu_locid::locale!(#locale)).eq(&locale) {
+                            Ok(Self::#singleton_ident)
                         } else {
                             Err(icu_provider::DataErrorKind::MissingLocale)
                         }
                     }
                 } else {
                     quote! {
-                        if $locale.strict_cmp(#locale.as_bytes()).is_eq() {
-                            Ok(&SINGLETON)
+                        if locale.strict_cmp(#locale.as_bytes()).is_eq() {
+                            Ok(Self::#singleton_ident)
                         } else {
                             Err(icu_provider::DataErrorKind::MissingLocale)
                         }
                     }
-                };
-                quote! {
-                    // Exposing singleton structs separately allows us to get rid of fallibility by using
-                    // the struct directly.
-                    #[doc(hidden)]
-                    #[macro_export]
-                    macro_rules! #prefixed_singleton_ident_ts {
-                        () => {
-                            #bake
-                        }
-                    }
-                    #[doc(hidden)]
-                    #[macro_export]
-                    macro_rules! #prefixed_lookup_macro_ident {
-                        ($locale:expr) => {{
-                            static SINGLETON: #struct_type = #singleton_ident_ts!();
-                            #cmp
-                        }}
-                    }
-
                 }
             }
             _ => {
@@ -426,19 +398,13 @@ impl DataExporter for BakedExporter {
                 let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
 
                 quote! {
-                    #[doc(hidden)]
-                    #[macro_export]
-                    macro_rules! #prefixed_lookup_macro_ident {
-                        ($locale:expr) => {{
-                            #(#statics)*
-                            match [#(#keys),*].binary_search_by(|k| $locale.strict_cmp(k.as_bytes()).reverse()) {
-                                Ok(i) => Ok(*unsafe {
-                                    // Safe because keys and values have the same length
-                                    [#(&#values),*].get_unchecked(i)
-                                }),
-                                Err(_) => Err(icu_provider::DataErrorKind::MissingLocale)
-                            }
-                        }}
+                    #(#statics)*
+                    match [#(#keys),*].binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse()) {
+                        Ok(i) => Ok(*unsafe {
+                            // Safe because keys and values have the same length
+                            [#(&#values),*].get_unchecked(i)
+                        }),
+                        Err(_) => Err(icu_provider::DataErrorKind::MissingLocale)
                     }
                 }
             }
@@ -464,7 +430,6 @@ impl DataExporter for BakedExporter {
         self.write_to_file(
             PathBuf::from(format!("macros/{}", ident)),
             quote!{
-                #lookup_macro
                 #[doc = #doc]
                 /// hardcoded in this file. This allows the struct to be used with
                 /// `icu`'s `_unstable` constructors.
@@ -472,13 +437,25 @@ impl DataExporter for BakedExporter {
                 #[macro_export]
                 macro_rules! #prefixed_macro_ident {
                     ($provider:path) => {
+
+                        #[clippy::msrv = "1.61"]
+                        impl $provider {
+                            #(#singleton)*
+
+                            #[doc(hidden)]
+                            pub fn #lookup_ident(locale: &icu_provider::DataLocale) -> Result<&'static #struct_type, icu_provider::DataErrorKind> {
+                                #lookup
+                            }
+
+                        }
+
                         #[clippy::msrv = "1.61"]
                         impl icu_provider::DataProvider<#marker> for $provider {
                             fn load(
                                 &self,
                                 req: icu_provider::DataRequest,
                             ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
-                                match #lookup_macro_ident!(req.locale) {
+                                match Self::#lookup_ident(&req.locale) {
                                     Ok(payload) => Ok(icu_provider::DataResponse {
                                         metadata: Default::default(),
                                         payload: Some(icu_provider::DataPayload::from_owned(icu_provider::prelude::zerofrom::ZeroFrom::zero_from(payload))),
@@ -494,9 +471,7 @@ impl DataExporter for BakedExporter {
 
         let data = ImplData {
             feature: feature.to_string(),
-            lookup_macro_ident: lookup_macro_ident.to_string(),
-            prefixed_lookup_macro_ident: prefixed_lookup_macro_ident.to_string(),
-            singleton_macro_ident,
+            lookup_ident: lookup_ident.to_string(),
             marker: quote!(#marker).to_string(),
             macro_ident: format!("impl_{ident}"),
             prefixed_macro_ident: prefixed_macro_ident.to_string(),
@@ -522,9 +497,9 @@ impl DataExporter for BakedExporter {
             .values()
             .map(|data| data.feature.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
-        let lookup_macro_idents = data
+        let lookup_idents = data
             .values()
-            .map(|data| data.lookup_macro_ident.parse::<TokenStream>().unwrap())
+            .map(|data| data.lookup_ident.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
         let markers = data
             .values()
@@ -570,7 +545,7 @@ impl DataExporter for BakedExporter {
                 match key.hashed() {
                     #(
                         #features
-                        #hash_idents => #lookup_macro_idents!(req.locale) #into_any_payloads,
+                        #hash_idents => Self::#lookup_idents(&req.locale) #into_any_payloads,
                     )*
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey),
                 }
@@ -581,30 +556,6 @@ impl DataExporter for BakedExporter {
                 .map_err(|e| e.with_req(key, req))
             }
         };
-
-        let mut lookup_macro_reexports = Vec::new();
-
-        for (datum, lookup_macro_ident) in data.values().zip(lookup_macro_idents) {
-            let prefixed_lookup_macro_ident = datum
-                .prefixed_lookup_macro_ident
-                .parse::<TokenStream>()
-                .unwrap();
-            lookup_macro_reexports.push(quote! {
-                use #prefixed_lookup_macro_ident as #lookup_macro_ident;
-            });
-
-            if let Some((singleton_ident, prefixed_singleton_ident)) = &datum.singleton_macro_ident
-            {
-                let singleton_ident = singleton_ident.parse::<TokenStream>().unwrap();
-                let prefixed_singleton_ident =
-                    prefixed_singleton_ident.parse::<TokenStream>().unwrap();
-
-                lookup_macro_reexports.push(quote! {
-                    #[doc(inline)]
-                    pub use #prefixed_singleton_ident as #singleton_ident;
-                });
-            }
-        }
 
         self.write_to_file(
             PathBuf::from("macros"),
@@ -621,10 +572,6 @@ impl DataExporter for BakedExporter {
                 #(
                     #[doc(inline)]
                     pub use #prefixed_macro_idents as #macro_idents;
-                )*
-
-                #(
-                    #lookup_macro_reexports
                 )*
 
                 /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
