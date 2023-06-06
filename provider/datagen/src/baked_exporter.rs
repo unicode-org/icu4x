@@ -137,17 +137,16 @@ pub struct BakedExporter {
 /// Data required to write the implementations
 struct ImplData {
     marker: SyncTokenStream,
-    /// A snippet of code that can perform a lookup of the data with `req` being
-    /// the local variable containing the DataRequest
-    lookup_ref: SyncTokenStream,
-    /// An optional macro that was defined, needed by lookup_ref, as well as
-    /// its name
+    /// An macro that has been defined (with a __ prefix) which takes in a DataRequest and produces
+    /// the appropriate data
     ///
-    /// It will likely be defined with a __ prefix and needs to be reexported with the correct
-    /// name. The name stored here will not be prefixed
-    lookup_macro_and_ident: Option<(SyncTokenStream, SyncTokenStream)>,
-    /// Whether the lookup macro should be public
-    public_lookup_macro: bool,
+    /// It will need to be reexported with the unprefixed name
+    lookup_macro: SyncTokenStream,
+    /// The name of the lookup macro (unprefixed)
+    lookup_macro_ident: SyncTokenStream,
+    prefixed_lookup_macro_ident: SyncTokenStream,
+    /// If a singleton macro was defined, its name, and the prefixed name
+    singleton_macro_ident: Option<(SyncTokenStream, SyncTokenStream)>,
     feature: SyncTokenStream,
     macro_ident: SyncTokenStream,
     prefixed_macro_ident: SyncTokenStream,
@@ -342,51 +341,66 @@ impl DataExporter for BakedExporter {
             .replace('@', "_v")
             .replace('/', "_");
 
-        let mut lookup_macro = None;
-        let mut lookup_ident = None;
-        let mut public_lookup_macro = false;
+        let lookup_macro_ident = format!("lookup_{ident}");
+        let prefixed_lookup_macro_ident = format!("__{lookup_macro_ident}");
+        let prefixed_lookup_macro_ident_ts =
+            prefixed_lookup_macro_ident.parse::<TokenStream>().unwrap();
+        let mut singleton_macro_ident = None;
 
-        let lookup_ref = match values.iter().map(|(_, l)| l.len()).sum() {
-            0 => quote!(None),
+        let lookup_macro = match values.iter().map(|(_, l)| l.len()).sum() {
+            0 => quote! {
+              #[doc(hidden)]
+                #[macro_export]
+                macro_rules! #prefixed_lookup_macro_ident_ts {
+                    ($req:expr) => {
+                        None
+                    }
+                }
+            },
             1 => {
                 let (bake, locale) = values.into_iter().next().unwrap();
                 let locale = locale.into_iter().next().unwrap();
 
-                lookup_ident = Some(format!("singleton_{ident}").parse::<TokenStream>().unwrap());
-                let lookup_ident_prefixed = format!("__singleton_{ident}")
-                    .parse::<TokenStream>()
-                    .unwrap();
-
-                // Exposing singleton structs separately allows us to get rid of fallibility by using
-                // the struct directly.
-                lookup_macro = Some(quote! {
-                    #[doc(hidden)]
-                    #[macro_export]
-                    macro_rules! #lookup_ident_prefixed {
-                        () => {
-                            #bake
-                        }
-                    }
-                });
-                // The singleton macros are public. Other lookup macros are not.
-                public_lookup_macro = true;
+                let singleton_ident = format!("singleton_{ident}");
+                let prefixed_singleton_ident = format!("__singleton_{ident}");
+                let singleton_ident_ts = singleton_ident.parse::<TokenStream>().unwrap();
+                let prefixed_singleton_ident_ts =
+                    prefixed_singleton_ident.parse::<TokenStream>().unwrap();
+                singleton_macro_ident = Some((singleton_ident, prefixed_singleton_ident));
 
                 let cmp = if locale == "und" {
                     quote! {
-                        req.locale.is_empty()
+                        $req.locale.is_empty()
                     }
                 } else if icu_locid::Locale::try_from_bytes_with_single_variant_single_keyword_unicode_extension(locale.as_bytes()).is_ok() {
                     self.dependencies.insert("icu_locid");
                     quote! {
-                        icu_provider::DataLocale::from(icu_locid::locale!(#locale)).eq(&req.locale)
+                        icu_provider::DataLocale::from(icu_locid::locale!(#locale)).eq(&$req.locale)
                     }
                 } else {
                     quote! {
-                        req.locale.strict_cmp(#locale.as_bytes()).is_eq()
+                        $req.locale.strict_cmp(#locale.as_bytes()).is_eq()
                     }
                 };
                 quote! {
-                    #cmp.then(|| {static ANCHOR: #struct_type = #lookup_ident!(); &ANCHOR})
+                    // Exposing singleton structs separately allows us to get rid of fallibility by using
+                    // the struct directly.
+
+                    #[doc(hidden)]
+                    #[macro_export]
+                    macro_rules! #prefixed_singleton_ident_ts {
+                        () => {
+                            #bake
+                        }
+                    }
+                    #[doc(hidden)]
+                    #[macro_export]
+                    macro_rules! #prefixed_lookup_macro_ident_ts {
+                        ($req:expr) => {
+                            #cmp.then(|| {static ANCHOR: #struct_type = #singleton_ident_ts!(); &ANCHOR})
+                        }
+                    }
+
                 }
             }
             _ => {
@@ -405,14 +419,10 @@ impl DataExporter for BakedExporter {
 
                 let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
 
-                lookup_ident = Some(format!("lookup_{ident}").parse::<TokenStream>().unwrap());
-                let lookup_ident_prefixed =
-                    format!("__lookup_{ident}").parse::<TokenStream>().unwrap();
-
-                lookup_macro = Some(quote! {
+                quote! {
                     #[doc(hidden)]
                     #[macro_export]
-                    macro_rules! #lookup_ident_prefixed {
+                    macro_rules! #prefixed_lookup_macro_ident_ts {
                         ($req:expr) => {
                             [#(#keys),*]
                                 .binary_search_by(|k| $req.locale.strict_cmp(k.as_bytes()).reverse())
@@ -424,10 +434,6 @@ impl DataExporter for BakedExporter {
                                 })
                         }
                     }
-                });
-
-                quote! {
-                    #lookup_ident!(req)
                 }
             }
         };
@@ -444,14 +450,12 @@ impl DataExporter for BakedExporter {
             }
         };
 
-        let lookup_macro_and_ident =
-            lookup_macro.and_then(|mac| lookup_ident.map(|id| (mac.to_string(), id.to_string())));
-
         let data = ImplData {
             feature: feature.to_string(),
-            lookup_ref: lookup_ref.to_string(),
-            lookup_macro_and_ident,
-            public_lookup_macro,
+            lookup_macro: lookup_macro.to_string(),
+            lookup_macro_ident,
+            prefixed_lookup_macro_ident,
+            singleton_macro_ident,
             marker: quote!(#marker).to_string(),
             macro_ident: format!("impl_{ident}"),
             prefixed_macro_ident: format!("__impl_{ident}"),
@@ -477,9 +481,9 @@ impl DataExporter for BakedExporter {
             .values()
             .map(|data| data.feature.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
-        let lookup_refs = data
+        let lookup_macro_idents = data
             .values()
-            .map(|data| data.lookup_ref.parse::<TokenStream>().unwrap())
+            .map(|data| data.lookup_macro_ident.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
         let markers = data
             .values()
@@ -525,7 +529,7 @@ impl DataExporter for BakedExporter {
                 match key.hashed() {
                     #(
                         #features
-                        #hash_idents => #lookup_refs #into_any_payloads,
+                        #hash_idents => #lookup_macro_idents!(req) #into_any_payloads,
                     )*
                     _ => return Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
@@ -546,27 +550,28 @@ impl DataExporter for BakedExporter {
             );
             let prefixed_macro_ident = &prefixed_macro_idents[i];
             let marker = &markers[i];
-            let lookup_ref = &lookup_refs[i];
+            let lookup_macro_ident = &lookup_macro_idents[i];
+            let prefixed_lookup_macro_ident = datum
+                .prefixed_lookup_macro_ident
+                .parse::<TokenStream>()
+                .unwrap();
+            lookup_macro_reexports.push(quote! {
+                #[doc(inline)]
+                use #prefixed_lookup_macro_ident as #lookup_macro_ident;
+            });
+            let lookup_macro = datum.lookup_macro.parse::<TokenStream>().unwrap();
 
-            let lookup_macro =
-                if let Some((lookup_macro, lookup_ident)) = &datum.lookup_macro_and_ident {
-                    let lookup_ident_prefixed = format!("__{}", lookup_ident)
-                        .parse::<TokenStream>()
-                        .unwrap();
-                    let lookup_ident = lookup_ident.parse::<TokenStream>().unwrap();
-                    let maybe_pub = if datum.public_lookup_macro {
-                        quote!(pub)
-                    } else {
-                        quote!()
-                    };
-                    lookup_macro_reexports.push(quote! {
-                        #[doc(inline)]
-                        #maybe_pub use #lookup_ident_prefixed as #lookup_ident;
-                    });
-                    Some(lookup_macro.parse::<TokenStream>().unwrap())
-                } else {
-                    None
-                };
+            if let Some((singleton_ident, prefixed_singleton_ident)) = &datum.singleton_macro_ident
+            {
+                let singleton_ident = singleton_ident.parse::<TokenStream>().unwrap();
+                let prefixed_singleton_ident =
+                    prefixed_singleton_ident.parse::<TokenStream>().unwrap();
+
+                lookup_macro_reexports.push(quote! {
+                    #[doc(inline)]
+                    pub use #prefixed_singleton_ident as #singleton_ident;
+                });
+            }
             self.write_to_file(
                 PathBuf::from(format!("macros/{}", datum.mod_ident)),
                 quote!{
@@ -584,8 +589,9 @@ impl DataExporter for BakedExporter {
                                     &self,
                                     req: icu_provider::DataRequest,
                                 ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
-                                    #lookup_ref
-                                        .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
+                                    let lookup = #lookup_macro_ident!(req);
+
+                                    lookup.map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
                                         .map(icu_provider::DataPayload::from_owned)
                                         .map(|payload| {
                                             icu_provider::DataResponse {

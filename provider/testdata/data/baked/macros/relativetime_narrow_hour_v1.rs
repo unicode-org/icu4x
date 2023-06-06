@@ -138,7 +138,8 @@ macro_rules! __impl_relativetime_narrow_hour_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
-                lookup_relativetime_narrow_hour_v1!(req).map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from).map(icu_provider::DataPayload::from_owned).map(|payload| icu_provider::DataResponse { metadata: Default::default(), payload: Some(payload) }).ok_or_else(|| icu_provider::DataErrorKind::MissingLocale.with_req(<icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                let lookup = lookup_relativetime_narrow_hour_v1!(req);
+                lookup.map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from).map(icu_provider::DataPayload::from_owned).map(|payload| icu_provider::DataResponse { metadata: Default::default(), payload: Some(payload) }).ok_or_else(|| icu_provider::DataErrorKind::MissingLocale.with_req(<icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
             }
         }
     };

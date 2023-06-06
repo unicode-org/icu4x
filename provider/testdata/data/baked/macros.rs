@@ -819,9 +819,19 @@ pub use __impl_time_zone_specific_long_v1 as impl_time_zone_specific_long_v1;
 #[doc(inline)]
 pub use __impl_time_zone_specific_short_v1 as impl_time_zone_specific_short_v1;
 #[doc(inline)]
+use __lookup_calendar_japanese_v1 as lookup_calendar_japanese_v1;
+#[doc(inline)]
+use __lookup_calendar_japanext_v1 as lookup_calendar_japanext_v1;
+#[doc(inline)]
 use __lookup_collator_data_v1 as lookup_collator_data_v1;
 #[doc(inline)]
+use __lookup_collator_dia_v1 as lookup_collator_dia_v1;
+#[doc(inline)]
+use __lookup_collator_jamo_v1 as lookup_collator_jamo_v1;
+#[doc(inline)]
 use __lookup_collator_meta_v1 as lookup_collator_meta_v1;
+#[doc(inline)]
+use __lookup_collator_prim_v1 as lookup_collator_prim_v1;
 #[doc(inline)]
 use __lookup_collator_reord_v1 as lookup_collator_reord_v1;
 #[doc(inline)]
@@ -879,15 +889,161 @@ use __lookup_displaynames_scripts_v1 as lookup_displaynames_scripts_v1;
 #[doc(inline)]
 use __lookup_displaynames_variants_v1 as lookup_displaynames_variants_v1;
 #[doc(inline)]
+use __lookup_fallback_likelysubtags_v1 as lookup_fallback_likelysubtags_v1;
+#[doc(inline)]
+use __lookup_fallback_parents_v1 as lookup_fallback_parents_v1;
+#[doc(inline)]
+use __lookup_fallback_supplement_co_v1 as lookup_fallback_supplement_co_v1;
+#[doc(inline)]
 use __lookup_list_and_v1 as lookup_list_and_v1;
 #[doc(inline)]
 use __lookup_list_or_v1 as lookup_list_or_v1;
 #[doc(inline)]
 use __lookup_list_unit_v1 as lookup_list_unit_v1;
 #[doc(inline)]
+use __lookup_locid_transform_aliases_v1 as lookup_locid_transform_aliases_v1;
+#[doc(inline)]
+use __lookup_locid_transform_likelysubtags_ext_v1 as lookup_locid_transform_likelysubtags_ext_v1;
+#[doc(inline)]
+use __lookup_locid_transform_likelysubtags_l_v1 as lookup_locid_transform_likelysubtags_l_v1;
+#[doc(inline)]
+use __lookup_locid_transform_likelysubtags_sr_v1 as lookup_locid_transform_likelysubtags_sr_v1;
+#[doc(inline)]
+use __lookup_locid_transform_likelysubtags_v1 as lookup_locid_transform_likelysubtags_v1;
+#[doc(inline)]
+use __lookup_normalizer_comp_v1 as lookup_normalizer_comp_v1;
+#[doc(inline)]
+use __lookup_normalizer_decomp_v1 as lookup_normalizer_decomp_v1;
+#[doc(inline)]
+use __lookup_normalizer_nfd_v1 as lookup_normalizer_nfd_v1;
+#[doc(inline)]
+use __lookup_normalizer_nfdex_v1 as lookup_normalizer_nfdex_v1;
+#[doc(inline)]
+use __lookup_normalizer_nfkd_v1 as lookup_normalizer_nfkd_v1;
+#[doc(inline)]
+use __lookup_normalizer_nfkdex_v1 as lookup_normalizer_nfkdex_v1;
+#[doc(inline)]
+use __lookup_normalizer_uts46d_v1 as lookup_normalizer_uts46d_v1;
+#[doc(inline)]
 use __lookup_plurals_cardinal_v1 as lookup_plurals_cardinal_v1;
 #[doc(inline)]
 use __lookup_plurals_ordinal_v1 as lookup_plurals_ordinal_v1;
+#[doc(inline)]
+use __lookup_propnames_from_bc_v1 as lookup_propnames_from_bc_v1;
+#[doc(inline)]
+use __lookup_propnames_from_ccc_v1 as lookup_propnames_from_ccc_v1;
+#[doc(inline)]
+use __lookup_propnames_from_ea_v1 as lookup_propnames_from_ea_v1;
+#[doc(inline)]
+use __lookup_propnames_from_gc_v1 as lookup_propnames_from_gc_v1;
+#[doc(inline)]
+use __lookup_propnames_from_gcb_v1 as lookup_propnames_from_gcb_v1;
+#[doc(inline)]
+use __lookup_propnames_from_gcm_v1 as lookup_propnames_from_gcm_v1;
+#[doc(inline)]
+use __lookup_propnames_from_lb_v1 as lookup_propnames_from_lb_v1;
+#[doc(inline)]
+use __lookup_propnames_from_sb_v1 as lookup_propnames_from_sb_v1;
+#[doc(inline)]
+use __lookup_propnames_from_sc_v1 as lookup_propnames_from_sc_v1;
+#[doc(inline)]
+use __lookup_propnames_from_wb_v1 as lookup_propnames_from_wb_v1;
+#[doc(inline)]
+use __lookup_propnames_to_long_linear_bc_v1 as lookup_propnames_to_long_linear_bc_v1;
+#[doc(inline)]
+use __lookup_propnames_to_long_linear_ea_v1 as lookup_propnames_to_long_linear_ea_v1;
+#[doc(inline)]
+use __lookup_propnames_to_long_linear_gc_v1 as lookup_propnames_to_long_linear_gc_v1;
+#[doc(inline)]
+use __lookup_propnames_to_long_linear_gcb_v1 as lookup_propnames_to_long_linear_gcb_v1;
+#[doc(inline)]
+use __lookup_propnames_to_long_linear_lb_v1 as lookup_propnames_to_long_linear_lb_v1;
+#[doc(inline)]
+use __lookup_propnames_to_long_linear_sb_v1 as lookup_propnames_to_long_linear_sb_v1;
+#[doc(inline)]
+use __lookup_propnames_to_long_linear_sc_v1 as lookup_propnames_to_long_linear_sc_v1;
+#[doc(inline)]
+use __lookup_propnames_to_long_linear_wb_v1 as lookup_propnames_to_long_linear_wb_v1;
+#[doc(inline)]
+use __lookup_propnames_to_long_sparse_ccc_v1 as lookup_propnames_to_long_sparse_ccc_v1;
+#[doc(inline)]
+use __lookup_propnames_to_short_linear4_sc_v1 as lookup_propnames_to_short_linear4_sc_v1;
+#[doc(inline)]
+use __lookup_propnames_to_short_linear_bc_v1 as lookup_propnames_to_short_linear_bc_v1;
+#[doc(inline)]
+use __lookup_propnames_to_short_linear_ea_v1 as lookup_propnames_to_short_linear_ea_v1;
+#[doc(inline)]
+use __lookup_propnames_to_short_linear_gc_v1 as lookup_propnames_to_short_linear_gc_v1;
+#[doc(inline)]
+use __lookup_propnames_to_short_linear_gcb_v1 as lookup_propnames_to_short_linear_gcb_v1;
+#[doc(inline)]
+use __lookup_propnames_to_short_linear_lb_v1 as lookup_propnames_to_short_linear_lb_v1;
+#[doc(inline)]
+use __lookup_propnames_to_short_linear_sb_v1 as lookup_propnames_to_short_linear_sb_v1;
+#[doc(inline)]
+use __lookup_propnames_to_short_linear_wb_v1 as lookup_propnames_to_short_linear_wb_v1;
+#[doc(inline)]
+use __lookup_propnames_to_short_sparse_ccc_v1 as lookup_propnames_to_short_sparse_ccc_v1;
+#[doc(inline)]
+use __lookup_props_ahex_v1 as lookup_props_ahex_v1;
+#[doc(inline)]
+use __lookup_props_alnum_v1 as lookup_props_alnum_v1;
+#[doc(inline)]
+use __lookup_props_alpha_v1 as lookup_props_alpha_v1;
+#[doc(inline)]
+use __lookup_props_basic_emoji_v1 as lookup_props_basic_emoji_v1;
+#[doc(inline)]
+use __lookup_props_bc_v1 as lookup_props_bc_v1;
+#[doc(inline)]
+use __lookup_props_bidi_c_v1 as lookup_props_bidi_c_v1;
+#[doc(inline)]
+use __lookup_props_bidi_m_v1 as lookup_props_bidi_m_v1;
+#[doc(inline)]
+use __lookup_props_bidiauxiliaryprops_v1 as lookup_props_bidiauxiliaryprops_v1;
+#[doc(inline)]
+use __lookup_props_blank_v1 as lookup_props_blank_v1;
+#[doc(inline)]
+use __lookup_props_cased_v1 as lookup_props_cased_v1;
+#[doc(inline)]
+use __lookup_props_casemap_v1 as lookup_props_casemap_v1;
+#[doc(inline)]
+use __lookup_props_ccc_v1 as lookup_props_ccc_v1;
+#[doc(inline)]
+use __lookup_props_ci_v1 as lookup_props_ci_v1;
+#[doc(inline)]
+use __lookup_props_comp_ex_v1 as lookup_props_comp_ex_v1;
+#[doc(inline)]
+use __lookup_props_cwcf_v1 as lookup_props_cwcf_v1;
+#[doc(inline)]
+use __lookup_props_cwcm_v1 as lookup_props_cwcm_v1;
+#[doc(inline)]
+use __lookup_props_cwkcf_v1 as lookup_props_cwkcf_v1;
+#[doc(inline)]
+use __lookup_props_cwl_v1 as lookup_props_cwl_v1;
+#[doc(inline)]
+use __lookup_props_cwt_v1 as lookup_props_cwt_v1;
+#[doc(inline)]
+use __lookup_props_cwu_v1 as lookup_props_cwu_v1;
+#[doc(inline)]
+use __lookup_props_dash_v1 as lookup_props_dash_v1;
+#[doc(inline)]
+use __lookup_props_dep_v1 as lookup_props_dep_v1;
+#[doc(inline)]
+use __lookup_props_di_v1 as lookup_props_di_v1;
+#[doc(inline)]
+use __lookup_props_dia_v1 as lookup_props_dia_v1;
+#[doc(inline)]
+use __lookup_props_ea_v1 as lookup_props_ea_v1;
+#[doc(inline)]
+use __lookup_props_ebase_v1 as lookup_props_ebase_v1;
+#[doc(inline)]
+use __lookup_props_ecomp_v1 as lookup_props_ecomp_v1;
+#[doc(inline)]
+use __lookup_props_emod_v1 as lookup_props_emod_v1;
+#[doc(inline)]
+use __lookup_props_emoji_v1 as lookup_props_emoji_v1;
+#[doc(inline)]
+use __lookup_props_epres_v1 as lookup_props_epres_v1;
 #[doc(inline)]
 use __lookup_props_exemplarchars_auxiliary_v1 as lookup_props_exemplarchars_auxiliary_v1;
 #[doc(inline)]
@@ -898,6 +1054,102 @@ use __lookup_props_exemplarchars_main_v1 as lookup_props_exemplarchars_main_v1;
 use __lookup_props_exemplarchars_numbers_v1 as lookup_props_exemplarchars_numbers_v1;
 #[doc(inline)]
 use __lookup_props_exemplarchars_punctuation_v1 as lookup_props_exemplarchars_punctuation_v1;
+#[doc(inline)]
+use __lookup_props_ext_v1 as lookup_props_ext_v1;
+#[doc(inline)]
+use __lookup_props_extpict_v1 as lookup_props_extpict_v1;
+#[doc(inline)]
+use __lookup_props_gc_v1 as lookup_props_gc_v1;
+#[doc(inline)]
+use __lookup_props_gcb_v1 as lookup_props_gcb_v1;
+#[doc(inline)]
+use __lookup_props_gr_base_v1 as lookup_props_gr_base_v1;
+#[doc(inline)]
+use __lookup_props_gr_ext_v1 as lookup_props_gr_ext_v1;
+#[doc(inline)]
+use __lookup_props_gr_link_v1 as lookup_props_gr_link_v1;
+#[doc(inline)]
+use __lookup_props_graph_v1 as lookup_props_graph_v1;
+#[doc(inline)]
+use __lookup_props_hex_v1 as lookup_props_hex_v1;
+#[doc(inline)]
+use __lookup_props_hyphen_v1 as lookup_props_hyphen_v1;
+#[doc(inline)]
+use __lookup_props_idc_v1 as lookup_props_idc_v1;
+#[doc(inline)]
+use __lookup_props_ideo_v1 as lookup_props_ideo_v1;
+#[doc(inline)]
+use __lookup_props_ids_v1 as lookup_props_ids_v1;
+#[doc(inline)]
+use __lookup_props_idsb_v1 as lookup_props_idsb_v1;
+#[doc(inline)]
+use __lookup_props_idst_v1 as lookup_props_idst_v1;
+#[doc(inline)]
+use __lookup_props_join_c_v1 as lookup_props_join_c_v1;
+#[doc(inline)]
+use __lookup_props_lb_v1 as lookup_props_lb_v1;
+#[doc(inline)]
+use __lookup_props_loe_v1 as lookup_props_loe_v1;
+#[doc(inline)]
+use __lookup_props_lower_v1 as lookup_props_lower_v1;
+#[doc(inline)]
+use __lookup_props_math_v1 as lookup_props_math_v1;
+#[doc(inline)]
+use __lookup_props_nchar_v1 as lookup_props_nchar_v1;
+#[doc(inline)]
+use __lookup_props_nfcinert_v1 as lookup_props_nfcinert_v1;
+#[doc(inline)]
+use __lookup_props_nfdinert_v1 as lookup_props_nfdinert_v1;
+#[doc(inline)]
+use __lookup_props_nfkcinert_v1 as lookup_props_nfkcinert_v1;
+#[doc(inline)]
+use __lookup_props_nfkdinert_v1 as lookup_props_nfkdinert_v1;
+#[doc(inline)]
+use __lookup_props_pat_syn_v1 as lookup_props_pat_syn_v1;
+#[doc(inline)]
+use __lookup_props_pat_ws_v1 as lookup_props_pat_ws_v1;
+#[doc(inline)]
+use __lookup_props_pcm_v1 as lookup_props_pcm_v1;
+#[doc(inline)]
+use __lookup_props_print_v1 as lookup_props_print_v1;
+#[doc(inline)]
+use __lookup_props_qmark_v1 as lookup_props_qmark_v1;
+#[doc(inline)]
+use __lookup_props_radical_v1 as lookup_props_radical_v1;
+#[doc(inline)]
+use __lookup_props_ri_v1 as lookup_props_ri_v1;
+#[doc(inline)]
+use __lookup_props_sb_v1 as lookup_props_sb_v1;
+#[doc(inline)]
+use __lookup_props_sc_v1 as lookup_props_sc_v1;
+#[doc(inline)]
+use __lookup_props_scx_v1 as lookup_props_scx_v1;
+#[doc(inline)]
+use __lookup_props_sd_v1 as lookup_props_sd_v1;
+#[doc(inline)]
+use __lookup_props_segstart_v1 as lookup_props_segstart_v1;
+#[doc(inline)]
+use __lookup_props_sensitive_v1 as lookup_props_sensitive_v1;
+#[doc(inline)]
+use __lookup_props_sterm_v1 as lookup_props_sterm_v1;
+#[doc(inline)]
+use __lookup_props_term_v1 as lookup_props_term_v1;
+#[doc(inline)]
+use __lookup_props_uideo_v1 as lookup_props_uideo_v1;
+#[doc(inline)]
+use __lookup_props_upper_v1 as lookup_props_upper_v1;
+#[doc(inline)]
+use __lookup_props_vs_v1 as lookup_props_vs_v1;
+#[doc(inline)]
+use __lookup_props_wb_v1 as lookup_props_wb_v1;
+#[doc(inline)]
+use __lookup_props_wspace_v1 as lookup_props_wspace_v1;
+#[doc(inline)]
+use __lookup_props_xdigit_v1 as lookup_props_xdigit_v1;
+#[doc(inline)]
+use __lookup_props_xidc_v1 as lookup_props_xidc_v1;
+#[doc(inline)]
+use __lookup_props_xids_v1 as lookup_props_xids_v1;
 #[doc(inline)]
 use __lookup_relativetime_long_day_v1 as lookup_relativetime_long_day_v1;
 #[doc(inline)]
@@ -947,6 +1199,20 @@ use __lookup_relativetime_short_week_v1 as lookup_relativetime_short_week_v1;
 #[doc(inline)]
 use __lookup_relativetime_short_year_v1 as lookup_relativetime_short_year_v1;
 #[doc(inline)]
+use __lookup_segmenter_dictionary_w_auto_v1 as lookup_segmenter_dictionary_w_auto_v1;
+#[doc(inline)]
+use __lookup_segmenter_dictionary_wl_ext_v1 as lookup_segmenter_dictionary_wl_ext_v1;
+#[doc(inline)]
+use __lookup_segmenter_grapheme_v1 as lookup_segmenter_grapheme_v1;
+#[doc(inline)]
+use __lookup_segmenter_line_v1 as lookup_segmenter_line_v1;
+#[doc(inline)]
+use __lookup_segmenter_lstm_wl_auto_v1 as lookup_segmenter_lstm_wl_auto_v1;
+#[doc(inline)]
+use __lookup_segmenter_sentence_v1 as lookup_segmenter_sentence_v1;
+#[doc(inline)]
+use __lookup_segmenter_word_v1 as lookup_segmenter_word_v1;
+#[doc(inline)]
 use __lookup_time_zone_exemplar_cities_v1 as lookup_time_zone_exemplar_cities_v1;
 #[doc(inline)]
 use __lookup_time_zone_formats_v1 as lookup_time_zone_formats_v1;
@@ -954,6 +1220,8 @@ use __lookup_time_zone_formats_v1 as lookup_time_zone_formats_v1;
 use __lookup_time_zone_generic_long_v1 as lookup_time_zone_generic_long_v1;
 #[doc(inline)]
 use __lookup_time_zone_generic_short_v1 as lookup_time_zone_generic_short_v1;
+#[doc(inline)]
+use __lookup_time_zone_metazone_period_v1 as lookup_time_zone_metazone_period_v1;
 #[doc(inline)]
 use __lookup_time_zone_specific_long_v1 as lookup_time_zone_specific_long_v1;
 #[doc(inline)]
@@ -2069,54 +2337,19 @@ macro_rules! __impl_any_provider {
                 const TIME_ZONE_SPECIFIC_SHORT_V1: icu_provider::DataKeyHash = <icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
                     #[cfg(feature = "icu_calendar")]
-                    CALENDAR_JAPANESE_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_calendar::provider::JapaneseErasV1Marker as icu_provider::DataMarker>::Yokeable = singleton_calendar_japanese_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    CALENDAR_JAPANESE_V1 => lookup_calendar_japanese_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_calendar")]
-                    CALENDAR_JAPANEXT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_calendar::provider::JapaneseExtendedErasV1Marker as icu_provider::DataMarker>::Yokeable = singleton_calendar_japanext_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    CALENDAR_JAPANEXT_V1 => lookup_calendar_japanext_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
                     COLLATOR_DATA_V1 => lookup_collator_data_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
-                    COLLATOR_DIA_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_collator::provider::CollationDiacriticsV1Marker as icu_provider::DataMarker>::Yokeable = singleton_collator_dia_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    COLLATOR_DIA_V1 => lookup_collator_dia_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
-                    COLLATOR_JAMO_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_collator::provider::CollationJamoV1Marker as icu_provider::DataMarker>::Yokeable = singleton_collator_jamo_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    COLLATOR_JAMO_V1 => lookup_collator_jamo_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
                     COLLATOR_META_V1 => lookup_collator_meta_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
-                    COLLATOR_PRIM_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_collator::provider::CollationSpecialPrimariesV1Marker as icu_provider::DataMarker>::Yokeable = singleton_collator_prim_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    COLLATOR_PRIM_V1 => lookup_collator_prim_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
                     COLLATOR_REORD_V1 => lookup_collator_reord_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_compactdecimal")]
@@ -2172,30 +2405,9 @@ macro_rules! __impl_any_provider {
                     DISPLAYNAMES_SCRIPTS_V1 => lookup_displaynames_scripts_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_displaynames")]
                     DISPLAYNAMES_VARIANTS_V1 => lookup_displaynames_variants_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
-                    FALLBACK_LIKELYSUBTAGS_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::DataMarker>::Yokeable = singleton_fallback_likelysubtags_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    FALLBACK_PARENTS_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker as icu_provider::DataMarker>::Yokeable = singleton_fallback_parents_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    FALLBACK_SUPPLEMENT_CO_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker as icu_provider::DataMarker>::Yokeable = singleton_fallback_supplement_co_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    FALLBACK_LIKELYSUBTAGS_V1 => lookup_fallback_likelysubtags_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    FALLBACK_PARENTS_V1 => lookup_fallback_parents_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    FALLBACK_SUPPLEMENT_CO_V1 => lookup_fallback_supplement_co_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_list")]
                     LIST_AND_V1 => lookup_list_and_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_list")]
@@ -2203,963 +2415,221 @@ macro_rules! __impl_any_provider {
                     #[cfg(feature = "icu_list")]
                     LIST_UNIT_V1 => lookup_list_unit_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
-                    LOCID_TRANSFORM_ALIASES_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_locid_transform::provider::AliasesV1Marker as icu_provider::DataMarker>::Yokeable = singleton_locid_transform_aliases_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    LOCID_TRANSFORM_ALIASES_V1 => lookup_locid_transform_aliases_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
-                    LOCID_TRANSFORM_LIKELYSUBTAGS_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_locid_transform::provider::LikelySubtagsV1Marker as icu_provider::DataMarker>::Yokeable = singleton_locid_transform_likelysubtags_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    LOCID_TRANSFORM_LIKELYSUBTAGS_V1 => lookup_locid_transform_likelysubtags_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
-                    LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_locid_transform::provider::LikelySubtagsExtendedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_locid_transform_likelysubtags_ext_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1 => lookup_locid_transform_likelysubtags_ext_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
-                    LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DataMarker>::Yokeable = singleton_locid_transform_likelysubtags_l_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1 => lookup_locid_transform_likelysubtags_l_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
-                    LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::DataMarker>::Yokeable = singleton_locid_transform_likelysubtags_sr_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1 => lookup_locid_transform_likelysubtags_sr_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_COMP_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_normalizer::provider::CanonicalCompositionsV1Marker as icu_provider::DataMarker>::Yokeable = singleton_normalizer_comp_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_COMP_V1 => lookup_normalizer_comp_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_DECOMP_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker as icu_provider::DataMarker>::Yokeable = singleton_normalizer_decomp_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_DECOMP_V1 => lookup_normalizer_decomp_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_NFD_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_normalizer::provider::CanonicalDecompositionDataV1Marker as icu_provider::DataMarker>::Yokeable = singleton_normalizer_nfd_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_NFD_V1 => lookup_normalizer_nfd_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_NFDEX_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_normalizer::provider::CanonicalDecompositionTablesV1Marker as icu_provider::DataMarker>::Yokeable = singleton_normalizer_nfdex_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_NFDEX_V1 => lookup_normalizer_nfdex_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_NFKD_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker as icu_provider::DataMarker>::Yokeable = singleton_normalizer_nfkd_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_NFKD_V1 => lookup_normalizer_nfkd_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_NFKDEX_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker as icu_provider::DataMarker>::Yokeable = singleton_normalizer_nfkdex_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_NFKDEX_V1 => lookup_normalizer_nfkdex_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_UTS46D_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_normalizer::provider::Uts46DecompositionSupplementV1Marker as icu_provider::DataMarker>::Yokeable = singleton_normalizer_uts46d_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_UTS46D_V1 => lookup_normalizer_uts46d_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_plurals")]
                     PLURALS_CARDINAL_V1 => lookup_plurals_cardinal_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_plurals")]
                     PLURALS_ORDINAL_V1 => lookup_plurals_ordinal_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_GCB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_from_gcb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_SB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::SentenceBreakNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_from_sb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_WB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::WordBreakNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_from_wb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_BC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::BidiClassNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_from_bc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_CCC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::CanonicalCombiningClassNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_from_ccc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_EA_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::EastAsianWidthNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_from_ea_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_GC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GeneralCategoryNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_from_gc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_GCM_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::names::GeneralCategoryMaskNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_from_gcm_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_LB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::LineBreakNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_from_lb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_SC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ScriptNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_from_sc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_GCB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_long_linear_gcb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_SB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::SentenceBreakValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_long_linear_sb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_WB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::WordBreakValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_long_linear_wb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_BC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::BidiClassValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_long_linear_bc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_EA_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_long_linear_ea_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_GC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GeneralCategoryValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_long_linear_gc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_LB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::LineBreakValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_long_linear_lb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_SC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ScriptValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_long_linear_sc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_SPARSE_CCC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_long_sparse_ccc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_GCB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_short_linear_gcb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_SB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::SentenceBreakValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_short_linear_sb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_WB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::WordBreakValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_short_linear_wb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_BC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::BidiClassValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_short_linear_bc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_EA_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::EastAsianWidthValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_short_linear_ea_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_GC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GeneralCategoryValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_short_linear_gc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_LB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::LineBreakValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_short_linear_lb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR4_SC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ScriptValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_short_linear4_sc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_SPARSE_CCC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = singleton_propnames_to_short_sparse_ccc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_AHEX_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::AsciiHexDigitV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_ahex_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_ALPHA_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::AlphabeticV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_alpha_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_BASIC_EMOJI_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::BasicEmojiV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_basic_emoji_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_BIDI_C_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::BidiControlV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_bidi_c_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_BIDI_M_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::BidiMirroredV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_bidi_m_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_CI_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::CaseIgnorableV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_ci_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_CWCF_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ChangesWhenCasefoldedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_cwcf_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_CWCM_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ChangesWhenCasemappedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_cwcm_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_CWKCF_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_cwkcf_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_CWL_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ChangesWhenLowercasedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_cwl_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_CWT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ChangesWhenTitlecasedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_cwt_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_CWU_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ChangesWhenUppercasedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_cwu_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_CASED_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::CasedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_cased_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_COMP_EX_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::FullCompositionExclusionV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_comp_ex_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_DI_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::DefaultIgnorableCodePointV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_di_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_DASH_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::DashV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_dash_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_DEP_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::DeprecatedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_dep_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_DIA_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::DiacriticV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_dia_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_EBASE_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::EmojiModifierBaseV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_ebase_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_ECOMP_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::EmojiComponentV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_ecomp_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_EMOD_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::EmojiModifierV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_emod_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_EPRES_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::EmojiPresentationV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_epres_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_EMOJI_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::EmojiV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_emoji_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_EXT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ExtenderV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_ext_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_EXTPICT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ExtendedPictographicV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_extpict_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_GCB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GraphemeClusterBreakV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_gcb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_GR_BASE_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GraphemeBaseV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_gr_base_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_GR_EXT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GraphemeExtendV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_gr_ext_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_GR_LINK_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GraphemeLinkV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_gr_link_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_HEX_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::HexDigitV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_hex_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_HYPHEN_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::HyphenV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_hyphen_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_IDC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::IdContinueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_idc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_IDS_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::IdStartV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_ids_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_IDSB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::IdsBinaryOperatorV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_idsb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_IDST_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::IdsTrinaryOperatorV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_idst_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_IDEO_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::IdeographicV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_ideo_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_JOIN_C_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::JoinControlV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_join_c_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_LOE_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::LogicalOrderExceptionV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_loe_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_LOWER_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::LowercaseV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_lower_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_MATH_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::MathV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_math_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_NCHAR_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::NoncharacterCodePointV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_nchar_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_PCM_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::PrependedConcatenationMarkV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_pcm_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_PAT_SYN_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::PatternSyntaxV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_pat_syn_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_PAT_WS_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::PatternWhiteSpaceV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_pat_ws_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_QMARK_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::QuotationMarkV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_qmark_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_RI_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::RegionalIndicatorV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_ri_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_RADICAL_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::RadicalV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_radical_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_SB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::SentenceBreakV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_sb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_SD_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::SoftDottedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_sd_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_STERM_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::SentenceTerminalV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_sterm_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_SENSITIVE_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::CaseSensitiveV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_sensitive_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_TERM_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::TerminalPunctuationV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_term_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_UIDEO_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::UnifiedIdeographV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_uideo_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_UPPER_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::UppercaseV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_upper_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_VS_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::VariationSelectorV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_vs_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_WB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::WordBreakV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_wb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_WSPACE_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::WhiteSpaceV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_wspace_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_XIDC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::XidContinueV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_xidc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_XIDS_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::XidStartV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_xids_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_ALNUM_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::AlnumV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_alnum_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_BC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::BidiClassV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_bc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_BIDIAUXILIARYPROPS_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_bidiauxiliaryprops_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_properties")]
-                    PROPS_BLANK_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::BlankV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_blank_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_GCB_V1 => lookup_propnames_from_gcb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_FROM_SB_V1 => lookup_propnames_from_sb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_FROM_WB_V1 => lookup_propnames_from_wb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_FROM_BC_V1 => lookup_propnames_from_bc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_FROM_CCC_V1 => lookup_propnames_from_ccc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_FROM_EA_V1 => lookup_propnames_from_ea_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_FROM_GC_V1 => lookup_propnames_from_gc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_FROM_GCM_V1 => lookup_propnames_from_gcm_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_FROM_LB_V1 => lookup_propnames_from_lb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_FROM_SC_V1 => lookup_propnames_from_sc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_LONG_LINEAR_GCB_V1 => lookup_propnames_to_long_linear_gcb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_LONG_LINEAR_SB_V1 => lookup_propnames_to_long_linear_sb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_LONG_LINEAR_WB_V1 => lookup_propnames_to_long_linear_wb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_LONG_LINEAR_BC_V1 => lookup_propnames_to_long_linear_bc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_LONG_LINEAR_EA_V1 => lookup_propnames_to_long_linear_ea_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_LONG_LINEAR_GC_V1 => lookup_propnames_to_long_linear_gc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_LONG_LINEAR_LB_V1 => lookup_propnames_to_long_linear_lb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_LONG_LINEAR_SC_V1 => lookup_propnames_to_long_linear_sc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_LONG_SPARSE_CCC_V1 => lookup_propnames_to_long_sparse_ccc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_SHORT_LINEAR_GCB_V1 => lookup_propnames_to_short_linear_gcb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_SHORT_LINEAR_SB_V1 => lookup_propnames_to_short_linear_sb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_SHORT_LINEAR_WB_V1 => lookup_propnames_to_short_linear_wb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_SHORT_LINEAR_BC_V1 => lookup_propnames_to_short_linear_bc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_SHORT_LINEAR_EA_V1 => lookup_propnames_to_short_linear_ea_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_SHORT_LINEAR_GC_V1 => lookup_propnames_to_short_linear_gc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_SHORT_LINEAR_LB_V1 => lookup_propnames_to_short_linear_lb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_SHORT_LINEAR4_SC_V1 => lookup_propnames_to_short_linear4_sc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPNAMES_TO_SHORT_SPARSE_CCC_V1 => lookup_propnames_to_short_sparse_ccc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_AHEX_V1 => lookup_props_ahex_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_ALPHA_V1 => lookup_props_alpha_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_BASIC_EMOJI_V1 => lookup_props_basic_emoji_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_BIDI_C_V1 => lookup_props_bidi_c_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_BIDI_M_V1 => lookup_props_bidi_m_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_CI_V1 => lookup_props_ci_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_CWCF_V1 => lookup_props_cwcf_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_CWCM_V1 => lookup_props_cwcm_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_CWKCF_V1 => lookup_props_cwkcf_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_CWL_V1 => lookup_props_cwl_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_CWT_V1 => lookup_props_cwt_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_CWU_V1 => lookup_props_cwu_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_CASED_V1 => lookup_props_cased_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_COMP_EX_V1 => lookup_props_comp_ex_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_DI_V1 => lookup_props_di_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_DASH_V1 => lookup_props_dash_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_DEP_V1 => lookup_props_dep_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_DIA_V1 => lookup_props_dia_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_EBASE_V1 => lookup_props_ebase_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_ECOMP_V1 => lookup_props_ecomp_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_EMOD_V1 => lookup_props_emod_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_EPRES_V1 => lookup_props_epres_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_EMOJI_V1 => lookup_props_emoji_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_EXT_V1 => lookup_props_ext_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_EXTPICT_V1 => lookup_props_extpict_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_GCB_V1 => lookup_props_gcb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_GR_BASE_V1 => lookup_props_gr_base_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_GR_EXT_V1 => lookup_props_gr_ext_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_GR_LINK_V1 => lookup_props_gr_link_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_HEX_V1 => lookup_props_hex_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_HYPHEN_V1 => lookup_props_hyphen_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_IDC_V1 => lookup_props_idc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_IDS_V1 => lookup_props_ids_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_IDSB_V1 => lookup_props_idsb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_IDST_V1 => lookup_props_idst_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_IDEO_V1 => lookup_props_ideo_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_JOIN_C_V1 => lookup_props_join_c_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_LOE_V1 => lookup_props_loe_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_LOWER_V1 => lookup_props_lower_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_MATH_V1 => lookup_props_math_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_NCHAR_V1 => lookup_props_nchar_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_PCM_V1 => lookup_props_pcm_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_PAT_SYN_V1 => lookup_props_pat_syn_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_PAT_WS_V1 => lookup_props_pat_ws_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_QMARK_V1 => lookup_props_qmark_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_RI_V1 => lookup_props_ri_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_RADICAL_V1 => lookup_props_radical_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_SB_V1 => lookup_props_sb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_SD_V1 => lookup_props_sd_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_STERM_V1 => lookup_props_sterm_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_SENSITIVE_V1 => lookup_props_sensitive_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_TERM_V1 => lookup_props_term_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_UIDEO_V1 => lookup_props_uideo_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_UPPER_V1 => lookup_props_upper_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_VS_V1 => lookup_props_vs_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_WB_V1 => lookup_props_wb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_WSPACE_V1 => lookup_props_wspace_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_XIDC_V1 => lookup_props_xidc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_XIDS_V1 => lookup_props_xids_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_ALNUM_V1 => lookup_props_alnum_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_BC_V1 => lookup_props_bc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_BIDIAUXILIARYPROPS_V1 => lookup_props_bidiauxiliaryprops_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PROPS_BLANK_V1 => lookup_props_blank_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_casemapping")]
-                    PROPS_CASEMAP_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_casemapping::provider::CaseMappingV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_casemap_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CASEMAP_V1 => lookup_props_casemap_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_CCC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::CanonicalCombiningClassV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_ccc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CCC_V1 => lookup_props_ccc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EA_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::EastAsianWidthV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_ea_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EA_V1 => lookup_props_ea_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     PROPS_EXEMPLARCHARS_AUXILIARY_V1 => lookup_props_exemplarchars_auxiliary_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3171,113 +2641,29 @@ macro_rules! __impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     PROPS_EXEMPLARCHARS_PUNCTUATION_V1 => lookup_props_exemplarchars_punctuation_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_GC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GeneralCategoryV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_gc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_GC_V1 => lookup_props_gc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_GRAPH_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::GraphV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_graph_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_GRAPH_V1 => lookup_props_graph_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_LB_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::LineBreakV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_lb_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_LB_V1 => lookup_props_lb_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_NFCINERT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::NfcInertV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_nfcinert_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_NFCINERT_V1 => lookup_props_nfcinert_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_NFDINERT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::NfdInertV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_nfdinert_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_NFDINERT_V1 => lookup_props_nfdinert_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_NFKCINERT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::NfkcInertV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_nfkcinert_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_NFKCINERT_V1 => lookup_props_nfkcinert_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_NFKDINERT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::NfkdInertV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_nfkdinert_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_NFKDINERT_V1 => lookup_props_nfkdinert_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_PRINT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::PrintV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_print_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_PRINT_V1 => lookup_props_print_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_SC_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ScriptV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_sc_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_SC_V1 => lookup_props_sc_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_SCX_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::ScriptWithExtensionsPropertyV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_scx_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_SCX_V1 => lookup_props_scx_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_SEGSTART_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::SegmentStarterV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_segstart_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_SEGSTART_V1 => lookup_props_segstart_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_XDIGIT_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_properties::provider::XdigitV1Marker as icu_provider::DataMarker>::Yokeable = singleton_props_xdigit_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_XDIGIT_V1 => lookup_props_xdigit_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
                     RELATIVETIME_LONG_DAY_V1 => lookup_relativetime_long_day_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
@@ -3327,65 +2713,19 @@ macro_rules! __impl_any_provider {
                     #[cfg(feature = "icu_relativetime")]
                     RELATIVETIME_SHORT_YEAR_V1 => lookup_relativetime_short_year_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_DICTIONARY_W_AUTO_V1 => icu_provider::DataLocale::from(icu_locid::locale!("ja"))
-                        .eq(&req.locale)
-                        .then(|| {
-                            static ANCHOR: <icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker as icu_provider::DataMarker>::Yokeable = singleton_segmenter_dictionary_w_auto_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_DICTIONARY_W_AUTO_V1 => lookup_segmenter_dictionary_w_auto_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_DICTIONARY_WL_EXT_V1 => icu_provider::DataLocale::from(icu_locid::locale!("th"))
-                        .eq(&req.locale)
-                        .then(|| {
-                            static ANCHOR: <icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker as icu_provider::DataMarker>::Yokeable = singleton_segmenter_dictionary_wl_ext_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_DICTIONARY_WL_EXT_V1 => lookup_segmenter_dictionary_wl_ext_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_GRAPHEME_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_segmenter::provider::GraphemeClusterBreakDataV1Marker as icu_provider::DataMarker>::Yokeable = singleton_segmenter_grapheme_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_GRAPHEME_V1 => lookup_segmenter_grapheme_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_LINE_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_segmenter::provider::LineBreakDataV1Marker as icu_provider::DataMarker>::Yokeable = singleton_segmenter_line_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_LINE_V1 => lookup_segmenter_line_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_LSTM_WL_AUTO_V1 => icu_provider::DataLocale::from(icu_locid::locale!("th"))
-                        .eq(&req.locale)
-                        .then(|| {
-                            static ANCHOR: <icu_segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::DataMarker>::Yokeable = singleton_segmenter_lstm_wl_auto_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_LSTM_WL_AUTO_V1 => lookup_segmenter_lstm_wl_auto_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_SENTENCE_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_segmenter::provider::SentenceBreakDataV1Marker as icu_provider::DataMarker>::Yokeable = singleton_segmenter_sentence_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_SENTENCE_V1 => lookup_segmenter_sentence_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_WORD_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_segmenter::provider::WordBreakDataV1Marker as icu_provider::DataMarker>::Yokeable = singleton_segmenter_word_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_WORD_V1 => lookup_segmenter_word_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
                     TIME_ZONE_EXEMPLAR_CITIES_V1 => lookup_time_zone_exemplar_cities_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
@@ -3395,14 +2735,7 @@ macro_rules! __impl_any_provider {
                     #[cfg(feature = "icu_datetime")]
                     TIME_ZONE_GENERIC_SHORT_V1 => lookup_time_zone_generic_short_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_timezone")]
-                    TIME_ZONE_METAZONE_PERIOD_V1 => req
-                        .locale
-                        .is_empty()
-                        .then(|| {
-                            static ANCHOR: <icu_timezone::provider::MetazonePeriodV1Marker as icu_provider::DataMarker>::Yokeable = singleton_time_zone_metazone_period_v1!();
-                            &ANCHOR
-                        })
-                        .map(icu_provider::AnyPayload::from_static_ref),
+                    TIME_ZONE_METAZONE_PERIOD_V1 => lookup_time_zone_metazone_period_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
                     TIME_ZONE_SPECIFIC_LONG_V1 => lookup_time_zone_specific_long_v1!(req).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
