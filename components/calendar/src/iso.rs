@@ -556,7 +556,9 @@ mod test {
             saturating: bool,
         }
         // Calculates the max possible year representable using i32::MAX as the fixed date
-        let max_year = Iso::iso_from_fixed(RataDie::new(i32::MAX as i64)).year().number;
+        let max_year = Iso::iso_from_fixed(RataDie::new(i32::MAX as i64))
+            .year()
+            .number;
 
         // Calculates the minimum possible year representable using i32::MIN as the fixed date
         // *Cannot be tested yet due to hard coded date not being available yet (see line 436)
@@ -582,36 +584,8 @@ mod test {
                 year: min_year,
                 month: 6,
                 day: 21,
-                fixed: RataDie::new(i32::MIN as i64),
-                saturating: true,
-            },
-            TestCase {
-                year: min_year,
-                month: 5,
-                day: 21,
-                fixed: RataDie::new(i32::MIN as i64),
-                saturating: true,
-            },
-            TestCase {
-                year: min_year - 1,
-                month: 12,
-                day: 31,
-                fixed: RataDie::new(i32::MIN as i64),
-                saturating: true,
-            },
-            TestCase {
-                year: min_year - 1,
-                month: 12,
-                day: 30,
-                fixed: RataDie::new(i32::MIN as i64),
-                saturating: true,
-            },
-            TestCase {
-                year: min_year - 1,
-                month: 12,
-                day: 1,
-                fixed: RataDie::new(i32::MIN as i64),
-                saturating: true,
+                fixed: RataDie::new(i32::MIN as i64 - 1),
+                saturating: false,
             },
             TestCase {
                 year: min_year,
@@ -660,28 +634,49 @@ mod test {
                 year: max_year,
                 month: 7,
                 day: 12,
-                fixed: RataDie::new(i32::MAX as i64),
+                fixed: RataDie::new(i32::MAX as i64 + 1),
+                saturating: false,
+            },
+            TestCase {
+                year: i32::MIN,
+                month: 1,
+                day: 2,
+                fixed: RataDie::new(-784352296669),
+                saturating: false,
+            },
+            TestCase {
+                year: i32::MIN,
+                month: 1,
+                day: 1,
+                fixed: RataDie::new(-784352296670),
+                saturating: false,
+            },
+            TestCase {
+                year: i32::MIN,
+                month: 1,
+                day: 1,
+                fixed: RataDie::new(-784352296671),
                 saturating: true,
             },
             TestCase {
-                year: max_year,
-                month: 8,
-                day: 11,
-                fixed: RataDie::new(i32::MAX as i64),
-                saturating: true,
+                year: i32::MAX,
+                month: 12,
+                day: 30,
+                fixed: RataDie::new(784352295938),
+                saturating: false,
             },
             TestCase {
-                year: max_year,
+                year: i32::MAX,
                 month: 12,
                 day: 31,
-                fixed: RataDie::new(i32::MAX as i64),
-                saturating: true,
+                fixed: RataDie::new(784352295939),
+                saturating: false,
             },
             TestCase {
-                year: max_year + 1,
-                month: 7,
-                day: 11,
-                fixed: RataDie::new(i32::MAX as i64),
+                year: i32::MAX,
+                month: 12,
+                day: 31,
+                fixed: RataDie::new(784352295940),
                 saturating: true,
             },
         ];
@@ -689,16 +684,21 @@ mod test {
         for case in cases {
             let date = Date::try_new_iso_date(case.year, case.month, case.day).unwrap();
             if !case.saturating {
-                assert_eq!(Iso::iso_from_fixed(case.fixed), date, "{case:?}");
+                assert_eq!(Iso::fixed_from_iso(date.inner), case.fixed, "{case:?}");
             }
-            assert_eq!(Iso::fixed_from_iso(date.inner), case.fixed, "{case:?}");
+            assert_eq!(Iso::iso_from_fixed(case.fixed), date, "{case:?}");
         }
     }
 
     // Calculates the minimum possible year representable using a large negative fixed date
     #[test]
     fn min_year() {
-        assert_eq!(Iso::iso_from_fixed(RataDie::new(-999999999999)).year().number, i32::MIN);
+        assert_eq!(
+            Iso::iso_from_fixed(RataDie::new(-999999999999))
+                .year()
+                .number,
+            i32::MIN
+        );
     }
 
     #[test]
@@ -853,7 +853,11 @@ mod test {
         // Year 0 is a leap year due to the 400-year rule.
         fn check(fixed: i64, year: i32, month: u8, day: u8) {
             let fixed = RataDie::new(fixed);
-            assert_eq!(Iso::iso_year_from_fixed(fixed), year as i64, "fixed: {fixed:?}");
+            assert_eq!(
+                Iso::iso_year_from_fixed(fixed),
+                year as i64,
+                "fixed: {fixed:?}"
+            );
             assert_eq!(
                 Iso::iso_from_fixed(fixed),
                 Date::try_new_iso_date(year, month, day).unwrap(),
