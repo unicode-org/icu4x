@@ -187,14 +187,11 @@ impl BakedExporter {
         })
     }
 
-    fn write_to_file<P: AsRef<std::path::Path>>(
-        &self,
-        relative_path: P,
-        data: TokenStream,
-    ) -> Result<(), DataError> {
-        let path = self.mod_directory.join(&relative_path).with_extension("rs");
-
-        let mut formatted = if self.pretty {
+    /// Convert tokens to a string, potentially formatting them
+    ///
+    /// `is_expr` is true if the tokens are an expression rather than a full file
+    fn tokens_to_string(&self, tokens: TokenStream, is_expr: bool) -> Result<String, DataError> {
+        if self.pretty {
             use std::process::{Command, Stdio};
             let mut rustfmt = Command::new("rustfmt")
                 .arg("--config")
@@ -207,21 +204,41 @@ impl BakedExporter {
                 .stdout(Stdio::piped())
                 .spawn()?;
             let mut rustfmt_stdin = rustfmt.stdin.take().unwrap();
-            write!(rustfmt_stdin, "{data}")?;
+            if is_expr {
+                write!(rustfmt_stdin, "fn main() {{ {tokens} }}")?;
+            } else {
+                write!(rustfmt_stdin, "{tokens}")?;
+            }
+            
 
             drop(rustfmt_stdin); // EOF
-
             let output = rustfmt.wait_with_output()?;
             if !output.status.success() {
                 let stderr = String::from_utf8(output.stderr)
                     .map_err(|_| DataError::custom("rustfmt output not utf-8"))?;
                 return Err(DataError::custom("rustfmt failed").with_display_context(&stderr));
             }
-            String::from_utf8(output.stdout)
-                .map_err(|_| DataError::custom("rustfmt output not utf-8"))?
+            let out = if is_expr {
+                // todo handle indentation
+                output.stdout.strip_prefix(b"fn main() {\n").and_then(|s| s.strip_suffix(b"}\n")).unwrap_or(&output.stdout).into()
+            } else {
+                output.stdout
+            };
+            String::from_utf8(out)
+                .map_err(|_| DataError::custom("rustfmt output not utf-8"))
         } else {
-            data.to_string()
-        };
+            Ok(tokens.to_string())
+        }
+    }
+
+    fn write_to_file<P: AsRef<std::path::Path>>(
+        &self,
+        relative_path: P,
+        data: TokenStream,
+    ) -> Result<(), DataError> {
+        let path = self.mod_directory.join(&relative_path).with_extension("rs");
+
+        let mut formatted = self.tokens_to_string(data, false)?;
 
         if !self.use_separate_crates {
             formatted = formatted
