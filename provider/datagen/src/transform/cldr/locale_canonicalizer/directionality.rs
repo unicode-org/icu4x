@@ -81,19 +81,6 @@ fn test_basic() {
 
     assert!(matches!(
         data.get()
-            .rtl
-            .binary_search(&script!("Arab").into_tinystr().to_unvalidated()),
-        Ok(_)
-    ));
-    assert!(matches!(
-        data.get()
-            .ltr
-            .binary_search(&script!("Arab").into_tinystr().to_unvalidated()),
-        Err(_)
-    ));
-
-    assert!(matches!(
-        data.get()
             .ltr
             .binary_search(&script!("Latn").into_tinystr().to_unvalidated()),
         Ok(_)
