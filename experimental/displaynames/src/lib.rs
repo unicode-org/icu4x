@@ -44,6 +44,7 @@ pub use displaynames::LocaleDisplayNamesFormatter;
 pub use displaynames::RegionDisplayNames;
 pub use displaynames::ScriptDisplayNames;
 pub use displaynames::VariantDisplayNames;
+pub use options::Capitalization;
 pub use options::DisplayNamesOptions;
 pub use options::Fallback;
 pub use options::LanguageDisplay;

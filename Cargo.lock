@@ -1526,6 +1526,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
+ "icu_personnames",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1622,6 +1623,7 @@ dependencies = [
  "icu_testdata",
  "serde",
  "tinystr",
+ "writeable",
  "zerovec",
 ]
 
@@ -1746,6 +1748,19 @@ dependencies = [
  "displaydoc",
  "iai",
  "writeable",
+]
+
+[[package]]
+name = "icu_personnames"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "icu_collections",
+ "icu_locid",
+ "icu_provider",
+ "litemap",
+ "serde",
+ "zerovec",
 ]
 
 [[package]]

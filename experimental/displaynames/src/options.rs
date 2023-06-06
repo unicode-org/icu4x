@@ -35,6 +35,8 @@ pub struct DisplayNamesOptions {
     pub fallback: Fallback,
     /// The language display kind, defaults to "dialect".
     pub language_display: LanguageDisplay,
+    /// The option to retrieve the capitalization context setting.
+    pub capitalization: Capitalization,
 }
 
 /// An enum for formatting style.
@@ -76,5 +78,31 @@ pub enum LanguageDisplay {
 impl Default for LanguageDisplay {
     fn default() -> Self {
         Self::Dialect
+    }
+}
+
+/// An enum to handle capitalization for the resultant string.
+#[non_exhaustive]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub enum Capitalization {
+    /// The capitalization context to be used is unknown (this is the default value).
+    None,
+    /// The capitalization context if a display name is to be formatted with capitalization
+    /// appropriate for the middle of a sentence.
+    MiddleOfSentence,
+    /// The capitalization context if a display name is to be formatted with capitalization
+    /// appropriate for the beginning of a sentence.
+    BeginningOfSentence,
+    /// The capitalization context if a display name is to be formatted with capitalization
+    /// appropriate for a user-interface list or menu item.
+    UiListOrMenu,
+    /// The capitalization context if a display name is to be formatted with capitalization
+    /// appropriate for stand-alone usage such as an isolated name on a calendar page.
+    Standalone,
+}
+
+impl Default for Capitalization {
+    fn default() -> Self {
+        Self::None
     }
 }
