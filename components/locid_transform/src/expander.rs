@@ -309,7 +309,7 @@ impl LocaleExpander {
         Self::try_new_compat(&provider.as_deserializing())
     }
 
-    pub(crate) fn as_borrowed(&self) -> LocaleExpanderBorrowed {
+    fn as_borrowed(&self) -> LocaleExpanderBorrowed {
         LocaleExpanderBorrowed {
             likely_subtags_l: self.likely_subtags_l.get(),
             likely_subtags_sr: self.likely_subtags_sr.get(),

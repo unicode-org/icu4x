@@ -94,6 +94,8 @@ mod macros {
     #[macro_use]
     mod locid_transform_likelysubtags_sr_v1;
     #[macro_use]
+    mod locid_transform_script_dir_v1;
+    #[macro_use]
     mod normalizer_comp_v1;
     #[macro_use]
     mod normalizer_decomp_v1;
@@ -502,6 +504,8 @@ pub use __impl_locid_transform_likelysubtags_l_v1 as impl_locid_transform_likely
 pub use __impl_locid_transform_likelysubtags_sr_v1 as impl_locid_transform_likelysubtags_sr_v1;
 #[doc(inline)]
 pub use __impl_locid_transform_likelysubtags_v1 as impl_locid_transform_likelysubtags_v1;
+#[doc(inline)]
+pub use __impl_locid_transform_script_dir_v1 as impl_locid_transform_script_dir_v1;
 #[doc(inline)]
 pub use __impl_normalizer_comp_v1 as impl_normalizer_comp_v1;
 #[doc(inline)]
@@ -985,6 +989,8 @@ pub use __singleton_locid_transform_likelysubtags_sr_v1 as singleton_locid_trans
 #[doc(inline)]
 pub use __singleton_locid_transform_likelysubtags_v1 as singleton_locid_transform_likelysubtags_v1;
 #[doc(inline)]
+pub use __singleton_locid_transform_script_dir_v1 as singleton_locid_transform_script_dir_v1;
+#[doc(inline)]
 pub use __singleton_normalizer_comp_v1 as singleton_normalizer_comp_v1;
 #[doc(inline)]
 pub use __singleton_normalizer_decomp_v1 as singleton_normalizer_decomp_v1;
@@ -1327,6 +1333,8 @@ macro_rules! __impl_data_provider {
         impl_locid_transform_likelysubtags_l_v1!($provider);
         #[cfg(feature = "icu_locid_transform")]
         impl_locid_transform_likelysubtags_sr_v1!($provider);
+        #[cfg(feature = "icu_locid_transform")]
+        impl_locid_transform_script_dir_v1!($provider);
         #[cfg(feature = "icu_normalizer")]
         impl_normalizer_comp_v1!($provider);
         #[cfg(feature = "icu_normalizer")]
@@ -1751,6 +1759,8 @@ macro_rules! __impl_any_provider {
                 const LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_locid_transform")]
                 const LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                #[cfg(feature = "icu_locid_transform")]
+                const LOCID_TRANSFORM_SCRIPT_DIR_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::ScriptDirectionV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
                 const NORMALIZER_COMP_V1: icu_provider::DataKeyHash = <icu_normalizer::provider::CanonicalCompositionsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
@@ -2244,6 +2254,15 @@ macro_rules! __impl_any_provider {
                         .is_empty()
                         .then(|| {
                             static ANCHOR: <icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::DataMarker>::Yokeable = singleton_locid_transform_likelysubtags_sr_v1!();
+                            &ANCHOR
+                        })
+                        .map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_locid_transform")]
+                    LOCID_TRANSFORM_SCRIPT_DIR_V1 => req
+                        .locale
+                        .is_empty()
+                        .then(|| {
+                            static ANCHOR: <icu_locid_transform::provider::ScriptDirectionV1Marker as icu_provider::DataMarker>::Yokeable = singleton_locid_transform_script_dir_v1!();
                             &ANCHOR
                         })
                         .map(icu_provider::AnyPayload::from_static_ref),
