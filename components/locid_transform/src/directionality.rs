@@ -175,7 +175,7 @@ impl LocaleDirectionality {
     }
 
     /// Returns true if the given locale is right-to-left.
-    /// 
+    ///
     /// Note that if this method returns `false`, it does not mean that the locale is left-to-right.
     /// You should use `LocaleDirectionality::get` if you need to differentiate between these cases.
     ///
@@ -188,7 +188,7 @@ impl LocaleDirectionality {
     }
 
     /// Returns true if the given locale is left-to-right.
-    /// 
+    ///
     /// Note that if this method returns `false`, it does not mean that the locale is right-to-left.
     /// You should use `LocaleDirectionality::get` if you need to differentiate between these cases.
     ///
