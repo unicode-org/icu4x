@@ -37,7 +37,7 @@ use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit
 use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
-const EPOCH: RataDie = RataDie::new_from_fixed_date(1);
+const EPOCH: RataDie = RataDie::new(1);
 
 /// The [ISO Calendar]
 ///
@@ -408,7 +408,7 @@ impl Iso {
         };
         // Days passed in current month
         fixed += date.0.day as i64;
-        RataDie::new_from_fixed_date(fixed)
+        RataDie::new(fixed)
     }
 
     fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<RataDie> {
@@ -552,15 +552,15 @@ mod test {
             year: i32,
             month: u8,
             day: u8,
-            fixed: i32,
+            fixed: RataDie,
             saturating: bool,
         }
         // Calculates the max possible year representable using i32::MAX as the fixed date
-        let max_year = Iso::iso_from_fixed(i32::MAX).year().number;
+        let max_year = Iso::iso_from_fixed(RataDie::new(i32::MAX as i64)).year().number;
 
         // Calculates the minimum possible year representable using i32::MIN as the fixed date
         // *Cannot be tested yet due to hard coded date not being available yet (see line 436)
-        let min_year = MIN_YEAR;
+        let min_year = -5879610;
 
         let cases = [
             TestCase {
@@ -568,84 +568,84 @@ mod test {
                 year: min_year,
                 month: 6,
                 day: 22,
-                fixed: i32::MIN,
+                fixed: RataDie::new(i32::MIN as i64),
                 saturating: false,
             },
             TestCase {
                 year: min_year,
                 month: 6,
                 day: 23,
-                fixed: i32::MIN + 1,
+                fixed: RataDie::new(i32::MIN as i64 + 1),
                 saturating: false,
             },
             TestCase {
                 year: min_year,
                 month: 6,
                 day: 21,
-                fixed: i32::MIN,
+                fixed: RataDie::new(i32::MIN as i64),
                 saturating: true,
             },
             TestCase {
                 year: min_year,
                 month: 5,
                 day: 21,
-                fixed: i32::MIN,
+                fixed: RataDie::new(i32::MIN as i64),
                 saturating: true,
             },
             TestCase {
                 year: min_year - 1,
                 month: 12,
                 day: 31,
-                fixed: i32::MIN,
+                fixed: RataDie::new(i32::MIN as i64),
                 saturating: true,
             },
             TestCase {
                 year: min_year - 1,
                 month: 12,
                 day: 30,
-                fixed: i32::MIN,
+                fixed: RataDie::new(i32::MIN as i64),
                 saturating: true,
             },
             TestCase {
                 year: min_year - 1,
                 month: 12,
                 day: 1,
-                fixed: i32::MIN,
+                fixed: RataDie::new(i32::MIN as i64),
                 saturating: true,
             },
             TestCase {
                 year: min_year,
                 month: 12,
                 day: 31,
-                fixed: -2147483456,
+                fixed: RataDie::new(-2147483456),
                 saturating: false,
             },
             TestCase {
                 year: min_year + 1,
                 month: 1,
                 day: 1,
-                fixed: -2147483455,
+                fixed: RataDie::new(-2147483455),
                 saturating: false,
             },
             TestCase {
                 year: max_year,
                 month: 6,
                 day: 11,
-                fixed: i32::MAX - 30,
+                fixed: RataDie::new(i32::MAX as i64 - 30),
                 saturating: false,
             },
             TestCase {
                 year: max_year,
                 month: 7,
                 day: 9,
-                fixed: i32::MAX - 2,
+                fixed: RataDie::new(i32::MAX as i64 - 2),
                 saturating: false,
             },
             TestCase {
                 year: max_year,
                 month: 7,
                 day: 10,
-                fixed: i32::MAX - 1,
+                fixed: RataDie::new(i32::MAX as i64 - 1),
                 saturating: false,
             },
             TestCase {
@@ -653,35 +653,35 @@ mod test {
                 year: max_year,
                 month: 7,
                 day: 11,
-                fixed: i32::MAX,
+                fixed: RataDie::new(i32::MAX as i64),
                 saturating: false,
             },
             TestCase {
                 year: max_year,
                 month: 7,
                 day: 12,
-                fixed: i32::MAX,
+                fixed: RataDie::new(i32::MAX as i64),
                 saturating: true,
             },
             TestCase {
                 year: max_year,
                 month: 8,
                 day: 11,
-                fixed: i32::MAX,
+                fixed: RataDie::new(i32::MAX as i64),
                 saturating: true,
             },
             TestCase {
                 year: max_year,
                 month: 12,
                 day: 31,
-                fixed: i32::MAX,
+                fixed: RataDie::new(i32::MAX as i64),
                 saturating: true,
             },
             TestCase {
                 year: max_year + 1,
                 month: 7,
                 day: 11,
-                fixed: i32::MAX,
+                fixed: RataDie::new(i32::MAX as i64),
                 saturating: true,
             },
         ];
@@ -695,11 +695,10 @@ mod test {
         }
     }
 
-    // Calculates the minimum possible year representable using i32::MIN as the fixed date
-    // Used as the value for the const MIN_YEAR
+    // Calculates the minimum possible year representable using a large negative fixed date
     #[test]
     fn min_year() {
-        assert_eq!(Iso::iso_from_fixed(i32::MIN).year().number, MIN_YEAR);
+        assert_eq!(Iso::iso_from_fixed(RataDie::new(-999999999999)).year().number, i32::MIN);
     }
 
     #[test]
@@ -852,17 +851,18 @@ mod test {
     fn test_iso_to_from_fixed() {
         // Reminder: ISO year 0 is Gregorian year 1 BCE.
         // Year 0 is a leap year due to the 400-year rule.
-        fn check(fixed: i32, year: i32, month: u8, day: u8) {
-            assert_eq!(Iso::iso_year_from_fixed(fixed), year, "fixed: {fixed}");
+        fn check(fixed: i64, year: i32, month: u8, day: u8) {
+            let fixed = RataDie::new(fixed);
+            assert_eq!(Iso::iso_year_from_fixed(fixed), year as i64, "fixed: {fixed:?}");
             assert_eq!(
                 Iso::iso_from_fixed(fixed),
                 Date::try_new_iso_date(year, month, day).unwrap(),
-                "fixed: {fixed}"
+                "fixed: {fixed:?}"
             );
             assert_eq!(
                 Iso::fixed_from_iso_integers(year, month, day),
                 Some(fixed),
-                "fixed: {fixed}"
+                "fixed: {fixed:?}"
             );
         }
         check(-1828, -5, 12, 30);

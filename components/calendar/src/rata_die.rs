@@ -14,7 +14,7 @@ use core::ops::{Add, AddAssign, Sub, SubAssign};
 pub(crate) struct RataDie(i64);
 
 impl RataDie {
-    pub const fn new_from_fixed_date(fixed_date: i64) -> Self {
+    pub const fn new(fixed_date: i64) -> Self {
         Self(fixed_date)
     }
     pub const fn to_fixed_date(self) -> i64 {

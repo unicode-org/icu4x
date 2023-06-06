@@ -42,7 +42,7 @@ use tinystr::tinystr;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
 // 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
-const JULIAN_EPOCH: RataDie = RataDie::new_from_fixed_date(-1);
+const JULIAN_EPOCH: RataDie = RataDie::new(-1);
 
 /// The [Julian Calendar]
 ///
@@ -234,7 +234,7 @@ impl Julian {
             -2
         };
 
-        RataDie::new_from_fixed_date(fixed + (date.day as i64))
+        RataDie::new(fixed + (date.day as i64))
     }
 
     pub(crate) const fn fixed_from_julian_integers(year: i32, month: u8, day: u8) -> RataDie {
