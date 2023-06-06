@@ -31,10 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{
-    div_rem_euclid, div_rem_euclid64, i64_to_i32, i64_to_saturated_i32, quotient, quotient64,
-    I32Result,
-};
+use crate::helpers::{div_rem_euclid64, i64_to_i32, i64_to_saturated_i32, quotient64, I32Result};
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
@@ -83,7 +80,7 @@ impl CalendarArithmetic for Iso {
         year % 4 == 0 && (year % 400 == 0 || year % 100 != 0)
     }
 
-    fn last_month_day_in_year(year: i32) -> (u8, u8) {
+    fn last_month_day_in_year(_year: i32) -> (u8, u8) {
         (12, 31)
     }
 

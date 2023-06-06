@@ -33,7 +33,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{i64_to_i32, quotient, quotient64, I32Result};
+use crate::helpers::{i64_to_i32, quotient64, I32Result};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};

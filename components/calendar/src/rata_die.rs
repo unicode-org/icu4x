@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::ops::{Add, Mul, Sub};
-
-use crate::helpers::div_rem_euclid64;
+use core::ops::{Add, Sub};
 
 /// The *Rata Die*, or *R.D.*, or `fixed_date`: number of days since January 1, 1 CE.
 ///
@@ -14,12 +12,6 @@ use crate::helpers::div_rem_euclid64;
 /// except from a date that is in range of one of the official calendars.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct RataDie(pub i64);
-
-impl RataDie {
-    pub fn div_rem_euclid64(self, divisor: i64) -> (i64, i64) {
-        div_rem_euclid64(self.0, divisor)
-    }
-}
 
 /// Shift a RataDie N days into the future
 impl Add<i64> for RataDie {
