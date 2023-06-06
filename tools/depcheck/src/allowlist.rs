@@ -67,6 +67,7 @@ pub const EXTRA_SERDE_DEPS: &[&str] = &["deduplicating_array", "serde", "serde_d
 pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_casemapping",
     "icu_displaynames",
+    "icu_personnames",
     "icu_relativetime",
     "icu_compactdecimal",
 ];

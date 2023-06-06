@@ -8,7 +8,7 @@ use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive};
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
-use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
+use zerovec::{ule::AsULE, zerovec, ZeroVec};
 
 use super::CodePointInversionListError;
 use crate::codepointinvlist::utils::{deconstruct_range, is_valid_zv};
@@ -17,15 +17,12 @@ use crate::codepointinvlist::utils::{deconstruct_range, is_valid_zv};
 const BMP_MAX: u32 = 0xFFFF;
 
 /// Represents the inversion list for a set of all code points in the Basic Multilingual Plane.
-const BMP_INV_LIST_SLICE: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([0x0, BMP_MAX + 1]));
+const BMP_INV_LIST_VEC: ZeroVec<u32> =
+    zerovec![u32; <u32 as AsULE>::ULE::from_unsigned; 0x0, BMP_MAX + 1];
 
 /// Represents the inversion list for all of the code points in the Unicode range.
-const ALL_SLICE: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([
-        0x0,
-        (char::MAX as u32) + 1,
-    ]));
+const ALL_VEC: ZeroVec<u32> =
+    zerovec![u32; <u32 as AsULE>::ULE::from_unsigned; 0x0, (char::MAX as u32) + 1];
 
 /// A membership wrapper for [`CodePointInversionList`].
 ///
@@ -297,7 +294,7 @@ impl<'data> CodePointInversionList<'data> {
     /// ```
     pub fn all() -> Self {
         Self {
-            inv_list: ALL_SLICE.as_zerovec(),
+            inv_list: ALL_VEC,
             size: (char::MAX as usize) + 1,
         }
     }
@@ -326,7 +323,7 @@ impl<'data> CodePointInversionList<'data> {
     /// ```
     pub fn bmp() -> Self {
         Self {
-            inv_list: BMP_INV_LIST_SLICE.as_zerovec(),
+            inv_list: BMP_INV_LIST_VEC,
             size: (BMP_MAX as usize) + 1,
         }
     }

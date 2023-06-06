@@ -26,6 +26,17 @@ pub const fn quotient(n: i32, d: i32) -> i32 {
         a - 1
     }
 }
+pub const fn quotient64(n: i64, d: i64) -> i64 {
+    debug_assert!(d > 0);
+    // Code can use int_roundings once stabilized
+    // https://github.com/rust-lang/rust/issues/88581
+    let (a, b) = (n / d, n % d);
+    if n >= 0 || b == 0 {
+        a
+    } else {
+        a - 1
+    }
+}
 
 #[test]
 fn test_div_rem_euclid() {

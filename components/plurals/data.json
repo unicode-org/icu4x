@@ -16,7 +16,8 @@
     "export": {
         "Baked": {
             "output_path": "data",
-            "use_separate_crates": true
+            "use_separate_crates": true,
+            "pretty": true
         }
     },
     "overwrite": true

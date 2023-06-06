@@ -3,16 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::convert::TryFrom;
-use core::num::TryFromIntError;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(feature = "datagen")]
 use icu_collections::codepointtrie::CodePointTrieHeader;
-use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
-#[cfg(feature = "datagen")]
-use std::collections::HashMap;
-use zerovec::ule::{AsULE, RawBytesULE};
 use zerovec::ZeroMap;
 #[cfg(feature = "datagen")]
 use zerovec::ZeroVec;
@@ -22,234 +18,7 @@ use crate::exceptions::{CaseMappingExceptions, ExceptionSlot};
 #[cfg(feature = "datagen")]
 use crate::exceptions_builder::CaseMappingExceptionsBuilder;
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum MappingKind {
-    Lower = 0,
-    Fold = 1,
-    Upper = 2,
-    Title = 3,
-}
-
-// The case of a Unicode character
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum CaseType {
-    // Not a cased letter
-    None = 0,
-    // Lowercase letter
-    Lower = 1,
-    // Uppercase letter
-    Upper = 2,
-    // Titlecase letter
-    Title = 3,
-}
-
-impl CaseType {
-    const CASE_MASK: u16 = 0x3;
-
-    // The casetype is stored in the codepoint trie as two bits.
-    // After masking them to get a value between 0 and 3, this
-    // function converts to CaseType.
-    #[inline]
-    fn from_masked_bits(b: u16) -> Self {
-        debug_assert!(b & Self::CASE_MASK == b);
-        match b {
-            0 => CaseType::None,
-            1 => CaseType::Lower,
-            2 => CaseType::Upper,
-            _ => CaseType::Title,
-        }
-    }
-}
-
-// The dot type of a Unicode character. This indicates how dotted
-// letters (like `i` and `j`) combine with accents placed above the
-// letter.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum DotType {
-    // Normal characters with combining class 0
-    NoDot = 0,
-    // Soft-dotted characters with combining class 0
-    SoftDotted = 1,
-    // "Above" accents with combining class 230
-    Above = 2,
-    // Other accent characters
-    OtherAccent = 3,
-}
-
-impl DotType {
-    pub const DOT_MASK: u16 = 0x3;
-
-    // The dot type is stored in either the codepoint trie or the
-    // exception table as two bits.  After shifting and masking them
-    // to get a value between 0 and 3, this function converts to
-    // DotType.
-    #[inline]
-    pub fn from_masked_bits(b: u16) -> Self {
-        debug_assert!(b & Self::DOT_MASK == b);
-        match b {
-            0 => DotType::NoDot,
-            1 => DotType::SoftDotted,
-            2 => DotType::Above,
-            _ => DotType::OtherAccent,
-        }
-    }
-}
-
-/// The datatype stored in the codepoint trie for casemapping.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider))]
-// field is doc(hidden) so that databake can work, though it's unclear if
-// this field has invariants
-pub struct CaseMappingData(#[doc(hidden)] pub u16);
-
-impl CaseMappingData {
-    // Sequences of case-ignorable characters are skipped when determining
-    // whether a character is preceded or followed by a cased letter. A
-    // character C is defined to be case-ignorable if it meets either of the
-    // following criteria:
-    // - The general category of C is
-    //   - Nonspacing Mark (Mn)
-    //   - Enclosing Mark (Me)
-    //   - Format Control (Cf)
-    //   - Letter Modifier (Lm)
-    //   - Symbol Modifier (Sk)
-    // - C is one of the following characters
-    //   - U+0027 APOSTROPHE
-    //   - U+00AD SOFT HYPHEN (SHY)
-    //   - U+2019 RIGHT SINGLE QUOTATION MARK (the preferred character for apostrophe)
-    // (See Unicode 2.3 UAX 21)
-    const IGNORABLE_FLAG: u16 = 0x4;
-
-    // In simple cases, the CaseMappingData stores the delta between
-    // a code point and its upper/lowercase equivalent. Exceptions
-    // to this pattern are stored in a secondary data structure.
-    // This bit is set if the corresponding character has exception
-    // data.
-    const EXCEPTION_FLAG: u16 = 0x8;
-
-    // This bit is set if the corresponding character is case-sensitive.
-    // This is not currently exposed.
-    const SENSITIVE_FLAG: u16 = 0x10;
-
-    // Depending on whether the exception bit is set, the most significant bits contain either
-    // a 9 bit signed delta, or a 12 bit exception table index.
-    const DELTA_SHIFT: usize = 7;
-    const EXCEPTION_SHIFT: usize = 4;
-
-    // If the exception bit is not set, the dot type is stored in the CaseMappingData.
-    const DOT_SHIFT: u16 = 5;
-
-    // The bits that are set for every CaseMappingData (not part of the exception index).
-    #[cfg(feature = "datagen")]
-    const COMMON_MASK: u16 =
-        CaseType::CASE_MASK | Self::IGNORABLE_FLAG | CaseMappingData::EXCEPTION_FLAG;
-
-    #[inline]
-    fn case_type(&self) -> CaseType {
-        let masked_bits = self.0 & CaseType::CASE_MASK;
-        CaseType::from_masked_bits(masked_bits)
-    }
-
-    #[inline]
-    fn is_upper_or_title(&self) -> bool {
-        match self.case_type() {
-            CaseType::None | CaseType::Lower => false,
-            CaseType::Upper | CaseType::Title => true,
-        }
-    }
-
-    #[inline]
-    fn is_relevant_to(&self, kind: MappingKind) -> bool {
-        match kind {
-            MappingKind::Lower | MappingKind::Fold => self.is_upper_or_title(),
-            MappingKind::Upper | MappingKind::Title => self.case_type() == CaseType::Lower,
-        }
-    }
-
-    #[inline]
-    fn is_ignorable(&self) -> bool {
-        self.0 & Self::IGNORABLE_FLAG != 0
-    }
-
-    #[inline]
-    fn has_exception(&self) -> bool {
-        self.0 & Self::EXCEPTION_FLAG != 0
-    }
-
-    // Returns true if this code point is case-sensitive.
-    // This is not currently exposed.
-    #[inline]
-    fn is_sensitive(&self) -> bool {
-        self.0 & Self::SENSITIVE_FLAG != 0
-    }
-
-    #[inline]
-    fn dot_type(&self) -> DotType {
-        let masked_bits = (self.0 >> Self::DOT_SHIFT) & DotType::DOT_MASK;
-        DotType::from_masked_bits(masked_bits)
-    }
-
-    // The delta between this code point and its upper/lowercase equivalent.
-    // This should only be called for codepoints without exception data.
-    #[inline]
-    fn delta(&self) -> i16 {
-        debug_assert!(!self.has_exception());
-        (self.0 as i16) >> Self::DELTA_SHIFT
-    }
-
-    // The index of the exception data for this codepoint in the exception
-    // table. This should only be called for codepoints with exception data.
-    #[inline]
-    fn exception_index(&self) -> u16 {
-        debug_assert!(self.has_exception());
-        self.0 >> Self::EXCEPTION_SHIFT
-    }
-
-    // CaseMappingExceptionsBuilder moves the full mapping and closure
-    // strings out of the exception table itself. This means that the
-    // exception index for a code point in ICU4X will be different
-    // from the exception index for the same codepoint in ICU4C. Given
-    // a mapping from old to new, this function updates the exception
-    // index if necessary.
-    #[cfg(feature = "datagen")]
-    fn with_updated_exception(self, updates: &HashMap<u16, u16>) -> Self {
-        if self.has_exception() {
-            if let Some(updated_exception) = updates.get(&self.exception_index()) {
-                let non_exception_bits = self.0 & Self::COMMON_MASK;
-                return Self(updated_exception << Self::EXCEPTION_SHIFT | non_exception_bits);
-            }
-        }
-        self
-    }
-}
-
-impl AsULE for CaseMappingData {
-    type ULE = RawBytesULE<2>;
-
-    #[inline]
-    fn to_unaligned(self) -> Self::ULE {
-        RawBytesULE(self.0.to_le_bytes())
-    }
-
-    #[inline]
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        CaseMappingData(u16::from_le_bytes(unaligned.0))
-    }
-}
-
-impl TrieValue for CaseMappingData {
-    type TryFromU32Error = TryFromIntError;
-
-    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        u16::try_from(i).map(CaseMappingData)
-    }
-
-    fn to_u32(self) -> u32 {
-        u32::from(self.0)
-    }
-}
+use crate::provider::data::{CaseMappingData, DotType, MappingKind};
 
 /// Reverse case folding data. Maps from multi-character strings back
 /// to code-points that fold to those strings.
@@ -395,7 +164,11 @@ impl<'data> CaseMappingInternals<'data> {
         let trie_index = ZeroVec::alloc_from_slice(trie_index);
         let trie_data = trie_data
             .iter()
-            .map(|&i| CaseMappingData(i).with_updated_exception(&idx_map))
+            .map(|&i| {
+                CaseMappingData::try_from_icu_integer(i)
+                    .unwrap()
+                    .with_updated_exception(&idx_map)
+            })
             .collect::<ZeroVec<_>>();
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
 
@@ -934,7 +707,7 @@ impl<'data> CaseMappingInternals<'data> {
 
         let data = self.lookup_data(c);
         if !data.has_exception() {
-            if data.case_type() != CaseType::None {
+            if data.case_type().is_some() {
                 let delta = data.delta() as i32;
                 if delta != 0 {
                     // Add the one simple case mapping, no matter what type it is.
@@ -1101,7 +874,7 @@ impl<'a> ContextIterator<'a> {
         for c in self.before.chars().rev() {
             let data = mapping.lookup_data(c);
             if !data.is_ignorable() {
-                return data.case_type() != CaseType::None;
+                return data.case_type().is_some();
             }
         }
         false
@@ -1110,7 +883,7 @@ impl<'a> ContextIterator<'a> {
         for c in self.after.chars() {
             let data = mapping.lookup_data(c);
             if !data.is_ignorable() {
-                return data.case_type() != CaseType::None;
+                return data.case_type().is_some();
             }
         }
         false
