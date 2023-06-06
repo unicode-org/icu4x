@@ -84,14 +84,14 @@ pub struct LocaleExpander {
     likely_subtags_ext: Option<DataPayload<LikelySubtagsExtendedV1Marker>>,
 }
 
-pub(crate) struct LocaleExpanderBorrowed<'a> {
+struct LocaleExpanderBorrowed<'a> {
     likely_subtags_l: &'a LikelySubtagsForLanguageV1<'a>,
     likely_subtags_sr: &'a LikelySubtagsForScriptRegionV1<'a>,
     likely_subtags_ext: Option<&'a LikelySubtagsExtendedV1<'a>>,
 }
 
 impl LocaleExpanderBorrowed<'_> {
-    pub(crate) fn get_l(&self, l: Language) -> Option<(Script, Region)> {
+    fn get_l(&self, l: Language) -> Option<(Script, Region)> {
         let key = &l.into_tinystr().to_unvalidated();
         self.likely_subtags_l.language.get_copied(key).or_else(|| {
             self.likely_subtags_ext
@@ -99,7 +99,7 @@ impl LocaleExpanderBorrowed<'_> {
         })
     }
 
-    pub(crate) fn get_ls(&self, l: Language, s: Script) -> Option<Region> {
+    fn get_ls(&self, l: Language, s: Script) -> Option<Region> {
         let key = &(
             l.into_tinystr().to_unvalidated(),
             s.into_tinystr().to_unvalidated(),
@@ -113,7 +113,7 @@ impl LocaleExpanderBorrowed<'_> {
             })
     }
 
-    pub(crate) fn get_lr(&self, l: Language, r: Region) -> Option<Script> {
+    fn get_lr(&self, l: Language, r: Region) -> Option<Script> {
         let key = &(
             l.into_tinystr().to_unvalidated(),
             r.into_tinystr().to_unvalidated(),
@@ -127,7 +127,7 @@ impl LocaleExpanderBorrowed<'_> {
             })
     }
 
-    pub(crate) fn get_s(&self, s: Script) -> Option<(Language, Region)> {
+    fn get_s(&self, s: Script) -> Option<(Language, Region)> {
         let key = &s.into_tinystr().to_unvalidated();
         self.likely_subtags_sr.script.get_copied(key).or_else(|| {
             self.likely_subtags_ext
@@ -135,7 +135,7 @@ impl LocaleExpanderBorrowed<'_> {
         })
     }
 
-    pub(crate) fn get_sr(&self, s: Script, r: Region) -> Option<Language> {
+    fn get_sr(&self, s: Script, r: Region) -> Option<Language> {
         let key = &(
             s.into_tinystr().to_unvalidated(),
             r.into_tinystr().to_unvalidated(),
@@ -149,7 +149,7 @@ impl LocaleExpanderBorrowed<'_> {
             })
     }
 
-    pub(crate) fn get_r(&self, r: Region) -> Option<(Language, Script)> {
+    fn get_r(&self, r: Region) -> Option<(Language, Script)> {
         let key = &r.into_tinystr().to_unvalidated();
         self.likely_subtags_sr.region.get_copied(key).or_else(|| {
             self.likely_subtags_ext
@@ -157,7 +157,7 @@ impl LocaleExpanderBorrowed<'_> {
         })
     }
 
-    pub(crate) fn get_und(&self) -> (Language, Script, Region) {
+    fn get_und(&self) -> (Language, Script, Region) {
         self.likely_subtags_l.und
     }
 }
