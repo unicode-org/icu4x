@@ -23,6 +23,9 @@ use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 pub mod names;
 
+pub use names::Bcp47ToIanaMapV1Marker;
+pub use names::IanaToBcp47MapV1Marker;
+
 /// TimeZone ID in BCP47 format
 ///
 /// <div class="stab unstable">

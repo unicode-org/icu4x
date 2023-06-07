@@ -1638,6 +1638,7 @@ time_zone/generic_short@1, sr-Latn, 138B, a4b2548c5cbaee3d
 time_zone/generic_short@1, th, 60B, f2684ef71a14efa
 time_zone/generic_short@1, tr, 60B, f2684ef71a14efa
 time_zone/generic_short@1, und, 60B, f2684ef71a14efa
+time_zone/iana_to_bcp47@1, und, 18678B, 4a0dcf968e4fadae
 time_zone/metazone_period@1, und, 20485B, 63f36c3252f47b76
 time_zone/specific_long@1, ar, 16042B, 49cfd1546ed410f
 time_zone/specific_long@1, ar-EG, 16042B, 49cfd1546ed410f

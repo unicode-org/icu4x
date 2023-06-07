@@ -193,6 +193,7 @@ registry!(
     GregorianDateSymbolsV1Marker,
     HexDigitV1Marker,
     HyphenV1Marker,
+    IanaToBcp47MapV1Marker,
     IdContinueV1Marker,
     IdeographicV1Marker,
     IdsBinaryOperatorV1Marker,
