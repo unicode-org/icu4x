@@ -21,6 +21,8 @@ use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
+pub mod names;
+
 /// TimeZone ID in BCP47 format
 ///
 /// <div class="stab unstable">
