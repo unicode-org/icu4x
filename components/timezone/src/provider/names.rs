@@ -14,11 +14,14 @@
 
 use alloc::boxed::Box;
 use core::cmp::Ordering;
-
 use core::str;
 
+use icu_provider::prelude::*;
+
 use zerovec::ule::{UnvalidatedStr, VarULE};
-use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec};
+use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap};
+use tinystr::UnvalidatedTinyAsciiStr;
+use crate::TimeZoneBcp47Id;
 
 /// This is a time zone identifier that can be "loose matched" as according to
 /// [ECMAScript Temporal](https://tc39.es/proposal-temporal/#sec-isavailabletimezonename)
@@ -125,25 +128,25 @@ impl Ord for NormalizedTimeZoneIdStr {
 }
 
 impl NormalizedTimeZoneIdStr {
-    /// Perform the loose comparison as defined in [`NormalizedPropertyNameStr`].
+    /// Perform the loose comparison as defined in [`NormalizedTimeZoneIdStr`].
     pub fn cmp_loose(&self, other: &Self) -> Ordering {
         let self_iter = self.0.iter().map(u8::to_ascii_lowercase);
         let other_iter = other.0.iter().map(u8::to_ascii_lowercase);
         self_iter.cmp(other_iter)
     }
 
-    /// Convert a string reference to a [`NormalizedPropertyNameStr`].
+    /// Convert a string reference to a [`NormalizedTimeZoneIdStr`].
     pub const fn from_str(s: &str) -> &Self {
         Self::cast_ref(UnvalidatedStr::from_str(s))
     }
 
-    /// Convert a [`UnvalidatedStr`] reference to a [`NormalizedPropertyNameStr`] reference.
+    /// Convert a [`UnvalidatedStr`] reference to a [`NormalizedTimeZoneIdStr`] reference.
     pub const fn cast_ref(value: &UnvalidatedStr) -> &Self {
         // Safety: repr(transparent)
         unsafe { core::mem::transmute(value) }
     }
 
-    /// Convert a [`UnvalidatedStr`] box to a [`NormalizedPropertyNameStr`] box.
+    /// Convert a [`UnvalidatedStr`] box to a [`NormalizedTimeZoneIdStr`] box.
     pub const fn cast_box(value: Box<UnvalidatedStr>) -> Box<Self> {
         // Safety: repr(transparent)
         unsafe { core::mem::transmute(value) }
@@ -153,4 +156,58 @@ impl NormalizedTimeZoneIdStr {
     pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
         Self::cast_box(UnvalidatedStr::from_boxed_bytes(b.into()))
     }
+}
+
+/// A mapping from IANA time zone identifiers to BCP-47 time zone identifiers.
+/// 
+/// Multiple IANA time zone IDs can map to the same BCP-47 time zone ID.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, Clone)]
+#[icu_provider::data_struct(marker(
+    IanaToBcp47MapV1Marker,
+    "time_zone/iana_to_bcp47@1"
+))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_timezone::provider::names),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct IanaToBcp47MapV1<'data> {
+    /// A map from IANA time zone identifiers to BCP-47 time zone identifiers
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: ZeroMap<'data, NormalizedTimeZoneIdStr, TimeZoneBcp47Id>,
+}
+
+/// A mapping from IANA time zone identifiers to BCP-47 time zone identifiers.
+/// 
+/// The BCP-47 time zone ID maps to the default IANA time zone ID according to the CLDR data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, Clone)]
+#[icu_provider::data_struct(marker(
+    Bcp47ToIanaMapV1Marker,
+    "time_zone/bcp47_to_iana@1"
+))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_timezone::provider::names),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct Bcp47ToIanaMapV1<'data> {
+    /// A map from BCP-47 time zone identifiers to IANA time zone identifiers
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: ZeroMap<'data, UnvalidatedTinyAsciiStr<8>, str>,
 }
