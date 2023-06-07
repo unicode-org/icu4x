@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::Error;
-use crate::exceptions::{CaseMappingExceptions, ExceptionHeader, ExceptionSlot};
+use crate::exceptions::CaseMappingExceptions;
+use crate::provider::exceptions::{ExceptionHeader, ExceptionSlot};
 use std::collections::HashMap;
 use zerovec::{VarZeroVec, ZeroVec};
 
@@ -117,9 +118,9 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
             index_map.insert(old_idx, new_idx);
 
             // Copy header.
-            let header = ExceptionHeader(self.read_raw()?);
-            self.write_raw(header.0);
-            self.double_slots = header.has_double_slots();
+            let header = ExceptionHeader::from_integer(self.read_raw()?);
+            self.write_raw(header.to_integer());
+            self.double_slots = header.double_width_slots;
 
             // Copy unmodified slots.
             for slot in [

@@ -222,6 +222,7 @@ impl CaseMappingData {
     }
 
     /// Attempt to construct from ICU-format integer
+    #[cfg(any(feature = "datagen", test))]
     pub(crate) fn try_from_icu_integer(int: u16) -> Result<Self, ZeroVecError> {
         let raw = int.to_unaligned();
         CaseMappingDataULE::validate_byte_slice(raw.as_bytes())?;
