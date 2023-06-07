@@ -80,7 +80,7 @@ impl<'de> serde::Deserialize<'de> for Box<NormalizedPropertyNameStr> {
     where
         D: serde::Deserializer<'de>,
     {
-        <Box<UnvalidatedStr>>::deserialize(deserializer).map(From::from)
+        <Box<UnvalidatedStr>>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_box)
     }
 }
 
@@ -94,7 +94,7 @@ where
     where
         D: serde::Deserializer<'de>,
     {
-        <&UnvalidatedStr>::deserialize(deserializer).map(From::from)
+        <&UnvalidatedStr>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_ref)
     }
 }
 
@@ -148,20 +148,6 @@ impl Ord for NormalizedPropertyNameStr {
     }
 }
 
-impl<'a> From<&'a UnvalidatedStr> for &'a NormalizedPropertyNameStr {
-    fn from(value: &'a UnvalidatedStr) -> Self {
-        // Safety: repr(transparent)
-        unsafe { core::mem::transmute(value) }
-    }
-}
-
-impl From<Box<UnvalidatedStr>> for Box<NormalizedPropertyNameStr> {
-    fn from(value: Box<UnvalidatedStr>) -> Self {
-        // Safety: repr(transparent)
-        unsafe { core::mem::transmute(value) }
-    }
-}
-
 impl NormalizedPropertyNameStr {
     /// Perform the loose comparison as defined in [`NormalizedPropertyNameStr`].
     pub fn cmp_loose(&self, other: &Self) -> Ordering {
@@ -170,14 +156,26 @@ impl NormalizedPropertyNameStr {
         self_iter.cmp(other_iter)
     }
 
-    /// Convert a string to a [`NormalizedPropertyNameStr`].
-    pub fn from_str(s: &str) -> &Self {
-        UnvalidatedStr::from_str(s).into()
+    /// Convert a string reference to a [`NormalizedPropertyNameStr`].
+    pub const fn from_str(s: &str) -> &Self {
+        Self::cast_ref(UnvalidatedStr::from_str(s))
     }
 
-    /// Get a `Box<NormalizedPropertyName>` from a byte slice
+    /// Convert a [`UnvalidatedStr`] reference to a [`NormalizedPropertyNameStr`] reference.
+    pub const fn cast_ref(value: &UnvalidatedStr) -> &Self {
+        // Safety: repr(transparent)
+        unsafe { core::mem::transmute(value) }
+    }
+
+    /// Convert a [`UnvalidatedStr`] box to a [`NormalizedPropertyNameStr`] box.
+    pub const fn cast_box(value: Box<UnvalidatedStr>) -> Box<Self> {
+        // Safety: repr(transparent)
+        unsafe { core::mem::transmute(value) }
+    }
+
+    /// Get a [`NormalizedPropertyName`] box from a byte slice.
     pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
-        Box::<NormalizedPropertyNameStr>::from(UnvalidatedStr::from_boxed_bytes(b.into()))
+        Self::cast_box(UnvalidatedStr::from_boxed_bytes(b.into()))
     }
 }
 
