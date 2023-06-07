@@ -141,7 +141,7 @@ exit_on_error true
 exec --fail-on-error cargo build -p icu_datagen
 root = pwd
 
-components = array "components/plurals" "components/timezone"
+components = array "components/plurals/data" "components/timezone/data"
 
 for component in ${components}
     cd "${component}"
