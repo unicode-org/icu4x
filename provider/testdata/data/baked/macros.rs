@@ -818,682 +818,6 @@ pub use __impl_time_zone_metazone_period_v1 as impl_time_zone_metazone_period_v1
 pub use __impl_time_zone_specific_long_v1 as impl_time_zone_specific_long_v1;
 #[doc(inline)]
 pub use __impl_time_zone_specific_short_v1 as impl_time_zone_specific_short_v1;
-#[doc(hidden)]
-pub use __lookup_calendar_japanese_v1 as lookup_calendar_japanese_v1;
-#[doc(hidden)]
-pub use __lookup_calendar_japanext_v1 as lookup_calendar_japanext_v1;
-#[doc(hidden)]
-pub use __lookup_collator_data_v1 as lookup_collator_data_v1;
-#[doc(hidden)]
-pub use __lookup_collator_dia_v1 as lookup_collator_dia_v1;
-#[doc(hidden)]
-pub use __lookup_collator_jamo_v1 as lookup_collator_jamo_v1;
-#[doc(hidden)]
-pub use __lookup_collator_meta_v1 as lookup_collator_meta_v1;
-#[doc(hidden)]
-pub use __lookup_collator_prim_v1 as lookup_collator_prim_v1;
-#[doc(hidden)]
-pub use __lookup_collator_reord_v1 as lookup_collator_reord_v1;
-#[doc(hidden)]
-pub use __lookup_compactdecimal_long_v1 as lookup_compactdecimal_long_v1;
-#[doc(hidden)]
-pub use __lookup_compactdecimal_short_v1 as lookup_compactdecimal_short_v1;
-#[doc(hidden)]
-pub use __lookup_core_helloworld_v1 as lookup_core_helloworld_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_buddhist_datelengths_v1 as lookup_datetime_buddhist_datelengths_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_buddhist_datesymbols_v1 as lookup_datetime_buddhist_datesymbols_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_coptic_datelengths_v1 as lookup_datetime_coptic_datelengths_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_coptic_datesymbols_v1 as lookup_datetime_coptic_datesymbols_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_ethiopic_datelengths_v1 as lookup_datetime_ethiopic_datelengths_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_ethiopic_datesymbols_v1 as lookup_datetime_ethiopic_datesymbols_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_gregory_datelengths_v1 as lookup_datetime_gregory_datelengths_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_gregory_datesymbols_v1 as lookup_datetime_gregory_datesymbols_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_indian_datelengths_v1 as lookup_datetime_indian_datelengths_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_indian_datesymbols_v1 as lookup_datetime_indian_datesymbols_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_japanese_datelengths_v1 as lookup_datetime_japanese_datelengths_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_japanese_datesymbols_v1 as lookup_datetime_japanese_datesymbols_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_japanext_datelengths_v1 as lookup_datetime_japanext_datelengths_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_japanext_datesymbols_v1 as lookup_datetime_japanext_datesymbols_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_skeletons_v1 as lookup_datetime_skeletons_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_timelengths_v1 as lookup_datetime_timelengths_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_timesymbols_v1 as lookup_datetime_timesymbols_v1;
-#[doc(hidden)]
-pub use __lookup_datetime_week_data_v1 as lookup_datetime_week_data_v1;
-#[doc(hidden)]
-pub use __lookup_decimal_symbols_v1 as lookup_decimal_symbols_v1;
-#[doc(hidden)]
-pub use __lookup_displaynames_languages_v1 as lookup_displaynames_languages_v1;
-#[doc(hidden)]
-pub use __lookup_displaynames_locales_v1 as lookup_displaynames_locales_v1;
-#[doc(hidden)]
-pub use __lookup_displaynames_regions_v1 as lookup_displaynames_regions_v1;
-#[doc(hidden)]
-pub use __lookup_displaynames_scripts_v1 as lookup_displaynames_scripts_v1;
-#[doc(hidden)]
-pub use __lookup_displaynames_variants_v1 as lookup_displaynames_variants_v1;
-#[doc(hidden)]
-pub use __lookup_fallback_likelysubtags_v1 as lookup_fallback_likelysubtags_v1;
-#[doc(hidden)]
-pub use __lookup_fallback_parents_v1 as lookup_fallback_parents_v1;
-#[doc(hidden)]
-pub use __lookup_fallback_supplement_co_v1 as lookup_fallback_supplement_co_v1;
-#[doc(hidden)]
-pub use __lookup_list_and_v1 as lookup_list_and_v1;
-#[doc(hidden)]
-pub use __lookup_list_or_v1 as lookup_list_or_v1;
-#[doc(hidden)]
-pub use __lookup_list_unit_v1 as lookup_list_unit_v1;
-#[doc(hidden)]
-pub use __lookup_locid_transform_aliases_v1 as lookup_locid_transform_aliases_v1;
-#[doc(hidden)]
-pub use __lookup_locid_transform_likelysubtags_ext_v1 as lookup_locid_transform_likelysubtags_ext_v1;
-#[doc(hidden)]
-pub use __lookup_locid_transform_likelysubtags_l_v1 as lookup_locid_transform_likelysubtags_l_v1;
-#[doc(hidden)]
-pub use __lookup_locid_transform_likelysubtags_sr_v1 as lookup_locid_transform_likelysubtags_sr_v1;
-#[doc(hidden)]
-pub use __lookup_locid_transform_likelysubtags_v1 as lookup_locid_transform_likelysubtags_v1;
-#[doc(hidden)]
-pub use __lookup_normalizer_comp_v1 as lookup_normalizer_comp_v1;
-#[doc(hidden)]
-pub use __lookup_normalizer_decomp_v1 as lookup_normalizer_decomp_v1;
-#[doc(hidden)]
-pub use __lookup_normalizer_nfd_v1 as lookup_normalizer_nfd_v1;
-#[doc(hidden)]
-pub use __lookup_normalizer_nfdex_v1 as lookup_normalizer_nfdex_v1;
-#[doc(hidden)]
-pub use __lookup_normalizer_nfkd_v1 as lookup_normalizer_nfkd_v1;
-#[doc(hidden)]
-pub use __lookup_normalizer_nfkdex_v1 as lookup_normalizer_nfkdex_v1;
-#[doc(hidden)]
-pub use __lookup_normalizer_uts46d_v1 as lookup_normalizer_uts46d_v1;
-#[doc(hidden)]
-pub use __lookup_plurals_cardinal_v1 as lookup_plurals_cardinal_v1;
-#[doc(hidden)]
-pub use __lookup_plurals_ordinal_v1 as lookup_plurals_ordinal_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_from_bc_v1 as lookup_propnames_from_bc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_from_ccc_v1 as lookup_propnames_from_ccc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_from_ea_v1 as lookup_propnames_from_ea_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_from_gc_v1 as lookup_propnames_from_gc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_from_gcb_v1 as lookup_propnames_from_gcb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_from_gcm_v1 as lookup_propnames_from_gcm_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_from_lb_v1 as lookup_propnames_from_lb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_from_sb_v1 as lookup_propnames_from_sb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_from_sc_v1 as lookup_propnames_from_sc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_from_wb_v1 as lookup_propnames_from_wb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_long_linear_bc_v1 as lookup_propnames_to_long_linear_bc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_long_linear_ea_v1 as lookup_propnames_to_long_linear_ea_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_long_linear_gc_v1 as lookup_propnames_to_long_linear_gc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_long_linear_gcb_v1 as lookup_propnames_to_long_linear_gcb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_long_linear_lb_v1 as lookup_propnames_to_long_linear_lb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_long_linear_sb_v1 as lookup_propnames_to_long_linear_sb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_long_linear_sc_v1 as lookup_propnames_to_long_linear_sc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_long_linear_wb_v1 as lookup_propnames_to_long_linear_wb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_long_sparse_ccc_v1 as lookup_propnames_to_long_sparse_ccc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_short_linear4_sc_v1 as lookup_propnames_to_short_linear4_sc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_short_linear_bc_v1 as lookup_propnames_to_short_linear_bc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_short_linear_ea_v1 as lookup_propnames_to_short_linear_ea_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_short_linear_gc_v1 as lookup_propnames_to_short_linear_gc_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_short_linear_gcb_v1 as lookup_propnames_to_short_linear_gcb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_short_linear_lb_v1 as lookup_propnames_to_short_linear_lb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_short_linear_sb_v1 as lookup_propnames_to_short_linear_sb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_short_linear_wb_v1 as lookup_propnames_to_short_linear_wb_v1;
-#[doc(hidden)]
-pub use __lookup_propnames_to_short_sparse_ccc_v1 as lookup_propnames_to_short_sparse_ccc_v1;
-#[doc(hidden)]
-pub use __lookup_props_ahex_v1 as lookup_props_ahex_v1;
-#[doc(hidden)]
-pub use __lookup_props_alnum_v1 as lookup_props_alnum_v1;
-#[doc(hidden)]
-pub use __lookup_props_alpha_v1 as lookup_props_alpha_v1;
-#[doc(hidden)]
-pub use __lookup_props_basic_emoji_v1 as lookup_props_basic_emoji_v1;
-#[doc(hidden)]
-pub use __lookup_props_bc_v1 as lookup_props_bc_v1;
-#[doc(hidden)]
-pub use __lookup_props_bidi_c_v1 as lookup_props_bidi_c_v1;
-#[doc(hidden)]
-pub use __lookup_props_bidi_m_v1 as lookup_props_bidi_m_v1;
-#[doc(hidden)]
-pub use __lookup_props_bidiauxiliaryprops_v1 as lookup_props_bidiauxiliaryprops_v1;
-#[doc(hidden)]
-pub use __lookup_props_blank_v1 as lookup_props_blank_v1;
-#[doc(hidden)]
-pub use __lookup_props_cased_v1 as lookup_props_cased_v1;
-#[doc(hidden)]
-pub use __lookup_props_casemap_v1 as lookup_props_casemap_v1;
-#[doc(hidden)]
-pub use __lookup_props_ccc_v1 as lookup_props_ccc_v1;
-#[doc(hidden)]
-pub use __lookup_props_ci_v1 as lookup_props_ci_v1;
-#[doc(hidden)]
-pub use __lookup_props_comp_ex_v1 as lookup_props_comp_ex_v1;
-#[doc(hidden)]
-pub use __lookup_props_cwcf_v1 as lookup_props_cwcf_v1;
-#[doc(hidden)]
-pub use __lookup_props_cwcm_v1 as lookup_props_cwcm_v1;
-#[doc(hidden)]
-pub use __lookup_props_cwkcf_v1 as lookup_props_cwkcf_v1;
-#[doc(hidden)]
-pub use __lookup_props_cwl_v1 as lookup_props_cwl_v1;
-#[doc(hidden)]
-pub use __lookup_props_cwt_v1 as lookup_props_cwt_v1;
-#[doc(hidden)]
-pub use __lookup_props_cwu_v1 as lookup_props_cwu_v1;
-#[doc(hidden)]
-pub use __lookup_props_dash_v1 as lookup_props_dash_v1;
-#[doc(hidden)]
-pub use __lookup_props_dep_v1 as lookup_props_dep_v1;
-#[doc(hidden)]
-pub use __lookup_props_di_v1 as lookup_props_di_v1;
-#[doc(hidden)]
-pub use __lookup_props_dia_v1 as lookup_props_dia_v1;
-#[doc(hidden)]
-pub use __lookup_props_ea_v1 as lookup_props_ea_v1;
-#[doc(hidden)]
-pub use __lookup_props_ebase_v1 as lookup_props_ebase_v1;
-#[doc(hidden)]
-pub use __lookup_props_ecomp_v1 as lookup_props_ecomp_v1;
-#[doc(hidden)]
-pub use __lookup_props_emod_v1 as lookup_props_emod_v1;
-#[doc(hidden)]
-pub use __lookup_props_emoji_v1 as lookup_props_emoji_v1;
-#[doc(hidden)]
-pub use __lookup_props_epres_v1 as lookup_props_epres_v1;
-#[doc(hidden)]
-pub use __lookup_props_exemplarchars_auxiliary_v1 as lookup_props_exemplarchars_auxiliary_v1;
-#[doc(hidden)]
-pub use __lookup_props_exemplarchars_index_v1 as lookup_props_exemplarchars_index_v1;
-#[doc(hidden)]
-pub use __lookup_props_exemplarchars_main_v1 as lookup_props_exemplarchars_main_v1;
-#[doc(hidden)]
-pub use __lookup_props_exemplarchars_numbers_v1 as lookup_props_exemplarchars_numbers_v1;
-#[doc(hidden)]
-pub use __lookup_props_exemplarchars_punctuation_v1 as lookup_props_exemplarchars_punctuation_v1;
-#[doc(hidden)]
-pub use __lookup_props_ext_v1 as lookup_props_ext_v1;
-#[doc(hidden)]
-pub use __lookup_props_extpict_v1 as lookup_props_extpict_v1;
-#[doc(hidden)]
-pub use __lookup_props_gc_v1 as lookup_props_gc_v1;
-#[doc(hidden)]
-pub use __lookup_props_gcb_v1 as lookup_props_gcb_v1;
-#[doc(hidden)]
-pub use __lookup_props_gr_base_v1 as lookup_props_gr_base_v1;
-#[doc(hidden)]
-pub use __lookup_props_gr_ext_v1 as lookup_props_gr_ext_v1;
-#[doc(hidden)]
-pub use __lookup_props_gr_link_v1 as lookup_props_gr_link_v1;
-#[doc(hidden)]
-pub use __lookup_props_graph_v1 as lookup_props_graph_v1;
-#[doc(hidden)]
-pub use __lookup_props_hex_v1 as lookup_props_hex_v1;
-#[doc(hidden)]
-pub use __lookup_props_hyphen_v1 as lookup_props_hyphen_v1;
-#[doc(hidden)]
-pub use __lookup_props_idc_v1 as lookup_props_idc_v1;
-#[doc(hidden)]
-pub use __lookup_props_ideo_v1 as lookup_props_ideo_v1;
-#[doc(hidden)]
-pub use __lookup_props_ids_v1 as lookup_props_ids_v1;
-#[doc(hidden)]
-pub use __lookup_props_idsb_v1 as lookup_props_idsb_v1;
-#[doc(hidden)]
-pub use __lookup_props_idst_v1 as lookup_props_idst_v1;
-#[doc(hidden)]
-pub use __lookup_props_join_c_v1 as lookup_props_join_c_v1;
-#[doc(hidden)]
-pub use __lookup_props_lb_v1 as lookup_props_lb_v1;
-#[doc(hidden)]
-pub use __lookup_props_loe_v1 as lookup_props_loe_v1;
-#[doc(hidden)]
-pub use __lookup_props_lower_v1 as lookup_props_lower_v1;
-#[doc(hidden)]
-pub use __lookup_props_math_v1 as lookup_props_math_v1;
-#[doc(hidden)]
-pub use __lookup_props_nchar_v1 as lookup_props_nchar_v1;
-#[doc(hidden)]
-pub use __lookup_props_nfcinert_v1 as lookup_props_nfcinert_v1;
-#[doc(hidden)]
-pub use __lookup_props_nfdinert_v1 as lookup_props_nfdinert_v1;
-#[doc(hidden)]
-pub use __lookup_props_nfkcinert_v1 as lookup_props_nfkcinert_v1;
-#[doc(hidden)]
-pub use __lookup_props_nfkdinert_v1 as lookup_props_nfkdinert_v1;
-#[doc(hidden)]
-pub use __lookup_props_pat_syn_v1 as lookup_props_pat_syn_v1;
-#[doc(hidden)]
-pub use __lookup_props_pat_ws_v1 as lookup_props_pat_ws_v1;
-#[doc(hidden)]
-pub use __lookup_props_pcm_v1 as lookup_props_pcm_v1;
-#[doc(hidden)]
-pub use __lookup_props_print_v1 as lookup_props_print_v1;
-#[doc(hidden)]
-pub use __lookup_props_qmark_v1 as lookup_props_qmark_v1;
-#[doc(hidden)]
-pub use __lookup_props_radical_v1 as lookup_props_radical_v1;
-#[doc(hidden)]
-pub use __lookup_props_ri_v1 as lookup_props_ri_v1;
-#[doc(hidden)]
-pub use __lookup_props_sb_v1 as lookup_props_sb_v1;
-#[doc(hidden)]
-pub use __lookup_props_sc_v1 as lookup_props_sc_v1;
-#[doc(hidden)]
-pub use __lookup_props_scx_v1 as lookup_props_scx_v1;
-#[doc(hidden)]
-pub use __lookup_props_sd_v1 as lookup_props_sd_v1;
-#[doc(hidden)]
-pub use __lookup_props_segstart_v1 as lookup_props_segstart_v1;
-#[doc(hidden)]
-pub use __lookup_props_sensitive_v1 as lookup_props_sensitive_v1;
-#[doc(hidden)]
-pub use __lookup_props_sterm_v1 as lookup_props_sterm_v1;
-#[doc(hidden)]
-pub use __lookup_props_term_v1 as lookup_props_term_v1;
-#[doc(hidden)]
-pub use __lookup_props_uideo_v1 as lookup_props_uideo_v1;
-#[doc(hidden)]
-pub use __lookup_props_upper_v1 as lookup_props_upper_v1;
-#[doc(hidden)]
-pub use __lookup_props_vs_v1 as lookup_props_vs_v1;
-#[doc(hidden)]
-pub use __lookup_props_wb_v1 as lookup_props_wb_v1;
-#[doc(hidden)]
-pub use __lookup_props_wspace_v1 as lookup_props_wspace_v1;
-#[doc(hidden)]
-pub use __lookup_props_xdigit_v1 as lookup_props_xdigit_v1;
-#[doc(hidden)]
-pub use __lookup_props_xidc_v1 as lookup_props_xidc_v1;
-#[doc(hidden)]
-pub use __lookup_props_xids_v1 as lookup_props_xids_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_long_day_v1 as lookup_relativetime_long_day_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_long_hour_v1 as lookup_relativetime_long_hour_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_long_minute_v1 as lookup_relativetime_long_minute_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_long_month_v1 as lookup_relativetime_long_month_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_long_quarter_v1 as lookup_relativetime_long_quarter_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_long_second_v1 as lookup_relativetime_long_second_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_long_week_v1 as lookup_relativetime_long_week_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_long_year_v1 as lookup_relativetime_long_year_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_narrow_day_v1 as lookup_relativetime_narrow_day_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_narrow_hour_v1 as lookup_relativetime_narrow_hour_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_narrow_minute_v1 as lookup_relativetime_narrow_minute_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_narrow_month_v1 as lookup_relativetime_narrow_month_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_narrow_quarter_v1 as lookup_relativetime_narrow_quarter_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_narrow_second_v1 as lookup_relativetime_narrow_second_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_narrow_week_v1 as lookup_relativetime_narrow_week_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_narrow_year_v1 as lookup_relativetime_narrow_year_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_short_day_v1 as lookup_relativetime_short_day_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_short_hour_v1 as lookup_relativetime_short_hour_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_short_minute_v1 as lookup_relativetime_short_minute_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_short_month_v1 as lookup_relativetime_short_month_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_short_quarter_v1 as lookup_relativetime_short_quarter_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_short_second_v1 as lookup_relativetime_short_second_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_short_week_v1 as lookup_relativetime_short_week_v1;
-#[doc(hidden)]
-pub use __lookup_relativetime_short_year_v1 as lookup_relativetime_short_year_v1;
-#[doc(hidden)]
-pub use __lookup_segmenter_dictionary_w_auto_v1 as lookup_segmenter_dictionary_w_auto_v1;
-#[doc(hidden)]
-pub use __lookup_segmenter_dictionary_wl_ext_v1 as lookup_segmenter_dictionary_wl_ext_v1;
-#[doc(hidden)]
-pub use __lookup_segmenter_grapheme_v1 as lookup_segmenter_grapheme_v1;
-#[doc(hidden)]
-pub use __lookup_segmenter_line_v1 as lookup_segmenter_line_v1;
-#[doc(hidden)]
-pub use __lookup_segmenter_lstm_wl_auto_v1 as lookup_segmenter_lstm_wl_auto_v1;
-#[doc(hidden)]
-pub use __lookup_segmenter_sentence_v1 as lookup_segmenter_sentence_v1;
-#[doc(hidden)]
-pub use __lookup_segmenter_word_v1 as lookup_segmenter_word_v1;
-#[doc(hidden)]
-pub use __lookup_time_zone_exemplar_cities_v1 as lookup_time_zone_exemplar_cities_v1;
-#[doc(hidden)]
-pub use __lookup_time_zone_formats_v1 as lookup_time_zone_formats_v1;
-#[doc(hidden)]
-pub use __lookup_time_zone_generic_long_v1 as lookup_time_zone_generic_long_v1;
-#[doc(hidden)]
-pub use __lookup_time_zone_generic_short_v1 as lookup_time_zone_generic_short_v1;
-#[doc(hidden)]
-pub use __lookup_time_zone_metazone_period_v1 as lookup_time_zone_metazone_period_v1;
-#[doc(hidden)]
-pub use __lookup_time_zone_specific_long_v1 as lookup_time_zone_specific_long_v1;
-#[doc(hidden)]
-pub use __lookup_time_zone_specific_short_v1 as lookup_time_zone_specific_short_v1;
-#[doc(inline)]
-pub use __singleton_calendar_japanese_v1 as singleton_calendar_japanese_v1;
-#[doc(inline)]
-pub use __singleton_calendar_japanext_v1 as singleton_calendar_japanext_v1;
-#[doc(inline)]
-pub use __singleton_collator_dia_v1 as singleton_collator_dia_v1;
-#[doc(inline)]
-pub use __singleton_collator_jamo_v1 as singleton_collator_jamo_v1;
-#[doc(inline)]
-pub use __singleton_collator_prim_v1 as singleton_collator_prim_v1;
-#[doc(inline)]
-pub use __singleton_fallback_likelysubtags_v1 as singleton_fallback_likelysubtags_v1;
-#[doc(inline)]
-pub use __singleton_fallback_parents_v1 as singleton_fallback_parents_v1;
-#[doc(inline)]
-pub use __singleton_fallback_supplement_co_v1 as singleton_fallback_supplement_co_v1;
-#[doc(inline)]
-pub use __singleton_locid_transform_aliases_v1 as singleton_locid_transform_aliases_v1;
-#[doc(inline)]
-pub use __singleton_locid_transform_likelysubtags_ext_v1 as singleton_locid_transform_likelysubtags_ext_v1;
-#[doc(inline)]
-pub use __singleton_locid_transform_likelysubtags_l_v1 as singleton_locid_transform_likelysubtags_l_v1;
-#[doc(inline)]
-pub use __singleton_locid_transform_likelysubtags_sr_v1 as singleton_locid_transform_likelysubtags_sr_v1;
-#[doc(inline)]
-pub use __singleton_locid_transform_likelysubtags_v1 as singleton_locid_transform_likelysubtags_v1;
-#[doc(inline)]
-pub use __singleton_normalizer_comp_v1 as singleton_normalizer_comp_v1;
-#[doc(inline)]
-pub use __singleton_normalizer_decomp_v1 as singleton_normalizer_decomp_v1;
-#[doc(inline)]
-pub use __singleton_normalizer_nfd_v1 as singleton_normalizer_nfd_v1;
-#[doc(inline)]
-pub use __singleton_normalizer_nfdex_v1 as singleton_normalizer_nfdex_v1;
-#[doc(inline)]
-pub use __singleton_normalizer_nfkd_v1 as singleton_normalizer_nfkd_v1;
-#[doc(inline)]
-pub use __singleton_normalizer_nfkdex_v1 as singleton_normalizer_nfkdex_v1;
-#[doc(inline)]
-pub use __singleton_normalizer_uts46d_v1 as singleton_normalizer_uts46d_v1;
-#[doc(inline)]
-pub use __singleton_propnames_from_bc_v1 as singleton_propnames_from_bc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_from_ccc_v1 as singleton_propnames_from_ccc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_from_ea_v1 as singleton_propnames_from_ea_v1;
-#[doc(inline)]
-pub use __singleton_propnames_from_gc_v1 as singleton_propnames_from_gc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_from_gcb_v1 as singleton_propnames_from_gcb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_from_gcm_v1 as singleton_propnames_from_gcm_v1;
-#[doc(inline)]
-pub use __singleton_propnames_from_lb_v1 as singleton_propnames_from_lb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_from_sb_v1 as singleton_propnames_from_sb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_from_sc_v1 as singleton_propnames_from_sc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_from_wb_v1 as singleton_propnames_from_wb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_long_linear_bc_v1 as singleton_propnames_to_long_linear_bc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_long_linear_ea_v1 as singleton_propnames_to_long_linear_ea_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_long_linear_gc_v1 as singleton_propnames_to_long_linear_gc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_long_linear_gcb_v1 as singleton_propnames_to_long_linear_gcb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_long_linear_lb_v1 as singleton_propnames_to_long_linear_lb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_long_linear_sb_v1 as singleton_propnames_to_long_linear_sb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_long_linear_sc_v1 as singleton_propnames_to_long_linear_sc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_long_linear_wb_v1 as singleton_propnames_to_long_linear_wb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_long_sparse_ccc_v1 as singleton_propnames_to_long_sparse_ccc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_short_linear4_sc_v1 as singleton_propnames_to_short_linear4_sc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_short_linear_bc_v1 as singleton_propnames_to_short_linear_bc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_short_linear_ea_v1 as singleton_propnames_to_short_linear_ea_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_short_linear_gc_v1 as singleton_propnames_to_short_linear_gc_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_short_linear_gcb_v1 as singleton_propnames_to_short_linear_gcb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_short_linear_lb_v1 as singleton_propnames_to_short_linear_lb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_short_linear_sb_v1 as singleton_propnames_to_short_linear_sb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_short_linear_wb_v1 as singleton_propnames_to_short_linear_wb_v1;
-#[doc(inline)]
-pub use __singleton_propnames_to_short_sparse_ccc_v1 as singleton_propnames_to_short_sparse_ccc_v1;
-#[doc(inline)]
-pub use __singleton_props_ahex_v1 as singleton_props_ahex_v1;
-#[doc(inline)]
-pub use __singleton_props_alnum_v1 as singleton_props_alnum_v1;
-#[doc(inline)]
-pub use __singleton_props_alpha_v1 as singleton_props_alpha_v1;
-#[doc(inline)]
-pub use __singleton_props_basic_emoji_v1 as singleton_props_basic_emoji_v1;
-#[doc(inline)]
-pub use __singleton_props_bc_v1 as singleton_props_bc_v1;
-#[doc(inline)]
-pub use __singleton_props_bidi_c_v1 as singleton_props_bidi_c_v1;
-#[doc(inline)]
-pub use __singleton_props_bidi_m_v1 as singleton_props_bidi_m_v1;
-#[doc(inline)]
-pub use __singleton_props_bidiauxiliaryprops_v1 as singleton_props_bidiauxiliaryprops_v1;
-#[doc(inline)]
-pub use __singleton_props_blank_v1 as singleton_props_blank_v1;
-#[doc(inline)]
-pub use __singleton_props_cased_v1 as singleton_props_cased_v1;
-#[doc(inline)]
-pub use __singleton_props_casemap_v1 as singleton_props_casemap_v1;
-#[doc(inline)]
-pub use __singleton_props_ccc_v1 as singleton_props_ccc_v1;
-#[doc(inline)]
-pub use __singleton_props_ci_v1 as singleton_props_ci_v1;
-#[doc(inline)]
-pub use __singleton_props_comp_ex_v1 as singleton_props_comp_ex_v1;
-#[doc(inline)]
-pub use __singleton_props_cwcf_v1 as singleton_props_cwcf_v1;
-#[doc(inline)]
-pub use __singleton_props_cwcm_v1 as singleton_props_cwcm_v1;
-#[doc(inline)]
-pub use __singleton_props_cwkcf_v1 as singleton_props_cwkcf_v1;
-#[doc(inline)]
-pub use __singleton_props_cwl_v1 as singleton_props_cwl_v1;
-#[doc(inline)]
-pub use __singleton_props_cwt_v1 as singleton_props_cwt_v1;
-#[doc(inline)]
-pub use __singleton_props_cwu_v1 as singleton_props_cwu_v1;
-#[doc(inline)]
-pub use __singleton_props_dash_v1 as singleton_props_dash_v1;
-#[doc(inline)]
-pub use __singleton_props_dep_v1 as singleton_props_dep_v1;
-#[doc(inline)]
-pub use __singleton_props_di_v1 as singleton_props_di_v1;
-#[doc(inline)]
-pub use __singleton_props_dia_v1 as singleton_props_dia_v1;
-#[doc(inline)]
-pub use __singleton_props_ea_v1 as singleton_props_ea_v1;
-#[doc(inline)]
-pub use __singleton_props_ebase_v1 as singleton_props_ebase_v1;
-#[doc(inline)]
-pub use __singleton_props_ecomp_v1 as singleton_props_ecomp_v1;
-#[doc(inline)]
-pub use __singleton_props_emod_v1 as singleton_props_emod_v1;
-#[doc(inline)]
-pub use __singleton_props_emoji_v1 as singleton_props_emoji_v1;
-#[doc(inline)]
-pub use __singleton_props_epres_v1 as singleton_props_epres_v1;
-#[doc(inline)]
-pub use __singleton_props_ext_v1 as singleton_props_ext_v1;
-#[doc(inline)]
-pub use __singleton_props_extpict_v1 as singleton_props_extpict_v1;
-#[doc(inline)]
-pub use __singleton_props_gc_v1 as singleton_props_gc_v1;
-#[doc(inline)]
-pub use __singleton_props_gcb_v1 as singleton_props_gcb_v1;
-#[doc(inline)]
-pub use __singleton_props_gr_base_v1 as singleton_props_gr_base_v1;
-#[doc(inline)]
-pub use __singleton_props_gr_ext_v1 as singleton_props_gr_ext_v1;
-#[doc(inline)]
-pub use __singleton_props_gr_link_v1 as singleton_props_gr_link_v1;
-#[doc(inline)]
-pub use __singleton_props_graph_v1 as singleton_props_graph_v1;
-#[doc(inline)]
-pub use __singleton_props_hex_v1 as singleton_props_hex_v1;
-#[doc(inline)]
-pub use __singleton_props_hyphen_v1 as singleton_props_hyphen_v1;
-#[doc(inline)]
-pub use __singleton_props_idc_v1 as singleton_props_idc_v1;
-#[doc(inline)]
-pub use __singleton_props_ideo_v1 as singleton_props_ideo_v1;
-#[doc(inline)]
-pub use __singleton_props_ids_v1 as singleton_props_ids_v1;
-#[doc(inline)]
-pub use __singleton_props_idsb_v1 as singleton_props_idsb_v1;
-#[doc(inline)]
-pub use __singleton_props_idst_v1 as singleton_props_idst_v1;
-#[doc(inline)]
-pub use __singleton_props_join_c_v1 as singleton_props_join_c_v1;
-#[doc(inline)]
-pub use __singleton_props_lb_v1 as singleton_props_lb_v1;
-#[doc(inline)]
-pub use __singleton_props_loe_v1 as singleton_props_loe_v1;
-#[doc(inline)]
-pub use __singleton_props_lower_v1 as singleton_props_lower_v1;
-#[doc(inline)]
-pub use __singleton_props_math_v1 as singleton_props_math_v1;
-#[doc(inline)]
-pub use __singleton_props_nchar_v1 as singleton_props_nchar_v1;
-#[doc(inline)]
-pub use __singleton_props_nfcinert_v1 as singleton_props_nfcinert_v1;
-#[doc(inline)]
-pub use __singleton_props_nfdinert_v1 as singleton_props_nfdinert_v1;
-#[doc(inline)]
-pub use __singleton_props_nfkcinert_v1 as singleton_props_nfkcinert_v1;
-#[doc(inline)]
-pub use __singleton_props_nfkdinert_v1 as singleton_props_nfkdinert_v1;
-#[doc(inline)]
-pub use __singleton_props_pat_syn_v1 as singleton_props_pat_syn_v1;
-#[doc(inline)]
-pub use __singleton_props_pat_ws_v1 as singleton_props_pat_ws_v1;
-#[doc(inline)]
-pub use __singleton_props_pcm_v1 as singleton_props_pcm_v1;
-#[doc(inline)]
-pub use __singleton_props_print_v1 as singleton_props_print_v1;
-#[doc(inline)]
-pub use __singleton_props_qmark_v1 as singleton_props_qmark_v1;
-#[doc(inline)]
-pub use __singleton_props_radical_v1 as singleton_props_radical_v1;
-#[doc(inline)]
-pub use __singleton_props_ri_v1 as singleton_props_ri_v1;
-#[doc(inline)]
-pub use __singleton_props_sb_v1 as singleton_props_sb_v1;
-#[doc(inline)]
-pub use __singleton_props_sc_v1 as singleton_props_sc_v1;
-#[doc(inline)]
-pub use __singleton_props_scx_v1 as singleton_props_scx_v1;
-#[doc(inline)]
-pub use __singleton_props_sd_v1 as singleton_props_sd_v1;
-#[doc(inline)]
-pub use __singleton_props_segstart_v1 as singleton_props_segstart_v1;
-#[doc(inline)]
-pub use __singleton_props_sensitive_v1 as singleton_props_sensitive_v1;
-#[doc(inline)]
-pub use __singleton_props_sterm_v1 as singleton_props_sterm_v1;
-#[doc(inline)]
-pub use __singleton_props_term_v1 as singleton_props_term_v1;
-#[doc(inline)]
-pub use __singleton_props_uideo_v1 as singleton_props_uideo_v1;
-#[doc(inline)]
-pub use __singleton_props_upper_v1 as singleton_props_upper_v1;
-#[doc(inline)]
-pub use __singleton_props_vs_v1 as singleton_props_vs_v1;
-#[doc(inline)]
-pub use __singleton_props_wb_v1 as singleton_props_wb_v1;
-#[doc(inline)]
-pub use __singleton_props_wspace_v1 as singleton_props_wspace_v1;
-#[doc(inline)]
-pub use __singleton_props_xdigit_v1 as singleton_props_xdigit_v1;
-#[doc(inline)]
-pub use __singleton_props_xidc_v1 as singleton_props_xidc_v1;
-#[doc(inline)]
-pub use __singleton_props_xids_v1 as singleton_props_xids_v1;
-#[doc(inline)]
-pub use __singleton_segmenter_dictionary_w_auto_v1 as singleton_segmenter_dictionary_w_auto_v1;
-#[doc(inline)]
-pub use __singleton_segmenter_dictionary_wl_ext_v1 as singleton_segmenter_dictionary_wl_ext_v1;
-#[doc(inline)]
-pub use __singleton_segmenter_grapheme_v1 as singleton_segmenter_grapheme_v1;
-#[doc(inline)]
-pub use __singleton_segmenter_line_v1 as singleton_segmenter_line_v1;
-#[doc(inline)]
-pub use __singleton_segmenter_lstm_wl_auto_v1 as singleton_segmenter_lstm_wl_auto_v1;
-#[doc(inline)]
-pub use __singleton_segmenter_sentence_v1 as singleton_segmenter_sentence_v1;
-#[doc(inline)]
-pub use __singleton_segmenter_word_v1 as singleton_segmenter_word_v1;
-#[doc(inline)]
-pub use __singleton_time_zone_metazone_period_v1 as singleton_time_zone_metazone_period_v1;
 /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
@@ -2337,409 +1661,409 @@ macro_rules! __impl_any_provider {
                 const TIME_ZONE_SPECIFIC_SHORT_V1: icu_provider::DataKeyHash = <icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
                     #[cfg(feature = "icu_calendar")]
-                    CALENDAR_JAPANESE_V1 => lookup_calendar_japanese_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    CALENDAR_JAPANESE_V1 => Self::lookup_calendar_japanese_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_calendar")]
-                    CALENDAR_JAPANEXT_V1 => lookup_calendar_japanext_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    CALENDAR_JAPANEXT_V1 => Self::lookup_calendar_japanext_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
-                    COLLATOR_DATA_V1 => lookup_collator_data_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    COLLATOR_DATA_V1 => Self::lookup_collator_data_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
-                    COLLATOR_DIA_V1 => lookup_collator_dia_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    COLLATOR_DIA_V1 => Self::lookup_collator_dia_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
-                    COLLATOR_JAMO_V1 => lookup_collator_jamo_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    COLLATOR_JAMO_V1 => Self::lookup_collator_jamo_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
-                    COLLATOR_META_V1 => lookup_collator_meta_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    COLLATOR_META_V1 => Self::lookup_collator_meta_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
-                    COLLATOR_PRIM_V1 => lookup_collator_prim_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    COLLATOR_PRIM_V1 => Self::lookup_collator_prim_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_collator")]
-                    COLLATOR_REORD_V1 => lookup_collator_reord_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    COLLATOR_REORD_V1 => Self::lookup_collator_reord_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_compactdecimal")]
-                    COMPACTDECIMAL_LONG_V1 => lookup_compactdecimal_long_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    COMPACTDECIMAL_LONG_V1 => Self::lookup_compactdecimal_long_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_compactdecimal")]
-                    COMPACTDECIMAL_SHORT_V1 => lookup_compactdecimal_short_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
-                    CORE_HELLOWORLD_V1 => lookup_core_helloworld_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    COMPACTDECIMAL_SHORT_V1 => Self::lookup_compactdecimal_short_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    CORE_HELLOWORLD_V1 => Self::lookup_core_helloworld_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_BUDDHIST_DATELENGTHS_V1 => lookup_datetime_buddhist_datelengths_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_BUDDHIST_DATELENGTHS_V1 => Self::lookup_datetime_buddhist_datelengths_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_BUDDHIST_DATESYMBOLS_V1 => lookup_datetime_buddhist_datesymbols_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_BUDDHIST_DATESYMBOLS_V1 => Self::lookup_datetime_buddhist_datesymbols_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_COPTIC_DATELENGTHS_V1 => lookup_datetime_coptic_datelengths_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_COPTIC_DATELENGTHS_V1 => Self::lookup_datetime_coptic_datelengths_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_COPTIC_DATESYMBOLS_V1 => lookup_datetime_coptic_datesymbols_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_COPTIC_DATESYMBOLS_V1 => Self::lookup_datetime_coptic_datesymbols_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_ETHIOPIC_DATELENGTHS_V1 => lookup_datetime_ethiopic_datelengths_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_ETHIOPIC_DATELENGTHS_V1 => Self::lookup_datetime_ethiopic_datelengths_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_ETHIOPIC_DATESYMBOLS_V1 => lookup_datetime_ethiopic_datesymbols_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_ETHIOPIC_DATESYMBOLS_V1 => Self::lookup_datetime_ethiopic_datesymbols_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_GREGORY_DATELENGTHS_V1 => lookup_datetime_gregory_datelengths_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_GREGORY_DATELENGTHS_V1 => Self::lookup_datetime_gregory_datelengths_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_GREGORY_DATESYMBOLS_V1 => lookup_datetime_gregory_datesymbols_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_GREGORY_DATESYMBOLS_V1 => Self::lookup_datetime_gregory_datesymbols_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_INDIAN_DATELENGTHS_V1 => lookup_datetime_indian_datelengths_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_INDIAN_DATELENGTHS_V1 => Self::lookup_datetime_indian_datelengths_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_INDIAN_DATESYMBOLS_V1 => lookup_datetime_indian_datesymbols_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_INDIAN_DATESYMBOLS_V1 => Self::lookup_datetime_indian_datesymbols_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_JAPANESE_DATELENGTHS_V1 => lookup_datetime_japanese_datelengths_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_JAPANESE_DATELENGTHS_V1 => Self::lookup_datetime_japanese_datelengths_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_JAPANESE_DATESYMBOLS_V1 => lookup_datetime_japanese_datesymbols_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_JAPANESE_DATESYMBOLS_V1 => Self::lookup_datetime_japanese_datesymbols_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_JAPANEXT_DATELENGTHS_V1 => lookup_datetime_japanext_datelengths_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_JAPANEXT_DATELENGTHS_V1 => Self::lookup_datetime_japanext_datelengths_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_JAPANEXT_DATESYMBOLS_V1 => lookup_datetime_japanext_datesymbols_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_JAPANEXT_DATESYMBOLS_V1 => Self::lookup_datetime_japanext_datesymbols_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime_experimental")]
-                    DATETIME_SKELETONS_V1 => lookup_datetime_skeletons_v1!(req.locale).map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from).map(icu_provider::DataPayload::<icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>::from_owned).map(icu_provider::DataPayload::wrap_into_any_payload),
+                    DATETIME_SKELETONS_V1 => Self::lookup_datetime_skeletons_v1(&req.locale).map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from).map(icu_provider::DataPayload::<icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>::from_owned).map(icu_provider::DataPayload::wrap_into_any_payload),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_TIMELENGTHS_V1 => lookup_datetime_timelengths_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_TIMELENGTHS_V1 => Self::lookup_datetime_timelengths_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    DATETIME_TIMESYMBOLS_V1 => lookup_datetime_timesymbols_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_TIMESYMBOLS_V1 => Self::lookup_datetime_timesymbols_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_calendar")]
-                    DATETIME_WEEK_DATA_V1 => lookup_datetime_week_data_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DATETIME_WEEK_DATA_V1 => Self::lookup_datetime_week_data_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_decimal")]
-                    DECIMAL_SYMBOLS_V1 => lookup_decimal_symbols_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DECIMAL_SYMBOLS_V1 => Self::lookup_decimal_symbols_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_displaynames")]
-                    DISPLAYNAMES_LANGUAGES_V1 => lookup_displaynames_languages_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DISPLAYNAMES_LANGUAGES_V1 => Self::lookup_displaynames_languages_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_displaynames")]
-                    DISPLAYNAMES_LOCALES_V1 => lookup_displaynames_locales_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DISPLAYNAMES_LOCALES_V1 => Self::lookup_displaynames_locales_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_displaynames")]
-                    DISPLAYNAMES_REGIONS_V1 => lookup_displaynames_regions_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DISPLAYNAMES_REGIONS_V1 => Self::lookup_displaynames_regions_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_displaynames")]
-                    DISPLAYNAMES_SCRIPTS_V1 => lookup_displaynames_scripts_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DISPLAYNAMES_SCRIPTS_V1 => Self::lookup_displaynames_scripts_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_displaynames")]
-                    DISPLAYNAMES_VARIANTS_V1 => lookup_displaynames_variants_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
-                    FALLBACK_LIKELYSUBTAGS_V1 => lookup_fallback_likelysubtags_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
-                    FALLBACK_PARENTS_V1 => lookup_fallback_parents_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
-                    FALLBACK_SUPPLEMENT_CO_V1 => lookup_fallback_supplement_co_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    DISPLAYNAMES_VARIANTS_V1 => Self::lookup_displaynames_variants_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    FALLBACK_LIKELYSUBTAGS_V1 => Self::lookup_fallback_likelysubtags_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    FALLBACK_PARENTS_V1 => Self::lookup_fallback_parents_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    FALLBACK_SUPPLEMENT_CO_V1 => Self::lookup_fallback_supplement_co_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_list")]
-                    LIST_AND_V1 => lookup_list_and_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    LIST_AND_V1 => Self::lookup_list_and_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_list")]
-                    LIST_OR_V1 => lookup_list_or_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    LIST_OR_V1 => Self::lookup_list_or_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_list")]
-                    LIST_UNIT_V1 => lookup_list_unit_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    LIST_UNIT_V1 => Self::lookup_list_unit_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
-                    LOCID_TRANSFORM_ALIASES_V1 => lookup_locid_transform_aliases_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    LOCID_TRANSFORM_ALIASES_V1 => Self::lookup_locid_transform_aliases_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
-                    LOCID_TRANSFORM_LIKELYSUBTAGS_V1 => lookup_locid_transform_likelysubtags_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    LOCID_TRANSFORM_LIKELYSUBTAGS_V1 => Self::lookup_locid_transform_likelysubtags_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
-                    LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1 => lookup_locid_transform_likelysubtags_ext_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1 => Self::lookup_locid_transform_likelysubtags_ext_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
-                    LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1 => lookup_locid_transform_likelysubtags_l_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1 => Self::lookup_locid_transform_likelysubtags_l_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_locid_transform")]
-                    LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1 => lookup_locid_transform_likelysubtags_sr_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1 => Self::lookup_locid_transform_likelysubtags_sr_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_COMP_V1 => lookup_normalizer_comp_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_COMP_V1 => Self::lookup_normalizer_comp_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_DECOMP_V1 => lookup_normalizer_decomp_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_DECOMP_V1 => Self::lookup_normalizer_decomp_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_NFD_V1 => lookup_normalizer_nfd_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_NFD_V1 => Self::lookup_normalizer_nfd_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_NFDEX_V1 => lookup_normalizer_nfdex_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_NFDEX_V1 => Self::lookup_normalizer_nfdex_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_NFKD_V1 => lookup_normalizer_nfkd_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_NFKD_V1 => Self::lookup_normalizer_nfkd_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_NFKDEX_V1 => lookup_normalizer_nfkdex_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_NFKDEX_V1 => Self::lookup_normalizer_nfkdex_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_normalizer")]
-                    NORMALIZER_UTS46D_V1 => lookup_normalizer_uts46d_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    NORMALIZER_UTS46D_V1 => Self::lookup_normalizer_uts46d_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_plurals")]
-                    PLURALS_CARDINAL_V1 => lookup_plurals_cardinal_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PLURALS_CARDINAL_V1 => Self::lookup_plurals_cardinal_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_plurals")]
-                    PLURALS_ORDINAL_V1 => lookup_plurals_ordinal_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PLURALS_ORDINAL_V1 => Self::lookup_plurals_ordinal_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_GCB_V1 => lookup_propnames_from_gcb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_GCB_V1 => Self::lookup_propnames_from_gcb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_SB_V1 => lookup_propnames_from_sb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_SB_V1 => Self::lookup_propnames_from_sb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_WB_V1 => lookup_propnames_from_wb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_WB_V1 => Self::lookup_propnames_from_wb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_BC_V1 => lookup_propnames_from_bc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_BC_V1 => Self::lookup_propnames_from_bc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_CCC_V1 => lookup_propnames_from_ccc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_CCC_V1 => Self::lookup_propnames_from_ccc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_EA_V1 => lookup_propnames_from_ea_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_EA_V1 => Self::lookup_propnames_from_ea_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_GC_V1 => lookup_propnames_from_gc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_GC_V1 => Self::lookup_propnames_from_gc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_GCM_V1 => lookup_propnames_from_gcm_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_GCM_V1 => Self::lookup_propnames_from_gcm_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_LB_V1 => lookup_propnames_from_lb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_LB_V1 => Self::lookup_propnames_from_lb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_FROM_SC_V1 => lookup_propnames_from_sc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_FROM_SC_V1 => Self::lookup_propnames_from_sc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_GCB_V1 => lookup_propnames_to_long_linear_gcb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_LONG_LINEAR_GCB_V1 => Self::lookup_propnames_to_long_linear_gcb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_SB_V1 => lookup_propnames_to_long_linear_sb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_LONG_LINEAR_SB_V1 => Self::lookup_propnames_to_long_linear_sb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_WB_V1 => lookup_propnames_to_long_linear_wb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_LONG_LINEAR_WB_V1 => Self::lookup_propnames_to_long_linear_wb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_BC_V1 => lookup_propnames_to_long_linear_bc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_LONG_LINEAR_BC_V1 => Self::lookup_propnames_to_long_linear_bc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_EA_V1 => lookup_propnames_to_long_linear_ea_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_LONG_LINEAR_EA_V1 => Self::lookup_propnames_to_long_linear_ea_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_GC_V1 => lookup_propnames_to_long_linear_gc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_LONG_LINEAR_GC_V1 => Self::lookup_propnames_to_long_linear_gc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_LB_V1 => lookup_propnames_to_long_linear_lb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_LONG_LINEAR_LB_V1 => Self::lookup_propnames_to_long_linear_lb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_LINEAR_SC_V1 => lookup_propnames_to_long_linear_sc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_LONG_LINEAR_SC_V1 => Self::lookup_propnames_to_long_linear_sc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_LONG_SPARSE_CCC_V1 => lookup_propnames_to_long_sparse_ccc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_LONG_SPARSE_CCC_V1 => Self::lookup_propnames_to_long_sparse_ccc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_GCB_V1 => lookup_propnames_to_short_linear_gcb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_SHORT_LINEAR_GCB_V1 => Self::lookup_propnames_to_short_linear_gcb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_SB_V1 => lookup_propnames_to_short_linear_sb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_SHORT_LINEAR_SB_V1 => Self::lookup_propnames_to_short_linear_sb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_WB_V1 => lookup_propnames_to_short_linear_wb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_SHORT_LINEAR_WB_V1 => Self::lookup_propnames_to_short_linear_wb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_BC_V1 => lookup_propnames_to_short_linear_bc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_SHORT_LINEAR_BC_V1 => Self::lookup_propnames_to_short_linear_bc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_EA_V1 => lookup_propnames_to_short_linear_ea_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_SHORT_LINEAR_EA_V1 => Self::lookup_propnames_to_short_linear_ea_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_GC_V1 => lookup_propnames_to_short_linear_gc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_SHORT_LINEAR_GC_V1 => Self::lookup_propnames_to_short_linear_gc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR_LB_V1 => lookup_propnames_to_short_linear_lb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_SHORT_LINEAR_LB_V1 => Self::lookup_propnames_to_short_linear_lb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_LINEAR4_SC_V1 => lookup_propnames_to_short_linear4_sc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_SHORT_LINEAR4_SC_V1 => Self::lookup_propnames_to_short_linear4_sc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPNAMES_TO_SHORT_SPARSE_CCC_V1 => lookup_propnames_to_short_sparse_ccc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPNAMES_TO_SHORT_SPARSE_CCC_V1 => Self::lookup_propnames_to_short_sparse_ccc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_AHEX_V1 => lookup_props_ahex_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_AHEX_V1 => Self::lookup_props_ahex_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_ALPHA_V1 => lookup_props_alpha_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_ALPHA_V1 => Self::lookup_props_alpha_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_BASIC_EMOJI_V1 => lookup_props_basic_emoji_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_BASIC_EMOJI_V1 => Self::lookup_props_basic_emoji_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_BIDI_C_V1 => lookup_props_bidi_c_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_BIDI_C_V1 => Self::lookup_props_bidi_c_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_BIDI_M_V1 => lookup_props_bidi_m_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_BIDI_M_V1 => Self::lookup_props_bidi_m_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_CI_V1 => lookup_props_ci_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CI_V1 => Self::lookup_props_ci_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_CWCF_V1 => lookup_props_cwcf_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CWCF_V1 => Self::lookup_props_cwcf_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_CWCM_V1 => lookup_props_cwcm_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CWCM_V1 => Self::lookup_props_cwcm_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_CWKCF_V1 => lookup_props_cwkcf_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CWKCF_V1 => Self::lookup_props_cwkcf_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_CWL_V1 => lookup_props_cwl_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CWL_V1 => Self::lookup_props_cwl_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_CWT_V1 => lookup_props_cwt_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CWT_V1 => Self::lookup_props_cwt_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_CWU_V1 => lookup_props_cwu_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CWU_V1 => Self::lookup_props_cwu_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_CASED_V1 => lookup_props_cased_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CASED_V1 => Self::lookup_props_cased_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_COMP_EX_V1 => lookup_props_comp_ex_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_COMP_EX_V1 => Self::lookup_props_comp_ex_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_DI_V1 => lookup_props_di_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_DI_V1 => Self::lookup_props_di_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_DASH_V1 => lookup_props_dash_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_DASH_V1 => Self::lookup_props_dash_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_DEP_V1 => lookup_props_dep_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_DEP_V1 => Self::lookup_props_dep_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_DIA_V1 => lookup_props_dia_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_DIA_V1 => Self::lookup_props_dia_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EBASE_V1 => lookup_props_ebase_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EBASE_V1 => Self::lookup_props_ebase_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_ECOMP_V1 => lookup_props_ecomp_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_ECOMP_V1 => Self::lookup_props_ecomp_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EMOD_V1 => lookup_props_emod_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EMOD_V1 => Self::lookup_props_emod_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EPRES_V1 => lookup_props_epres_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EPRES_V1 => Self::lookup_props_epres_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EMOJI_V1 => lookup_props_emoji_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EMOJI_V1 => Self::lookup_props_emoji_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EXT_V1 => lookup_props_ext_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EXT_V1 => Self::lookup_props_ext_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EXTPICT_V1 => lookup_props_extpict_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EXTPICT_V1 => Self::lookup_props_extpict_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_GCB_V1 => lookup_props_gcb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_GCB_V1 => Self::lookup_props_gcb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_GR_BASE_V1 => lookup_props_gr_base_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_GR_BASE_V1 => Self::lookup_props_gr_base_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_GR_EXT_V1 => lookup_props_gr_ext_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_GR_EXT_V1 => Self::lookup_props_gr_ext_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_GR_LINK_V1 => lookup_props_gr_link_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_GR_LINK_V1 => Self::lookup_props_gr_link_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_HEX_V1 => lookup_props_hex_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_HEX_V1 => Self::lookup_props_hex_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_HYPHEN_V1 => lookup_props_hyphen_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_HYPHEN_V1 => Self::lookup_props_hyphen_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_IDC_V1 => lookup_props_idc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_IDC_V1 => Self::lookup_props_idc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_IDS_V1 => lookup_props_ids_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_IDS_V1 => Self::lookup_props_ids_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_IDSB_V1 => lookup_props_idsb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_IDSB_V1 => Self::lookup_props_idsb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_IDST_V1 => lookup_props_idst_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_IDST_V1 => Self::lookup_props_idst_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_IDEO_V1 => lookup_props_ideo_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_IDEO_V1 => Self::lookup_props_ideo_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_JOIN_C_V1 => lookup_props_join_c_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_JOIN_C_V1 => Self::lookup_props_join_c_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_LOE_V1 => lookup_props_loe_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_LOE_V1 => Self::lookup_props_loe_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_LOWER_V1 => lookup_props_lower_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_LOWER_V1 => Self::lookup_props_lower_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_MATH_V1 => lookup_props_math_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_MATH_V1 => Self::lookup_props_math_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_NCHAR_V1 => lookup_props_nchar_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_NCHAR_V1 => Self::lookup_props_nchar_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_PCM_V1 => lookup_props_pcm_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_PCM_V1 => Self::lookup_props_pcm_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_PAT_SYN_V1 => lookup_props_pat_syn_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_PAT_SYN_V1 => Self::lookup_props_pat_syn_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_PAT_WS_V1 => lookup_props_pat_ws_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_PAT_WS_V1 => Self::lookup_props_pat_ws_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_QMARK_V1 => lookup_props_qmark_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_QMARK_V1 => Self::lookup_props_qmark_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_RI_V1 => lookup_props_ri_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_RI_V1 => Self::lookup_props_ri_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_RADICAL_V1 => lookup_props_radical_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_RADICAL_V1 => Self::lookup_props_radical_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_SB_V1 => lookup_props_sb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_SB_V1 => Self::lookup_props_sb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_SD_V1 => lookup_props_sd_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_SD_V1 => Self::lookup_props_sd_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_STERM_V1 => lookup_props_sterm_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_STERM_V1 => Self::lookup_props_sterm_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_SENSITIVE_V1 => lookup_props_sensitive_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_SENSITIVE_V1 => Self::lookup_props_sensitive_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_TERM_V1 => lookup_props_term_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_TERM_V1 => Self::lookup_props_term_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_UIDEO_V1 => lookup_props_uideo_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_UIDEO_V1 => Self::lookup_props_uideo_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_UPPER_V1 => lookup_props_upper_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_UPPER_V1 => Self::lookup_props_upper_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_VS_V1 => lookup_props_vs_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_VS_V1 => Self::lookup_props_vs_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_WB_V1 => lookup_props_wb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_WB_V1 => Self::lookup_props_wb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_WSPACE_V1 => lookup_props_wspace_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_WSPACE_V1 => Self::lookup_props_wspace_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_XIDC_V1 => lookup_props_xidc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_XIDC_V1 => Self::lookup_props_xidc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_XIDS_V1 => lookup_props_xids_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_XIDS_V1 => Self::lookup_props_xids_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_ALNUM_V1 => lookup_props_alnum_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_ALNUM_V1 => Self::lookup_props_alnum_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_BC_V1 => lookup_props_bc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_BC_V1 => Self::lookup_props_bc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_BIDIAUXILIARYPROPS_V1 => lookup_props_bidiauxiliaryprops_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_BIDIAUXILIARYPROPS_V1 => Self::lookup_props_bidiauxiliaryprops_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_BLANK_V1 => lookup_props_blank_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_BLANK_V1 => Self::lookup_props_blank_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_casemapping")]
-                    PROPS_CASEMAP_V1 => lookup_props_casemap_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CASEMAP_V1 => Self::lookup_props_casemap_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_CCC_V1 => lookup_props_ccc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_CCC_V1 => Self::lookup_props_ccc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EA_V1 => lookup_props_ea_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EA_V1 => Self::lookup_props_ea_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EXEMPLARCHARS_AUXILIARY_V1 => lookup_props_exemplarchars_auxiliary_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EXEMPLARCHARS_AUXILIARY_V1 => Self::lookup_props_exemplarchars_auxiliary_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EXEMPLARCHARS_INDEX_V1 => lookup_props_exemplarchars_index_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EXEMPLARCHARS_INDEX_V1 => Self::lookup_props_exemplarchars_index_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EXEMPLARCHARS_MAIN_V1 => lookup_props_exemplarchars_main_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EXEMPLARCHARS_MAIN_V1 => Self::lookup_props_exemplarchars_main_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EXEMPLARCHARS_NUMBERS_V1 => lookup_props_exemplarchars_numbers_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EXEMPLARCHARS_NUMBERS_V1 => Self::lookup_props_exemplarchars_numbers_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_EXEMPLARCHARS_PUNCTUATION_V1 => lookup_props_exemplarchars_punctuation_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_EXEMPLARCHARS_PUNCTUATION_V1 => Self::lookup_props_exemplarchars_punctuation_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_GC_V1 => lookup_props_gc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_GC_V1 => Self::lookup_props_gc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_GRAPH_V1 => lookup_props_graph_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_GRAPH_V1 => Self::lookup_props_graph_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_LB_V1 => lookup_props_lb_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_LB_V1 => Self::lookup_props_lb_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_NFCINERT_V1 => lookup_props_nfcinert_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_NFCINERT_V1 => Self::lookup_props_nfcinert_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_NFDINERT_V1 => lookup_props_nfdinert_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_NFDINERT_V1 => Self::lookup_props_nfdinert_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_NFKCINERT_V1 => lookup_props_nfkcinert_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_NFKCINERT_V1 => Self::lookup_props_nfkcinert_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_NFKDINERT_V1 => lookup_props_nfkdinert_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_NFKDINERT_V1 => Self::lookup_props_nfkdinert_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_PRINT_V1 => lookup_props_print_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_PRINT_V1 => Self::lookup_props_print_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_SC_V1 => lookup_props_sc_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_SC_V1 => Self::lookup_props_sc_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_SCX_V1 => lookup_props_scx_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_SCX_V1 => Self::lookup_props_scx_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_SEGSTART_V1 => lookup_props_segstart_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_SEGSTART_V1 => Self::lookup_props_segstart_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    PROPS_XDIGIT_V1 => lookup_props_xdigit_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PROPS_XDIGIT_V1 => Self::lookup_props_xdigit_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_LONG_DAY_V1 => lookup_relativetime_long_day_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_LONG_DAY_V1 => Self::lookup_relativetime_long_day_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_LONG_HOUR_V1 => lookup_relativetime_long_hour_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_LONG_HOUR_V1 => Self::lookup_relativetime_long_hour_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_LONG_MINUTE_V1 => lookup_relativetime_long_minute_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_LONG_MINUTE_V1 => Self::lookup_relativetime_long_minute_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_LONG_MONTH_V1 => lookup_relativetime_long_month_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_LONG_MONTH_V1 => Self::lookup_relativetime_long_month_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_LONG_QUARTER_V1 => lookup_relativetime_long_quarter_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_LONG_QUARTER_V1 => Self::lookup_relativetime_long_quarter_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_LONG_SECOND_V1 => lookup_relativetime_long_second_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_LONG_SECOND_V1 => Self::lookup_relativetime_long_second_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_LONG_WEEK_V1 => lookup_relativetime_long_week_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_LONG_WEEK_V1 => Self::lookup_relativetime_long_week_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_LONG_YEAR_V1 => lookup_relativetime_long_year_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_LONG_YEAR_V1 => Self::lookup_relativetime_long_year_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_NARROW_DAY_V1 => lookup_relativetime_narrow_day_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_NARROW_DAY_V1 => Self::lookup_relativetime_narrow_day_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_NARROW_HOUR_V1 => lookup_relativetime_narrow_hour_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_NARROW_HOUR_V1 => Self::lookup_relativetime_narrow_hour_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_NARROW_MINUTE_V1 => lookup_relativetime_narrow_minute_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_NARROW_MINUTE_V1 => Self::lookup_relativetime_narrow_minute_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_NARROW_MONTH_V1 => lookup_relativetime_narrow_month_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_NARROW_MONTH_V1 => Self::lookup_relativetime_narrow_month_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_NARROW_QUARTER_V1 => lookup_relativetime_narrow_quarter_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_NARROW_QUARTER_V1 => Self::lookup_relativetime_narrow_quarter_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_NARROW_SECOND_V1 => lookup_relativetime_narrow_second_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_NARROW_SECOND_V1 => Self::lookup_relativetime_narrow_second_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_NARROW_WEEK_V1 => lookup_relativetime_narrow_week_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_NARROW_WEEK_V1 => Self::lookup_relativetime_narrow_week_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_NARROW_YEAR_V1 => lookup_relativetime_narrow_year_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_NARROW_YEAR_V1 => Self::lookup_relativetime_narrow_year_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_SHORT_DAY_V1 => lookup_relativetime_short_day_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_SHORT_DAY_V1 => Self::lookup_relativetime_short_day_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_SHORT_HOUR_V1 => lookup_relativetime_short_hour_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_SHORT_HOUR_V1 => Self::lookup_relativetime_short_hour_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_SHORT_MINUTE_V1 => lookup_relativetime_short_minute_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_SHORT_MINUTE_V1 => Self::lookup_relativetime_short_minute_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_SHORT_MONTH_V1 => lookup_relativetime_short_month_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_SHORT_MONTH_V1 => Self::lookup_relativetime_short_month_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_SHORT_QUARTER_V1 => lookup_relativetime_short_quarter_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_SHORT_QUARTER_V1 => Self::lookup_relativetime_short_quarter_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_SHORT_SECOND_V1 => lookup_relativetime_short_second_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_SHORT_SECOND_V1 => Self::lookup_relativetime_short_second_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_SHORT_WEEK_V1 => lookup_relativetime_short_week_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_SHORT_WEEK_V1 => Self::lookup_relativetime_short_week_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_relativetime")]
-                    RELATIVETIME_SHORT_YEAR_V1 => lookup_relativetime_short_year_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    RELATIVETIME_SHORT_YEAR_V1 => Self::lookup_relativetime_short_year_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_DICTIONARY_W_AUTO_V1 => lookup_segmenter_dictionary_w_auto_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_DICTIONARY_W_AUTO_V1 => Self::lookup_segmenter_dictionary_w_auto_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_DICTIONARY_WL_EXT_V1 => lookup_segmenter_dictionary_wl_ext_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_DICTIONARY_WL_EXT_V1 => Self::lookup_segmenter_dictionary_wl_ext_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_GRAPHEME_V1 => lookup_segmenter_grapheme_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_GRAPHEME_V1 => Self::lookup_segmenter_grapheme_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_LINE_V1 => lookup_segmenter_line_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_LINE_V1 => Self::lookup_segmenter_line_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_LSTM_WL_AUTO_V1 => lookup_segmenter_lstm_wl_auto_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_LSTM_WL_AUTO_V1 => Self::lookup_segmenter_lstm_wl_auto_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_SENTENCE_V1 => lookup_segmenter_sentence_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_SENTENCE_V1 => Self::lookup_segmenter_sentence_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    SEGMENTER_WORD_V1 => lookup_segmenter_word_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    SEGMENTER_WORD_V1 => Self::lookup_segmenter_word_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    TIME_ZONE_EXEMPLAR_CITIES_V1 => lookup_time_zone_exemplar_cities_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    TIME_ZONE_EXEMPLAR_CITIES_V1 => Self::lookup_time_zone_exemplar_cities_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    TIME_ZONE_FORMATS_V1 => lookup_time_zone_formats_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    TIME_ZONE_FORMATS_V1 => Self::lookup_time_zone_formats_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    TIME_ZONE_GENERIC_LONG_V1 => lookup_time_zone_generic_long_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    TIME_ZONE_GENERIC_LONG_V1 => Self::lookup_time_zone_generic_long_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    TIME_ZONE_GENERIC_SHORT_V1 => lookup_time_zone_generic_short_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    TIME_ZONE_GENERIC_SHORT_V1 => Self::lookup_time_zone_generic_short_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_timezone")]
-                    TIME_ZONE_METAZONE_PERIOD_V1 => lookup_time_zone_metazone_period_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    TIME_ZONE_METAZONE_PERIOD_V1 => Self::lookup_time_zone_metazone_period_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    TIME_ZONE_SPECIFIC_LONG_V1 => lookup_time_zone_specific_long_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    TIME_ZONE_SPECIFIC_LONG_V1 => Self::lookup_time_zone_specific_long_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
-                    TIME_ZONE_SPECIFIC_SHORT_V1 => lookup_time_zone_specific_short_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    TIME_ZONE_SPECIFIC_SHORT_V1 => Self::lookup_time_zone_specific_short_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey),
                 }
                 .map(|payload| icu_provider::AnyResponse { payload: Some(payload), metadata: Default::default() })

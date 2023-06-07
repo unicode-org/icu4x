@@ -6,10 +6,6 @@ mod macros {
 }
 #[doc(inline)]
 pub use __impl_time_zone_metazone_period_v1 as impl_time_zone_metazone_period_v1;
-#[doc(hidden)]
-pub use __lookup_time_zone_metazone_period_v1 as lookup_time_zone_metazone_period_v1;
-#[doc(inline)]
-pub use __singleton_time_zone_metazone_period_v1 as singleton_time_zone_metazone_period_v1;
 /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
@@ -46,7 +42,7 @@ macro_rules! __impl_any_provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 const TIME_ZONE_METAZONE_PERIOD_V1: icu_provider::DataKeyHash = <icu_timezone::provider::MetazonePeriodV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    TIME_ZONE_METAZONE_PERIOD_V1 => lookup_time_zone_metazone_period_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    TIME_ZONE_METAZONE_PERIOD_V1 => Self::lookup_time_zone_metazone_period_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey),
                 }
                 .map(|payload| icu_provider::AnyResponse { payload: Some(payload), metadata: Default::default() })

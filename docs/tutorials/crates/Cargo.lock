@@ -781,6 +781,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
+ "icu_personnames",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -910,6 +911,19 @@ dependencies = [
  "utf16_iter",
  "utf8_iter",
  "write16",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_personnames"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "icu_collections",
+ "icu_locid",
+ "icu_provider",
+ "litemap",
+ "serde",
  "zerovec",
 ]
 

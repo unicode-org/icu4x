@@ -10,10 +10,6 @@ mod macros {
 pub use __impl_plurals_cardinal_v1 as impl_plurals_cardinal_v1;
 #[doc(inline)]
 pub use __impl_plurals_ordinal_v1 as impl_plurals_ordinal_v1;
-#[doc(hidden)]
-pub use __lookup_plurals_cardinal_v1 as lookup_plurals_cardinal_v1;
-#[doc(hidden)]
-pub use __lookup_plurals_ordinal_v1 as lookup_plurals_ordinal_v1;
 /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
@@ -52,8 +48,8 @@ macro_rules! __impl_any_provider {
                 const PLURALS_CARDINAL_V1: icu_provider::DataKeyHash = <icu_plurals::provider::CardinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const PLURALS_ORDINAL_V1: icu_provider::DataKeyHash = <icu_plurals::provider::OrdinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    PLURALS_CARDINAL_V1 => lookup_plurals_cardinal_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
-                    PLURALS_ORDINAL_V1 => lookup_plurals_ordinal_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PLURALS_CARDINAL_V1 => Self::lookup_plurals_cardinal_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    PLURALS_ORDINAL_V1 => Self::lookup_plurals_ordinal_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey),
                 }
                 .map(|payload| icu_provider::AnyResponse { payload: Some(payload), metadata: Default::default() })

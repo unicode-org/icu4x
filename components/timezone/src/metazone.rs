@@ -35,10 +35,9 @@ impl MetazoneCalculator {
     #[cfg(feature = "data")]
     #[inline]
     pub const fn new() -> Self {
-        use crate as icu_timezone;
         MetazoneCalculator {
-            metazone_period: DataPayload::from_owned(
-                crate::data::singleton_time_zone_metazone_period_v1!(),
+            metazone_period: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_TIME_ZONE_METAZONE_PERIOD_V1,
             ),
         }
     }

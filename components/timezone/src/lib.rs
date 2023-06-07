@@ -142,4 +142,8 @@ pub mod data {
     include!(concat!(core::env!("ICU4X_DATA_DIR"), "/macros.rs"));
     #[cfg(not(icu4x_custom_data))]
     include!("../data/macros.rs");
+
+    use crate as icu_timezone;
+    pub(crate) struct Provider;
+    impl_time_zone_metazone_period_v1!(Provider);
 }
