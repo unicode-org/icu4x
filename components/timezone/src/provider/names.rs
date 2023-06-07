@@ -18,10 +18,10 @@ use core::str;
 
 use icu_provider::prelude::*;
 
+use crate::TimeZoneBcp47Id;
+use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::ule::{UnvalidatedStr, VarULE};
 use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap};
-use tinystr::UnvalidatedTinyAsciiStr;
-use crate::TimeZoneBcp47Id;
 
 /// This is a time zone identifier that can be "loose matched" as according to
 /// [ECMAScript Temporal](https://tc39.es/proposal-temporal/#sec-isavailabletimezonename)
@@ -159,7 +159,7 @@ impl NormalizedTimeZoneIdStr {
 }
 
 /// A mapping from IANA time zone identifiers to BCP-47 time zone identifiers.
-/// 
+///
 /// Multiple IANA time zone IDs can map to the same BCP-47 time zone ID.
 ///
 /// <div class="stab unstable">
@@ -168,10 +168,7 @@ impl NormalizedTimeZoneIdStr {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Clone)]
-#[icu_provider::data_struct(marker(
-    IanaToBcp47MapV1Marker,
-    "time_zone/iana_to_bcp47@1"
-))]
+#[icu_provider::data_struct(marker(IanaToBcp47MapV1Marker, "time_zone/iana_to_bcp47@1"))]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
@@ -186,7 +183,7 @@ pub struct IanaToBcp47MapV1<'data> {
 }
 
 /// A mapping from IANA time zone identifiers to BCP-47 time zone identifiers.
-/// 
+///
 /// The BCP-47 time zone ID maps to the default IANA time zone ID according to the CLDR data.
 ///
 /// <div class="stab unstable">
@@ -195,10 +192,7 @@ pub struct IanaToBcp47MapV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Clone)]
-#[icu_provider::data_struct(marker(
-    Bcp47ToIanaMapV1Marker,
-    "time_zone/bcp47_to_iana@1"
-))]
+#[icu_provider::data_struct(marker(Bcp47ToIanaMapV1Marker, "time_zone/bcp47_to_iana@1"))]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
