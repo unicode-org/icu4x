@@ -14,7 +14,7 @@ macro_rules! __impl_calendar_japanext_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_calendar::provider::JapaneseExtendedErasV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_calendar::provider::JapaneseExtendedErasV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     if locale.is_empty() {
                         Ok(Self::SINGLETON_CALENDAR_JAPANEXT_V1)

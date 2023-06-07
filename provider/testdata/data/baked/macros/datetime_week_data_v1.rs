@@ -9,7 +9,7 @@ macro_rules! __impl_datetime_week_data_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_calendar::provider::WeekDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_calendar::provider::WeekDataV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     static UND_MV: <icu_calendar::provider::WeekDataV1Marker as icu_provider::DataMarker>::Yokeable = icu_calendar::provider::WeekDataV1 { first_weekday: icu_calendar::types::IsoWeekday::Friday, min_week_days: 1u8 };
                     static UND: <icu_calendar::provider::WeekDataV1Marker as icu_provider::DataMarker>::Yokeable = icu_calendar::provider::WeekDataV1 { first_weekday: icu_calendar::types::IsoWeekday::Monday, min_week_days: 1u8 };

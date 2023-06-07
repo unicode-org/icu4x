@@ -9,7 +9,7 @@ macro_rules! __impl_relativetime_short_year_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     static UND: <icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu_relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {

@@ -14,7 +14,7 @@ macro_rules! __impl_propnames_to_long_linear_gc_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_properties::provider::GeneralCategoryValueToLongNameV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_properties::provider::GeneralCategoryValueToLongNameV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     if locale.is_empty() {
                         Ok(Self::SINGLETON_PROPNAMES_TO_LONG_LINEAR_GC_V1)

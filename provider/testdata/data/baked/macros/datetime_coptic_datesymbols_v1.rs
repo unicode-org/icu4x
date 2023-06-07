@@ -9,7 +9,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_datetime::provider::calendar::CopticDateSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_datetime::provider::calendar::CopticDateSymbolsV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     static JA: <icu_datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                         months: icu_datetime::provider::calendar::months::ContextsV1 {

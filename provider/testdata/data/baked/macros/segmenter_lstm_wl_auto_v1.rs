@@ -29,7 +29,7 @@ macro_rules! __impl_segmenter_lstm_wl_auto_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_segmenter::provider::LstmForWordLineAutoV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     if icu_provider::DataLocale::from(icu_locid::locale!("th")).eq(&locale) {
                         Ok(Self::SINGLETON_SEGMENTER_LSTM_WL_AUTO_V1)

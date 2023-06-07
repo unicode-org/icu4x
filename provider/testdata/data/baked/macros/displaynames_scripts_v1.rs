@@ -9,7 +9,7 @@ macro_rules! __impl_displaynames_scripts_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_displaynames::provider::ScriptDisplayNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_displaynames::provider::ScriptDisplayNamesV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     static EN: <icu_displaynames::provider::ScriptDisplayNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu_displaynames::provider::ScriptDisplayNamesV1 {
                         names: unsafe {

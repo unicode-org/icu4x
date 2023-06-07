@@ -448,7 +448,7 @@ impl DataExporter for BakedExporter {
                                 &self,
                                 req: icu_provider::DataRequest,
                             ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
-                                let locale = &req.locale;
+                                let locale = req.locale;
                                 match {#lookup} {
                                     Ok(payload) => Ok(icu_provider::DataResponse {
                                         metadata: Default::default(),

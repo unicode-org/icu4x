@@ -17,7 +17,7 @@ macro_rules! __impl_props_join_c_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_properties::provider::JoinControlV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_properties::provider::JoinControlV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     if locale.is_empty() {
                         Ok(Self::SINGLETON_PROPS_JOIN_C_V1)

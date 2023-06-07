@@ -28,7 +28,7 @@ macro_rules! __impl_locid_transform_likelysubtags_l_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     if locale.is_empty() {
                         Ok(Self::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1)

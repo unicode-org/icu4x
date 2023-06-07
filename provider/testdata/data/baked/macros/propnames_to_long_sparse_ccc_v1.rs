@@ -19,7 +19,7 @@ macro_rules! __impl_propnames_to_long_sparse_ccc_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     if locale.is_empty() {
                         Ok(Self::SINGLETON_PROPNAMES_TO_LONG_SPARSE_CCC_V1)

@@ -31,7 +31,7 @@ macro_rules! __impl_fallback_likelysubtags_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     if locale.is_empty() {
                         Ok(Self::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1)

@@ -9,7 +9,7 @@ macro_rules! __impl_props_exemplarchars_index_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_properties::provider::ExemplarCharactersIndexV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_properties::provider::ExemplarCharactersIndexV1Marker>, icu_provider::DataError> {
-                let locale = &req.locale;
+                let locale = req.locale;
                 match {
                     static AR: <icu_properties::provider::ExemplarCharactersIndexV1Marker as icu_provider::DataMarker>::Yokeable = icu_properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                         unsafe {
