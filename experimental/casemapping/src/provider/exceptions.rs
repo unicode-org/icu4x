@@ -68,7 +68,7 @@ impl ExceptionHeader {
     }
 
     // The number of optional slots for this exception
-    fn num_slots(&self) -> u16 {
+    pub(crate) fn num_slots(&self) -> u16 {
         self.slot_presence.count_ones() as u16
     }
 
@@ -79,7 +79,7 @@ impl ExceptionHeader {
     }
 
     // Returns the number of slots between this header and the given slot.
-    fn slot_offset(&self, slot: ExceptionSlot) -> usize {
+    pub(crate) fn slot_offset(&self, slot: ExceptionSlot) -> usize {
         debug_assert!(self.has_slot(slot));
         let slot_bit = 1 << (slot as u8);
         let previous_slot_mask = slot_bit - 1;
