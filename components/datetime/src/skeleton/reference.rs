@@ -53,6 +53,12 @@ impl From<Vec<fields::Field>> for Skeleton {
     }
 }
 
+impl From<&[fields::Field]> for Skeleton {
+    fn from(fields: &[fields::Field]) -> Self {
+        Self(fields.into())
+    }
+}
+
 /// Convert a Pattern into a Skeleton. This will remove all of the string literals, and sort
 /// the fields into the canonical sort order. Not all fields are supported by Skeletons, so map
 /// fields into skeleton-appropriate ones. For instance, in the "ja" locale the pattern "aK:mm"

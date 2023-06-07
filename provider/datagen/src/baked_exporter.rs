@@ -411,10 +411,13 @@ impl DataExporter for BakedExporter {
 
         let into_data_payload = if is_datetime_skeletons {
             quote! {
-                icu_provider::DataPayload::<#marker>::from_owned(icu_datetime::provider::calendar::DateSkeletonPatternsV1(
+                icu_provider::DataPayload::from_owned(icu_datetime::provider::calendar::DateSkeletonPatternsV1(
                     payload
                         .iter()
-                        .map(|(fields, pattern)| (SkeletonV1(Skeleton(fields.iter().cloned().collect())), icu_provider::prelude::zerofrom::ZeroFrom::zero_from(pattern)))
+                        .map(|(fields, pattern)| (
+                            icu_datetime::provider::calendar::SkeletonV1((*fields).into()),
+                            icu_provider::prelude::zerofrom::ZeroFrom::zero_from(pattern)
+                        ))
                         .collect(),
                 ))
 
