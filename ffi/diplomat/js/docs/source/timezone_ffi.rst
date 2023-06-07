@@ -105,6 +105,16 @@
         Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
+    .. js:method:: try_set_iana_time_zone_id_strict(mapper, id)
+
+        See the `Rust documentation for get_strict <https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get_strict>`__ for more information.
+
+
+    .. js:method:: try_set_iana_time_zone_id_loose(mapper, id)
+
+        See the `Rust documentation for get_loose <https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get_loose>`__ for more information.
+
+
     .. js:method:: clear_time_zone_id()
 
         Clears the ``time_zone_id`` field.

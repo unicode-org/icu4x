@@ -89,6 +89,8 @@ pub mod decimal;
 pub mod displaynames;
 #[cfg(feature = "icu_decimal")]
 pub mod fixed_decimal;
+#[cfg(feature = "icu_timezone")]
+pub mod iana_bcp47_mapper;
 #[cfg(feature = "icu_list")]
 pub mod list;
 #[cfg(feature = "icu_locid_transform")]

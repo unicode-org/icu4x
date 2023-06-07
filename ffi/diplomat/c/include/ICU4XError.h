@@ -63,6 +63,7 @@ typedef enum ICU4XError {
   ICU4XError_TimeZoneOffsetOutOfBoundsError = 2560,
   ICU4XError_TimeZoneInvalidOffsetError = 2561,
   ICU4XError_TimeZoneMissingInputError = 2562,
+  ICU4XError_TimeZoneInvalidIdError = 2563,
   ICU4XError_NormalizerFutureExtensionError = 2816,
   ICU4XError_NormalizerValidationError = 2817,
 } ICU4XError;

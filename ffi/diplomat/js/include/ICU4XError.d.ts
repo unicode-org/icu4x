@@ -176,6 +176,9 @@ export enum ICU4XError {
   TimeZoneMissingInputError = 'TimeZoneMissingInputError',
   /**
    */
+  TimeZoneInvalidIdError = 'TimeZoneInvalidIdError',
+  /**
+   */
   NormalizerFutureExtensionError = 'NormalizerFutureExtensionError',
   /**
    */

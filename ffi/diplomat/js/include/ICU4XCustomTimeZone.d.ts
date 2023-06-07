@@ -1,6 +1,7 @@
 import { i32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
+import { ICU4XIanaToBcp47Mapper } from "./ICU4XIanaToBcp47Mapper";
 import { ICU4XIsoDateTime } from "./ICU4XIsoDateTime";
 import { ICU4XMetazoneCalculator } from "./ICU4XMetazoneCalculator";
 
@@ -127,6 +128,20 @@ export class ICU4XCustomTimeZone {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   try_set_time_zone_id(id: string): void | never;
+
+  /**
+
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get_strict Rust documentation for `get_strict`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  try_set_iana_time_zone_id_strict(mapper: ICU4XIanaToBcp47Mapper, id: string): void | never;
+
+  /**
+
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get_loose Rust documentation for `get_loose`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  try_set_iana_time_zone_id_loose(mapper: ICU4XIanaToBcp47Mapper, id: string): void | never;
 
   /**
 
