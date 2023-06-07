@@ -77,6 +77,11 @@ pub use source::SourceData;
 
 #[cfg(feature = "provider_baked")]
 pub mod baked_exporter;
+#[cfg(feature = "provider_blob")]
+pub use icu_provider_blob::export as blob_exporter;
+#[cfg(feature = "provider_fs")]
+pub use icu_provider_fs::export as fs_exporter;
+
 pub mod options;
 
 /// A prelude for using the datagen API
@@ -477,32 +482,9 @@ pub fn datagen(
         },
     )?;
 
-    struct MultiExporter(Vec<Box<dyn DataExporter>>);
-
-    impl DataExporter for MultiExporter {
-        fn put_payload(
-            &self,
-            key: DataKey,
-            locale: &DataLocale,
-            payload: &DataPayload<ExportMarker>,
-        ) -> Result<(), DataError> {
-            self.0
-                .iter()
-                .try_for_each(|e| e.put_payload(key, locale, payload))
-        }
-
-        fn flush(&self, key: DataKey) -> Result<(), DataError> {
-            self.0.iter().try_for_each(|e| e.flush(key))
-        }
-
-        fn close(&mut self) -> Result<(), DataError> {
-            self.0.iter_mut().try_for_each(|e| e.close())
-        }
-    }
-
     provider.export(
         keys.iter().cloned().collect(),
-        MultiExporter(
+        MultiExporter::new(
             outs.into_iter()
                 .map(|out| -> Result<Box<dyn DataExporter>, DataError> {
                     use baked_exporter::*;
@@ -644,11 +626,7 @@ impl CldrLocaleSubset {
 
 #[cfg(feature = "legacy_api")]
 #[doc(hidden)]
-pub mod syntax {
-    pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
-    pub use icu_provider_fs::export::serializers::json::Serializer as Json;
-    pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
-}
+pub use icu_provider_fs::export::serializers as syntax;
 
 impl AnyProvider for DatagenProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {

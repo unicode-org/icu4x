@@ -97,3 +97,43 @@ macro_rules! make_exportable_provider {
         }
     };
 }
+
+/// A `DataExporter` that forks to multiple `DataExporter`s.
+#[derive(Default)]
+pub struct MultiExporter(Vec<Box<dyn DataExporter>>);
+
+impl MultiExporter {
+    /// Creates a `MultiExporter` for the given exporters.
+    pub const fn new(exporters: Vec<Box<dyn DataExporter>>) -> Self {
+        Self(exporters)
+    }
+}
+
+impl core::fmt::Debug for MultiExporter {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MultiExporter")
+            .field("0", &format!("vec[len = {}]", self.0.len()))
+            .finish()
+    }
+}
+
+impl DataExporter for MultiExporter {
+    fn put_payload(
+        &self,
+        key: DataKey,
+        locale: &DataLocale,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.0
+            .iter()
+            .try_for_each(|e| e.put_payload(key, locale, payload))
+    }
+
+    fn flush(&self, key: DataKey) -> Result<(), DataError> {
+        self.0.iter().try_for_each(|e| e.flush(key))
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        self.0.iter_mut().try_for_each(|e| e.close())
+    }
+}
