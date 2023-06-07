@@ -69,19 +69,9 @@ use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 /// ```
 #[derive(PartialEq, Eq)] // VarULE wants these to be byte equality
 #[derive(Debug, VarULE)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
 pub struct NormalizedPropertyNameStr(UnvalidatedStr);
-
-/// This impl requires enabling the optional `serde` Cargo feature of the `icu_properties` crate
-#[cfg(feature = "serde")]
-impl serde::Serialize for NormalizedPropertyNameStr {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        self.0.serialize(serializer)
-    }
-}
 
 /// This impl requires enabling the optional `serde` Cargo feature of the `icu_properties` crate
 #[cfg(feature = "serde")]
@@ -187,11 +177,7 @@ impl NormalizedPropertyNameStr {
 
     /// Get a `Box<NormalizedPropertyName>` from a byte slice
     pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
-        #[allow(clippy::expect_used)] // Self has no invariants
-        // can be cleaned up with https://github.com/unicode-org/icu4x/issues/2310
-        let this = Self::parse_byte_slice(b).expect("NormalizedPropertyName has no invariants");
-
-        zerovec::ule::encode_varule_to_box(&this)
+        Box::<NormalizedPropertyNameStr>::from(UnvalidatedStr::from_boxed_bytes(b.into()))
     }
 }
 
