@@ -191,7 +191,7 @@ impl BakedExporter {
         relative_path: P,
         data: TokenStream,
     ) -> Result<(), DataError> {
-        let path = self.mod_directory.join(&relative_path).with_extension("rs");
+        let path = self.mod_directory.join(&relative_path);
 
         let mut formatted = if self.pretty {
             use std::process::{Command, Stdio};
@@ -434,7 +434,7 @@ impl DataExporter for BakedExporter {
         );
         let prefixed_macro_ident = format!("__impl_{ident}").parse::<TokenStream>().unwrap();
         self.write_to_file(
-            PathBuf::from(format!("macros/{}", ident)),
+            PathBuf::from(format!("macros/{}.data.rs", ident)),
             quote!{
                 #[doc = #doc]
                 /// hardcoded in this file. This allows the struct to be used with
@@ -505,6 +505,10 @@ impl DataExporter for BakedExporter {
             .values()
             .map(|data| data.mod_ident.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
+        let file_paths = data
+            .values()
+            .map(|data| format!("macros/{}.data.rs", data.mod_ident))
+            .collect::<Vec<_>>();
 
         // We prefix all macros with `__`, as these will be automatically exported at the crate root, which is annoying
         // for crates that include the data but don't want it to be public. We then reexport them as items that use
@@ -520,18 +524,13 @@ impl DataExporter for BakedExporter {
             .collect::<Vec<_>>();
 
         self.write_to_file(
-            PathBuf::from("macros"),
+            PathBuf::from("macros.rs"),
             quote! {
 
-                #[macro_use]
-                mod macros {
-                    #(
-                        #[macro_use]
-                        mod #mod_idents;
-                    )*
-                }
-
                 #(
+                    #[macro_use]
+                    #[path = #file_paths]
+                    mod #mod_idents;
                     #[doc(inline)]
                     pub use #prefixed_macro_idents as #macro_idents;
                 )*
@@ -601,7 +600,7 @@ impl DataExporter for BakedExporter {
 
         // For backwards compatibility
         self.write_to_file(
-            PathBuf::from("mod"),
+            PathBuf::from("mod.rs"),
             quote! {
                 include!("macros.rs");
                 #[clippy::msrv = "1.61"]
@@ -612,7 +611,7 @@ impl DataExporter for BakedExporter {
 
         // For backwards compatibility
         self.write_to_file(
-            PathBuf::from("any"),
+            PathBuf::from("any.rs"),
             quote! {
                 // This assumes that `mod.rs` is already included.
                 impl_any_provider!(BakedDataProvider);
