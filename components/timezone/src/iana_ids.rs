@@ -96,3 +96,79 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
             .get_copied_by(|probe| probe.cmp_loose(NormalizedTimeZoneIdStr::from_str(iana_id)))
     }
 }
+
+/// A mapper from BCP-47 time zone identifiers to canonical IANA time zone identifiers.
+///
+/// This is mainly useful if the IANA identifier needs to be recovered. However, the ID returned
+/// from this function might not be the same as the one sourced from [`IanaToBcp47Mapper`].
+///
+/// # Examples
+///
+/// Demonstration of canonicalization of the time zone identifier:
+///
+/// ```
+/// use icu::timezone::IanaToBcp47Mapper;
+/// use icu::timezone::Bcp47ToIanaMapper;
+///
+/// let mapper1 = IanaToBcp47Mapper::try_new_unstable(&icu_testdata::unstable()).unwrap();
+/// let mapper2 = Bcp47ToIanaMapper::try_new_unstable(&icu_testdata::unstable()).unwrap();
+///
+/// // Look up the time zone ID for "Asia/Calcutta"
+/// let bcp47_id = mapper1.as_borrowed().get_loose("asia/calcutta");
+/// assert_eq!(bcp47_id, Some("inccu".parse().unwrap()));
+///
+/// // Get it back as the canonical form "Asia/Kolkata"
+/// let mapper2_borrowed = mapper2.as_borrowed();
+/// let iana_id = mapper2_borrowed.get(bcp47_id.unwrap());
+/// assert_eq!(iana_id, Some("Asia/Kolkata"))
+/// ```
+#[derive(Debug)]
+pub struct Bcp47ToIanaMapper {
+    data: DataPayload<Bcp47ToIanaMapV1Marker>,
+}
+
+impl Bcp47ToIanaMapper {
+    /// Creates a new [`Bcp47ToIanaMapper`].
+    ///
+    /// See [`Bcp47ToIanaMapper`] for an example.
+    ///
+    /// [📚 Help choosing a constructor](crate::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, TimeZoneError>
+    where
+        P: DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
+    {
+        let data = provider.load(Default::default())?.take_payload()?;
+        Ok(Self { data })
+    }
+
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: TimeZoneError);
+
+    /// Returns a borrowed version of the mapper that can be queried.
+    ///
+    /// This avoids a small potential cost of reading the data pointer.
+    pub fn as_borrowed(&self) -> Bcp47ToIanaMapperBorrowed {
+        Bcp47ToIanaMapperBorrowed {
+            data: self.data.get(),
+        }
+    }
+}
+
+/// A borrowed wrapper around IANA-to-BCP47 time zone data, returned by
+/// [`Bcp47ToIanaMapper::as_borrowed()`]. More efficient to query.
+#[derive(Debug)]
+pub struct Bcp47ToIanaMapperBorrowed<'a> {
+    data: &'a Bcp47ToIanaMapV1<'a>,
+}
+
+impl<'a> Bcp47ToIanaMapperBorrowed<'a> {
+    /// Looks up a BCP-47 time zone identifier based on an exact match for the given IANA
+    /// time zone identifier.
+    ///
+    /// See examples in [`Bcp47ToIanaMapper`].
+    pub fn get(&self, bcp47_id: TimeZoneBcp47Id) -> Option<&str> {
+        self.data.map.get(&bcp47_id.0.to_unvalidated())
+    }
+}
