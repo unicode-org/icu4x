@@ -49,20 +49,19 @@ macro_rules! __impl_locid_transform_aliases_v1 {
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"cn11\0\0\0cn12\0\0\0cn13\0\0\0cn14\0\0\0cn15\0\0\0cn21\0\0\0cn22\0\0\0cn23\0\0\0cn31\0\0\0cn32\0\0\0cn33\0\0\0cn34\0\0\0cn35\0\0\0cn36\0\0\0cn37\0\0\0cn41\0\0\0cn42\0\0\0cn43\0\0\0cn44\0\0\0cn45\0\0\0cn46\0\0\0cn50\0\0\0cn51\0\0\0cn52\0\0\0cn53\0\0\0cn54\0\0\0cn61\0\0\0cn62\0\0\0cn63\0\0\0cn64\0\0\0cn65\0\0\0cn71\0\0\0cn91\0\0\0cn92\0\0\0cz10a\0\0cz10b\0\0cz10c\0\0cz10d\0\0cz10e\0\0cz10f\0\0cz611\0\0cz612\0\0cz613\0\0cz614\0\0cz615\0\0cz621\0\0cz622\0\0cz623\0\0cz624\0\0cz626\0\0cz627\0\0czjc\0\0\0czjm\0\0\0czka\0\0\0czkr\0\0\0czli\0\0\0czmo\0\0\0czol\0\0\0czpa\0\0\0czpl\0\0\0czpr\0\0\0czst\0\0\0czus\0\0\0czvy\0\0\0czzl\0\0\0fi01\0\0\0fra\0\0\0\0frb\0\0\0\0frbl\0\0\0frc\0\0\0\0frcp\0\0\0frd\0\0\0\0fre\0\0\0\0frf\0\0\0\0frg\0\0\0\0frgf\0\0\0frgp\0\0\0frh\0\0\0\0fri\0\0\0\0frj\0\0\0\0frk\0\0\0\0frl\0\0\0\0frm\0\0\0\0frmf\0\0\0frmq\0\0\0frn\0\0\0\0frnc\0\0\0fro\0\0\0\0frp\0\0\0\0frpf\0\0\0frpm\0\0\0frq\0\0\0\0frr\0\0\0\0frre\0\0\0frs\0\0\0\0frt\0\0\0\0frtf\0\0\0fru\0\0\0\0frv\0\0\0\0frwf\0\0\0fryt\0\0\0laxn\0\0\0lud\0\0\0\0lug\0\0\0\0lul\0\0\0\0mrnkc\0\0nlaw\0\0\0nlcw\0\0\0nlsx\0\0\0no23\0\0\0nzn\0\0\0\0nzs\0\0\0\0omba\0\0\0omsh\0\0\0plds\0\0\0plkp\0\0\0pllb\0\0\0plld\0\0\0pllu\0\0\0plma\0\0\0plmz\0\0\0plop\0\0\0plpd\0\0\0plpk\0\0\0plpm\0\0\0plsk\0\0\0plsl\0\0\0plwn\0\0\0plwp\0\0\0plzp\0\0\0shta\0\0\0tteto\0\0ttrcm\0\0ttwto\0\0twkhq\0\0twtnq\0\0twtpq\0\0twtxq\0\0usas\0\0\0usgu\0\0\0usmp\0\0\0uspr\0\0\0usum\0\0\0usvi\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"cnbj\0\0\0cntj\0\0\0cnhe\0\0\0cnsx\0\0\0cnmn\0\0\0cnln\0\0\0cnjl\0\0\0cnhl\0\0\0cnsh\0\0\0cnjs\0\0\0cnzj\0\0\0cnah\0\0\0cnfj\0\0\0cnjx\0\0\0cnsd\0\0\0cnha\0\0\0cnhb\0\0\0cnhn\0\0\0cngd\0\0\0cngx\0\0\0cnhi\0\0\0cncq\0\0\0cnsc\0\0\0cngz\0\0\0cnyn\0\0\0cnxz\0\0\0cnsn\0\0\0cngs\0\0\0cnqh\0\0\0cnnx\0\0\0cnxj\0\0\0twzzzz\0hkzzzz\0mozzzz\0cz110\0\0cz111\0\0cz112\0\0cz113\0\0cz114\0\0cz115\0\0cz663\0\0cz632\0\0cz633\0\0cz634\0\0cz635\0\0cz641\0\0cz642\0\0cz643\0\0cz644\0\0cz646\0\0cz647\0\0cz31\0\0\0cz64\0\0\0cz41\0\0\0cz52\0\0\0cz51\0\0\0cz80\0\0\0cz71\0\0\0cz53\0\0\0cz32\0\0\0cz10\0\0\0cz20\0\0\0cz42\0\0\0cz63\0\0\0cz72\0\0\0axzzzz\0frges\0\0frnaq\0\0blzzzz\0frara\0\0cpzzzz\0frbfc\0\0frbre\0\0frcvl\0\0frges\0\0gfzzzz\0gpzzzz\0frcor\0\0frbfc\0\0fridf\0\0frocc\0\0frnaq\0\0frges\0\0mfzzzz\0mqzzzz\0frocc\0\0nczzzz\0frhdf\0\0frnor\0\0pfzzzz\0pmzzzz\0frnor\0\0frpdl\0\0rezzzz\0frhdf\0\0frnaq\0\0tfzzzz\0frpac\0\0frara\0\0wfzzzz\0ytzzzz\0laxs\0\0\0lucl\0\0\0luec\0\0\0luca\0\0\0mr13\0\0\0awzzzz\0cwzzzz\0sxzzzz\0no50\0\0\0nzauk\0\0nzcan\0\0ombj\0\0\0omsj\0\0\0pl02\0\0\0pl04\0\0\0pl08\0\0\0pl10\0\0\0pl06\0\0\0pl12\0\0\0pl14\0\0\0pl16\0\0\0pl20\0\0\0pl18\0\0\0pl22\0\0\0pl26\0\0\0pl24\0\0\0pl28\0\0\0pl30\0\0\0pl32\0\0\0tazzzz\0tttob\0\0ttmrc\0\0tttob\0\0twkhh\0\0twtnn\0\0twnwt\0\0twtxg\0\0aszzzz\0guzzzz\0mpzzzz\0przzzz\0umzzzz\0vizzzz\0") })
                 },
             };
-            #[doc(hidden)]
-            pub fn lookup_locid_transform_aliases_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_locid_transform::provider::AliasesV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
-                if locale.is_empty() {
-                    Ok(Self::SINGLETON_LOCID_TRANSFORM_ALIASES_V1)
-                } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                }
-            }
         }
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_locid_transform::provider::AliasesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::AliasesV1Marker>, icu_provider::DataError> {
-                match Self::lookup_locid_transform_aliases_v1(&req.locale) {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_owned(icu_provider::prelude::zerofrom::ZeroFrom::zero_from(payload))) }),
+                let locale = &req.locale;
+                match {
+                    if locale.is_empty() {
+                        Ok(Self::SINGLETON_LOCID_TRANSFORM_ALIASES_V1)
+                    } else {
+                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
+                    }
+                } {
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_locid_transform::provider::AliasesV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

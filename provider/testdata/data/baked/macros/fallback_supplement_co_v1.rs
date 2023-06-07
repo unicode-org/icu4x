@@ -19,20 +19,19 @@ macro_rules! __impl_fallback_supplement_co_v1 {
                     zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"co") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0zhzh-Hant") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x06\0pinyinstroke") })
                 },
             };
-            #[doc(hidden)]
-            pub fn lookup_fallback_supplement_co_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
-                if locale.is_empty() {
-                    Ok(Self::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1)
-                } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                }
-            }
         }
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker>, icu_provider::DataError> {
-                match Self::lookup_fallback_supplement_co_v1(&req.locale) {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_owned(icu_provider::prelude::zerofrom::ZeroFrom::zero_from(payload))) }),
+                let locale = &req.locale;
+                match {
+                    if locale.is_empty() {
+                        Ok(Self::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1)
+                    } else {
+                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
+                    }
+                } {
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

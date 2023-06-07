@@ -21,20 +21,19 @@ macro_rules! __impl_props_casemap_v1 {
                     },
                 },
             };
-            #[doc(hidden)]
-            pub fn lookup_props_casemap_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_casemapping::provider::CaseMappingV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
-                if locale.is_empty() {
-                    Ok(Self::SINGLETON_PROPS_CASEMAP_V1)
-                } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                }
-            }
         }
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_casemapping::provider::CaseMappingV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_casemapping::provider::CaseMappingV1Marker>, icu_provider::DataError> {
-                match Self::lookup_props_casemap_v1(&req.locale) {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_owned(icu_provider::prelude::zerofrom::ZeroFrom::zero_from(payload))) }),
+                let locale = &req.locale;
+                match {
+                    if locale.is_empty() {
+                        Ok(Self::SINGLETON_PROPS_CASEMAP_V1)
+                    } else {
+                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
+                    }
+                } {
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_casemapping::provider::CaseMappingV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

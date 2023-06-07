@@ -27,20 +27,19 @@ macro_rules! __impl_fallback_likelysubtags_v1 {
                     zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"az\0en\0ff\0kk\0ky\0mn\0pa\0sd\0tg\0uz\0yuezh\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0\x06\0\0\0\x07\0\0\0\x08\0\0\0\x0B\0\0\0\x0C\0\0\0\r\0\0\0\x0E\0\0\0\x11\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ArabShawAdlmArabArabLatnMongArabDevaKhojSindArabArabHansBopoHanbHant") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"IR\0GB\0GN\0CN\0CN\0TR\0CN\0PK\0IN\0IN\0IN\0PK\0AF\0CN\0TW\0TW\0TW\0") })
                 },
             };
-            #[doc(hidden)]
-            pub fn lookup_fallback_likelysubtags_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
-                if locale.is_empty() {
-                    Ok(Self::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1)
-                } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                }
-            }
         }
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker>, icu_provider::DataError> {
-                match Self::lookup_fallback_likelysubtags_v1(&req.locale) {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_owned(icu_provider::prelude::zerofrom::ZeroFrom::zero_from(payload))) }),
+                let locale = &req.locale;
+                match {
+                    if locale.is_empty() {
+                        Ok(Self::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1)
+                    } else {
+                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
+                    }
+                } {
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

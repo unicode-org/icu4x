@@ -24,20 +24,19 @@ macro_rules! __impl_locid_transform_likelysubtags_l_v1 {
                 },
                 und: (icu_locid::subtags_language!("en"), icu_locid::subtags_script!("Latn"), icu_locid::subtags_region!("US")),
             };
-            #[doc(hidden)]
-            pub fn lookup_locid_transform_likelysubtags_l_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
-                if locale.is_empty() {
-                    Ok(Self::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1)
-                } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                }
-            }
         }
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker>, icu_provider::DataError> {
-                match Self::lookup_locid_transform_likelysubtags_l_v1(&req.locale) {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_owned(icu_provider::prelude::zerofrom::ZeroFrom::zero_from(payload))) }),
+                let locale = &req.locale;
+                match {
+                    if locale.is_empty() {
+                        Ok(Self::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1)
+                    } else {
+                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
+                    }
+                } {
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

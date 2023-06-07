@@ -10,20 +10,19 @@ macro_rules! __impl_propnames_to_long_linear_ea_v1 {
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_PROPNAMES_TO_LONG_LINEAR_EA_V1: &'static <icu_properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x07\0\x10\0\x19\0\"\0NeutralAmbiguousHalfwidthFullwidthNarrow") } };
-            #[doc(hidden)]
-            pub fn lookup_propnames_to_long_linear_ea_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
-                if locale.is_empty() {
-                    Ok(Self::SINGLETON_PROPNAMES_TO_LONG_LINEAR_EA_V1)
-                } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                }
-            }
         }
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_properties::provider::EastAsianWidthValueToLongNameV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_properties::provider::EastAsianWidthValueToLongNameV1Marker>, icu_provider::DataError> {
-                match Self::lookup_propnames_to_long_linear_ea_v1(&req.locale) {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_owned(icu_provider::prelude::zerofrom::ZeroFrom::zero_from(payload))) }),
+                let locale = &req.locale;
+                match {
+                    if locale.is_empty() {
+                        Ok(Self::SINGLETON_PROPNAMES_TO_LONG_LINEAR_EA_V1)
+                    } else {
+                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
+                    }
+                } {
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

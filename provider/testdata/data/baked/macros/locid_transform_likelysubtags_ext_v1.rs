@@ -35,20 +35,19 @@ macro_rules! __impl_locid_transform_likelysubtags_ext_v1 {
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"061AQ\0AS\0BI\0BQ\0BT\0BV\0CP\0CW\0DJ\0GH\0GL\0GS\0HM\0HT\0LS\0MG\0ML\0MT\0MU\0MV\0NO\0PG\0PW\0PY\0RW\0SJ\0TK\0TV\0VU\0WS\0ZW\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"sm\0LatnundLatnsm\0Latnrn\0LatnpapLatndz\0TibtundLatnundLatnpapLatnaa\0Latnak\0Latnkl\0LatnundLatnundLatnht\0Latnst\0Latnmg\0Latnbm\0Latnmt\0LatnmfeLatndv\0Thaanb\0LatntpiLatnpauLatngn\0Latnrw\0Latnnb\0LatntklLatntvlLatnbi\0Latnsm\0Latnsn\0Latn") })
                 },
             };
-            #[doc(hidden)]
-            pub fn lookup_locid_transform_likelysubtags_ext_v1(locale: &icu_provider::DataLocale) -> Result<&'static <icu_locid_transform::provider::LikelySubtagsExtendedV1Marker as icu_provider::DataMarker>::Yokeable, icu_provider::DataErrorKind> {
-                if locale.is_empty() {
-                    Ok(Self::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1)
-                } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                }
-            }
         }
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker>, icu_provider::DataError> {
-                match Self::lookup_locid_transform_likelysubtags_ext_v1(&req.locale) {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_owned(icu_provider::prelude::zerofrom::ZeroFrom::zero_from(payload))) }),
+                let locale = &req.locale;
+                match {
+                    if locale.is_empty() {
+                        Ok(Self::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1)
+                    } else {
+                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
+                    }
+                } {
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

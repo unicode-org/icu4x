@@ -137,13 +137,11 @@ pub struct BakedExporter {
 /// Data required to write the implementations
 struct ImplData {
     marker: SyncTokenStream,
-    lookup_ident: SyncTokenStream,
     feature: SyncTokenStream,
     macro_ident: SyncTokenStream,
     prefixed_macro_ident: SyncTokenStream,
     hash_ident: SyncTokenStream,
     mod_ident: SyncTokenStream,
-    into_any_payload: SyncTokenStream,
 }
 
 impl std::fmt::Debug for BakedExporter {
@@ -332,8 +330,6 @@ impl DataExporter for BakedExporter {
             .replace('@', "_v")
             .replace('/', "_");
 
-        let lookup_ident = format!("lookup_{ident}").parse::<TokenStream>().unwrap();
-
         let mut singleton = None.into_iter();
 
         let lookup = match values.iter().map(|(_, l)| l.len()).sum() {
@@ -349,8 +345,11 @@ impl DataExporter for BakedExporter {
                 // Exposing singleton structs separately allows us to get rid of fallibility by using
                 // the struct directly.
                 singleton = Some(quote! {
-                    #[doc(hidden)]
-                    pub const #singleton_ident: &'static #struct_type = &#bake;
+                    #[clippy::msrv = "1.61"]
+                    impl $provider {
+                        #[doc(hidden)]
+                        pub const #singleton_ident: &'static #struct_type = &#bake;
+                    }
                 })
                 .into_iter();
 
@@ -410,15 +409,19 @@ impl DataExporter for BakedExporter {
             }
         };
 
-        let into_any_payload = if is_datetime_skeletons {
+        let into_data_payload = if is_datetime_skeletons {
             quote! {
-                .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
-                .map(icu_provider::DataPayload::<#marker>::from_owned)
-                .map(icu_provider::DataPayload::wrap_into_any_payload)
+                icu_provider::DataPayload::<#marker>::from_owned(icu_datetime::provider::calendar::DateSkeletonPatternsV1(
+                    payload
+                        .iter()
+                        .map(|(fields, pattern)| (SkeletonV1(Skeleton(fields.iter().cloned().collect())), zerofrom::ZeroFrom::zero_from(pattern)))
+                        .collect(),
+                ))
+
             }
         } else {
             quote! {
-                .map(icu_provider::AnyPayload::from_static_ref)
+                icu_provider::DataPayload::from_static_ref(payload)
             }
         };
 
@@ -437,17 +440,7 @@ impl DataExporter for BakedExporter {
                 #[macro_export]
                 macro_rules! #prefixed_macro_ident {
                     ($provider:path) => {
-
-                        #[clippy::msrv = "1.61"]
-                        impl $provider {
-                            #(#singleton)*
-
-                            #[doc(hidden)]
-                            pub fn #lookup_ident(locale: &icu_provider::DataLocale) -> Result<&'static #struct_type, icu_provider::DataErrorKind> {
-                                #lookup
-                            }
-
-                        }
+                        #(#singleton)*
 
                         #[clippy::msrv = "1.61"]
                         impl icu_provider::DataProvider<#marker> for $provider {
@@ -455,10 +448,11 @@ impl DataExporter for BakedExporter {
                                 &self,
                                 req: icu_provider::DataRequest,
                             ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
-                                match Self::#lookup_ident(&req.locale) {
+                                let locale = &req.locale;
+                                match {#lookup} {
                                     Ok(payload) => Ok(icu_provider::DataResponse {
                                         metadata: Default::default(),
-                                        payload: Some(icu_provider::DataPayload::from_owned(icu_provider::prelude::zerofrom::ZeroFrom::zero_from(payload))),
+                                        payload: Some(#into_data_payload),
                                     }),
                                     Err(e) => Err(e.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
                                 }
@@ -471,13 +465,11 @@ impl DataExporter for BakedExporter {
 
         let data = ImplData {
             feature: feature.to_string(),
-            lookup_ident: lookup_ident.to_string(),
             marker: quote!(#marker).to_string(),
             macro_ident: format!("impl_{ident}"),
             prefixed_macro_ident: prefixed_macro_ident.to_string(),
             hash_ident: ident.to_ascii_uppercase(),
             mod_ident: ident,
-            into_any_payload: into_any_payload.to_string(),
         };
 
         self.impl_data
@@ -496,10 +488,6 @@ impl DataExporter for BakedExporter {
         let features = data
             .values()
             .map(|data| data.feature.parse::<TokenStream>().unwrap())
-            .collect::<Vec<_>>();
-        let lookup_idents = data
-            .values()
-            .map(|data| data.lookup_ident.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
         let markers = data
             .values()
@@ -527,35 +515,6 @@ impl DataExporter for BakedExporter {
             .values()
             .map(|data| data.hash_ident.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
-        let into_any_payloads = data
-            .values()
-            .map(|data| data.into_any_payload.parse::<TokenStream>().unwrap())
-            .collect::<Vec<_>>();
-
-        let any_body = if data.is_empty() {
-            quote! {
-                Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req))
-            }
-        } else {
-            quote! {
-                #(
-                    #features
-                    const #hash_idents: icu_provider::DataKeyHash = <#markers as icu_provider::KeyedDataMarker>::KEY.hashed();
-                )*
-                match key.hashed() {
-                    #(
-                        #features
-                        #hash_idents => Self::#lookup_idents(&req.locale) #into_any_payloads,
-                    )*
-                    _ => Err(icu_provider::DataErrorKind::MissingDataKey),
-                }
-                .map(|payload| icu_provider::AnyResponse {
-                    payload: Some(payload),
-                    metadata: Default::default(),
-                })
-                .map_err(|e| e.with_req(key, req))
-            }
-        };
 
         self.write_to_file(
             PathBuf::from("macros"),
@@ -612,7 +571,22 @@ impl DataExporter for BakedExporter {
                         #[clippy::msrv = "1.61"]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                                #any_body
+                                #(
+                                    #features
+                                    const #hash_idents: icu_provider::DataKeyHash = <#markers as icu_provider::KeyedDataMarker>::KEY.hashed();
+                                )*
+                                match key.hashed() {
+                                    #(
+                                        #features
+                                        #hash_idents => icu_provider::DataProvider::<#markers>::load(self, req)
+                                            .and_then(|r| r.take_metadata_and_payload())
+                                            .map(|(metadata, payload)| icu_provider::AnyResponse {
+                                                payload: Some(payload.wrap_into_any_payload()),
+                                                metadata,
+                                            }),
+                                    )*
+                                    _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
+                                }
                             }
                         }
                     }
