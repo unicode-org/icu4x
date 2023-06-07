@@ -184,6 +184,15 @@ impl NormalizedPropertyNameStr {
     pub fn from_str(s: &str) -> &Self {
         UnvalidatedStr::from_str(s).into()
     }
+
+    /// Get a `Box<NormalizedPropertyName>` from a byte slice
+    pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
+        #[allow(clippy::expect_used)] // Self has no invariants
+        // can be cleaned up with https://github.com/unicode-org/icu4x/issues/2310
+        let this = Self::parse_byte_slice(b).expect("NormalizedPropertyName has no invariants");
+
+        zerovec::ule::encode_varule_to_box(&this)
+    }
 }
 
 /// A set of characters and strings which share a particular property value.
