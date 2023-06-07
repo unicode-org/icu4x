@@ -4,8 +4,8 @@
 
 use super::convert::compute_bcp47_tzids_btreemap;
 use crate::transform::cldr::cldr_serde;
-use icu_provider::prelude::*;
 use icu_provider::datagen::IterableDataProvider;
+use icu_provider::prelude::*;
 use icu_timezone::provider::names::*;
 
 impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
