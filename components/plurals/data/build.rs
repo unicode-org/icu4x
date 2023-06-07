@@ -3,10 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 fn main() {
-    if std::env::var("CARGO_FEATURE_DATA").is_ok() {
-        if std::env::var("ICU4X_DATA_DIR").is_ok() {
-            println!("cargo:rustc-cfg=icu4x_custom_data");
-        }
-        println!("cargo:rerun-if-env-changed=ICU4X_DATA_DIR");
+    if std::env::var("ICU4X_DATA_DIR").is_ok() {
+        println!("cargo:rustc-cfg=icu4x_custom_data");
     }
+    println!("cargo:rerun-if-env-changed=ICU4X_DATA_DIR");
 }

@@ -523,10 +523,10 @@ impl DataExporter for BakedExporter {
             .map(|data| data.hash_ident.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
 
+        // macros.rs is the interface for built-in data. It exposes one macro per data key.
         self.write_to_file(
             PathBuf::from("macros.rs"),
             quote! {
-
                 #(
                     #[macro_use]
                     #[path = #file_paths]
@@ -534,14 +534,23 @@ impl DataExporter for BakedExporter {
                     #[doc(inline)]
                     pub use #prefixed_macro_idents as #macro_idents;
                 )*
+            },
+        )?;
+
+        // mod.rs is the interface for using databake directly. It exposes the macros from macros.rs,
+        // as well as `impl_data_provider` and `impl_any_provider` which include all keys.
+        self.write_to_file(
+            PathBuf::from("mod.rs"),
+            quote! {
+                include!("macros.rs");
 
                 /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
-                /// hardcoded in this file. This allows the struct to be used with
+                /// hardcoded in this module. This allows the struct to be used with
                 /// `icu`'s `_unstable` constructors.
                 ///
                 /// ```compile_fail
                 /// struct MyDataProvider;
-                /// include!("/path/to/generated/macros.rs");
+                /// include!("/path/to/generated/mod.rs");
                 /// impl_data_provider(MyDataProvider);
                 /// ```
                 #[doc(hidden)]
@@ -563,7 +572,7 @@ impl DataExporter for BakedExporter {
                 ///
                 /// ```compile_fail
                 /// struct MyAnyProvider;
-                /// include!("/path/to/generated/macros.rs");
+                /// include!("/path/to/generated/mod.rs");
                 /// impl_any_provider(MyAnyProvider);
                 /// ```
                 #[doc(hidden)]
@@ -595,14 +604,7 @@ impl DataExporter for BakedExporter {
                 }
                 #[doc(inline)]
                 pub use __impl_any_provider as impl_any_provider;
-            },
-        )?;
 
-        // For backwards compatibility
-        self.write_to_file(
-            PathBuf::from("mod.rs"),
-            quote! {
-                include!("macros.rs");
                 #[clippy::msrv = "1.61"]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
