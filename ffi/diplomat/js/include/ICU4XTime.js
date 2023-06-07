@@ -33,10 +33,10 @@ export class ICU4XTime {
     })();
   }
 
-  static create_midnight(arg_hour, arg_minute, arg_second, arg_nanosecond) {
+  static create_midnight() {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XTime_create_midnight(diplomat_receive_buffer, arg_hour, arg_minute, arg_second, arg_nanosecond);
+      wasm.ICU4XTime_create_midnight(diplomat_receive_buffer);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XTime(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

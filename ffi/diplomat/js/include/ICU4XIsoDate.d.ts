@@ -30,7 +30,7 @@ export class ICU4XIsoDate {
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch Rust documentation for `unix_epoch`} for more information.
    */
-  static create_for_unix_epoch(year: i32, month: u8, day: u8): ICU4XIsoDate;
+  static create_for_unix_epoch(): ICU4XIsoDate;
 
   /**
 

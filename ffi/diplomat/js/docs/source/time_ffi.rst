@@ -15,7 +15,7 @@
         See the `Rust documentation for Time <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html>`__ for more information.
 
 
-    .. js:function:: create_midnight(hour, minute, second, nanosecond)
+    .. js:function:: create_midnight()
 
         Creates a new :js:class:`ICU4XTime` representing midnight (00:00.000).
 

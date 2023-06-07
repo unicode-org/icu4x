@@ -48,7 +48,7 @@ class ICU4XIsoDate {
    * 
    * See the [Rust documentation for `unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch) for more information.
    */
-  static ICU4XIsoDate create_for_unix_epoch(int32_t year, uint8_t month, uint8_t day);
+  static ICU4XIsoDate create_for_unix_epoch();
 
   /**
    * Convert this date to one in a different calendar
@@ -154,8 +154,8 @@ inline diplomat::result<ICU4XIsoDate, ICU4XError> ICU4XIsoDate::create(int32_t y
   }
   return diplomat_result_out_value;
 }
-inline ICU4XIsoDate ICU4XIsoDate::create_for_unix_epoch(int32_t year, uint8_t month, uint8_t day) {
-  return ICU4XIsoDate(capi::ICU4XIsoDate_create_for_unix_epoch(year, month, day));
+inline ICU4XIsoDate ICU4XIsoDate::create_for_unix_epoch() {
+  return ICU4XIsoDate(capi::ICU4XIsoDate_create_for_unix_epoch());
 }
 inline ICU4XDate ICU4XIsoDate::to_calendar(const ICU4XCalendar& calendar) const {
   return ICU4XDate(capi::ICU4XIsoDate_to_calendar(this->inner.get(), calendar.AsFFI()));

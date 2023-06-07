@@ -156,7 +156,7 @@
         See the `Rust documentation for try_new_iso_date <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso_date>`__ for more information.
 
 
-    .. cpp:function:: static ICU4XIsoDate create_for_unix_epoch(int32_t year, uint8_t month, uint8_t day)
+    .. cpp:function:: static ICU4XIsoDate create_for_unix_epoch()
 
         Creates a new :cpp:class:`ICU4XIsoDate` representing January 1, 1970.
 

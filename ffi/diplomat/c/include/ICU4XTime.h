@@ -22,7 +22,7 @@ extern "C" {
 
 diplomat_result_box_ICU4XTime_ICU4XError ICU4XTime_create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
-diplomat_result_box_ICU4XTime_ICU4XError ICU4XTime_create_midnight(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+diplomat_result_box_ICU4XTime_ICU4XError ICU4XTime_create_midnight();
 
 uint8_t ICU4XTime_hour(const ICU4XTime* self);
 

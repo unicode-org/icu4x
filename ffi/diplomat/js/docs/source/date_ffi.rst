@@ -140,7 +140,7 @@
         See the `Rust documentation for try_new_iso_date <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso_date>`__ for more information.
 
 
-    .. js:function:: create_for_unix_epoch(year, month, day)
+    .. js:function:: create_for_unix_epoch()
 
         Creates a new :js:class:`ICU4XIsoDate` representing January 1, 1970.
 

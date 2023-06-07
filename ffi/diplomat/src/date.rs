@@ -45,7 +45,7 @@ pub mod ffi {
 
         /// Creates a new [`ICU4XIsoDate`] representing January 1, 1970.
         #[diplomat::rust_link(icu::calendar::Date::unix_epoch, FnInStruct)]
-        pub fn create_for_unix_epoch(year: i32, month: u8, day: u8) -> Box<ICU4XIsoDate> {
+        pub fn create_for_unix_epoch() -> Box<ICU4XIsoDate> {
             Box::new(ICU4XIsoDate(Date::unix_epoch()))
         }
 

@@ -26,7 +26,7 @@ export class ICU4XTime {
    * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html Rust documentation for `Time`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static create_midnight(hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XTime | never;
+  static create_midnight(): ICU4XTime | never;
 
   /**
 
