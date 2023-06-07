@@ -1,13 +1,12 @@
 // @generated
 #[macro_use]
-mod macros {
-    #[macro_use]
-    mod plurals_cardinal_v1;
-    #[macro_use]
-    mod plurals_ordinal_v1;
-}
+#[path = "macros/plurals_cardinal_v1.data.rs"]
+mod plurals_cardinal_v1;
 #[doc(inline)]
 pub use __impl_plurals_cardinal_v1 as impl_plurals_cardinal_v1;
+#[macro_use]
+#[path = "macros/plurals_ordinal_v1.data.rs"]
+mod plurals_ordinal_v1;
 #[doc(inline)]
 pub use __impl_plurals_ordinal_v1 as impl_plurals_ordinal_v1;
 /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
@@ -48,12 +47,10 @@ macro_rules! __impl_any_provider {
                 const PLURALS_CARDINAL_V1: icu_provider::DataKeyHash = <icu_plurals::provider::CardinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const PLURALS_ORDINAL_V1: icu_provider::DataKeyHash = <icu_plurals::provider::OrdinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    PLURALS_CARDINAL_V1 => Self::lookup_plurals_cardinal_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
-                    PLURALS_ORDINAL_V1 => Self::lookup_plurals_ordinal_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
-                    _ => Err(icu_provider::DataErrorKind::MissingDataKey),
+                    PLURALS_CARDINAL_V1 => icu_provider::DataProvider::<icu_plurals::provider::CardinalV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    PLURALS_ORDINAL_V1 => icu_provider::DataProvider::<icu_plurals::provider::OrdinalV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
-                .map(|payload| icu_provider::AnyResponse { payload: Some(payload), metadata: Default::default() })
-                .map_err(|e| e.with_req(key, req))
             }
         }
     };

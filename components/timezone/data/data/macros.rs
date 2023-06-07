@@ -1,9 +1,7 @@
 // @generated
 #[macro_use]
-mod macros {
-    #[macro_use]
-    mod time_zone_metazone_period_v1;
-}
+#[path = "macros/time_zone_metazone_period_v1.data.rs"]
+mod time_zone_metazone_period_v1;
 #[doc(inline)]
 pub use __impl_time_zone_metazone_period_v1 as impl_time_zone_metazone_period_v1;
 /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
@@ -42,11 +40,9 @@ macro_rules! __impl_any_provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 const TIME_ZONE_METAZONE_PERIOD_V1: icu_provider::DataKeyHash = <icu_timezone::provider::MetazonePeriodV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    TIME_ZONE_METAZONE_PERIOD_V1 => Self::lookup_time_zone_metazone_period_v1(&req.locale).map(icu_provider::AnyPayload::from_static_ref),
-                    _ => Err(icu_provider::DataErrorKind::MissingDataKey),
+                    TIME_ZONE_METAZONE_PERIOD_V1 => icu_provider::DataProvider::<icu_timezone::provider::MetazonePeriodV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
-                .map(|payload| icu_provider::AnyResponse { payload: Some(payload), metadata: Default::default() })
-                .map_err(|e| e.with_req(key, req))
             }
         }
     };
