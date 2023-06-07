@@ -12,8 +12,8 @@ pub(crate) struct ExceptionHeader {
     pub negative_delta: bool,
     pub is_sensitive: bool,
     pub dot_type: DotType,
-    pub has_conditional_fold: bool,
     pub has_conditional_special: bool,
+    pub has_conditional_fold: bool,
 }
 
 impl ExceptionHeader {
@@ -24,10 +24,11 @@ impl ExceptionHeader {
         let no_simple_case_folding = int & ExceptionHeaderULE::NO_SIMPLE_CASE_FOLDING_FLAG != 0;
         let negative_delta = int & ExceptionHeaderULE::NEGATIVE_DELTA_FLAG != 0;
         let is_sensitive = int & ExceptionHeaderULE::SENSITIVE_FLAG != 0;
-        let has_conditional_fold = int & ExceptionHeaderULE::CONDITIONAL_SPECIAL_FLAG != 0;
-        let has_conditional_special = int & ExceptionHeaderULE::CONDITIONAL_FOLD_FLAG != 0;
+        let has_conditional_special = int & ExceptionHeaderULE::CONDITIONAL_SPECIAL_FLAG != 0;
+        let has_conditional_fold = int & ExceptionHeaderULE::CONDITIONAL_FOLD_FLAG != 0;
 
-        let dot_type = DotType::from_masked_bits(int >> ExceptionHeaderULE::DOT_SHIFT);
+        let dot_type =
+            DotType::from_masked_bits((int >> ExceptionHeaderULE::DOT_SHIFT) & DotType::DOT_MASK);
         Self {
             slot_presence,
             double_width_slots,
@@ -35,15 +36,15 @@ impl ExceptionHeader {
             negative_delta,
             is_sensitive,
             dot_type,
-            has_conditional_fold,
             has_conditional_special,
+            has_conditional_fold,
         }
     }
 
     /// Convert to an ICU4C-format u16
     pub(crate) fn to_integer(self) -> u16 {
         let mut sixteen: u16 = self.slot_presence.into();
-        let dot_data = self.dot_type as u16 >> ExceptionHeaderULE::DOT_SHIFT;
+        let dot_data = (self.dot_type as u16) << ExceptionHeaderULE::DOT_SHIFT;
         sixteen |= dot_data;
 
         if self.double_width_slots {
@@ -58,10 +59,10 @@ impl ExceptionHeader {
         if self.is_sensitive {
             sixteen |= ExceptionHeaderULE::SENSITIVE_FLAG
         }
-        if self.has_conditional_fold {
+        if self.has_conditional_special {
             sixteen |= ExceptionHeaderULE::CONDITIONAL_SPECIAL_FLAG
         }
-        if self.has_conditional_special {
+        if self.has_conditional_fold {
             sixteen |= ExceptionHeaderULE::CONDITIONAL_FOLD_FLAG
         }
         sixteen
