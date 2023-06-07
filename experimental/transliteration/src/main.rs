@@ -47,6 +47,29 @@ fn main() {
     println!("{:?}", parse_rules().parse(RULES));
 }
 
+struct UnicodeSet(String);
+struct Literal(String);
+
+enum UnicodeSetOrLiteral {
+    UnicodeSet(UnicodeSet),
+    Literal(Literal),
+}
+
+struct KeyLike(Vec<Literal>);
+
+struct ContextLike(Vec<UnicodeSetOrLiteral>);
+
+struct HalfRule {
+    ante: Option<ContextLike>,
+    key: KeyLike,
+    post: Option<ContextLike>,
+}
+
+struct Rule {
+    source: HalfRule,
+    target: HalfRule,
+}
+
 /*
 Parsing:
 first just handle rules:
