@@ -27,3 +27,7 @@ zip = ">=0.5, <0.7"
 
 [features]
 make-testdata-legacy = ["icu_datagen/legacy_api"]
+
+[[bin]]
+name = "make-testdata-legacy"
+required-features = ["make-testdata-legacy"]
