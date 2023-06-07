@@ -8,6 +8,7 @@ use zerovec::{VarZeroVec, ZeroVec};
 use crate::error::Error;
 use crate::internals::ClosureSet;
 use crate::provider::data::{DotType, MappingKind};
+use crate::provider::exceptions::ExceptionSlot;
 
 /// This represents case mapping exceptions that can't be represented as a delta applied to
 /// the original code point. Similar to ICU4C, data is stored as a u16 array. The codepoint
@@ -155,35 +156,6 @@ impl ExceptionHeader {
     // (This is used for Turkic mappings for dotted/dotless i.)
     fn has_conditional_fold(&self) -> bool {
         self.0 & Self::CONDITIONAL_FOLD_FLAG != 0
-    }
-}
-
-#[derive(Copy, Clone, Debug)]
-pub(crate) enum ExceptionSlot {
-    Lower = 0,
-    Fold = 1,
-    Upper = 2,
-    Title = 3,
-    Delta = 4,
-    // Slot 5 is reserved
-    Closure = 6,
-    FullMappings = 7,
-}
-
-impl ExceptionSlot {
-    fn contains_char(&self) -> bool {
-        matches!(self, Self::Lower | Self::Fold | Self::Upper | Self::Title)
-    }
-}
-
-impl From<MappingKind> for ExceptionSlot {
-    fn from(full: MappingKind) -> Self {
-        match full {
-            MappingKind::Lower => Self::Lower,
-            MappingKind::Fold => Self::Fold,
-            MappingKind::Upper => Self::Upper,
-            MappingKind::Title => Self::Title,
-        }
     }
 }
 
