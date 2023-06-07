@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
+///
+/// Also see [`i32::div_euclid`], [`i32::rem_euclid`].
 pub fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
     debug_assert!(d > 0);
     let (a, b) = (n / d, n % d);
@@ -14,6 +16,8 @@ pub fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
 }
 
 /// [`div_rem_euclid`] for 64-bit inputs
+///
+/// Also see [`i64::div_euclid`], [`i64::rem_euclid`].
 pub fn div_rem_euclid64(n: i64, d: i64) -> (i64, i64) {
     debug_assert!(d > 0);
     let (a, b) = (n / d, n % d);
@@ -26,6 +30,8 @@ pub fn div_rem_euclid64(n: i64, d: i64) -> (i64, i64) {
 
 /// Calculate `n / d` such that the remainder is always positive.
 /// This is equivalent to quotient() in the Reingold/Dershowitz Lisp code
+///
+/// Also see [`i32::div_euclid`]
 pub const fn quotient(n: i32, d: i32) -> i32 {
     debug_assert!(d > 0);
     // Code can use int_roundings once stabilized
@@ -39,6 +45,8 @@ pub const fn quotient(n: i32, d: i32) -> i32 {
 }
 
 /// [`quotient`] for 64-bit inputs
+///
+/// Also see [`i64::div_euclid`]
 pub const fn quotient64(n: i64, d: i64) -> i64 {
     debug_assert!(d > 0);
     // Code can use int_roundings once stabilized
@@ -104,6 +112,18 @@ fn test_div_rem_euclid() {
     assert_eq!(div_rem_euclid(i32::MAX, 1), (2147483647, 0));
     assert_eq!(div_rem_euclid(i32::MAX, 2), (1073741823, 1));
     assert_eq!(div_rem_euclid(i32::MAX, 3), (715827882, 1));
+
+    for n in -100..100 {
+        for d in 1..5 {
+            let (x1, y1) = div_rem_euclid(n, d);
+            let (x2, y2) = div_rem_euclid64(n as i64, d as i64);
+            let (x3, y3) = (n.div_euclid(d), n.rem_euclid(d));
+            assert_eq!(x1, x2 as i32);
+            assert_eq!(x1, x3);
+            assert_eq!(y1, y2 as i32);
+            assert_eq!(y1, y3);
+        }
+    }
 }
 
 pub enum I32Result {
