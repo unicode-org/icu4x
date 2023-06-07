@@ -456,7 +456,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     ///
     /// assert_eq!(yoke.get(), "hello");
     /// ```
-    pub fn new_owned(yokeable: Y) -> Self {
+    pub const fn new_owned(yokeable: Y) -> Self {
         Self {
             yokeable,
             cart: None,

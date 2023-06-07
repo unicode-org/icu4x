@@ -132,8 +132,46 @@ args = [
     "--overwrite",
 ]
 
+[tasks.bakeddata]
+description = "Builds full baked data"
+category = "ICU4X Data"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+exec --fail-on-error cargo build -p icu_datagen
+root = pwd
+
+components = array "components/plurals" "components/timezone"
+
+for component in ${components}
+    cd "${component}/data"
+    exec --fail-on-error ${root}/target/debug/icu4x-datagen --config config.json
+    cd "${root}"
+end
+'''
+
+[tasks.bakeddata-check]
+description = "Rebuild baked data and ensure that the working copy is clean"
+category = "ICU4X Data"
+dependencies = ["bakeddata"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    msg = array "" ""
+    array_push ${msg} "Baked data needs to be updated. Please run `cargo make bakeddata`"
+    array_push ${msg} ""
+    array_push ${msg} "${output.stdout}"
+    msg = array_join ${msg} "\n"
+    trigger_error ${msg}
+end
+'''
+
 [tasks.full-data]
-description = "Builds a complete postcard file from latest CLDR and icu_exportdata."
+description = "Builds a complete postcard file from latest data."
 category = "ICU4X Data"
 command = "cargo"
 args = [
