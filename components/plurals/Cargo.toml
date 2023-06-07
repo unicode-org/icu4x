@@ -38,7 +38,7 @@ zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"]
 databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
-icu_plurals_data = { version = "43", path = "data", optional = true }
+icu_plurals_data = { path = "data", optional = true }
 
 [dev-dependencies]
 criterion = "0.4"

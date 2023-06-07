@@ -1783,7 +1783,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "43.0.0"
+version = "0.0.0"
 
 [[package]]
 name = "icu_properties"
@@ -1992,7 +1992,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone_data"
-version = "43.0.0"
+version = "0.0.0"
 
 [[package]]
 name = "ident_case"
