@@ -396,6 +396,8 @@ mod macros {
     #[macro_use]
     mod segmenter_word_v1;
     #[macro_use]
+    mod time_zone_bcp47_to_iana_v1;
+    #[macro_use]
     mod time_zone_exemplar_cities_v1;
     #[macro_use]
     mod time_zone_formats_v1;
@@ -807,6 +809,8 @@ pub use __impl_segmenter_sentence_v1 as impl_segmenter_sentence_v1;
 #[doc(inline)]
 pub use __impl_segmenter_word_v1 as impl_segmenter_word_v1;
 #[doc(inline)]
+pub use __impl_time_zone_bcp47_to_iana_v1 as impl_time_zone_bcp47_to_iana_v1;
+#[doc(inline)]
 pub use __impl_time_zone_exemplar_cities_v1 as impl_time_zone_exemplar_cities_v1;
 #[doc(inline)]
 pub use __impl_time_zone_formats_v1 as impl_time_zone_formats_v1;
@@ -1019,6 +1023,7 @@ use __lookup_segmenter_line_v1 as lookup_segmenter_line_v1;
 use __lookup_segmenter_lstm_wl_auto_v1 as lookup_segmenter_lstm_wl_auto_v1;
 use __lookup_segmenter_sentence_v1 as lookup_segmenter_sentence_v1;
 use __lookup_segmenter_word_v1 as lookup_segmenter_word_v1;
+use __lookup_time_zone_bcp47_to_iana_v1 as lookup_time_zone_bcp47_to_iana_v1;
 use __lookup_time_zone_exemplar_cities_v1 as lookup_time_zone_exemplar_cities_v1;
 use __lookup_time_zone_formats_v1 as lookup_time_zone_formats_v1;
 use __lookup_time_zone_generic_long_v1 as lookup_time_zone_generic_long_v1;
@@ -1293,6 +1298,8 @@ pub use __singleton_segmenter_lstm_wl_auto_v1 as singleton_segmenter_lstm_wl_aut
 pub use __singleton_segmenter_sentence_v1 as singleton_segmenter_sentence_v1;
 #[doc(inline)]
 pub use __singleton_segmenter_word_v1 as singleton_segmenter_word_v1;
+#[doc(inline)]
+pub use __singleton_time_zone_bcp47_to_iana_v1 as singleton_time_zone_bcp47_to_iana_v1;
 #[doc(inline)]
 pub use __singleton_time_zone_iana_to_bcp47_v1 as singleton_time_zone_iana_to_bcp47_v1;
 #[doc(inline)]
@@ -1700,6 +1707,8 @@ macro_rules! __impl_data_provider {
         impl_segmenter_sentence_v1!($provider);
         #[cfg(feature = "icu_segmenter")]
         impl_segmenter_word_v1!($provider);
+        #[cfg(feature = "icu_timezone")]
+        impl_time_zone_bcp47_to_iana_v1!($provider);
         #[cfg(feature = "icu_datetime")]
         impl_time_zone_exemplar_cities_v1!($provider);
         #[cfg(feature = "icu_datetime")]
@@ -2126,6 +2135,8 @@ macro_rules! __impl_any_provider {
                 const SEGMENTER_SENTENCE_V1: icu_provider::DataKeyHash = <icu_segmenter::provider::SentenceBreakDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
                 const SEGMENTER_WORD_V1: icu_provider::DataKeyHash = <icu_segmenter::provider::WordBreakDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                #[cfg(feature = "icu_timezone")]
+                const TIME_ZONE_BCP47_TO_IANA_V1: icu_provider::DataKeyHash = <icu_timezone::provider::names::Bcp47ToIanaMapV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
                 const TIME_ZONE_EXEMPLAR_CITIES_V1: icu_provider::DataKeyHash = <icu_datetime::provider::time_zones::ExemplarCitiesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
@@ -2533,6 +2544,8 @@ macro_rules! __impl_any_provider {
                     SEGMENTER_SENTENCE_V1 => lookup_segmenter_sentence_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
                     SEGMENTER_WORD_V1 => lookup_segmenter_word_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_timezone")]
+                    TIME_ZONE_BCP47_TO_IANA_V1 => lookup_time_zone_bcp47_to_iana_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
                     TIME_ZONE_EXEMPLAR_CITIES_V1 => lookup_time_zone_exemplar_cities_v1!(req.locale).map(icu_provider::AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]

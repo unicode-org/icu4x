@@ -110,6 +110,7 @@ registry!(
     AndListV1Marker,
     AsciiHexDigitV1Marker,
     BasicEmojiV1Marker,
+    Bcp47ToIanaMapV1Marker,
     BidiClassV1Marker,
     BidiClassNameToValueV1Marker,
     BidiClassValueToLongNameV1Marker,
