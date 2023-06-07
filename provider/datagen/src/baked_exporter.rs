@@ -414,7 +414,7 @@ impl DataExporter for BakedExporter {
                 icu_provider::DataPayload::<#marker>::from_owned(icu_datetime::provider::calendar::DateSkeletonPatternsV1(
                     payload
                         .iter()
-                        .map(|(fields, pattern)| (SkeletonV1(Skeleton(fields.iter().cloned().collect())), zerofrom::ZeroFrom::zero_from(pattern)))
+                        .map(|(fields, pattern)| (SkeletonV1(Skeleton(fields.iter().cloned().collect())), icu_provider::prelude::zerofrom::ZeroFrom::zero_from(pattern)))
                         .collect(),
                 ))
 
