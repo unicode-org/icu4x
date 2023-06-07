@@ -141,11 +141,11 @@ exit_on_error true
 exec --fail-on-error cargo build -p icu_datagen
 root = pwd
 
-components = array "components/plurals/data" "components/timezone/data"
+components = array "components/plurals" "components/timezone"
 
 for component in ${components}
-    cd "${component}"
-    exec --fail-on-error ${root}/target/debug/icu4x-datagen --config data.json
+    cd "${component}/data"
+    exec --fail-on-error ${root}/target/debug/icu4x-datagen --config config.json
     cd "${root}"
 end
 
