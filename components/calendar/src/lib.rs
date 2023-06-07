@@ -130,6 +130,7 @@ pub mod iso;
 pub mod japanese;
 pub mod julian;
 pub mod provider;
+mod rata_die;
 pub mod types;
 mod week_of;
 

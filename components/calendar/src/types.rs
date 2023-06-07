@@ -479,6 +479,16 @@ impl Time {
         }
     }
 
+    /// Construct a new [`Time`] representing midnight (00:00.000)
+    pub const fn midnight() -> Self {
+        Self {
+            hour: IsoHour::zero(),
+            minute: IsoMinute::zero(),
+            second: IsoSecond::zero(),
+            nanosecond: NanoSecond::zero(),
+        }
+    }
+
     /// Construct a new [`Time`], whilst validating that all components are in range
     pub fn try_new(
         hour: u8,
