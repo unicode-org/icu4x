@@ -515,6 +515,51 @@ impl LocaleExpander {
             TransformResult::Unmodified
         }
     }
+
+    // TODO(3492): consider turning this and a future get_likely_region/get_likely_language public
+    #[allow(dead_code)]
+    #[inline]
+    pub(crate) fn get_likely_script<T: AsRef<LanguageIdentifier>>(
+        &self,
+        langid: T,
+    ) -> Option<Script> {
+        let langid = langid.as_ref();
+        langid
+            .script
+            .or_else(|| self.infer_likely_script(langid.language, langid.region))
+    }
+
+    fn infer_likely_script(&self, language: Language, region: Option<Region>) -> Option<Script> {
+        let data = self.as_borrowed();
+
+        // proceed through _all possible cases_ in order of specificity
+        // (borrowed from LocaleExpander::maximize):
+        // 1. language + region
+        // 2. language
+        // 3. region
+        // we need to check all cases, because e.g. for "en-US" the default script is associated
+        // with "en" but not "en-US"
+        if language != Language::UND {
+            if let Some(region) = region {
+                // 1. we know both language and region
+                if let Some(script) = data.get_lr(language, region) {
+                    return Some(script);
+                }
+            }
+            // 2. we know language, but we either do not know region or knowing region did not help
+            if let Some((script, _)) = data.get_l(language) {
+                return Some(script);
+            }
+        }
+        if let Some(region) = region {
+            // 3. we know region, but we either do not know language or knowing language did not help
+            if let Some((_, script)) = data.get_r(region) {
+                return Some(script);
+            }
+        }
+        // we could not figure out the script from the given locale
+        None
+    }
 }
 
 #[cfg(feature = "serde")]

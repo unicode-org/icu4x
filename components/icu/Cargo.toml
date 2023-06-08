@@ -106,6 +106,7 @@ experimental = [
     "icu_casemapping",
     "icu_datetime_experimental",
     "icu_displaynames",
+    "icu_locid_transform/experimental",
     "icu_relativetime",
     "icu_compactdecimal",
 ]
