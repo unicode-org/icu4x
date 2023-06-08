@@ -2,11 +2,25 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module contains various types for managing casemapping exceptions
+//!
+//! This is both used in datagen to decode ICU4C's data, and natively in ICU4X's
+//! own data model.
+//!
+//! [`ExceptionHeader`] is the core type common to both backends: it represents
+//! a metadata header with a bunch of bits ([`ExceptionBits`]) as well as information
+//! on slots used ([`SlotPresence`]).
+//!
+//! The `exceptions_builder` module of this crate handles decoding ICU4C data using the exception
+//! header.
+//!
+//! TBD: Using these types to build ICU4X's native exception data structure (and then documenting it)
+
 use crate::provider::data::{DotType, MappingKind};
-use zerovec::ule::{AsULE, RawBytesULE, ULE};
+use zerovec::ule::{AsULE, ULE};
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-pub(crate) struct ExceptionBits {
+pub struct ExceptionBits {
     pub double_width_slots: bool,
     pub no_simple_case_folding: bool,
     pub negative_delta: bool,
@@ -16,14 +30,81 @@ pub(crate) struct ExceptionBits {
     pub has_conditional_fold: bool,
 }
 
+impl ExceptionBits {
+    /// Extract from the upper half of an ICU4C-format u16
+    fn from_integer(int: u8) -> Self {
+        let double_width_slots = int & ExceptionBitsULE::DOUBLE_SLOTS_FLAG != 0;
+        let no_simple_case_folding = int & ExceptionBitsULE::NO_SIMPLE_CASE_FOLDING_FLAG != 0;
+        let negative_delta = int & ExceptionBitsULE::NEGATIVE_DELTA_FLAG != 0;
+        let is_sensitive = int & ExceptionBitsULE::SENSITIVE_FLAG != 0;
+        let has_conditional_special = int & ExceptionBitsULE::CONDITIONAL_SPECIAL_FLAG != 0;
+        let has_conditional_fold = int & ExceptionBitsULE::CONDITIONAL_FOLD_FLAG != 0;
+
+        let dot_type = DotType::from_masked_bits(
+            ((u16::from(int >> ExceptionBitsULE::DOT_SHIFT)) & DotType::DOT_MASK).into(),
+        );
+
+        Self {
+            double_width_slots,
+            no_simple_case_folding,
+            negative_delta,
+            is_sensitive,
+            dot_type,
+            has_conditional_special,
+            has_conditional_fold,
+        }
+    }
+
+    /// Convert to an ICU4C-format upper half of u16
+    pub(crate) fn to_integer(self) -> u8 {
+        let mut int = 0;
+        let dot_data = (self.dot_type as u8) << ExceptionBitsULE::DOT_SHIFT;
+        int |= dot_data;
+
+        if self.double_width_slots {
+            int |= ExceptionBitsULE::DOUBLE_SLOTS_FLAG
+        }
+        if self.no_simple_case_folding {
+            int |= ExceptionBitsULE::NO_SIMPLE_CASE_FOLDING_FLAG
+        }
+        if self.negative_delta {
+            int |= ExceptionBitsULE::NEGATIVE_DELTA_FLAG
+        }
+        if self.is_sensitive {
+            int |= ExceptionBitsULE::SENSITIVE_FLAG
+        }
+        if self.has_conditional_special {
+            int |= ExceptionBitsULE::CONDITIONAL_SPECIAL_FLAG
+        }
+        if self.has_conditional_fold {
+            int |= ExceptionBitsULE::CONDITIONAL_FOLD_FLAG
+        }
+        int
+    }
+}
+
+/// Packed slot presence marker
+///
+/// All bits are valid, though bit 4 is unused and reserved
+///
+/// Bits:
+///
+/// ```text
+///               0: Lowercase mapping (code point)
+///               1: Case folding (code point)
+///               2: Uppercase mapping (code point)
+///               3: Titlecase mapping (code point)
+///               4: Delta to simple case mapping (code point) (sign stored separately)
+///               5: RESERVED
+///               6: Closure mappings (string; see below)
+///               7: Full mappings (strings; see below)
+/// ```
 #[derive(Copy, Clone, PartialEq, Eq, ULE)]
 #[repr(transparent)]
-pub(crate) struct SlotPresence(pub u8);
-
-
+pub struct SlotPresence(pub u8);
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-pub(crate) struct ExceptionHeader {
+pub struct ExceptionHeader {
     /// The various slots that are present, masked by ExceptionSlot
     ///
     /// We still store this as a bitmask since it's more convenient to access as one
@@ -34,54 +115,22 @@ pub(crate) struct ExceptionHeader {
 impl ExceptionHeader {
     /// Construct from an ICU4C-format u16.
     pub(crate) fn from_integer(int: u16) -> Self {
-        let slot_presence = SlotPresence(u8::try_from(int & ExceptionHeaderULE::SLOTS_MASK).unwrap_or(0));
-        let double_width_slots = int & ExceptionHeaderULE::DOUBLE_SLOTS_FLAG != 0;
-        let no_simple_case_folding = int & ExceptionHeaderULE::NO_SIMPLE_CASE_FOLDING_FLAG != 0;
-        let negative_delta = int & ExceptionHeaderULE::NEGATIVE_DELTA_FLAG != 0;
-        let is_sensitive = int & ExceptionHeaderULE::SENSITIVE_FLAG != 0;
-        let has_conditional_special = int & ExceptionHeaderULE::CONDITIONAL_SPECIAL_FLAG != 0;
-        let has_conditional_fold = int & ExceptionHeaderULE::CONDITIONAL_FOLD_FLAG != 0;
-
-        let dot_type =
-            DotType::from_masked_bits((int >> ExceptionHeaderULE::DOT_SHIFT) & DotType::DOT_MASK);
+        let slot_presence =
+            SlotPresence(u8::try_from(int & ExceptionHeaderULE::SLOTS_MASK).unwrap_or(0));
+        let bits = ExceptionBits::from_integer(
+            u8::try_from(int >> ExceptionHeaderULE::BITS_SHIFT).unwrap_or(0),
+        );
         Self {
             slot_presence,
-            bits: ExceptionBits {
-                double_width_slots,
-                no_simple_case_folding,
-                negative_delta,
-                is_sensitive,
-                dot_type,
-                has_conditional_special,
-                has_conditional_fold,
-            },
+            bits,
         }
     }
 
     /// Convert to an ICU4C-format u16
+    #[cfg(feature = "datagen")]
     pub(crate) fn to_integer(self) -> u16 {
         let mut sixteen: u16 = self.slot_presence.0.into();
-        let dot_data = (self.bits.dot_type as u16) << ExceptionHeaderULE::DOT_SHIFT;
-        sixteen |= dot_data;
-
-        if self.bits.double_width_slots {
-            sixteen |= ExceptionHeaderULE::DOUBLE_SLOTS_FLAG
-        }
-        if self.bits.no_simple_case_folding {
-            sixteen |= ExceptionHeaderULE::NO_SIMPLE_CASE_FOLDING_FLAG
-        }
-        if self.bits.negative_delta {
-            sixteen |= ExceptionHeaderULE::NEGATIVE_DELTA_FLAG
-        }
-        if self.bits.is_sensitive {
-            sixteen |= ExceptionHeaderULE::SENSITIVE_FLAG
-        }
-        if self.bits.has_conditional_special {
-            sixteen |= ExceptionHeaderULE::CONDITIONAL_SPECIAL_FLAG
-        }
-        if self.bits.has_conditional_fold {
-            sixteen |= ExceptionHeaderULE::CONDITIONAL_FOLD_FLAG
-        }
+        sixteen |= (u16::from(self.bits.to_integer())) << ExceptionHeaderULE::BITS_SHIFT;
         sixteen
     }
 
@@ -139,33 +188,61 @@ impl ExceptionHeader {
 /// In this struct the RESERVED bit is still allowed to be set, and it will produce a different
 /// exception header, but it will not have any other effects.
 #[derive(Copy, Clone, PartialEq, Eq, ULE)]
-#[repr(transparent)]
-pub(crate) struct ExceptionHeaderULE(pub(crate) RawBytesULE<2>);
+#[repr(packed)]
+pub struct ExceptionHeaderULE {
+    slot_presence: SlotPresence,
+    bits: ExceptionBitsULE,
+}
 
+/// The bitflags on an exception header (bits 8-15, see docs on [`ExceptionHeaderULE`])
+///
+/// All bits are valid, though in ICU4X data bits 0 and 2 are not used
+#[derive(Copy, Clone, PartialEq, Eq, ULE)]
+#[repr(transparent)]
+pub struct ExceptionBitsULE(pub u8);
+
+impl ExceptionBitsULE {
+    const DOUBLE_SLOTS_FLAG: u8 = 0x1;
+
+    const NO_SIMPLE_CASE_FOLDING_FLAG: u8 = 0x2;
+    const NEGATIVE_DELTA_FLAG: u8 = 0x4;
+    const SENSITIVE_FLAG: u8 = 0x8;
+
+    const DOT_SHIFT: u8 = 4;
+
+    const CONDITIONAL_SPECIAL_FLAG: u8 = 0x40;
+    const CONDITIONAL_FOLD_FLAG: u8 = 0x80;
+}
 impl ExceptionHeaderULE {
     const SLOTS_MASK: u16 = 0xff;
-
-    // Each slot is 2 u16 elements instead of 1
-    const DOUBLE_SLOTS_FLAG: u16 = 0x100;
-
-    const NO_SIMPLE_CASE_FOLDING_FLAG: u16 = 0x200;
-    const NEGATIVE_DELTA_FLAG: u16 = 0x400;
-    const SENSITIVE_FLAG: u16 = 0x800;
-
-    const DOT_SHIFT: u16 = 12;
-
-    const CONDITIONAL_SPECIAL_FLAG: u16 = 0x4000;
-    const CONDITIONAL_FOLD_FLAG: u16 = 0x8000;
+    const BITS_SHIFT: u16 = 8;
 }
 
 impl AsULE for ExceptionHeader {
     type ULE = ExceptionHeaderULE;
     fn from_unaligned(u: ExceptionHeaderULE) -> Self {
-        Self::from_integer(u.0.as_unsigned_int())
+        Self {
+            slot_presence: u.slot_presence,
+            bits: ExceptionBits::from_integer(u.bits.0),
+        }
     }
 
     fn to_unaligned(self) -> ExceptionHeaderULE {
-        ExceptionHeaderULE(self.to_integer().to_unaligned())
+        ExceptionHeaderULE {
+            slot_presence: self.slot_presence,
+            bits: ExceptionBitsULE(self.bits.to_integer()),
+        }
+    }
+}
+
+impl AsULE for ExceptionBits {
+    type ULE = ExceptionBitsULE;
+    fn from_unaligned(u: ExceptionBitsULE) -> Self {
+        ExceptionBits::from_integer(u.0)
+    }
+
+    fn to_unaligned(self) -> ExceptionBitsULE {
+        ExceptionBitsULE(self.to_integer())
     }
 }
 #[derive(Copy, Clone, Debug)]
