@@ -28,14 +28,10 @@ fn strip_headers(content: &str) -> String {
 }
 
 fn normalizer_bench_data() -> [BenchDataContent; 15] {
-    let nfc_normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfd_normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkc_normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkd_normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
+    let nfc_normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let nfd_normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let nfkc_normalizer: ComposingNormalizer = ComposingNormalizer::new_nfkc();
+    let nfkd_normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
 
     let content_latin: (&str, &str) = (
         "TestNames_Latin",
@@ -142,8 +138,7 @@ fn function_under_bench_u16(normalizer: &ComposingNormalizer, text: &[u16]) {
 pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "composing_normalizer_nfkc";
 
-    let normalizer_under_bench: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer_under_bench: ComposingNormalizer = ComposingNormalizer::new_nfkc();
 
     let mut group = criterion.benchmark_group(group_name);
 

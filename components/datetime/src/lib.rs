@@ -169,6 +169,41 @@ pub use zoned_datetime::TypedZonedDateTimeFormatter;
 #[doc(no_inline)]
 pub use DateTimeError as Error;
 
+#[cfg(feature = "data")]
+#[doc(hidden)]
+pub mod data {
+    use icu_datetime_data::*;
+
+    use crate as icu_datetime;
+    #[allow(clippy::exhaustive_structs)]
+    #[derive(Debug)]
+    pub struct Provider;
+    impl_datetime_buddhist_datelengths_v1!(Provider);
+    impl_datetime_buddhist_datesymbols_v1!(Provider);
+    impl_datetime_coptic_datelengths_v1!(Provider);
+    impl_datetime_coptic_datesymbols_v1!(Provider);
+    impl_datetime_ethiopic_datelengths_v1!(Provider);
+    impl_datetime_ethiopic_datesymbols_v1!(Provider);
+    impl_datetime_gregory_datelengths_v1!(Provider);
+    impl_datetime_gregory_datesymbols_v1!(Provider);
+    impl_datetime_indian_datelengths_v1!(Provider);
+    impl_datetime_indian_datesymbols_v1!(Provider);
+    impl_datetime_japanese_datelengths_v1!(Provider);
+    impl_datetime_japanese_datesymbols_v1!(Provider);
+    impl_datetime_japanext_datelengths_v1!(Provider);
+    impl_datetime_japanext_datesymbols_v1!(Provider);
+    #[cfg(feature = "experimental")]
+    impl_datetime_skeletons_v1!(Provider);
+    impl_datetime_timelengths_v1!(Provider);
+    impl_datetime_timesymbols_v1!(Provider);
+    impl_time_zone_exemplar_cities_v1!(Provider);
+    impl_time_zone_formats_v1!(Provider);
+    impl_time_zone_generic_long_v1!(Provider);
+    impl_time_zone_generic_short_v1!(Provider);
+    impl_time_zone_specific_long_v1!(Provider);
+    impl_time_zone_specific_short_v1!(Provider);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

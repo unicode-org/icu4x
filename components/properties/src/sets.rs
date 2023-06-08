@@ -343,6 +343,9 @@ macro_rules! make_code_point_set_property {
         func:
         $(#[$attr:meta])*
         $vis:vis fn $funcname:ident();
+        const:
+        $(#[$cattr:meta])*
+        $cvis:vis const $constname:ident => $singleton_name:ident;
     ) => {
         $(#[$attr])*
         $vis fn $funcname(
@@ -350,6 +353,14 @@ macro_rules! make_code_point_set_property {
         ) -> Result<CodePointSetData, PropertiesError> {
             load_set_data(provider)
         }
+
+        #[cfg(feature = "data")]
+        $(#[$cattr])*
+        /// TODO
+        #[cfg(feature = "data")]
+        $cvis const $constname: CodePointSetDataBorrowed = CodePointSetDataBorrowed {
+            set: crate::data::Provider::$singleton_name,
+        };
     }
 }
 
@@ -376,6 +387,8 @@ make_code_point_set_property! {
     /// assert!(!ascii_hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
     pub fn load_ascii_hex_digit();
+    const:
+    pub const ASCII_HEX_DIGIT => SINGLETON_PROPS_AHEX_V1;
 }
 
 make_code_point_set_property! {
@@ -387,6 +400,8 @@ make_code_point_set_property! {
     /// This is defined for POSIX compatibility.
 
     pub fn load_alnum();
+    const:
+    pub const ALNUM => SINGLETON_PROPS_ALNUM_V1;
 }
 
 make_code_point_set_property! {
@@ -413,6 +428,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_alphabetic();
+    const:
+    pub const ALPHABETIC => SINGLETON_PROPS_ALPHA_V1;
 }
 
 make_code_point_set_property! {
@@ -438,6 +455,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_bidi_control();
+    const:
+    pub const BIDI_CONTROL => SINGLETON_PROPS_BIDI_C_V1;
 }
 
 make_code_point_set_property! {
@@ -464,6 +483,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_bidi_mirrored();
+    const:
+    pub const BIDI_MIRRORED => SINGLETON_PROPS_BIDI_M_V1;
 }
 
 make_code_point_set_property! {
@@ -474,6 +495,8 @@ make_code_point_set_property! {
     /// Horizontal whitespace characters
 
     pub fn load_blank();
+    const:
+    pub const BLANK => SINGLETON_PROPS_BLANK_V1;
 }
 
 make_code_point_set_property! {
@@ -498,6 +521,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_cased();
+    const:
+    pub const CASED => SINGLETON_PROPS_CASED_V1;
 }
 
 make_code_point_set_property! {
@@ -522,6 +547,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_case_ignorable();
+    const:
+    pub const CASE_IGNORABLE => SINGLETON_PROPS_CI_V1;
 }
 
 make_code_point_set_property! {
@@ -533,6 +560,8 @@ make_code_point_set_property! {
     /// See <https://unicode.org/Public/UNIDATA/CompositionExclusions.txt>
 
     pub fn load_full_composition_exclusion();
+    const:
+    pub const FULL_COMPOSITION_EXCLUSION => SINGLETON_PROPS_COMP_EX_V1;
 }
 
 make_code_point_set_property! {
@@ -557,6 +586,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_changes_when_casefolded();
+    const:
+    pub const CHANGES_WHEN_CASEFOLDED => SINGLETON_PROPS_CWCF_V1;
 }
 
 make_code_point_set_property! {
@@ -567,6 +598,8 @@ make_code_point_set_property! {
     /// Characters which may change when they undergo case mapping
 
     pub fn load_changes_when_casemapped();
+    const:
+    pub const CHANGES_WHEN_CASEMAPPED => SINGLETON_PROPS_CWCM_V1;
 }
 
 make_code_point_set_property! {
@@ -591,6 +624,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_changes_when_nfkc_casefolded();
+    const:
+    pub const CHANGES_WHEN_NFKC_CASEFOLDED => SINGLETON_PROPS_CWKCF_V1;
 }
 
 make_code_point_set_property! {
@@ -615,6 +650,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_changes_when_lowercased();
+    const:
+    pub const CHANGES_WHEN_LOWERCASED => SINGLETON_PROPS_CWL_V1;
 }
 
 make_code_point_set_property! {
@@ -639,6 +676,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_changes_when_titlecased();
+    const:
+    pub const CHANGES_WHEN_TITLECASED => SINGLETON_PROPS_CWT_V1;
 }
 
 make_code_point_set_property! {
@@ -663,6 +702,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_changes_when_uppercased();
+    const:
+    pub const CHANGES_WHEN_UPPERCASED => SINGLETON_PROPS_CWU_V1;
 }
 
 make_code_point_set_property! {
@@ -689,6 +730,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_dash();
+    const:
+    pub const DASH => SINGLETON_PROPS_DASH_V1;
 }
 
 make_code_point_set_property! {
@@ -714,6 +757,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_deprecated();
+    const:
+    pub const DEPRECATED => SINGLETON_PROPS_DEP_V1;
 }
 
 make_code_point_set_property! {
@@ -741,6 +786,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_default_ignorable_code_point();
+    const:
+    pub const DEFAULT_IGNORABLE_CODE_POINT => SINGLETON_PROPS_DI_V1;
 }
 
 make_code_point_set_property! {
@@ -765,6 +812,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_diacritic();
+    const:
+    pub const DIACRITIC => SINGLETON_PROPS_DIA_V1;
 }
 
 make_code_point_set_property! {
@@ -789,6 +838,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_emoji_modifier_base();
+    const:
+    pub const EMOJI_MODIFIER_BASE => SINGLETON_PROPS_EBASE_V1;
 }
 
 make_code_point_set_property! {
@@ -816,6 +867,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_emoji_component();
+    const:
+    pub const EMOJI_COMPONENT => SINGLETON_PROPS_ECOMP_V1;
 }
 
 make_code_point_set_property! {
@@ -840,6 +893,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_emoji_modifier();
+    const:
+    pub const EMOJI_MODIFIER => SINGLETON_PROPS_EMOD_V1;
 }
 
 make_code_point_set_property! {
@@ -864,6 +919,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_emoji();
+    const:
+    pub const EMOJI => SINGLETON_PROPS_EMOJI_V1;
 }
 
 make_code_point_set_property! {
@@ -888,6 +945,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_emoji_presentation();
+    const:
+    pub const EMOJI_PRESENTATION => SINGLETON_PROPS_EPRES_V1;
 }
 
 make_code_point_set_property! {
@@ -914,6 +973,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_extender();
+    const:
+    pub const EXTENDER => SINGLETON_PROPS_EXT_V1;
 }
 
 make_code_point_set_property! {
@@ -939,6 +1000,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_extended_pictographic();
+    const:
+    pub const EXTENDED_PICTOGRAPHIC => SINGLETON_PROPS_EXTPICT_V1;
 }
 
 make_code_point_set_property! {
@@ -950,6 +1013,8 @@ make_code_point_set_property! {
     /// This is defined for POSIX compatibility.
 
     pub fn load_graph();
+    const:
+    pub const GRAPH => SINGLETON_PROPS_GRAPH_V1;
 }
 
 make_code_point_set_property! {
@@ -976,6 +1041,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_grapheme_base();
+    const:
+    pub const GRAPHEME_BASE => SINGLETON_PROPS_GR_BASE_V1;
 }
 
 make_code_point_set_property! {
@@ -1002,6 +1069,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_grapheme_extend();
+    const:
+    pub const GRAPHEME_EXTEND => SINGLETON_PROPS_GR_EXT_V1;
 }
 
 make_code_point_set_property! {
@@ -1013,6 +1082,8 @@ make_code_point_set_property! {
     /// cluster boundaries.
 
     pub fn load_grapheme_link();
+    const:
+    pub const GRAPHEME_LINK => SINGLETON_PROPS_GR_LINK_V1;
 }
 
 make_code_point_set_property! {
@@ -1042,6 +1113,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_hex_digit();
+    const:
+    pub const HEX_DIGIT => SINGLETON_PROPS_HEX_V1;
 }
 
 make_code_point_set_property! {
@@ -1053,6 +1126,8 @@ make_code_point_set_property! {
     /// words, plus the Katakana middle dot.
 
     pub fn load_hyphen();
+    const:
+    pub const HYPHEN => SINGLETON_PROPS_HYPHEN_V1;
 }
 
 make_code_point_set_property! {
@@ -1084,6 +1159,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_id_continue();
+    const:
+    pub const ID_CONTINUE => SINGLETON_PROPS_IDC_V1;
 }
 
 make_code_point_set_property! {
@@ -1109,6 +1186,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_ideographic();
+    const:
+    pub const IDEOGRAPHIC => SINGLETON_PROPS_IDEO_V1;
 }
 
 make_code_point_set_property! {
@@ -1139,6 +1218,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_id_start();
+    const:
+    pub const ID_START => SINGLETON_PROPS_IDS_V1;
 }
 
 make_code_point_set_property! {
@@ -1163,6 +1244,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_ids_binary_operator();
+    const:
+    pub const IDS_BINARY_OPERATOR => SINGLETON_PROPS_IDSB_V1;
 }
 
 make_code_point_set_property! {
@@ -1190,6 +1273,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_ids_trinary_operator();
+    const:
+    pub const IDS_TRINARY_OPERATOR => SINGLETON_PROPS_IDST_V1;
 }
 
 make_code_point_set_property! {
@@ -1216,6 +1301,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_join_control();
+    const:
+    pub const JOIN_CONTROL => SINGLETON_PROPS_JOIN_C_V1;
 }
 
 make_code_point_set_property! {
@@ -1240,6 +1327,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_logical_order_exception();
+    const:
+    pub const LOGICAL_ORDER_EXCEPTION => SINGLETON_PROPS_LOE_V1;
 }
 
 make_code_point_set_property! {
@@ -1264,6 +1353,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_lowercase();
+    const:
+    pub const LOWERCASE => SINGLETON_PROPS_LOWER_V1;
 }
 
 make_code_point_set_property! {
@@ -1292,6 +1383,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_math();
+    const:
+    pub const MATH => SINGLETON_PROPS_MATH_V1;
 }
 
 make_code_point_set_property! {
@@ -1317,6 +1410,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_noncharacter_code_point();
+    const:
+    pub const NONCHARACTER_CODE_POINT => SINGLETON_PROPS_NCHAR_V1;
 }
 
 make_code_point_set_property! {
@@ -1327,6 +1422,8 @@ make_code_point_set_property! {
     /// Characters that are inert under NFC, i.e., they do not interact with adjacent characters
 
     pub fn load_nfc_inert();
+    const:
+    pub const NFC_INERT => SINGLETON_PROPS_NFCINERT_V1;
 }
 
 make_code_point_set_property! {
@@ -1337,6 +1434,8 @@ make_code_point_set_property! {
     /// Characters that are inert under NFD, i.e., they do not interact with adjacent characters
 
     pub fn load_nfd_inert();
+    const:
+    pub const NFD_INERT => SINGLETON_PROPS_NFDINERT_V1;
 }
 
 make_code_point_set_property! {
@@ -1347,6 +1446,8 @@ make_code_point_set_property! {
     /// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters
 
     pub fn load_nfkc_inert();
+    const:
+    pub const NFKC_INERT => SINGLETON_PROPS_NFKCINERT_V1;
 }
 
 make_code_point_set_property! {
@@ -1357,6 +1458,8 @@ make_code_point_set_property! {
     /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters
 
     pub fn load_nfkd_inert();
+    const:
+    pub const NFKD_INERT => SINGLETON_PROPS_NFKDINERT_V1;
 }
 
 make_code_point_set_property! {
@@ -1384,6 +1487,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_pattern_syntax();
+    const:
+    pub const PATTERN_SYNTAX => SINGLETON_PROPS_PAT_SYN_V1;
 }
 
 make_code_point_set_property! {
@@ -1412,6 +1517,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_pattern_white_space();
+    const:
+    pub const PATTERN_WHITE_SPACE => SINGLETON_PROPS_PAT_WS_V1;
 }
 
 make_code_point_set_property! {
@@ -1423,6 +1530,8 @@ make_code_point_set_property! {
     /// other characters, usually digits.
 
     pub fn load_prepended_concatenation_mark();
+    const:
+    pub const PREPENDED_CONCATENATION_MARK => SINGLETON_PROPS_PCM_V1;
 }
 
 make_code_point_set_property! {
@@ -1434,6 +1543,8 @@ make_code_point_set_property! {
     /// This is defined for POSIX compatibility.
 
     pub fn load_print();
+    const:
+    pub const PRINT => SINGLETON_PROPS_PRINT_V1;
 }
 
 make_code_point_set_property! {
@@ -1459,6 +1570,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_quotation_mark();
+    const:
+    pub const QUOTATION_MARK => SINGLETON_PROPS_QMARK_V1;
 }
 
 make_code_point_set_property! {
@@ -1483,6 +1596,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_radical();
+    const:
+    pub const RADICAL => SINGLETON_PROPS_RADICAL_V1;
 }
 
 make_code_point_set_property! {
@@ -1508,6 +1623,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_regional_indicator();
+    const:
+    pub const REGIONAL_INDICATOR => SINGLETON_PROPS_RI_V1;
 }
 
 make_code_point_set_property! {
@@ -1533,6 +1650,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_soft_dotted();
+    const:
+    pub const SOFT_DOTTED => SINGLETON_PROPS_SD_V1;
 }
 
 make_code_point_set_property! {
@@ -1544,6 +1663,8 @@ make_code_point_set_property! {
     /// sequences
 
     pub fn load_segment_starter();
+    const:
+    pub const SEGMENT_STARTER => SINGLETON_PROPS_SEGSTART_V1;
 }
 
 make_code_point_set_property! {
@@ -1555,6 +1676,8 @@ make_code_point_set_property! {
     /// mapping
 
     pub fn load_case_sensitive();
+    const:
+    pub const CASE_SENSITIVE => SINGLETON_PROPS_SENSITIVE_V1;
 }
 
 make_code_point_set_property! {
@@ -1582,6 +1705,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_sentence_terminal();
+    const:
+    pub const SENTENCE_TERMINAL => SINGLETON_PROPS_STERM_V1;
 }
 
 make_code_point_set_property! {
@@ -1609,6 +1734,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_terminal_punctuation();
+    const:
+    pub const TERMINAL_PUNCTUATION => SINGLETON_PROPS_TERM_V1;
 }
 
 make_code_point_set_property! {
@@ -1634,6 +1761,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_unified_ideograph();
+    const:
+    pub const UNIFIED_IDEOGRAPH => SINGLETON_PROPS_UIDEO_V1;
 }
 
 make_code_point_set_property! {
@@ -1658,6 +1787,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_uppercase();
+    const:
+    pub const UPPERCASE => SINGLETON_PROPS_UPPER_V1;
 }
 
 make_code_point_set_property! {
@@ -1685,6 +1816,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_variation_selector();
+    const:
+    pub const VARIATION_SELECTOR => SINGLETON_PROPS_VS_V1;
 }
 
 make_code_point_set_property! {
@@ -1712,6 +1845,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_white_space();
+    const:
+    pub const WHITE_SPACE => SINGLETON_PROPS_WSPACE_V1;
 }
 
 make_code_point_set_property! {
@@ -1723,6 +1858,8 @@ make_code_point_set_property! {
     /// This is defined for POSIX compatibility.
 
     pub fn load_xdigit();
+    const:
+    pub const XDIGIT => SINGLETON_PROPS_XDIGIT_V1;
 }
 
 make_code_point_set_property! {
@@ -1752,6 +1889,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_xid_continue();
+    const:
+    pub const XID_CONTINUE => SINGLETON_PROPS_XIDC_V1;
 }
 
 make_code_point_set_property! {
@@ -1782,6 +1921,8 @@ make_code_point_set_property! {
     /// ```
 
     pub fn load_xid_start();
+    const:
+    pub const XID_START => SINGLETON_PROPS_XIDS_V1;
 }
 
 //
@@ -1799,6 +1940,9 @@ macro_rules! make_unicode_set_property {
         func:
         $(#[$attr:meta])*
         $vis:vis fn $funcname:ident();
+        const:
+        $(#[$cattr:meta])*
+        $cvis:vis const $constname:ident => $singleton:ident;
     ) => {
         $(#[$attr])*
         $vis fn $funcname(
@@ -1806,6 +1950,12 @@ macro_rules! make_unicode_set_property {
         ) -> Result<UnicodeSetData, PropertiesError> {
             Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(UnicodeSetData::from_data)?)
         }
+        $(#[$cattr])*
+        /// TODO
+        #[cfg(feature = "data")]
+        $cvis const $constname: UnicodeSetDataBorrowed = UnicodeSetDataBorrowed {
+            set: crate::data::Provider::$singleton
+        };
     }
 }
 
@@ -1837,6 +1987,9 @@ make_unicode_set_property! {
     /// ```
 
     pub fn load_basic_emoji();
+
+    const:
+    pub const BASIC_EMOJI => SINGLETON_PROPS_BASIC_EMOJI_V1;
 }
 
 //
@@ -1858,24 +2011,18 @@ pub fn load_for_general_category_group(
     Ok(CodePointSetData::from_code_point_inversion_list(set))
 }
 
-/// Returns a type capable of looking up values for a property specified as a string, as long as it is a
-/// [binary property listed in ECMA-262][ecma], using strict matching on the names in the spec.
-///
-/// This handles every property required by ECMA-262 `/u` regular expressions, except for:
-///
-/// - `Script` and `General_Category`: handle these directly with [`maps::load_general_category()`] and
-///    [`maps::load_script()`].
-///    using property values parsed via [`GeneralCategory::get_name_to_enum_mapper()`] and [`Script::get_name_to_enum_mapper()`]
-///    if necessary.
-/// - `Script_Extensions`: handle this directly using APIs from [`crate::script`], like [`script::load_script_with_extensions_unstable()`]
-/// - `General_Category` mask values: Handle this alongside `General_Category` using [`GeneralCategoryGroup`],
-///    using property values parsed via [`GeneralCategoryGroup::get_name_to_enum_mapper()`] if necessary
-/// - `Assigned`, `All`, and `ASCII` pseudoproperties: Handle these using their equivalent sets:
-///    - `Any` can be expressed as the range `[\u{0}-\u{10FFFF}]`
-///    - `Assigned` can be expressed as the inverse of the set `gc=Cn` (i.e., `\P{gc=Cn}`).
-///    - `ASCII` can be expressed as the range `[\u{0}-\u{7F}]`
-/// - `General_Category` property values can themselves be treated like properties using a shorthand in ECMA262,
-///    simply create the corresponding `GeneralCategory` set.
+/// Return a [`CodePointSetData`] for a value or a grouping of values of the General_Category property. See [`GeneralCategoryGroup`].
+#[cfg(feature = "data")]
+pub fn load_for_general_category_group_stable(enum_val: GeneralCategoryGroup) -> CodePointSetData {
+    let matching_gc_ranges = maps::GENERAL_CATEGORY
+        .iter_ranges()
+        .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
+        .map(|cpm_range| cpm_range.range);
+    let set = CodePointInversionList::from_iter(matching_gc_ranges);
+    CodePointSetData::from_code_point_inversion_list(set)
+}
+
+/// Like [`load_for_ecma262`], but with custom data.
 ///
 /// ```rust
 /// use icu::properties::sets;
@@ -1955,92 +2102,56 @@ where
         return Err(PropertiesError::UnexpectedPropertyName);
     };
     match prop {
-        UnicodeProperty::AsciiHexDigit => load_set_data::<AsciiHexDigitV1Marker, _>(provider),
-        UnicodeProperty::Alphabetic => load_set_data::<AlphabeticV1Marker, _>(provider),
-        UnicodeProperty::BidiControl => load_set_data::<BidiControlV1Marker, _>(provider),
-        UnicodeProperty::BidiMirrored => load_set_data::<BidiMirroredV1Marker, _>(provider),
-        UnicodeProperty::CaseIgnorable => load_set_data::<CaseIgnorableV1Marker, _>(provider),
-        UnicodeProperty::Cased => load_set_data::<CasedV1Marker, _>(provider),
-        UnicodeProperty::ChangesWhenCasefolded => {
-            load_set_data::<ChangesWhenCasefoldedV1Marker, _>(provider)
-        }
-        UnicodeProperty::ChangesWhenCasemapped => {
-            load_set_data::<ChangesWhenCasemappedV1Marker, _>(provider)
-        }
-        UnicodeProperty::ChangesWhenLowercased => {
-            load_set_data::<ChangesWhenLowercasedV1Marker, _>(provider)
-        }
-        UnicodeProperty::ChangesWhenNfkcCasefolded => {
-            load_set_data::<ChangesWhenNfkcCasefoldedV1Marker, _>(provider)
-        }
-        UnicodeProperty::ChangesWhenTitlecased => {
-            load_set_data::<ChangesWhenTitlecasedV1Marker, _>(provider)
-        }
-        UnicodeProperty::ChangesWhenUppercased => {
-            load_set_data::<ChangesWhenUppercasedV1Marker, _>(provider)
-        }
-        UnicodeProperty::Dash => load_set_data::<DashV1Marker, _>(provider),
-        UnicodeProperty::DefaultIgnorableCodePoint => {
-            load_set_data::<DefaultIgnorableCodePointV1Marker, _>(provider)
-        }
-        UnicodeProperty::Deprecated => load_set_data::<DeprecatedV1Marker, _>(provider),
-        UnicodeProperty::Diacritic => load_set_data::<DiacriticV1Marker, _>(provider),
-        UnicodeProperty::Emoji => load_set_data::<EmojiV1Marker, _>(provider),
-        UnicodeProperty::EmojiComponent => load_set_data::<EmojiComponentV1Marker, _>(provider),
-        UnicodeProperty::EmojiModifier => load_set_data::<EmojiModifierV1Marker, _>(provider),
-        UnicodeProperty::EmojiModifierBase => {
-            load_set_data::<EmojiModifierBaseV1Marker, _>(provider)
-        }
-        UnicodeProperty::EmojiPresentation => {
-            load_set_data::<EmojiPresentationV1Marker, _>(provider)
-        }
-        UnicodeProperty::ExtendedPictographic => {
-            load_set_data::<ExtendedPictographicV1Marker, _>(provider)
-        }
-        UnicodeProperty::Extender => load_set_data::<ExtenderV1Marker, _>(provider),
-        UnicodeProperty::GraphemeBase => load_set_data::<GraphemeBaseV1Marker, _>(provider),
-        UnicodeProperty::GraphemeExtend => load_set_data::<GraphemeExtendV1Marker, _>(provider),
-        UnicodeProperty::HexDigit => load_set_data::<HexDigitV1Marker, _>(provider),
-        UnicodeProperty::IdsBinaryOperator => {
-            load_set_data::<IdsBinaryOperatorV1Marker, _>(provider)
-        }
-        UnicodeProperty::IdsTrinaryOperator => {
-            load_set_data::<IdsTrinaryOperatorV1Marker, _>(provider)
-        }
-        UnicodeProperty::IdContinue => load_set_data::<IdContinueV1Marker, _>(provider),
-        UnicodeProperty::IdStart => load_set_data::<IdStartV1Marker, _>(provider),
-        UnicodeProperty::Ideographic => load_set_data::<IdeographicV1Marker, _>(provider),
-        UnicodeProperty::JoinControl => load_set_data::<JoinControlV1Marker, _>(provider),
-        UnicodeProperty::LogicalOrderException => {
-            load_set_data::<LogicalOrderExceptionV1Marker, _>(provider)
-        }
-        UnicodeProperty::Lowercase => load_set_data::<LowercaseV1Marker, _>(provider),
-        UnicodeProperty::Math => load_set_data::<MathV1Marker, _>(provider),
-        UnicodeProperty::NoncharacterCodePoint => {
-            load_set_data::<NoncharacterCodePointV1Marker, _>(provider)
-        }
-        UnicodeProperty::PatternSyntax => load_set_data::<PatternSyntaxV1Marker, _>(provider),
-        UnicodeProperty::PatternWhiteSpace => {
-            load_set_data::<PatternWhiteSpaceV1Marker, _>(provider)
-        }
-        UnicodeProperty::QuotationMark => load_set_data::<QuotationMarkV1Marker, _>(provider),
-        UnicodeProperty::Radical => load_set_data::<RadicalV1Marker, _>(provider),
-        UnicodeProperty::RegionalIndicator => {
-            load_set_data::<RegionalIndicatorV1Marker, _>(provider)
-        }
-        UnicodeProperty::SentenceTerminal => load_set_data::<SentenceTerminalV1Marker, _>(provider),
-        UnicodeProperty::SoftDotted => load_set_data::<SoftDottedV1Marker, _>(provider),
-        UnicodeProperty::TerminalPunctuation => {
-            load_set_data::<TerminalPunctuationV1Marker, _>(provider)
-        }
-        UnicodeProperty::UnifiedIdeograph => load_set_data::<UnifiedIdeographV1Marker, _>(provider),
-        UnicodeProperty::Uppercase => load_set_data::<UppercaseV1Marker, _>(provider),
-        UnicodeProperty::VariationSelector => {
-            load_set_data::<VariationSelectorV1Marker, _>(provider)
-        }
-        UnicodeProperty::WhiteSpace => load_set_data::<WhiteSpaceV1Marker, _>(provider),
-        UnicodeProperty::XidContinue => load_set_data::<XidContinueV1Marker, _>(provider),
-        UnicodeProperty::XidStart => load_set_data::<XidStartV1Marker, _>(provider),
+        UnicodeProperty::AsciiHexDigit => load_ascii_hex_digit(provider),
+        UnicodeProperty::Alphabetic => load_alphabetic(provider),
+        UnicodeProperty::BidiControl => load_bidi_control(provider),
+        UnicodeProperty::BidiMirrored => load_bidi_mirrored(provider),
+        UnicodeProperty::CaseIgnorable => load_case_ignorable(provider),
+        UnicodeProperty::Cased => load_cased(provider),
+        UnicodeProperty::ChangesWhenCasefolded => load_changes_when_casefolded(provider),
+        UnicodeProperty::ChangesWhenCasemapped => load_changes_when_casemapped(provider),
+        UnicodeProperty::ChangesWhenLowercased => load_changes_when_lowercased(provider),
+        UnicodeProperty::ChangesWhenNfkcCasefolded => load_changes_when_nfkc_casefolded(provider),
+        UnicodeProperty::ChangesWhenTitlecased => load_changes_when_titlecased(provider),
+        UnicodeProperty::ChangesWhenUppercased => load_changes_when_uppercased(provider),
+        UnicodeProperty::Dash => load_dash(provider),
+        UnicodeProperty::DefaultIgnorableCodePoint => load_default_ignorable_code_point(provider),
+        UnicodeProperty::Deprecated => load_deprecated(provider),
+        UnicodeProperty::Diacritic => load_diacritic(provider),
+        UnicodeProperty::Emoji => load_emoji(provider),
+        UnicodeProperty::EmojiComponent => load_emoji_component(provider),
+        UnicodeProperty::EmojiModifier => load_emoji_modifier(provider),
+        UnicodeProperty::EmojiModifierBase => load_emoji_modifier_base(provider),
+        UnicodeProperty::EmojiPresentation => load_emoji_presentation(provider),
+        UnicodeProperty::ExtendedPictographic => load_extended_pictographic(provider),
+        UnicodeProperty::Extender => load_extender(provider),
+        UnicodeProperty::GraphemeBase => load_grapheme_base(provider),
+        UnicodeProperty::GraphemeExtend => load_grapheme_extend(provider),
+        UnicodeProperty::HexDigit => load_hex_digit(provider),
+        UnicodeProperty::IdsBinaryOperator => load_ids_binary_operator(provider),
+        UnicodeProperty::IdsTrinaryOperator => load_ids_trinary_operator(provider),
+        UnicodeProperty::IdContinue => load_id_continue(provider),
+        UnicodeProperty::IdStart => load_id_start(provider),
+        UnicodeProperty::Ideographic => load_ideographic(provider),
+        UnicodeProperty::JoinControl => load_join_control(provider),
+        UnicodeProperty::LogicalOrderException => load_logical_order_exception(provider),
+        UnicodeProperty::Lowercase => load_lowercase(provider),
+        UnicodeProperty::Math => load_math(provider),
+        UnicodeProperty::NoncharacterCodePoint => load_noncharacter_code_point(provider),
+        UnicodeProperty::PatternSyntax => load_pattern_syntax(provider),
+        UnicodeProperty::PatternWhiteSpace => load_pattern_white_space(provider),
+        UnicodeProperty::QuotationMark => load_quotation_mark(provider),
+        UnicodeProperty::Radical => load_radical(provider),
+        UnicodeProperty::RegionalIndicator => load_regional_indicator(provider),
+        UnicodeProperty::SentenceTerminal => load_sentence_terminal(provider),
+        UnicodeProperty::SoftDotted => load_soft_dotted(provider),
+        UnicodeProperty::TerminalPunctuation => load_terminal_punctuation(provider),
+        UnicodeProperty::UnifiedIdeograph => load_unified_ideograph(provider),
+        UnicodeProperty::Uppercase => load_uppercase(provider),
+        UnicodeProperty::VariationSelector => load_variation_selector(provider),
+        UnicodeProperty::WhiteSpace => load_white_space(provider),
+        UnicodeProperty::XidContinue => load_xid_continue(provider),
+        UnicodeProperty::XidStart => load_xid_start(provider),
         _ => Err(PropertiesError::UnexpectedPropertyName),
     }
 }
@@ -2055,6 +2166,100 @@ icu_provider::gen_any_buffer_constructors!(
         load_for_ecma262_with_buffer_provider
     ]
 );
+
+/// Returns a type capable of looking up values for a property specified as a string, as long as it is a
+/// [binary property listed in ECMA-262][ecma], using strict matching on the names in the spec.
+///
+/// This handles every property required by ECMA-262 `/u` regular expressions, except for:
+///
+/// - `Script` and `General_Category`: handle these directly with [`maps::load_general_category()`] and
+///    [`maps::load_script()`].
+///    using property values parsed via [`GeneralCategory::get_name_to_enum_mapper()`] and [`Script::get_name_to_enum_mapper()`]
+///    if necessary.
+/// - `Script_Extensions`: handle this directly using APIs from [`crate::script`], like [`script::load_script_with_extensions_unstable()`]
+/// - `General_Category` mask values: Handle this alongside `General_Category` using [`GeneralCategoryGroup`],
+///    using property values parsed via [`GeneralCategoryGroup::get_name_to_enum_mapper()`] if necessary
+/// - `Assigned`, `All`, and `ASCII` pseudoproperties: Handle these using their equivalent sets:
+///    - `Any` can be expressed as the range `[\u{0}-\u{10FFFF}]`
+///    - `Assigned` can be expressed as the inverse of the set `gc=Cn` (i.e., `\P{gc=Cn}`).
+///    - `ASCII` can be expressed as the range `[\u{0}-\u{7F}]`
+/// - `General_Category` property values can themselves be treated like properties using a shorthand in ECMA262,
+///    simply create the corresponding `GeneralCategory` set.
+///
+/// ```rust
+/// use icu::properties::sets;
+///
+/// let emoji = sets::load_for_ecma262("Emoji")
+///         .expect("loading data failed");
+///
+/// assert!(emoji.contains('🔥')); // U+1F525 FIRE
+/// assert!(!emoji.contains('V'));
+/// ```
+///
+/// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
+#[cfg(feature = "data")]
+pub fn load_for_ecma262(name: &str) -> Result<CodePointSetDataBorrowed, PropertiesError> {
+    use crate::runtime::UnicodeProperty;
+
+    let prop = if let Some(prop) = UnicodeProperty::parse_ecma262_name(name) {
+        prop
+    } else {
+        return Err(PropertiesError::UnexpectedPropertyName);
+    };
+    Ok(match prop {
+        UnicodeProperty::AsciiHexDigit => ASCII_HEX_DIGIT,
+        UnicodeProperty::Alphabetic => ALPHABETIC,
+        UnicodeProperty::BidiControl => BIDI_CONTROL,
+        UnicodeProperty::BidiMirrored => BIDI_MIRRORED,
+        UnicodeProperty::CaseIgnorable => CASE_IGNORABLE,
+        UnicodeProperty::Cased => CASED,
+        UnicodeProperty::ChangesWhenCasefolded => CHANGES_WHEN_CASEFOLDED,
+        UnicodeProperty::ChangesWhenCasemapped => CHANGES_WHEN_CASEMAPPED,
+        UnicodeProperty::ChangesWhenLowercased => CHANGES_WHEN_LOWERCASED,
+        UnicodeProperty::ChangesWhenNfkcCasefolded => CHANGES_WHEN_NFKC_CASEFOLDED,
+        UnicodeProperty::ChangesWhenTitlecased => CHANGES_WHEN_TITLECASED,
+        UnicodeProperty::ChangesWhenUppercased => CHANGES_WHEN_UPPERCASED,
+        UnicodeProperty::Dash => DASH,
+        UnicodeProperty::DefaultIgnorableCodePoint => DEFAULT_IGNORABLE_CODE_POINT,
+        UnicodeProperty::Deprecated => DEPRECATED,
+        UnicodeProperty::Diacritic => DIACRITIC,
+        UnicodeProperty::Emoji => EMOJI,
+        UnicodeProperty::EmojiComponent => EMOJI_COMPONENT,
+        UnicodeProperty::EmojiModifier => EMOJI_MODIFIER,
+        UnicodeProperty::EmojiModifierBase => EMOJI_MODIFIER_BASE,
+        UnicodeProperty::EmojiPresentation => EMOJI_PRESENTATION,
+        UnicodeProperty::ExtendedPictographic => EXTENDED_PICTOGRAPHIC,
+        UnicodeProperty::Extender => EXTENDER,
+        UnicodeProperty::GraphemeBase => GRAPHEME_BASE,
+        UnicodeProperty::GraphemeExtend => GRAPHEME_EXTEND,
+        UnicodeProperty::HexDigit => HEX_DIGIT,
+        UnicodeProperty::IdsBinaryOperator => IDS_BINARY_OPERATOR,
+        UnicodeProperty::IdsTrinaryOperator => IDS_TRINARY_OPERATOR,
+        UnicodeProperty::IdContinue => ID_CONTINUE,
+        UnicodeProperty::IdStart => ID_START,
+        UnicodeProperty::Ideographic => IDEOGRAPHIC,
+        UnicodeProperty::JoinControl => JOIN_CONTROL,
+        UnicodeProperty::LogicalOrderException => LOGICAL_ORDER_EXCEPTION,
+        UnicodeProperty::Lowercase => LOWERCASE,
+        UnicodeProperty::Math => MATH,
+        UnicodeProperty::NoncharacterCodePoint => NONCHARACTER_CODE_POINT,
+        UnicodeProperty::PatternSyntax => PATTERN_SYNTAX,
+        UnicodeProperty::PatternWhiteSpace => PATTERN_WHITE_SPACE,
+        UnicodeProperty::QuotationMark => QUOTATION_MARK,
+        UnicodeProperty::Radical => RADICAL,
+        UnicodeProperty::RegionalIndicator => REGIONAL_INDICATOR,
+        UnicodeProperty::SentenceTerminal => SENTENCE_TERMINAL,
+        UnicodeProperty::SoftDotted => SOFT_DOTTED,
+        UnicodeProperty::TerminalPunctuation => TERMINAL_PUNCTUATION,
+        UnicodeProperty::UnifiedIdeograph => UNIFIED_IDEOGRAPH,
+        UnicodeProperty::Uppercase => UPPERCASE,
+        UnicodeProperty::VariationSelector => VARIATION_SELECTOR,
+        UnicodeProperty::WhiteSpace => WHITE_SPACE,
+        UnicodeProperty::XidContinue => XID_CONTINUE,
+        UnicodeProperty::XidStart => XID_START,
+        _ => return Err(PropertiesError::UnexpectedPropertyName),
+    })
+}
 
 #[cfg(test)]
 mod tests {

@@ -246,12 +246,27 @@ pub struct LineSegmenter {
 }
 
 impl LineSegmenter {
-    /// Constructs a [`LineSegmenter`] with an invariant locale and the best available data for
-    /// complex scripts (Khmer, Lao, Myanmar, and Thai).
-    ///
-    /// The current behavior, which is subject to change, is to use the LSTM model when available.
-    ///
-    /// See also [`Self::try_new_auto_with_options_unstable`].
+    #[cfg(feature = "auto")]
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: skip,
+        options: skip,
+        error: SegmenterError,
+        /// Constructs a [`LineSegmenter`] with an invariant locale and the best available data for
+        /// complex scripts (Khmer, Lao, Myanmar, and Thai).
+        ///
+        /// The current behavior, which is subject to change, is to use the LSTM model when available.
+        ///
+        /// See also [`Self::try_new_auto_with_options`].
+        functions: [
+            try_new_auto_unstable,
+            try_new_auto_with_any_provider,
+            try_new_auto_with_buffer_provider,
+            try_new_auto,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_auto)]
     #[cfg(feature = "auto")]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
@@ -263,26 +278,29 @@ impl LineSegmenter {
         Self::try_new_auto_with_options_unstable(provider, Default::default())
     }
 
-    #[cfg(feature = "auto")]
-    icu_provider::gen_any_buffer_constructors!(
+    #[cfg(feature = "lstm")]
+    icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
         error: SegmenterError,
+        /// Constructs a [`LineSegmenter`] with an invariant locale and LSTM data for
+        /// complex scripts (Khmer, Lao, Myanmar, and Thai).
+        ///
+        /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
+        /// the full dictionary but more expensive during segmentation (inference).
+        ///
+        /// See also [`Self::try_new_lstm_with_options`].
         functions: [
-            Self::try_new_auto_unstable,
-            try_new_auto_with_any_provider,
-            try_new_auto_with_buffer_provider
+            try_new_lstm_unstable,
+            try_new_lstm_with_any_provider,
+            try_new_lstm_with_buffer_provider,
+            try_new_lstm,
+            Self,
         ]
     );
 
-    /// Constructs a [`LineSegmenter`] with an invariant locale and LSTM data for
-    /// complex scripts (Khmer, Lao, Myanmar, and Thai).
-    ///
-    /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
-    /// the full dictionary but more expensive during segmentation (inference).
-    ///
-    /// See also [`Self::try_new_lstm_with_options_unstable`].
     #[cfg(feature = "lstm")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_lstm)]
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
@@ -293,25 +311,27 @@ impl LineSegmenter {
         Self::try_new_lstm_with_options_unstable(provider, Default::default())
     }
 
-    #[cfg(feature = "lstm")]
-    icu_provider::gen_any_buffer_constructors!(
+    icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
         error: SegmenterError,
+        /// Constructs a [`LineSegmenter`] with an invariant locale and dictionary data for
+        /// complex scripts (Khmer, Lao, Myanmar, and Thai).
+        ///
+        /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
+        /// faster than the LSTM model but requires more data.
+        ///
+        /// See also [`Self::try_new_dictionary_with_options`].
         functions: [
-            Self::try_new_lstm_unstable,
-            try_new_lstm_with_any_provider,
-            try_new_lstm_with_buffer_provider
+            try_new_dictionary_unstable,
+            try_new_dictionary_with_any_provider,
+            try_new_dictionary_with_buffer_provider,
+            try_new_dictionary,
+            Self,
         ]
     );
 
-    /// Constructs a [`LineSegmenter`] with an invariant locale and dictionary data for
-    /// complex scripts (Khmer, Lao, Myanmar, and Thai).
-    ///
-    /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
-    /// faster than the LSTM model but requires more data.
-    ///
-    /// See also [`Self::try_new_dictionary_with_options_unstable`].
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_dictionary)]
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
@@ -322,24 +342,28 @@ impl LineSegmenter {
         Self::try_new_dictionary_with_options_unstable(provider, Default::default())
     }
 
-    icu_provider::gen_any_buffer_constructors!(
+    #[cfg(feature = "auto")]
+    icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
-        options: skip,
+        options: LineBreakOptions,
         error: SegmenterError,
+        /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
+        /// the best available data for complex scripts (Khmer, Lao, Myanmar, and Thai).
+        ///
+        /// The current behavior, which is subject to change, is to use the LSTM model when available.
+        ///
+        /// See also [`Self::try_new_auto`].
         functions: [
-            Self::try_new_dictionary_unstable,
-            try_new_dictionary_with_any_provider,
-            try_new_dictionary_with_buffer_provider
+            try_new_auto_with_options_unstable,
+            try_new_auto_with_options_with_any_provider,
+            try_new_auto_with_options_with_buffer_provider,
+            try_new_auto_with_options,
+            Self,
         ]
     );
 
-    /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
-    /// the best available data for complex scripts (Khmer, Lao, Myanmar, and Thai).
-    ///
-    /// The current behavior, which is subject to change, is to use the LSTM model when available.
-    ///
-    /// See also [`Self::try_new_auto_unstable`].
     #[cfg(feature = "auto")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_auto_with_options)]
     pub fn try_new_auto_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -353,26 +377,29 @@ impl LineSegmenter {
         Self::try_new_lstm_with_options_unstable(provider, options)
     }
 
-    #[cfg(feature = "auto")]
-    icu_provider::gen_any_buffer_constructors!(
+    #[cfg(feature = "lstm")]
+    icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: LineBreakOptions,
         error: SegmenterError,
+        /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
+        /// LSTM data for complex scripts (Khmer, Lao, Myanmar, and Thai).
+        ///
+        /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
+        /// the full dictionary but more expensive during segmentation (inference).
+        ///
+        /// See also [`Self::try_new_dictionary`].
         functions: [
-            Self::try_new_auto_with_options_unstable,
-            try_new_auto_with_options_with_any_provider,
-            try_new_auto_with_options_with_buffer_provider
+            try_new_lstm_with_options_unstable,
+            try_new_lstm_with_options_with_any_provider,
+            try_new_lstm_with_options_with_buffer_provider,
+            try_new_lstm_with_options,
+            Self,
         ]
     );
 
-    /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
-    /// LSTM data for complex scripts (Khmer, Lao, Myanmar, and Thai).
-    ///
-    /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
-    /// the full dictionary but more expensive during segmentation (inference).
-    ///
-    /// See also [`Self::try_new_dictionary_unstable`].
     #[cfg(feature = "lstm")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_lstm_with_options)]
     pub fn try_new_lstm_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -390,25 +417,27 @@ impl LineSegmenter {
         })
     }
 
-    #[cfg(feature = "lstm")]
-    icu_provider::gen_any_buffer_constructors!(
+    icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: LineBreakOptions,
         error: SegmenterError,
+        /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
+        /// dictionary data for complex scripts (Khmer, Lao, Myanmar, and Thai).
+        ///
+        /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
+        /// faster than the LSTM model but requires more data.
+        ///
+        /// See also [`Self::try_new_dictionary_unstable`].
         functions: [
-            Self::try_new_lstm_with_options_unstable,
-            try_new_lstm_with_options_with_any_provider,
-            try_new_lstm_with_options_with_buffer_provider
+            try_new_dictionary_with_options_unstable,
+            try_new_dictionary_with_options_with_any_provider,
+            try_new_dictionary_with_options_with_buffer_provider,
+            try_new_dictionary_with_options,
+            Self,
         ]
     );
 
-    /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
-    /// dictionary data for complex scripts (Khmer, Lao, Myanmar, and Thai).
-    ///
-    /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
-    /// faster than the LSTM model but requires more data.
-    ///
-    /// See also [`Self::try_new_dictionary_unstable`].
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_dictionary_with_options)]
     pub fn try_new_dictionary_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -431,17 +460,6 @@ impl LineSegmenter {
             complex: ComplexPayloads::try_new_southeast_asian(provider)?,
         })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: LineBreakOptions,
-        error: SegmenterError,
-        functions: [
-            Self::try_new_dictionary_with_options_unstable,
-            try_new_dictionary_with_options_with_any_provider,
-            try_new_dictionary_with_options_with_buffer_provider
-        ]
-    );
 
     /// Creates a line break iterator for an `str` (a UTF-8 string).
     ///

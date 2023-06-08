@@ -48,3 +48,17 @@ pub use options::DisplayNamesOptions;
 pub use options::Fallback;
 pub use options::LanguageDisplay;
 pub use options::Style;
+
+#[cfg(feature = "data")]
+#[doc(hidden)]
+pub(crate) mod data {
+    use icu_displaynames_data::*;
+
+    use crate as icu_displaynames;
+    pub(crate) struct Provider;
+    impl_displaynames_languages_v1!(Provider);
+    impl_displaynames_locales_v1!(Provider);
+    impl_displaynames_regions_v1!(Provider);
+    impl_displaynames_scripts_v1!(Provider);
+    impl_displaynames_variants_v1!(Provider);
+}

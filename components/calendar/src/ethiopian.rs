@@ -233,12 +233,12 @@ const ETHIOPIC_TO_COPTIC_OFFSET: i64 =
 
 impl Ethiopian {
     /// Construct a new Ethiopian Calendar for the Amete Mihret era naming scheme
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self(false)
     }
     /// Construct a new Ethiopian Calendar with a value specifying whether or not it is Amete Alem
-    pub fn new_with_era_style(era_style: EthiopianEraStyle) -> Self {
-        Self(era_style == EthiopianEraStyle::AmeteAlem)
+    pub const fn new_with_era_style(era_style: EthiopianEraStyle) -> Self {
+        Self(matches!(era_style, EthiopianEraStyle::AmeteAlem))
     }
     /// Set whether or not this uses the Amete Alem era scheme
     pub fn set_era_style(&mut self, era_style: EthiopianEraStyle) {

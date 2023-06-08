@@ -22,7 +22,7 @@
 //! let locale = locale!("en-001").into();
 //! let data =
 //!     exemplar_chars::load_exemplars_main(&icu_testdata::unstable(), &locale)
-//!         .expect("The data should be valid");
+//!         .expect("locale should be present");
 //! let exemplars_main = data.as_borrowed();
 //!
 //! assert!(exemplars_main.contains_char('a'));
@@ -42,7 +42,7 @@
 //! let locale = locale!("und").into();
 //! let data =
 //!     exemplar_chars::load_exemplars_main(&icu_testdata::unstable(), &locale)
-//!         .expect("The data should be valid");
+//!         .expect("locale should be present");
 //! let exemplars_main_und = data.as_borrowed();
 //!
 //! assert!(!exemplars_main_und.contains_char('a'));
@@ -53,7 +53,7 @@
 //!
 //! let cpilsl = data.as_code_point_inversion_list_string_list();
 //! println!("underlying data = {:?}", cpilsl);
-//! let num_chars = cpilsl.expect("The data should be valid").size();
+//! let num_chars = cpilsl.expect("locale should be present").size();
 //! assert_eq!(0, num_chars);
 //! ```
 
@@ -70,6 +70,8 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         func:
         $(#[$attr:meta])*
         $vis:vis fn $funcname:ident();
+        $(#[$attr2:meta])*
+        $vis2:vis fn $funcname2:ident();
     ) => {
         $(#[$attr])*
         $vis fn $funcname(
@@ -84,6 +86,13 @@ macro_rules! make_exemplar_chars_unicode_set_property {
                 .and_then(DataResponse::take_payload)
                 .map(UnicodeSetData::from_data)?
             )
+        }
+        $(#[$attr2])*
+        #[cfg(feature = "data")]
+        $vis2 fn $funcname2(
+            locale: &DataLocale,
+        ) -> Result<UnicodeSetData, PropertiesError> {
+            $funcname(&crate::data::Provider, locale)
         }
     }
 }
@@ -103,7 +112,7 @@ make_exemplar_chars_unicode_set_property!(
     /// let locale = locale!("en-001").into();
     /// let data =
     ///     exemplar_chars::load_exemplars_main(&icu_testdata::unstable(), &locale)
-    ///         .expect("The data should be valid");
+    ///         .expect("locale should be present");
     /// let exemplars_main = data.as_borrowed();
     ///
     /// assert!(exemplars_main.contains_char('a'));
@@ -115,6 +124,27 @@ make_exemplar_chars_unicode_set_property!(
     /// ```
 
     pub fn load_exemplars_main();
+
+    /// Get the "main" set of exemplar characters.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::properties::exemplar_chars;
+    ///
+    /// let data = exemplar_chars::load_exemplars_main_stable(&locale!("en").into())
+    ///         .expect("locale should be present");
+    /// let exemplars_main = data.as_borrowed();
+    ///
+    /// assert!(exemplars_main.contains_char('a'));
+    /// assert!(exemplars_main.contains_char('z'));
+    /// assert!(exemplars_main.contains("a"));
+    /// assert!(!exemplars_main.contains("ä"));
+    /// assert!(!exemplars_main.contains("ng"));
+    /// assert!(!exemplars_main.contains("A"));
+    /// ```
+    pub fn load_exemplars_main_stable();
 );
 
 make_exemplar_chars_unicode_set_property!(
@@ -132,7 +162,7 @@ make_exemplar_chars_unicode_set_property!(
     /// let locale = locale!("en-001").into();
     /// let data =
     ///     exemplar_chars::load_exemplars_auxiliary(&icu_testdata::unstable(), &locale)
-    ///         .expect("The data should be valid");
+    ///         .expect("locale should be present");
     /// let exemplars_auxiliary = data.as_borrowed();
     ///
     /// assert!(!exemplars_auxiliary.contains_char('a'));
@@ -144,6 +174,28 @@ make_exemplar_chars_unicode_set_property!(
     /// ```
 
     pub fn load_exemplars_auxiliary();
+
+    /// Get the "auxiliary" set of exemplar characters.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::properties::exemplar_chars;
+    ///
+    /// let data =
+    ///     exemplar_chars::load_exemplars_auxiliary_stable(&locale!("en").into())
+    ///         .expect("locale should be present");
+    /// let exemplars_auxiliary = data.as_borrowed();
+    ///
+    /// assert!(!exemplars_auxiliary.contains_char('a'));
+    /// assert!(!exemplars_auxiliary.contains_char('z'));
+    /// assert!(!exemplars_auxiliary.contains("a"));
+    /// assert!(exemplars_auxiliary.contains("ä"));
+    /// assert!(!exemplars_auxiliary.contains("ng"));
+    /// assert!(!exemplars_auxiliary.contains("A"));
+    /// ```
+    pub fn load_exemplars_auxiliary_stable();
 );
 
 make_exemplar_chars_unicode_set_property!(
@@ -161,7 +213,7 @@ make_exemplar_chars_unicode_set_property!(
     /// let locale = locale!("en-001").into();
     /// let data =
     ///     exemplar_chars::load_exemplars_punctuation(&icu_testdata::unstable(), &locale)
-    ///         .expect("The data should be valid");
+    ///         .expect("locale should be present");
     /// let exemplars_punctuation = data.as_borrowed();
     ///
     /// assert!(!exemplars_punctuation.contains_char('0'));
@@ -174,6 +226,29 @@ make_exemplar_chars_unicode_set_property!(
     /// ```
 
     pub fn load_exemplars_punctuation();
+
+    /// Get the "punctuation" set of exemplar characters.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::properties::exemplar_chars;
+    ///
+    /// let data =
+    ///     exemplar_chars::load_exemplars_punctuation_stable(&locale!("en").into())
+    ///         .expect("locale should be present");
+    /// let exemplars_punctuation = data.as_borrowed();
+    ///
+    /// assert!(!exemplars_punctuation.contains_char('0'));
+    /// assert!(!exemplars_punctuation.contains_char('9'));
+    /// assert!(!exemplars_punctuation.contains_char('%'));
+    /// assert!(exemplars_punctuation.contains_char(','));
+    /// assert!(exemplars_punctuation.contains_char('.'));
+    /// assert!(exemplars_punctuation.contains_char('!'));
+    /// assert!(exemplars_punctuation.contains_char('?'));
+    /// ```
+    pub fn load_exemplars_punctuation_stable();
 );
 
 make_exemplar_chars_unicode_set_property!(
@@ -191,7 +266,7 @@ make_exemplar_chars_unicode_set_property!(
     /// let locale = locale!("en-001").into();
     /// let data =
     ///     exemplar_chars::load_exemplars_numbers(&icu_testdata::unstable(), &locale)
-    ///         .expect("The data should be valid");
+    ///         .expect("locale should be present");
     /// let exemplars_numbers = data.as_borrowed();
     ///
     /// assert!(exemplars_numbers.contains_char('0'));
@@ -204,6 +279,29 @@ make_exemplar_chars_unicode_set_property!(
     /// ```
 
     pub fn load_exemplars_numbers();
+
+    /// Get the "numbers" set of exemplar characters.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::properties::exemplar_chars;
+    ///
+    /// let data =
+    ///     exemplar_chars::load_exemplars_numbers_stable(&locale!("en").into())
+    ///         .expect("locale should be present");
+    /// let exemplars_numbers = data.as_borrowed();
+    ///
+    /// assert!(exemplars_numbers.contains_char('0'));
+    /// assert!(exemplars_numbers.contains_char('9'));
+    /// assert!(exemplars_numbers.contains_char('%'));
+    /// assert!(exemplars_numbers.contains_char(','));
+    /// assert!(exemplars_numbers.contains_char('.'));
+    /// assert!(!exemplars_numbers.contains_char('!'));
+    /// assert!(!exemplars_numbers.contains_char('?'));
+    /// ```
+    pub fn load_exemplars_numbers_stable();
 );
 
 make_exemplar_chars_unicode_set_property!(
@@ -221,7 +319,7 @@ make_exemplar_chars_unicode_set_property!(
     /// let locale = locale!("en-001").into();
     /// let data =
     ///     exemplar_chars::load_exemplars_index(&icu_testdata::unstable(), &locale)
-    ///         .expect("The data should be valid");
+    ///         .expect("locale should be present");
     /// let exemplars_index = data.as_borrowed();
     ///
     /// assert!(!exemplars_index.contains_char('a'));
@@ -233,4 +331,26 @@ make_exemplar_chars_unicode_set_property!(
     /// ```
 
     pub fn load_exemplars_index();
+
+    /// Get the "index" set of exemplar characters.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::properties::exemplar_chars;
+    ///
+    /// let data =
+    ///     exemplar_chars::load_exemplars_index_stable(&locale!("en").into())
+    ///         .expect("locale should be present");
+    /// let exemplars_index = data.as_borrowed();
+    ///
+    /// assert!(!exemplars_index.contains_char('a'));
+    /// assert!(!exemplars_index.contains_char('z'));
+    /// assert!(!exemplars_index.contains("a"));
+    /// assert!(!exemplars_index.contains("ä"));
+    /// assert!(!exemplars_index.contains("ng"));
+    /// assert!(exemplars_index.contains("A"));
+    /// ```
+    pub fn load_exemplars_index_stable();
 );

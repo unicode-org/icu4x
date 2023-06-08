@@ -33,3 +33,13 @@ pub use error::Error as CaseMappingError;
 pub use internals::CaseMappingInternals;
 #[doc(no_inline)]
 pub use CaseMappingError as Error;
+
+#[cfg(feature = "data")]
+#[doc(hidden)]
+pub mod data {
+    use icu_casemapping_data::*;
+
+    use crate as icu_casemapping;
+    pub(crate) struct Provider;
+    impl_props_casemap_v1!(Provider);
+}

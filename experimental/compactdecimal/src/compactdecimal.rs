@@ -154,6 +154,36 @@ impl CompactDecimalFormatter {
         })
     }
 
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// Creates a new instance using built-in data.
+    ///
+    /// For details on the behavior of this function, see: [`Self::try_new_short_unstable`]
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub fn try_new_short(
+        locale: &DataLocale,
+        options: CompactDecimalFormatterOptions,
+    ) -> Result<Self, CompactDecimalError> {
+        Ok(Self {
+            fixed_decimal_format: FixedDecimalFormatter::try_new(
+                locale,
+                options.fixed_decimal_formatter_options,
+            )?,
+            plural_rules: PluralRules::try_new_cardinal(locale)?,
+            compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
+                &crate::data::Provider,
+                DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                },
+            )?
+            .take_payload()?
+            .cast(),
+        })
+    }
+
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         options: CompactDecimalFormatterOptions,
@@ -209,6 +239,36 @@ impl CompactDecimalFormatter {
             plural_rules: PluralRules::try_new_cardinal_unstable(data_provider, locale)?,
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
                 data_provider,
+                DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                },
+            )?
+            .take_payload()?
+            .cast(),
+        })
+    }
+
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// Creates a new instance using built-in data.
+    ///
+    /// For details on the behavior of this function, see: [`Self::try_new_long_unstable`]
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub fn try_new_long(
+        locale: &DataLocale,
+        options: CompactDecimalFormatterOptions,
+    ) -> Result<Self, CompactDecimalError> {
+        Ok(Self {
+            fixed_decimal_format: FixedDecimalFormatter::try_new(
+                locale,
+                options.fixed_decimal_formatter_options,
+            )?,
+            plural_rules: PluralRules::try_new_cardinal(locale)?,
+            compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
+                &crate::data::Provider,
                 DataRequest {
                     locale,
                     metadata: Default::default(),

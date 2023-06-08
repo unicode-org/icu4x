@@ -1354,15 +1354,19 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
+ "icu_calendar_data",
  "icu_locid",
  "icu_provider",
- "icu_testdata",
  "serde",
  "serde_json",
  "tinystr",
  "writeable",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_calendar_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_capi"
@@ -1420,6 +1424,7 @@ version = "0.7.2"
 dependencies = [
  "databake",
  "displaydoc",
+ "icu_casemapping_data",
  "icu_collections",
  "icu_locid",
  "icu_provider",
@@ -1427,6 +1432,10 @@ dependencies = [
  "yoke",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_casemapping_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_codepointtrie_builder"
@@ -1451,18 +1460,22 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
+ "icu_collator_data",
  "icu_collections",
  "icu_locid",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "icu_testdata",
  "serde",
  "smallvec",
  "utf16_iter",
  "utf8_iter",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_collator_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_collections"
@@ -1491,6 +1504,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "fixed_decimal",
+ "icu_compactdecimal_data",
  "icu_decimal",
  "icu_locid",
  "icu_plurals",
@@ -1500,6 +1514,10 @@ dependencies = [
  "writeable",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_compactdecimal_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_datagen"
@@ -1570,6 +1588,7 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_calendar",
+ "icu_datetime_data",
  "icu_decimal",
  "icu_locid",
  "icu_plurals",
@@ -1587,6 +1606,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_datetime_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_decimal"
 version = "1.2.0"
 dependencies = [
@@ -1597,6 +1620,7 @@ dependencies = [
  "getrandom",
  "icu",
  "icu_benchmark_macros",
+ "icu_decimal_data",
  "icu_locid",
  "icu_provider",
  "icu_provider_adapters",
@@ -1609,6 +1633,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_decimal_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_depcheck"
 version = "0.1.0"
 
@@ -1618,6 +1646,7 @@ version = "0.10.0"
 dependencies = [
  "databake",
  "icu_collections",
+ "icu_displaynames_data",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
@@ -1625,6 +1654,10 @@ dependencies = [
  "tinystr",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_displaynames_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_ffi_coverage"
@@ -1671,14 +1704,18 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
+ "icu_list_data",
  "icu_provider",
- "icu_testdata",
  "postcard",
  "regex-automata",
  "serde",
  "serde_json",
  "writeable",
 ]
+
+[[package]]
+name = "icu_list_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_locid"
@@ -1708,6 +1745,7 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_locid",
+ "icu_locid_transform_data",
  "icu_provider",
  "icu_testdata",
  "serde",
@@ -1716,6 +1754,10 @@ dependencies = [
  "writeable",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_locid_transform_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -1729,9 +1771,9 @@ dependencies = [
  "detone",
  "displaydoc",
  "icu_collections",
+ "icu_normalizer_data",
  "icu_properties",
  "icu_provider",
- "icu_testdata",
  "serde",
  "smallvec",
  "utf16_iter",
@@ -1739,6 +1781,10 @@ dependencies = [
  "write16",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_normalizer_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_pattern"
@@ -1793,6 +1839,7 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_collections",
+ "icu_properties_data",
  "icu_provider",
  "icu_testdata",
  "serde",
@@ -1800,6 +1847,10 @@ dependencies = [
  "unicode-bidi",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_properties_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_provider"
@@ -1896,11 +1947,16 @@ dependencies = [
  "icu_decimal",
  "icu_plurals",
  "icu_provider",
+ "icu_relativetime_data",
  "icu_testdata",
  "serde",
  "writeable",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_relativetime_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_segmenter"
@@ -1915,6 +1971,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_fs",
+ "icu_segmenter_data",
  "icu_testdata",
  "itertools",
  "libm",
@@ -1923,6 +1980,10 @@ dependencies = [
  "utf8_iter",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_segmenter_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_testdata"

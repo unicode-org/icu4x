@@ -646,3 +646,63 @@ icu_provider::gen_any_buffer_constructors!(
         load_script_with_extensions_with_buffer_provider
     ]
 );
+
+/// Returns a [`ScriptWithExtensionsBorrowed`] struct that represents the data for the Script
+/// and Script_Extensions properties.
+///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
+///
+/// # Examples
+///
+/// ```
+/// use icu::properties::{script::SCRIPT_WITH_EXTENSIONS, Script};
+///
+/// // get the `Script` property value
+/// assert_eq!(SCRIPT_WITH_EXTENSIONS.get_script_val(0x0640), Script::Common); // U+0640 ARABIC TATWEEL
+/// assert_eq!(SCRIPT_WITH_EXTENSIONS.get_script_val(0x0650), Script::Inherited); // U+0650 ARABIC KASRA
+/// assert_eq!(SCRIPT_WITH_EXTENSIONS.get_script_val(0x0660), Script::Arabic); // // U+0660 ARABIC-INDIC DIGIT ZERO
+/// assert_eq!(SCRIPT_WITH_EXTENSIONS.get_script_val(0xFDF2), Script::Arabic); // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
+///
+/// // get the `Script_Extensions` property value
+/// assert_eq!(
+///     SCRIPT_WITH_EXTENSIONS.get_script_extensions_val(0x0640) // U+0640 ARABIC TATWEEL
+///         .iter().collect::<Vec<Script>>(),
+///     vec![Script::Arabic, Script::Syriac, Script::Mandaic, Script::Manichaean,
+///          Script::PsalterPahlavi, Script::Adlam, Script::HanifiRohingya, Script::Sogdian,
+///          Script::OldUyghur]
+/// );
+/// assert_eq!(
+///     SCRIPT_WITH_EXTENSIONS.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+///         .iter().collect::<Vec<Script>>(),
+///     vec![Script::Common]
+/// );
+/// assert_eq!(
+///     SCRIPT_WITH_EXTENSIONS.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
+///         .iter().collect::<Vec<Script>>(),
+///     vec![Script::Inherited]
+/// );
+/// assert_eq!(
+///     SCRIPT_WITH_EXTENSIONS.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
+///         .iter().collect::<Vec<Script>>(),
+///     vec![Script::Tamil, Script::Grantha]
+/// );
+///
+/// // check containment of a `Script` value in the `Script_Extensions` value
+/// // U+0650 ARABIC KASRA
+/// assert!(!SCRIPT_WITH_EXTENSIONS.has_script(0x0650, Script::Inherited)); // main Script value
+/// assert!(SCRIPT_WITH_EXTENSIONS.has_script(0x0650, Script::Arabic));
+/// assert!(SCRIPT_WITH_EXTENSIONS.has_script(0x0650, Script::Syriac));
+/// assert!(!SCRIPT_WITH_EXTENSIONS.has_script(0x0650, Script::Thaana));
+///
+/// // get a `CodePointInversionList` for when `Script` value is contained in `Script_Extensions` value
+/// let syriac = SCRIPT_WITH_EXTENSIONS.get_script_extensions_set(Script::Syriac);
+/// assert!(syriac.contains32(0x0650)); // ARABIC KASRA
+/// assert!(!syriac.contains32(0x0660)); // ARABIC-INDIC DIGIT ZERO
+/// assert!(!syriac.contains32(0xFDF2)); // ARABIC LIGATURE ALLAH ISOLATED FORM
+/// assert!(syriac.contains32(0x0700)); // SYRIAC END OF PARAGRAPH
+/// assert!(syriac.contains32(0x074A)); // SYRIAC BARREKH
+/// ```
+#[cfg(feature = "data")]
+pub const SCRIPT_WITH_EXTENSIONS: ScriptWithExtensionsBorrowed = ScriptWithExtensionsBorrowed {
+    data: crate::data::Provider::SINGLETON_PROPS_SCX_V1,
+};

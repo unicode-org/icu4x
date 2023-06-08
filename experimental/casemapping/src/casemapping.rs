@@ -28,7 +28,40 @@ pub struct CaseMapping {
     locale: CaseMapLocale,
 }
 
+#[cfg(feature = "data")]
+impl Default for CaseMapping {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CaseMapping {
+    /// A constructor which creates a [`CaseMapping`].
+    ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    #[cfg(feature = "data")]
+    pub fn new() -> Self {
+        Self::new_with_locale(&Locale::UND)
+    }
+
+    /// A constructor which creates a [`CaseMapping`] for the given locale.
+    ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    #[cfg(feature = "data")]
+    pub fn new_with_locale(locale: &Locale) -> Self {
+        debug_assert!(crate::data::Provider::SINGLETON_PROPS_CASEMAP_V1
+            .casemap
+            .validate()
+            .is_ok());
+        let locale = CaseMapLocale::from(locale);
+        Self {
+            internals: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_PROPS_CASEMAP_V1,
+            ),
+            locale,
+        }
+    }
+
     /// A constructor which takes a [`DataProvider`] and creates a [`CaseMapping`].
     ///
     /// TODO before stabilitzation: make this return a crate-scoped error.

@@ -9,11 +9,7 @@
 //! use icu::calendar::{types::Era, Date, DateTime};
 //! use tinystr::tinystr;
 //!
-//! // `icu_testdata::unstable` contains information specifying era dates.
-//! // Production code should probably use its own data provider
-//! let japanese_calendar =
-//!     Japanese::try_new_unstable(&icu_testdata::unstable())
-//!         .expect("Cannot load japanese data");
+//! let japanese_calendar = Japanese::new();
 //!
 //! // `Date` type
 //! let date_iso = Date::try_new_iso_date(1970, 1, 2)
@@ -114,6 +110,16 @@ pub struct JapaneseDateInner {
 }
 
 impl Japanese {
+    /// Creates a new [`Japanese`] using only modern eras (post-meiji).
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        Self {
+            eras: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_CALENDAR_JAPANESE_V1,
+            ),
+        }
+    }
+
     /// Creates a new [`Japanese`] from locale data using only modern eras (post-meiji).
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
@@ -123,16 +129,12 @@ impl Japanese {
     pub fn try_new_unstable<D: DataProvider<JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
     ) -> Result<Self, CalendarError> {
-        let eras = data_provider
-            .load(DataRequest {
-                locale: Default::default(),
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
-        Ok(Self { eras })
+        Ok(Self {
+            eras: data_provider.load(Default::default())?.take_payload()?,
+        })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: CalendarError);
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: CalendarError, functions: [Self::try_new_unstable, try_new_with_any_provider, try_new_with_buffer_provider]);
 
     fn japanese_date_from_codes(
         &self,
@@ -158,6 +160,16 @@ impl Japanese {
 }
 
 impl JapaneseExtended {
+    /// Creates a new [`Japanese`] from using all eras (including pre-meiji).
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        Self(Japanese {
+            eras: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_CALENDAR_JAPANEXT_V1,
+            ),
+        })
+    }
+
     /// Creates a new [`Japanese`] from locale data using all eras (including pre-meiji).
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
@@ -167,16 +179,15 @@ impl JapaneseExtended {
     pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1Marker> + ?Sized>(
         data_provider: &D,
     ) -> Result<Self, CalendarError> {
-        let eras = data_provider
-            .load(DataRequest {
-                locale: Default::default(),
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
-        Ok(Self(Japanese { eras: eras.cast() }))
+        Ok(Self(Japanese {
+            eras: data_provider
+                .load(Default::default())?
+                .take_payload()?
+                .cast(),
+        }))
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: CalendarError);
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: CalendarError, functions: [Self::try_new_unstable, try_new_with_any_provider, try_new_with_buffer_provider]);
 }
 
 impl Calendar for Japanese {
@@ -387,9 +398,7 @@ impl Date<Japanese> {
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
-    /// let japanese_calendar =
-    ///     Japanese::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("Cannot load japanese data");
+    /// let japanese_calendar = Japanese::new();
     /// // for easy sharing
     /// let japanese_calendar = Ref(&japanese_calendar);
     ///
@@ -444,9 +453,7 @@ impl Date<JapaneseExtended> {
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
-    /// let japanext_calendar =
-    ///     JapaneseExtended::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("Cannot load japanese data");
+    /// let japanext_calendar = JapaneseExtended::new();
     /// // for easy sharing
     /// let japanext_calendar = Ref(&japanext_calendar);
     ///
@@ -493,9 +500,7 @@ impl DateTime<Japanese> {
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
-    /// let japanese_calendar =
-    ///     Japanese::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("Cannot load japanese data");
+    /// let japanese_calendar = Japanese::new();
     ///
     /// let era = types::Era(tinystr!(16, "heisei"));
     ///
@@ -550,9 +555,7 @@ impl DateTime<JapaneseExtended> {
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
-    /// let japanext_calendar =
-    ///     JapaneseExtended::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("Cannot load japanese data");
+    /// let japanext_calendar = JapaneseExtended::new();
     ///
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
@@ -891,13 +894,9 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "serde")]
     fn test_japanese() {
-        let calendar = Japanese::try_new_unstable(&icu_testdata::buffer().as_deserializing())
-            .expect("Cannot load japanese data");
-        let calendar_ext =
-            JapaneseExtended::try_new_unstable(&icu_testdata::buffer().as_deserializing())
-                .expect("Cannot load japanese data");
+        let calendar = Japanese::new();
+        let calendar_ext = JapaneseExtended::new();
         let calendar = Ref(&calendar);
         let calendar_ext = Ref(&calendar_ext);
 

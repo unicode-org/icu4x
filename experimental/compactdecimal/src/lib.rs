@@ -40,3 +40,14 @@ pub use compactdecimal::CompactDecimalFormatter;
 pub use error::CompactDecimalError;
 #[doc(no_inline)]
 pub use CompactDecimalError as Error;
+
+#[cfg(feature = "data")]
+#[doc(hidden)]
+pub mod data {
+    use icu_compactdecimal_data::*;
+
+    use crate as icu_compactdecimal;
+    pub(crate) struct Provider;
+    impl_compactdecimal_long_v1!(Provider);
+    impl_compactdecimal_short_v1!(Provider);
+}

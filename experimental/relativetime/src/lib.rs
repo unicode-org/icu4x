@@ -29,3 +29,36 @@ pub use options::RelativeTimeFormatterOptions;
 pub use relativetime::RelativeTimeFormatter;
 #[doc(no_inline)]
 pub use RelativeTimeError as Error;
+
+#[cfg(feature = "data")]
+#[doc(hidden)]
+pub mod data {
+    use icu_relativetime_data::*;
+
+    use crate as icu_relativetime;
+    pub(crate) struct Provider;
+    impl_relativetime_long_day_v1!(Provider);
+    impl_relativetime_long_hour_v1!(Provider);
+    impl_relativetime_long_minute_v1!(Provider);
+    impl_relativetime_long_month_v1!(Provider);
+    impl_relativetime_long_quarter_v1!(Provider);
+    impl_relativetime_long_second_v1!(Provider);
+    impl_relativetime_long_week_v1!(Provider);
+    impl_relativetime_long_year_v1!(Provider);
+    impl_relativetime_narrow_day_v1!(Provider);
+    impl_relativetime_narrow_hour_v1!(Provider);
+    impl_relativetime_narrow_minute_v1!(Provider);
+    impl_relativetime_narrow_month_v1!(Provider);
+    impl_relativetime_narrow_quarter_v1!(Provider);
+    impl_relativetime_narrow_second_v1!(Provider);
+    impl_relativetime_narrow_week_v1!(Provider);
+    impl_relativetime_narrow_year_v1!(Provider);
+    impl_relativetime_short_day_v1!(Provider);
+    impl_relativetime_short_hour_v1!(Provider);
+    impl_relativetime_short_minute_v1!(Provider);
+    impl_relativetime_short_month_v1!(Provider);
+    impl_relativetime_short_quarter_v1!(Provider);
+    impl_relativetime_short_second_v1!(Provider);
+    impl_relativetime_short_week_v1!(Provider);
+    impl_relativetime_short_year_v1!(Provider);
+}

@@ -209,13 +209,25 @@ where
     true
 }
 
+#[cfg(feature = "data")]
+impl Default for LocaleCanonicalizer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl LocaleCanonicalizer {
-    /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
+    /// A constructor which creates a [`LocaleCanonicalizer`].
+    ///
+    /// ✨ **Enabled with the `"data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        Self::new_with_expander(LocaleExpander::new_extended())
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleCanonicalizer, LocaleTransformError>
     where
         P: DataProvider<AliasesV1Marker>
@@ -228,7 +240,7 @@ impl LocaleCanonicalizer {
     }
 
     // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
-    #[doc = icu_provider::gen_any_buffer_docs!(ANY, icu_provider, Self::try_new_unstable)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
     ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
@@ -237,7 +249,7 @@ impl LocaleCanonicalizer {
     }
 
     // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
-    #[doc = icu_provider::gen_any_buffer_docs!(BUFFER, icu_provider, Self::try_new_unstable)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new)]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
@@ -248,7 +260,20 @@ impl LocaleCanonicalizer {
 
     /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] object.
     ///
-    /// For example, use this constructor if you wish to support all languages.
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new_with_expander(expander: LocaleExpander) -> Self {
+        Self {
+            aliases: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_LOCID_TRANSFORM_ALIASES_V1,
+            ),
+            expander,
+        }
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,

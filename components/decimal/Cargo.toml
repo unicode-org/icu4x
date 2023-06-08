@@ -37,6 +37,8 @@ writeable = { version = "0.5.1", path = "../../utils/writeable" }
 databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
+icu_decimal_data = { path = "data", optional = true }
+
 [dev-dependencies]
 criterion = "0.4"
 icu = { path = "../icu", default-features = false }
@@ -53,6 +55,7 @@ std = ["fixed_decimal/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake"]
 bench = ["serde"]
+data = ["dep:icu_decimal_data"]
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI

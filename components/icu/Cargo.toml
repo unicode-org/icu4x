@@ -45,9 +45,9 @@ icu_timezone = { version = "1.2.0", path = "../timezone", default-features = fal
 
 # Experimental components
 icu_casemapping = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, optional = true }
+icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
 icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", default-features = false, optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
-icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
 
 # For docs links
 icu_provider = { version = "1.2.0", path = "../../provider/core", default-features = false }
@@ -73,8 +73,8 @@ std = [
     "icu_locid/std",
     "icu_normalizer/std",
     "icu_plurals/std",
-    "icu_relativetime?/std",
     "icu_properties/std",
+    "icu_relativetime?/std",
     "icu_segmenter/std",
     "icu_timezone/std",
 ]
@@ -91,8 +91,8 @@ serde = [
     "icu_locid/serde",
     "icu_normalizer/serde",
     "icu_plurals/serde",
-    "icu_relativetime?/serde",
     "icu_properties/serde",
+    "icu_relativetime?/serde",
     "icu_segmenter/serde",
     "icu_timezone/serde",
 ]
@@ -104,10 +104,27 @@ icu_datetime_experimental = [
 ]
 experimental = [
     "icu_casemapping",
+    "icu_compactdecimal",
     "icu_datetime_experimental",
     "icu_displaynames",
     "icu_relativetime",
-    "icu_compactdecimal",
+]
+data = [
+    "icu_calendar/data",
+    "icu_casemapping?/data",
+    "icu_collator/data",
+    "icu_compactdecimal?/data",
+    "icu_datetime/data",
+    "icu_decimal/data",
+    "icu_displaynames?/data",
+    "icu_list/data",
+    "icu_locid_transform/data",
+    "icu_normalizer/data",
+    "icu_plurals/data",
+    "icu_properties/data",
+    "icu_relativetime?/data",
+    "icu_segmenter/data",
+    "icu_timezone/data",
 ]
 
 [package.metadata.cargo-all-features]

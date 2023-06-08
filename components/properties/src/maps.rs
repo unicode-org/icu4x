@@ -49,7 +49,6 @@ impl<T: TrieValue> CodePointMapData<T> {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let data =
     ///     maps::load_general_category(&icu_testdata::unstable())
@@ -78,7 +77,6 @@ impl<T: TrieValue> CodePointMapData<T> {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let data =
     ///     maps::load_general_category(&icu_testdata::unstable())
@@ -158,7 +156,6 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let data =
     ///     maps::load_general_category(&icu_testdata::unstable())
@@ -178,7 +175,6 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let data =
     ///     maps::load_general_category(&icu_testdata::unstable())
@@ -198,7 +194,6 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let data = maps::load_general_category(&icu_testdata::unstable())
     ///     .expect("The data should be valid");
@@ -338,6 +333,9 @@ macro_rules! make_map_property {
         func:
         $(#[$attr:meta])*
         $vis:vis fn $name:ident();
+        const:
+        $(#[$attr2:meta])*
+        $vis2:vis const $constname:ident => $singleton:ident;
     ) => {
         $(#[$attr])*
         $vis fn $name(
@@ -345,7 +343,12 @@ macro_rules! make_map_property {
         ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {
             Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
         }
-    }
+        $(#[$attr2])*
+        #[cfg(feature = "data")]
+        pub const $constname: CodePointMapDataBorrowed<$value_ty> = CodePointMapDataBorrowed {
+            map: crate::data::Provider::$singleton
+        };
+    };
 }
 
 make_map_property! {
@@ -360,7 +363,6 @@ make_map_property! {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let data =
     ///     maps::load_general_category(&icu_testdata::unstable())
@@ -369,9 +371,18 @@ make_map_property! {
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
-    ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn load_general_category();
+    const:
+    /// Return a [`CodePointMapDataBorrowed`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    ///
+    /// assert_eq!(maps::GENERAL_CATEGORY.get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(maps::GENERAL_CATEGORY.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    pub const GENERAL_CATEGORY => SINGLETON_PROPS_GC_V1;
 }
 
 make_map_property! {
@@ -386,7 +397,6 @@ make_map_property! {
     ///
     /// ```
     /// use icu::properties::{maps, BidiClass};
-    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let data =
     ///     maps::load_bidi_class(&icu_testdata::unstable())
@@ -395,9 +405,19 @@ make_map_property! {
     /// assert_eq!(bc.get('y'), BidiClass::LeftToRight);  // U+0079
     /// assert_eq!(bc.get('ع'), BidiClass::ArabicLetter);  // U+0639
     /// ```
-    ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn load_bidi_class();
+    const:
+    /// Return a [`CodePointMapDataBorrowed`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, BidiClass};
+    ///
+    /// assert_eq!(maps::BIDI_CLASS.get('y'), BidiClass::LeftToRight);  // U+0079
+    /// assert_eq!(maps::BIDI_CLASS.get('ع'), BidiClass::ArabicLetter);  // U+0639
+    /// ```
+    pub const BIDI_CLASS => SINGLETON_PROPS_BC_V1;
 }
 
 make_map_property! {
@@ -417,7 +437,6 @@ make_map_property! {
     ///
     /// ```
     /// use icu::properties::{maps, Script};
-    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let data =
     ///     maps::load_script(&icu_testdata::unstable())
@@ -426,11 +445,28 @@ make_map_property! {
     /// assert_eq!(script.get('木'), Script::Han);  // U+6728
     /// assert_eq!(script.get('🎃'), Script::Common);  // U+1F383 JACK-O-LANTERN
     /// ```
-    ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     /// [`load_script_with_extensions_unstable`]: crate::script::load_script_with_extensions_unstable
     /// [`ScriptWithExtensionsBorrowed::has_script`]: crate::script::ScriptWithExtensionsBorrowed::has_script
     pub fn load_script();
+    const:
+    /// Return a [`CodePointMapDataBorrowed`] for the Script Unicode enumerated property. See [`Script`].
+    ///
+    /// **Note:** Some code points are associated with multiple scripts. If you are trying to
+    /// determine whether a code point belongs to a certain script, you should use
+    /// [`load_script_with_extensions_unstable`] and [`ScriptWithExtensionsBorrowed::has_script`]
+    /// instead of this function.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, Script};
+    ///
+    /// assert_eq!(maps::SCRIPT.get('木'), Script::Han);  // U+6728
+    /// assert_eq!(maps::SCRIPT.get('🎃'), Script::Common);  // U+1F383 JACK-O-LANTERN
+    /// ```
+    /// [`load_script_with_extensions_unstable`]: crate::script::load_script_with_extensions_unstable
+    /// [`ScriptWithExtensionsBorrowed::has_script`]: crate::script::ScriptWithExtensionsBorrowed::has_script
+    pub const SCRIPT => SINGLETON_PROPS_SC_V1;
 }
 
 make_map_property! {
@@ -453,9 +489,20 @@ make_map_property! {
     /// assert_eq!(eaw.get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
     /// assert_eq!(eaw.get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
     /// ```
-    ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn load_east_asian_width();
+    const:
+    /// Return a [`CodePointMapDataBorrowed`] for the East_Asian_Width Unicode enumerated
+    /// property. See [`EastAsianWidth`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, EastAsianWidth};
+    ///
+    /// assert_eq!(maps::EAST_ASIAN_WIDTH.get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
+    /// assert_eq!(maps::EAST_ASIAN_WIDTH.get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
+    /// ```
+    pub const EAST_ASIAN_WIDTH => SINGLETON_PROPS_EA_V1;
 }
 
 make_map_property! {
@@ -480,9 +527,22 @@ make_map_property! {
     /// assert_eq!(lb.get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
     /// assert_eq!(lb.get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
     /// ```
-    ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn load_line_break();
+    const:
+    /// Return a [`CodePointMapDataBorrowed`] for the Line_Break Unicode enumerated
+    /// property. See [`LineBreak`].
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, LineBreak};
+    ///
+    /// assert_eq!(maps::LINE_BREAK.get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
+    /// assert_eq!(maps::LINE_BREAK.get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
+    /// ```
+    pub const LINE_BREAK => SINGLETON_PROPS_LB_V1;
 }
 
 make_map_property! {
@@ -507,9 +567,22 @@ make_map_property! {
     /// assert_eq!(gcb.get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
     /// assert_eq!(gcb.get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
     /// ```
-    ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn load_grapheme_cluster_break();
+    const:
+    /// Return a [`CodePointMapDataBorrowed`] for the Grapheme_Cluster_Break Unicode enumerated
+    /// property. See [`GraphemeClusterBreak`].
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GraphemeClusterBreak};
+    ///
+    /// assert_eq!(maps::GRAPHEME_CLUSTER_BREAK.get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
+    /// assert_eq!(maps::GRAPHEME_CLUSTER_BREAK.get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
+    /// ```
+    pub const GRAPHEME_CLUSTER_BREAK => SINGLETON_PROPS_GCB_V1;
 }
 
 make_map_property! {
@@ -534,9 +607,22 @@ make_map_property! {
     /// assert_eq!(wb.get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
     /// assert_eq!(wb.get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
     /// ```
-    ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn load_word_break();
+    const:
+    /// Return a [`CodePointMapDataBorrowed`] for the Word_Break Unicode enumerated
+    /// property. See [`WordBreak`].
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, WordBreak};
+    ///
+    /// assert_eq!(maps::WORD_BREAK.get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
+    /// assert_eq!(maps::WORD_BREAK.get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
+    /// ```
+    pub const WORD_BREAK => SINGLETON_PROPS_WB_V1;
 }
 
 make_map_property! {
@@ -561,9 +647,22 @@ make_map_property! {
     /// assert_eq!(sb.get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
     /// assert_eq!(sb.get(','), SentenceBreak::SContinue); // U+002C: Comma
     /// ```
-    ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn load_sentence_break();
+    const:
+    /// Return a [`CodePointMapDataBorrowed`] for the Sentence_Break Unicode enumerated
+    /// property. See [`SentenceBreak`].
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, SentenceBreak};
+    ///
+    /// assert_eq!(maps::SENTENCE_BREAK.get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
+    /// assert_eq!(maps::SENTENCE_BREAK.get(','), SentenceBreak::SContinue); // U+002C: Comma
+    /// ```
+    pub const SENTENCE_BREAK => SINGLETON_PROPS_SB_V1;
 }
 
 make_map_property! {
@@ -589,7 +688,21 @@ make_map_property! {
     /// assert_eq!(sb.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
     /// assert_eq!(sb.get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
     /// ```
-    ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn load_canonical_combining_class();
+    const:
+    /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
+    /// [`CanonicalCombiningClass`].
+    ///
+    /// **Note:** See `icu_normalizer::CanonicalCombiningClassMap` for the preferred API
+    /// to look up the Canonical_Combining_Class property by scalar value.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, CanonicalCombiningClass};
+    ///
+    /// assert_eq!(maps::CANONICAL_COMBINING_CLASS.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
+    /// assert_eq!(maps::CANONICAL_COMBINING_CLASS.get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+    /// ```
+    pub const CANONICAL_COMBINING_CLASS => SINGLETON_PROPS_CCC_V1;
 }

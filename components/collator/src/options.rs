@@ -29,8 +29,7 @@ pub enum Strength {
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Primary);
-    /// let collator = Collator::try_new_unstable(
-    ///     &icu_testdata::unstable(),
+    /// let collator = Collator::try_new(
     ///     &Default::default(),
     ///     options,
     /// )
@@ -48,8 +47,7 @@ pub enum Strength {
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Secondary);
-    /// let collator = Collator::try_new_unstable(
-    ///     &icu_testdata::unstable(),
+    /// let collator = Collator::try_new(
     ///     &Default::default(),
     ///     options,
     /// )
@@ -78,8 +76,7 @@ pub enum Strength {
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Tertiary);
     /// let collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &Default::default(),
+    ///   Collator::try_new(&Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("E", "e"),
     ///            core::cmp::Ordering::Greater);
@@ -96,8 +93,7 @@ pub enum Strength {
     ///
     /// let locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &locale.into(),
+    ///   Collator::try_new(&locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("E", "e"),
     ///            core::cmp::Ordering::Greater);
@@ -128,8 +124,7 @@ pub enum Strength {
     ///
     /// let ja_locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &ja_locale.into(),
+    ///   Collator::try_new(&ja_locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("あ", "ア"),
     ///            core::cmp::Ordering::Less);
@@ -141,8 +136,7 @@ pub enum Strength {
     /// // Even this level doesn't distinguish everything,
     /// // e.g. Hebrew cantillation marks are still ignored.
     /// let collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &Default::default(),
+    ///   Collator::try_new(&Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Equal);
@@ -167,8 +161,7 @@ pub enum Strength {
     ///
     /// let ja_locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &ja_locale.into(),
+    ///   Collator::try_new(&ja_locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("ア", "ｱ"),
     ///            core::cmp::Ordering::Less);
@@ -176,8 +169,7 @@ pub enum Strength {
     ///            core::cmp::Ordering::Less);
     ///
     /// let collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &Default::default(),
+    ///   Collator::try_new(&Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Less);

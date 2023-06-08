@@ -157,10 +157,41 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             &date_time_format_options,
         )?;
         Ok(Self(
-            raw::ZonedDateTimeFormatter::try_new(
+            raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                locale,
+                time_zone_format_options,
+            )?,
+            PhantomData,
+        ))
+    }
+
+    /// TODO
+    #[cfg(feature = "experimental")]
+    #[cfg(feature = "data")]
+    #[inline]
+    pub fn try_new_experimental(
+        locale: &DataLocale,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeError>
+    where
+        crate::data::Provider:
+            DataProvider<C::DateLengthsV1Marker> + DataProvider<C::DateSymbolsV1Marker>,
+    {
+        let patterns = PatternSelector::for_options_experimental(
+            &crate::data::Provider,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::data::Provider, locale)?,
+            locale,
+            &C::DEFAULT_BCP_47_IDENTIFIER,
+            &date_time_format_options,
+        )?;
+        Ok(Self(
+            raw::ZonedDateTimeFormatter::try_new(
+                patterns,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(&crate::data::Provider, locale),
                 locale,
                 time_zone_format_options,
             )?,
@@ -240,10 +271,39 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             &date_time_format_options,
         )?;
         Ok(Self(
-            raw::ZonedDateTimeFormatter::try_new(
+            raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                locale,
+                time_zone_format_options,
+            )?,
+            PhantomData,
+        ))
+    }
+
+    /// TODO
+    #[inline]
+    #[cfg(feature = "data")]
+    pub fn try_new(
+        locale: &DataLocale,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeError>
+    where
+        crate::data::Provider:
+            DataProvider<C::DateLengthsV1Marker> + DataProvider<C::DateSymbolsV1Marker>,
+    {
+        let patterns = PatternSelector::for_options(
+            &crate::data::Provider,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::data::Provider, locale)?,
+            locale,
+            &date_time_format_options,
+        )?;
+        Ok(Self(
+            raw::ZonedDateTimeFormatter::try_new(
+                patterns,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(&crate::data::Provider, locale),
                 locale,
                 time_zone_format_options,
             )?,

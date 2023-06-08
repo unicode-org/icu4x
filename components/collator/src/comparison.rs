@@ -90,6 +90,54 @@ impl Collator {
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + ?Sized,
     {
+        Self::try_new_unstable_internal(
+            data_provider,
+            data_provider.load(Default::default())?.take_payload()?,
+            data_provider.load(Default::default())?.take_payload()?,
+            locale,
+            options,
+        )
+    }
+
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// Creates a new instance using built-in data.
+    ///
+    /// For details on the behavior of this function, see: [`Self::try_new_unstable`]
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, CollatorError> {
+        Self::try_new_unstable_internal(
+            &crate::data::Provider,
+            DataPayload::from_static_ref(
+                icu_normalizer::data::Provider::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            DataPayload::from_static_ref(
+                icu_normalizer::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            // TODO: Are CollationSpecialPrimariesV1Marker and CollationJamoV1Marker singletons?
+            locale,
+            options,
+        )
+    }
+
+    fn try_new_unstable_internal<D>(
+        data_provider: &D,
+        decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+        tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
+        locale: &DataLocale,
+        options: CollatorOptions,
+    ) -> Result<Self, CollatorError>
+    where
+        D: DataProvider<CollationSpecialPrimariesV1Marker>
+            + DataProvider<CollationDataV1Marker>
+            + DataProvider<CollationDiacriticsV1Marker>
+            + DataProvider<CollationJamoV1Marker>
+            + DataProvider<CollationMetadataV1Marker>
+            + DataProvider<CollationReorderingV1Marker>
+            + ?Sized,
+    {
         let req = DataRequest {
             locale,
             metadata: Default::default(),
@@ -152,12 +200,6 @@ impl Collator {
         if jamo.get().ce32s.len() != JAMO_COUNT {
             return Err(CollatorError::MalformedData);
         }
-
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
-
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
 
         let mut altered_defaults = CollatorOptionsBitField::new();
 

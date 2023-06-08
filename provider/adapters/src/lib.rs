@@ -34,3 +34,12 @@ pub mod fallback;
 pub mod filter;
 pub mod fork;
 mod helpers;
+
+#[cfg(feature = "data")]
+#[doc(hidden)]
+pub mod data {
+    use icu_provider_adapters_data::*;
+
+    pub(crate) struct Provider;
+    use crate as icu_provider_adapters;
+}

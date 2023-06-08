@@ -36,12 +36,21 @@ pub struct RegionDisplayNames {
 }
 
 impl RegionDisplayNames {
-    /// Creates a new [`RegionDisplayNames`] from locale data and an options bag.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: DisplayNamesOptions,
+        error: DataError,
+        /// Creates a new [`RegionDisplayNames`] from locale data and an options bag.
+        functions: [
+            try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<RegionDisplayNamesV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
@@ -59,17 +68,6 @@ impl RegionDisplayNames {
             region_data,
         })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
-        functions: [
-            Self::try_new_unstable,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider
-        ]
-    );
 
     /// Returns the display name of a region.
     pub fn of(&self, region: Region) -> Option<&str> {
@@ -112,12 +110,21 @@ pub struct ScriptDisplayNames {
 
 #[allow(dead_code)] // not public at the moment
 impl ScriptDisplayNames {
-    /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: DisplayNamesOptions,
+        error: DataError,
+        /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag.
+        functions: [
+            try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<ScriptDisplayNamesV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
@@ -135,17 +142,6 @@ impl ScriptDisplayNames {
             script_data,
         })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
-        functions: [
-            Self::try_new_unstable,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider
-        ]
-    );
 
     /// Returns the display name of a script.
     pub fn of(&self, script: Script) -> Option<&str> {
@@ -258,12 +254,21 @@ pub struct LanguageDisplayNames {
 }
 
 impl LanguageDisplayNames {
-    /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: DisplayNamesOptions,
+        error: DataError,
+        /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag.
+        functions: [
+            try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<LanguageDisplayNamesV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
@@ -281,17 +286,6 @@ impl LanguageDisplayNames {
             language_data,
         })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
-        functions: [
-            Self::try_new_unstable,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider
-        ]
-    );
 
     /// Returns the display name of a language.
     pub fn of(&self, language: Language) -> Option<&str> {
@@ -354,12 +348,21 @@ pub struct LocaleDisplayNamesFormatter {
 }
 
 impl LocaleDisplayNamesFormatter {
-    /// Creates a new [`LocaleDisplayNamesFormatter`] from locale data and an options bag.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: DisplayNamesOptions,
+        error: DataError,
+        /// Creates a new [`LocaleDisplayNamesFormatter`] from locale data and an options bag.
+        functions: [
+            try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
@@ -386,17 +389,6 @@ impl LocaleDisplayNamesFormatter {
             variant_data: data_provider.load(req)?.take_payload()?,
         })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
-        functions: [
-            Self::try_new_unstable,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider
-        ]
-    );
 
     /// Returns the display name of a locale.
     // TODO: Make this return a writeable instead of using alloc

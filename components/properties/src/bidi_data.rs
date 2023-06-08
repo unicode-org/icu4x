@@ -208,3 +208,20 @@ icu_provider::gen_any_buffer_constructors!(
         load_bidi_auxiliary_properties_with_buffer_provider
     ]
 );
+
+/// Returns a [`BidiAuxiliaryPropertiesV1`] struct that represents the data for certain
+/// Bidi properties.
+///
+/// # Examples
+/// ```
+/// use icu_properties::{bidi_data::BIDI_AUXILIARY_PROPERTIES, bidi_data::BidiMirroringProperties};
+///
+/// let open_paren = BIDI_AUXILIARY_PROPERTIES.get32_mirroring_props('(' as u32);
+/// assert_eq!(open_paren.mirroring_glyph, Some(')'));
+/// assert_eq!(open_paren.mirrored, true);
+/// ```
+#[cfg(feature = "data")]
+pub const BIDI_AUXILIARY_PROPERTIES: BidiAuxiliaryPropertiesBorrowed =
+    BidiAuxiliaryPropertiesBorrowed {
+        data: crate::data::Provider::SINGLETON_PROPS_BIDIAUXILIARYPROPS_V1,
+    };

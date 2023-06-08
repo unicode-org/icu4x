@@ -180,3 +180,20 @@ pub use error::SegmenterError;
 
 #[doc(no_inline)]
 pub use SegmenterError as Error;
+
+#[cfg(feature = "data")]
+#[doc(hidden)]
+pub mod data {
+    use icu_segmenter_data::*;
+
+    use crate as icu_segmenter;
+    pub(crate) struct Provider;
+    impl_segmenter_dictionary_w_auto_v1!(Provider);
+    impl_segmenter_dictionary_wl_ext_v1!(Provider);
+    impl_segmenter_grapheme_v1!(Provider);
+    impl_segmenter_line_v1!(Provider);
+    #[cfg(feature = "lstm")]
+    impl_segmenter_lstm_wl_auto_v1!(Provider);
+    impl_segmenter_sentence_v1!(Provider);
+    impl_segmenter_word_v1!(Provider);
+}

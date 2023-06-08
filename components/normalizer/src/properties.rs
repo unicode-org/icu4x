@@ -52,19 +52,10 @@ impl CanonicalComposition {
     /// characters or returns `None` if these characters don't compose.
     /// Composition exclusions are taken into account.
     ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
-    ///
     /// # Examples
     ///
     /// ```
-    /// let comp =
-    ///     icu_normalizer::properties::CanonicalComposition::try_new_unstable(
-    ///         &icu_testdata::unstable(),
-    ///     )
-    ///     .unwrap();
+    /// let comp = icu_normalizer::properties::CanonicalComposition::new();
     ///
     /// assert_eq!(comp.compose('a', 'b'), None); // Just two non-composing starters
     /// assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
@@ -96,6 +87,18 @@ impl CanonicalComposition {
         Ok(CanonicalComposition {
             canonical_compositions,
         })
+    }
+
+    /// Construct from built-in data.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub fn new() -> Self {
+        Self {
+            canonical_compositions: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_COMP_V1,
+            ),
+        }
     }
 
     icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);
@@ -131,7 +134,7 @@ impl CanonicalDecomposition {
     ///
     /// ```
     ///     use icu_normalizer::properties::Decomposed;
-    ///     let decomp = icu_normalizer::properties::CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    ///     let decomp = icu_normalizer::properties::CanonicalDecomposition::new();
     ///
     ///     assert_eq!(decomp.decompose('e'), Decomposed::Default);
     ///     assert_eq!(
@@ -359,6 +362,35 @@ impl CanonicalDecomposition {
         })
     }
 
+    /// Construct from built-in data.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        const _: () = assert!(
+            crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1
+                .scalars16
+                .const_len()
+                + crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1
+                    .scalars24
+                    .const_len()
+                <= 0xFFF,
+            "NormalizerError::FutureExtension"
+        );
+
+        Self {
+            decompositions: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            tables: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            non_recursive: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_DECOMP_V1,
+            ),
+        }
+    }
+
     icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);
 }
 
@@ -370,7 +402,7 @@ impl CanonicalDecomposition {
 /// use icu_properties::CanonicalCombiningClass;
 /// use icu_normalizer::properties::CanonicalCombiningClassMap;
 ///
-/// let map = CanonicalCombiningClassMap::try_new_unstable(&icu_testdata::unstable()).unwrap();
+/// let map = CanonicalCombiningClassMap::new();
 /// assert_eq!(map.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
 /// assert_eq!(map.get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
 /// ```
@@ -417,6 +449,18 @@ impl CanonicalCombiningClassMap {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
         Ok(CanonicalCombiningClassMap { decompositions })
+    }
+
+    /// Construct from built-in data.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        CanonicalCombiningClassMap {
+            decompositions: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+        }
     }
 
     icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);

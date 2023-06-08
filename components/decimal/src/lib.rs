@@ -103,6 +103,16 @@ mod grouper;
 pub mod options;
 pub mod provider;
 
+#[cfg(feature = "data")]
+#[doc(hidden)]
+pub mod data {
+    use icu_decimal_data::*;
+
+    use crate as icu_decimal;
+    pub(crate) struct Provider;
+    impl_decimal_symbols_v1!(Provider);
+}
+
 pub use error::DecimalError;
 pub use format::FormattedFixedDecimal;
 
@@ -132,12 +142,14 @@ pub struct FixedDecimalFormatter {
 }
 
 impl FixedDecimalFormatter {
-    /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: options::FixedDecimalFormatterOptions,
+        error: DecimalError,
+        /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
@@ -151,12 +163,6 @@ impl FixedDecimalFormatter {
             .take_payload()?;
         Ok(Self { options, symbols })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: options::FixedDecimalFormatterOptions,
-        error: DecimalError
-    );
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
     pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {

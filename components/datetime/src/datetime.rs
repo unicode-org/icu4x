@@ -65,6 +65,38 @@ use crate::options::components;
 pub struct TimeFormatter(pub(super) raw::TimeFormatter);
 
 impl TimeFormatter {
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// Creates a new instance using built-in data.
+    ///
+    /// For details on the behavior of this function, see: [`Self::try_new_unstable`]
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub fn try_new_with_length(
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, DateTimeError> {
+        let preferences = Some(preferences::Bag::from_data_locale(locale));
+
+        Ok(Self(raw::TimeFormatter::try_new(
+            locale,
+            length,
+            preferences,
+        )?))
+    }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        length: length::Time,
+        error: DateTimeError,
+        functions: [
+            Self::try_new_with_length_unstable,
+            try_new_with_length_with_any_provider,
+            try_new_with_length_with_buffer_provider
+        ]
+    );
+
     /// Constructor that takes a selected locale, reference to a [data provider] and
     /// a list of preferences, then collects all data necessary to format date and time values into the given locale,
     /// using the short style.
@@ -103,24 +135,13 @@ impl TimeFormatter {
     {
         let preferences = Some(preferences::Bag::from_data_locale(locale));
 
-        Ok(Self(raw::TimeFormatter::try_new(
+        Ok(Self(raw::TimeFormatter::try_new_unstable(
             data_provider,
             locale,
             length,
             preferences,
         )?))
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        length: length::Time,
-        error: DateTimeError,
-        functions: [
-            Self::try_new_with_length_unstable,
-            try_new_with_length_with_any_provider,
-            try_new_with_length_with_buffer_provider
-        ]
-    );
 
     /// Takes a [`IsoTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
@@ -599,10 +620,18 @@ where {
         ))
     }
 
-    icu_provider::gen_any_buffer_constructors!(
+    icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: DateTimeFormatterOptions,
-        error: DateTimeError
+        error: DateTimeError,
+        #[cfg(skip_new)]
+        functions: [
+            try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new,
+            Self
+        ]
     );
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]

@@ -233,10 +233,51 @@ impl ZonedDateTimeFormatter {
         )?;
 
         Ok(Self(
-            raw::ZonedDateTimeFormatter::try_new(
+            raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
                 || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
+                locale,
+                time_zone_format_options,
+            )?,
+            calendar,
+        ))
+    }
+
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// Creates a new instance using built-in data.
+    ///
+    /// For details on the behavior of this function, see: [`Self::try_new_unstable`]
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(all(feature = "experimental", feature = "data"))]
+    pub fn try_new_experimental(
+        locale: &DataLocale,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeError> {
+        let calendar = AnyCalendar::new_for_locale(locale);
+        let kind = calendar.kind();
+
+        let patterns = PatternSelector::for_options_experimental(
+            &crate::data::Provider,
+            calendar::load_lengths_for_any_calendar_kind(&crate::data::Provider, locale, kind)?,
+            locale,
+            &kind.as_bcp47_value(),
+            &date_time_format_options,
+        )?;
+
+        Ok(Self(
+            raw::ZonedDateTimeFormatter::try_new(
+                patterns,
+                || {
+                    calendar::load_symbols_for_any_calendar_kind(
+                        &crate::data::Provider,
+                        locale,
+                        kind,
+                    )
+                },
                 locale,
                 time_zone_format_options,
             )?,
@@ -343,10 +384,50 @@ impl ZonedDateTimeFormatter {
         )?;
 
         Ok(Self(
-            raw::ZonedDateTimeFormatter::try_new(
+            raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
                 || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
+                locale,
+                time_zone_format_options,
+            )?,
+            calendar,
+        ))
+    }
+
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// Creates a new instance using built-in data.
+    ///
+    /// For details on the behavior of this function, see: [`Self::try_new_unstable`]
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub fn try_new(
+        locale: &DataLocale,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeError> {
+        let calendar = AnyCalendar::new_for_locale(locale);
+        let kind = calendar.kind();
+
+        let patterns = PatternSelector::for_options(
+            &crate::data::Provider,
+            calendar::load_lengths_for_any_calendar_kind(&crate::data::Provider, locale, kind)?,
+            locale,
+            &date_time_format_options,
+        )?;
+
+        Ok(Self(
+            raw::ZonedDateTimeFormatter::try_new(
+                patterns,
+                || {
+                    calendar::load_symbols_for_any_calendar_kind(
+                        &crate::data::Provider,
+                        locale,
+                        kind,
+                    )
+                },
                 locale,
                 time_zone_format_options,
             )?,

@@ -44,7 +44,47 @@ impl TimeFormatter {
     /// a list of options, then collects all data necessary to format time values into the given locale,
     /// using the short style.
     #[inline(never)]
-    pub fn try_new<D>(
+    #[cfg(feature = "data")]
+    pub fn try_new(
+        locale: &DataLocale,
+        length: length::Time,
+        preferences: Option<preferences::Bag>,
+    ) -> Result<Self, DateTimeError> {
+        let patterns = provider::date_time::pattern_for_time_length(
+            &crate::data::Provider,
+            locale,
+            length,
+            preferences,
+        )?;
+
+        let required = datetime::analyze_patterns(&patterns.get().0, false)
+            .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
+
+        let symbols_data = if required.time_symbols_data {
+            Some(
+                crate::data::Provider
+                    .load(DataRequest {
+                        locale,
+                        metadata: Default::default(),
+                    })?
+                    .take_payload()?,
+            )
+        } else {
+            None
+        };
+
+        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
+                .map_err(DateTimeError::FixedDecimalFormatter)?;
+
+        Ok(Self::new(patterns, symbols_data, fixed_decimal_format))
+    }
+
+    #[inline(never)]
+    pub fn try_new_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
         length: length::Time,

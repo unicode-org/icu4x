@@ -103,6 +103,24 @@ use write16::Write16;
 use zerofrom::ZeroFrom;
 use zerovec::{zeroslice, ZeroSlice};
 
+#[cfg(feature = "data")]
+#[doc(hidden)]
+pub mod data {
+    use icu_normalizer_data::*;
+
+    use crate as icu_normalizer;
+    #[derive(Debug)]
+    #[allow(clippy::exhaustive_structs)]
+    pub struct Provider;
+    impl_normalizer_comp_v1!(Provider);
+    impl_normalizer_decomp_v1!(Provider);
+    impl_normalizer_nfd_v1!(Provider);
+    impl_normalizer_nfdex_v1!(Provider);
+    impl_normalizer_nfkd_v1!(Provider);
+    impl_normalizer_nfkdex_v1!(Provider);
+    impl_normalizer_uts46d_v1!(Provider);
+}
+
 #[derive(Debug)]
 enum SupplementPayloadHolder {
     Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
@@ -1527,6 +1545,36 @@ impl DecomposingNormalizer {
     /// NFD constructor.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new_nfd() -> Self {
+        const _: () = assert!(
+            crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1
+                .scalars16
+                .const_len()
+                + crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1
+                    .scalars24
+                    .const_len()
+                <= 0xFFF,
+            "NormalizerError::FutureExtension"
+        );
+
+        DecomposingNormalizer {
+            decompositions: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            supplementary_decompositions: None,
+            tables: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            supplementary_tables: None,
+            decomposition_passthrough_bound: 0xC0,
+            composition_passthrough_bound: 0x0300,
+        }
+    }
+
+    /// NFD constructor from data provider.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
@@ -1573,6 +1621,64 @@ impl DecomposingNormalizer {
     );
 
     /// NFKD constructor.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new_nfkd() -> Self {
+        const _: () = assert!(
+            crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1
+                .scalars16
+                .const_len()
+                + crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1
+                    .scalars24
+                    .const_len()
+                + crate::data::Provider::SINGLETON_NORMALIZER_NFKDEX_V1
+                    .scalars16
+                    .const_len()
+                + crate::data::Provider::SINGLETON_NORMALIZER_NFKDEX_V1
+                    .scalars24
+                    .const_len()
+                <= 0xFFF,
+            "NormalizerError::FutureExtension"
+        );
+
+        const _: () = assert!(
+            crate::data::Provider::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap <= 0x0300,
+            "NormalizerError::ValidationError"
+        );
+
+        let decomposition_capped =
+            if crate::data::Provider::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap < 0xC0 {
+                crate::data::Provider::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap
+            } else {
+                0xC0
+            };
+        let composition_capped =
+            if crate::data::Provider::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap < 0x0300 {
+                crate::data::Provider::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap
+            } else {
+                0x0300
+            };
+
+        DecomposingNormalizer {
+            decompositions: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            supplementary_decompositions: Some(SupplementPayloadHolder::Compatibility(
+                DataPayload::from_static_ref(crate::data::Provider::SINGLETON_NORMALIZER_NFKD_V1),
+            )),
+            tables: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            supplementary_tables: Some(DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFKDEX_V1,
+            )),
+            decomposition_passthrough_bound: decomposition_capped as u8,
+            composition_passthrough_bound: composition_capped,
+        }
+    }
+
+    /// NFKD constructor from data provider.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     /// <div class="stab unstable">
@@ -1714,6 +1820,62 @@ impl DecomposingNormalizer {
             decomposition_passthrough_bound: decomposition_capped as u8,
             composition_passthrough_bound: composition_capped,
         })
+    }
+
+    #[doc(hidden)]
+    #[cfg(all(feature = "experimental", feature = "data"))]
+    pub const fn new_uts46_decomposed_without_ignored_and_disallowed() -> Self {
+        const _: () = assert!(
+            crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1
+                .scalars16
+                .const_len()
+                + crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1
+                    .scalars24
+                    .const_len()
+                + crate::data::Provider::SINGLETON_NORMALIZER_NFKDEX_V1
+                    .scalars16
+                    .const_len()
+                + crate::data::Provider::SINGLETON_NORMALIZER_NFKDEX_V1
+                    .scalars24
+                    .const_len()
+                <= 0xFFF,
+            "NormalizerError::FutureExtension"
+        );
+
+        const _: () = assert!(
+            crate::data::Provider::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap <= 0x0300,
+            "NormalizerError::ValidationError"
+        );
+
+        let decomposition_capped =
+            if crate::data::Provider::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap < 0xC0 {
+                crate::data::Provider::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap
+            } else {
+                0xC0
+            };
+        let composition_capped =
+            if crate::data::Provider::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap < 0x0300 {
+                crate::data::Provider::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap
+            } else {
+                0x0300
+            };
+
+        DecomposingNormalizer {
+            decompositions: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            supplementary_decompositions: Some(SupplementPayloadHolder::Uts46(
+                DataPayload::from_static_ref(crate::data::Provider::SINGLETON_NORMALIZER_UTS46D_V1),
+            )),
+            tables: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            supplementary_tables: Some(DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_NFKDEX_V1,
+            )),
+            decomposition_passthrough_bound: decomposition_capped as u8,
+            composition_passthrough_bound: composition_capped,
+        }
     }
 
     /// Wraps a delegate iterator into a decomposing iterator
@@ -2000,6 +2162,19 @@ impl ComposingNormalizer {
     /// NFC constructor.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new_nfc() -> Self {
+        ComposingNormalizer {
+            decomposing_normalizer: DecomposingNormalizer::new_nfd(),
+            canonical_compositions: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_COMP_V1,
+            ),
+        }
+    }
+
+    /// NFC constructor from data provider.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
@@ -2033,6 +2208,19 @@ impl ComposingNormalizer {
     );
 
     /// NFKC constructor.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new_nfkc() -> Self {
+        ComposingNormalizer {
+            decomposing_normalizer: DecomposingNormalizer::new_nfkd(),
+            canonical_compositions: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_COMP_V1,
+            ),
+        }
+    }
+
+    /// NFKC constructor from data provider.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     /// <div class="stab unstable">
@@ -2124,6 +2312,18 @@ impl ComposingNormalizer {
             decomposing_normalizer,
             canonical_compositions,
         })
+    }
+
+    /// See [`try_new_uts46_without_ignored_and_disallowed_unstable`].
+    #[cfg(all(feature = "experimental", feature = "data"))]
+    pub const fn new_uts46_without_ignored_and_disallowed() -> Self {
+        ComposingNormalizer {
+            decomposing_normalizer:
+                DecomposingNormalizer::new_uts46_decomposed_without_ignored_and_disallowed(),
+            canonical_compositions: DataPayload::from_static_ref(
+                crate::data::Provider::SINGLETON_NORMALIZER_COMP_V1,
+            ),
+        }
     }
 
     /// Wraps a delegate iterator into a composing iterator
