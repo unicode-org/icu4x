@@ -140,7 +140,7 @@ macro_rules! gen_any_buffer_unstable_docs {
     };
 }
 
-#[allow(clippy::crate_in_macro_def)] // by convention each crate's data provider is `crate::data::Provider`
+#[allow(clippy::crate_in_macro_def)] // by convention each crate's data provider is `crate::provider::Baked`
 #[doc(hidden)]
 #[macro_export]
 macro_rules! gen_any_buffer_data_constructors {
@@ -166,7 +166,7 @@ macro_rules! gen_any_buffer_data_constructors {
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked() -> Result<Self, $error_ty> {
-            $($struct :: )? $unstable(&crate::data::Provider)
+            $($struct :: )? $unstable(&crate::provider::Baked)
         }
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
         pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized)) -> Result<Self, $error_ty> {
@@ -190,7 +190,7 @@ macro_rules! gen_any_buffer_data_constructors {
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked() -> $result_ty {
-            $($struct :: )? $unstable(&crate::data::Provider)
+            $($struct :: )? $unstable(&crate::provider::Baked)
         }
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
         pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized)) -> $result_ty {
@@ -228,7 +228,7 @@ macro_rules! gen_any_buffer_data_constructors {
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked($options_arg: $options_ty) -> $result_ty {
-            $($struct :: )? $unstable(&crate::data::Provider, $options_arg)
+            $($struct :: )? $unstable(&crate::provider::Baked, $options_arg)
         }
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
         pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), $options_arg: $options_ty) -> $result_ty {
@@ -250,7 +250,7 @@ macro_rules! gen_any_buffer_data_constructors {
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked($options_arg: $options_ty) -> Result<Self, $error_ty> {
-            $($struct :: )? $unstable(&crate::data::Provider, $options_arg)
+            $($struct :: )? $unstable(&crate::provider::Baked, $options_arg)
         }
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
         pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), $options_arg: $options_ty) -> Result<Self, $error_ty> {
@@ -287,7 +287,7 @@ macro_rules! gen_any_buffer_data_constructors {
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
-            $($struct :: )? $unstable(&crate::data::Provider, locale)
+            $($struct :: )? $unstable(&crate::provider::Baked, locale)
         }
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
         pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
@@ -326,7 +326,7 @@ macro_rules! gen_any_buffer_data_constructors {
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
-            $($struct :: )? $unstable(&crate::data::Provider, locale, $config_arg, $options_arg)
+            $($struct :: )? $unstable(&crate::provider::Baked, locale, $config_arg, $options_arg)
         }
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
         pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::DataLocale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
@@ -364,7 +364,7 @@ macro_rules! gen_any_buffer_data_constructors {
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale, $options_arg: $options_ty) -> Result<Self, $error_ty> {
-            $($struct :: )? $unstable(&crate::data::Provider, locale, $options_arg)
+            $($struct :: )? $unstable(&crate::provider::Baked, locale, $options_arg)
         }
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
         pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::DataLocale, $options_arg: $options_ty) -> Result<Self, $error_ty> {

@@ -37,7 +37,7 @@ impl MetazoneCalculator {
     pub const fn new() -> Self {
         MetazoneCalculator {
             metazone_period: DataPayload::from_static_ref(
-                crate::data::Provider::SINGLETON_TIME_ZONE_METAZONE_PERIOD_V1,
+                crate::provider::Baked::SINGLETON_TIME_ZONE_METAZONE_PERIOD_V1,
             ),
         }
     }
