@@ -22,6 +22,7 @@ use core::marker::PhantomData;
 use core::mem;
 use core::num::NonZeroUsize;
 use core::ops::Deref;
+use core::ptr;
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
 ///
@@ -292,8 +293,8 @@ where
         // to ZeroVec, all other such operations should use this function
         let capacity = vec.capacity();
         let len = vec.len();
-        let ptr = ::core::mem::ManuallyDrop::new(vec).as_mut_ptr();
-        let slice = ::core::ptr::slice_from_raw_parts_mut(ptr, len);
+        let ptr = mem::ManuallyDrop::new(vec).as_mut_ptr();
+        let slice = ptr::slice_from_raw_parts_mut(ptr, len);
         Self {
             vector: EyepatchHackVector {
                 buf: slice,
@@ -894,7 +895,7 @@ where
     /// the logical equivalent of this type's internal representation
     #[inline]
     pub fn into_cow(self) -> Cow<'a, [T::ULE]> {
-        let this = ::core::mem::ManuallyDrop::new(self);
+        let this = mem::ManuallyDrop::new(self);
         if this.is_owned() {
             let vec = unsafe {
                 // safe to call: we know it's owned,

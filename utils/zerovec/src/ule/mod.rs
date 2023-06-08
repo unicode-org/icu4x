@@ -357,7 +357,7 @@ pub unsafe trait VarULE: 'static {
     #[inline]
     fn to_boxed(&self) -> Box<Self> {
         let bytesvec = self.as_byte_slice().to_owned().into_boxed_slice();
-        let bytesvec = ::core::mem::ManuallyDrop::new(bytesvec);
+        let bytesvec = mem::ManuallyDrop::new(bytesvec);
         unsafe {
             // Get the pointer representation
             let ptr: *mut Self =
