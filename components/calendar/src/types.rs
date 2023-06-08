@@ -706,3 +706,20 @@ impl From<usize> for IsoWeekday {
         unsafe { core::mem::transmute(ordinal) }
     }
 }
+
+/// A moment in time, given as the number of seconds elapsed since midnight on
+/// January 1st 1 CE
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+pub struct Moment(f64);
+
+impl Moment {
+    /// Create a Moment
+    pub fn new(inner: f64) -> Self {
+        Moment(inner)
+    }
+
+    /// Get the inner field of a Moment
+    pub fn to_f64(self) -> f64 {
+        self.0
+    }
+}
