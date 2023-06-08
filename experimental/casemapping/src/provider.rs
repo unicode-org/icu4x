@@ -15,6 +15,9 @@ pub use crate::internals::CaseMappingUnfoldData;
 #[allow(missing_docs)] // TBD, temporary
 pub mod data;
 
+#[allow(missing_docs)] // TBD, temporary
+pub mod exception_header;
+
 #[icu_provider::data_struct(CaseMappingV1Marker = "props/casemap@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

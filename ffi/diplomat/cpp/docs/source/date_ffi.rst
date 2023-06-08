@@ -156,6 +156,13 @@
         See the `Rust documentation for try_new_iso_date <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso_date>`__ for more information.
 
 
+    .. cpp:function:: static ICU4XIsoDate create_for_unix_epoch()
+
+        Creates a new :cpp:class:`ICU4XIsoDate` representing January 1, 1970.
+
+        See the `Rust documentation for unix_epoch <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch>`__ for more information.
+
+
     .. cpp:function:: ICU4XDate to_calendar(const ICU4XCalendar& calendar) const
 
         Convert this date to one in a different calendar

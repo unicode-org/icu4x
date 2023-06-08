@@ -14,12 +14,12 @@ use zerovec::ZeroMap;
 use zerovec::ZeroVec;
 
 use crate::error::Error;
-use crate::exceptions::{CaseMappingExceptions, ExceptionSlot};
+use crate::exceptions::CaseMappingExceptions;
 #[cfg(feature = "datagen")]
 use crate::exceptions_builder::CaseMappingExceptionsBuilder;
 
 use crate::provider::data::{CaseMappingData, DotType, MappingKind};
-
+use crate::provider::exception_header::ExceptionSlot;
 /// Reverse case folding data. Maps from multi-character strings back
 /// to code-points that fold to those strings.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

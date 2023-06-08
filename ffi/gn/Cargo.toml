@@ -34,7 +34,6 @@ rustflags = []
 rustflags = []
 
 [gn.package.libm."0.2.6"]
-rustflags = []
 
 # Build cargo-gnaw with the checked-in lockfile
 [workspace]

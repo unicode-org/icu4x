@@ -1773,12 +1773,17 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_locid",
+ "icu_plurals_data",
  "icu_provider",
  "icu_testdata",
  "serde",
  "serde_json",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_plurals_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_properties"
@@ -1979,10 +1984,15 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "icu_testdata",
+ "icu_timezone_data",
  "serde",
  "tinystr",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_timezone_data"
+version = "0.0.0"
 
 [[package]]
 name = "ident_case"

@@ -15,6 +15,13 @@
         See the `Rust documentation for Time <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html>`__ for more information.
 
 
+    .. cpp:function:: static diplomat::result<ICU4XTime, ICU4XError> create_midnight()
+
+        Creates a new :cpp:class:`ICU4XTime` representing midnight (00:00.000).
+
+        See the `Rust documentation for Time <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html>`__ for more information.
+
+
     .. cpp:function:: uint8_t hour() const
 
         Returns the hour in this time

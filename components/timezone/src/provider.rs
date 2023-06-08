@@ -21,6 +21,15 @@ use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
+#[cfg(feature = "data")]
+pub(crate) struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_timezone;
+    icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
+};
+
 /// TimeZone ID in BCP47 format
 ///
 /// <div class="stab unstable">

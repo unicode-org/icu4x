@@ -137,23 +137,11 @@ pub struct BakedExporter {
 /// Data required to write the implementations
 struct ImplData {
     marker: SyncTokenStream,
-    /// A snippet of code that can perform a lookup of the data with `req` being
-    /// the local variable containing the DataRequest
-    lookup_ref: SyncTokenStream,
-    /// An optional macro that was defined, needed by lookup_ref, as well as
-    /// its name
-    ///
-    /// It will likely be defined with a __ prefix and needs to be reexported with the correct
-    /// name. The name stored here will not be prefixed
-    lookup_macro_and_ident: Option<(SyncTokenStream, SyncTokenStream)>,
-    /// Whether the lookup macro should be public
-    public_lookup_macro: bool,
     feature: SyncTokenStream,
     macro_ident: SyncTokenStream,
     prefixed_macro_ident: SyncTokenStream,
     hash_ident: SyncTokenStream,
     mod_ident: SyncTokenStream,
-    into_any_payload: SyncTokenStream,
 }
 
 impl std::fmt::Debug for BakedExporter {
@@ -203,7 +191,7 @@ impl BakedExporter {
         relative_path: P,
         data: TokenStream,
     ) -> Result<(), DataError> {
-        let path = self.mod_directory.join(&relative_path).with_extension("rs");
+        let path = self.mod_directory.join(&relative_path);
 
         let mut formatted = if self.pretty {
             use std::process::{Command, Stdio};
@@ -342,51 +330,54 @@ impl DataExporter for BakedExporter {
             .replace('@', "_v")
             .replace('/', "_");
 
-        let mut lookup_macro = None;
-        let mut lookup_ident = None;
-        let mut public_lookup_macro = false;
+        let mut singleton = None.into_iter();
 
-        let lookup_ref = match values.iter().map(|(_, l)| l.len()).sum() {
-            0 => quote!(None),
+        let lookup = match values.iter().map(|(_, l)| l.len()).sum() {
+            0 => quote!(Err(icu_provider::DataErrorKind::MissingLocale)),
             1 => {
                 let (bake, locale) = values.into_iter().next().unwrap();
                 let locale = locale.into_iter().next().unwrap();
 
-                lookup_ident = Some(format!("singleton_{ident}").parse::<TokenStream>().unwrap());
-                let lookup_ident_prefixed = format!("__singleton_{ident}")
+                let singleton_ident = format!("SINGLETON_{}", ident.to_ascii_uppercase())
                     .parse::<TokenStream>()
                     .unwrap();
 
                 // Exposing singleton structs separately allows us to get rid of fallibility by using
                 // the struct directly.
-                lookup_macro = Some(quote! {
-                    #[doc(hidden)]
-                    #[macro_export]
-                    macro_rules! #lookup_ident_prefixed {
-                        () => {
-                            #bake
-                        }
+                singleton = Some(quote! {
+                    #[clippy::msrv = "1.61"]
+                    impl $provider {
+                        #[doc(hidden)]
+                        pub const #singleton_ident: &'static #struct_type = &#bake;
                     }
-                });
-                // The singleton macros are public. Other lookup macros are not.
-                public_lookup_macro = true;
+                })
+                .into_iter();
 
-                let cmp = if locale == "und" {
+                if locale == "und" {
                     quote! {
-                        req.locale.is_empty()
+                        if locale.is_empty() {
+                            Ok(Self::#singleton_ident)
+                        } else {
+                            Err(icu_provider::DataErrorKind::ExtraneousLocale)
+                        }
                     }
                 } else if icu_locid::Locale::try_from_bytes_with_single_variant_single_keyword_unicode_extension(locale.as_bytes()).is_ok() {
                     self.dependencies.insert("icu_locid");
                     quote! {
-                        icu_provider::DataLocale::from(icu_locid::locale!(#locale)).eq(&req.locale)
+                        if icu_provider::DataLocale::from(icu_locid::locale!(#locale)).eq(&locale) {
+                            Ok(Self::#singleton_ident)
+                        } else {
+                            Err(icu_provider::DataErrorKind::MissingLocale)
+                        }
                     }
                 } else {
                     quote! {
-                        req.locale.strict_cmp(#locale.as_bytes()).is_eq()
+                        if locale.strict_cmp(#locale.as_bytes()).is_eq() {
+                            Ok(Self::#singleton_ident)
+                        } else {
+                            Err(icu_provider::DataErrorKind::MissingLocale)
+                        }
                     }
-                };
-                quote! {
-                    #cmp.then(|| {static ANCHOR: #struct_type = #lookup_ident!(); &ANCHOR})
                 }
             }
             _ => {
@@ -405,59 +396,83 @@ impl DataExporter for BakedExporter {
 
                 let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
 
-                lookup_ident = Some(format!("lookup_{ident}").parse::<TokenStream>().unwrap());
-                let lookup_ident_prefixed =
-                    format!("__lookup_{ident}").parse::<TokenStream>().unwrap();
-
-                lookup_macro = Some(quote! {
-                    #[doc(hidden)]
-                    #[macro_export]
-                    macro_rules! #lookup_ident_prefixed {
-                        ($req:expr) => {
-                            [#(#keys),*]
-                                .binary_search_by(|k| $req.locale.strict_cmp(k.as_bytes()).reverse())
-                                .ok()
-                                .map(|i| unsafe {
-                                    #(#statics)*
-                                    // Safe because keys and values have the same length
-                                    *[#(&#values),*].get_unchecked(i)
-                                })
-                        }
-                    }
-                });
-
                 quote! {
-                    #lookup_ident!(req)
+                    #(#statics)*
+                    match [#(#keys),*].binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse()) {
+                        Ok(i) => Ok(*unsafe {
+                            // Safe because keys and values have the same length
+                            [#(&#values),*].get_unchecked(i)
+                        }),
+                        Err(_) => Err(icu_provider::DataErrorKind::MissingLocale)
+                    }
                 }
             }
         };
 
-        let into_any_payload = if is_datetime_skeletons {
+        let into_data_payload = if is_datetime_skeletons {
             quote! {
-                .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
-                .map(icu_provider::DataPayload::<#marker>::from_owned)
-                .map(icu_provider::DataPayload::wrap_into_any_payload)
+                icu_provider::DataPayload::from_owned(icu_datetime::provider::calendar::DateSkeletonPatternsV1(
+                    payload
+                        .iter()
+                        .map(|(fields, pattern)| (
+                            icu_datetime::provider::calendar::SkeletonV1((*fields).into()),
+                            icu_provider::prelude::zerofrom::ZeroFrom::zero_from(pattern)
+                        ))
+                        .collect(),
+                ))
+
             }
         } else {
             quote! {
-                .map(icu_provider::AnyPayload::from_static_ref)
+                icu_provider::DataPayload::from_static_ref(payload)
             }
         };
 
-        let lookup_macro_and_ident =
-            lookup_macro.and_then(|mac| lookup_ident.map(|id| (mac.to_string(), id.to_string())));
+        let doc = format!(
+            " Implement [`DataProvider<{}>`](icu_provider::DataProvider) on the given struct using the data",
+            marker.segments.iter().next_back().unwrap().ident
+        );
+        let prefixed_macro_ident = format!("__impl_{ident}").parse::<TokenStream>().unwrap();
+        self.write_to_file(
+            PathBuf::from(format!("macros/{}.data.rs", ident)),
+            quote!{
+                #[doc = #doc]
+                /// hardcoded in this file. This allows the struct to be used with
+                /// `icu`'s `_unstable` constructors.
+                #[doc(hidden)]
+                #[macro_export]
+                macro_rules! #prefixed_macro_ident {
+                    ($provider:path) => {
+                        #(#singleton)*
+
+                        #[clippy::msrv = "1.61"]
+                        impl icu_provider::DataProvider<#marker> for $provider {
+                            fn load(
+                                &self,
+                                req: icu_provider::DataRequest,
+                            ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
+                                let locale = req.locale;
+                                match {#lookup} {
+                                    Ok(payload) => Ok(icu_provider::DataResponse {
+                                        metadata: Default::default(),
+                                        payload: Some(#into_data_payload),
+                                    }),
+                                    Err(e) => Err(e.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        )?;
 
         let data = ImplData {
             feature: feature.to_string(),
-            lookup_ref: lookup_ref.to_string(),
-            lookup_macro_and_ident,
-            public_lookup_macro,
             marker: quote!(#marker).to_string(),
             macro_ident: format!("impl_{ident}"),
-            prefixed_macro_ident: format!("__impl_{ident}"),
+            prefixed_macro_ident: prefixed_macro_ident.to_string(),
             hash_ident: ident.to_ascii_uppercase(),
             mod_ident: ident,
-            into_any_payload: into_any_payload.to_string(),
         };
 
         self.impl_data
@@ -477,10 +492,6 @@ impl DataExporter for BakedExporter {
             .values()
             .map(|data| data.feature.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
-        let lookup_refs = data
-            .values()
-            .map(|data| data.lookup_ref.parse::<TokenStream>().unwrap())
-            .collect::<Vec<_>>();
         let markers = data
             .values()
             .map(|data| data.marker.parse::<TokenStream>().unwrap())
@@ -493,6 +504,10 @@ impl DataExporter for BakedExporter {
         let mod_idents = data
             .values()
             .map(|data| data.mod_ident.parse::<TokenStream>().unwrap())
+            .collect::<Vec<_>>();
+        let file_paths = data
+            .values()
+            .map(|data| format!("macros/{}.data.rs", data.mod_ident))
             .collect::<Vec<_>>();
 
         // We prefix all macros with `__`, as these will be automatically exported at the crate root, which is annoying
@@ -507,129 +522,35 @@ impl DataExporter for BakedExporter {
             .values()
             .map(|data| data.hash_ident.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
-        let into_any_payloads = data
-            .values()
-            .map(|data| data.into_any_payload.parse::<TokenStream>().unwrap())
-            .collect::<Vec<_>>();
 
-        let any_body = if data.is_empty() {
-            quote! {
-                Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req))
-            }
-        } else {
-            quote! {
-                #(
-                    #features
-                    const #hash_idents: icu_provider::DataKeyHash = <#markers as icu_provider::KeyedDataMarker>::KEY.hashed();
-                )*
-                match key.hashed() {
-                    #(
-                        #features
-                        #hash_idents => #lookup_refs #into_any_payloads,
-                    )*
-                    _ => return Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
-                }
-                .map(|payload| icu_provider::AnyResponse {
-                    payload: Some(payload),
-                    metadata: Default::default(),
-                })
-                .ok_or_else(|| icu_provider::DataErrorKind::MissingLocale.with_req(key, req))
-            }
-        };
-
-        let mut lookup_macro_reexports = Vec::new();
-
-        for (i, datum) in data.values().enumerate() {
-            let doc = format!(
-                " Implement [`DataProvider<{}>`](icu_provider::DataProvider) on the given struct using the data",
-                datum.marker.rsplit(" :: ").next().unwrap()
-            );
-            let prefixed_macro_ident = &prefixed_macro_idents[i];
-            let marker = &markers[i];
-            let lookup_ref = &lookup_refs[i];
-
-            let lookup_macro =
-                if let Some((lookup_macro, lookup_ident)) = &datum.lookup_macro_and_ident {
-                    let lookup_ident_prefixed = format!("__{}", lookup_ident)
-                        .parse::<TokenStream>()
-                        .unwrap();
-                    let lookup_ident = lookup_ident.parse::<TokenStream>().unwrap();
-                    let maybe_pub = if datum.public_lookup_macro {
-                        quote!(pub)
-                    } else {
-                        quote!()
-                    };
-                    lookup_macro_reexports.push(quote! {
-                        #[doc(inline)]
-                        #maybe_pub use #lookup_ident_prefixed as #lookup_ident;
-                    });
-                    Some(lookup_macro.parse::<TokenStream>().unwrap())
-                } else {
-                    None
-                };
-            self.write_to_file(
-                PathBuf::from(format!("macros/{}", datum.mod_ident)),
-                quote!{
-                    #lookup_macro
-                    #[doc = #doc]
-                    /// hardcoded in this file. This allows the struct to be used with
-                    /// `icu`'s `_unstable` constructors.
-                    #[doc(hidden)]
-                    #[macro_export]
-                    macro_rules! #prefixed_macro_ident {
-                        ($provider:path) => {
-                            #[clippy::msrv = "1.61"]
-                            impl icu_provider::DataProvider<#marker> for $provider {
-                                fn load(
-                                    &self,
-                                    req: icu_provider::DataRequest,
-                                ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
-                                    #lookup_ref
-                                        .map(icu_provider::prelude::zerofrom::ZeroFrom::zero_from)
-                                        .map(icu_provider::DataPayload::from_owned)
-                                        .map(|payload| {
-                                            icu_provider::DataResponse {
-                                                metadata: Default::default(),
-                                                payload: Some(payload),
-                                            }
-                                        })
-                                        .ok_or_else(|| icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
-                                    }
-                            }
-                        }
-                    }
-                }
-            )?;
-        }
-
+        // macros.rs is the interface for built-in data. It exposes one macro per data key.
         self.write_to_file(
-            PathBuf::from("macros"),
+            PathBuf::from("macros.rs"),
             quote! {
-
-                #[macro_use]
-                mod macros {
-                    #(
-                        #[macro_use]
-                        mod #mod_idents;
-                    )*
-                }
-
                 #(
+                    #[macro_use]
+                    #[path = #file_paths]
+                    mod #mod_idents;
                     #[doc(inline)]
                     pub use #prefixed_macro_idents as #macro_idents;
                 )*
+            },
+        )?;
 
-                #(
-                    #lookup_macro_reexports
-                )*
+        // mod.rs is the interface for using databake directly. It exposes the macros from macros.rs,
+        // as well as `impl_data_provider` and `impl_any_provider` which include all keys.
+        self.write_to_file(
+            PathBuf::from("mod.rs"),
+            quote! {
+                include!("macros.rs");
 
                 /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
-                /// hardcoded in this file. This allows the struct to be used with
+                /// hardcoded in this module. This allows the struct to be used with
                 /// `icu`'s `_unstable` constructors.
                 ///
                 /// ```compile_fail
                 /// struct MyDataProvider;
-                /// include!("/path/to/generated/macros.rs");
+                /// include!("/path/to/generated/mod.rs");
                 /// impl_data_provider(MyDataProvider);
                 /// ```
                 #[doc(hidden)]
@@ -651,7 +572,7 @@ impl DataExporter for BakedExporter {
                 ///
                 /// ```compile_fail
                 /// struct MyAnyProvider;
-                /// include!("/path/to/generated/macros.rs");
+                /// include!("/path/to/generated/mod.rs");
                 /// impl_any_provider(MyAnyProvider);
                 /// ```
                 #[doc(hidden)]
@@ -661,21 +582,29 @@ impl DataExporter for BakedExporter {
                         #[clippy::msrv = "1.61"]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                                #any_body
+                                #(
+                                    #features
+                                    const #hash_idents: icu_provider::DataKeyHash = <#markers as icu_provider::KeyedDataMarker>::KEY.hashed();
+                                )*
+                                match key.hashed() {
+                                    #(
+                                        #features
+                                        #hash_idents => icu_provider::DataProvider::<#markers>::load(self, req)
+                                            .and_then(|r| r.take_metadata_and_payload())
+                                            .map(|(metadata, payload)| icu_provider::AnyResponse {
+                                                payload: Some(payload.wrap_into_any_payload()),
+                                                metadata,
+                                            }),
+                                    )*
+                                    _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
+                                }
                             }
                         }
                     }
                 }
                 #[doc(inline)]
                 pub use __impl_any_provider as impl_any_provider;
-            },
-        )?;
 
-        // For backwards compatibility
-        self.write_to_file(
-            PathBuf::from("mod"),
-            quote! {
-                include!("macros.rs");
                 #[clippy::msrv = "1.61"]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
@@ -684,7 +613,7 @@ impl DataExporter for BakedExporter {
 
         // For backwards compatibility
         self.write_to_file(
-            PathBuf::from("any"),
+            PathBuf::from("any.rs"),
             quote! {
                 // This assumes that `mod.rs` is already included.
                 impl_any_provider!(BakedDataProvider);

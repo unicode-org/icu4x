@@ -4,6 +4,9 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
+#![allow(dead_code)]
+#![allow(unused_imports)]
+
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::{

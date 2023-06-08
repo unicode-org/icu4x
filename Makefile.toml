@@ -97,6 +97,7 @@ dependencies = [
 description = "Run full data generation on latest CLDR and ICU"
 category = "CI"
 dependencies = [
+    "bakeddata-check",
     "full-data",
 ]
 

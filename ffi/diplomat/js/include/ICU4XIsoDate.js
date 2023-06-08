@@ -37,6 +37,10 @@ export class ICU4XIsoDate {
     })();
   }
 
+  static create_for_unix_epoch() {
+    return new ICU4XIsoDate(wasm.ICU4XIsoDate_create_for_unix_epoch(), true, []);
+  }
+
   to_calendar(arg_calendar) {
     return new ICU4XDate(wasm.ICU4XIsoDate_to_calendar(this.underlying, arg_calendar.underlying), true, []);
   }

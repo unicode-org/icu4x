@@ -21,6 +21,9 @@ icu::locid_transform::LocaleDirectionality::is_left_to_right#FnInStruct
 icu::locid_transform::LocaleDirectionality::is_right_to_left#FnInStruct
 icu::locid_transform::LocaleDirectionality::try_new_unstable#FnInStruct
 icu::locid_transform::LocaleDirectionality::try_new_with_expander_unstable#FnInStruct
+icu::plurals::PluralRules::try_new#FnInStruct
+icu::plurals::PluralRules::try_new_cardinal#FnInStruct
+icu::plurals::PluralRules::try_new_ordinal#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
 icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
@@ -42,3 +45,4 @@ icu::properties::names::PropertyEnumToValueNameSparseMapper#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapper::as_borrowed#FnInStruct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStruct
+icu::timezone::MetazoneCalculator::new#FnInStruct
