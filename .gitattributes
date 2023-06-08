@@ -10,3 +10,4 @@ ffi/diplomat/js/include/** linguist-generated=true
 ffi/diplomat/js/docs/** linguist-generated=true
 *.rs.data linguist-language=Rust
 */**/README.md linguist-generated=true
+**/data/data/** linguist-generated=true
