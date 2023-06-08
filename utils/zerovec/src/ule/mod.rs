@@ -357,13 +357,12 @@ pub unsafe trait VarULE: 'static {
     #[inline]
     fn to_boxed(&self) -> Box<Self> {
         let bytesvec = self.as_byte_slice().to_owned().into_boxed_slice();
+        let bytesvec = mem::ManuallyDrop::new(bytesvec);
         unsafe {
             // Get the pointer representation
             let ptr: *mut Self =
                 Self::from_byte_slice_unchecked(&bytesvec) as *const Self as *mut Self;
-            assert_eq!(Layout::for_value(&*ptr), Layout::for_value(&*bytesvec));
-            // Forget the allocation
-            mem::forget(bytesvec);
+            assert_eq!(Layout::for_value(&*ptr), Layout::for_value(&**bytesvec));
             // Transmute the pointer to an owned pointer
             Box::from_raw(ptr)
         }
