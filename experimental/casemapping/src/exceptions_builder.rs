@@ -120,7 +120,7 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
             // Copy header.
             let header = ExceptionHeader::from_integer(self.read_raw()?);
             self.write_raw(header.to_integer());
-            self.double_slots = header.double_width_slots;
+            self.double_slots = header.bits.double_width_slots;
 
             // Copy unmodified slots.
             for slot in [

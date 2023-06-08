@@ -6,11 +6,7 @@ use crate::provider::data::{DotType, MappingKind};
 use zerovec::ule::{AsULE, RawBytesULE, ULE};
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-pub(crate) struct ExceptionHeader {
-    /// The various slots that are present, masked by ExceptionSlot
-    ///
-    /// We still store this as a bitmask since it's more convenient to access as one
-    pub slot_presence: u8,
+pub(crate) struct ExceptionBits {
     pub double_width_slots: bool,
     pub no_simple_case_folding: bool,
     pub negative_delta: bool,
@@ -18,6 +14,15 @@ pub(crate) struct ExceptionHeader {
     pub dot_type: DotType,
     pub has_conditional_special: bool,
     pub has_conditional_fold: bool,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub(crate) struct ExceptionHeader {
+    /// The various slots that are present, masked by ExceptionSlot
+    ///
+    /// We still store this as a bitmask since it's more convenient to access as one
+    pub slot_presence: u8,
+    pub bits: ExceptionBits,
 }
 
 impl ExceptionHeader {
@@ -35,38 +40,40 @@ impl ExceptionHeader {
             DotType::from_masked_bits((int >> ExceptionHeaderULE::DOT_SHIFT) & DotType::DOT_MASK);
         Self {
             slot_presence,
-            double_width_slots,
-            no_simple_case_folding,
-            negative_delta,
-            is_sensitive,
-            dot_type,
-            has_conditional_special,
-            has_conditional_fold,
+            bits: ExceptionBits {
+                double_width_slots,
+                no_simple_case_folding,
+                negative_delta,
+                is_sensitive,
+                dot_type,
+                has_conditional_special,
+                has_conditional_fold,
+            },
         }
     }
 
     /// Convert to an ICU4C-format u16
     pub(crate) fn to_integer(self) -> u16 {
         let mut sixteen: u16 = self.slot_presence.into();
-        let dot_data = (self.dot_type as u16) << ExceptionHeaderULE::DOT_SHIFT;
+        let dot_data = (self.bits.dot_type as u16) << ExceptionHeaderULE::DOT_SHIFT;
         sixteen |= dot_data;
 
-        if self.double_width_slots {
+        if self.bits.double_width_slots {
             sixteen |= ExceptionHeaderULE::DOUBLE_SLOTS_FLAG
         }
-        if self.no_simple_case_folding {
+        if self.bits.no_simple_case_folding {
             sixteen |= ExceptionHeaderULE::NO_SIMPLE_CASE_FOLDING_FLAG
         }
-        if self.negative_delta {
+        if self.bits.negative_delta {
             sixteen |= ExceptionHeaderULE::NEGATIVE_DELTA_FLAG
         }
-        if self.is_sensitive {
+        if self.bits.is_sensitive {
             sixteen |= ExceptionHeaderULE::SENSITIVE_FLAG
         }
-        if self.has_conditional_special {
+        if self.bits.has_conditional_special {
             sixteen |= ExceptionHeaderULE::CONDITIONAL_SPECIAL_FLAG
         }
-        if self.has_conditional_fold {
+        if self.bits.has_conditional_fold {
             sixteen |= ExceptionHeaderULE::CONDITIONAL_FOLD_FLAG
         }
         sixteen
@@ -91,7 +98,7 @@ impl ExceptionHeader {
         let previous_slots = self.slot_presence & previous_slot_mask;
         let slot_num = previous_slots.count_ones() as usize;
 
-        if self.double_width_slots {
+        if self.bits.double_width_slots {
             slot_num * 2
         } else {
             slot_num
