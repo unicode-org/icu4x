@@ -141,7 +141,7 @@ exit_on_error true
 exec --fail-on-error cargo build -p icu_datagen
 root = pwd
 
-components = array "components/plurals" "components/timezone"
+components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemapping experimental/compactdecimal experimental/displaynames experimental/relativetime provider/adapters
 
 for component in ${components}
     cd "${component}/data"
@@ -168,6 +168,8 @@ if greater_than ${output_length} 0
     msg = array_join ${msg} "\n"
     trigger_error ${msg}
 end
+
+exec target/debug/icu4x-datagen --locales basic moderate --keys experimental-all --format blob --out /dev/null --overwrite
 '''
 
 [tasks.full-data]
