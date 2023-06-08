@@ -286,14 +286,14 @@ where
     /// If you have a slice of `&[T]`s, prefer using
     /// [`Self::alloc_from_slice()`].
     #[inline]
-    pub fn new_owned(mut vec: Vec<T::ULE>) -> Self {
+    pub fn new_owned(vec: Vec<T::ULE>) -> Self {
         // Deconstruct the vector into parts
         // This is the only part of the code that goes from Vec
         // to ZeroVec, all other such operations should use this function
-        let slice: &mut [T::ULE] = &mut vec;
-        let slice = slice as *mut [_];
         let capacity = vec.capacity();
-        mem::forget(vec);
+        let len = vec.len();
+        let ptr = ::core::mem::ManuallyDrop::new(vec).as_mut_ptr();
+        let slice = ::core::ptr::slice_from_raw_parts_mut(ptr, len);
         Self {
             vector: EyepatchHackVector {
                 buf: slice,
@@ -894,21 +894,18 @@ where
     /// the logical equivalent of this type's internal representation
     #[inline]
     pub fn into_cow(self) -> Cow<'a, [T::ULE]> {
-        if self.is_owned() {
+        let this = ::core::mem::ManuallyDrop::new(self);
+        if this.is_owned() {
             let vec = unsafe {
                 // safe to call: we know it's owned,
-                // and we mem::forget self immediately afterwards
-                self.vector.get_vec()
+                // and `self`/`this` are thenceforth no longer used or dropped
+                { this }.vector.get_vec()
             };
-            mem::forget(self);
             Cow::Owned(vec)
         } else {
             // We can extend the lifetime of the slice to 'a
             // since we know it is borrowed
-            let slice = unsafe { self.vector.as_arbitrary_slice() };
-            // The borrowed destructor is a no-op, but we want to prevent
-            // the check being run
-            mem::forget(self);
+            let slice = unsafe { { this }.vector.as_arbitrary_slice() };
             Cow::Borrowed(slice)
         }
     }
