@@ -17,7 +17,9 @@
 use crate::provider::data::{DotType, MappingKind};
 use zerovec::ule::{AsULE, ULE};
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub struct ExceptionBits {
     pub double_width_slots: bool,
     pub no_simple_case_folding: bool,
@@ -31,16 +33,14 @@ pub struct ExceptionBits {
 impl ExceptionBits {
     /// Extract from the upper half of an ICU4C-format u16
     fn from_integer(int: u8) -> Self {
-        let double_width_slots = int & ExceptionBitsULE::DOUBLE_SLOTS_FLAG != 0;
-        let no_simple_case_folding = int & ExceptionBitsULE::NO_SIMPLE_CASE_FOLDING_FLAG != 0;
-        let negative_delta = int & ExceptionBitsULE::NEGATIVE_DELTA_FLAG != 0;
-        let is_sensitive = int & ExceptionBitsULE::SENSITIVE_FLAG != 0;
-        let has_conditional_special = int & ExceptionBitsULE::CONDITIONAL_SPECIAL_FLAG != 0;
-        let has_conditional_fold = int & ExceptionBitsULE::CONDITIONAL_FOLD_FLAG != 0;
-
-        let dot_type = DotType::from_masked_bits(
-            (u16::from(int >> ExceptionBitsULE::DOT_SHIFT)) & DotType::DOT_MASK,
-        );
+        let ule = ExceptionBitsULE(int);
+        let double_width_slots = ule.double_width_slots();
+        let no_simple_case_folding = ule.no_simple_case_folding();
+        let negative_delta = ule.negative_delta();
+        let is_sensitive = ule.is_sensitive();
+        let has_conditional_special = ule.has_conditional_special();
+        let has_conditional_fold = ule.has_conditional_fold();
+        let dot_type = ule.dot_type();
 
         Self {
             double_width_slots,
@@ -97,10 +97,21 @@ impl ExceptionBits {
 ///               6: Closure mappings (string; see below)
 ///               7: Full mappings (strings; see below)
 /// ```
-#[derive(Copy, Clone, PartialEq, Eq, ULE)]
+#[derive(Copy, Clone, PartialEq, Eq, ULE, Debug, Default)]
 #[repr(transparent)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub struct SlotPresence(pub u8);
 
+impl SlotPresence {
+    pub(crate) fn add_slot(&mut self, slot: ExceptionSlot) {
+        self.0 |= 1 << slot as u8;
+    }
+    pub(crate) fn has_slot(self, slot: ExceptionSlot) -> bool {
+        let bit = 1 << (slot as u8);
+        self.0 & bit != 0
+    }
+}
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct ExceptionHeader {
     /// The various slots that are present, masked by ExceptionSlot
@@ -139,8 +150,7 @@ impl ExceptionHeader {
 
     // Returns true if the given slot exists for this exception
     pub(crate) fn has_slot(&self, slot: ExceptionSlot) -> bool {
-        let bit = 1 << (slot as u8);
-        self.slot_presence.0 & bit != 0
+        self.slot_presence.has_slot(slot)
     }
 
     // Returns the number of slots between this header and the given slot.
@@ -211,6 +221,30 @@ impl ExceptionBitsULE {
     const CONDITIONAL_SPECIAL_FLAG: u8 = 0x40;
     const CONDITIONAL_FOLD_FLAG: u8 = 0x80;
 }
+
+impl ExceptionBitsULE {
+    pub fn double_width_slots(self) -> bool {
+        self.0 & Self::DOUBLE_SLOTS_FLAG != 0
+    }
+    pub fn no_simple_case_folding(self) -> bool {
+        self.0 & Self::NO_SIMPLE_CASE_FOLDING_FLAG != 0
+    }
+    pub fn negative_delta(self) -> bool {
+        self.0 & Self::NEGATIVE_DELTA_FLAG != 0
+    }
+    pub fn is_sensitive(self) -> bool {
+        self.0 & Self::SENSITIVE_FLAG != 0
+    }
+    pub fn has_conditional_special(self) -> bool {
+        self.0 & Self::CONDITIONAL_SPECIAL_FLAG != 0
+    }
+    pub fn has_conditional_fold(self) -> bool {
+        self.0 & Self::CONDITIONAL_FOLD_FLAG != 0
+    }
+    pub fn dot_type(self) -> DotType {
+        DotType::from_masked_bits((u16::from(self.0 >> Self::DOT_SHIFT)) & DotType::DOT_MASK)
+    }
+}
 impl ExceptionHeaderULE {
     const SLOTS_MASK: u16 = 0xff;
     const BITS_SHIFT: u16 = 8;
@@ -255,12 +289,13 @@ impl AsULE for SlotPresence {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq)]
 pub(crate) enum ExceptionSlot {
     Lower = 0,
     Fold = 1,
     Upper = 2,
     Title = 3,
+    /// Also the Simple slot (todo: rename this)
     Delta = 4,
     // Slot 5 is reserved
     Closure = 6,
@@ -268,6 +303,8 @@ pub(crate) enum ExceptionSlot {
 }
 
 impl ExceptionSlot {
+    /// Where the string slots begin
+    pub(crate) const STRING_SLOTS_START: Self = Self::Closure;
     pub(crate) fn contains_char(&self) -> bool {
         matches!(self, Self::Lower | Self::Fold | Self::Upper | Self::Title)
     }

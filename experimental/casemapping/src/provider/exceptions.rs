@@ -1,0 +1,434 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use super::data::MappingKind;
+use super::exception_header::{ExceptionBits, ExceptionHeader, ExceptionSlot, SlotPresence};
+use crate::error::Error;
+use crate::internals::ClosureSet;
+use core::fmt;
+use core::ptr;
+use std::borrow::Cow;
+use zerovec::ule::AsULE;
+
+/// A type representing the wire format of `Exception`
+///
+/// This type is itself not used that much, most of its relevant methods live
+/// on [`ExceptionULE`].
+///
+/// The `bits` contain supplementary data, whereas
+/// `slot_presence` marks te presence of various extra data
+/// in the `data` field.
+///
+/// The `data` field is not validated to contain all of this data,
+/// this type will have GIGO behavior when constructed with invalid `data`.
+///
+/// The format of `data` is documented on the field
+#[zerovec::make_varule(ExceptionULE)]
+#[derive(PartialEq, Eq, Clone, Default)]
+#[zerovec::skip_derive(Ord)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+pub struct Exception<'a> {
+    pub bits: ExceptionBits,
+    pub slot_presence: SlotPresence,
+    /// Format : `[char slots] [optional closure length] [ closure slot ] [ full mappings data ]`
+    ///
+    /// For each set SlotPresence bit, except for the two stringy slots (Closure/FullMapping),
+    /// this will have one entry in the string, packed together
+    ///
+    /// If both Closure/FullMapping are present, the next char will be the length of the closure slot,
+    /// bisecting the rest of the data.
+    /// If only one is present, the rest of the data represents that slot.
+    ///
+    /// The closure slot simply represents one string. The full-mappings slot represents four strings,
+    /// packed in a way similar to VarZeroVec, in the following format:
+    /// `i1 i2 i3 [ str0 ] [ str1 ] [ str2 ] [ str3 ]`
+    ///
+    /// where `i1 i2 i3` are the indices of the relevant mappings string. The strings are stored in
+    /// the order corresponding to the MappingKind enum.
+    pub data: Cow<'a, str>,
+}
+
+impl ExceptionULE {
+    #[inline]
+    fn empty_exception() -> &'static Self {
+        static EMPTY_BYTES: &'static [u8] = &[0, 0];
+        unsafe {
+            let slice: *const [u8] = ptr::slice_from_raw_parts(EMPTY_BYTES.as_ptr(), 0);
+            &*(slice as *const Self)
+        }
+    }
+    pub(crate) fn has_slot(&self, slot: ExceptionSlot) -> bool {
+        self.slot_presence.has_slot(slot)
+    }
+    /// Obtain a `char` slot, if occupied. If `slot` represents a string slot,
+    /// will return `None`
+    pub(crate) fn get_char_slot(&self, slot: ExceptionSlot) -> Option<char> {
+        if slot >= ExceptionSlot::STRING_SLOTS_START {
+            return None;
+        }
+        let bit = 1 << (slot as u8);
+        // check if slot is occupied
+        if self.slot_presence.0 & bit == 0 {
+            return None;
+        }
+
+        let previous_slot_mask = bit - 1;
+        let previous_slots = self.slot_presence.0 & previous_slot_mask;
+        let slot_num = previous_slots.count_ones() as usize;
+        self.data.chars().nth(slot_num)
+    }
+
+    /// Returns *all* the data in the closure/full slots, including length metadata
+    fn get_stringy_data<'a>(&'a self) -> Option<&'a str> {
+        const CHAR_MASK: u8 = (1 << ExceptionSlot::STRING_SLOTS_START as u8) - 1;
+        let char_slot_count = (self.slot_presence.0 & CHAR_MASK).count_ones() as usize;
+        let mut chars = self.data.chars();
+        for _ in 0..char_slot_count {
+            let res = chars.next();
+            if res.is_none() {
+                // GIGO: the data did not have this slot available
+                return None;
+            }
+        }
+        Some(chars.as_str())
+    }
+
+    /// Returns a single stringy slot, either ExceptionSlot::Closure
+    /// or ExceptionSlot::FullMappings.
+    fn get_stringy_slot<'a>(&'a self, slot: ExceptionSlot) -> Option<&'a str> {
+        debug_assert!(slot == ExceptionSlot::Closure || slot == ExceptionSlot::FullMappings);
+        let other_slot = if slot == ExceptionSlot::Closure {
+            ExceptionSlot::FullMappings
+        } else {
+            ExceptionSlot::Closure
+        };
+        if !self.slot_presence.has_slot(slot) {
+            return None;
+        }
+        let stringy_data = self.get_stringy_data()?;
+
+        if self.slot_presence.has_slot(other_slot) {
+            // both stringy slots are used, we need a length
+            let mut chars = stringy_data.chars();
+            // GIGO: to have two strings there must be a length, if not present return None
+            let length_char = chars.next()?;
+
+            let length = usize::try_from(u32::from(length_char)).unwrap_or(0);
+            // The length indexes into the string after the first char
+            let remaining_slice = chars.as_str();
+            // GIGO: will return none if there wasn't enough space in this slot
+            if slot == ExceptionSlot::Closure {
+                remaining_slice.get(0..length)
+            } else {
+                remaining_slice.get(length..)
+            }
+        } else {
+            // only a single stringy slot, there is no length stored
+            Some(stringy_data)
+        }
+    }
+
+    /// Get the data behind the `closure` slot
+    pub(crate) fn get_closure_slot<'a>(&'a self) -> Option<&'a str> {
+        self.get_stringy_slot(ExceptionSlot::Closure)
+    }
+
+    /// Get all the slot data for the FullMappings slot
+    ///
+    /// This needs to be further segmented into four based on length metadata
+    fn get_fullmappings_slot_data<'a>(&'a self) -> Option<&'a str> {
+        self.get_stringy_slot(ExceptionSlot::FullMappings)
+    }
+
+    /// Get a specific FullMappings slot value
+    pub(crate) fn get_fullmappings_slot_for_kind<'a>(
+        &'a self,
+        kind: MappingKind,
+    ) -> Option<&'a str> {
+        let data = self.get_fullmappings_slot_data()?;
+
+        let mut chars = data.chars();
+        // GIGO: must have three index strings, else return None
+        let i1 = usize::try_from(u32::from(chars.next()?)).ok()?;
+        let i2 = usize::try_from(u32::from(chars.next()?)).ok()?;
+        let i3 = usize::try_from(u32::from(chars.next()?)).ok()?;
+        let remaining_slice = chars.as_str();
+        // GIGO: if the indices are wrong, return None
+        match kind {
+            MappingKind::Lower => remaining_slice.get(..i1),
+            MappingKind::Fold => remaining_slice.get(i1..i2),
+            MappingKind::Upper => remaining_slice.get(i2..i3),
+            MappingKind::Title => remaining_slice.get(i3..),
+        }
+    }
+
+    // convenience function that lets us use the ? operator
+    fn get_all_fullmapping_slots<'a>(&'a self) -> Option<[Cow<'a, str>; 4]> {
+        Some([
+            self.get_fullmappings_slot_for_kind(MappingKind::Lower)?
+                .into(),
+            self.get_fullmappings_slot_for_kind(MappingKind::Fold)?
+                .into(),
+            self.get_fullmappings_slot_for_kind(MappingKind::Upper)?
+                .into(),
+            self.get_fullmappings_slot_for_kind(MappingKind::Title)?
+                .into(),
+        ])
+    }
+
+    // Given a mapping kind, returns the character for that kind, if it exists. Fold falls
+    // back to Lower; Title falls back to Upper.
+    #[inline]
+    pub(crate) fn slot_char_for_kind(&self, kind: MappingKind) -> Option<char> {
+        match kind {
+            MappingKind::Lower | MappingKind::Upper => self.get_char_slot(kind.into()),
+            MappingKind::Fold => self
+                .get_char_slot(ExceptionSlot::Fold)
+                .or_else(|| self.get_char_slot(ExceptionSlot::Lower)),
+            MappingKind::Title => self
+                .get_char_slot(ExceptionSlot::Title)
+                .or_else(|| self.get_char_slot(ExceptionSlot::Upper)),
+        }
+    }
+
+    pub(crate) fn add_full_and_closure_mappings<S: ClosureSet>(&self, set: &mut S) {
+        if let Some(full) = self.get_fullmappings_slot_for_kind(MappingKind::Fold) {
+            if !full.is_empty() {
+                set.add_string(full);
+            }
+        };
+        if let Some(closure) = self.get_closure_slot() {
+            for c in closure.chars() {
+                set.add_char(c);
+            }
+        };
+    }
+
+    /// Extract all the data out into a structured form
+    ///
+    /// Useful for serialization and debugging
+    pub fn decode<'b>(&'b self) -> DecodedException<'b> {
+        // Potential future optimization: This can
+        // directly access each bit one after the other and iterate the string
+        // which avoids recomputing slot offsets over and over again.
+        //
+        // If we're doing so we may wish to retain this older impl so that we can still roundtrip test
+        let bits = self.bits;
+        let lowercase = self.get_char_slot(ExceptionSlot::Lower);
+        let casefold = self.get_char_slot(ExceptionSlot::Fold);
+        let uppercase = self.get_char_slot(ExceptionSlot::Upper);
+        let titlecase = self.get_char_slot(ExceptionSlot::Title);
+        let simple_case = self.get_char_slot(ExceptionSlot::Delta);
+        let closure = self.get_closure_slot().map(Into::into);
+        let full = self.get_all_fullmapping_slots();
+
+        DecodedException {
+            bits: ExceptionBits::from_unaligned(bits),
+            lowercase,
+            casefold,
+            uppercase,
+            titlecase,
+            simple_case,
+            closure,
+            full,
+        }
+    }
+
+    pub(crate) fn validate(&self) -> Result<(), Error> {
+        // check that ICU4C specific fields are not set
+        // check that there is enough space for all the offsets
+        if self.bits.double_width_slots() {
+            return Err(Error::Validation("double-width-slots should not be used in ICU4C"))
+        }
+        if self.bits.negative_delta() {
+            return Err(Error::Validation("negative-delta should not be used in ICU4C"))
+        }
+
+        // just run all of the slot getters at once and then check
+        let decoded = self.decode();
+
+        for (slot, decoded_slot) in [
+            (ExceptionSlot::Lower, &decoded.lowercase),
+            (ExceptionSlot::Fold, &decoded.casefold),
+            (ExceptionSlot::Upper, &decoded.uppercase),
+            (ExceptionSlot::Title, &decoded.titlecase),
+            (ExceptionSlot::Delta, &decoded.simple_case),
+        ] {
+            if self.has_slot(slot) && decoded_slot.is_none() {
+                // decoding hit GIGO behavior, oops!
+                return Err(Error::Validation("Slot decoding failed"));
+            }
+        }
+
+        if self.has_slot(ExceptionSlot::Closure) && decoded.closure.is_none() {
+            return Err(Error::Validation("Slot decoding failed"));
+        }
+
+        if self.has_slot(ExceptionSlot::FullMappings) {
+            if decoded.full.is_some() {
+                let data = self.get_fullmappings_slot_data().expect("already known to succeed");
+                let mut chars = data.chars();
+                let i1 = u32::from(chars.next().ok_or(Error::Validation("fullmappings string too small"))?);
+                let i2 = u32::from(chars.next().ok_or(Error::Validation("fullmappings string too small"))?);
+                let i3 = u32::from(chars.next().ok_or(Error::Validation("fullmappings string too small"))?);
+
+                if i2 < i1 || i3 < i2 {
+                    return Err(Error::Validation("fullmappings string contains non-sequential indices"))
+                }
+                let rest = chars.as_str();
+                let len = u32::try_from(rest.len()).unwrap();
+
+                if i1 > len || i2 > len || i3 > len {
+                    return Err(Error::Validation("fullmappings string contains out-of-bounds indices"));
+                }
+
+            } else {
+                return Err(Error::Validation("Slot decoding failed"));
+            }
+        }
+
+        Ok(())
+    }
+}
+
+impl fmt::Debug for ExceptionULE {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.decode().fmt(f)
+    }
+}
+
+/// A decoded [`Exception`] type, with all of the data parsed out into
+/// separate fields.
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct DecodedException<'a> {
+    pub bits: ExceptionBits,
+    pub lowercase: Option<char>,
+    pub casefold: Option<char>,
+    pub uppercase: Option<char>,
+    pub titlecase: Option<char>,
+    pub simple_case: Option<char>,
+    pub closure: Option<Cow<'a, str>>,
+    /// The four full-mappings strings, indexed by MappingKind u8 value
+    pub full: Option<[Cow<'a, str>; 4]>,
+}
+
+impl<'a> DecodedException<'a> {
+    pub fn encode(&self) -> Exception<'static> {
+        let bits = self.bits;
+        let mut slot_presence = SlotPresence(0);
+        let mut data = String::new();
+        if let Some(lowercase) = self.lowercase {
+            slot_presence.add_slot(ExceptionSlot::Lower);
+            data.push(lowercase)
+        }
+        if let Some(casefold) = self.casefold {
+            slot_presence.add_slot(ExceptionSlot::Fold);
+            data.push(casefold)
+        }
+        if let Some(uppercase) = self.uppercase {
+            slot_presence.add_slot(ExceptionSlot::Upper);
+            data.push(uppercase)
+        }
+        if let Some(titlecase) = self.titlecase {
+            slot_presence.add_slot(ExceptionSlot::Title);
+            data.push(titlecase)
+        }
+        if let Some(simple_case) = self.simple_case {
+            slot_presence.add_slot(ExceptionSlot::Delta);
+            data.push(simple_case)
+        }
+
+        if let Some(ref closure) = self.closure {
+            slot_presence.add_slot(ExceptionSlot::Closure);
+            if self.full.is_some() {
+                // GIGO: if the closure length is more than 0xD800 this will error. Plenty of space.
+                let len_char = u32::try_from(closure.len())
+                    .ok()
+                    .and_then(|c| char::try_from(c).ok())
+                    .unwrap_or('\0');
+                data.push(len_char);
+            }
+            data.push_str(&closure);
+        }
+        if let Some(ref full) = self.full {
+            slot_presence.add_slot(ExceptionSlot::FullMappings);
+            let mut idx = 0;
+            for i in 0..3 {
+                idx += full[i].len();
+                data.push(char::try_from(u32::try_from(idx).unwrap_or(0)).unwrap_or('\0'));
+            }
+            for mapping in full {
+                data.push_str(&mapping);
+            }
+        }
+        Exception {
+            bits,
+            slot_presence,
+            data: data.into(),
+        }
+    }
+
+    // Potential optimization: Write an `EncodeAsVarULE` that
+    // directly produces an ExceptionULE
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn test_roundtrip_once(exception: DecodedException) {
+        let encoded = exception.encode();
+        let encoded = zerovec::ule::encode_varule_to_box(&encoded);
+        let decoded = encoded.decode();
+        assert_eq!(decoded, exception);
+    }
+
+    #[test]
+    fn test_roundtrip() {
+        test_roundtrip_once(DecodedException {
+            lowercase: Some('ø'),
+            ..Default::default()
+        });
+        test_roundtrip_once(DecodedException {
+            titlecase: Some('X'),
+            lowercase: Some('ø'),
+            ..Default::default()
+        });
+        test_roundtrip_once(DecodedException {
+            titlecase: Some('X'),
+            ..Default::default()
+        });
+        test_roundtrip_once(DecodedException {
+            titlecase: Some('X'),
+            closure: Some("hello world".into()),
+            ..Default::default()
+        });
+        test_roundtrip_once(DecodedException {
+            simple_case: Some('X'),
+            closure: Some("hello world".into()),
+            full: Some(["你好世界".into(), "".into(), "hi".into(), "å".into()]),
+            ..Default::default()
+        });
+        test_roundtrip_once(DecodedException {
+            closure: Some("hello world".into()),
+            full: Some(["aa".into(), "ț".into(), "".into(), "å".into()]),
+            ..Default::default()
+        });
+        test_roundtrip_once(DecodedException {
+            full: Some(["你好世界".into(), "".into(), "hi".into(), "å".into()]),
+            ..Default::default()
+        });
+    }
+}
