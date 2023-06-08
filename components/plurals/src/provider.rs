@@ -19,6 +19,7 @@ use crate::rules::runtime::ast::Rule;
 use icu_provider::prelude::*;
 use icu_provider::DataMarker;
 
+#[cfg(feature = "data")]
 pub(crate) struct Baked;
 
 #[cfg(feature = "data")]

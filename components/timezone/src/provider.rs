@@ -21,6 +21,7 @@ use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
+#[cfg(feature = "data")]
 pub(crate) struct Baked;
 
 #[cfg(feature = "data")]
