@@ -89,7 +89,7 @@ pub mod decimal;
 pub mod displaynames;
 #[cfg(feature = "icu_decimal")]
 pub mod fixed_decimal;
-#[cfg(feature = "icu_timezone")]
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod iana_bcp47_mapper;
 #[cfg(feature = "icu_list")]
 pub mod list;
