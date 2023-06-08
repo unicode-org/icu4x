@@ -133,19 +133,18 @@ impl FlexZeroSlice {
         // Safety: The DST of FlexZeroSlice is a pointer to the `width` element and has a metadata
         // equal to the length of the `data` field, which will be one less than the length of the
         // overall array.
-        #[allow(clippy::panic)] // panic is documented in function contract
-        let (_, remainder) = match bytes.split_last() {
-            Some(v) => v,
-            None => panic!("slice should be non-empty"),
-        };
-        &*(remainder as *const [u8] as *const Self)
+        assert!(!bytes.is_empty());
+        let remainder = core::ptr::slice_from_raw_parts(bytes.as_ptr(), bytes.len() - 1);
+        &*(remainder as *const Self)
     }
 
     #[inline]
     pub(crate) unsafe fn from_byte_slice_mut_unchecked(bytes: &mut [u8]) -> &mut Self {
+        debug_assert!(!bytes.is_empty());
         // Safety: See comments in `from_byte_slice_unchecked`
-        let remainder = core::slice::from_raw_parts_mut(bytes.as_mut_ptr(), bytes.len() - 1);
-        &mut *(remainder as *mut [u8] as *mut Self)
+        let len = bytes.len() - 1;
+        let remainder = core::ptr::slice_from_raw_parts_mut(bytes.as_mut_ptr(), len);
+        &mut *(remainder as *mut Self)
     }
 
     /// Returns this slice as its underlying `&[u8]` byte buffer representation.
