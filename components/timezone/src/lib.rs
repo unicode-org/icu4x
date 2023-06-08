@@ -134,11 +134,3 @@ pub use types::{GmtOffset, ZoneVariant};
 
 #[doc(no_inline)]
 pub use TimeZoneError as Error;
-
-#[cfg(feature = "data")]
-#[doc(hidden)]
-pub mod data {
-    use crate as icu_timezone;
-    pub(crate) struct Provider;
-    icu_timezone_data::impl_time_zone_metazone_period_v1!(Provider);
-}

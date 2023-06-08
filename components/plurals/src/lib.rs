@@ -83,15 +83,6 @@ mod operands;
 pub mod provider;
 pub mod rules;
 
-#[doc(hidden)]
-#[cfg(feature = "data")]
-pub mod data {
-    use crate as icu_plurals;
-    pub(crate) struct Provider;
-    icu_plurals_data::impl_plurals_ordinal_v1!(Provider);
-    icu_plurals_data::impl_plurals_cardinal_v1!(Provider);
-}
-
 use core::cmp::{Ord, PartialOrd};
 pub use error::PluralsError;
 use icu_provider::prelude::*;
