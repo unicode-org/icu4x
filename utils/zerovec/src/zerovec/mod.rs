@@ -281,12 +281,12 @@ where
     /// If you have a slice of `&[T]`s, prefer using
     /// [`Self::alloc_from_slice()`].
     #[inline]
-    pub fn new_owned(vec: Vec<T::ULE>) -> Self {
+    pub fn new_owned(mut vec: Vec<T::ULE>) -> Self {
         // Deconstruct the vector into parts
         // This is the only part of the code that goes from Vec
         // to ZeroVec, all other such operations should use this function
-        let slice: &[T::ULE] = &vec;
-        let slice = slice as *const [_] as *mut [_];
+        let slice: &mut [T::ULE] = &mut vec;
+        let slice = slice as *mut [_];
         let capacity = vec.capacity();
         mem::forget(vec);
         Self {
