@@ -39,7 +39,7 @@ impl ExceptionBits {
         let has_conditional_fold = int & ExceptionBitsULE::CONDITIONAL_FOLD_FLAG != 0;
 
         let dot_type = DotType::from_masked_bits(
-            ((u16::from(int >> ExceptionBitsULE::DOT_SHIFT)) & DotType::DOT_MASK).into(),
+            (u16::from(int >> ExceptionBitsULE::DOT_SHIFT)) & DotType::DOT_MASK,
         );
 
         Self {
@@ -243,6 +243,18 @@ impl AsULE for ExceptionBits {
         ExceptionBitsULE(self.to_integer())
     }
 }
+
+impl AsULE for SlotPresence {
+    type ULE = SlotPresence;
+    fn from_unaligned(u: Self) -> Self {
+        u
+    }
+
+    fn to_unaligned(self) -> Self {
+        self
+    }
+}
+
 #[derive(Copy, Clone, Debug)]
 pub(crate) enum ExceptionSlot {
     Lower = 0,
