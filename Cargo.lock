@@ -3487,6 +3487,9 @@ dependencies = [
 [[package]]
 name = "transliteration"
 version = "0.1.0"
+dependencies = [
+ "combine",
+]
 
 [[package]]
 name = "tutorials-test"
