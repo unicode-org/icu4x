@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains various types for managing casemapping exceptions
+//! This module contains various types for the header part of casemapping exception data
 //!
 //! This is both used in datagen to decode ICU4C's data, and natively in ICU4X's
 //! own data model.
@@ -13,8 +13,6 @@
 //!
 //! The `exceptions_builder` module of this crate handles decoding ICU4C data using the exception
 //! header.
-//!
-//! TBD: Using these types to build ICU4X's native exception data structure (and then documenting it)
 
 use crate::provider::data::{DotType, MappingKind};
 use zerovec::ule::{AsULE, ULE};

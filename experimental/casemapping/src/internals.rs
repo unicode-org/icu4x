@@ -19,7 +19,7 @@ use crate::exceptions::CaseMappingExceptions;
 use crate::exceptions_builder::CaseMappingExceptionsBuilder;
 
 use crate::provider::data::{CaseMappingData, DotType, MappingKind};
-use crate::provider::exceptions::ExceptionSlot;
+use crate::provider::exception_header::ExceptionSlot;
 /// Reverse case folding data. Maps from multi-character strings back
 /// to code-points that fold to those strings.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

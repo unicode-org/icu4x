@@ -4,7 +4,7 @@
 
 use crate::error::Error;
 use crate::exceptions::CaseMappingExceptions;
-use crate::provider::exceptions::{ExceptionHeader, ExceptionSlot};
+use crate::provider::exception_header::{ExceptionHeader, ExceptionSlot};
 use std::collections::HashMap;
 use zerovec::{VarZeroVec, ZeroVec};
 

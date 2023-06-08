@@ -8,7 +8,7 @@ use zerovec::{VarZeroVec, ZeroVec};
 use crate::error::Error;
 use crate::internals::ClosureSet;
 use crate::provider::data::{DotType, MappingKind};
-use crate::provider::exceptions::{ExceptionHeader, ExceptionSlot};
+use crate::provider::exception_header::{ExceptionHeader, ExceptionSlot};
 
 /// This represents case mapping exceptions that can't be represented as a delta applied to
 /// the original code point. Similar to ICU4C, data is stored as a u16 array. The codepoint
