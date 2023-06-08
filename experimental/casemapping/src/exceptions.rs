@@ -8,7 +8,7 @@ use zerovec::{VarZeroVec, ZeroVec};
 use crate::error::Error;
 use crate::internals::ClosureSet;
 use crate::provider::data::{DotType, MappingKind};
-use crate::provider::exceptions::{ExceptionHeader, ExceptionSlot};
+use crate::provider::exception_header::{ExceptionHeader, ExceptionSlot};
 
 /// This represents case mapping exceptions that can't be represented as a delta applied to
 /// the original code point. Similar to ICU4C, data is stored as a u16 array. The codepoint
@@ -153,7 +153,7 @@ impl<'data> CaseMappingExceptions<'data> {
     pub(crate) fn delta(&self, hdr_idx: u16) -> i32 {
         debug_assert!(self.has_delta(hdr_idx));
         let raw: i32 = self.slot_value(hdr_idx, ExceptionSlot::Delta) as _;
-        if self.header(hdr_idx).negative_delta {
+        if self.header(hdr_idx).bits.negative_delta {
             -raw
         } else {
             raw
@@ -163,38 +163,38 @@ impl<'data> CaseMappingExceptions<'data> {
     // Returns whether an entry has double-width slots.
     #[inline]
     fn has_double_slots(&self, hdr_idx: u16) -> bool {
-        self.header(hdr_idx).double_width_slots
+        self.header(hdr_idx).bits.double_width_slots
     }
 
     // Returns whether there is no simple case folding for an entry.
     #[inline]
     pub(crate) fn no_simple_case_folding(&self, hdr_idx: u16) -> bool {
-        self.header(hdr_idx).no_simple_case_folding
+        self.header(hdr_idx).bits.no_simple_case_folding
     }
 
     // Returns whether this code point is case-sensitive.
     // (Note that this information is stored in the trie for code points without
     // exception data, but the exception index requires more bits than the delta.)
     pub(crate) fn is_sensitive(&self, hdr_idx: u16) -> bool {
-        self.header(hdr_idx).is_sensitive
+        self.header(hdr_idx).bits.is_sensitive
     }
 
     // Returns whether there is a conditional case fold for this entry.
     // (This is used to implement Turkic mappings for dotted/dotless i.)
     pub(crate) fn has_conditional_fold(&self, hdr_idx: u16) -> bool {
-        self.header(hdr_idx).has_conditional_fold
+        self.header(hdr_idx).bits.has_conditional_fold
     }
 
     // Given a header index, returns whether there is a language-specific case mapping.
     pub(crate) fn has_conditional_special(&self, hdr_idx: u16) -> bool {
-        self.header(hdr_idx).has_conditional_special
+        self.header(hdr_idx).bits.has_conditional_special
     }
 
     // Given a header index, returns the dot type.
     // (Note that this information is stored in the trie for code points without
     // exception data, but the exception index requires more bits than the delta.)
     pub(crate) fn dot_type(&self, hdr_idx: u16) -> DotType {
-        self.header(hdr_idx).dot_type
+        self.header(hdr_idx).bits.dot_type
     }
 
     // Given a header index and a mapping kind, returns the full mapping string.
