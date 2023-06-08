@@ -16,19 +16,25 @@ pub(crate) struct ExceptionBits {
     pub has_conditional_fold: bool,
 }
 
+#[derive(Copy, Clone, PartialEq, Eq, ULE)]
+#[repr(transparent)]
+pub(crate) struct SlotPresence(pub u8);
+
+
+
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub(crate) struct ExceptionHeader {
     /// The various slots that are present, masked by ExceptionSlot
     ///
     /// We still store this as a bitmask since it's more convenient to access as one
-    pub slot_presence: u8,
+    pub slot_presence: SlotPresence,
     pub bits: ExceptionBits,
 }
 
 impl ExceptionHeader {
     /// Construct from an ICU4C-format u16.
     pub(crate) fn from_integer(int: u16) -> Self {
-        let slot_presence = u8::try_from(int & ExceptionHeaderULE::SLOTS_MASK).unwrap_or(0);
+        let slot_presence = SlotPresence(u8::try_from(int & ExceptionHeaderULE::SLOTS_MASK).unwrap_or(0));
         let double_width_slots = int & ExceptionHeaderULE::DOUBLE_SLOTS_FLAG != 0;
         let no_simple_case_folding = int & ExceptionHeaderULE::NO_SIMPLE_CASE_FOLDING_FLAG != 0;
         let negative_delta = int & ExceptionHeaderULE::NEGATIVE_DELTA_FLAG != 0;
@@ -54,7 +60,7 @@ impl ExceptionHeader {
 
     /// Convert to an ICU4C-format u16
     pub(crate) fn to_integer(self) -> u16 {
-        let mut sixteen: u16 = self.slot_presence.into();
+        let mut sixteen: u16 = self.slot_presence.0.into();
         let dot_data = (self.bits.dot_type as u16) << ExceptionHeaderULE::DOT_SHIFT;
         sixteen |= dot_data;
 
@@ -81,13 +87,13 @@ impl ExceptionHeader {
 
     // The number of optional slots for this exception
     pub(crate) fn num_slots(&self) -> u16 {
-        self.slot_presence.count_ones() as u16
+        self.slot_presence.0.count_ones() as u16
     }
 
     // Returns true if the given slot exists for this exception
     pub(crate) fn has_slot(&self, slot: ExceptionSlot) -> bool {
         let bit = 1 << (slot as u8);
-        self.slot_presence & bit != 0
+        self.slot_presence.0 & bit != 0
     }
 
     // Returns the number of slots between this header and the given slot.
@@ -95,7 +101,7 @@ impl ExceptionHeader {
         debug_assert!(self.has_slot(slot));
         let slot_bit = 1 << (slot as u8);
         let previous_slot_mask = slot_bit - 1;
-        let previous_slots = self.slot_presence & previous_slot_mask;
+        let previous_slots = self.slot_presence.0 & previous_slot_mask;
         let slot_num = previous_slots.count_ones() as usize;
 
         if self.bits.double_width_slots {
