@@ -139,8 +139,8 @@ impl<U> EyepatchHackVector<U> {
     }
     // Return a slice to the inner data
     #[inline]
-    fn as_slice<'a>(&'a self) -> &'a [U] {
-        unsafe { &*self.buf }
+    const fn as_slice<'a>(&'a self) -> &'a [U] {
+        unsafe { &*(self.buf as *const [U]) }
     }
 
     /// Return this type as a vector
@@ -273,6 +273,11 @@ where
     #[inline]
     pub const fn new() -> Self {
         Self::new_borrowed(&[])
+    }
+
+    /// Same as `ZeroSlice::len`, which is available through `Deref` and not `const`.
+    pub const fn const_len(&self) -> usize {
+        self.vector.as_slice().len()
     }
 
     /// Creates a new owned `ZeroVec` using an existing
