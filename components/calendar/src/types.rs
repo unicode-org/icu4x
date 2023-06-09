@@ -709,7 +709,7 @@ impl From<usize> for IsoWeekday {
 }
 
 /// A moment is a RataDie with a fractional part giving the time of day.
-/// 
+///
 /// NOTE: This should not cause overflow errors for most cases, but consider
 /// alternative implementations if necessary.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
@@ -748,5 +748,12 @@ impl Sub for Moment {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         Self(self.0 - rhs.0)
+    }
+}
+
+impl Moment {
+    /// Get the inner field of a Moment
+    pub fn inner(self) -> f64 {
+        self.0
     }
 }
