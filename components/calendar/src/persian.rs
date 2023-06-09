@@ -4,23 +4,23 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::gregorian::{self, year_as_gregorian, Gregorian};
 use crate::iso::Iso;
 use crate::julian::{Julian, JulianDateInner};
-use crate::gregorian::{Gregorian, self, year_as_gregorian};
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use::tinystr::tinystr;
+use ::tinystr::tinystr;
 
 const PERSIAN_EPOCH: i32 = Persian::persian_epoch();
 /// The Persian Calendar
-/// 
+///
 /// The [Persian Calendar] is a solar calendar used officially by the countries of Iran and Afghanistan and many Persian-speaking regions.
 /// It has 12 months and other similarities to the Gregorian Calendar
-/// 
+///
 /// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
-/// 
+///
 /// [Persian Calendar]: https://en.wikipedia.org/wiki/Solar_Hijri_calendar
-/// 
+///
 /// # Era codes
 /// This calendar supports two era codes: '"BH"', and '"AH"', which correspond to the dates before the Hijrah and after the Hijrah
 
@@ -33,9 +33,7 @@ pub struct Persian;
 pub struct PersianDateInner(ArithmeticDate<Persian>);
 
 impl CalendarArithmetic for Persian {
-
     fn month_days(year: i32, month: u8) {
-
         match month {
             1 | 2 | 3 | 4 | 5 | 6 => 31,
             7 | 8 | 9 | 10 | 11 => 30,
@@ -65,32 +63,30 @@ impl CalendarArithmetic for Persian {
 impl Calendar for Persian {
     type DateInner = PersianDateInner;
     fn date_from_codes(
-            &self,
-            era: types::Era,
-            year: i32,
-            month_code: types::MonthCode,
-            day: u8,
-        ) -> Result<Self::DateInner, CalendarError> {
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, CalendarError> {
+        let year = if era.0 == tinystr!(16, "ah") {
+            if year <= 0 {
+                return Err(CalendarError::OutOfRange);
+            }
+            year
+        } else if era.0 == tinystr!(16, "bh") {
+            if year <= 0 {
+                return Err(calendarError::OutOfRange);
+            }
+            1 - year;
+        } else {
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+        };
 
-            let year = if era.0 == tinystr!(16,"ah") {
-                if year <= 0 {
-                    return Err(CalendarError::OutOfRange);
-                }
-                year
-            } else if era.0 == tinystr!(16, "bh") {
-                if year <= 0 {
-                    return Err(calendarError::OutOfRange);
-                }
-                1 - year;
-            } else {
-                return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
-            };
-            
-            ArithmeticDate::new_from_solar(self, year, month_code, day).map(PersianDateInner)
+        ArithmeticDate::new_from_solar(self, year, month_code, day).map(PersianDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> PersianDateInner {
-
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
         Self::arithmetic_persian_from_fixed(fixed_iso)
     }
@@ -145,13 +141,14 @@ impl Calendar for Persian {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let (prev_year, next_year) = date.0.year -1; date.0.year + 1;
+        let (prev_year, next_year) = date.0.year - 1;
+        date.0.year + 1;
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Persian::year_as_persian(prev_year),
             days_in_prev_year: Persian::days_in_year_direct(prev_year),
-            next_year: Persian::year_as_persian(next_year)
+            next_year: Persian::year_as_persian(next_year),
         }
     }
 
@@ -165,22 +162,20 @@ impl Calendar for Persian {
 }
 
 impl Persian {
-
     pub fn new() -> Self {
         Self
     }
 
     pub fn persian_epoch() -> RataDie {
         Julian::fixed_from_julian(ArithmeticDate {
-             year: (622),
-              month: (3),
-               day: (19),
-                marker: core::marker::PhantomData
+            year: (622),
+            month: (3),
+            day: (19),
+            marker: core::marker::PhantomData,
         })
     }
 
     fn arithmetic_persian_leap_year(p_year: i32) -> bool {
-
         let mut year: i32 = if 0 < p_year {
             p_year - 474
         } else {
@@ -196,50 +191,72 @@ impl Persian {
         let mut month = date.0.month;
 
         let mut day = date.0.day;
-        
+
         let mut year: i32 = if 0 < date.0.year {
             date.0.year - 474
         } else {
             date.0.year - 473
         };
         year = (year % 2820) + 474;
-        
+
         let result = 1948320 - 1
-        + (1029983 * (y / 2820))
-        + (365 * (year - 1))
-        + ((31 * year - 5) / 128)
-        + if month <= 7 { 31 * (month - 1) } else { 30 * (month - 1) + 6 }
-        + day;
+            + (1029983 * (y / 2820))
+            + (365 * (year - 1))
+            + ((31 * year - 5) / 128)
+            + if month <= 7 {
+                31 * (month - 1)
+            } else {
+                30 * (month - 1) + 6
+            }
+            + day;
 
         RataDie::new(result)
     }
 
     fn arithmetic_persian_from_fixed(date: i32) -> Date<Persian> {
-
         let year = arithmetic_persian_year_from_fixed(RataDie::new(date as i64));
-        let day_of_year = (date - fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate { year: (year), month: (1), day: 1, marker: (core::marker::PhantomData) }))) + 1;
+        let day_of_year = (date
+            - fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
+                year: (year),
+                month: (1),
+                day: 1,
+                marker: (core::marker::PhantomData),
+            })))
+            + 1;
         let month = if day_of_year <= 186 {
             ((day_of_year as f64 / 31.0).ceil()) as u8
         } else {
             (((day_of_year - 6) as f64 / 30.0).ceil()) as u8
         };
-        let day = date - (fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate { year: (year), month: (month), day: 1, marker: core::marker::PhantomData})) - 1);
-        // Not yet implemented
-        Date::try_new_persian_date(year,month,day).unwrap();
+        let day = date
+            - (fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
+                year: (year),
+                month: (month),
+                day: 1,
+                marker: core::marker::PhantomData,
+            })) - 1);
+
+        Date::try_new_persian_date(year, month, day).unwrap()
     }
 
     fn arithmetic_persian_year_from_fixed(date: RataDie) -> i64 {
-        let d0 = date - fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate { year: 475, month: 1, day: 1, marker: core::marker::PhanthomData}));
+        let d0 = date
+            - fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
+                year: 475,
+                month: 1,
+                day: 1,
+                marker: core::marker::PhanthomData,
+            }));
         let last_day_of_cycle = 1029983;
         let n2820 = d0 / last_day_of_cycle;
         let d1 = d0 % last_day_of_cycle;
-        let y2820 = if d1 == last_day_of_cycle-1 {
+        let y2820 = if d1 == last_day_of_cycle - 1 {
             2820
         } else {
             (d1 * 128 + 46878) / 46751
         };
         let year = 474 + (2820 * n2820) + y2820;
-        
+
         if year > 0 {
             year
         } else {
@@ -247,22 +264,24 @@ impl Persian {
         }
     }
 
-
     // Persian New Year to fixed year
     fn nowruz(g_year: i32) -> RataDie {
         let persian_year = g_year - year_as_gregorian(PERSIAN_EPOCH).number + 1;
         let year = if persian_year <= 0 {
-            persian_year -1
+            persian_year - 1
         } else {
             persian_year
         };
-        Self::fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate { year: year, month: 1, day: 1, marker: core::marker::PhantomData }))
+        Self::fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
+            year: year,
+            month: 1,
+            day: 1,
+            marker: core::marker::PhantomData,
+        }))
     }
 
-
-    
     fn days_in_year_direct(year: i32) -> u32 {
-        if Persian::is_leap_year(year)  {
+        if Persian::is_leap_year(year) {
             366
         } else {
             365
@@ -270,7 +289,6 @@ impl Persian {
     }
 
     fn year_as_persian(year: i32) -> types::FormattableYear {
-
         if year > 0 {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "ah")),
@@ -287,7 +305,26 @@ impl Persian {
     }
 }
 
-impl Date<Persian> {}
+impl Date<Persian> {
+    pub fn try_new_persian_date(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<Persian>, CalendarError> {
+        let inner = ArithmeticDate {
+            year,
+            month,
+            day,
+            marker: PhantomData,
+        };
+
+        let bound = inner.days_in_month();
+        if day > bound {
+            return Err(CalendarError::OutOfRange);
+        }
+        Ok(Date::from_raw(PersianDateInner(inner), Persian))
+    }
+}
 
 impl DateTime<Persian> {}
 
@@ -295,4 +332,3 @@ impl DateTime<Persian> {}
 mod tests {
     use super::*;
 }
-

@@ -129,11 +129,11 @@ pub mod indian;
 pub mod iso;
 pub mod japanese;
 pub mod julian;
+mod persian;
 pub mod provider;
 mod rata_die;
 pub mod types;
 mod week_of;
-mod persian;
 
 pub mod week {
     //! Functions for week-of-month and week-of-year arithmetic.
