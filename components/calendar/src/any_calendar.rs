@@ -602,6 +602,8 @@ pub enum AnyCalendarKind {
     Coptic,
     /// The kind of an [`Iso`] calendar
     Iso,
+    // The kind of an [`Persian`] calendar
+    Persian,
 }
 
 impl AnyCalendarKind {
@@ -653,6 +655,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::Ethiopian
         } else if *x == value!("ethioaa") {
             AnyCalendarKind::EthiopianAmeteAlem
+        } else if *x == value!("persian") {
+            AnyCalendarKind::Persian
         } else {
             return None;
         })
@@ -670,6 +674,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Iso => "iso",
             AnyCalendarKind::Ethiopian => "ethiopic",
             AnyCalendarKind::EthiopianAmeteAlem => "ethioaa",
+            AnyCalendarKind::Persian => "persian",
         }
     }
 
@@ -685,6 +690,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Iso => value!("iso"),
             AnyCalendarKind::Ethiopian => value!("ethiopic"),
             AnyCalendarKind::EthiopianAmeteAlem => value!("ethioaa"),
+            AnyCalendarKind::Persian => value!("persian"),
         }
     }
 
@@ -844,6 +850,18 @@ impl IntoAnyCalendar for Coptic {
     }
 }
 
+impl IntoAnyCalendar for Persian {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Persian(Persian)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Persian(Persian)
+    }
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Persian(*d)
+    }
+}
+
 impl IntoAnyCalendar for Iso {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Iso(Iso)
@@ -962,6 +980,11 @@ mod tests {
             AnyCalendarKind::Indian,
         )
         .expect("Calendar construction must succeed");
+        let persian = AnyCalendar::try_new_with_buffer_provider(
+            &icu_testdata::buffer(),
+            AnyCalendarKind::persian,
+        )
+        .expect("Calendar construction must succeed");
         let japanese = AnyCalendar::try_new_with_buffer_provider(
             &icu_testdata::buffer(),
             AnyCalendarKind::Japanese,
@@ -980,6 +1003,7 @@ mod tests {
         let indian = Ref(&indian);
         let japanese = Ref(&japanese);
         let japanext = Ref(&japanext);
+        let persian = Ref(&persian);
 
         single_test_roundtrip(buddhist, "be", 100, "M03", 1);
         single_test_roundtrip(buddhist, "be", 2000, "M03", 1);
