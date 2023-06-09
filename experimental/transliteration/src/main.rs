@@ -29,6 +29,14 @@ $UE = [Ü {U \u0308}];
 {$AE}[:Lowercase:]→Ae;
 {[]}[:Lowercase:]→Ae;
 {a}[:Lowercase:]→Ae;
+a {$AE} [:Lowercase:] → Ae;
+a{$AE}[:Lowercase:]→Ae;
+ a{[]}[:Lowercase:]→Ae;
+ a {a}[:Lowercase:]→Ae;
+ $AE} [:Lowercase:] → Ae;
+$AE}[:Lowercase:]→Ae;
+[]}[:Lowercase:]→Ae;
+a}[:Lowercase:]→Ae;
 {$OE} [:Lowercase:] → Oe;
 {$UE} [:Lowercase:] → Ue;
 

@@ -88,6 +88,7 @@ mod missingapis {
     //  * [:Script=L:]
     //  Will need to disambiguate these cases.
     // TODO: Continue parsing UnicodeSets. Figure out a good way to handle character escaping. Check the "quoted" rule in the syntax: https://www.unicode.org/reports/tr35/#Unicode_Sets
+    // TODO: also parse transform rules and filter rules
 
     fn parse_perl_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
         // parses perl-style \p{x=y} or \p{x} unicode sets
@@ -379,77 +380,40 @@ fn is_half_rule_end(c: char) -> bool {
 
 fn parse_half_rule(it: &mut t!()) -> Result<HalfRule> {
     dbg!(it.peek());
+
     let pattern1 = parse_pattern(it)?;
-    // there should be a is_pattern_end char now
-    match it.peek() {
-        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
-        Some(&c) if is_half_rule_end(c) => {
-            // half rule is over
-            return Ok(HalfRule {
-                ante: None,
-                key: pattern1,
-                post: None,
-            });
-        },
-        Some(&'{') => {
-            // we just parsed the ante context, now parse the key
-            it.next();
-            let pattern2 = parse_pattern(it)?;
-            // there should be a is_pattern_end char now
-            match it.peek() {
-                None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
-                Some(&c) if is_half_rule_end(c) => {
-                    // half rule is over
-                    return Ok(HalfRule {
-                        ante: pattern1.flat_empty(),
-                        key: pattern2,
-                        post: None,
-                    });
-                },
-                Some(&'}') => {
-                    // we just parsed the key, now parse the post context
-                    it.next();
-                    let pattern3 = parse_pattern(it)?;
-                    // there should be a is_pattern_end char now
-                    match it.peek() {
-                        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
-                        Some(&c) if is_half_rule_end(c) => {
-                            // half rule is over
-                            return Ok(HalfRule {
-                                ante: pattern1.flat_empty(),
-                                key: pattern2,
-                                post: pattern3.flat_empty(),
-                            });
-                        },
-                        Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
-                    }
-                },
-                Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
-            }
+    // ante and post are Option<Option<..>> to detect cases like "{ a { x > ;" (which are invalid)
+    let mut ante = None;
+    let mut key = pattern1;
+    let mut post = None;
 
-        },
-        Some(&'}') => {
-            // we just parsed the key, there is no ante context, parse the post context
-            it.next();
-            let pattern2 = parse_pattern(it)?;
-            // there should be a is_pattern_end and is_half_rule_end char now
-            match it.peek() {
-                None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
-                Some(&c) if is_half_rule_end(c) => {
-                    // half rule is over
-                    return Ok(HalfRule {
-                        ante: None,
-                        key: pattern1,
-                        post: pattern2.flat_empty(),
-                    });
-                },
-                Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
-            }
-        },
-        Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+    loop {
+        match it.peek() {
+            None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+            Some(&c) if is_half_rule_end(c) => {
+                return Ok(HalfRule { ante: ante.unwrap_or(None), key, post: post.unwrap_or(None) });
+            },
+            Some(&'{') => {
+                it.next();
+                // the pattern that we parsed in the beginning was actually the ante, we're parsing the key now
+                if ante.is_none() {
+                    ante = Some(key.flat_empty());
+                    key = parse_pattern(it)?;
+                } else {
+                    return Err(ParseError::new(pl!(), PEK::UnexpectedChar('{')));
+                }
+            },
+            Some(&'}') => {
+                it.next();
+                if post.is_none() {
+                    post = Some(parse_pattern(it)?.flat_empty());
+                } else {
+                    return Err(ParseError::new(pl!(), PEK::UnexpectedChar('}')));
+                }
+            },
+            Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+        }
     }
-
-    unreachable!("need to refactor above monstrosity")
 }
 
 #[derive(Debug, Clone)]
