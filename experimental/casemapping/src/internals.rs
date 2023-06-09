@@ -14,9 +14,9 @@ use zerovec::ZeroMap;
 use zerovec::ZeroVec;
 
 use crate::error::Error;
-use crate::exceptions::CaseMappingExceptions;
 #[cfg(feature = "datagen")]
 use crate::exceptions_builder::CaseMappingExceptionsBuilder;
+use crate::provider::exceptions::CaseMappingExceptions;
 
 use crate::provider::data::{CaseMappingData, DotType, MappingKind};
 use crate::provider::exception_header::ExceptionSlot;
@@ -202,13 +202,12 @@ impl<'data> CaseMappingInternals<'data> {
                 let data = self.lookup_data(c);
                 if data.has_exception() {
                     let idx = data.exception_index();
+                    let exception = self.exceptions.get(idx);
                     // Verify that the exception index points to a valid exception header.
                     if !valid_exception_indices.contains(&idx) {
                         return Error::invalid("Invalid exception index in trie data");
                     }
-                    if self.exceptions.has_slot(idx, ExceptionSlot::Delta) {
-                        validate_delta(c, self.exceptions.delta(idx))?;
-                    }
+                    exception.validate()?;
                 } else {
                     validate_delta(c, data.delta() as i32)?;
                 }
@@ -235,11 +234,13 @@ impl<'data> CaseMappingInternals<'data> {
             }
         } else {
             let idx = data.exception_index();
-            if data.is_relevant_to(kind) && self.exceptions.has_delta(idx) {
-                let folded = c as i32 + self.exceptions.delta(idx);
-                return char::from_u32(folded as u32).expect("Checked in validate()");
+            let exception = self.exceptions.get(idx);
+            if data.is_relevant_to(kind) {
+                if let Some(simple) = exception.get_char_slot(ExceptionSlot::Delta) {
+                    return simple;
+                }
             }
-            self.exceptions.slot_char_for_kind(idx, kind).unwrap_or(c)
+            exception.slot_char_for_kind(kind).unwrap_or(c)
         }
     }
 
@@ -276,18 +277,17 @@ impl<'data> CaseMappingInternals<'data> {
             // TODO: if we move conditional fold and no_simple_case_folding into
             // simple_helper, this function can just call simple_helper.
             let idx = data.exception_index();
-            if self.exceptions.has_conditional_fold(idx) {
+            let exception = self.exceptions.get(idx);
+            if exception.bits.has_conditional_fold() {
                 self.simple_fold_special_case(c, options)
-            } else if self.exceptions.no_simple_case_folding(idx) {
+            } else if exception.bits.no_simple_case_folding() {
                 c
-            } else if data.is_upper_or_title()
-                && self.exceptions.has_slot(idx, ExceptionSlot::Delta)
-            {
-                let folded = c as i32 + self.exceptions.delta(idx);
-                char::from_u32(folded as u32).expect("Checked in validate()")
-            } else if let Some(slot_char) =
-                self.exceptions.slot_char_for_kind(idx, MappingKind::Fold)
-            {
+            } else if data.is_upper_or_title() && exception.has_slot(ExceptionSlot::Delta) {
+                // unwrap_or case should never happen but best to avoid panics
+                exception
+                    .get_char_slot(ExceptionSlot::Delta)
+                    .unwrap_or('\0')
+            } else if let Some(slot_char) = exception.slot_char_for_kind(MappingKind::Fold) {
                 slot_char
             } else {
                 c
@@ -301,7 +301,7 @@ impl<'data> CaseMappingInternals<'data> {
             data.dot_type()
         } else {
             let idx = data.exception_index();
-            self.exceptions.dot_type(idx)
+            self.exceptions.get(idx).bits.dot_type()
         }
     }
 
@@ -314,7 +314,7 @@ impl<'data> CaseMappingInternals<'data> {
             data.is_sensitive()
         } else {
             let idx = data.exception_index();
-            self.exceptions.is_sensitive(idx)
+            self.exceptions.get(idx).bits.is_sensitive()
         }
     }
 
@@ -337,7 +337,8 @@ impl<'data> CaseMappingInternals<'data> {
             }
         } else {
             let idx = data.exception_index();
-            if self.exceptions.has_conditional_special(idx) {
+            let exception = self.exceptions.get(idx);
+            if exception.bits.has_conditional_special() {
                 if let Some(special) = match kind {
                     MappingKind::Lower => self.full_lower_special_case(c, context, locale),
                     MappingKind::Fold => self.full_fold_special_case(c, context, locale),
@@ -352,22 +353,21 @@ impl<'data> CaseMappingInternals<'data> {
                     return special;
                 }
             }
-            if self.exceptions.has_slot(idx, ExceptionSlot::FullMappings) {
-                let mapped_string = self.exceptions.full_mapping_string(idx, kind);
+            if let Some(mapped_string) = exception.get_fullmappings_slot_for_kind(kind) {
                 if !mapped_string.is_empty() {
                     return FullMappingResult::String(mapped_string);
                 }
             }
-            if data.is_relevant_to(kind) && self.exceptions.has_slot(idx, ExceptionSlot::Delta) {
-                let mapped = c as i32 + self.exceptions.delta(idx);
-                let mapped = char::from_u32(mapped as u32).expect("Checked in validate()");
-                return FullMappingResult::CodePoint(mapped);
+            if data.is_relevant_to(kind) {
+                if let Some(simple) = exception.get_char_slot(ExceptionSlot::Delta) {
+                    return FullMappingResult::CodePoint(simple);
+                }
             }
-            if kind == MappingKind::Fold && self.exceptions.no_simple_case_folding(idx) {
+            if kind == MappingKind::Fold && exception.bits.no_simple_case_folding() {
                 return FullMappingResult::CodePoint(c);
             }
 
-            if let Some(slot_char) = self.exceptions.slot_char_for_kind(idx, kind) {
+            if let Some(slot_char) = exception.slot_char_for_kind(kind) {
                 FullMappingResult::CodePoint(slot_char)
             } else {
                 FullMappingResult::CodePoint(c)
@@ -721,6 +721,7 @@ impl<'data> CaseMappingInternals<'data> {
 
         // c has exceptions, so there may be multiple simple and/or full case mappings.
         let idx = data.exception_index();
+        let exception = self.exceptions.get(idx);
 
         // Add all simple case mappings.
         for slot in [
@@ -729,17 +730,15 @@ impl<'data> CaseMappingInternals<'data> {
             ExceptionSlot::Upper,
             ExceptionSlot::Title,
         ] {
-            if let Some(simple) = self.exceptions.slot_char(idx, slot) {
+            if let Some(simple) = exception.get_char_slot(slot) {
                 set.add_char(simple);
             }
         }
-        if self.exceptions.has_slot(idx, ExceptionSlot::Delta) {
-            let codepoint = c as i32 + self.exceptions.delta(idx);
-            let mapped = char::from_u32(codepoint as u32).expect("Checked in validate()");
-            set.add_char(mapped);
+        if let Some(simple) = exception.get_char_slot(ExceptionSlot::Delta) {
+            set.add_char(simple);
         }
 
-        self.exceptions.add_full_and_closure_mappings(idx, set);
+        exception.add_full_and_closure_mappings(set);
     }
 
     // Maps the string to single code points and adds the associated case closure

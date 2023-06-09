@@ -2,15 +2,57 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::prelude::*;
+
 use super::data::MappingKind;
-use super::exception_header::{ExceptionBits, ExceptionHeader, ExceptionSlot, SlotPresence};
+use super::exception_header::{ExceptionBits, ExceptionSlot, SlotPresence};
 use crate::error::Error;
 use crate::internals::ClosureSet;
 use core::fmt;
+use core::ops::Range;
 use core::ptr;
 use std::borrow::Cow;
 use zerovec::ule::AsULE;
+use zerovec::VarZeroVec;
 
+/// This represents case mapping exceptions that can't be represented as a delta applied to
+/// the original code point. The codepoint
+/// trie in CaseMapping stores indices into this VarZeroVec.
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_casemapping::provider),
+)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+pub struct CaseMappingExceptions<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[allow(missing_docs)] // struct doc covers this
+    pub exceptions: VarZeroVec<'data, ExceptionULE>,
+}
+
+impl<'data> CaseMappingExceptions<'data> {
+    /// Obtain the exception at index `idx`. Will
+    /// return a default value if not present (GIGO behavior),
+    /// as these indices should come from a paired CaseMappingData object
+    ///
+    /// Will also panic in debug mode
+    pub fn get<'a>(&'a self, idx: u16) -> &'a ExceptionULE {
+        let exception = self.exceptions.get(idx.into());
+        debug_assert!(exception.is_some());
+
+        exception.unwrap_or(&ExceptionULE::empty_exception())
+    }
+
+    pub(crate) fn validate(&self) -> Result<Range<u16>, Error> {
+        for exception in self.exceptions.iter() {
+            exception.validate()?;
+        }
+        u16::try_from(self.exceptions.len())
+            .map_err(|_| Error::Validation("Too many exceptions"))
+            .map(|l| 0..l)
+    }
+}
 /// A type representing the wire format of `Exception`
 ///
 /// This type is itself not used that much, most of its relevant methods live

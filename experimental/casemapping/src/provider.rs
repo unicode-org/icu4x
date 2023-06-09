@@ -8,7 +8,6 @@
 
 use icu_provider::prelude::*;
 
-pub use crate::exceptions::CaseMappingExceptions;
 pub use crate::internals::CaseMappingInternals;
 pub use crate::internals::CaseMappingUnfoldData;
 

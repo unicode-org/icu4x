@@ -22,7 +22,6 @@ mod casemapping;
 pub mod provider;
 
 mod error;
-mod exceptions;
 #[cfg(feature = "datagen")]
 mod exceptions_builder;
 mod internals;
