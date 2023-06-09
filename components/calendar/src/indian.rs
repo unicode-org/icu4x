@@ -55,7 +55,7 @@ pub struct Indian;
 
 /// The inner date type used for representing [`Date`]s of [`Indian`]. See [`Date`] and [`Indian`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub struct IndianDateInner(ArithmeticDate<Indian>);
+pub struct IndianDateInner(ArithmeticDate<Indian>, month_code);
 
 impl CalendarArithmetic for Indian {
     fn month_days(year: i32, month: u8) -> u8 {
@@ -169,6 +169,7 @@ impl Calendar for Indian {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+        let extra_state = self.compute_extra();
         date.0.offset_date(offset);
     }
 

@@ -20,8 +20,19 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
 }
 
 pub trait CalendarArithmetic: Calendar {
-    fn month_days(year: i32, month: u8) -> u8;
-    fn months_for_every_year(year: i32) -> u8;
+    type ExtraState: Default =
+    {
+        year: i32,
+        month_days: [u8; 12],
+        leap_month: Option<(u8 /* n days */ , u8 /* month index */)>
+    }
+    fn month_days(year: i32, month: u8, extra_state: &mut ExtraState) -> u8 {
+        if year != extra_state.year {
+            *extra_state = recalculate_extra_state_for_year(year)
+        }
+    
+    }
+    fn months_for_every_year(year: i32, extra_state: &mut ExtraState) -> u8;
     fn is_leap_year(year: i32) -> bool;
     fn last_month_day_in_year(year: i32) -> (u8, u8);
 
@@ -92,9 +103,9 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    fn offset_months(&mut self, mut month_offset: i32) {
+    fn offset_months(&mut self, mut month_offset: i32,  &mut extra_state) {
         while month_offset != 0 {
-            let year_months = C::months_for_every_year(self.year);
+            let year_months = C::months_for_every_year(self.year, &mut extra_state);
             if self.month as i32 + month_offset > year_months as i32 {
                 self.year += 1;
                 month_offset -= year_months as i32;
@@ -109,15 +120,16 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn offset_date(&mut self, offset: DateDuration<C>) {
+    pub fn offset_date(&mut self, offset: DateDuration<C>, &mut extra) {
+        let extra_state = C::ExtraState::new();
         // For offset_date to work with lunar calendars, need to handle an edge case where the original month is not valid in the future year.
         self.year += offset.years;
 
-        self.offset_months(offset.months);
+        self.offset_months(offset.months, &mut extra_state);
 
         let day_offset = offset.days + offset.weeks * 7 + self.day as i32 - 1;
         self.day = 1;
-        self.offset_days(day_offset);
+        self.offset_days(day_offset, &mut extra_state);
     }
 
     #[inline]
