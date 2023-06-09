@@ -357,7 +357,10 @@ pub(super) struct HalfRule {
     key: Pattern,
     post: Option<Pattern>,
     /* add cursor here, e.g. index into Pattern. that would imply a literal like "ab > aa|b" would
-    be split up into Pattern([aa, b]) and cursor = 1*/
+    be split up into Pattern([aa, b]) and cursor = 1
+    a cursor could also be a special patternelement in the uncompiled rules, the same for spacing
+    or spacing could be a property of the pattern element, like cursor.spacing_before = 0 and .spacing_after = 0 by default
+    */
 }
 
 impl Display for HalfRule {
@@ -393,23 +396,16 @@ fn parse_half_rule(it: &mut t!()) -> Result<HalfRule> {
             Some(&c) if is_half_rule_end(c) => {
                 return Ok(HalfRule { ante: ante.unwrap_or(None), key, post: post.unwrap_or(None) });
             },
-            Some(&'{') => {
-                it.next();
+            Some(&'{') if ante.is_none() && post.is_none() => {
                 // the pattern that we parsed in the beginning was actually the ante, we're parsing the key now
-                if ante.is_none() {
-                    ante = Some(key.flat_empty());
-                    key = parse_pattern(it)?;
-                } else {
-                    return Err(ParseError::new(pl!(), PEK::UnexpectedChar('{')));
-                }
-            },
-            Some(&'}') => {
+                // also, post must not have been parsed yet. that ensures rules like "} x { > ;" throw an error
                 it.next();
-                if post.is_none() {
-                    post = Some(parse_pattern(it)?.flat_empty());
-                } else {
-                    return Err(ParseError::new(pl!(), PEK::UnexpectedChar('}')));
-                }
+                ante = Some(key.flat_empty());
+                key = parse_pattern(it)?;
+            },
+            Some(&'}') if post.is_none() => {
+                it.next();
+                post = Some(parse_pattern(it)?.flat_empty());
             },
             Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
         }

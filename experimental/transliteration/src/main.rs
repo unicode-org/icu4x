@@ -43,6 +43,7 @@ a}[:Lowercase:]→Ae;
 $AE → AE;
 $OE → OE;
 $UE → UE;
+
 "#;
 
 const RULES_EASY: &str = r#"
