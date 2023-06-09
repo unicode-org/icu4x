@@ -1,4 +1,7 @@
+extern crate core;
+
 use std::fmt::Display;
+use std::io::Write;
 use combine::error::{ParseError, StdParseResult};
 use combine::parser::char::{char, letter, spaces, string};
 use combine::parser::combinator::recognize;
@@ -11,6 +14,8 @@ use combine::{
     Parser,
 };
 
+mod dfaparsing;
+
 const RULES: &str = r#"
 $AE = [Ä {A \u0308}];
 $OE = [Ö {O \u0308}];
@@ -21,6 +26,9 @@ $UE = [Ü {U \u0308}];
 [ü {u \u0308}] → ue;
 
 {$AE} [:Lowercase:] → Ae;
+{$AE}[:Lowercase:]→Ae;
+{[]}[:Lowercase:]→Ae;
+{a}[:Lowercase:]→Ae;
 {$OE} [:Lowercase:] → Oe;
 {$UE} [:Lowercase:] → Ue;
 
@@ -40,7 +48,7 @@ const RULES_EASY: &str = r#"
 [ö {o \u0308}] → oe;
 [ü {u \u0308}] → ue;
 
-{$AE} [:Lowercase:] → Ae;
+{$AE } [:Lowercase:] → Ae;
 {$OE} [:Lowercase:] → Oe;
 {$UE} [:Lowercase:] → Ue;
 
@@ -97,6 +105,23 @@ fn pretty_print_rules(rules: &[Rule]) {
 // TODO: add "compile" function that: 1. compiles UnicodeSets (converts them into CodePointInversionLists) and 2. compiles variable references.
 
 fn main() {
+    let rules = RULES;
+    let mut it = rules.chars().peekable();
+    let rules = dfaparsing::parse_rules(&mut it);
+    eprintln!("Remaining input: {:?}", it.collect::<String>());
+    eprintln!("debug: {:?}", rules);
+    match rules {
+        Ok(rules) => {
+            eprintln!("Parsed rules:");
+            dfaparsing::pretty_print_rules(&rules);
+        }
+        Err(e) => {
+            eprintln!("Error: {:?}", e);
+        }
+    }
+
+    return;
+
     let rules = RULES_EASY;
     println!("{rules}\nHello, world!");
     // let parse_res = half_rule().easy_parse(rules);
@@ -179,7 +204,10 @@ first just handle rules:
  */
 
 fn legal_top_level_char(c: char) -> bool {
-    c != '{' && c != '}' && c != '[' && c != ']' && c != '→' && c != ';' && !c.is_whitespace()
+    // c != '{' && c != '}' && c != '[' && c != ']' && c != '→' && c != ';' && !c.is_whitespace()
+    // 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9'
+    (c.is_ascii() && c.is_ascii_alphanumeric())
+        || (!c.is_ascii() && c != '→' && c != '←' && c != '↔')
 }
 
 fn legal_in_set_char(c: char) -> bool {

@@ -1,0 +1,676 @@
+use core::fmt;
+use std::fmt::{Display, Formatter};
+use std::iter::Peekable;
+use crate::dfaparsing::missingapis::unescape;
+// use super::*;
+
+macro_rules! t {
+    () => (
+        Peekable<impl Iterator<Item = char> + Clone>
+    );
+}
+
+fn legal_top_level_char(c: char) -> bool {
+    // As specified in: https://unicode.org/reports/tr35/tr35-general.html#Transform_Rules_Syntax
+    // "All of the ASCII characters except numbers and letters are reserved for use in the rule syntax, as are the characters →, ←, ↔."
+    (c.is_ascii() && c.is_ascii_alphanumeric())
+        || (!c.is_ascii() && c != '→' && c != '←' && c != '↔')
+}
+
+fn skip_whitespace(it: &mut t!()) {
+    // while let Some(&c) = it.peek() {
+    //     if c.is_ascii_whitespace() {
+    //         it.next();
+    //     } else {
+    //         break;
+    //     }
+    // }
+
+    // Skip ascii_whitespace and comments
+    while let Some(&c) = it.peek() {
+        match c {
+            c if c.is_ascii_whitespace() => {it.next();},
+            '#' => {
+                while let Some(&c) = it.peek() {
+                    if c == '\n' {
+                        break;
+                    }
+                    it.next();
+                }
+            },
+            _ => break,
+        }
+    }
+
+}
+
+macro_rules! pl {
+    () => (
+        ParseLocation {
+            file: file!(),
+            line: line!(),
+        }
+    );
+}
+
+mod missingapis {
+    use super::*;
+
+    pub(super) fn unescapable(c: char) -> bool {
+        match c {
+            'n' | 'r' | 't' => true,
+            _ => false,
+        }
+    }
+
+    pub(super) fn unescape(c: char) -> char {
+        match c {
+            'n' => '\n',
+            'r' => '\r',
+            't' => '\t',
+            _ => c,
+        }
+    }
+
+    // conform to ID_Start property
+    pub(super) fn is_id_start(c: char) -> bool {
+        c.is_ascii_alphabetic()
+    }
+
+    // conform to ID_Continue property
+    pub(super) fn is_id_continue(c: char) -> bool {
+        c.is_ascii_alphanumeric()
+    }
+
+    // TODO: Note on UnicodeSet parsing: [:L:] _could_ be any of the following:
+    //  * [:L=true:]
+    //  * [:General_Category=L:]
+    //  * [:Script=L:]
+    //  Will need to disambiguate these cases.
+    // TODO: Continue parsing UnicodeSets. Figure out a good way to handle character escaping. Check the "quoted" rule in the syntax: https://www.unicode.org/reports/tr35/#Unicode_Sets
+
+    fn parse_perl_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
+        // parses perl-style \p{x=y} or \p{x} unicode sets
+        todo!()
+    }
+
+    fn parse_posix_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
+        todo!()
+    }
+
+    pub(super) fn parse_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
+        let mut set = String::new();
+        let Some('[') = it.next() else {
+            return Err(ParseError::new(pl!(), PEK::Legacy));
+        };
+        set.push('[');
+
+        // parse until we find a closing bracket
+        let mut escaped = false;
+        loop {
+            match it.next() {
+                None => return Err(ParseError::new(pl!(), PEK::Legacy)),
+                Some(']') if !escaped => {
+                    set.push(']');
+                    break
+                },
+                Some('\\') => escaped = true,
+                Some(mut c) => {
+                    // handle special escape sequences
+                    if escaped {
+                        match c {
+                            'n' => c = '\n',
+                            'r' => c = '\r',
+                            't' => c = '\t',
+                            _ => {},
+                        }
+                    }
+                    escaped = false;
+                    set.push(c);
+                }
+            }
+        }
+        dbg!(set.clone());
+        Ok(set)
+    }
+}
+
+// #[derive(Debug, Clone)]
+// pub(super) enum ParseError {
+//     UnexpectedEof,
+//     UnexpectedChar(char),
+//     Legacy,
+// }
+
+#[derive(Debug, Clone)]
+pub(super) enum ParseErrorKind {
+    UnexpectedEof,
+    UnexpectedChar(char),
+    Legacy,
+}
+// #[derive(Debug, Clone)]
+// pub(super) enum ParseLocation {
+//     LiteralQuoted,
+//     LiteralUnquoted,
+//     Literal,
+//     UnicodeSet,
+//     Variable,
+//     PatternElement,
+//     Pattern,
+//     HalfRule,
+//     Direction,
+//     Rule,
+// }
+#[derive(Clone)]
+pub(super) struct ParseLocation {
+    file: &'static str,
+    line: u32,
+}
+impl core::fmt::Debug for ParseLocation {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "\n[{}:{}]", self.file, self.line)
+    }
+}
+
+use ParseLocation as PL;
+use ParseErrorKind as PEK;
+
+#[derive(Debug, Clone)]
+pub(super) struct ParseError {
+    location: ParseLocation,
+    kind: ParseErrorKind,
+}
+
+impl ParseError {
+    pub(super) fn new(location: ParseLocation, kind: ParseErrorKind) -> Self {
+        Self { location, kind }
+    }
+}
+type Result<T, E = ParseError> = core::result::Result<T, E>;
+
+type Literal = String;
+type UnicodeSet = String;
+
+#[derive(Debug, Clone)]
+pub(super) enum PatternElement {
+    Literal(Literal),
+    UnicodeSet(UnicodeSet),
+    Variable(String),
+}
+
+impl PatternElement {
+    fn string(&self) -> String {
+        match self {
+            Self::Literal(l) => l.clone(),
+            Self::UnicodeSet(u) => u.clone(),
+            Self::Variable(v) => format!("${}", v),
+        }
+    }
+}
+
+fn parse_quoted_literal(it: &mut t!()) -> Result<Literal> {
+    dbg!(it.peek());
+    unimplemented!()
+}
+
+fn parse_unquoted_literal(it: &mut t!()) -> Result<Literal> {
+    dbg!(it.peek());
+    let mut literal = String::new();
+    // collect consecutive legal_top_level_chars and escaped any other chars
+    while let Some(&c) = it.peek() {
+        if legal_top_level_char(c) {
+            literal.push(c);
+            it.next();
+        } else if c == '\\' {
+            it.next();
+            match it.next() {
+                None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+                Some(c) if missingapis::unescapable(c) => literal.push(unescape(c)),
+                Some(c) => literal.push(c),
+            }
+        } else {
+            break;
+        }
+    }
+
+    Ok(literal)
+}
+
+fn parse_literal(it: &mut t!()) -> Result<Literal> {
+    dbg!(it.peek());
+    // a literal is either a sequence of characters that are not special or escaped,
+    // or a quoted sequence of any chars
+    match it.peek() {
+        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+        Some(&'\'') => parse_quoted_literal(it),
+        Some(_) => parse_unquoted_literal(it),
+    }
+}
+
+fn parse_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
+    dbg!(it.peek());
+    missingapis::parse_unicode_set(it)
+}
+
+fn parse_variable(it: &mut t!()) -> Result<String> {
+    dbg!(it.peek());
+    let mut name = String::new();
+    match it.next() {
+        Some('$') => {},
+        Some(c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+    }
+
+    match it.next() {
+        // a variable has at least one character
+        Some(c) if missingapis::is_id_start(c) => name.push(c),
+        Some(c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+    }
+
+    // take_while is a problem because it consumes the first char after the id-continue sequence
+    // it.take_while(|c| missingapis::is_id_continue(*c))
+    //     .for_each(|c| name.push(c));
+    // so implement as peeking loop
+    loop {
+        match it.peek() {
+            None => break,
+            Some(&c) if missingapis::is_id_continue(c) => {
+                it.next();
+                name.push(c);
+            },
+            _ => break,
+        }
+    }
+
+
+    Ok(name)
+
+}
+
+fn parse_pattern_element(it: &mut t!()) -> Result<PatternElement> {
+    dbg!(it.peek());
+    match it.peek() {
+        None => Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+        Some(&'$') => Ok(PatternElement::Variable(parse_variable(it)?)),
+        Some(&'[') => Ok(PatternElement::UnicodeSet(parse_unicode_set(it)?)),
+        Some(&'\\') => {
+            // need lookahead to decide between \p{x=y} (unicode set) and \escape (unqouted literal)
+            let mut lookahead_it = it.clone();
+            // consume '\\'
+            let _ = lookahead_it.next();
+            match lookahead_it.next() {
+                None => Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+                Some('p') => {
+                    // Perl property syntax
+                    Ok(PatternElement::UnicodeSet(parse_unicode_set(it)?))
+                },
+                Some(_) => {
+                    Ok(PatternElement::Literal(parse_literal(it)?))
+                },
+            }
+        },
+        Some(_) => Ok(PatternElement::Literal(parse_literal(it)?)),
+    }
+}
+
+#[derive(Debug, Clone)]
+pub(super) struct Pattern(Vec<PatternElement>);
+
+impl Pattern {
+    fn flat_empty(self) -> Option<Self> {
+        if self.0.is_empty() {
+            None
+        } else {
+            Some(self)
+        }
+    }
+
+    fn string(&self) -> String {
+        self.0.iter().map(|e| e.string()).collect()
+    }
+}
+
+fn is_pattern_end(c: char) -> bool {
+    c == ';' || c == '>' || c == '<' || c == '→' || c == '←' || c == '↔' || c == '=' || c == '{' || c == '}'
+}
+
+fn parse_pattern(it: &mut t!()) -> Result<Pattern> {
+    dbg!(it.peek());
+    let mut elements = Vec::new();
+    loop {
+        skip_whitespace(it);
+        match it.peek() {
+            None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+            Some(&c) if is_pattern_end(c) => break,
+            Some(_) => elements.push(parse_pattern_element(it)?),
+        }
+    }
+
+    Ok(Pattern(elements))
+}
+
+#[derive(Debug, Clone)]
+pub(super) struct HalfRule {
+    ante: Option<Pattern>,
+    key: Pattern,
+    post: Option<Pattern>,
+    /* add cursor here, e.g. index into Pattern. that would imply a literal like "ab > aa|b" would
+    be split up into Pattern([aa, b]) and cursor = 1*/
+}
+
+impl Display for HalfRule {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        // ante { key } post
+        if let Some(ante) = &self.ante {
+            write!(f, "{} {{ ", ante.string())?;
+        }
+        write!(f, "{}", self.key.string())?;
+        if let Some(post) = &self.post {
+            write!(f, " }} {}", post.string())?;
+        }
+        Ok(())
+    }
+}
+
+fn is_half_rule_end(c: char) -> bool {
+    c == ';' || c == '>' || c == '<' || c == '→' || c == '←' || c == '↔' || c == '='
+}
+
+fn parse_half_rule(it: &mut t!()) -> Result<HalfRule> {
+    dbg!(it.peek());
+    let pattern1 = parse_pattern(it)?;
+    // there should be a is_pattern_end char now
+    match it.peek() {
+        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+        Some(&c) if is_half_rule_end(c) => {
+            // half rule is over
+            return Ok(HalfRule {
+                ante: None,
+                key: pattern1,
+                post: None,
+            });
+        },
+        Some(&'{') => {
+            // we just parsed the ante context, now parse the key
+            it.next();
+            let pattern2 = parse_pattern(it)?;
+            // there should be a is_pattern_end char now
+            match it.peek() {
+                None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+                Some(&c) if is_half_rule_end(c) => {
+                    // half rule is over
+                    return Ok(HalfRule {
+                        ante: pattern1.flat_empty(),
+                        key: pattern2,
+                        post: None,
+                    });
+                },
+                Some(&'}') => {
+                    // we just parsed the key, now parse the post context
+                    it.next();
+                    let pattern3 = parse_pattern(it)?;
+                    // there should be a is_pattern_end char now
+                    match it.peek() {
+                        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+                        Some(&c) if is_half_rule_end(c) => {
+                            // half rule is over
+                            return Ok(HalfRule {
+                                ante: pattern1.flat_empty(),
+                                key: pattern2,
+                                post: pattern3.flat_empty(),
+                            });
+                        },
+                        Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+                    }
+                },
+                Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+            }
+
+        },
+        Some(&'}') => {
+            // we just parsed the key, there is no ante context, parse the post context
+            it.next();
+            let pattern2 = parse_pattern(it)?;
+            // there should be a is_pattern_end and is_half_rule_end char now
+            match it.peek() {
+                None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+                Some(&c) if is_half_rule_end(c) => {
+                    // half rule is over
+                    return Ok(HalfRule {
+                        ante: None,
+                        key: pattern1,
+                        post: pattern2.flat_empty(),
+                    });
+                },
+                Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+            }
+        },
+        Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+    }
+
+    unreachable!("need to refactor above monstrosity")
+}
+
+#[derive(Debug, Clone)]
+pub(super) struct VariableDef {
+    name: String,
+    pattern: Pattern,
+}
+
+#[derive(Debug, Clone)]
+pub(super) enum Direction {
+    Forward,
+    Reverse,
+    Bidirectional,
+}
+
+impl Display for Direction {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        match self {
+            Direction::Forward => write!(f, "→"),
+            Direction::Reverse => write!(f, "←"),
+            Direction::Bidirectional => write!(f, "↔"),
+        }
+    }
+}
+
+fn parse_direction(it: &mut t!()) -> Result<Direction> {
+    dbg!(it.peek());
+    match it.next() {
+        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+        Some('>') => Ok(Direction::Forward),
+        Some('<') => {
+            // if <> then bidirectional
+            match it.peek() {
+                Some(&'>') => {
+                    it.next();
+                    return Ok(Direction::Bidirectional);
+                },
+                _ => {},
+            }
+            Ok(Direction::Reverse)
+        },
+        Some('→') => Ok(Direction::Forward),
+        Some('←') => Ok(Direction::Reverse),
+        Some('↔') => Ok(Direction::Bidirectional),
+        Some(c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+    }
+}
+
+#[derive(Debug, Clone)]
+pub(super) enum RuleKind {
+    Conversion(Direction),
+    VariableDef,
+}
+
+fn parse_rule_kind(it: &mut t!()) -> Result<RuleKind> {
+    dbg!(it.peek());
+    match it.peek() {
+        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+        Some(&'=') => {
+            it.next();
+            Ok(RuleKind::VariableDef)
+        },
+        Some(&('<' | '>' | '→' | '←' | '↔')) => {
+            let dir = parse_direction(it)?;
+            Ok(RuleKind::Conversion(dir))
+        },
+        Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+    }
+}
+
+#[derive(Debug, Clone)]
+pub(super) struct ConversionRule {
+    source: HalfRule,
+    target: HalfRule,
+    dir: Direction,
+}
+
+#[derive(Debug, Clone)]
+pub(super) enum Rule {
+    ConversionRule(ConversionRule),
+    VariableDef(VariableDef),
+}
+
+fn parse_rule(it: &mut t!()) -> Result<Rule> {
+    dbg!(it.peek());
+    let half_rule1 = parse_half_rule(it)?;
+    // stopped because a is_half_rule_end char appeared
+    dbg!(half_rule1.clone());
+    skip_whitespace(it);
+    let rule_kind = parse_rule_kind(it)?;
+    // it should be one going in the middle
+    skip_whitespace(it);
+    let half_rule2 = parse_half_rule(it)?;
+    // stopped because a is_half_rule_end char appeared, should only be ;
+    match it.next() {
+        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+        Some(';') => {},
+        Some(c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+    }
+    match rule_kind {
+        RuleKind::VariableDef => {
+            // perform some runtime checks for variable defs
+            if half_rule1.ante.is_some() || half_rule1.post.is_some() || half_rule2.ante.is_some() || half_rule2.post.is_some() {
+                return Err(ParseError::new(pl!(), PEK::Legacy));
+            }
+            if half_rule1.key.0.len() != 1 {
+                return Err(ParseError::new(pl!(), PEK::Legacy));
+            }
+
+            let PatternElement::Variable(name) = half_rule1.key.0[0].clone() else {
+                return Err(ParseError::new(pl!(), PEK::Legacy));
+            };
+
+            Ok(Rule::VariableDef(VariableDef {
+                name,
+                pattern: half_rule2.key,
+            }))
+        },
+        RuleKind::Conversion(dir) => {
+            Ok(Rule::ConversionRule(ConversionRule {
+                source: half_rule1,
+                target: half_rule2,
+                dir,
+            }))
+        },
+    }
+}
+
+pub(super) fn parse_rules(it: &mut t!()) -> Result<Vec<Rule>> {
+    dbg!(it.peek());
+    let mut rules = Vec::new();
+    loop {
+        skip_whitespace(it);
+        if it.peek().is_none() {
+            break;
+        }
+        let rule = parse_rule(it)?;
+        dbg!(rule.clone());
+        rules.push(rule);
+    }
+    Ok(rules)
+}
+
+pub(super) fn pretty_print_rules(rules: &[Rule]) {
+    eprintln!("[");
+
+    for rule in rules {
+        match rule {
+            Rule::ConversionRule(rule) => {
+                let source = &rule.source;
+                let target = &rule.target;
+                let dir = &rule.dir;
+                eprintln!("  {source} {dir} {target} ;");
+            },
+            Rule::VariableDef(rule) => {
+                let name = &rule.name;
+                let pattern = &rule.pattern.string();
+                eprintln!("  ${name} = {pattern} ;");
+            },
+        }
+    }
+    eprintln!("]");
+}
+
+/*
+
+fn skip_whitespace(it: &mut Peekable<impl Iterator<Item = char>>) {
+    while let Some(c) = it.peek() {
+        if !c.is_whitespace() && *c != '#' {
+            break;
+        }
+        if *c == '#' {
+            while let Some(c) = it.next() {
+                if c == '\n' {
+                    break;
+                }
+            }
+        }
+        it.next();
+    }
+}
+
+enum RuleOrVarDef {
+    Rule(Rule),
+    VarDef(String, Pattern),
+}
+
+fn parse_rule_or_vardef(it: &mut Peekable<impl Iterator<Item = char>>) -> Option<RuleOrVarDef> {
+    let mut curr_pattern = UnicodeSetOrLiteral::Literal(Literal(String::new()));
+    if let Some(c) = it.peek() {
+        if *c == '$' {
+            // Difficult case, could be either variable definition or variable reference
+
+        }
+    }
+
+}
+
+fn parse_rules(it: &mut Peekable<impl Iterator<Item = char>>) -> Vec<Rule> {
+    let mut rules = Vec::new();
+    skip_whitespace(it);
+    while let Some(rule) = parse_rule(it) {
+        rules.push(rule);
+        skip_whitespace(it);
+    }
+    if let Some(&':') = it.peek() {
+        // block of variable defs/conversion rules is over
+        return rules;
+    }
+
+    rules
+}
+
+// at some point will return a all rules, not just conversion rules
+fn parse(src: &str) -> Vec<Rule> {
+    let mut it = src.chars().peekable();
+    skip_whitespace(&mut it);
+    if let Some(&':') = it.peek() {
+        panic!("TODO: parse filter and transform rules")
+    }
+
+    parse_rules(&mut it)
+}
+*/
