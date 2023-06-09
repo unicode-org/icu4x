@@ -90,6 +90,12 @@ fn pretty_print_rules(rules: &[Rule]) {
     println!("]");
 }
 
+// TODO: add below to gdoc
+// TODO: escaped() for \u, \{ etc in literals
+// TODO: string literals with '
+// TODO: check if there's some unicode set parsing already
+// TODO: add "compile" function that: 1. compiles UnicodeSets (converts them into CodePointInversionLists) and 2. compiles variable references.
+
 fn main() {
     let rules = RULES_EASY;
     println!("{rules}\nHello, world!");
