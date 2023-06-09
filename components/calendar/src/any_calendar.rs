@@ -1013,7 +1013,7 @@ mod tests {
         .expect("Calendar construction must succeed");
         let persian = AnyCalendar::try_new_with_buffer_provider(
             &icu_testdata::buffer(),
-            AnyCalendarKind::persian,
+            AnyCalendarKind::Persian,
         )
         .expect("Calendar construction must succeed");
         let japanese = AnyCalendar::try_new_with_buffer_provider(

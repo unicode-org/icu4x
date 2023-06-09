@@ -53,12 +53,20 @@ impl CalendarArithmetic for Persian {
         12
     }
 
-    fn is_leap_year(year: i32) -> bool {
-        false
+    fn is_leap_year(p_year: i32) -> bool {
+        if 0 < p_year {
+            p_year = p_year - 474;
+        } else {
+            p_year = p_year - 473;
+        };
+
+        year = (p_year % 2820) + 474;
+
+        (((year + 38) * 31) % 128) < 31
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
-        if Self::is_leap_year(year) {
+        if Self::is_leayear(year) {
             366
         } else {
             365
@@ -66,7 +74,11 @@ impl CalendarArithmetic for Persian {
     }
 
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        todo!()
+        if Self::is_leap_year(year) {
+            (12, 30)
+        } else {
+            (12, 29)
+        }
     }
 }
 
@@ -174,18 +186,6 @@ impl Calendar for Persian {
 impl Persian {
     pub fn new() -> Self {
         Self
-    }
-
-    fn arithmetic_persian_leap_year(p_year: i32) -> bool {
-        let mut year: i32 = if 0 < p_year {
-            p_year - 474
-        } else {
-            p_year - 473
-        };
-
-        year = (year % 2820) + 474;
-
-        (((year + 38) * 31) % 128) < 31
     }
 
     fn fixed_from_arithmetic_persian(date: PersianDateInner) -> RataDie {
