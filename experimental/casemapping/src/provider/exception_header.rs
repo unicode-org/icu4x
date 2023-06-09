@@ -32,7 +32,7 @@ pub struct ExceptionBits {
 
 impl ExceptionBits {
     /// Extract from the upper half of an ICU4C-format u16
-    fn from_integer(int: u8) -> Self {
+    pub(crate) fn from_integer(int: u8) -> Self {
         let ule = ExceptionBitsULE(int);
         let double_width_slots = ule.double_width_slots();
         let no_simple_case_folding = ule.no_simple_case_folding();
@@ -112,95 +112,6 @@ impl SlotPresence {
         self.0 & bit != 0
     }
 }
-#[derive(Copy, Clone, PartialEq, Eq)]
-pub struct ExceptionHeader {
-    /// The various slots that are present, masked by ExceptionSlot
-    ///
-    /// We still store this as a bitmask since it's more convenient to access as one
-    pub slot_presence: SlotPresence,
-    pub bits: ExceptionBits,
-}
-
-impl ExceptionHeader {
-    /// Construct from an ICU4C-format u16.
-    pub(crate) fn from_integer(int: u16) -> Self {
-        let slot_presence =
-            SlotPresence(u8::try_from(int & ExceptionHeaderULE::SLOTS_MASK).unwrap_or(0));
-        let bits = ExceptionBits::from_integer(
-            u8::try_from(int >> ExceptionHeaderULE::BITS_SHIFT).unwrap_or(0),
-        );
-        Self {
-            slot_presence,
-            bits,
-        }
-    }
-
-    /// Convert to an ICU4C-format u16
-    #[cfg(feature = "datagen")]
-    pub(crate) fn to_integer(self) -> u16 {
-        let mut sixteen: u16 = self.slot_presence.0.into();
-        sixteen |= (u16::from(self.bits.to_integer())) << ExceptionHeaderULE::BITS_SHIFT;
-        sixteen
-    }
-
-    // The number of optional slots for this exception
-    pub(crate) fn num_slots(&self) -> u16 {
-        self.slot_presence.0.count_ones() as u16
-    }
-
-    // Returns true if the given slot exists for this exception
-    pub(crate) fn has_slot(&self, slot: ExceptionSlot) -> bool {
-        self.slot_presence.has_slot(slot)
-    }
-
-    // Returns the number of slots between this header and the given slot.
-    pub(crate) fn slot_offset(&self, slot: ExceptionSlot) -> usize {
-        debug_assert!(self.has_slot(slot));
-        let slot_bit = 1 << (slot as u8);
-        let previous_slot_mask = slot_bit - 1;
-        let previous_slots = self.slot_presence.0 & previous_slot_mask;
-        let slot_num = previous_slots.count_ones() as usize;
-
-        if self.bits.double_width_slots {
-            slot_num * 2
-        } else {
-            slot_num
-        }
-    }
-}
-
-/// Packed exception header (format from icu4c, documented in casepropsbuilder.cpp)
-///
-/// ```text
-///       Bits:
-///         0..7  Flag bits indicating which optional slots are present (if any):
-///               0: Lowercase mapping (code point)
-///               1: Case folding (code point)
-///               2: Uppercase mapping (code point)
-///               3: Titlecase mapping (code point)
-///               4: Delta to simple case mapping (code point) (sign stored separately)
-///               5: RESERVED
-///               6: Closure mappings (string; see below)
-///               7: Full mappings (strings; see below)
-///            8  Double-width slots. If set, then each optional slot is stored as two
-///               elements of the array (high and low halves of 32-bit values) instead of
-///               a single element.
-///            9  Has no simple case folding, even if there is a simple lowercase mapping
-///           10  The value in the delta slot is negative
-///           11  Is case-sensitive (not exposed)
-///       12..13  Dot type
-///           14  Has conditional special casing
-///           15  Has conditional case folding
-/// ```
-///
-/// In this struct the RESERVED bit is still allowed to be set, and it will produce a different
-/// exception header, but it will not have any other effects.
-#[derive(Copy, Clone, PartialEq, Eq, ULE)]
-#[repr(packed)]
-pub struct ExceptionHeaderULE {
-    slot_presence: SlotPresence,
-    bits: ExceptionBitsULE,
-}
 
 /// The bitflags on an exception header (bits 8-15, see docs on [`ExceptionHeaderULE`])
 ///
@@ -243,27 +154,6 @@ impl ExceptionBitsULE {
     }
     pub fn dot_type(self) -> DotType {
         DotType::from_masked_bits((u16::from(self.0 >> Self::DOT_SHIFT)) & DotType::DOT_MASK)
-    }
-}
-impl ExceptionHeaderULE {
-    const SLOTS_MASK: u16 = 0xff;
-    const BITS_SHIFT: u16 = 8;
-}
-
-impl AsULE for ExceptionHeader {
-    type ULE = ExceptionHeaderULE;
-    fn from_unaligned(u: ExceptionHeaderULE) -> Self {
-        Self {
-            slot_presence: u.slot_presence,
-            bits: ExceptionBits::from_integer(u.bits.0),
-        }
-    }
-
-    fn to_unaligned(self) -> ExceptionHeaderULE {
-        ExceptionHeaderULE {
-            slot_presence: self.slot_presence,
-            bits: ExceptionBitsULE(self.bits.to_integer()),
-        }
     }
 }
 
