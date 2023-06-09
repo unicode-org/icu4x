@@ -745,15 +745,20 @@ impl SubAssign<f64> for Moment {
 
 /// Calculate the number of days between two moments
 impl Sub for Moment {
-    type Output = Self;
+    type Output = f64;
     fn sub(self, rhs: Self) -> Self::Output {
-        Self(self.0 - rhs.0)
+        self.0 - rhs.0
     }
 }
 
 impl Moment {
+    /// Create a new moment
+    pub const fn new(value: f64) -> Moment {
+        Moment(value)
+    }
+
     /// Get the inner field of a Moment
-    pub fn inner(self) -> f64 {
+    pub const fn inner(self) -> f64 {
         self.0
     }
 }

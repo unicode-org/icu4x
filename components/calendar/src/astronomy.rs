@@ -5,15 +5,10 @@
 /// This file contains important structs and functions relating to location,
 /// time, and astronomy; these are intended for calender calculations and based off
 /// _Calendrical Calculations_ by Reingold & Dershowitz.
-use crate::any_calendar::AnyCalendarKind;
-use crate::calendar_arithmetic::ArithmeticDate;
-use crate::iso::{Iso, IsoDateInner};
+use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
-use crate::{
-    types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Gregorian,
-};
-use tinystr::tinystr;
+use crate::Date;
 
 pub struct Location {
     latitude: f32,  // latitude from -90 to 90
@@ -24,6 +19,9 @@ pub struct Location {
 // The mean synodic month in days of 86400 atomic seconds
 // (86400 = 24 * 60 * 60)
 const MEAN_SYNODIC_MONTH: f64 = 29.53058861;
+
+// The Moment of noon on January 1, 2000
+const J2000: Moment = Moment::new(730120.5);
 
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180
@@ -61,9 +59,9 @@ impl Location {
     }
 
     /// Convert a longitude into a mean time zone;
-    /// this yields the difference in Moment given a longitude, such that
-    /// a longitude of 90 degrees is 0.25 (90 / 360) days ahead of a location
-    /// with a longitude of 0 degrees.
+    /// this yields the difference in Moment given a longitude
+    /// e.g. a longitude of 90 degrees is 0.25 (90 / 360) days ahead
+    /// of a location with a longitude of 0 degrees.
     pub fn zone_from_longitude(longitude: f64) -> f64 {
         longitude / (360 as f64)
     }
@@ -155,8 +153,126 @@ impl Astronomical {
             (1.0 / 86400.0) * (-20.0 + 32.0 * y1820.powi(2))
         }
     }
+
+    /// Include the ephemeris correction to universal time, yielding dynamical time
+    pub fn dynamical_from_universal(universal: Moment) -> Moment {
+        universal + Self::ephemeris_correction(universal)
+    }
+
+    /// Remove the ephemeris correction from dynamical time, yielding universal time
+    pub fn universal_from_dynamical(dynamical: Moment) -> Moment {
+        dynamical - Self::ephemeris_correction(dynamical)
+    }
 }
 
 pub struct Lunar;
 
-impl Lunar {}
+impl Lunar {
+    /// The moment (in universal time) of the nth new moon after
+    /// (or before if n is negative) the new moon of January 11, 1 CE,
+    /// which is the first new moon after R.D. 0.
+    pub fn nth_new_moon(n: i32) -> Moment {
+        let n0 = 24724.0;
+        let k = (n as f64) - n0;
+        let c = k / 1236.85;
+        let approx = J2000
+            + (5.09766 + MEAN_SYNODIC_MONTH * 1236.85 * c + 0.00015437 * c.powi(2)
+                - 0.00000015 * c.powi(3)
+                + 0.00000000073 * c.powi(4));
+        let E = 1.0 - 0.002516 * c - 0.0000074 * c.powi(2);
+        let solar_anomaly =
+            2.5534 + 1236.85 * 29.10535670 * c - 0.0000014 * c.powi(2) - 0.00000011 * c.powi(3);
+        let lunar_anomaly =
+            201.5643 + 385.81693528 * 1236.85 * c + 0.0107582 * c.powi(2) + 0.00001238 * c.powi(3)
+                - 0.000000058 * c.powi(4);
+        let moon_argument =
+            160.7108 + 390.67050284 * 1236.85 * c - 0.0016118 * c.powi(2) - 0.00000227 * c.powi(3)
+                + 0.000000011 * c.powi(4);
+        let omega =
+            124.7746 + (-1.56375588 * 1236.85) * c + 0.0020672 * c.powi(2) + 0.00000215 * c.powi(3);
+        let v: [f64; 24] = [
+            -0.40720, 0.17241, 0.01608, 0.01039, 0.00739, -0.00514, 0.00208, -0.00111, -0.00057,
+            0.00056, -0.00042, 0.00042, 0.00038, -0.00024, -0.00007, 0.00004, 0.00004, 0.00003,
+            0.00003, -0.00003, 0.00003, -0.00002, -0.00002, 0.00002,
+        ];
+        let w: [f64; 24] = [
+            0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 2.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        ];
+        let x: [f64; 24] = [
+            0.0, 1.0, 0.0, 0.0, -1.0, 1.0, 2.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, -1.0, 2.0, 0.0, 3.0,
+            1.0, 0.0, 1.0, -1.0, -1.0, 1.0, 0.0,
+        ];
+        let y: [f64; 24] = [
+            1.0, 0.0, 2.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 0.0, 0.0, 2.0, 1.0, 2.0, 0.0,
+            1.0, 2.0, 1.0, 1.0, 1.0, 3.0, 4.0,
+        ];
+        let z: [f64; 24] = [
+            0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, -2.0, 2.0, 0.0, 0.0, 2.0, -2.0, 0.0, 0.0, -2.0, 0.0,
+            -2.0, 2.0, 2.0, 2.0, -2.0, 0.0, 0.0,
+        ];
+        let i: [f64; 13] = [
+            251.88, 251.83, 349.42, 84.66, 141.74, 207.14, 154.84, 34.52, 207.19, 291.34, 161.72,
+            239.56, 331.55,
+        ];
+        let j: [f64; 13] = [
+            0.016321, 26.651886, 36.412478, 18.206239, 53.303771, 2.453732, 7.306860, 27.261239,
+            0.121824, 1.844379, 24.198154, 25.513099, 3.592518,
+        ];
+        let l: [f64; 13] = [
+            0.000165, 0.000164, 0.000126, 0.000110, 0.000062, 0.000060, 0.000056, 0.000047,
+            0.000042, 0.000040, 0.000037, 0.000035, 0.000023,
+        ];
+        let mut correction = -0.00017 + omega.sin();
+        for g in 0..12 {
+            correction += v[g]
+                * E.powf(w[g])
+                * (x[g] * solar_anomaly + y[g] * lunar_anomaly + z[g] * moon_argument).sin();
+        }
+        let extra = 0.000325 * (299.77 + 132.8475848 * c - 0.009173 * c.powi(2)).sin();
+        let mut additional = 0.0;
+        for g in 0..13 {
+            additional += l[g] * (i[g] + j[g] * k).sin();
+        }
+        Astronomical::universal_from_dynamical(approx + correction + extra + additional)
+    }
+
+    /// The lunar phase as an angle in degrees at a given Moment.
+    /// An angle of 0 corresponds to a new moon, 90 -> first quarter,
+    /// 180 -> full moon, 270 -> last quarter
+    pub fn lunar_phase(moment: Moment) -> f64 {
+        todo!();
+    }
+
+    /// Find the time of the new moon preceding a given Moment
+    /// (the last new moon before moment)
+    pub fn new_moon_before(moment: Moment) -> Moment {
+        let t0: Moment = Self::nth_new_moon(0);
+        let phi = Self::lunar_phase(moment);
+        let n = ((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0).round() as i32;
+        let mut result = n - 1;
+        let mut iters = 0;
+        let max_iters = 245_000_000;
+        while iters < max_iters && Self::nth_new_moon(result) < moment {
+            iters += 1;
+            result += 1;
+        }
+        Self::nth_new_moon(result - 1)
+    }
+
+    /// Find the time of the new moon following a given Moment
+    /// (the first new moon after moment)
+    pub fn new_moon_at_or_after(moment: Moment) -> Moment {
+        let t0: Moment = Self::nth_new_moon(0);
+        let phi = Self::lunar_phase(moment);
+        let n = ((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0).round() as i32;
+        let mut result = n;
+        let mut iters = 0;
+        let max_iters = 245_000_000;
+        while iters < max_iters && Self::nth_new_moon(result) < moment {
+            iters += 1;
+            result += 1;
+        }
+        Self::nth_new_moon(result)
+    }
+}
