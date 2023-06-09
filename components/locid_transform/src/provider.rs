@@ -19,7 +19,7 @@ use alloc::borrow::Cow;
 use icu_locid::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
 use tinystr::{TinyAsciiStr, UnvalidatedTinyAsciiStr};
-use zerovec::{VarZeroVec, ZeroMap, ZeroSlice};
+use zerovec::{VarZeroVec, ZeroMap, ZeroSlice, ZeroVec};
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
@@ -133,6 +133,31 @@ pub struct AliasesV1<'data> {
     /// `[value{7}] -> [value{7}]`
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, SemivalidatedSubdivision>,
+}
+
+#[icu_provider::data_struct(ScriptDirectionV1Marker = "locid_transform/script_dir@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_locid_transform::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+/// This directionality data is used to determine the script directionality of a locale.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[yoke(prove_covariance_manually)]
+pub struct ScriptDirectionV1<'data> {
+    /// Scripts in right-to-left direction.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub rtl: ZeroVec<'data, UnvalidatedScript>,
+    /// Scripts in left-to-right direction.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub ltr: ZeroVec<'data, UnvalidatedScript>,
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locid_transform/likelysubtags@1")]

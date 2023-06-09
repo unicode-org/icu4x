@@ -249,6 +249,11 @@ impl LocaleCanonicalizer {
     /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] object.
     ///
     /// For example, use this constructor if you wish to support all languages.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,

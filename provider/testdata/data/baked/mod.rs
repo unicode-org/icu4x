@@ -101,6 +101,8 @@ macro_rules! __impl_data_provider {
         impl_locid_transform_likelysubtags_l_v1!($provider);
         #[cfg(feature = "icu_locid_transform")]
         impl_locid_transform_likelysubtags_sr_v1!($provider);
+        #[cfg(feature = "icu_locid_transform")]
+        impl_locid_transform_script_dir_v1!($provider);
         #[cfg(feature = "icu_normalizer")]
         impl_normalizer_comp_v1!($provider);
         #[cfg(feature = "icu_normalizer")]
@@ -525,6 +527,8 @@ macro_rules! __impl_any_provider {
                 const LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_locid_transform")]
                 const LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                #[cfg(feature = "icu_locid_transform")]
+                const LOCID_TRANSFORM_SCRIPT_DIR_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::ScriptDirectionV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
                 const NORMALIZER_COMP_V1: icu_provider::DataKeyHash = <icu_normalizer::provider::CanonicalCompositionsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_normalizer")]
@@ -930,6 +934,8 @@ macro_rules! __impl_any_provider {
                     LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_locid_transform")]
                     LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    #[cfg(feature = "icu_locid_transform")]
+                    LOCID_TRANSFORM_SCRIPT_DIR_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::ScriptDirectionV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_normalizer")]
                     NORMALIZER_COMP_V1 => icu_provider::DataProvider::<icu_normalizer::provider::CanonicalCompositionsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_normalizer")]

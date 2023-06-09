@@ -281,6 +281,7 @@ registry!(
         RegionDisplayNamesV1Marker,
         LanguageDisplayNamesV1Marker,
         LocaleDisplayNamesV1Marker,
+        ScriptDirectionV1Marker,
         ScriptDisplayNamesV1Marker,
         VariantDisplayNamesV1Marker,
         LongSecondRelativeTimeFormatDataV1Marker,

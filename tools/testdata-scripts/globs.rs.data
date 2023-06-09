@@ -6,6 +6,7 @@
 // The variable "$LOCALES" is replaced with the list of locales from above.
 const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-core/coverageLevels.json",
+    "cldr-core/scriptMetadata.json",
     "cldr-core/supplemental/aliases.json",
     "cldr-core/supplemental/calendarData.json",
     "cldr-core/supplemental/likelySubtags.json",
