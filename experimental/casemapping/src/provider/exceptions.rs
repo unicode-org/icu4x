@@ -290,10 +290,14 @@ impl ExceptionULE {
         // check that ICU4C specific fields are not set
         // check that there is enough space for all the offsets
         if self.bits.double_width_slots() {
-            return Err(Error::Validation("double-width-slots should not be used in ICU4C"))
+            return Err(Error::Validation(
+                "double-width-slots should not be used in ICU4C",
+            ));
         }
         if self.bits.negative_delta() {
-            return Err(Error::Validation("negative-delta should not be used in ICU4C"))
+            return Err(Error::Validation(
+                "negative-delta should not be used in ICU4C",
+            ));
         }
 
         // just run all of the slot getters at once and then check
@@ -318,22 +322,39 @@ impl ExceptionULE {
 
         if self.has_slot(ExceptionSlot::FullMappings) {
             if decoded.full.is_some() {
-                let data = self.get_fullmappings_slot_data().expect("already known to succeed");
+                let data = self
+                    .get_fullmappings_slot_data()
+                    .expect("already known to succeed");
                 let mut chars = data.chars();
-                let i1 = u32::from(chars.next().ok_or(Error::Validation("fullmappings string too small"))?);
-                let i2 = u32::from(chars.next().ok_or(Error::Validation("fullmappings string too small"))?);
-                let i3 = u32::from(chars.next().ok_or(Error::Validation("fullmappings string too small"))?);
+                let i1 = u32::from(
+                    chars
+                        .next()
+                        .ok_or(Error::Validation("fullmappings string too small"))?,
+                );
+                let i2 = u32::from(
+                    chars
+                        .next()
+                        .ok_or(Error::Validation("fullmappings string too small"))?,
+                );
+                let i3 = u32::from(
+                    chars
+                        .next()
+                        .ok_or(Error::Validation("fullmappings string too small"))?,
+                );
 
                 if i2 < i1 || i3 < i2 {
-                    return Err(Error::Validation("fullmappings string contains non-sequential indices"))
+                    return Err(Error::Validation(
+                        "fullmappings string contains non-sequential indices",
+                    ));
                 }
                 let rest = chars.as_str();
                 let len = u32::try_from(rest.len()).unwrap();
 
                 if i1 > len || i2 > len || i3 > len {
-                    return Err(Error::Validation("fullmappings string contains out-of-bounds indices"));
+                    return Err(Error::Validation(
+                        "fullmappings string contains out-of-bounds indices",
+                    ));
                 }
-
             } else {
                 return Err(Error::Validation("Slot decoding failed"));
             }

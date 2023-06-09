@@ -3,13 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::Error;
+use crate::provider::data::CaseMappingData;
 use crate::provider::exception_header::{
     ExceptionBits, ExceptionBitsULE, ExceptionSlot, SlotPresence,
 };
-use crate::provider::exceptions::CaseMappingExceptions;
+use crate::provider::exceptions::{CaseMappingExceptions, DecodedException};
+use icu_collections::codepointtrie::CodePointTrie;
+use std::borrow::Cow;
 use std::collections::HashMap;
 use zerovec::ule::{AsULE, ULE};
-use zerovec::{VarZeroVec, ZeroVec};
 
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct ExceptionHeader {
@@ -34,37 +36,9 @@ impl ExceptionHeader {
         }
     }
 
-    /// Convert to an ICU4C-format u16
-    #[cfg(feature = "datagen")]
-    pub(crate) fn to_integer(self) -> u16 {
-        let mut sixteen: u16 = self.slot_presence.0.into();
-        sixteen |= (u16::from(self.bits.to_integer())) << ExceptionHeaderULE::BITS_SHIFT;
-        sixteen
-    }
-
-    // The number of optional slots for this exception
-    pub(crate) fn num_slots(&self) -> u16 {
-        self.slot_presence.0.count_ones() as u16
-    }
-
     // Returns true if the given slot exists for this exception
     pub(crate) fn has_slot(&self, slot: ExceptionSlot) -> bool {
         self.slot_presence.has_slot(slot)
-    }
-
-    // Returns the number of slots between this header and the given slot.
-    pub(crate) fn slot_offset(&self, slot: ExceptionSlot) -> usize {
-        debug_assert!(self.has_slot(slot));
-        let slot_bit = 1 << (slot as u8);
-        let previous_slot_mask = slot_bit - 1;
-        let previous_slots = self.slot_presence.0 & previous_slot_mask;
-        let slot_num = previous_slots.count_ones() as usize;
-
-        if self.bits.double_width_slots {
-            slot_num * 2
-        } else {
-            slot_num
-        }
     }
 }
 
@@ -131,10 +105,9 @@ impl AsULE for ExceptionHeader {
 // update the data stored in the code point trie.
 pub struct CaseMappingExceptionsBuilder<'a> {
     raw_data: &'a [u16],
+    casemapping_data: &'a CodePointTrie<'a, CaseMappingData>,
     raw_data_idx: usize,
     double_slots: bool,
-    slot_data: Vec<u16>,
-    strings: Vec<String>,
 }
 
 impl<'a> CaseMappingExceptionsBuilder<'a> {
@@ -144,19 +117,18 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
 
     const CLOSURE_MAX_LENGTH: u32 = 0xf;
 
-    pub fn new(raw_data: &'a [u16]) -> Self {
+    pub fn new(
+        raw_data: &'a [u16],
+        casemapping_data: &'a CodePointTrie<'a, CaseMappingData>,
+    ) -> Self {
         Self {
             raw_data,
             raw_data_idx: 0,
+            casemapping_data,
             double_slots: false,
-            slot_data: vec![],
-            strings: vec![],
         }
     }
 
-    fn done(&self) -> bool {
-        self.raw_data_idx >= self.raw_data.len()
-    }
     fn read_raw(&mut self) -> Result<u16, Error> {
         let result = self
             .raw_data
@@ -164,9 +136,6 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
             .ok_or(Error::Validation("Incomplete data"))?;
         self.raw_data_idx += 1;
         Ok(*result)
-    }
-    fn write_raw(&mut self, value: u16) {
-        self.slot_data.push(value);
     }
 
     fn read_slot(&mut self) -> Result<u32, Error> {
@@ -176,17 +145,6 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
             Ok(hi << 16 | lo)
         } else {
             Ok(self.read_raw()? as u32)
-        }
-    }
-    fn write_slot(&mut self, value: u32) {
-        if self.double_slots {
-            let hi = (value >> 16) as u16;
-            let lo = (value & 0xffff) as u16;
-            self.write_raw(hi);
-            self.write_raw(lo);
-        } else {
-            debug_assert!(value & 0xffff == value);
-            self.write_raw(value as u16);
         }
     }
 
@@ -200,7 +158,8 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
     pub(crate) fn build(
         mut self,
     ) -> Result<(CaseMappingExceptions<'static>, HashMap<u16, u16>), Error> {
-        let mut index_map = HashMap::new();
+        let mut exceptions = Vec::new();
+        let mut idx_map = HashMap::new();
         // The format of the raw data from ICU4C is the same as the format described in
         // exceptions.rs, with the exception of full mapping and closure strings. The
         // header and non-string slots can be copied over without modification. For string
@@ -226,27 +185,57 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
         // (Other bits are reserved.) The closure string itself is encoded as UTF16 and
         // stored following the full mappings data (if it exists) or the final optional
         // slot.
-        while !self.done() {
-            let old_idx = self.raw_data_idx as u16;
-            let new_idx = self.slot_data.len() as u16;
-            index_map.insert(old_idx, new_idx);
+        for range in self.casemapping_data.iter_ranges() {
+            let datum = range.value;
+            if !datum.has_exception() {
+                continue;
+            }
+            self.raw_data_idx = datum.exception_index().into();
+
+            let mut exception = DecodedException::default();
 
             // Copy header.
             let header = ExceptionHeader::from_integer(self.read_raw()?);
-            self.write_raw(header.to_integer());
             self.double_slots = header.bits.double_width_slots;
 
             // Copy unmodified slots.
-            for slot in [
-                ExceptionSlot::Lower,
-                ExceptionSlot::Fold,
-                ExceptionSlot::Upper,
-                ExceptionSlot::Title,
-                ExceptionSlot::Delta,
+            for (slot, output) in [
+                (ExceptionSlot::Lower, &mut exception.lowercase),
+                (ExceptionSlot::Fold, &mut exception.casefold),
+                (ExceptionSlot::Upper, &mut exception.uppercase),
+                (ExceptionSlot::Title, &mut exception.titlecase),
             ] {
                 if header.has_slot(slot) {
                     let value = self.read_slot()?;
-                    self.write_slot(value);
+                    if let Ok(ch) = char::try_from(value) {
+                        *output = Some(ch)
+                    } else {
+                        return Err(Error::Validation(
+                            "Found non-char value in casemapping exceptions data",
+                        ));
+                    }
+                }
+            }
+            if header.has_slot(ExceptionSlot::Delta) {
+                let mut delta: i32 = i32::try_from(self.read_slot()?).unwrap();
+                if exception.bits.negative_delta {
+                    delta = -delta;
+                }
+                // `delta` only makes sense if the exception is for a single character
+                // range.range is a RangeInclusive, so we check that it has len 1 by checking start == end
+                if range.range.start() == range.range.end() {
+                    let value = *range.range.start() as i32 + delta;
+                    if let Ok(ch) = char::try_from(value as u32) {
+                        exception.simple_case = Some(ch)
+                    } else {
+                        return Err(Error::Validation(
+                            "Found non-char value in casemapping exceptions data",
+                        ));
+                    }
+                } else {
+                    return Err(Error::Validation(
+                        "Found delta value for range of casemapping exceptions data",
+                    ));
                 }
             }
 
@@ -263,9 +252,9 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
             };
 
             // Copy the full mappings strings into the strings table, if they exist.
-            let mappings_idx = if let Some(mut lengths) = mappings_lengths {
-                let idx = self.strings.len() as u32;
-                for _ in 0..4 {
+            if let Some(mut lengths) = mappings_lengths {
+                let mut arr: [Cow<_>; 4] = Default::default();
+                for i in 0..4 {
                     let len = lengths & Self::FULL_MAPPINGS_LENGTH_MASK;
                     lengths >>= Self::FULL_MAPPINGS_LENGTH_SHIFT;
 
@@ -278,17 +267,13 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
                     let string =
                         char::decode_utf16(slice.iter().copied()).collect::<Result<String, _>>()?;
                     self.skip_string(&string);
-                    self.strings.push(string);
+                    arr[i] = string.into()
                 }
-                Some(idx)
-            } else {
-                None
-            };
+                exception.full = Some(arr)
+            }
 
             // Copy the closure string into the strings table, if it exists.
-            let closure_idx = if let Some(len) = closure_length {
-                let idx = self.strings.len() as u32;
-
+            if let Some(len) = closure_length {
                 let start = self.raw_data_idx;
                 let slice = &self
                     .raw_data
@@ -298,23 +283,28 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
                     .take(len)
                     .collect::<Result<String, _>>()?;
                 self.skip_string(&string);
-                self.strings.push(string);
-                Some(idx)
-            } else {
-                None
-            };
+                exception.closure = Some(string.into())
+            }
 
-            // Write the new indices, if they exist.
-            if let Some(idx) = closure_idx {
-                self.write_slot(idx);
-            }
-            if let Some(idx) = mappings_idx {
-                self.write_slot(idx);
-            }
+            exception.bits = header.bits;
+            // unused bits in ICU4X
+            exception.bits.double_width_slots = false;
+            exception.bits.negative_delta = false;
+
+            let new_exception_index = if let Ok(idx) = u16::try_from(exceptions.len()) {
+                idx
+            } else {
+                return Err(Error::Validation("More than u16 exceptions"));
+            };
+            idx_map.insert(datum.exception_index(), new_exception_index);
+            exceptions.push(exception.encode());
         }
 
-        let slots = ZeroVec::alloc_from_slice(&self.slot_data);
-        let strings = VarZeroVec::from(&self.strings);
-        Ok((CaseMappingExceptions { slots, strings }, index_map))
+        Ok((
+            CaseMappingExceptions {
+                exceptions: (&exceptions).into(),
+            },
+            idx_map,
+        ))
     }
 }

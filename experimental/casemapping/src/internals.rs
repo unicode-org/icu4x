@@ -156,21 +156,31 @@ impl<'data> CaseMappingInternals<'data> {
         exceptions: &[u16],
         unfold: &[u16],
     ) -> Result<Self, Error> {
-        let exceptions_builder = CaseMappingExceptionsBuilder::new(exceptions);
+        use zerofrom::ZeroFrom;
+        let trie_index = ZeroVec::alloc_from_slice(trie_index);
+        let mut trie_data = trie_data
+            .iter()
+            .map(|&i| CaseMappingData::try_from_icu_integer(i).unwrap())
+            .collect::<ZeroVec<_>>();
+        // Unfortunately, CaseMappingExceptions contains resolved `char` values for simple_case
+        // whereas ICU4C uses deltas. To resolve these deltas, we need to know the original `char`
+        // which isn't present in the exceptions data. We need to construct a temporary trie
+        // to query and then throw it away
+        let trie = CodePointTrie::try_new(
+            trie_header,
+            ZeroFrom::zero_from(&trie_index),
+            ZeroFrom::zero_from(&trie_data),
+        )?;
+
+        let exceptions_builder = CaseMappingExceptionsBuilder::new(exceptions, &trie);
         let (exceptions, idx_map) = exceptions_builder.build()?;
 
-        let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
-
-        let trie_index = ZeroVec::alloc_from_slice(trie_index);
-        let trie_data = trie_data
-            .iter()
-            .map(|&i| {
-                CaseMappingData::try_from_icu_integer(i)
-                    .unwrap()
-                    .with_updated_exception(&idx_map)
-            })
-            .collect::<ZeroVec<_>>();
+        trie_data.for_each_mut(|data| {
+            *data = data.with_updated_exception(&idx_map);
+        });
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
+
+        let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
 
         let result = Self {
             trie,

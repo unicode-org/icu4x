@@ -195,9 +195,6 @@ pub(crate) enum ExceptionSlot {
 impl ExceptionSlot {
     /// Where the string slots begin
     pub(crate) const STRING_SLOTS_START: Self = Self::Closure;
-    pub(crate) fn contains_char(&self) -> bool {
-        matches!(self, Self::Lower | Self::Fold | Self::Upper | Self::Title)
-    }
 }
 
 impl From<MappingKind> for ExceptionSlot {
