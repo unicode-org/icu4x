@@ -2,6 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This is the main module pertaining to casemapping exceptions.
+//!
+//! A single exception is represented by the [`Exception`] type and its ULE equivalent.
+//!
+//! The storage format is complicated (and documented on [`Exception`]), but the data format is
+//! represented equally by [`DecodedException`], which is more human-readable.
 use icu_provider::prelude::*;
 
 use super::data::MappingKind;
@@ -30,7 +36,7 @@ const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct CaseMappingExceptions<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    #[allow(missing_docs)] // struct doc covers this
+    /// The list of exceptions
     pub exceptions: VarZeroVec<'data, ExceptionULE>,
 }
 
@@ -56,7 +62,8 @@ impl<'data> CaseMappingExceptions<'data> {
             .map(|l| 0..l)
     }
 }
-/// A type representing the wire format of `Exception`
+/// A type representing the wire format of `Exception`. The data contained is
+/// equivalently represented by [`DecodedException`].
 ///
 /// This type is itself not used that much, most of its relevant methods live
 /// on [`ExceptionULE`].
@@ -83,7 +90,13 @@ impl<'data> CaseMappingExceptions<'data> {
     zerovec::derive(Serialize)
 )]
 pub struct Exception<'a> {
+    /// The various bit based exception data associated with this.
+    ///
+    /// Format: Just a u8 of bitflags, some flags unused. See [`ExceptionBits`] and its ULE type for more.
     pub bits: ExceptionBits,
+    /// Which slots are present in `data`.
+    ///
+    /// Format: a u8 of bitflags
     pub slot_presence: SlotPresence,
     /// Format : `[char slots] [optional closure length] [ closure slot ] [ full mappings data ]`
     ///
@@ -416,19 +429,26 @@ impl fmt::Debug for ExceptionULE {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct DecodedException<'a> {
+    /// The various bit-based data associated with this exception
     pub bits: ExceptionBits,
+    /// Lowercase mapping
     pub lowercase: Option<char>,
+    /// Case folding
     pub casefold: Option<char>,
+    /// Uppercase mapping
     pub uppercase: Option<char>,
+    /// Titlecase mapping
     pub titlecase: Option<char>,
     /// The simple casefold delta. Its sign is stored in bits.negative_delta
     pub simple_case_delta: Option<u32>,
+    /// Closure mappings
     pub closure: Option<Cow<'a, str>>,
     /// The four full-mappings strings, indexed by MappingKind u8 value
     pub full: Option<[Cow<'a, str>; 4]>,
 }
 
 impl<'a> DecodedException<'a> {
+    /// Convert to a wire-format encodeable (VarULE-encodeable) [`Exception`]
     pub fn encode(&self) -> Exception<'static> {
         let bits = self.bits;
         let mut slot_presence = SlotPresence(0);

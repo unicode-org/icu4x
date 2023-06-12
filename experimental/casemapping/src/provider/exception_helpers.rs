@@ -21,12 +21,21 @@ use zerovec::ule::{AsULE, ULE};
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub struct ExceptionBits {
+    /// Whether or not the slots are double-width.
+    ///
+    /// Unused in ICU4X
     pub double_width_slots: bool,
+    /// There is no simple casefolding, even if there is a simple lowercase mapping
     pub no_simple_case_folding: bool,
+    /// The delta stored in the `Delta` slot is negative
     pub negative_delta: bool,
+    /// If the character is case sensitive
     pub is_sensitive: bool,
+    /// The dot type of the character
     pub dot_type: DotType,
+    /// If the character has conditional special casing
     pub has_conditional_special: bool,
+    /// If the character has conditional case folding
     pub has_conditional_fold: bool,
 }
 
@@ -134,24 +143,40 @@ impl ExceptionBitsULE {
 }
 
 impl ExceptionBitsULE {
+    /// Whether or not the slots are double-width.
+    ///
+    /// Unused in ICU4X
+
     pub fn double_width_slots(self) -> bool {
         self.0 & Self::DOUBLE_SLOTS_FLAG != 0
     }
+
+    /// There is no simple casefolding, even if there is a simple lowercase mapping
     pub fn no_simple_case_folding(self) -> bool {
         self.0 & Self::NO_SIMPLE_CASE_FOLDING_FLAG != 0
     }
+
+    /// The delta stored in the `Delta` slot is negative
     pub fn negative_delta(self) -> bool {
         self.0 & Self::NEGATIVE_DELTA_FLAG != 0
     }
+
+    /// If the character is case sensitive
     pub fn is_sensitive(self) -> bool {
         self.0 & Self::SENSITIVE_FLAG != 0
     }
+
+    /// If the character has conditional special casing
     pub fn has_conditional_special(self) -> bool {
         self.0 & Self::CONDITIONAL_SPECIAL_FLAG != 0
     }
+
+    /// If the character has conditional case folding
     pub fn has_conditional_fold(self) -> bool {
         self.0 & Self::CONDITIONAL_FOLD_FLAG != 0
     }
+
+    /// The dot type of the character
     pub fn dot_type(self) -> DotType {
         DotType::from_masked_bits((u16::from(self.0 >> Self::DOT_SHIFT)) & DotType::DOT_MASK)
     }
@@ -179,16 +204,23 @@ impl AsULE for SlotPresence {
     }
 }
 
+/// The different slots that may be present in slot-based exception data
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq)]
 pub(crate) enum ExceptionSlot {
+    /// Lowercase mapping
     Lower = 0,
+    /// Case folding
     Fold = 1,
+    /// Uppercase mapping
     Upper = 2,
+    /// Titlecase mapping
     Title = 3,
-    /// Also the Simple slot (todo: rename this)
+    /// The delta to the simple case folding
     Delta = 4,
     // Slot 5 is reserved
+    /// The closure set
     Closure = 6,
+    /// The four full-mappings
     FullMappings = 7,
 }
 

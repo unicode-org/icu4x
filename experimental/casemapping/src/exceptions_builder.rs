@@ -11,6 +11,8 @@ use std::borrow::Cow;
 use std::collections::HashMap;
 use zerovec::ule::{AsULE, ULE};
 
+/// The header for exception types as found in ICU4C data. See [`ExceptionHeaderULE`]
+/// for the wire format
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct ExceptionHeader {
     /// The various slots that are present, masked by ExceptionSlot
