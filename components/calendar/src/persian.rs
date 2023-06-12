@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::marker::PhantomData;
+use core::num;
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
@@ -55,9 +56,9 @@ impl CalendarArithmetic for Persian {
 
     fn is_leap_year(mut p_year: i32) -> bool {
         if 0 < p_year {
-            p_year = p_year - 474;
+            p_year -= 474;
         } else {
-            p_year = p_year - 473;
+            p_year -= 473;
         };
 
         let year = (p_year % 2820) + 474;
@@ -189,9 +190,9 @@ impl Persian {
     }
 
     fn fixed_from_arithmetic_persian(date: PersianDateInner) -> RataDie {
-        let mut month = date.0.month;
+        let month = date.0.month;
 
-        let mut day = date.0.day;
+        let day = date.0.day;
 
         let mut year: i32 = if 0 < date.0.year {
             date.0.year - 474
@@ -215,30 +216,30 @@ impl Persian {
     }
 
     fn arithmetic_persian_from_fixed(date: RataDie) -> Date<Persian> {
-        let year = Self::arithmetic_persian_year_from_fixed(date);
+        let _year = Self::arithmetic_persian_year_from_fixed(date);
         let day_of_year = (date
             - Self::fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
-                year: (year),
-                month: (1),
+                year: _year,
+                month: 1,
                 day: 1,
                 marker: (core::marker::PhantomData),
             })))
             + 1;
-        let month = if day_of_year <= 186 {
-            ((day_of_year as f64 / 31.0).ceil()) as u8
+        let _month = if day_of_year <= 186 {
+            f64::ceil(day_of_year as f64 / 31.0) as u8
         } else {
-            (((day_of_year - 6) as f64 / 30.0).ceil()) as u8
+            f64::ceil((day_of_year - 6) as f64 / 30.0) as u8
         };
-        let day = (date.to_i64_date()
+        let _day = (date.to_i64_date()
             - (Self::fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
-                year: year,
-                month: month,
+                year: _year,
+                month: _month,
                 day: 1,
                 marker: core::marker::PhantomData,
             })) - 1)
                 .to_i64_date()) as u8;
 
-        Date::try_new_persian_date(year, month, day).unwrap()
+        Date::try_new_persian_date(_year, _month, _day).unwrap()
     }
 
     fn arithmetic_persian_year_from_fixed(date: RataDie) -> i32 {
@@ -269,13 +270,13 @@ impl Persian {
     // Persian New Year to fixed year
     fn nowruz(g_year: i32) -> RataDie {
         let persian_year = g_year - year_as_gregorian(PERSIAN_EPOCH as i32).number + 1;
-        let year = if persian_year <= 0 {
+        let _year = if persian_year <= 0 {
             persian_year - 1
         } else {
             persian_year
         };
         Self::fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
-            year: year,
+            year: _year,
             month: 1,
             day: 1,
             marker: core::marker::PhantomData,
