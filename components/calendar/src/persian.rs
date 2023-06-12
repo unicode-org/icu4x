@@ -53,20 +53,20 @@ impl CalendarArithmetic for Persian {
         12
     }
 
-    fn is_leap_year(p_year: i32) -> bool {
+    fn is_leap_year(mut p_year: i32) -> bool {
         if 0 < p_year {
             p_year = p_year - 474;
         } else {
             p_year = p_year - 473;
         };
 
-        year = (p_year % 2820) + 474;
+        let year = (p_year % 2820) + 474;
 
         (((year + 38) * 31) % 128) < 31
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
-        if Self::is_leayear(year) {
+        if Self::is_leap_year(year) {
             366
         } else {
             365

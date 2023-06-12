@@ -436,8 +436,6 @@ impl AnyCalendar {
     where
         P: BufferProvider + ?Sized,
     {
-        use crate::persian::Persian;
-
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
