@@ -49,7 +49,8 @@ impl Location {
     pub fn direction(loc1: Location, loc2: Location) -> f32 {
         let y = (loc2.longitude - loc1.longitude).to_radians().sin();
         let x = (loc1.latitude.to_radians().cos() * loc2.latitude.to_radians().tan())
-            - (loc1.latitude.to_radians().sin() * (loc1.longitude - loc2.longitude).to_radians().cos());
+            - (loc1.latitude.to_radians().sin()
+                * (loc1.longitude - loc2.longitude).to_radians().cos());
         if (x == y && y == 0.0) || loc2.latitude == 90.0 {
             0.0
         } else if loc2.latitude == -90.0 {
@@ -96,7 +97,7 @@ impl Astronomical {
         let y2000 = year - 2000.0;
         let y1700 = year - 1700.0;
         let y1600 = year - 1600.0;
-        let y1000 = (year - 1000.0) / 1000.0;
+        let y1000 = (year - 1000.0) / 100.0;
         let y0 = year / 100.0;
         let y1820 = (year - 1820.0) / 100.0;
 
@@ -182,7 +183,7 @@ impl Astronomical {
             + (5.09766 + MEAN_SYNODIC_MONTH * 1236.85 * c + 0.00015437 * c.powi(2)
                 - 0.00000015 * c.powi(3)
                 + 0.00000000073 * c.powi(4));
-        let E = 1.0 - 0.002516 * c - 0.0000074 * c.powi(2);
+        let e = 1.0 - 0.002516 * c - 0.0000074 * c.powi(2);
         let solar_anomaly =
             2.5534 + 1236.85 * 29.10535670 * c - 0.0000014 * c.powi(2) - 0.00000011 * c.powi(3);
         let lunar_anomaly =
@@ -229,10 +230,15 @@ impl Astronomical {
         let mut correction = -0.00017 + omega.to_radians().sin();
         for g in 0..12 {
             correction += v[g]
-                * E.powf(w[g])
-                * (x[g] * solar_anomaly + y[g] * lunar_anomaly + z[g] * moon_argument).to_radians().sin();
+                * e.powf(w[g])
+                * (x[g] * solar_anomaly + y[g] * lunar_anomaly + z[g] * moon_argument)
+                    .to_radians()
+                    .sin();
         }
-        let extra = 0.000325 * (299.77 + 132.8475848 * c - 0.009173 * c.powi(2)).to_radians().sin();
+        let extra = 0.000325
+            * (299.77 + 132.8475848 * c - 0.009173 * c.powi(2))
+                .to_radians()
+                .sin();
         let mut additional = 0.0;
         for g in 0..13 {
             additional += l[g] * (i[g] + j[g] * k).to_radians().sin();
@@ -243,18 +249,18 @@ impl Astronomical {
     /// Longitude of the moon (in degrees) at a given moment
     pub fn lunar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
-        let L = Self::mean_lunar_longitude(c);
-        let D = Self::lunar_elongation(c);
-        let Ms = Self::solar_anomaly(c);
-        let Ml = Self::lunar_anomaly(c);
-        let F = Self::moon_node(c);
-        let E = 1.0 - 0.002516 * c - 0.0000074 * c.powi(2);
+        let l = Self::mean_lunar_longitude(c);
+        let d = Self::lunar_elongation(c);
+        let ms = Self::solar_anomaly(c);
+        let ml = Self::lunar_anomaly(c);
+        let f = Self::moon_node(c);
+        let e = 1.0 - 0.002516 * c - 0.0000074 * c.powi(2);
         let v: [f64; 59] = [
             6288774.0, 1274027.0, 658314.0, 213618.0, -185116.0, -114332.0, 58793.0, 57066.0,
             53322.0, 45758.0, -40923.0, -34720.0, -30383.0, 15327.0, -12528.0, 10980.0, 10675.0,
             10034.0, 8548.0, -7888.0, -6766.0, -5163.0, 4987.0, 4036.0, 3994.0, 3861.0, 3665.0,
             -2689.0, -2602.0, 2390.0, -2348.0, 2236.0, -2120.0, -2069.0, 2048.0, -1773.0, -1595.0,
-            1215.0, -1110.0, -892.0, -810.0, 759.0, -713.0, -700.0, 391.0, 596.0, 549.0, 537.0,
+            1215.0, -1110.0, -892.0, -810.0, 759.0, -713.0, -700.0, 691.0, 596.0, 549.0, 537.0,
             520.0, -487.0, -399.0, -381.0, 351.0, -340.0, 330.0, 327.0, -323.0, 299.0, 294.0,
         ];
         let w: [f64; 59] = [
@@ -284,50 +290,54 @@ impl Astronomical {
         let mut correction = 1.0 / 1000000.0;
         let mut correction_operand = 0.0;
         for i in 0..59 {
-            correction_operand += v[i] * E.powf(x[i].abs()) * (w[i] * D + x[i] * Ms + y[i] * Ml + z[i] * F).to_radians().sin();
+            correction_operand += v[i]
+                * e.powf(x[i].abs())
+                * (w[i] * d + x[i] * ms + y[i] * ml + z[i] * f)
+                    .to_radians()
+                    .sin();
         }
         correction *= correction_operand;
         let venus = 3958.0 / 1000000.0 * (119.75 + c * 131.849).to_radians().sin();
         let jupiter = 318.0 / 1000000.0 * (53.09 + c * 479264.29).to_radians().sin();
-        let flat_earth = 1962.0 / 1000000.0 * (L - F).to_radians().sin();
-        (L + correction + venus + jupiter + flat_earth + Self::nutation(moment)) % 360.0
+        let flat_earth = 1962.0 / 1000000.0 * (l - f).to_radians().sin();
+        (l + correction + venus + jupiter + flat_earth + Self::nutation(moment)).rem_euclid(360.0)
     }
 
     fn mean_lunar_longitude(c: f64) -> f64 {
         (218.3164477 + 481267.88123421 * c - 0.0015786 * c.powi(2) + 1.0 / 538841.0 * c.powi(3)
             - 1.0 / 65194000.0 * c.powi(4))
-            % 360.0
+        .rem_euclid(360.0)
     }
 
     fn lunar_elongation(c: f64) -> f64 {
         (297.85019021 + 445267.1114034 * c - 0.0018819 * c.powi(2) + 1.0 / 545868.0 * c.powi(3)
             - 1.0 / 113065000.0 * c.powi(4))
-            % 360.0
+        .rem_euclid(360.0)
     }
 
     fn solar_anomaly(c: f64) -> f64 {
         (357.5291092 + 35999.0502909 * c - 0.0001536 * c.powi(2) + 1.0 / 24490000.0 * c.powi(3))
-            % 360.0
+            .rem_euclid(360.0)
     }
 
     fn lunar_anomaly(c: f64) -> f64 {
         (134.9633964 + 477198.8675055 * c + 0.0087414 * c.powi(2)
             - 1.0 / 69699.0 * c.powi(3)
             - 1.0 / 14712000.0 * c.powi(4))
-            % 360.0
+        .rem_euclid(360.0)
     }
 
     fn moon_node(c: f64) -> f64 {
         (93.2720950 + 483202.0175233 * c - 0.0036539 * c.powi(2) - 1.0 / 3526000.0 * c.powi(3)
             + 1.0 / 863310000.0 * c.powi(4))
-            % 360.0
+        .rem_euclid(360.0)
     }
 
     fn nutation(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
-        let A = 124.90 - 1934.134 * c + 0.002063 * c * c;
-        let B = 201.11 + 72001.5377 * c + 0.00057 * c * c;
-        -0.004778 * A.to_radians().sin() - 0.0003667 * B.to_radians().sin()
+        let a = 124.90 - 1934.134 * c + 0.002063 * c * c;
+        let b = 201.11 + 72001.5377 * c + 0.00057 * c * c;
+        -0.004778 * a.to_radians().sin() - 0.0003667 * b.to_radians().sin()
     }
 
     /// The phase of the moon at a given Moment, defined as the difference in longitudes
@@ -335,8 +345,8 @@ impl Astronomical {
     pub fn lunar_phase(moment: Moment) -> f64 {
         let t0 = Self::nth_new_moon(0);
         let n = ((moment - t0) / MEAN_SYNODIC_MONTH).round() as i32;
-        let a = (Self::lunar_longitude(moment) - Self::solar_longitude(moment)) % 360.0;
-        let b = 360.0 * (((moment - Self::nth_new_moon(n)) / MEAN_SYNODIC_MONTH) % 1.0);
+        let a = (Self::lunar_longitude(moment) - Self::solar_longitude(moment)).rem_euclid(360.0);
+        let b = 360.0 * (((moment - Self::nth_new_moon(n)) / MEAN_SYNODIC_MONTH).rem_euclid(1.0));
         if (a - b).abs() > 180.0 {
             b
         } else {
@@ -348,20 +358,76 @@ impl Astronomical {
     pub fn solar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let x: [f64; 49] = [
-            403406.0, 195207.0, 119433.0, 112392.0, 3891.0, 2819.0, 1721.0, 660.0, 350.0, 334.0, 314.0, 268.0, 242.0, 234.0, 158.0, 132.0, 129.0, 114.0, 99.0, 93.0, 86.0, 78.0, 72.0, 68.0, 64.0, 46.0, 38.0, 37.0, 32.0, 29.0, 28.0, 27.0, 27.0, 25.0, 24.0, 21.0, 21.0, 20.0, 18.0, 17.0, 14.0, 13.0, 13.0, 13.0, 12.0, 10.0, 10.0, 10.0, 10.0,
+            403406.0, 195207.0, 119433.0, 112392.0, 3891.0, 2819.0, 1721.0, 660.0, 350.0, 334.0,
+            314.0, 268.0, 242.0, 234.0, 158.0, 132.0, 129.0, 114.0, 99.0, 93.0, 86.0, 78.0, 72.0,
+            68.0, 64.0, 46.0, 38.0, 37.0, 32.0, 29.0, 28.0, 27.0, 27.0, 25.0, 24.0, 21.0, 21.0,
+            20.0, 18.0, 17.0, 14.0, 13.0, 13.0, 13.0, 12.0, 10.0, 10.0, 10.0, 10.0,
         ];
         let y: [f64; 49] = [
-            270.54861, 340.19128, 63.91854, 331.26220, 317.843, 86.631, 240.052, 310.26, 247.23, 260.87, 297.82, 343.14, 166.79, 81.53, 3.50, 132.75, 182.95, 162.03, 29.8, 266.4, 249.2, 157.6, 257.8, 185.1, 69.9, 8.0, 197.1, 250.4, 65.3, 162.7, 341.5, 291.6, 98.5, 146.7, 110.0, 5.2, 342.6, 230.9, 256.1, 45.3, 242.9, 115.2, 151.8, 285.3, 53.3, 126.6, 205.7, 85.9, 146.1,
+            270.54861, 340.19128, 63.91854, 331.26220, 317.843, 86.631, 240.052, 310.26, 247.23,
+            260.87, 297.82, 343.14, 166.79, 81.53, 3.50, 132.75, 182.95, 162.03, 29.8, 266.4,
+            249.2, 157.6, 257.8, 185.1, 69.9, 8.0, 197.1, 250.4, 65.3, 162.7, 341.5, 291.6, 98.5,
+            146.7, 110.0, 5.2, 342.6, 230.9, 256.1, 45.3, 242.9, 115.2, 151.8, 285.3, 53.3, 126.6,
+            205.7, 85.9, 146.1,
         ];
         let z: [f64; 49] = [
-            0.9287892, 35999.1376958, 35999.4089666, 35998.7287385, 71998.20261, 71998.4403, 36000.35726, 71997.4812, 32964.4678, -19.4410, 445267.1117, 45036.8840, 3.1008, 22518.4434, -19.9739, 65928.9345, 9038.0293, 3034.7684, 33718.148, 3034.448, -2280.773, 29929.992, 31556.493, 149.588, 9037.750, 107997.405, -4444.176, 151.771, 67555.316, 31556.080, -4561.540, 107996.706, 1221.655, 62894.167, 31437.369, 14578.298, -31931.757, 34777.243, 1221.999, 62894.511, -4442.039, 107997.909, 119.066, 16859.071, -4.578, 26895.292, -39.127, 12297.536, 90073.778,
+            0.9287892,
+            35999.1376958,
+            35999.4089666,
+            35998.7287385,
+            71998.20261,
+            71998.4403,
+            36000.35726,
+            71997.4812,
+            32964.4678,
+            -19.4410,
+            445267.1117,
+            45036.8840,
+            3.1008,
+            22518.4434,
+            -19.9739,
+            65928.9345,
+            9038.0293,
+            3034.7684,
+            33718.148,
+            3034.448,
+            -2280.773,
+            29929.992,
+            31556.493,
+            149.588,
+            9037.750,
+            107997.405,
+            -4444.176,
+            151.771,
+            67555.316,
+            31556.080,
+            -4561.540,
+            107996.706,
+            1221.655,
+            62894.167,
+            31437.369,
+            14578.298,
+            -31931.757,
+            34777.243,
+            1221.999,
+            62894.511,
+            -4442.039,
+            107997.909,
+            119.066,
+            16859.071,
+            -4.578,
+            26895.292,
+            -39.127,
+            12297.536,
+            90073.778,
         ];
-        let mut lambda = 0.000005729577951308232;
+        let mut lambda = 0.0;
         for i in 0..49 {
-            lambda *= x[i] * (y[i] + z[i] * c).to_radians().sin();
+            lambda += x[i] * (y[i] + z[i] * c).to_radians().sin();
         }
+        lambda *= 0.000005729577951308232;
         lambda += 282.7771834 + 36000.76953744 * c;
-        lambda + Self::abberation(c, moment) + Self::nutation(moment)
+        (lambda + Self::abberation(c, moment) + Self::nutation(moment)).rem_euclid(360.0)
     }
 
     fn abberation(c: f64, moment: Moment) -> f64 {
@@ -394,5 +460,107 @@ impl Astronomical {
             result += 1;
         }
         result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn check_astronomy_functions() {
+        // Tests the following test cases given a RataDie and expected values for
+        // Ephemeris Correction, Solar Longitude at 12:00:00 UT,
+        // lunar longitude at 00:00:00 UT, and the Moment of the next New Moon
+        //
+        // Test cases are based off pages 452-453 of _Calendrical Calculations_
+        // by Reingold & Dershowitz
+
+        let rd_vals = [
+            -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+            470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
+            664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
+        ];
+        let expected_ephemeris = [
+            0.214169, 0.143632, 0.114444, 0.107183, 0.069498, 0.057506, 0.044758, 0.017397,
+            0.012796, 0.008869, 0.007262, 0.005979, 0.005740, 0.003875, 0.003157, 0.002393,
+            0.001731, 0.001669, 0.000615, 0.000177, 0.000101, 0.000171, 0.000136, 0.000061,
+            0.000014, 0.000276, 0.000296, 0.000302, 0.000302, 0.000675, 0.000712, 0.000963,
+            0.002913,
+        ];
+        let expected_solar_long = [
+            119.473431, 254.248961, 181.435996, 188.663922, 289.091566, 59.119741, 228.314554,
+            34.460769, 63.187995, 2.457591, 350.475934, 13.498220, 37.403920, 81.028130,
+            313.860493, 19.954430, 176.059431, 344.922951, 79.964921, 99.302317, 121.535304,
+            88.567428, 129.289884, 6.146910, 28.251993, 151.780699, 185.945867, 28.555607,
+            193.347892, 357.151254, 336.170692, 228.184879, 116.439352,
+        ];
+        let expected_lunar_long = [
+            244.853905, 208.856738, 213.746842, 292.046243, 156.819014, 108.055632, 39.356097,
+            98.565851, 332.958296, 92.259651, 78.132029, 274.946995, 128.362844, 89.518450,
+            24.607322, 53.485956, 187.898520, 320.172362, 314.042566, 145.474063, 185.030507,
+            142.189132, 253.743375, 151.648685, 287.987743, 25.626707, 290.288300, 189.913142,
+            284.931730, 152.339044, 51.662265, 26.6820606, 175.500822,
+        ];
+        let expected_next_new_moon = [
+            -214174.605828,
+            -61382.995328,
+            25495.809776,
+            49238.502448,
+            171318.435313,
+            210180.691849,
+            253442.859367,
+            369763.746413,
+            400091.578343,
+            434376.578106,
+            452627.191972,
+            470169.578360,
+            473858.853276,
+            507878.666842,
+            524179.247062,
+            544702.753873,
+            567146.513181,
+            569479.203258,
+            601727.033557,
+            613449.762129,
+            626620.369801,
+            645579.076748,
+            664242.886718,
+            671418.970538,
+            694807.563371,
+            704433.491182,
+            708863.597000,
+            709424.404929,
+            709602.082686,
+            727291.209400,
+            728737.447691,
+            744329.573999,
+            764676.191273,
+        ];
+        for i in 0..33 {
+            let moment = Moment::new(rd_vals[i] as f64);
+
+            // Checking ephemeris correction
+            let ephemeris = Astronomical::ephemeris_correction(moment);
+            // The ephemeris correction calculation is acceptable if accurate within 0.0005
+            let expected_ephemeris_value = expected_ephemeris[i];
+            assert!(ephemeris > expected_ephemeris_value  - 0.0005, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+            assert!(ephemeris < expected_ephemeris_value + 0.0005, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+
+            // Checking solar_longitude
+            let solar_long = Astronomical::solar_longitude(moment + 0.5);
+            // The solar longitude calculation is acceptable if accurate within +/- 2 arcminutes in general, or approx. 0.033 degrees
+            let expected_solar_long_value = expected_solar_long[i];
+            assert!(solar_long > expected_solar_long_value - 0.033, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
+            assert!(solar_long < expected_solar_long_value + 0.033, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
+
+            // Checking lunar_longitude
+            let lunar_long = Astronomical::lunar_longitude(moment);
+            // The lunar longitude calculation is acceptable if accurate within +/- 2 arcminutes in general, or approx. 0.033 degrees
+            let expected_lunar_long_value = expected_lunar_long[i];
+            assert!(lunar_long > expected_lunar_long_value - 0.033, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
+            assert!(lunar_long < expected_lunar_long_value + 0.033, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
+        }
     }
 }
