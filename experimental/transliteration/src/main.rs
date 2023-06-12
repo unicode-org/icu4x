@@ -1,7 +1,5 @@
 extern crate core;
 
-use std::fmt::Display;
-use std::io::Write;
 use combine::error::{ParseError, StdParseResult};
 use combine::parser::char::{char, letter, spaces, string};
 use combine::parser::combinator::recognize;
@@ -13,8 +11,12 @@ use combine::{
     attempt, between, choice, many, many1, optional, parser, satisfy, sep_by, value, EasyParser,
     Parser,
 };
+use std::fmt::Display;
+use std::io::Write;
 
 mod dfaparsing;
+mod compile;
+mod translit;
 
 const RULES: &str = r#"
 $AE = [Ä {A \u0308}];
@@ -43,6 +45,13 @@ a}[:Lowercase:]→Ae;
 $AE → AE;
 $OE → OE;
 $UE → UE;
+
+'hello ' { world } > | @@@@@@ welt ;
+{ 'hello welt' } > 'hallo welt' ;
+
+'' > '"' ;
+
+\>a\<''\' > ;
 
 "#;
 
@@ -90,18 +99,55 @@ struct TransliterationRule {
 
 fn pretty_print_rules(rules: &[Rule]) {
     fn string_from_many_literals(v: &[UnicodeSetOrLiteral]) -> String {
-        v.into_iter().map(|s| format!("{s}")).collect::<Vec<_>>().join("")
+        v.into_iter()
+            .map(|s| format!("{s}"))
+            .collect::<Vec<_>>()
+            .join("")
     }
 
     println!("[");
     for rule in rules {
-        let source_ante = rule.source.ante.as_ref().map(|s| string_from_many_literals(&s.0)).unwrap_or("".into());
-        let source_post = rule.source.post.as_ref().map(|s| string_from_many_literals(&s.0)).unwrap_or("".into());
-        let target_ante = rule.target.ante.as_ref().map(|s| string_from_many_literals(&s.0)).unwrap_or("".into());
-        let target_post = rule.target.post.as_ref().map(|s| string_from_many_literals(&s.0)).unwrap_or("".into());
+        let source_ante = rule
+            .source
+            .ante
+            .as_ref()
+            .map(|s| string_from_many_literals(&s.0))
+            .unwrap_or("".into());
+        let source_post = rule
+            .source
+            .post
+            .as_ref()
+            .map(|s| string_from_many_literals(&s.0))
+            .unwrap_or("".into());
+        let target_ante = rule
+            .target
+            .ante
+            .as_ref()
+            .map(|s| string_from_many_literals(&s.0))
+            .unwrap_or("".into());
+        let target_post = rule
+            .target
+            .post
+            .as_ref()
+            .map(|s| string_from_many_literals(&s.0))
+            .unwrap_or("".into());
 
-        let source_key = rule.source.key.0.iter().map(|Literal(s)| format!("{s}")).collect::<Vec<_>>().join("");
-        let target_key = rule.target.key.0.iter().map(|Literal(s)| format!("{s}")).collect::<Vec<_>>().join("");
+        let source_key = rule
+            .source
+            .key
+            .0
+            .iter()
+            .map(|Literal(s)| format!("{s}"))
+            .collect::<Vec<_>>()
+            .join("");
+        let target_key = rule
+            .target
+            .key
+            .0
+            .iter()
+            .map(|Literal(s)| format!("{s}"))
+            .collect::<Vec<_>>()
+            .join("");
         println!("  {source_ante} {{ {source_key} }} {source_post} → {target_ante} {{ {target_key} }} {target_post}", );
     }
     println!("]");
@@ -261,7 +307,11 @@ where
     let explicit_ante = (context_like(), spaces(), char('{')).map(|(context, _, _)| Some(context));
     let ante = attempt(empty_ante.or(explicit_ante)).or(value(None));
 
-    let key = between(spaces(), spaces(), many1(between(spaces(), spaces(), literal())).or(value(vec![Literal("".to_string())])));
+    let key = between(
+        spaces(),
+        spaces(),
+        many1(between(spaces(), spaces(), literal())).or(value(vec![Literal("".to_string())])),
+    );
 
     let empty_post = char('}').map(|_| None);
     let explicit_post = (char('}'), spaces(), context_like()).map(|(_, _, context)| Some(context));

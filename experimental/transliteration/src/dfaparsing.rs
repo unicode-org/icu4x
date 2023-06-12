@@ -1,8 +1,10 @@
+use crate::dfaparsing::missingapis::unescape;
 use core::fmt;
 use std::fmt::{Display, Formatter};
 use std::iter::Peekable;
-use crate::dfaparsing::missingapis::unescape;
 // use super::*;
+
+// TODO: parse transform rules and filter rules
 
 macro_rules! t {
     () => (
@@ -29,7 +31,9 @@ fn skip_whitespace(it: &mut t!()) {
     // Skip ascii_whitespace and comments
     while let Some(&c) = it.peek() {
         match c {
-            c if c.is_ascii_whitespace() => {it.next();},
+            c if c.is_ascii_whitespace() => {
+                it.next();
+            }
             '#' => {
                 while let Some(&c) = it.peek() {
                     if c == '\n' {
@@ -37,20 +41,19 @@ fn skip_whitespace(it: &mut t!()) {
                     }
                     it.next();
                 }
-            },
+            }
             _ => break,
         }
     }
-
 }
 
 macro_rules! pl {
-    () => (
+    () => {
         ParseLocation {
             file: file!(),
             line: line!(),
         }
-    );
+    };
 }
 
 mod missingapis {
@@ -88,7 +91,6 @@ mod missingapis {
     //  * [:Script=L:]
     //  Will need to disambiguate these cases.
     // TODO: Continue parsing UnicodeSets. Figure out a good way to handle character escaping. Check the "quoted" rule in the syntax: https://www.unicode.org/reports/tr35/#Unicode_Sets
-    // TODO: also parse transform rules and filter rules
 
     fn parse_perl_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
         // parses perl-style \p{x=y} or \p{x} unicode sets
@@ -113,8 +115,8 @@ mod missingapis {
                 None => return Err(ParseError::new(pl!(), PEK::Legacy)),
                 Some(']') if !escaped => {
                     set.push(']');
-                    break
-                },
+                    break;
+                }
                 Some('\\') => escaped = true,
                 Some(mut c) => {
                     // handle special escape sequences
@@ -123,7 +125,7 @@ mod missingapis {
                             'n' => c = '\n',
                             'r' => c = '\r',
                             't' => c = '\t',
-                            _ => {},
+                            _ => {}
                         }
                     }
                     escaped = false;
@@ -173,8 +175,8 @@ impl core::fmt::Debug for ParseLocation {
     }
 }
 
-use ParseLocation as PL;
 use ParseErrorKind as PEK;
+use ParseLocation as PL;
 
 #[derive(Debug, Clone)]
 pub(super) struct ParseError {
@@ -193,25 +195,80 @@ type Literal = String;
 type UnicodeSet = String;
 
 #[derive(Debug, Clone)]
+pub(super) struct Cursor {
+    pub(super) pre_spacing: u32,
+    pub(super) post_spacing: u32,
+}
+
+#[derive(Debug, Clone)]
 pub(super) enum PatternElement {
     Literal(Literal),
     UnicodeSet(UnicodeSet),
     Variable(String),
+    Cursor(Cursor),
 }
 
 impl PatternElement {
     fn string(&self) -> String {
         match self {
-            Self::Literal(l) => l.clone(),
+            Self::Literal(l) => {
+                // todo: refactor this function into one pass
+                // check if any char needs escaping
+                if l.chars().any(|c| c == '\'') {
+                    // cannot escape in quoted literals, escape using \
+                    let mut res = String::new();
+                    for c in l.chars() {
+                        if !legal_top_level_char(c) {
+                            res.push('\\');
+                        }
+                        res.push(c);
+                    }
+                    res
+                } else if !l.chars().all(legal_top_level_char) {
+                    // needs escaping, can be escaped with quotes
+                    format!("'{}'", l)
+                } else {
+                    // no escaping needed
+                    l.clone()
+                }
+            }
             Self::UnicodeSet(u) => u.clone(),
             Self::Variable(v) => format!("${}", v),
+            Self::Cursor(c) => {
+                format!(
+                    "{}|{}",
+                    "@".repeat(c.pre_spacing as usize),
+                    "@".repeat(c.post_spacing as usize)
+                )
+            }
         }
     }
 }
 
 fn parse_quoted_literal(it: &mut t!()) -> Result<Literal> {
     dbg!(it.peek());
-    unimplemented!()
+    // No escaping in quoted literals?
+    let mut literal = String::new();
+    match it.next() {
+        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+        Some('\'') => {}
+        Some(c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+    }
+
+    while let Some(c) = it.next() {
+        if c == '\'' {
+            break;
+        } else {
+            literal.push(c);
+        }
+    }
+
+    // special case: '' is an escaped single quote
+    if literal.is_empty() {
+        literal.push('\'');
+    }
+
+    Ok(literal)
 }
 
 fn parse_unquoted_literal(it: &mut t!()) -> Result<Literal> {
@@ -257,7 +314,7 @@ fn parse_variable(it: &mut t!()) -> Result<String> {
     dbg!(it.peek());
     let mut name = String::new();
     match it.next() {
-        Some('$') => {},
+        Some('$') => {}
         Some(c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
         None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
     }
@@ -279,14 +336,48 @@ fn parse_variable(it: &mut t!()) -> Result<String> {
             Some(&c) if missingapis::is_id_continue(c) => {
                 it.next();
                 name.push(c);
-            },
+            }
             _ => break,
         }
     }
 
-
     Ok(name)
+}
 
+fn parse_cursor(it: &mut t!()) -> Result<Cursor> {
+    dbg!(it.peek());
+    let mut pre_spacing = 0;
+    let mut post_spacing = 0;
+    match it.peek() {
+        Some(&'@') | Some(&'|') => {}
+        Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+    }
+
+    skip_whitespace(it);
+    while let Some('@') = it.peek() {
+        it.next();
+        skip_whitespace(it);
+        pre_spacing += 1;
+    }
+
+    match it.next() {
+        Some('|') => {}
+        Some(c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+    }
+
+    skip_whitespace(it);
+    while let Some('@') = it.peek() {
+        it.next();
+        skip_whitespace(it);
+        post_spacing += 1;
+    }
+
+    Ok(Cursor {
+        pre_spacing,
+        post_spacing,
+    })
 }
 
 fn parse_pattern_element(it: &mut t!()) -> Result<PatternElement> {
@@ -295,28 +386,27 @@ fn parse_pattern_element(it: &mut t!()) -> Result<PatternElement> {
         None => Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
         Some(&'$') => Ok(PatternElement::Variable(parse_variable(it)?)),
         Some(&'[') => Ok(PatternElement::UnicodeSet(parse_unicode_set(it)?)),
+        Some(&'@') | Some(&'|') => Ok(PatternElement::Cursor(parse_cursor(it)?)),
         Some(&'\\') => {
             // need lookahead to decide between \p{x=y} (unicode set) and \escape (unqouted literal)
             let mut lookahead_it = it.clone();
-            // consume '\\'
+            // consume \
             let _ = lookahead_it.next();
             match lookahead_it.next() {
                 None => Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
                 Some('p') => {
                     // Perl property syntax
                     Ok(PatternElement::UnicodeSet(parse_unicode_set(it)?))
-                },
-                Some(_) => {
-                    Ok(PatternElement::Literal(parse_literal(it)?))
-                },
+                }
+                Some(_) => Ok(PatternElement::Literal(parse_literal(it)?)),
             }
-        },
+        }
         Some(_) => Ok(PatternElement::Literal(parse_literal(it)?)),
     }
 }
 
 #[derive(Debug, Clone)]
-pub(super) struct Pattern(Vec<PatternElement>);
+pub(super) struct Pattern(pub(super) Vec<PatternElement>);
 
 impl Pattern {
     fn flat_empty(self) -> Option<Self> {
@@ -333,7 +423,15 @@ impl Pattern {
 }
 
 fn is_pattern_end(c: char) -> bool {
-    c == ';' || c == '>' || c == '<' || c == '→' || c == '←' || c == '↔' || c == '=' || c == '{' || c == '}'
+    c == ';'
+        || c == '>'
+        || c == '<'
+        || c == '→'
+        || c == '←'
+        || c == '↔'
+        || c == '='
+        || c == '{'
+        || c == '}'
 }
 
 fn parse_pattern(it: &mut t!()) -> Result<Pattern> {
@@ -353,13 +451,15 @@ fn parse_pattern(it: &mut t!()) -> Result<Pattern> {
 
 #[derive(Debug, Clone)]
 pub(super) struct HalfRule {
-    ante: Option<Pattern>,
-    key: Pattern,
-    post: Option<Pattern>,
+    pub(super) ante: Option<Pattern>,
+    pub(super) key: Pattern,
+    pub(super) post: Option<Pattern>,
     /* add cursor here, e.g. index into Pattern. that would imply a literal like "ab > aa|b" would
     be split up into Pattern([aa, b]) and cursor = 1
     a cursor could also be a special patternelement in the uncompiled rules, the same for spacing
     or spacing could be a property of the pattern element, like cursor.spacing_before = 0 and .spacing_after = 0 by default
+    // TODO: compilation will need to do some runtime checks, e.g., the target key of a rule can never be a set,
+    //       cursors may not exist in contexts or the source, spacing can only happen on either end of the target (e.g. a|@a is illegal, as is @|a)
     */
 }
 
@@ -391,22 +491,30 @@ fn parse_half_rule(it: &mut t!()) -> Result<HalfRule> {
     let mut post = None;
 
     loop {
+        // loop invariant: the state after each iteration must represent a valid half rule, i.e.,
+        // if the half rule is over, we are allowed to return the current state as valid half rule
         match it.peek() {
             None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
             Some(&c) if is_half_rule_end(c) => {
-                return Ok(HalfRule { ante: ante.unwrap_or(None), key, post: post.unwrap_or(None) });
-            },
+                // the half rule is over
+                return Ok(HalfRule {
+                    ante: ante.unwrap_or(None),
+                    key,
+                    post: post.unwrap_or(None),
+                });
+            }
             Some(&'{') if ante.is_none() && post.is_none() => {
                 // the pattern that we parsed in the beginning was actually the ante, we're parsing the key now
                 // also, post must not have been parsed yet. that ensures rules like "} x { > ;" throw an error
                 it.next();
                 ante = Some(key.flat_empty());
                 key = parse_pattern(it)?;
-            },
+            }
             Some(&'}') if post.is_none() => {
+                // the next pattern we parse is the post context
                 it.next();
                 post = Some(parse_pattern(it)?.flat_empty());
-            },
+            }
             Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
         }
     }
@@ -414,11 +522,11 @@ fn parse_half_rule(it: &mut t!()) -> Result<HalfRule> {
 
 #[derive(Debug, Clone)]
 pub(super) struct VariableDef {
-    name: String,
-    pattern: Pattern,
+    pub(super) name: String,
+    pub(super) pattern: Pattern,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub(super) enum Direction {
     Forward,
     Reverse,
@@ -446,11 +554,11 @@ fn parse_direction(it: &mut t!()) -> Result<Direction> {
                 Some(&'>') => {
                     it.next();
                     return Ok(Direction::Bidirectional);
-                },
-                _ => {},
+                }
+                _ => {}
             }
             Ok(Direction::Reverse)
-        },
+        }
         Some('→') => Ok(Direction::Forward),
         Some('←') => Ok(Direction::Reverse),
         Some('↔') => Ok(Direction::Bidirectional),
@@ -471,20 +579,20 @@ fn parse_rule_kind(it: &mut t!()) -> Result<RuleKind> {
         Some(&'=') => {
             it.next();
             Ok(RuleKind::VariableDef)
-        },
+        }
         Some(&('<' | '>' | '→' | '←' | '↔')) => {
             let dir = parse_direction(it)?;
             Ok(RuleKind::Conversion(dir))
-        },
+        }
         Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
     }
 }
 
 #[derive(Debug, Clone)]
 pub(super) struct ConversionRule {
-    source: HalfRule,
-    target: HalfRule,
-    dir: Direction,
+    pub(super) source: HalfRule,
+    pub(super) target: HalfRule,
+    pub(super) dir: Direction,
 }
 
 #[derive(Debug, Clone)]
@@ -506,13 +614,17 @@ fn parse_rule(it: &mut t!()) -> Result<Rule> {
     // stopped because a is_half_rule_end char appeared, should only be ;
     match it.next() {
         None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
-        Some(';') => {},
+        Some(';') => {}
         Some(c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
     }
     match rule_kind {
         RuleKind::VariableDef => {
             // perform some runtime checks for variable defs
-            if half_rule1.ante.is_some() || half_rule1.post.is_some() || half_rule2.ante.is_some() || half_rule2.post.is_some() {
+            if half_rule1.ante.is_some()
+                || half_rule1.post.is_some()
+                || half_rule2.ante.is_some()
+                || half_rule2.post.is_some()
+            {
                 return Err(ParseError::new(pl!(), PEK::Legacy));
             }
             if half_rule1.key.0.len() != 1 {
@@ -527,14 +639,12 @@ fn parse_rule(it: &mut t!()) -> Result<Rule> {
                 name,
                 pattern: half_rule2.key,
             }))
-        },
-        RuleKind::Conversion(dir) => {
-            Ok(Rule::ConversionRule(ConversionRule {
-                source: half_rule1,
-                target: half_rule2,
-                dir,
-            }))
-        },
+        }
+        RuleKind::Conversion(dir) => Ok(Rule::ConversionRule(ConversionRule {
+            source: half_rule1,
+            target: half_rule2,
+            dir,
+        })),
     }
 }
 
@@ -563,12 +673,12 @@ pub(super) fn pretty_print_rules(rules: &[Rule]) {
                 let target = &rule.target;
                 let dir = &rule.dir;
                 eprintln!("  {source} {dir} {target} ;");
-            },
+            }
             Rule::VariableDef(rule) => {
                 let name = &rule.name;
                 let pattern = &rule.pattern.string();
                 eprintln!("  ${name} = {pattern} ;");
-            },
+            }
         }
     }
     eprintln!("]");
