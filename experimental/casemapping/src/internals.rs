@@ -156,28 +156,20 @@ impl<'data> CaseMappingInternals<'data> {
         exceptions: &[u16],
         unfold: &[u16],
     ) -> Result<Self, Error> {
-        use zerofrom::ZeroFrom;
-        let trie_index = ZeroVec::alloc_from_slice(trie_index);
-        let mut trie_data = trie_data
-            .iter()
-            .map(|&i| CaseMappingData::try_from_icu_integer(i).unwrap())
-            .collect::<ZeroVec<_>>();
-        // Unfortunately, CaseMappingExceptions contains resolved `char` values for simple_case
-        // whereas ICU4C uses deltas. To resolve these deltas, we need to know the original `char`
-        // which isn't present in the exceptions data. We need to construct a temporary trie
-        // to query and then throw it away
-        let trie = CodePointTrie::try_new(
-            trie_header,
-            ZeroFrom::zero_from(&trie_index),
-            ZeroFrom::zero_from(&trie_data),
-        )?;
-
-        let exceptions_builder = CaseMappingExceptionsBuilder::new(exceptions, &trie);
+        let exceptions_builder = CaseMappingExceptionsBuilder::new(exceptions);
         let (exceptions, idx_map) = exceptions_builder.build()?;
 
-        trie_data.for_each_mut(|data| {
-            *data = data.with_updated_exception(&idx_map);
-        });
+        let trie_index = ZeroVec::alloc_from_slice(trie_index);
+
+        let trie_data = trie_data
+            .iter()
+            .map(|&i| {
+                CaseMappingData::try_from_icu_integer(i)
+                    .unwrap()
+                    .with_updated_exception(&idx_map)
+            })
+            .collect::<ZeroVec<_>>();
+
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
 
         let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
@@ -246,7 +238,7 @@ impl<'data> CaseMappingInternals<'data> {
             let idx = data.exception_index();
             let exception = self.exceptions.get(idx);
             if data.is_relevant_to(kind) {
-                if let Some(simple) = exception.get_char_slot(ExceptionSlot::Delta) {
+                if let Some(simple) = exception.get_simple_case_slot_for(c) {
                     return simple;
                 }
             }
@@ -294,9 +286,7 @@ impl<'data> CaseMappingInternals<'data> {
                 c
             } else if data.is_upper_or_title() && exception.has_slot(ExceptionSlot::Delta) {
                 // unwrap_or case should never happen but best to avoid panics
-                exception
-                    .get_char_slot(ExceptionSlot::Delta)
-                    .unwrap_or('\0')
+                exception.get_simple_case_slot_for(c).unwrap_or('\0')
             } else if let Some(slot_char) = exception.slot_char_for_kind(MappingKind::Fold) {
                 slot_char
             } else {
@@ -369,7 +359,7 @@ impl<'data> CaseMappingInternals<'data> {
                 }
             }
             if data.is_relevant_to(kind) {
-                if let Some(simple) = exception.get_char_slot(ExceptionSlot::Delta) {
+                if let Some(simple) = exception.get_simple_case_slot_for(c) {
                     return FullMappingResult::CodePoint(simple);
                 }
             }
@@ -744,7 +734,7 @@ impl<'data> CaseMappingInternals<'data> {
                 set.add_char(simple);
             }
         }
-        if let Some(simple) = exception.get_char_slot(ExceptionSlot::Delta) {
+        if let Some(simple) = exception.get_simple_case_slot_for(c) {
             set.add_char(simple);
         }
 

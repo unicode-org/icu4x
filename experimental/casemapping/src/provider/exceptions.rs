@@ -15,6 +15,9 @@ use std::borrow::Cow;
 use zerovec::ule::AsULE;
 use zerovec::VarZeroVec;
 
+const SURROGATES_START: u32 = 0xD800;
+const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
+
 /// This represents case mapping exceptions that can't be represented as a delta applied to
 /// the original code point. The codepoint
 /// trie in CaseMapping stores indices into this VarZeroVec.
@@ -22,7 +25,7 @@ use zerovec::VarZeroVec;
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_casemapping::provider),
+    databake(path = icu_casemapping::provider::exceptions),
 )]
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct CaseMappingExceptions<'data> {
@@ -85,7 +88,11 @@ pub struct Exception<'a> {
     /// Format : `[char slots] [optional closure length] [ closure slot ] [ full mappings data ]`
     ///
     /// For each set SlotPresence bit, except for the two stringy slots (Closure/FullMapping),
-    /// this will have one entry in the string, packed together
+    /// this will have one entry in the string, packed together.
+    ///
+    /// Note that the simple_case delta is stored as a u32 normalized to a `char`, where u32s
+    /// which are from or beyond the surrogate range 0xD800-0xDFFF are stored as chars
+    /// starting from 0xE000. The sign is stored in bits.negative_delta.
     ///
     /// If both Closure/FullMapping are present, the next char will be the length of the closure slot,
     /// bisecting the rest of the data.
@@ -128,6 +135,41 @@ impl ExceptionULE {
         let previous_slots = self.slot_presence.0 & previous_slot_mask;
         let slot_num = previous_slots.count_ones() as usize;
         self.data.chars().nth(slot_num)
+    }
+
+    /// Get the `simple_case` delta (i.e. the `delta` slot), given the character
+    /// this data belongs to.
+    ///
+    /// Normalizes the delta from char-format to u32 format
+    ///
+    /// Does *not* handle the sign of the delta; see self.bits.negative_delta
+    fn get_simple_case_delta(&self) -> Option<u32> {
+        let delta_ch = self.get_char_slot(ExceptionSlot::Delta)?;
+        let mut delta = u32::from(delta_ch);
+        // We "fill in" the surrogates range by offsetting deltas greater than it
+        if delta >= SURROGATES_START {
+            delta -= SURROGATES_LEN;
+        }
+        Some(delta)
+    }
+
+    /// Get the `simple_case` value (i.e. the `delta` slot), given the character
+    /// this data belongs to.
+    ///
+    /// The data is stored as a delta so the character must be provided.
+    ///
+    /// The data cannot be stored directly as a character because the trie is more
+    /// compact with adjacent characters sharing deltas.
+    pub(crate) fn get_simple_case_slot_for(&self, ch: char) -> Option<char> {
+        let delta = self.get_simple_case_delta()?;
+        let mut delta = i32::try_from(delta).ok()?;
+        if self.bits.negative_delta() {
+            delta = -delta;
+        }
+
+        let new_ch = i32::try_from(u32::from(ch)).ok()? + delta;
+
+        char::try_from(u32::try_from(new_ch).ok()?).ok()
     }
 
     /// Returns *all* the data in the closure/full slots, including length metadata
@@ -270,7 +312,7 @@ impl ExceptionULE {
         let casefold = self.get_char_slot(ExceptionSlot::Fold);
         let uppercase = self.get_char_slot(ExceptionSlot::Upper);
         let titlecase = self.get_char_slot(ExceptionSlot::Title);
-        let simple_case = self.get_char_slot(ExceptionSlot::Delta);
+        let simple_case_delta = self.get_simple_case_delta();
         let closure = self.get_closure_slot().map(Into::into);
         let full = self.get_all_fullmapping_slots();
 
@@ -280,7 +322,7 @@ impl ExceptionULE {
             casefold,
             uppercase,
             titlecase,
-            simple_case,
+            simple_case_delta,
             closure,
             full,
         }
@@ -294,11 +336,6 @@ impl ExceptionULE {
                 "double-width-slots should not be used in ICU4C",
             ));
         }
-        if self.bits.negative_delta() {
-            return Err(Error::Validation(
-                "negative-delta should not be used in ICU4C",
-            ));
-        }
 
         // just run all of the slot getters at once and then check
         let decoded = self.decode();
@@ -308,12 +345,15 @@ impl ExceptionULE {
             (ExceptionSlot::Fold, &decoded.casefold),
             (ExceptionSlot::Upper, &decoded.uppercase),
             (ExceptionSlot::Title, &decoded.titlecase),
-            (ExceptionSlot::Delta, &decoded.simple_case),
         ] {
             if self.has_slot(slot) && decoded_slot.is_none() {
                 // decoding hit GIGO behavior, oops!
                 return Err(Error::Validation("Slot decoding failed"));
             }
+        }
+        if self.has_slot(ExceptionSlot::Delta) && decoded.simple_case_delta.is_none() {
+            // decoding hit GIGO behavior, oops!
+            return Err(Error::Validation("Slot decoding failed"));
         }
 
         if self.has_slot(ExceptionSlot::Closure) && decoded.closure.is_none() {
@@ -381,7 +421,8 @@ pub struct DecodedException<'a> {
     pub casefold: Option<char>,
     pub uppercase: Option<char>,
     pub titlecase: Option<char>,
-    pub simple_case: Option<char>,
+    /// The simple casefold delta. Its sign is stored in bits.negative_delta
+    pub simple_case_delta: Option<u32>,
     pub closure: Option<Cow<'a, str>>,
     /// The four full-mappings strings, indexed by MappingKind u8 value
     pub full: Option<[Cow<'a, str>; 4]>,
@@ -408,9 +449,14 @@ impl<'a> DecodedException<'a> {
             slot_presence.add_slot(ExceptionSlot::Title);
             data.push(titlecase)
         }
-        if let Some(simple_case) = self.simple_case {
+        if let Some(mut simple_case_delta) = self.simple_case_delta {
             slot_presence.add_slot(ExceptionSlot::Delta);
-            data.push(simple_case)
+
+            if simple_case_delta >= SURROGATES_START {
+                simple_case_delta += SURROGATES_LEN;
+            }
+            let simple_case_delta = char::try_from(simple_case_delta).unwrap();
+            data.push(simple_case_delta)
         }
 
         if let Some(ref closure) = self.closure {
@@ -475,11 +521,12 @@ mod tests {
         });
         test_roundtrip_once(DecodedException {
             titlecase: Some('X'),
+            simple_case_delta: Some(0xE999),
             closure: Some("hello world".into()),
             ..Default::default()
         });
         test_roundtrip_once(DecodedException {
-            simple_case: Some('X'),
+            simple_case_delta: Some(10),
             closure: Some("hello world".into()),
             full: Some(["你好世界".into(), "".into(), "hi".into(), "å".into()]),
             ..Default::default()

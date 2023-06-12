@@ -3,12 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::Error;
-use crate::provider::data::CaseMappingData;
 use crate::provider::exception_header::{
     ExceptionBits, ExceptionBitsULE, ExceptionSlot, SlotPresence,
 };
 use crate::provider::exceptions::{CaseMappingExceptions, DecodedException};
-use icu_collections::codepointtrie::CodePointTrie;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use zerovec::ule::{AsULE, ULE};
@@ -105,7 +103,6 @@ impl AsULE for ExceptionHeader {
 // update the data stored in the code point trie.
 pub struct CaseMappingExceptionsBuilder<'a> {
     raw_data: &'a [u16],
-    casemapping_data: &'a CodePointTrie<'a, CaseMappingData>,
     raw_data_idx: usize,
     double_slots: bool,
 }
@@ -117,18 +114,17 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
 
     const CLOSURE_MAX_LENGTH: u32 = 0xf;
 
-    pub fn new(
-        raw_data: &'a [u16],
-        casemapping_data: &'a CodePointTrie<'a, CaseMappingData>,
-    ) -> Self {
+    pub fn new(raw_data: &'a [u16]) -> Self {
         Self {
             raw_data,
             raw_data_idx: 0,
-            casemapping_data,
             double_slots: false,
         }
     }
 
+    fn done(&self) -> bool {
+        self.raw_data_idx >= self.raw_data.len()
+    }
     fn read_raw(&mut self) -> Result<u16, Error> {
         let result = self
             .raw_data
@@ -185,12 +181,8 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
         // (Other bits are reserved.) The closure string itself is encoded as UTF16 and
         // stored following the full mappings data (if it exists) or the final optional
         // slot.
-        for range in self.casemapping_data.iter_ranges() {
-            let datum = range.value;
-            if !datum.has_exception() {
-                continue;
-            }
-            self.raw_data_idx = datum.exception_index().into();
+        while !self.done() {
+            let old_idx = self.raw_data_idx as u16;
 
             let mut exception = DecodedException::default();
 
@@ -217,26 +209,9 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
                 }
             }
             if header.has_slot(ExceptionSlot::Delta) {
-                let mut delta: i32 = i32::try_from(self.read_slot()?).unwrap();
-                if exception.bits.negative_delta {
-                    delta = -delta;
-                }
-                // `delta` only makes sense if the exception is for a single character
-                // range.range is a RangeInclusive, so we check that it has len 1 by checking start == end
-                if range.range.start() == range.range.end() {
-                    let value = *range.range.start() as i32 + delta;
-                    if let Ok(ch) = char::try_from(value as u32) {
-                        exception.simple_case = Some(ch)
-                    } else {
-                        return Err(Error::Validation(
-                            "Found non-char value in casemapping exceptions data",
-                        ));
-                    }
-                } else {
-                    return Err(Error::Validation(
-                        "Found delta value for range of casemapping exceptions data",
-                    ));
-                }
+                let delta = self.read_slot()?;
+
+                exception.simple_case_delta = Some(delta)
             }
 
             // Read the closure and full mappings slots, if they exist.
@@ -289,14 +264,13 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
             exception.bits = header.bits;
             // unused bits in ICU4X
             exception.bits.double_width_slots = false;
-            exception.bits.negative_delta = false;
 
             let new_exception_index = if let Ok(idx) = u16::try_from(exceptions.len()) {
                 idx
             } else {
                 return Err(Error::Validation("More than u16 exceptions"));
             };
-            idx_map.insert(datum.exception_index(), new_exception_index);
+            idx_map.insert(old_idx, new_exception_index);
             exceptions.push(exception.encode());
         }
 
