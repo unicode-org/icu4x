@@ -12,7 +12,7 @@ macro_rules! t {
     );
 }
 
-fn legal_top_level_char(c: char) -> bool {
+pub(super) fn legal_top_level_char(c: char) -> bool {
     // As specified in: https://unicode.org/reports/tr35/tr35-general.html#Transform_Rules_Syntax
     // "All of the ASCII characters except numbers and letters are reserved for use in the rule syntax, as are the characters →, ←, ↔."
     (c.is_ascii() && c.is_ascii_alphanumeric())

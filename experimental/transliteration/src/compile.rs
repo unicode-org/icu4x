@@ -80,7 +80,7 @@ impl Compiler {
 
     fn compile_target_pattern(&self, parsed_pattern: &[prs::PatternElement]) -> Result<translit::Replacer> {
         let mut replacement = String::new();
-        let mut cursor_from_beginning = 0;
+        let mut cursor_from_beginning = None;
         for (idx, element) in parsed_pattern.into_iter().enumerate() {
             match element {
                 prs::PatternElement::Literal(s) => {
@@ -99,7 +99,12 @@ impl Compiler {
                     replacement.push_str(s);
                 }
                 prs::PatternElement::Cursor(cursor) => {
+                    if cursor_from_beginning.is_some() {
+                        // can only have one cursor
+                        return Err(CompileError::default(sl!()));
+                    }
                     if cursor.pre_spacing != 0 && cursor.post_spacing != 0 {
+                        // a cursor with both pre and post spacing ( ..@|@.. ) is not allowed
                         return Err(CompileError::default(sl!()));
                     }
                     if cursor.post_spacing != 0 && !replacement.is_empty() {
@@ -111,7 +116,7 @@ impl Compiler {
                         return Err(CompileError::default(sl!()));
                     }
                     let curr_size = replacement.chars().count() as i32;
-                    cursor_from_beginning = curr_size + cursor.pre_spacing as i32 - cursor.post_spacing as i32;
+                    cursor_from_beginning = Some(curr_size + cursor.pre_spacing as i32 - cursor.post_spacing as i32);
                 }
                 prs::PatternElement::UnicodeSet(_) => {
                     return Err(CompileError::default(sl!()));
@@ -119,7 +124,7 @@ impl Compiler {
             }
         }
 
-        let cursor_from_end = cursor_from_beginning - replacement.chars().count() as i32;
+        let cursor_from_end = cursor_from_beginning.map(|cfb| cfb - replacement.chars().count() as i32).unwrap_or(0);
         Ok(translit::Replacer {
             replacement,
             cursor: cursor_from_end,
