@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::helpers::div_rem_euclid;
 /// This file contains important structs and functions relating to location,
 /// time, and astronomy; these are intended for calender calculations and based off
 /// _Calendrical Calculations_ by Reingold & Dershowitz.
@@ -46,9 +47,9 @@ impl Location {
 
     /// Get the direction from loc1 to loc2 in degrees east of due north
     pub fn direction(loc1: Location, loc2: Location) -> f32 {
-        let y = (loc2.longitude - loc1.longitude).sin();
-        let x = (loc1.latitude.cos() * loc2.latitude.tan())
-            - (loc1.latitude.sin() * (loc1.longitude - loc2.longitude).cos());
+        let y = (loc2.longitude - loc1.longitude).to_radians().sin();
+        let x = (loc1.latitude.to_radians().cos() * loc2.latitude.to_radians().tan())
+            - (loc1.latitude.to_radians().sin() * (loc1.longitude - loc2.longitude).to_radians().cos());
         if (x == y && y == 0.0) || loc2.latitude == 90.0 {
             0.0
         } else if loc2.latitude == -90.0 {
@@ -163,11 +164,13 @@ impl Astronomical {
     pub fn universal_from_dynamical(dynamical: Moment) -> Moment {
         dynamical - Self::ephemeris_correction(dynamical)
     }
-}
 
-pub struct Lunar;
+    /// The number of uniform length centuries (36525 days measured in dynamical time)
+    /// before or after noon on January 1, 2000
+    pub fn julian_centuries(moment: Moment) -> f64 {
+        (1.0 / 36525.0) * (Self::dynamical_from_universal(moment) - J2000)
+    }
 
-impl Lunar {
     /// The moment (in universal time) of the nth new moon after
     /// (or before if n is negative) the new moon of January 11, 1 CE,
     /// which is the first new moon after R.D. 0.
@@ -223,46 +226,163 @@ impl Lunar {
             0.000165, 0.000164, 0.000126, 0.000110, 0.000062, 0.000060, 0.000056, 0.000047,
             0.000042, 0.000040, 0.000037, 0.000035, 0.000023,
         ];
-        let mut correction = -0.00017 + omega.sin();
+        let mut correction = -0.00017 + omega.to_radians().sin();
         for g in 0..12 {
             correction += v[g]
                 * E.powf(w[g])
-                * (x[g] * solar_anomaly + y[g] * lunar_anomaly + z[g] * moon_argument).sin();
+                * (x[g] * solar_anomaly + y[g] * lunar_anomaly + z[g] * moon_argument).to_radians().sin();
         }
-        let extra = 0.000325 * (299.77 + 132.8475848 * c - 0.009173 * c.powi(2)).sin();
+        let extra = 0.000325 * (299.77 + 132.8475848 * c - 0.009173 * c.powi(2)).to_radians().sin();
         let mut additional = 0.0;
         for g in 0..13 {
-            additional += l[g] * (i[g] + j[g] * k).sin();
+            additional += l[g] * (i[g] + j[g] * k).to_radians().sin();
         }
-        Astronomical::universal_from_dynamical(approx + correction + extra + additional)
+        Self::universal_from_dynamical(approx + correction + extra + additional)
     }
 
-    /// The lunar phase as an angle in degrees at a given Moment.
-    /// An angle of 0 corresponds to a new moon, 90 -> first quarter,
-    /// 180 -> full moon, 270 -> last quarter
+    /// Longitude of the moon (in degrees) at a given moment
+    pub fn lunar_longitude(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let L = Self::mean_lunar_longitude(c);
+        let D = Self::lunar_elongation(c);
+        let Ms = Self::solar_anomaly(c);
+        let Ml = Self::lunar_anomaly(c);
+        let F = Self::moon_node(c);
+        let E = 1.0 - 0.002516 * c - 0.0000074 * c.powi(2);
+        let v: [f64; 59] = [
+            6288774.0, 1274027.0, 658314.0, 213618.0, -185116.0, -114332.0, 58793.0, 57066.0,
+            53322.0, 45758.0, -40923.0, -34720.0, -30383.0, 15327.0, -12528.0, 10980.0, 10675.0,
+            10034.0, 8548.0, -7888.0, -6766.0, -5163.0, 4987.0, 4036.0, 3994.0, 3861.0, 3665.0,
+            -2689.0, -2602.0, 2390.0, -2348.0, 2236.0, -2120.0, -2069.0, 2048.0, -1773.0, -1595.0,
+            1215.0, -1110.0, -892.0, -810.0, 759.0, -713.0, -700.0, 391.0, 596.0, 549.0, 537.0,
+            520.0, -487.0, -399.0, -381.0, 351.0, -340.0, 330.0, 327.0, -323.0, 299.0, 294.0,
+        ];
+        let w: [f64; 59] = [
+            0.0, 2.0, 2.0, 0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 4.0,
+            0.0, 4.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 4.0, 2.0, 0.0, 2.0, 2.0, 1.0, 2.0, 0.0, 0.0,
+            2.0, 2.0, 2.0, 4.0, 0.0, 3.0, 2.0, 4.0, 0.0, 2.0, 2.0, 2.0, 4.0, 0.0, 4.0, 1.0, 2.0,
+            0.0, 1.0, 3.0, 4.0, 2.0, 0.0, 1.0, 2.0,
+        ];
+        let x: [f64; 59] = [
+            0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 1.0, 0.0, 1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, -2.0, 1.0, 2.0,
+            -2.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, -1.0, 2.0, 2.0, 1.0, -1.0, 0.0, 0.0, -1.0, 0.0,
+            1.0, 0.0, 1.0, 0.0, 0.0, -1.0, 2.0, 1.0, 0.0,
+        ];
+        let y: [f64; 59] = [
+            1.0, -1.0, 0.0, 2.0, 0.0, 0.0, -2.0, -1.0, 1.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 1.0,
+            -1.0, 3.0, -2.0, -1.0, 0.0, -1.0, 0.0, 1.0, 2.0, 0.0, -3.0, -2.0, -1.0, -2.0, 1.0, 0.0,
+            2.0, 0.0, -1.0, 1.0, 0.0, -1.0, 2.0, -1.0, 1.0, -2.0, -1.0, -1.0, -2.0, 0.0, 1.0, 4.0,
+            0.0, -2.0, 0.0, 2.0, 1.0, -2.0, -3.0, 2.0, 1.0, -1.0, 3.0,
+        ];
+        let z: [f64; 59] = [
+            0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 2.0, -2.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, -2.0, 2.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0,
+            -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        ];
+        let mut correction = 1.0 / 1000000.0;
+        let mut correction_operand = 0.0;
+        for i in 0..59 {
+            correction_operand += v[i] * E.powf(x[i].abs()) * (w[i] * D + x[i] * Ms + y[i] * Ml + z[i] * F).to_radians().sin();
+        }
+        correction *= correction_operand;
+        let venus = 3958.0 / 1000000.0 * (119.75 + c * 131.849).to_radians().sin();
+        let jupiter = 318.0 / 1000000.0 * (53.09 + c * 479264.29).to_radians().sin();
+        let flat_earth = 1962.0 / 1000000.0 * (L - F).to_radians().sin();
+        (L + correction + venus + jupiter + flat_earth + Self::nutation(moment)) % 360.0
+    }
+
+    fn mean_lunar_longitude(c: f64) -> f64 {
+        (218.3164477 + 481267.88123421 * c - 0.0015786 * c.powi(2) + 1.0 / 538841.0 * c.powi(3)
+            - 1.0 / 65194000.0 * c.powi(4))
+            % 360.0
+    }
+
+    fn lunar_elongation(c: f64) -> f64 {
+        (297.85019021 + 445267.1114034 * c - 0.0018819 * c.powi(2) + 1.0 / 545868.0 * c.powi(3)
+            - 1.0 / 113065000.0 * c.powi(4))
+            % 360.0
+    }
+
+    fn solar_anomaly(c: f64) -> f64 {
+        (357.5291092 + 35999.0502909 * c - 0.0001536 * c.powi(2) + 1.0 / 24490000.0 * c.powi(3))
+            % 360.0
+    }
+
+    fn lunar_anomaly(c: f64) -> f64 {
+        (134.9633964 + 477198.8675055 * c + 0.0087414 * c.powi(2)
+            - 1.0 / 69699.0 * c.powi(3)
+            - 1.0 / 14712000.0 * c.powi(4))
+            % 360.0
+    }
+
+    fn moon_node(c: f64) -> f64 {
+        (93.2720950 + 483202.0175233 * c - 0.0036539 * c.powi(2) - 1.0 / 3526000.0 * c.powi(3)
+            + 1.0 / 863310000.0 * c.powi(4))
+            % 360.0
+    }
+
+    fn nutation(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let A = 124.90 - 1934.134 * c + 0.002063 * c * c;
+        let B = 201.11 + 72001.5377 * c + 0.00057 * c * c;
+        -0.004778 * A.to_radians().sin() - 0.0003667 * B.to_radians().sin()
+    }
+
+    /// The phase of the moon at a given Moment, defined as the difference in longitudes
+    /// of the sun and the moon.
     pub fn lunar_phase(moment: Moment) -> f64 {
-        todo!();
+        let t0 = Self::nth_new_moon(0);
+        let n = ((moment - t0) / MEAN_SYNODIC_MONTH).round() as i32;
+        let a = (Self::lunar_longitude(moment) - Self::solar_longitude(moment)) % 360.0;
+        let b = 360.0 * (((moment - Self::nth_new_moon(n)) / MEAN_SYNODIC_MONTH) % 1.0);
+        if (a - b).abs() > 180.0 {
+            b
+        } else {
+            a
+        }
+    }
+
+    /// The longitude of the Sun at a given Moment in degrees
+    pub fn solar_longitude(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let x: [f64; 49] = [
+            403406.0, 195207.0, 119433.0, 112392.0, 3891.0, 2819.0, 1721.0, 660.0, 350.0, 334.0, 314.0, 268.0, 242.0, 234.0, 158.0, 132.0, 129.0, 114.0, 99.0, 93.0, 86.0, 78.0, 72.0, 68.0, 64.0, 46.0, 38.0, 37.0, 32.0, 29.0, 28.0, 27.0, 27.0, 25.0, 24.0, 21.0, 21.0, 20.0, 18.0, 17.0, 14.0, 13.0, 13.0, 13.0, 12.0, 10.0, 10.0, 10.0, 10.0,
+        ];
+        let y: [f64; 49] = [
+            270.54861, 340.19128, 63.91854, 331.26220, 317.843, 86.631, 240.052, 310.26, 247.23, 260.87, 297.82, 343.14, 166.79, 81.53, 3.50, 132.75, 182.95, 162.03, 29.8, 266.4, 249.2, 157.6, 257.8, 185.1, 69.9, 8.0, 197.1, 250.4, 65.3, 162.7, 341.5, 291.6, 98.5, 146.7, 110.0, 5.2, 342.6, 230.9, 256.1, 45.3, 242.9, 115.2, 151.8, 285.3, 53.3, 126.6, 205.7, 85.9, 146.1,
+        ];
+        let z: [f64; 49] = [
+            0.9287892, 35999.1376958, 35999.4089666, 35998.7287385, 71998.20261, 71998.4403, 36000.35726, 71997.4812, 32964.4678, -19.4410, 445267.1117, 45036.8840, 3.1008, 22518.4434, -19.9739, 65928.9345, 9038.0293, 3034.7684, 33718.148, 3034.448, -2280.773, 29929.992, 31556.493, 149.588, 9037.750, 107997.405, -4444.176, 151.771, 67555.316, 31556.080, -4561.540, 107996.706, 1221.655, 62894.167, 31437.369, 14578.298, -31931.757, 34777.243, 1221.999, 62894.511, -4442.039, 107997.909, 119.066, 16859.071, -4.578, 26895.292, -39.127, 12297.536, 90073.778,
+        ];
+        let mut lambda = 0.000005729577951308232;
+        for i in 0..49 {
+            lambda *= x[i] * (y[i] + z[i] * c).to_radians().sin();
+        }
+        lambda += 282.7771834 + 36000.76953744 * c;
+        lambda + Self::abberation(c, moment) + Self::nutation(moment)
+    }
+
+    fn abberation(c: f64, moment: Moment) -> f64 {
+        0.0000974 * (177.63 + 35999.01848 * c).to_radians().cos() - 0.005575
     }
 
     /// Find the time of the new moon preceding a given Moment
     /// (the last new moon before moment)
     pub fn new_moon_before(moment: Moment) -> Moment {
-        let t0: Moment = Self::nth_new_moon(0);
-        let phi = Self::lunar_phase(moment);
-        let n = ((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0).round() as i32;
-        let mut result = n - 1;
-        let mut iters = 0;
-        let max_iters = 245_000_000;
-        while iters < max_iters && Self::nth_new_moon(result) < moment {
-            iters += 1;
-            result += 1;
-        }
-        Self::nth_new_moon(result - 1)
+        Self::nth_new_moon(Self::num_new_moons_at_or_after(moment) - 1)
     }
 
     /// Find the time of the new moon following a given Moment
     /// (the first new moon after moment)
     pub fn new_moon_at_or_after(moment: Moment) -> Moment {
+        Self::nth_new_moon(Self::num_new_moons_at_or_after(moment))
+    }
+
+    // Function to find the number of the new moon at or after a given moment;
+    // helper function for new_moon_before and new_moon_at_or_after
+    fn num_new_moons_at_or_after(moment: Moment) -> i32 {
         let t0: Moment = Self::nth_new_moon(0);
         let phi = Self::lunar_phase(moment);
         let n = ((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0).round() as i32;
@@ -273,6 +393,6 @@ impl Lunar {
             iters += 1;
             result += 1;
         }
-        Self::nth_new_moon(result)
+        result
     }
 }
