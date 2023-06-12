@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::marker::PhantomData;
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::gregorian::year_as_gregorian;
@@ -10,8 +9,8 @@ use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use libm;
 use ::tinystr::tinystr;
+use core::marker::PhantomData;
 
 const PERSIAN_EPOCH: i64 = Julian::fixed_from_julian(ArithmeticDate {
     year: (622),
