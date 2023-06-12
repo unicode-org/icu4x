@@ -5,7 +5,7 @@
 use icu_provider::prelude::*;
 
 use super::data::MappingKind;
-use super::exception_header::{ExceptionBits, ExceptionSlot, SlotPresence};
+use super::exception_helpers::{ExceptionBits, ExceptionSlot, SlotPresence};
 use crate::error::Error;
 use crate::internals::ClosureSet;
 use core::fmt;

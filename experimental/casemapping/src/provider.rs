@@ -15,7 +15,7 @@ pub use crate::internals::CaseMappingUnfoldData;
 pub mod data;
 
 #[allow(missing_docs)] // TBD, temporary
-pub mod exception_header;
+pub mod exception_helpers;
 
 #[allow(missing_docs)] // TBD, temporary
 pub mod exceptions;

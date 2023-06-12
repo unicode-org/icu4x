@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::Error;
-use crate::provider::exception_header::{
+use crate::provider::exception_helpers::{
     ExceptionBits, ExceptionBitsULE, ExceptionSlot, SlotPresence,
 };
 use crate::provider::exceptions::{CaseMappingExceptions, DecodedException};

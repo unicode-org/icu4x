@@ -7,16 +7,16 @@
 //! This is both used in datagen to decode ICU4C's data, and natively in ICU4X's
 //! own data model.
 //!
-//! [`ExceptionHeader`] is the core type common to both backends: it represents
-//! a metadata header with a bunch of bits ([`ExceptionBits`]) as well as information
-//! on slots used ([`SlotPresence`]).
+//! [`ExceptionBits`] is the bag of bits associated with exceptions, and [`SlotPresence`]
+//! marks the presence or absence of various "slots" in a given exception.
 //!
 //! The `exceptions_builder` module of this crate handles decoding ICU4C data using the exception
-//! header.
+//! header, and [`crate::provider::exceptions`] handles.
 
 use crate::provider::data::{DotType, MappingKind};
 use zerovec::ule::{AsULE, ULE};
 
+/// A bunch of bits associated with each exception.
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
