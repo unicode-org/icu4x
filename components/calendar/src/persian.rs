@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::marker::PhantomData;
-use core::num;
-
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::gregorian::year_as_gregorian;
@@ -12,6 +10,7 @@ use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use libm;
 use ::tinystr::tinystr;
 
 const PERSIAN_EPOCH: i64 = Julian::fixed_from_julian(ArithmeticDate {
@@ -226,9 +225,9 @@ impl Persian {
             })))
             + 1;
         let _month = if day_of_year <= 186 {
-            f64::ceil(day_of_year as f64 / 31.0) as u8
+            libm::ceil(day_of_year as f64 / 31.0) as u8
         } else {
-            f64::ceil((day_of_year - 6) as f64 / 30.0) as u8
+            libm::ceil((day_of_year - 6) as f64 / 30.0) as u8
         };
         let _day = (date.to_i64_date()
             - (Self::fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
