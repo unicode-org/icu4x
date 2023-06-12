@@ -231,7 +231,7 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
             // Copy the full mappings strings into the strings table, if they exist.
             if let Some(mut lengths) = mappings_lengths {
                 let mut arr: [Cow<_>; 4] = Default::default();
-                for i in 0..4 {
+                for mapping in &mut arr {
                     let len = lengths & Self::FULL_MAPPINGS_LENGTH_MASK;
                     lengths >>= Self::FULL_MAPPINGS_LENGTH_SHIFT;
 
@@ -244,7 +244,7 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
                     let string =
                         char::decode_utf16(slice.iter().copied()).collect::<Result<String, _>>()?;
                     self.skip_string(&string);
-                    arr[i] = string.into()
+                    *mapping = string.into()
                 }
                 exception.full = Some(arr)
             }

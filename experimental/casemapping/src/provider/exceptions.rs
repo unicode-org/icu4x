@@ -46,11 +46,11 @@ impl<'data> CaseMappingExceptions<'data> {
     /// as these indices should come from a paired CaseMappingData object
     ///
     /// Will also panic in debug mode
-    pub fn get<'a>(&'a self, idx: u16) -> &'a ExceptionULE {
+    pub fn get(&self, idx: u16) -> &ExceptionULE {
         let exception = self.exceptions.get(idx.into());
         debug_assert!(exception.is_some());
 
-        exception.unwrap_or(&ExceptionULE::empty_exception())
+        exception.unwrap_or(ExceptionULE::empty_exception())
     }
 
     pub(crate) fn validate(&self) -> Result<Range<u16>, Error> {
@@ -123,7 +123,7 @@ pub struct Exception<'a> {
 impl ExceptionULE {
     #[inline]
     fn empty_exception() -> &'static Self {
-        static EMPTY_BYTES: &'static [u8] = &[0, 0];
+        static EMPTY_BYTES: &[u8] = &[0, 0];
         unsafe {
             let slice: *const [u8] = ptr::slice_from_raw_parts(EMPTY_BYTES.as_ptr(), 0);
             &*(slice as *const Self)
@@ -186,23 +186,20 @@ impl ExceptionULE {
     }
 
     /// Returns *all* the data in the closure/full slots, including length metadata
-    fn get_stringy_data<'a>(&'a self) -> Option<&'a str> {
+    fn get_stringy_data(&self) -> Option<&str> {
         const CHAR_MASK: u8 = (1 << ExceptionSlot::STRING_SLOTS_START as u8) - 1;
         let char_slot_count = (self.slot_presence.0 & CHAR_MASK).count_ones() as usize;
         let mut chars = self.data.chars();
         for _ in 0..char_slot_count {
             let res = chars.next();
-            if res.is_none() {
-                // GIGO: the data did not have this slot available
-                return None;
-            }
+            res?;
         }
         Some(chars.as_str())
     }
 
     /// Returns a single stringy slot, either ExceptionSlot::Closure
     /// or ExceptionSlot::FullMappings.
-    fn get_stringy_slot<'a>(&'a self, slot: ExceptionSlot) -> Option<&'a str> {
+    fn get_stringy_slot(&self, slot: ExceptionSlot) -> Option<&str> {
         debug_assert!(slot == ExceptionSlot::Closure || slot == ExceptionSlot::FullMappings);
         let other_slot = if slot == ExceptionSlot::Closure {
             ExceptionSlot::FullMappings
@@ -236,22 +233,19 @@ impl ExceptionULE {
     }
 
     /// Get the data behind the `closure` slot
-    pub(crate) fn get_closure_slot<'a>(&'a self) -> Option<&'a str> {
+    pub(crate) fn get_closure_slot(&self) -> Option<&str> {
         self.get_stringy_slot(ExceptionSlot::Closure)
     }
 
     /// Get all the slot data for the FullMappings slot
     ///
     /// This needs to be further segmented into four based on length metadata
-    fn get_fullmappings_slot_data<'a>(&'a self) -> Option<&'a str> {
+    fn get_fullmappings_slot_data(&self) -> Option<&str> {
         self.get_stringy_slot(ExceptionSlot::FullMappings)
     }
 
     /// Get a specific FullMappings slot value
-    pub(crate) fn get_fullmappings_slot_for_kind<'a>(
-        &'a self,
-        kind: MappingKind,
-    ) -> Option<&'a str> {
+    pub(crate) fn get_fullmappings_slot_for_kind(&self, kind: MappingKind) -> Option<&str> {
         let data = self.get_fullmappings_slot_data()?;
 
         let mut chars = data.chars();
@@ -270,7 +264,7 @@ impl ExceptionULE {
     }
 
     // convenience function that lets us use the ? operator
-    fn get_all_fullmapping_slots<'a>(&'a self) -> Option<[Cow<'a, str>; 4]> {
+    fn get_all_fullmapping_slots(&self) -> Option<[Cow<'_, str>; 4]> {
         Some([
             self.get_fullmappings_slot_for_kind(MappingKind::Lower)?
                 .into(),
@@ -314,7 +308,7 @@ impl ExceptionULE {
     /// Extract all the data out into a structured form
     ///
     /// Useful for serialization and debugging
-    pub fn decode<'b>(&'b self) -> DecodedException<'b> {
+    pub fn decode(&self) -> DecodedException<'_> {
         // Potential future optimization: This can
         // directly access each bit one after the other and iterate the string
         // which avoids recomputing slot offsets over and over again.
@@ -489,17 +483,18 @@ impl<'a> DecodedException<'a> {
                     .unwrap_or('\0');
                 data.push(len_char);
             }
-            data.push_str(&closure);
+            data.push_str(closure);
         }
         if let Some(ref full) = self.full {
             slot_presence.add_slot(ExceptionSlot::FullMappings);
             let mut idx = 0;
-            for i in 0..3 {
-                idx += full[i].len();
+            // iterate all elements except the last, whose length we can calculate from context
+            for mapping in full.iter().take(3) {
+                idx += mapping.len();
                 data.push(char::try_from(u32::try_from(idx).unwrap_or(0)).unwrap_or('\0'));
             }
             for mapping in full {
-                data.push_str(&mapping);
+                data.push_str(mapping);
             }
         }
         Exception {
