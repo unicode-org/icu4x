@@ -2,21 +2,6 @@ use std::collections::HashMap;
 use super::dfaparsing as prs;
 use super::translit;
 
-/*
-Differences to parsed types:
- * Rules go only in one direction
- * No contexts on the target
- * Target is a literal
- * All variables get replaced with their definition
- * Adjacent literals get concatenated
- * Cursor is only allowed to exist on the target, and is implemented using a signed offset
-*/
-
-/*
-TODO: * zero-copify types
-      * switch to proper UnicodeSet
-*/
-
 macro_rules! sl {
     () => {
         SourceLocation {

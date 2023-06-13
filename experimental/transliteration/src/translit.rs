@@ -1,6 +1,21 @@
 use std::fmt::{Display, Formatter};
 use std::thread::sleep;
 
+/*
+Differences to parsed types:
+ * Rules go only in one direction
+ * No contexts on the target
+ * Target is a literal
+ * All variables get replaced with their definition
+ * Adjacent literals get concatenated
+ * Cursor is only allowed to exist on the target, and is implemented using a signed offset
+*/
+
+/*
+TODO: * zero-copify types
+      * switch to proper UnicodeSet
+*/
+
 #[derive(Debug, Clone)]
 pub enum PatternElement {
     Literal(String),

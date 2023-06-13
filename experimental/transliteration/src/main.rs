@@ -100,6 +100,75 @@ const RULES_NO_UNICODE_SET: &str = r#"
 
 "#;
 
+const RULES_PUBLISHING: &str = r#"
+# Variables
+$single = \' ;
+$space = ' ' ;
+$double = \";
+$back = \` ;
+$tab = \u0008 ;
+$makeRight = [[:Z:][:Ps:][:Pi:]$] ;
+
+# fix UNIX quotes
+$back $back → “ ;
+$back → ‘ ;
+
+# fix typewriter quotes, by context
+$makeRight {$double} ↔ “ ;
+$double ↔ ” ;
+$makeRight {$single} ↔ ‘ ;
+$single ↔ ’;
+
+$space {$space} → ;
+'<--->' ↔ '⟷';
+'<---' ↔ '⟵';
+'--->' ↔ '⟶';
+'<-->' ↔ '↔';
+'<--' ↔ '←';
+'-->' ↔ '→';
+'<-/->' ↔ '↮';
+'<-/-' ↔ '↚';
+'-/->' ↔ '↛';
+'<===>' ↔ '⟺';
+'<===' ↔ '⟸';
+'===>' ↔ '⟹';
+'<==>' ↔ '⇔';
+'<==' ↔ '⇐';
+'==>' ↔ '⇒';
+'!=' ↔ ≠;
+'<=' ↔ ≤;
+'>=' ↔ ≥;
+'+-' ↔ ±;
+'-+' ↔ ∓;
+'~=' ↔ ≅;
+'--' ↔ —;
+'...' ↔ …;
+
+\(C\) ↔ ©;
+\(c\) → ©;
+\(R\) ↔ ®;
+\(r\) → ®;
+\(TM\) ↔ ™;
+\(tm\) → ™;
+{c\/o} ↔ ℅;
+
+[^0-9] {1\/2} [^0-9] ↔ ½;
+[^0-9] {1\/3} [^0-9] ↔ ⅓;
+[^0-9] {2\/3} [^0-9] ↔ ⅔;
+[^0-9] {1\/4} [^0-9] ↔ ¼;
+[^0-9] {3\/4} [^0-9] ↔ ¾;
+[^0-9] {1\/5} [^0-9] ↔ ⅕;
+[^0-9] {2\/5} [^0-9] ↔ ⅖;
+[^0-9] {3\/5} [^0-9] ↔ ⅗;
+[^0-9] {4\/5} [^0-9] ↔ ⅘;
+[^0-9] {1\/6} [^0-9] ↔ ⅙;
+[^0-9] {5\/6} [^0-9] ↔ ⅚;
+[^0-9] {1\/8} [^0-9] ↔ ⅛;
+[^0-9] {3\/8} [^0-9] ↔ ⅜;
+[^0-9] {5\/8} [^0-9] ↔ ⅝;
+[^0-9] {7\/8} [^0-9] ↔ ⅞;
+"#;
+
 struct Match {
     start: u32,
     end: u32,
@@ -194,8 +263,14 @@ fn main() {
     "#;
 
     // let source = "hello world";
+    let source = r#"
+    
+    Hi there "person" (--> that implies you are not in fact a "human"). Gotta love 9 3/4!
+    
+    "#;
 
     let rules = RULES_NO_UNICODE_SET;
+    let rules = RULES_PUBLISHING;
     let mut it = rules.chars().peekable();
     let rules = dfaparsing::parse_rules(&mut it);
     eprintln!("Remaining input: {:?}", it.collect::<String>());

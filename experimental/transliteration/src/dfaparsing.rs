@@ -108,6 +108,8 @@ mod missingapis {
         };
         set.push('[');
 
+        let mut depth = 1;
+
         // parse until we find a closing bracket
         let mut escaped = false;
         loop {
@@ -115,7 +117,10 @@ mod missingapis {
                 None => return Err(ParseError::new(pl!(), PEK::Legacy)),
                 Some(']') if !escaped => {
                     set.push(']');
-                    break;
+                    depth -= 1;
+                    if depth == 0 {
+                        break;
+                    }
                 }
                 Some('\\') => escaped = true,
                 Some(mut c) => {
@@ -127,6 +132,10 @@ mod missingapis {
                             't' => c = '\t',
                             _ => {}
                         }
+                    }
+                    // handle new level
+                    if !escaped && c == '[' {
+                        depth += 1;
                     }
                     escaped = false;
                     set.push(c);
