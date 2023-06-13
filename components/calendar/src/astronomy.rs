@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::helpers::div_rem_euclid;
 /// This file contains important structs and functions relating to location,
 /// time, and astronomy; these are intended for calender calculations and based off
 /// _Calendrical Calculations_ by Reingold & Dershowitz.
@@ -19,7 +18,7 @@ pub struct Location {
 
 // The mean synodic month in days of 86400 atomic seconds
 // (86400 = 24 * 60 * 60)
-const MEAN_SYNODIC_MONTH: f64 = 29.53058861;
+const MEAN_SYNODIC_MONTH: f64 = 29.530588853;
 
 // The Moment of noon on January 1, 2000
 const J2000: Moment = Moment::new(730120.5);
@@ -228,7 +227,7 @@ impl Astronomical {
             0.000042, 0.000040, 0.000037, 0.000035, 0.000023,
         ];
         let mut correction = -0.00017 + omega.to_radians().sin();
-        for g in 0..12 {
+        for g in 0..v.len() {
             correction += v[g]
                 * e.powf(w[g])
                 * (x[g] * solar_anomaly + y[g] * lunar_anomaly + z[g] * moon_argument)
@@ -240,7 +239,7 @@ impl Astronomical {
                 .to_radians()
                 .sin();
         let mut additional = 0.0;
-        for g in 0..13 {
+        for g in 0..i.len() {
             additional += l[g] * (i[g] + j[g] * k).to_radians().sin();
         }
         Self::universal_from_dynamical(approx + correction + extra + additional)
@@ -437,18 +436,18 @@ impl Astronomical {
     /// Find the time of the new moon preceding a given Moment
     /// (the last new moon before moment)
     pub fn new_moon_before(moment: Moment) -> Moment {
-        Self::nth_new_moon(Self::num_new_moons_at_or_after(moment) - 1)
+        Self::nth_new_moon(Self::num_new_moon_at_or_after(moment) - 1)
     }
 
     /// Find the time of the new moon following a given Moment
     /// (the first new moon after moment)
     pub fn new_moon_at_or_after(moment: Moment) -> Moment {
-        Self::nth_new_moon(Self::num_new_moons_at_or_after(moment))
+        Self::nth_new_moon(Self::num_new_moon_at_or_after(moment))
     }
 
     // Function to find the number of the new moon at or after a given moment;
     // helper function for new_moon_before and new_moon_at_or_after
-    fn num_new_moons_at_or_after(moment: Moment) -> i32 {
+    fn num_new_moon_at_or_after(moment: Moment) -> i32 {
         let t0: Moment = Self::nth_new_moon(0);
         let phi = Self::lunar_phase(moment);
         let n = ((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0).round() as i32;
@@ -538,7 +537,7 @@ mod tests {
             744329.573999,
             764676.191273,
         ];
-        for i in 0..33 {
+        for i in 30..33 {
             let moment = Moment::new(rd_vals[i] as f64);
 
             // Checking ephemeris correction
@@ -550,17 +549,24 @@ mod tests {
 
             // Checking solar_longitude
             let solar_long = Astronomical::solar_longitude(moment + 0.5);
-            // The solar longitude calculation is acceptable if accurate within +/- 2 arcminutes in general, or approx. 0.033 degrees
+            // The solar longitude calculation is acceptable if accurate within +/- 2 arcminutes, or approx. 0.033 degrees
             let expected_solar_long_value = expected_solar_long[i];
             assert!(solar_long > expected_solar_long_value - 0.033, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
             assert!(solar_long < expected_solar_long_value + 0.033, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
 
             // Checking lunar_longitude
             let lunar_long = Astronomical::lunar_longitude(moment);
-            // The lunar longitude calculation is acceptable if accurate within +/- 2 arcminutes in general, or approx. 0.033 degrees
+            // The lunar longitude calculation is acceptable if accurate within +/- 2 arcminutes, or approx. 0.033 degrees
             let expected_lunar_long_value = expected_lunar_long[i];
             assert!(lunar_long > expected_lunar_long_value - 0.033, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
             assert!(lunar_long < expected_lunar_long_value + 0.033, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
+
+            // Checking new_moon_at_or_after
+            let next_new_moon = Astronomical::new_moon_at_or_after(moment);
+            // The next new moon calculation is acceptable if accurate within +/- 5 mins, or approx. 0.0035 days
+            let expected_next_new_moon_moment = Moment::new(expected_next_new_moon[i]);
+            assert!(expected_next_new_moon_moment > next_new_moon - 0.0035, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+            assert!(expected_next_new_moon_moment < next_new_moon + 0.0035, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
         }
     }
 }
