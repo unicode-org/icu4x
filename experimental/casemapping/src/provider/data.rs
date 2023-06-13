@@ -61,6 +61,12 @@ pub enum DotType {
     OtherAccent = 3,
 }
 
+impl Default for DotType {
+    fn default() -> Self {
+        DotType::NoDot
+    }
+}
+
 impl DotType {
     pub(crate) const DOT_MASK: u16 = 0x3;
 
