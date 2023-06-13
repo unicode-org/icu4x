@@ -5,6 +5,7 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::gregorian::year_as_gregorian;
+use crate::helpers::{div_rem_euclid64, i64_to_i32, quotient, quotient64, I32Result};
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
@@ -188,59 +189,74 @@ impl Persian {
     }
 
     fn fixed_from_arithmetic_persian(date: PersianDateInner) -> RataDie {
-        let month = date.0.month;
-
         let day = date.0.day;
-
-        let mut year: i32 = if 0 < date.0.year {
-            date.0.year - 474
+        let month = date.0.month;
+        let p_year = date.0.year;
+        let y = if 0 < p_year {
+            p_year - 474
         } else {
-            date.0.year - 473
+            p_year - 473
         };
-        year = (year % 2820) + 474;
+        let year = (y % 2820) + 474;
 
-        let result: i32 = 1_948_320 - 1
-            + (1029983 * (year / 2820))
-            + (365 * (year - 1))
-            + ((31 * year - 5) / 128)
+        let result = (PERSIAN_EPOCH - 1) as i32
+            + (1029983 * quotient(y, 2820)) as i32
+            + (365 * (year - 1)) as i32
+            + quotient(31 * year - 5, 128) as i32
             + if month <= 7 {
-                31 * (month as i32 - 1)
+                (31 * (month - 1))
             } else {
-                30 * (month as i32 - 1) + 6
-            }
+                (30 * (month - 1) + 6)
+            } as i32
             + day as i32;
 
         RataDie::new(result as i64)
     }
 
     fn arithmetic_persian_from_fixed(date: RataDie) -> Date<Persian> {
-        let _year = Self::arithmetic_persian_year_from_fixed(date);
-        let day_of_year = (date
-            - Self::fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
-                year: _year,
-                month: 1,
-                day: 1,
-                marker: (core::marker::PhantomData),
-            })))
-            + 1;
-        let _month = if day_of_year <= 186 {
+        let year = Self::arithmetic_persian_year_from_fixed(date);
+        let year = match i64_to_i32(year) {
+            I32Result::BelowMin(_) => {
+                return Date::from_raw(PersianDateInner(ArithmeticDate::min_date()), Persian)
+            }
+            I32Result::AboveMax(_) => {
+                return Date::from_raw(PersianDateInner(ArithmeticDate::max_date()), Persian)
+            }
+            I32Result::WithinRange(y) => y,
+        };
+
+        let day_of_year = 1 + date.to_i64_date()
+            - Self::fixed_from_arithmetic_persian(PersianDateInner(
+                (ArithmeticDate {
+                    year: (year),
+                    month: 1,
+                    day: 1,
+                    marker: core::marker::PhantomData,
+                }),
+            ))
+            .to_i64_date();
+
+        let month = if day_of_year <= 186 {
             libm::ceil(day_of_year as f64 / 31.0) as u8
         } else {
             libm::ceil((day_of_year - 6) as f64 / 30.0) as u8
         };
-        let _day = (date.to_i64_date()
-            - (Self::fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
-                year: _year,
-                month: _month,
-                day: 1,
-                marker: core::marker::PhantomData,
-            })) - 1)
-                .to_i64_date()) as u8;
-
-        Date::try_new_persian_date(_year, _month, _day).unwrap()
+        let day = (date.to_i64_date()
+            - Self::fixed_from_arithmetic_persian(PersianDateInner(
+                (ArithmeticDate {
+                    year,
+                    month,
+                    day: 1,
+                    marker: core::marker::PhantomData,
+                }),
+            ))
+            .to_i64_date()
+            + 1) as u8;
+        #[allow(clippy::unwrap_used)] // valid day and month
+        Date::try_new_persian_date(year, month, day).unwrap()
     }
 
-    fn arithmetic_persian_year_from_fixed(date: RataDie) -> i32 {
+    fn arithmetic_persian_year_from_fixed(date: RataDie) -> i64 {
         let d0 = date
             - Self::fixed_from_arithmetic_persian(PersianDateInner(ArithmeticDate {
                 year: 475,
@@ -249,14 +265,14 @@ impl Persian {
                 marker: PhantomData,
             }));
         let last_day_of_cycle = 1029983;
-        let n2820 = d0 / last_day_of_cycle;
-        let d1 = d0 % last_day_of_cycle;
+        let n2820 = quotient64(d0, last_day_of_cycle);
+        let d1 = div_rem_euclid64(d0, last_day_of_cycle).1;
         let y2820 = if d1 == last_day_of_cycle - 1 {
             2820
         } else {
-            (d1 * 128 + 46878) / 46751
+            (128 * d1 + 46878) / 46751
         };
-        let year: i32 = (474 + (2820 * n2820) + y2820).try_into().unwrap();
+        let year = 474 + 2820 * n2820 + y2820;
 
         if year > 0 {
             year
@@ -340,5 +356,209 @@ impl DateTime<Persian> {
             date: Date::try_new_persian_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
+    }
+}
+mod tests {
+    #[cfg(test)]
+    use super::*;
+    #[derive(Debug)]
+    struct DateCase {
+        year: i32,
+        month: u8,
+        day: u8,
+    }
+
+    #[test]
+    fn test_persian_year_from_fixed() {
+        let cases = [
+            DateCase {
+                year: -1208,
+                month: 5,
+                day: 1,
+            },
+            DateCase {
+                year: -790,
+                month: 9,
+                day: 14,
+            },
+            DateCase {
+                year: -552,
+                month: 7,
+                day: 2,
+            },
+            DateCase {
+                year: -487,
+                month: 7,
+                day: 9,
+            },
+            DateCase {
+                year: -153,
+                month: 10,
+                day: 18,
+            },
+            DateCase {
+                year: -46,
+                month: 2,
+                day: 30,
+            },
+            DateCase {
+                year: 73,
+                month: 8,
+                day: 19,
+            },
+            DateCase {
+                year: 392,
+                month: 2,
+                day: 5,
+            },
+            DateCase {
+                year: 475,
+                month: 3,
+                day: 3,
+            },
+            DateCase {
+                year: 569,
+                month: 1,
+                day: 3,
+            },
+            DateCase {
+                year: 618,
+                month: 12,
+                day: 20,
+            },
+            DateCase {
+                year: 667,
+                month: 1,
+                day: 14,
+            },
+            DateCase {
+                year: 677,
+                month: 2,
+                day: 8,
+            },
+            DateCase {
+                year: 770,
+                month: 3,
+                day: 22,
+            },
+            DateCase {
+                year: 814,
+                month: 11,
+                day: 13,
+            },
+            DateCase {
+                year: 871,
+                month: 1,
+                day: 21,
+            },
+            DateCase {
+                year: 932,
+                month: 6,
+                day: 28,
+            },
+            DateCase {
+                year: 938,
+                month: 12,
+                day: 14,
+            },
+            DateCase {
+                year: 1027,
+                month: 3,
+                day: 21,
+            },
+            DateCase {
+                year: 1059,
+                month: 4,
+                day: 10,
+            },
+            DateCase {
+                year: 1095,
+                month: 5,
+                day: 2,
+            },
+            DateCase {
+                year: 1147,
+                month: 3,
+                day: 30,
+            },
+            DateCase {
+                year: 1198,
+                month: 5,
+                day: 10,
+            },
+            DateCase {
+                year: 1218,
+                month: 1,
+                day: 7,
+            },
+            DateCase {
+                year: 1282,
+                month: 1,
+                day: 29,
+            },
+            DateCase {
+                year: 1308,
+                month: 6,
+                day: 3,
+            },
+            DateCase {
+                year: 1320,
+                month: 7,
+                day: 7,
+            },
+            DateCase {
+                year: 1322,
+                month: 1,
+                day: 29,
+            },
+            DateCase {
+                year: 1322,
+                month: 7,
+                day: 14,
+            },
+            DateCase {
+                year: 1370,
+                month: 12,
+                day: 27,
+            },
+            DateCase {
+                year: 1374,
+                month: 12,
+                day: 6,
+            },
+            DateCase {
+                year: 1417,
+                month: 8,
+                day: 19,
+            },
+            DateCase {
+                year: 1473,
+                month: 4,
+                day: 28,
+            },
+        ];
+
+        let fixed_date: [i64; 33] = [
+            -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+            470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
+            664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
+        ];
+        let mut i = 0;
+        for case in cases {
+            let date = PersianDateInner(ArithmeticDate {
+                year: (case.year),
+                month: (case.month),
+                day: (case.day),
+                marker: (PhantomData),
+            });
+            assert_eq!(
+                date.0.year as i64,
+                Persian::arithmetic_persian_year_from_fixed(RataDie::new(
+                    *fixed_date.get(i).unwrap()
+                )),
+                "{case:?}"
+            );
+            i += 1;
+        }
     }
 }
