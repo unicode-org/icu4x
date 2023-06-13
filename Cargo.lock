@@ -1671,14 +1671,18 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
+ "icu_list_data",
  "icu_provider",
- "icu_testdata",
  "postcard",
  "regex-automata",
  "serde",
  "serde_json",
  "writeable",
 ]
+
+[[package]]
+name = "icu_list_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_locid"
