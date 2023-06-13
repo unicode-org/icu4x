@@ -21,6 +21,12 @@ icu::locid_transform::LocaleDirectionality::is_left_to_right#FnInStruct
 icu::locid_transform::LocaleDirectionality::is_right_to_left#FnInStruct
 icu::locid_transform::LocaleDirectionality::try_new_unstable#FnInStruct
 icu::locid_transform::LocaleDirectionality::try_new_with_expander_unstable#FnInStruct
+icu::locid_transform::fallback::FallbackPriority#Enum
+icu::locid_transform::fallback::FallbackPriority::const_default#FnInEnum
+icu::locid_transform::fallback::FallbackSupplement#Enum
+icu::locid_transform::fallback::LocaleFallbackConfig#Struct
+icu::locid_transform::fallback::LocaleFallbackConfig::const_default#FnInStruct
+icu::locid_transform::fallback::LocaleFallbackConfig::from_key#FnInStruct
 icu::plurals::PluralRules::try_new#FnInStruct
 icu::plurals::PluralRules::try_new_cardinal#FnInStruct
 icu::plurals::PluralRules::try_new_ordinal#FnInStruct
@@ -46,4 +52,3 @@ icu::properties::names::PropertyEnumToValueNameSparseMapper::as_borrowed#FnInStr
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStruct
 icu::timezone::MetazoneCalculator::new#FnInStruct
-icu_provider_adapters::fallback::FallbackSupplement#Enum
