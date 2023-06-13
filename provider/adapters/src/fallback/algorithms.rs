@@ -79,7 +79,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     }
 }
 
-impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
+impl<'a> LocaleFallbackIteratorInner<'a> {
     pub fn step(&mut self, locale: &mut DataLocale) {
         match self.config.priority {
             FallbackPriority::Language => self.step_language(locale),
@@ -419,13 +419,12 @@ mod tests {
                     extension_key: cas.extension_key,
                     fallback_supplement: cas.fallback_supplement,
                 };
-                let key_fallbacker = if cas.requires_data {
-                    fallbacker_with_data.for_config(config)
+                let fallbacker = if cas.requires_data {
+                    &fallbacker_with_data
                 } else {
-                    fallbacker_no_data.for_config(config)
+                    &fallbacker_no_data
                 };
-                let locale = DataLocale::from(Locale::from_str(cas.input).unwrap());
-                let mut it = key_fallbacker.fallback_for(locale);
+                let mut it = fallbacker.fallback_for(config, Locale::from_str(cas.input).unwrap());
                 for &expected in expected_chain {
                     assert_eq!(
                         expected,

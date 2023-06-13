@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::*;
+use crate::fallback::provider::*;
+use crate::fallback::LocaleFallbacker;
 use crate::helpers::result_is_err_missing_locale;
+use icu_provider::prelude::*;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.
@@ -190,8 +192,9 @@ impl<P> LocaleFallbackProvider<P> {
         F1: FnMut(DataRequest) -> Result<R, DataError>,
         F2: FnMut(&mut R) -> &mut DataResponseMetadata,
     {
-        let key_fallbacker = self.fallbacker.for_key(key);
-        let mut fallback_iterator = key_fallbacker.fallback_for(base_req.locale.clone());
+        let mut fallback_iterator = self
+            .fallbacker
+            .fallback_for(key.into(), base_req.locale.clone());
         let base_silent = core::mem::replace(&mut base_req.metadata.silent, true);
         loop {
             let result = f1(DataRequest {
