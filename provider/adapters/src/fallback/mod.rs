@@ -216,11 +216,11 @@ impl LocaleFallbackConfig {
 
     /// Creates a [`LocaleFallbackConfig`] for a [`DataKey`].
     pub const fn from_key(key: DataKey) -> Self {
-        let mut config = Self::const_default();
-        config.priority = key.metadata().fallback_priority;
-        config.extension_key = key.metadata().extension_key;
-        config.fallback_supplement = key.metadata().fallback_supplement;
-        config
+        Self {
+            priority: key.metadata().fallback_priority,
+            extension_key: key.metadata().extension_key,
+            fallback_supplement: key.metadata().fallback_supplement,
+        }
     }
 }
 
