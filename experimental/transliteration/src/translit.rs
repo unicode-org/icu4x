@@ -26,9 +26,9 @@ impl PatternElement {
     fn matches(&self, source: &[char], dir: MatchDirection) -> Option<u32> {
         match self {
             PatternElement::Literal(s) => {
-                dbg!(dir);
-                dbg!(s);
-                dbg!(source.iter().collect::<String>());
+                // dbg!(dir);
+                // dbg!(s);
+                // dbg!(source.iter().collect::<String>());
                 let s_chars = s.chars().collect::<Vec<_>>();
 
                 match dir {
@@ -130,7 +130,7 @@ impl Display for Pattern {
                     };
                     write!(f, "{}", res)?
                 },
-                PatternElement::UnicodeSet(s) => write!(f, "[{}]", s)?,
+                PatternElement::UnicodeSet(s) => write!(f, "{}", s)?,
             }
         }
         Ok(())
@@ -192,7 +192,7 @@ impl Display for Rule {
         if let Some(post) = &self.post {
             write!(f, " }} {}", post)?;
         }
-        write!(f, " → {}", self.target)
+        write!(f, " → {} ;", self.target)
     }
 }
 
@@ -233,8 +233,8 @@ impl Transliterator {
         let mut cursor = 0;
 
         'outer: while cursor < chars.len() {
-            dbg!(cursor);
-            dbg!(chars.iter().copied().collect::<String>());
+            // dbg!(cursor);
+            // dbg!(chars.iter().copied().collect::<String>());
             // sleep(std::time::Duration::from_millis(1000));
 
 
@@ -255,28 +255,28 @@ impl Transliterator {
                     }
                 }
 
-                let mut post_start = cursor;
+                let mut key_end = cursor;
 
                 // step 1b)
                 if let Some(key_match_len) = key.matches(&chars[cursor..], MatchDirection::Forward) {
                     let key_match_len = key_match_len as usize;
-                    post_start += key_match_len;
+                    key_end += key_match_len;
                 } else {
                     // key doesn't match, skip this rule
                     continue;
                 }
                 if let Some(post) = post {
-                    if post.matches(&chars[post_start..], MatchDirection::Forward).is_none() {
+                    if post.matches(&chars[key_end..], MatchDirection::Forward).is_none() {
                         // post doesn't match, skip this rule
                         continue;
                     }
                 }
                 // matched rule
-                dbg!(rule);
+                // dbg!(rule);
                 // step 2a)
                 let mut replacement: Vec<_> = rule.target.replacement.chars().collect();
                 let mut new_chars = replacement.len();
-                chars.splice(cursor..post_start as usize, replacement.drain(..));
+                chars.splice(cursor..key_end as usize, replacement.drain(..));
                 // step 2b)
                 let new_cursor = cursor as i64 + new_chars as i64 + rule.target.cursor as i64;
                 cursor = new_cursor.clamp(0, chars.len() as i64) as usize;

@@ -93,7 +93,7 @@ const RULES_NO_UNICODE_SET: &str = r#"
 Ü → UE;
 
 'hello ' { world } > | @@@@@@ welt ;
-{ 'hello welt' } > 'hallo welt' ;
+{ 'hello welt'   > 'hallo welt' ;
 
 # ::Any-ASCII;
 
@@ -263,14 +263,10 @@ fn main() {
     "#;
 
     // let source = "hello world";
-    let source = r#"
-    
-    Hi there "person" (--> that implies you are not in fact a "human"). Gotta love 9 3/4!
-    
-    "#;
+
 
     let rules = RULES_NO_UNICODE_SET;
-    let rules = RULES_PUBLISHING;
+    //let rules = RULES_PUBLISHING;
     let mut it = rules.chars().peekable();
     let rules = dfaparsing::parse_rules(&mut it);
     eprintln!("Remaining input: {:?}", it.collect::<String>());
