@@ -288,7 +288,7 @@ impl Astronomical {
         ];
         let mut correction = 1.0 / 1000000.0;
         let mut correction_operand = 0.0;
-        for i in 0..59 {
+        for i in 0..x.len() {
             correction_operand += v[i]
                 * e.powf(x[i].abs())
                 * (w[i] * d + x[i] * ms + y[i] * ml + z[i] * f)
@@ -421,7 +421,7 @@ impl Astronomical {
             90073.778,
         ];
         let mut lambda = 0.0;
-        for i in 0..49 {
+        for i in 0..x.len() {
             lambda += x[i] * (y[i] + z[i] * c).to_radians().sin();
         }
         lambda *= 0.000005729577951308232;
