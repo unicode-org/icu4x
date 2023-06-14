@@ -13,7 +13,7 @@ use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit
 use ::tinystr::tinystr;
 use core::marker::PhantomData;
 
-const PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian(ArithmeticDate {
+const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian(ArithmeticDate {
     year: (622),
     month: (3),
     day: (19),
@@ -201,7 +201,7 @@ impl Persian {
         let z = div_rem_euclid64(31 * year - 5, 128);
 
         RataDie::new(
-            PERSIAN_EPOCH.to_i64_date() - 1
+            FIXED_PERSIAN_EPOCH.to_i64_date() - 1
                 + 1029983 * x.0
                 + 365 * (year - 1)
                 + z.0
@@ -270,7 +270,7 @@ impl Persian {
     // Persian New Year to fixed year
     fn nowruz(g_year: i32) -> RataDie {
         let persian_year =
-            g_year - year_as_gregorian(PERSIAN_EPOCH.to_i64_date() as i32).number + 1;
+            g_year - year_as_gregorian(FIXED_PERSIAN_EPOCH.to_i64_date() as i32).number + 1;
         let _year = if persian_year <= 0 {
             persian_year - 1
         } else {
@@ -342,6 +342,8 @@ impl DateTime<Persian> {
     }
 }
 mod tests {
+
+    use crate::Gregorian;
 
     #[cfg(test)]
     use super::*;
@@ -541,7 +543,6 @@ mod tests {
             );
         }
     }
-
     #[test]
     fn test_fixed_from_persian() {
         for (case, f_date) in CASES.iter().zip(FIXED_DATE.iter()) {
@@ -559,7 +560,6 @@ mod tests {
             );
         }
     }
-
     #[test]
     fn test_persian_from_fixed() {
         for (case, f_date) in CASES.iter().zip(FIXED_DATE.iter()) {
@@ -571,10 +571,11 @@ mod tests {
             );
         }
     }
-
-    //#[test]
-    // fn test_persian_epoch() {
-
-    //     assert_eq!(PERSIAN_EPOCH.to_i64_date(), -475);
-    // }
+    #[test]
+    fn test_persian_epoch() {
+        let epoch = FIXED_PERSIAN_EPOCH.to_i64_date();
+        // Iso year of Persian Epoch
+        let epoch_year_from_fixed = Iso::iso_from_fixed(RataDie::new(epoch)).inner.0.year;
+        assert_eq!(epoch_year_from_fixed, 622);
+    }
 }
