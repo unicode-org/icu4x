@@ -26,7 +26,6 @@ pub enum ICU4XDataProviderInner {
 pub mod ffi {
     use super::ICU4XDataProviderInner;
     use crate::errors::ffi::ICU4XError;
-    use crate::fallbacker::ffi::ICU4XLocaleFallbacker;
     use alloc::boxed::Box;
     #[allow(unused_imports)] // feature-gated
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -237,9 +236,10 @@ pub mod ffi {
             compact
         )]
         #[allow(unused_variables)] // feature-gated
+        #[cfg(feature = "icu_locid_transform")]
         pub fn enable_locale_fallback_with(
             &mut self,
-            fallbacker: &ICU4XLocaleFallbacker,
+            fallbacker: &crate::fallbacker::ffi::ICU4XLocaleFallbacker,
         ) -> Result<(), ICU4XError> {
             use ICU4XDataProviderInner::*;
             *self = match core::mem::replace(&mut self.0, Destroyed) {

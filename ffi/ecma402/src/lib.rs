@@ -63,10 +63,3 @@ impl std::fmt::Display for crate::DataLocale {
         self.0.fmt(f)
     }
 }
-
-pub(crate) struct GlobalDataProvider;
-
-mod baked {
-    include!(concat!(env!("OUT_DIR"), "/baked/mod.rs"));
-    impl_data_provider!(super::GlobalDataProvider);
-}

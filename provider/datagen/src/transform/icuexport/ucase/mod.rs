@@ -6,7 +6,6 @@
 //! exported from ICU.
 
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
-use icu_casemapping::CaseMappingInternals;
 use icu_collections::codepointtrie::toml::CodePointDataSlice;
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
@@ -40,21 +39,15 @@ impl DataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
         let exceptions = &toml.exceptions.exceptions;
         let unfold = &toml.unfold.unfold;
 
-        let case_mapping = CaseMappingInternals::try_from_icu(
-            trie_header,
-            trie_index,
-            trie_data,
-            exceptions,
-            unfold,
-        )
-        .map_err(|e| {
-            DataError::custom("Could not create CaseMappingInternals").with_display_context(&e)
-        })?;
+        let case_mapping =
+            CaseMappingV1::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)
+                .map_err(|e| {
+                    DataError::custom("Could not create CaseMappingInternals")
+                        .with_display_context(&e)
+                })?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(CaseMappingV1 {
-                casemap: case_mapping,
-            })),
+            payload: Some(DataPayload::from_owned(case_mapping)),
         })
     }
 }

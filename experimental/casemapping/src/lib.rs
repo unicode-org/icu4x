@@ -22,14 +22,9 @@ mod casemapping;
 pub mod provider;
 
 mod error;
-mod exceptions;
-#[cfg(feature = "datagen")]
-mod exceptions_builder;
 mod internals;
 
 pub use casemapping::CaseMapping;
 pub use error::Error as CaseMappingError;
-#[cfg(feature = "datagen")]
-pub use internals::CaseMappingInternals;
 #[doc(no_inline)]
 pub use CaseMappingError as Error;

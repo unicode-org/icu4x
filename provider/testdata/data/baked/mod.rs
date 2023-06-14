@@ -82,8 +82,11 @@ macro_rules! __impl_data_provider {
         impl_displaynames_scripts_v1!($provider);
         #[cfg(feature = "icu_displaynames")]
         impl_displaynames_variants_v1!($provider);
+        #[cfg(feature = "icu_locid_transform")]
         impl_fallback_likelysubtags_v1!($provider);
+        #[cfg(feature = "icu_locid_transform")]
         impl_fallback_parents_v1!($provider);
+        #[cfg(feature = "icu_locid_transform")]
         impl_fallback_supplement_co_v1!($provider);
         #[cfg(feature = "icu_list")]
         impl_list_and_v1!($provider);
@@ -508,9 +511,12 @@ macro_rules! __impl_any_provider {
                 const DISPLAYNAMES_SCRIPTS_V1: icu_provider::DataKeyHash = <icu_displaynames::provider::ScriptDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_displaynames")]
                 const DISPLAYNAMES_VARIANTS_V1: icu_provider::DataKeyHash = <icu_displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const FALLBACK_LIKELYSUBTAGS_V1: icu_provider::DataKeyHash = <icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const FALLBACK_PARENTS_V1: icu_provider::DataKeyHash = <icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const FALLBACK_SUPPLEMENT_CO_V1: icu_provider::DataKeyHash = <icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                #[cfg(feature = "icu_locid_transform")]
+                const FALLBACK_LIKELYSUBTAGS_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                #[cfg(feature = "icu_locid_transform")]
+                const FALLBACK_PARENTS_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::LocaleFallbackParentsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                #[cfg(feature = "icu_locid_transform")]
+                const FALLBACK_SUPPLEMENT_CO_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::CollationFallbackSupplementV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_list")]
                 const LIST_AND_V1: icu_provider::DataKeyHash = <icu_list::provider::AndListV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_list")]
@@ -915,9 +921,12 @@ macro_rules! __impl_any_provider {
                     DISPLAYNAMES_SCRIPTS_V1 => icu_provider::DataProvider::<icu_displaynames::provider::ScriptDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_displaynames")]
                     DISPLAYNAMES_VARIANTS_V1 => icu_provider::DataProvider::<icu_displaynames::provider::VariantDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    FALLBACK_LIKELYSUBTAGS_V1 => icu_provider::DataProvider::<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    FALLBACK_PARENTS_V1 => icu_provider::DataProvider::<icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    FALLBACK_SUPPLEMENT_CO_V1 => icu_provider::DataProvider::<icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    #[cfg(feature = "icu_locid_transform")]
+                    FALLBACK_LIKELYSUBTAGS_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    #[cfg(feature = "icu_locid_transform")]
+                    FALLBACK_PARENTS_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::LocaleFallbackParentsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    #[cfg(feature = "icu_locid_transform")]
+                    FALLBACK_SUPPLEMENT_CO_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::CollationFallbackSupplementV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_list")]
                     LIST_AND_V1 => icu_provider::DataProvider::<icu_list::provider::AndListV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_list")]

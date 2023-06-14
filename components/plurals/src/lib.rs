@@ -348,10 +348,10 @@ impl PluralRules {
         /// [`One`]: PluralCategory::One
         /// [`Other`]: PluralCategory::Other
         functions: [
-            try_new_cardinal_unstable,
+            try_new_cardinal,
             try_new_cardinal_with_any_provider,
             try_new_cardinal_with_buffer_provider,
-            try_new_cardinal,
+            try_new_cardinal_unstable,
             Self,
         ]
     );
@@ -406,10 +406,10 @@ impl PluralRules {
         /// [`Few`]: PluralCategory::Few
         /// [`Other`]: PluralCategory::Other
         functions: [
-            try_new_ordinal_unstable,
+            try_new_ordinal,
             try_new_ordinal_with_any_provider,
             try_new_ordinal_with_buffer_provider,
-            try_new_ordinal,
+            try_new_ordinal_unstable,
             Self,
         ]
     );
