@@ -237,7 +237,7 @@ impl DatagenProvider {
                     exporter
                         .flush_with_fallback(key, icu_provider::datagen::FallbackMode::Singleton)
                 } else if provider.source.options.fallback == options::FallbackMode::Full {
-                    // TODO: Figure out how to compare `DataPayload<ExportMarker>` for equality
+                    // TODO(#2683): Figure out how to compare `DataPayload<ExportMarker>` for equality
                     // to actually dedupe
                     payloads
                         .iter()
