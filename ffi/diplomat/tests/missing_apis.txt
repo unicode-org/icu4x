@@ -46,3 +46,4 @@ icu::properties::names::PropertyEnumToValueNameSparseMapper::as_borrowed#FnInStr
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStruct
 icu::timezone::MetazoneCalculator::new#FnInStruct
+icu_provider_adapters::fallback::FallbackSupplement#Enum

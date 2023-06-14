@@ -7,7 +7,7 @@ use icu_provider_adapters::fallback::LocaleFallbackConfig;
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_provider::FallbackPriority;
+    use icu_provider_adapters::fallback::FallbackPriority;
     use icu_provider_adapters::fallback::LocaleFallbackConfig;
     use icu_provider_adapters::fallback::LocaleFallbackIterator;
     use icu_provider_adapters::fallback::LocaleFallbacker;
@@ -24,7 +24,12 @@ pub mod ffi {
 
     /// Priority mode for the ICU4X fallback algorithm.
     #[diplomat::enum_convert(FallbackPriority, needs_wildcard)]
-    #[diplomat::rust_link(icu_provider::FallbackPriority, Enum)]
+    #[diplomat::rust_link(icu_provider_adapters::fallback::FallbackPriority, Enum)]
+    #[diplomat::rust_link(
+        icu_provider_adapters::fallback::FallbackPriority::const_default,
+        FnInEnum,
+        hidden
+    )]
     pub enum ICU4XLocaleFallbackPriority {
         Language = 0,
         Region = 1,
@@ -33,6 +38,11 @@ pub mod ffi {
 
     /// Collection of configurations for the ICU4X fallback algorithm.
     #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbackConfig, Struct)]
+    #[diplomat::rust_link(
+        icu_provider_adapters::fallback::LocaleFallbackConfig::const_default,
+        FnInStruct,
+        hidden
+    )]
     pub struct ICU4XLocaleFallbackConfig<'a> {
         /// Choice of priority mode.
         pub priority: ICU4XLocaleFallbackPriority,
