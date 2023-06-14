@@ -7,7 +7,8 @@
             "locid_transform/aliases@1",
             "locid_transform/likelysubtags_ext@1",
             "locid_transform/likelysubtags_l@1",
-            "locid_transform/likelysubtags_sr@1"
+            "locid_transform/likelysubtags_sr@1",
+            "locid_transform/script_dir@1"
         ]
     },
     "locales": {

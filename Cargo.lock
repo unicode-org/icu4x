@@ -1728,6 +1728,7 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_locid",
+ "icu_locid_transform_data",
  "icu_provider",
  "icu_testdata",
  "serde",
@@ -1736,6 +1737,10 @@ dependencies = [
  "writeable",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_locid_transform_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_normalizer"

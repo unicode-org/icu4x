@@ -24,6 +24,24 @@ pub use expander::*;
 mod fallback;
 pub use fallback::*;
 
+#[cfg(feature = "data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_locid_transform;
+    icu_locid_transform_data::impl_fallback_likelysubtags_v1!(Baked);
+    icu_locid_transform_data::impl_fallback_parents_v1!(Baked);
+    icu_locid_transform_data::impl_fallback_supplement_co_v1!(Baked);
+    icu_locid_transform_data::impl_locid_transform_aliases_v1!(Baked);
+    icu_locid_transform_data::impl_locid_transform_likelysubtags_ext_v1!(Baked);
+    icu_locid_transform_data::impl_locid_transform_likelysubtags_l_v1!(Baked);
+    icu_locid_transform_data::impl_locid_transform_likelysubtags_sr_v1!(Baked);
+    icu_locid_transform_data::impl_locid_transform_script_dir_v1!(Baked);
+};
+
 use alloc::borrow::Cow;
 use tinystr::{TinyAsciiStr, UnvalidatedTinyAsciiStr};
 
