@@ -1381,6 +1381,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_calendar_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_capi"
 version = "1.2.2"
 dependencies = [
@@ -1445,6 +1449,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_casemapping_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_codepointtrie_builder"
 version = "0.3.5"
 dependencies = [
@@ -1479,6 +1487,10 @@ dependencies = [
  "utf8_iter",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_collator_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_collections"
@@ -1516,6 +1528,10 @@ dependencies = [
  "writeable",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_compactdecimal_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_datagen"
@@ -1603,6 +1619,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_datetime_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_decimal"
 version = "1.2.0"
 dependencies = [
@@ -1625,6 +1645,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_decimal_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_depcheck"
 version = "0.1.0"
 
@@ -1641,6 +1665,10 @@ dependencies = [
  "tinystr",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_displaynames_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_ffi_coverage"
@@ -1766,6 +1794,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_normalizer_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_pattern"
 version = "0.1.4"
 dependencies = [
@@ -1825,6 +1857,10 @@ dependencies = [
  "unicode-bidi",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_properties_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_provider"
@@ -1929,6 +1965,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_relativetime_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_segmenter"
 version = "1.2.1"
 dependencies = [
@@ -1949,6 +1989,10 @@ dependencies = [
  "utf8_iter",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_segmenter_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_testdata"
