@@ -397,6 +397,7 @@ impl AnyCalendar {
                 AnyCalendar::JapaneseExtended(JapaneseExtended::new())
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(

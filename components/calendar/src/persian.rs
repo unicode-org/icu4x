@@ -5,7 +5,9 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::gregorian::year_as_gregorian;
-use crate::helpers::{div_rem_euclid64, i64_to_i32, quotient, quotient64, I32Result, div_rem_euclid};
+use crate::helpers::{
+    div_rem_euclid, div_rem_euclid64, i64_to_i32, quotient, quotient64, I32Result,
+};
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
@@ -528,21 +530,19 @@ mod tests {
             day: 28,
         },
     ];
-    
+
     #[test]
     fn test_persian_leap_year() {
-
-        let mut leap_years: [i32;33] = [0;33];
+        let mut leap_years: [i32; 33] = [0; 33];
         let mut index = 0;
         for case in CASES.iter() {
             leap_years[index] = case.year;
-            index+=1;
+            index += 1;
         }
         for i in leap_years {
             println!("{}", i);
         }
     }
-
 
     #[test]
     fn test_persian_year_from_fixed() {
