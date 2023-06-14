@@ -2,14 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "datagen")]
-use crate::error::Error;
 use crate::internals::{CaseMapLocale, FoldOptions};
-#[cfg(feature = "datagen")]
-use crate::provider::CaseMappingV1;
 use crate::provider::CaseMappingV1Marker;
-#[cfg(feature = "datagen")]
-use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
@@ -50,25 +44,6 @@ impl CaseMapping {
         debug_assert!(data.get().validate().is_ok());
         let locale = CaseMapLocale::from(locale);
         Ok(Self { data, locale })
-    }
-
-    /// Creates a new CaseMapping using data exported by the `icuexportdata` tool
-    /// in ICU4C. Validates that the data is consistent.
-    #[cfg(feature = "datagen")]
-    pub fn try_from_icu(
-        trie_header: CodePointTrieHeader,
-        trie_index: &[u16],
-        trie_data: &[u16],
-        exceptions: &[u16],
-        unfold: &[u16],
-    ) -> Result<Self, Error> {
-        let data =
-            CaseMappingV1::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)?;
-        let locale = CaseMapLocale::Root;
-        Ok(Self {
-            data: DataPayload::from_owned(data),
-            locale,
-        })
     }
 
     /// Returns the lowercase mapping of the given `char`.
