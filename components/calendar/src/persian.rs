@@ -343,8 +343,6 @@ impl DateTime<Persian> {
 }
 mod tests {
 
-    use crate::Gregorian;
-
     #[cfg(test)]
     use super::*;
     #[derive(Debug)]
@@ -576,6 +574,7 @@ mod tests {
         let epoch = FIXED_PERSIAN_EPOCH.to_i64_date();
         // Iso year of Persian Epoch
         let epoch_year_from_fixed = Iso::iso_from_fixed(RataDie::new(epoch)).inner.0.year;
+        // 622 is the correct ISO year for the Persian Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }
 }
