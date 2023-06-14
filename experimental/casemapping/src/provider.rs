@@ -27,12 +27,11 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::CodePointTrieHeader;
 
 pub mod data;
-
-pub mod unfold;
-
 pub mod exception_helpers;
-
 pub mod exceptions;
+#[cfg(feature = "datagen")]
+mod exceptions_builder;
+pub mod unfold;
 
 /// This type contains all of the casemapping data
 ///
@@ -80,7 +79,7 @@ impl<'data> CaseMappingV1<'data> {
         exceptions: &[u16],
         unfold: &[u16],
     ) -> Result<Self, Error> {
-        use crate::exceptions_builder::CaseMappingExceptionsBuilder;
+        use self::exceptions_builder::CaseMappingExceptionsBuilder;
         use zerovec::ZeroVec;
         let exceptions_builder = CaseMappingExceptionsBuilder::new(exceptions);
         let (exceptions, idx_map) = exceptions_builder.build()?;
