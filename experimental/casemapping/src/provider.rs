@@ -8,7 +8,14 @@
 
 use icu_provider::prelude::*;
 
-use crate::internals::CaseMappingInternals;
+use crate::error::Error;
+use crate::provider::data::CaseMappingData;
+use crate::provider::exceptions::CaseMappingExceptions;
+use crate::provider::unfold::CaseMappingUnfoldData;
+
+use icu_collections::codepointtrie::CodePointTrie;
+#[cfg(feature = "datagen")]
+use icu_collections::codepointtrie::CodePointTrieHeader;
 
 #[allow(missing_docs)] // TBD, temporary
 pub mod data;
@@ -34,5 +41,96 @@ pub mod exceptions;
 pub struct CaseMappingV1<'data> {
     /// Case mapping data
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub casemap: CaseMappingInternals<'data>,
+    /// TODO
+    pub trie: CodePointTrie<'data, CaseMappingData>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// TODO
+    pub exceptions: CaseMappingExceptions<'data>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// TODO
+    pub unfold: CaseMappingUnfoldData<'data>,
+}
+
+impl<'data> CaseMappingV1<'data> {
+    /// Creates a new CaseMappingV1 using data exported by the
+    // `icuexportdata` tool in ICU4C. Validates that the data is
+    // consistent.
+    #[cfg(feature = "datagen")]
+    pub fn try_from_icu(
+        trie_header: CodePointTrieHeader,
+        trie_index: &[u16],
+        trie_data: &[u16],
+        exceptions: &[u16],
+        unfold: &[u16],
+    ) -> Result<Self, Error> {
+        use crate::exceptions_builder::CaseMappingExceptionsBuilder;
+        use zerovec::ZeroVec;
+        let exceptions_builder = CaseMappingExceptionsBuilder::new(exceptions);
+        let (exceptions, idx_map) = exceptions_builder.build()?;
+
+        let trie_index = ZeroVec::alloc_from_slice(trie_index);
+
+        let trie_data = trie_data
+            .iter()
+            .map(|&i| {
+                CaseMappingData::try_from_icu_integer(i)
+                    .unwrap()
+                    .with_updated_exception(&idx_map)
+            })
+            .collect::<ZeroVec<_>>();
+
+        let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
+
+        let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
+
+        let result = Self {
+            trie,
+            exceptions,
+            unfold,
+        };
+        result.validate()?;
+        Ok(result)
+    }
+
+    /// Given an existing CaseMapping, validates that the data is
+    /// consistent. A CaseMapping created by the ICU transformer has
+    /// already been validated. Calling this function is only
+    /// necessary if you are concerned about data corruption after
+    /// deserializing.
+    pub(crate) fn validate(&self) -> Result<(), Error> {
+        // First, validate that exception data is well-formed.
+        let valid_exception_indices = self.exceptions.validate()?;
+
+        let validate_delta = |c: char, delta: i32| -> Result<(), Error> {
+            let new_c = u32::try_from(c as i32 + delta)
+                .map_err(|_| Error::Validation("Delta larger than character"))?;
+            char::from_u32(new_c).ok_or(Error::Validation("Invalid delta"))?;
+            Ok(())
+        };
+
+        for i in 0..char::MAX as u32 {
+            if let Some(c) = char::from_u32(i) {
+                let data = self.lookup_data(c);
+                if data.has_exception() {
+                    let idx = data.exception_index();
+                    let exception = self.exceptions.get(idx);
+                    // Verify that the exception index points to a valid exception header.
+                    if !valid_exception_indices.contains(&idx) {
+                        return Error::invalid("Invalid exception index in trie data");
+                    }
+                    exception.validate()?;
+                } else {
+                    validate_delta(c, data.delta() as i32)?;
+                }
+            }
+        }
+
+        // The unfold data is structurally guaranteed to be valid,
+        // so there is nothing left to check.
+        Ok(())
+    }
+
+    pub(crate) fn lookup_data(&self, c: char) -> CaseMappingData {
+        self.trie.get32(c as u32)
+    }
 }

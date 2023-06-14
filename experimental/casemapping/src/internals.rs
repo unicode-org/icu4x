@@ -2,24 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::convert::TryFrom;
-use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_collections::codepointtrie::CodePointTrie;
-#[cfg(feature = "datagen")]
-use icu_collections::codepointtrie::CodePointTrieHeader;
-use icu_locid::Locale;
-use icu_provider::prelude::*;
-#[cfg(feature = "datagen")]
-use zerovec::ZeroVec;
-
-use crate::error::Error;
-#[cfg(feature = "datagen")]
-use crate::exceptions_builder::CaseMappingExceptionsBuilder;
-use crate::provider::exceptions::CaseMappingExceptions;
-
-use crate::provider::data::{CaseMappingData, DotType, MappingKind};
+use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
-use crate::provider::unfold::CaseMappingUnfoldData;
+use crate::provider::CaseMappingV1;
+use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+use icu_locid::Locale;
 
 // Used to control the behavior of CaseMapping::fold.
 // Currently only used to decide whether to use Turkic (T) mappings for dotted/dotless i.
@@ -36,116 +23,7 @@ impl FoldOptions {
     }
 }
 
-/// CaseMappingInternals provides low-level access to the data necessary to
-/// convert characters and strings to upper, lower, or title case.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
-/// </div>
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_casemapping::provider),
-)]
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[yoke(prove_covariance_manually)]
-pub struct CaseMappingInternals<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    /// TODO
-    pub trie: CodePointTrie<'data, CaseMappingData>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    /// TODO
-    pub exceptions: CaseMappingExceptions<'data>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    /// TODO
-    pub unfold: CaseMappingUnfoldData<'data>,
-}
-
-impl<'data> CaseMappingInternals<'data> {
-    /// Creates a new CaseMappingInternals using data exported by the
-    // `icuexportdata` tool in ICU4C. Validates that the data is
-    // consistent.
-    #[cfg(feature = "datagen")]
-    pub fn try_from_icu(
-        trie_header: CodePointTrieHeader,
-        trie_index: &[u16],
-        trie_data: &[u16],
-        exceptions: &[u16],
-        unfold: &[u16],
-    ) -> Result<Self, Error> {
-        let exceptions_builder = CaseMappingExceptionsBuilder::new(exceptions);
-        let (exceptions, idx_map) = exceptions_builder.build()?;
-
-        let trie_index = ZeroVec::alloc_from_slice(trie_index);
-
-        let trie_data = trie_data
-            .iter()
-            .map(|&i| {
-                CaseMappingData::try_from_icu_integer(i)
-                    .unwrap()
-                    .with_updated_exception(&idx_map)
-            })
-            .collect::<ZeroVec<_>>();
-
-        let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
-
-        let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
-
-        let result = Self {
-            trie,
-            exceptions,
-            unfold,
-        };
-        result.validate()?;
-        Ok(result)
-    }
-
-    /// Given an existing CaseMapping, validates that the data is
-    /// consistent. A CaseMapping created by the ICU transformer has
-    /// already been validated. Calling this function is only
-    /// necessary if you are concerned about data corruption after
-    /// deserializing.
-    pub(crate) fn validate(&self) -> Result<(), Error> {
-        // First, validate that exception data is well-formed.
-        let valid_exception_indices = self.exceptions.validate()?;
-
-        let validate_delta = |c: char, delta: i32| -> Result<(), Error> {
-            let new_c = u32::try_from(c as i32 + delta)
-                .map_err(|_| Error::Validation("Delta larger than character"))?;
-            char::from_u32(new_c).ok_or(Error::Validation("Invalid delta"))?;
-            Ok(())
-        };
-
-        for i in 0..char::MAX as u32 {
-            if let Some(c) = char::from_u32(i) {
-                let data = self.lookup_data(c);
-                if data.has_exception() {
-                    let idx = data.exception_index();
-                    let exception = self.exceptions.get(idx);
-                    // Verify that the exception index points to a valid exception header.
-                    if !valid_exception_indices.contains(&idx) {
-                        return Error::invalid("Invalid exception index in trie data");
-                    }
-                    exception.validate()?;
-                } else {
-                    validate_delta(c, data.delta() as i32)?;
-                }
-            }
-        }
-
-        // The unfold data is structurally guaranteed to be valid,
-        // so there is nothing left to check.
-        Ok(())
-    }
-
-    fn lookup_data(&self, c: char) -> CaseMappingData {
-        self.trie.get32(c as u32)
-    }
-
+impl<'data> CaseMappingV1<'data> {
     fn simple_helper(&self, c: char, kind: MappingKind) -> char {
         let data = self.lookup_data(c);
         if !data.has_exception() {
@@ -769,7 +647,7 @@ impl<'a> ContextIterator<'a> {
         Self { before, after }
     }
 
-    fn preceded_by_soft_dotted(&self, mapping: &CaseMappingInternals) -> bool {
+    fn preceded_by_soft_dotted(&self, mapping: &CaseMappingV1) -> bool {
         for c in self.before.chars().rev() {
             match mapping.dot_type(c) {
                 DotType::SoftDotted => return true,
@@ -779,7 +657,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn preceded_by_capital_i(&self, mapping: &CaseMappingInternals) -> bool {
+    fn preceded_by_capital_i(&self, mapping: &CaseMappingV1) -> bool {
         for c in self.before.chars().rev() {
             if c == 'I' {
                 return true;
@@ -790,7 +668,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn preceded_by_cased_letter(&self, mapping: &CaseMappingInternals) -> bool {
+    fn preceded_by_cased_letter(&self, mapping: &CaseMappingV1) -> bool {
         for c in self.before.chars().rev() {
             let data = mapping.lookup_data(c);
             if !data.is_ignorable() {
@@ -799,7 +677,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn followed_by_cased_letter(&self, mapping: &CaseMappingInternals) -> bool {
+    fn followed_by_cased_letter(&self, mapping: &CaseMappingV1) -> bool {
         for c in self.after.chars() {
             let data = mapping.lookup_data(c);
             if !data.is_ignorable() {
@@ -808,7 +686,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn followed_by_more_above(&self, mapping: &CaseMappingInternals) -> bool {
+    fn followed_by_more_above(&self, mapping: &CaseMappingV1) -> bool {
         for c in self.after.chars() {
             match mapping.dot_type(c) {
                 DotType::Above => return true,
@@ -818,7 +696,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn followed_by_dot_above(&self, mapping: &CaseMappingInternals) -> bool {
+    fn followed_by_dot_above(&self, mapping: &CaseMappingV1) -> bool {
         for c in self.after.chars() {
             if c == '\u{307}' {
                 return true;

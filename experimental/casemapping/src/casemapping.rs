@@ -47,7 +47,7 @@ impl CaseMapping {
         P: DataProvider<CaseMappingV1Marker> + ?Sized,
     {
         let internals = provider.load(Default::default())?.take_payload()?;
-        debug_assert!(internals.get().casemap.validate().is_ok());
+        debug_assert!(internals.get().validate().is_ok());
         let locale = CaseMapLocale::from(locale);
         Ok(Self { internals, locale })
     }
@@ -62,15 +62,8 @@ impl CaseMapping {
         exceptions: &[u16],
         unfold: &[u16],
     ) -> Result<Self, Error> {
-        let internals = CaseMappingV1 {
-            casemap: CaseMappingInternals::try_from_icu(
-                trie_header,
-                trie_index,
-                trie_data,
-                exceptions,
-                unfold,
-            )?,
-        };
+        let internals =
+            CaseMappingV1::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)?;
         let locale = CaseMapLocale::Root;
         Ok(Self {
             internals: DataPayload::from_owned(internals),
@@ -83,7 +76,7 @@ impl CaseMapping {
     /// which can map one `char` to a string, are not included.
     /// For full mappings, use [`CaseMapping::to_full_lowercase`].
     pub fn to_lowercase(&self, c: char) -> char {
-        self.internals.get().casemap.simple_lower(c)
+        self.internals.get().simple_lower(c)
     }
 
     /// Returns the uppercase mapping of the given `char`.
@@ -91,23 +84,20 @@ impl CaseMapping {
     /// which can map one `char` to a string, are not included.
     /// For full mappings, use [`CaseMapping::to_full_uppercase`].
     pub fn to_uppercase(&self, c: char) -> char {
-        self.internals.get().casemap.simple_upper(c)
+        self.internals.get().simple_upper(c)
     }
 
     /// Returns the titlecase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
     pub fn to_titlecase(&self, c: char) -> char {
-        self.internals.get().casemap.simple_title(c)
+        self.internals.get().simple_title(c)
     }
 
     /// Returns the simple case folding mapping of the given char.
     /// For full mappings, use [`CaseMapping::full_fold`].
     pub fn fold(&self, c: char) -> char {
-        self.internals
-            .get()
-            .casemap
-            .simple_fold(c, FoldOptions::default())
+        self.internals.get().simple_fold(c, FoldOptions::default())
     }
 
     /// Returns the simple case folding mapping of the given char, using Turkic (T) mappings for
@@ -117,35 +107,25 @@ impl CaseMapping {
     pub fn fold_turkic(&self, c: char) -> char {
         self.internals
             .get()
-            .casemap
             .simple_fold(c, FoldOptions::with_turkic_mappings())
     }
 
     /// Returns the full lowercase mapping of the given string.
     /// This function is context and locale sensitive.
     pub fn to_full_lowercase(&self, src: &str) -> String {
-        self.internals
-            .get()
-            .casemap
-            .full_lowercase(src, self.locale)
+        self.internals.get().full_lowercase(src, self.locale)
     }
 
     /// Returns the full uppercase mapping of the given string.
     /// This function is context and locale sensitive.
     pub fn to_full_uppercase(&self, src: &str) -> String {
-        self.internals
-            .get()
-            .casemap
-            .full_uppercase(src, self.locale)
+        self.internals.get().full_uppercase(src, self.locale)
     }
 
     /// Case-folds the characters in the given string.
     /// This function is locale-independent and context-insensitive.
     pub fn full_fold(&self, src: &str) -> String {
-        self.internals
-            .get()
-            .casemap
-            .full_folding(src, CaseMapLocale::Root)
+        self.internals.get().full_folding(src, CaseMapLocale::Root)
     }
 
     /// Case-folds the characters in the given string, using Turkic (T) mappings for dotted/dotless I.
@@ -153,7 +133,6 @@ impl CaseMapping {
     pub fn full_fold_turkic(&self, src: &str) -> String {
         self.internals
             .get()
-            .casemap
             .full_folding(src, CaseMapLocale::Turkish)
     }
 }
