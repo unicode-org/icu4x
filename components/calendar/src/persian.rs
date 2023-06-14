@@ -534,13 +534,19 @@ mod tests {
     #[test]
     fn test_persian_leap_year() {
         let mut leap_years: [i32; 33] = [0; 33];
+        let lisp_results = [
+            false, true, false, false, false, false, false, true, false, true, false, false, true,
+            false, false, true, false, false, false, false, false, false, false, true, false,
+            false, false, false, false, true, false, false, false,
+        ];
+
         let mut index = 0;
         for case in CASES.iter() {
             leap_years[index] = case.year;
             index += 1;
         }
-        for i in leap_years {
-            println!("{}", i);
+        for (year, bool) in leap_years.iter().zip(lisp_results.iter()) {
+            assert_eq!(Persian::is_leap_year(*year), *bool);
         }
     }
 
