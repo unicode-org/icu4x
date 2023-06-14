@@ -17,6 +17,12 @@ use crate::provider::data::{DotType, MappingKind};
 use zerovec::ule::{AsULE, ULE};
 
 /// A bunch of bits associated with each exception.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
@@ -106,6 +112,12 @@ impl ExceptionBits {
 ///               6: Closure mappings (string; see below)
 ///               7: Full mappings (strings; see below)
 /// ```
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Copy, Clone, PartialEq, Eq, ULE, Debug, Default)]
 #[repr(transparent)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -125,6 +137,12 @@ impl SlotPresence {
 /// The bitflags on an exception header (bits 8-15, see docs on [`ExceptionHeaderULE`])
 ///
 /// All bits are valid, though in ICU4X data bits 0 and 2 are not used
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Copy, Clone, PartialEq, Eq, ULE)]
 #[repr(transparent)]
 pub struct ExceptionBitsULE(pub u8);
@@ -205,6 +223,12 @@ impl AsULE for SlotPresence {
 }
 
 /// The different slots that may be present in slot-based exception data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq)]
 pub(crate) enum ExceptionSlot {
     /// Lowercase mapping

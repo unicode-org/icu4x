@@ -27,6 +27,12 @@ const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
 /// This represents case mapping exceptions that can't be represented as a delta applied to
 /// the original code point. The codepoint
 /// trie in CaseMapping stores indices into this VarZeroVec.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen", 
@@ -76,6 +82,12 @@ impl<'data> CaseMappingExceptions<'data> {
 /// this type will have GIGO behavior when constructed with invalid `data`.
 ///
 /// The format of `data` is documented on the field
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[zerovec::make_varule(ExceptionULE)]
 #[derive(PartialEq, Eq, Clone, Default)]
 #[zerovec::skip_derive(Ord)]
@@ -419,6 +431,12 @@ impl fmt::Debug for ExceptionULE {
 
 /// A decoded [`Exception`] type, with all of the data parsed out into
 /// separate fields.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
