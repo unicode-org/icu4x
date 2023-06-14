@@ -10,6 +10,8 @@ macro_rules! __impl_datetime_week_data_v1 {
         impl icu_provider::DataProvider<icu_calendar::provider::WeekDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_calendar::provider::WeekDataV1Marker>, icu_provider::DataError> {
                 let locale = req.locale;
+                #[allow(unused_mut)]
+                let mut metadata = icu_provider::DataResponseMetadata::default();
                 match {
                     static UND_MV: <icu_calendar::provider::WeekDataV1Marker as icu_provider::DataMarker>::Yokeable = icu_calendar::provider::WeekDataV1 { first_weekday: icu_calendar::types::IsoWeekday::Friday, min_week_days: 1u8 };
                     static UND: <icu_calendar::provider::WeekDataV1Marker as icu_provider::DataMarker>::Yokeable = icu_calendar::provider::WeekDataV1 { first_weekday: icu_calendar::types::IsoWeekday::Monday, min_week_days: 1u8 };
@@ -22,7 +24,7 @@ macro_rules! __impl_datetime_week_data_v1 {
                         Err(_) => Err(icu_provider::DataErrorKind::MissingLocale),
                     }
                 } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
+                    Ok(payload) => Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata }),
                     Err(e) => Err(e.with_req(<icu_calendar::provider::WeekDataV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

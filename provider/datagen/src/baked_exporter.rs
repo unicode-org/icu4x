@@ -280,7 +280,11 @@ impl DataExporter for BakedExporter {
         Ok(())
     }
 
-    fn flush(&self, key: DataKey) -> Result<(), DataError> {
+    fn flush_with_fallback(
+        &self,
+        key: DataKey,
+        fallback_mode: FallbackMode,
+    ) -> Result<(), DataError> {
         let marker =
             syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
                 .unwrap();
@@ -330,79 +334,94 @@ impl DataExporter for BakedExporter {
 
         let mut singleton = None.into_iter();
 
-        let lookup = match values.iter().map(|(_, l)| l.len()).sum() {
-            0 => quote!(Err(icu_provider::DataErrorKind::MissingLocale)),
-            1 => {
-                let (bake, locale) = values.into_iter().next().unwrap();
-                let locale = locale.into_iter().next().unwrap();
+        let lookup = if values.is_empty() {
+            quote!(Err(icu_provider::DataErrorKind::MissingLocale))
+        } else if fallback_mode == FallbackMode::Singleton {
+            if values.iter().map(|(_, l)| l.len()).sum::<usize>() != 1 {
+                Err(DataError::custom(
+                    "Singleton mode needs exactly one payload",
+                ))?;
+            }
+            let (bake, locale) = values.into_iter().next().unwrap();
+            let locale = locale.into_iter().next().unwrap();
 
-                let singleton_ident = format!("SINGLETON_{}", ident.to_ascii_uppercase())
-                    .parse::<TokenStream>()
-                    .unwrap();
+            if locale != "und" {
+                Err(DataError::custom("Singleton mode needs the default locale"))?;
+            }
 
-                // Exposing singleton structs separately allows us to get rid of fallibility by using
-                // the struct directly.
-                singleton = Some(quote! {
-                    #[clippy::msrv = "1.61"]
-                    impl $provider {
-                        #[doc(hidden)]
-                        pub const #singleton_ident: &'static #struct_type = &#bake;
-                    }
-                })
-                .into_iter();
+            let singleton_ident = format!("SINGLETON_{}", ident.to_ascii_uppercase())
+                .parse::<TokenStream>()
+                .unwrap();
 
-                if locale == "und" {
-                    quote! {
-                        if locale.is_empty() {
-                            Ok(Self::#singleton_ident)
-                        } else {
-                            Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                        }
-                    }
-                } else if icu_locid::Locale::try_from_bytes_with_single_variant_single_keyword_unicode_extension(locale.as_bytes()).is_ok() {
-                    self.dependencies.insert("icu_locid");
-                    quote! {
-                        if icu_provider::DataLocale::from(icu_locid::locale!(#locale)).eq(&locale) {
-                            Ok(Self::#singleton_ident)
-                        } else {
-                            Err(icu_provider::DataErrorKind::MissingLocale)
-                        }
-                    }
+            // Exposing singleton structs separately allows us to get rid of fallibility by using
+            // the struct directly.
+            singleton = Some(quote! {
+                #[clippy::msrv = "1.61"]
+                impl $provider {
+                    #[doc(hidden)]
+                    pub const #singleton_ident: &'static #struct_type = &#bake;
+                }
+            })
+            .into_iter();
+
+            quote! {
+                if locale.is_empty() {
+                    Ok(Self::#singleton_ident)
                 } else {
-                    quote! {
-                        if locale.strict_cmp(#locale.as_bytes()).is_eq() {
-                            Ok(Self::#singleton_ident)
-                        } else {
-                            Err(icu_provider::DataErrorKind::MissingLocale)
-                        }
-                    }
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale)
                 }
             }
-            _ => {
-                let mut map = BTreeMap::new();
-                let mut statics = Vec::new();
+        } else {
+            let mut map = BTreeMap::new();
+            let mut statics = Vec::new();
 
-                for (bake, locales) in values {
-                    let first_locale = locales.iter().next().unwrap();
-                    let anchor = syn::parse_str::<syn::Ident>(
-                        &first_locale.to_ascii_uppercase().replace('-', "_"),
-                    )
-                    .unwrap();
-                    statics.push(quote! { static #anchor: #struct_type = #bake; });
-                    map.extend(locales.into_iter().map(|l| (l, anchor.clone())));
+            for (bake, locales) in values {
+                let first_locale = locales.iter().next().unwrap();
+                let anchor = syn::parse_str::<syn::Ident>(
+                    &first_locale.to_ascii_uppercase().replace('-', "_"),
+                )
+                .unwrap();
+                statics.push(quote! { static #anchor: #struct_type = #bake; });
+                map.extend(locales.into_iter().map(|l| (l, anchor.clone())));
+            }
+
+            let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
+
+            let lookup = quote! {
+                #(#statics)*
+                match [#(#keys),*].binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse()) {
+                    Ok(i) => Ok(*unsafe {
+                        // Safe because keys and values have the same length
+                        [#(&#values),*].get_unchecked(i)
+                    }),
+                    Err(_) => Err(icu_provider::DataErrorKind::MissingLocale)
                 }
+            };
 
-                let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
-
-                quote! {
-                    #(#statics)*
-                    match [#(#keys),*].binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse()) {
-                        Ok(i) => Ok(*unsafe {
-                            // Safe because keys and values have the same length
-                            [#(&#values),*].get_unchecked(i)
-                        }),
-                        Err(_) => Err(icu_provider::DataErrorKind::MissingLocale)
+            match fallback_mode {
+                FallbackMode::None => lookup,
+                FallbackMode::Full => {
+                    self.dependencies.insert("icu_locid_transform/data");
+                    quote! {
+                        let mut fallback_iterator = icu_locid_transform::fallback::LocaleFallbacker::new()
+                            .fallback_for(<#marker as icu_provider::KeyedDataMarker>::KEY.into(), locale.clone());
+                        loop {
+                            let locale = fallback_iterator.get();
+                            if let Ok(result) = {#lookup} {
+                                metadata.locale = Some(fallback_iterator.take());
+                                break Ok(result);
+                            }
+                            if fallback_iterator.get().is_empty() {
+                                break Err(icu_provider::DataErrorKind::MissingLocale);
+                            }
+                            fallback_iterator.step();
+                        }
                     }
+                }
+                FallbackMode::Singleton => unreachable!(),
+                f => {
+                    log::warn!("Unknown fallback mode {f:?}");
+                    lookup
                 }
             }
         };
@@ -450,10 +469,12 @@ impl DataExporter for BakedExporter {
                                 req: icu_provider::DataRequest,
                             ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
                                 let locale = req.locale;
+                                #[allow(unused_mut)] // mutable for fallback
+                                let mut metadata = icu_provider::DataResponseMetadata::default();
                                 match {#lookup} {
                                     Ok(payload) => Ok(icu_provider::DataResponse {
-                                        metadata: Default::default(),
                                         payload: Some(#into_data_payload),
+                                        metadata,
                                     }),
                                     Err(e) => Err(e.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
                                 }

@@ -10,6 +10,8 @@ macro_rules! __impl_plurals_ordinal_v1 {
         impl icu_provider::DataProvider<icu_plurals::provider::OrdinalV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_plurals::provider::OrdinalV1Marker>, icu_provider::DataError> {
                 let locale = req.locale;
+                #[allow(unused_mut)]
+                let mut metadata = icu_provider::DataResponseMetadata::default();
                 match {
                     static AF: <icu_plurals::provider::OrdinalV1Marker as icu_provider::DataMarker>::Yokeable = icu_plurals::provider::PluralRulesV1 { zero: None, one: None, two: None, few: None, many: None };
                     static IT: <icu_plurals::provider::OrdinalV1Marker as icu_provider::DataMarker>::Yokeable = icu_plurals::provider::PluralRulesV1 { zero: None, one: None, two: None, few: None, many: Some(icu_plurals::rules::runtime::ast::Rule(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC0\0\0\0\0\x0B\0\0\0\x0B\0\0\0\x08\0\0\0\x08\0\0\0P\0\0\0P\0\0\0 \x03\0\0 \x03\0\0") })) };
@@ -38,7 +40,7 @@ macro_rules! __impl_plurals_ordinal_v1 {
                         Err(_) => Err(icu_provider::DataErrorKind::MissingLocale),
                     }
                 } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
+                    Ok(payload) => Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata }),
                     Err(e) => Err(e.with_req(<icu_plurals::provider::OrdinalV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

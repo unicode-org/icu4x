@@ -21,6 +21,25 @@ pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;
 
+/// The type of fallback that the data was generated for. Data size can be reduced as
+/// long as the data consumers know how this was done.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum FallbackMode {
+    /// No fallback
+    None,
+    /// Full fallback
+    Full,
+    /// Singleton key
+    Singleton,
+}
+
+impl Default for FallbackMode {
+    fn default() -> Self {
+        Self::None
+    }
+}
+
 /// An object capable of exporting data payloads in some form.
 pub trait DataExporter: Sync {
     /// Save a `payload` corresponding to the given key and locale.
@@ -34,8 +53,18 @@ pub trait DataExporter: Sync {
 
     /// Function called after all keys have been fully dumped.
     /// Takes non-mut self as it can be called concurrently.
-    fn flush(&self, _key: DataKey) -> Result<(), DataError> {
+    fn flush_with_fallback(
+        &self,
+        _key: DataKey,
+        _fallback_mode: FallbackMode,
+    ) -> Result<(), DataError> {
         Ok(())
+    }
+
+    /// Use `self.flush_with_fallback(key, FallbackMode::None)`
+    #[deprecated(since = "1.3.0", note = "Use `self.flush_with_fallback`")]
+    fn flush(&self, key: DataKey) -> Result<(), DataError> {
+        self.flush_with_fallback(key, FallbackMode::None)
     }
 
     /// This function has to be called before the object is dropped (after all
@@ -129,8 +158,14 @@ impl DataExporter for MultiExporter {
             .try_for_each(|e| e.put_payload(key, locale, payload))
     }
 
-    fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        self.0.iter().try_for_each(|e| e.flush(key))
+    fn flush_with_fallback(
+        &self,
+        key: DataKey,
+        fallback_mode: FallbackMode,
+    ) -> Result<(), DataError> {
+        self.0
+            .iter()
+            .try_for_each(|e| e.flush_with_fallback(key, fallback_mode))
     }
 
     fn close(&mut self) -> Result<(), DataError> {

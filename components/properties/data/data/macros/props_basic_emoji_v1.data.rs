@@ -21,6 +21,8 @@ macro_rules! __impl_props_basic_emoji_v1 {
         impl icu_provider::DataProvider<icu_properties::provider::BasicEmojiV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_properties::provider::BasicEmojiV1Marker>, icu_provider::DataError> {
                 let locale = req.locale;
+                #[allow(unused_mut)]
+                let mut metadata = icu_provider::DataResponseMetadata::default();
                 match {
                     if locale.is_empty() {
                         Ok(Self::SINGLETON_PROPS_BASIC_EMOJI_V1)
@@ -28,7 +30,7 @@ macro_rules! __impl_props_basic_emoji_v1 {
                         Err(icu_provider::DataErrorKind::ExtraneousLocale)
                     }
                 } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
+                    Ok(payload) => Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata }),
                     Err(e) => Err(e.with_req(<icu_properties::provider::BasicEmojiV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

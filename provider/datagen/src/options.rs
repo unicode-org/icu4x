@@ -6,6 +6,22 @@
 
 pub use crate::transform::cldr::source::CoverageLevel;
 
+/// TODO
+#[derive(Debug, PartialEq, Clone, Copy, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
+pub enum FallbackMode {
+    /// TODO
+    None,
+    /// TODO
+    Full,
+}
+
+impl Default for FallbackMode {
+    fn default() -> Self {
+        Self::None
+    }
+}
+
 use icu_locid::LanguageIdentifier;
 use std::collections::HashSet;
 
@@ -23,6 +39,9 @@ pub struct Options {
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
     pub collations: HashSet<String>,
+    /// The type of fallback that the data should be generated for. If locale fallback is
+    /// used at runtime, smaller data can be generated.
+    pub fallback: FallbackMode,
 }
 
 /// Defines the locaes to include

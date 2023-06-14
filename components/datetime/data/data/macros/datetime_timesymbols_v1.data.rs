@@ -10,6 +10,8 @@ macro_rules! __impl_datetime_timesymbols_v1 {
         impl icu_provider::DataProvider<icu_datetime::provider::calendar::TimeSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_datetime::provider::calendar::TimeSymbolsV1Marker>, icu_provider::DataError> {
                 let locale = req.locale;
+                #[allow(unused_mut)]
+                let mut metadata = icu_provider::DataResponseMetadata::default();
                 match {
                     static IG: <icu_datetime::provider::calendar::TimeSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::TimeSymbolsV1 { day_periods: icu_datetime::provider::calendar::day_periods::ContextsV1 { format: icu_datetime::provider::calendar::day_periods::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("A.M."), pm: alloc::borrow::Cow::Borrowed("P.M."), noon: None, midnight: None }, narrow: icu_datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("A.M."), pm: alloc::borrow::Cow::Borrowed("P.M."), noon: None, midnight: None }, short: None, wide: icu_datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("N’ụtụtụ"), pm: alloc::borrow::Cow::Borrowed("N’abali"), noon: None, midnight: None } }, stand_alone: Some(icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 { abbreviated: None, narrow: None, short: None, wide: Some(icu_datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("A.M."), pm: alloc::borrow::Cow::Borrowed("P.M."), noon: None, midnight: None }) }) } };
                     static BN: <icu_datetime::provider::calendar::TimeSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::TimeSymbolsV1 { day_periods: icu_datetime::provider::calendar::day_periods::ContextsV1 { format: icu_datetime::provider::calendar::day_periods::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("AM"), pm: alloc::borrow::Cow::Borrowed("PM"), noon: None, midnight: None }, narrow: icu_datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("AM"), pm: alloc::borrow::Cow::Borrowed("PM"), noon: None, midnight: None }, short: None, wide: icu_datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("AM"), pm: alloc::borrow::Cow::Borrowed("PM"), noon: None, midnight: None } }, stand_alone: None } };
@@ -106,7 +108,7 @@ macro_rules! __impl_datetime_timesymbols_v1 {
                         Err(_) => Err(icu_provider::DataErrorKind::MissingLocale),
                     }
                 } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
+                    Ok(payload) => Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata }),
                     Err(e) => Err(e.with_req(<icu_datetime::provider::calendar::TimeSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

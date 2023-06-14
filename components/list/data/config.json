@@ -4,7 +4,6 @@
             "list/and@1",
             "list/or@1",
             "list/unit@1"
-
         ]
     },
     "locales": {
@@ -22,5 +21,6 @@
             "pretty": true
         }
     },
+    "fallback": "Full",
     "overwrite": true
 }
