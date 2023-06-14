@@ -17,16 +17,19 @@ use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(feature = "datagen")]
 use icu_collections::codepointtrie::CodePointTrieHeader;
 
-#[allow(missing_docs)] // TBD, temporary
 pub mod data;
 
-#[allow(missing_docs)] // TBD, temporary
 pub mod unfold;
 
 pub mod exception_helpers;
 
 pub mod exceptions;
 
+/// This type contains all of the casemapping data
+///
+/// The methods in the provider module are primarily about accessing its data,
+/// however the full algorithms are also implemented as methods on this type in
+/// the `internals` module of this crate.
 #[icu_provider::data_struct(CaseMappingV1Marker = "props/casemap@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -41,13 +44,12 @@ pub mod exceptions;
 pub struct CaseMappingV1<'data> {
     /// Case mapping data
     #[cfg_attr(feature = "serde", serde(borrow))]
-    /// TODO
     pub trie: CodePointTrie<'data, CaseMappingData>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    /// TODO
+    /// Exceptions to the case mapping data
     pub exceptions: CaseMappingExceptions<'data>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    /// TODO
+    /// Reverse case folding data.
     pub unfold: CaseMappingUnfoldData<'data>,
 }
 

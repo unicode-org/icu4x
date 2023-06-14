@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module contains most of the actual algorithms for case mapping.
+//!
+//! Primarily, it implements methods on `CaseMappingV1`, which contains the data model.
+
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::CaseMappingV1;
