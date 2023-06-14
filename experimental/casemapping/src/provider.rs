@@ -8,11 +8,13 @@
 
 use icu_provider::prelude::*;
 
-pub use crate::internals::CaseMappingInternals;
-pub use crate::internals::CaseMappingUnfoldData;
+use crate::internals::CaseMappingInternals;
 
 #[allow(missing_docs)] // TBD, temporary
 pub mod data;
+
+#[allow(missing_docs)] // TBD, temporary
+pub mod unfold;
 
 pub mod exception_helpers;
 
