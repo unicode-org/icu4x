@@ -1662,9 +1662,10 @@ version = "0.10.0"
 dependencies = [
  "databake",
  "icu_collections",
+ "icu_displaynames_data",
  "icu_locid",
+ "icu_locid_transform",
  "icu_provider",
- "icu_testdata",
  "serde",
  "tinystr",
  "zerovec",
