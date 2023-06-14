@@ -5,7 +5,7 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::gregorian::year_as_gregorian;
-use crate::helpers::{div_rem_euclid64, i64_to_i32, quotient, quotient64, I32Result};
+use crate::helpers::{div_rem_euclid64, i64_to_i32, quotient, quotient64, I32Result, div_rem_euclid};
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
@@ -59,10 +59,10 @@ impl CalendarArithmetic for Persian {
         } else {
             p_year -= 473;
         };
+        let d = div_rem_euclid(p_year, 2820);
+        let year = d.1 + 474;
 
-        let year = (p_year % 2820) + 474;
-
-        (((year + 38) * 31) % 128) < 31
+        (div_rem_euclid((year + 38) * 31, 128).1 < 31)
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
@@ -528,6 +528,22 @@ mod tests {
             day: 28,
         },
     ];
+    
+    #[test]
+    fn test_persian_leap_year() {
+
+        let mut leap_years: [i32;33] = [0;33];
+        let mut index = 0;
+        for case in CASES.iter() {
+            leap_years[index] = case.year;
+            index+=1;
+        }
+        for i in leap_years {
+            println!("{}", i);
+        }
+    }
+
+
     #[test]
     fn test_persian_year_from_fixed() {
         for (case, f_date) in CASES.iter().zip(FIXED_DATE.iter()) {
