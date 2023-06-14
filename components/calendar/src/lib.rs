@@ -142,6 +142,7 @@ pub mod week {
     pub use week_of::WeekOf;
 }
 
+#[doc(no_inline)]
 pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
@@ -149,7 +150,9 @@ pub use datetime::DateTime;
 #[doc(hidden)]
 pub use duration::{DateDuration, DateDurationUnit};
 pub use error::CalendarError;
+#[doc(no_inline)]
 pub use gregorian::Gregorian;
+#[doc(no_inline)]
 pub use iso::Iso;
 
 #[doc(no_inline)]

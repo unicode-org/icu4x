@@ -239,7 +239,7 @@ impl LocaleExpander {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: LocaleTransformError,
-        #[cfg(skip_new)]
+        #[cfg(skip)]
         functions: [
         new_extended,
         try_new_extended_with_any_provider,
