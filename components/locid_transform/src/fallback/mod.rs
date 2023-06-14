@@ -286,10 +286,35 @@ pub struct LocaleFallbackIterator<'a, 'b> {
 impl LocaleFallbacker {
     /// Creates a [`LocaleFallbacker`] with fallback data (likely subtags and parent locales).
     ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        Self {
+            likely_subtags: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1,
+            ),
+            parents: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_FALLBACK_PARENTS_V1,
+            ),
+            collation_supplement: Some(DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1,
+            )),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
+        #[cfg(skip_new)]
+        functions: [
+            new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+    ]);
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
@@ -317,8 +342,6 @@ impl LocaleFallbacker {
             collation_supplement,
         })
     }
-
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
 
     /// Creates a [`LocaleFallbacker`] without fallback data. Using this constructor may result in
     /// surprising behavior, especially in multi-script languages.
