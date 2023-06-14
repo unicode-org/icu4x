@@ -9,6 +9,7 @@ use crate::helpers::{div_rem_euclid64, i64_to_i32, quotient, quotient64, I32Resu
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
+use crate::Gregorian;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
 use core::marker::PhantomData;
@@ -267,10 +268,12 @@ impl Persian {
             .map(Self::fixed_from_arithmetic_persian)
     }
 
-    // Persian New Year to fixed year
+    // Persian New Year occuring in March of Gregorian year (g_year) to fixed date
     fn nowruz(g_year: i32) -> RataDie {
-        let persian_year =
-            g_year - year_as_gregorian(FIXED_PERSIAN_EPOCH.to_i64_date() as i32).number + 1;
+        let iso_from_fixed: Date<Iso> =
+            Iso::iso_from_fixed(RataDie::new(FIXED_PERSIAN_EPOCH.to_i64_date()));
+        let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
+        let persian_year = g_year - greg_date_from_fixed.year().number + 1;
         let _year = if persian_year <= 0 {
             persian_year - 1
         } else {
@@ -576,5 +579,26 @@ mod tests {
         let epoch_year_from_fixed = Iso::iso_from_fixed(RataDie::new(epoch)).inner.0.year;
         // 622 is the correct ISO year for the Persian Epoch
         assert_eq!(epoch_year_from_fixed, 622);
+    }
+
+    #[test]
+    fn test_nowruz() {
+        let fixed_date = Persian::nowruz(622).to_i64_date();
+        assert_eq!(fixed_date, FIXED_PERSIAN_EPOCH.to_i64_date());
+
+        let years = [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015];
+
+        for year in years {
+            let two_thousand_eight_to_fixed = Persian::nowruz(year).to_i64_date();
+            let iso_date = Date::try_new_iso_date(year, 3, 21).unwrap();
+            let persian_year =
+                Persian::arithmetic_persian_year_from_fixed(Iso::fixed_from_iso(iso_date.inner));
+            assert_eq!(
+                Persian::arithmetic_persian_year_from_fixed(RataDie::new(
+                    two_thousand_eight_to_fixed
+                )),
+                persian_year
+            );
+        }
     }
 }
