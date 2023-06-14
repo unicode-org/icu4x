@@ -96,6 +96,7 @@ mod canonicalizer;
 mod directionality;
 mod error;
 mod expander;
+pub mod fallback;
 pub mod provider;
 
 pub use canonicalizer::LocaleCanonicalizer;

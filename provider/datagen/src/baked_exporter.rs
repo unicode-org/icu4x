@@ -247,12 +247,10 @@ impl BakedExporter {
             .into_iter()
             .collect::<BTreeSet<_>>();
         if !self.use_separate_crates {
-            deps.retain(|&krate| krate.starts_with("icu_provider") || !krate.starts_with("icu_"));
+            deps.retain(|&krate| !krate.starts_with("icu_"));
             deps.insert("icu");
         }
         deps.insert("icu_provider");
-        // TODO: make locale fallback cfg'ed
-        deps.insert("icu_provider_adapters");
 
         log::info!("The generated module requires the following crates:");
         for crate_name in deps {

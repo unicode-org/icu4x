@@ -27,6 +27,7 @@ include = [
 
 [dependencies]
 icu_locid = { version = "1.2.0", path = "../../components/locid", features = ["zerovec"] }
+icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform" }
 icu_provider = { version = "1.2.0", path = "../core", features = ["macros"] }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["zerovec"] }
 yoke = { version = "0.7.1", path = "../../utils/yoke" }
@@ -43,5 +44,5 @@ writeable = { path = "../../utils/writeable" }
 
 [features]
 std = ["icu_locid/std", "icu_provider/std"]
-serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
-datagen = ["std", "serde", "dep:databake", "icu_provider/datagen", "icu_locid/databake", "zerovec/databake", "tinystr/databake"]
+serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_locid_transform/serde", "icu_provider/serde"]
+datagen = ["std", "serde", "icu_provider/datagen"]
