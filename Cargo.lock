@@ -895,6 +895,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "ecma402_traits"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b0c2a4ea26259c41a15dcd263be230bdb0a113246a046e8288738879a8304e4"
+
+[[package]]
 name = "either"
 version = "1.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1317,6 +1323,16 @@ dependencies = [
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
+ "writeable",
+]
+
+[[package]]
+name = "icu4x_ecma402"
+version = "0.8.0"
+dependencies = [
+ "ecma402_traits",
+ "icu",
+ "icu_provider",
  "writeable",
 ]
 
