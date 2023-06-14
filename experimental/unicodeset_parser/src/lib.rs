@@ -1,7 +1,4 @@
 mod parse;
 
-
 #[cfg(test)]
-mod tests {
-    
-}
+mod tests {}
