@@ -253,7 +253,7 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::any_payload::AnyPayloadProvider",
 
         // We don't expose data keys directly over FFI, but when we do, we should add this
-        "icu_locid_transform::fallback::LocaleFallbackConfig::from_key",
+        "icu::locid_transform::fallback::LocaleFallbackConfig::from_key",
 
         // On RequestFilterDataProvider, filter_by_langid needs callbacks, and
         // filter_by_langid_allowlist_strict needs input iterators.

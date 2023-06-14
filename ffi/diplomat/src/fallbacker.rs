@@ -27,9 +27,9 @@ pub mod ffi {
 
     /// Priority mode for the ICU4X fallback algorithm.
     #[diplomat::enum_convert(FallbackPriority, needs_wildcard)]
-    #[diplomat::rust_link(icu_locid_transform::fallback::FallbackPriority, Enum)]
+    #[diplomat::rust_link(icu::locid_transform::fallback::FallbackPriority, Enum)]
     #[diplomat::rust_link(
-        icu_locid_transform::fallback::FallbackPriority::const_default,
+        icu::locid_transform::fallback::FallbackPriority::const_default,
         FnInEnum,
         hidden
     )]
@@ -40,9 +40,9 @@ pub mod ffi {
     }
 
     /// Collection of configurations for the ICU4X fallback algorithm.
-    #[diplomat::rust_link(icu_locid_transform::fallback::LocaleFallbackConfig, Struct)]
+    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackConfig, Struct)]
     #[diplomat::rust_link(
-        icu_locid_transform::fallback::LocaleFallbackConfig::const_default,
+        icu::locid_transform::fallback::LocaleFallbackConfig::const_default,
         FnInStruct,
         hidden
     )]
