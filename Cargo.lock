@@ -1317,6 +1317,7 @@ dependencies = [
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
+ "icu_unicodeset_parser",
  "writeable",
 ]
 
@@ -1998,6 +1999,20 @@ dependencies = [
 [[package]]
 name = "icu_timezone_data"
 version = "0.0.0"
+
+[[package]]
+name = "icu_unicodeset_parser"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu_collections",
+ "icu_properties",
+ "icu_provider",
+ "serde",
+ "tinystr",
+ "zerovec",
+]
 
 [[package]]
 name = "ident_case"
