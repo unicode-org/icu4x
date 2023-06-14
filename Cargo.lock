@@ -3489,6 +3489,7 @@ name = "transliteration"
 version = "0.1.0"
 dependencies = [
  "combine",
+ "icu_properties",
 ]
 
 [[package]]

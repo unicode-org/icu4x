@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 combine = "4.6.4"
+icu_properties = { version = "1.2.0", path = "../../components/properties" }
