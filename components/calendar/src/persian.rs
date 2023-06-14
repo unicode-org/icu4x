@@ -543,7 +543,7 @@ mod tests {
     }
 
     #[test]
-    fn test_persian_from_fixed() {
+    fn test_fixed_from_persian() {
         for (case, f_date) in CASES.iter().zip(FIXED_DATE.iter()) {
             let date = PersianDateInner(ArithmeticDate {
                 year: (case.year),
@@ -555,6 +555,18 @@ mod tests {
             assert_eq!(
                 Persian::fixed_from_arithmetic_persian(date).to_i64_date(),
                 *f_date,
+                "{case:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_persian_from_fixed() {
+        for (case, f_date) in CASES.iter().zip(FIXED_DATE.iter()) {
+            let date = Date::try_new_persian_date(case.year, case.month, case.day).unwrap();
+            assert_eq!(
+                Persian::arithmetic_persian_from_fixed(RataDie::new(*f_date)),
+                date,
                 "{case:?}"
             );
         }
