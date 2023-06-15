@@ -33,7 +33,8 @@ impl<'data> CaseMappingV1<'data> {
         if !data.has_exception() {
             if data.is_relevant_to(kind) {
                 let folded = c as i32 + data.delta() as i32;
-                char::from_u32(folded as u32).expect("Checked in validate()")
+                // GIGO: delta should be valid
+                char::from_u32(folded as u32).unwrap_or(c)
             } else {
                 c
             }
@@ -74,7 +75,8 @@ impl<'data> CaseMappingV1<'data> {
         if !data.has_exception() {
             if data.is_upper_or_title() {
                 let folded = c as i32 + data.delta() as i32;
-                char::from_u32(folded as u32).expect("Checked in validate()")
+                // GIGO: delta should be valid
+                char::from_u32(folded as u32).unwrap_or(c)
             } else {
                 c
             }
@@ -133,7 +135,8 @@ impl<'data> CaseMappingV1<'data> {
         if !data.has_exception() {
             if data.is_relevant_to(kind) {
                 let mapped = c as i32 + data.delta() as i32;
-                let mapped = char::from_u32(mapped as u32).expect("Checked in validate()");
+                // GIGO: delta should be valid
+                let mapped = char::from_u32(mapped as u32).unwrap_or(c);
                 FullMappingResult::CodePoint(mapped)
             } else {
                 FullMappingResult::CodePoint(c)
@@ -515,7 +518,8 @@ impl<'data> CaseMappingV1<'data> {
                 if delta != 0 {
                     // Add the one simple case mapping, no matter what type it is.
                     let codepoint = c as i32 + delta;
-                    let mapped = char::from_u32(codepoint as u32).expect("Checked in validate()");
+                    // GIGO: delta should be valid
+                    let mapped = char::from_u32(codepoint as u32).unwrap_or(c);
                     set.add_char(mapped);
                 }
             }
