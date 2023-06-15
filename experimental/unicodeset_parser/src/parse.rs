@@ -264,12 +264,9 @@ impl<'a, 'b> UnicodeSetBuilder<'a, 'b> {
                         prev_char = None;
                     }
 
-                    // needed for mutable borrow issues
-                    //let mut tmp_iter = self.iter.clone();
                     let mut inner_builder = UnicodeSetBuilder::new_inner(self.iter);
                     inner_builder.parse_unicode_set()?;
                     let (single, multi) = inner_builder.finalize();
-                    //*self.iter = tmp_iter;
 
                     self.process_chars(single.build());
                     self.process_strings(multi);
@@ -385,6 +382,8 @@ pub fn parse(source: &str) -> Result<()> {
     let mut builder = UnicodeSetBuilder::new_inner(&mut iter);
 
     builder.parse_unicode_set()?;
+
+    // todo continue here, build set, return it, impl debug on stuff, and have test run
 
     // convert builder.single and builder.multi to an actual CodePointInversionListAndStringList
 
