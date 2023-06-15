@@ -31,7 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{div_rem_euclid, div_rem_euclid64, i64_to_i32, I32Result};
+use crate::helpers::{ceil_div, div_rem_euclid, div_rem_euclid64, i64_to_i32, I32Result};
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
@@ -255,14 +255,14 @@ impl Persian {
             I32Result::WithinRange(y) => y,
         };
         #[allow(clippy::unwrap_used)] // valid month,day
-        let day_of_year = (1_i64 + date.to_i64_date()
+        let day_of_year = 1_i64 + date.to_i64_date()
             - Self::fixed_from_persian_integers(year, 1, 1)
                 .unwrap()
-                .to_i64_date()) as i32;
+                .to_i64_date();
         let month = if day_of_year <= 186 {
-            ((day_of_year + 30) / 31) as u8
+            ceil_div(day_of_year, 31) as u8
         } else {
-            ((day_of_year - 6 + 29) / 30) as u8
+            ceil_div(day_of_year - 6, 30) as u8
         };
         #[allow(clippy::unwrap_used)] // month and day
         let day = (date - Self::fixed_from_persian_integers(year, month, 1).unwrap() + 1) as u8;
