@@ -222,7 +222,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     /// Construct a new arithmetic date from a year, month code, and day, bounds checking
-    /// the month
+    /// the month and day
     pub fn new_from_solar_codes<C2: Calendar>(
         // Separate type since the debug_name() impl may differ when DateInner types
         // are nested (e.g. in GregorianDateInner)
@@ -259,7 +259,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
-    /// the month
+    /// the month and day
     pub fn new_from_solar_ordinals(
         year: i32,
         month: u8,
