@@ -119,7 +119,7 @@ impl Calendar for Julian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(JulianDateInner)
+        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(JulianDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> JulianDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
@@ -301,21 +301,9 @@ impl Date<Julian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Julian>, CalendarError> {
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        if day > 28 {
-            let bound = inner.days_in_month();
-            if day > bound {
-                return Err(CalendarError::OutOfRange);
-            }
-        }
-
-        Ok(Date::from_raw(JulianDateInner(inner), Julian))
+        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+            .map(JulianDateInner)
+            .map(|inner| Date::from_raw(inner, Julian))
     }
 }
 
