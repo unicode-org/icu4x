@@ -42,6 +42,7 @@ pub trait CalendarArithmetic: Calendar {
 }
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
+    /// Create a new `ArithmeticDate` without checking that `month` and `day` are in bounds.
     #[inline]
     pub const fn new_unchecked(year: i32, month: u8, day: u8) -> Self {
         ArithmeticDate {
