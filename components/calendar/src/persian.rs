@@ -58,6 +58,7 @@ const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian(ArithmeticDate {
 /// # Era codes
 /// This calendar supports only one era code, which starts from the year of the Hijra, designated as "AH".
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[non_exhaustive]
 pub struct Persian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
@@ -321,9 +322,11 @@ impl Persian {
     }
 
     fn days_in_provided_year_core(year: i32) -> u32 {
+        #[allow(clippy::unwrap_used)] // valid month and day
         let fixed_year = Self::fixed_from_persian_integers(year, 1, 1)
             .unwrap()
             .to_i64_date();
+        #[allow(clippy::unwrap_used)] // valid month and day
         let next_fixed_year = Self::fixed_from_persian_integers(year + 1, 1, 1)
             .unwrap()
             .to_i64_date();
