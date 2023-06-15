@@ -155,13 +155,13 @@ impl DatagenProvider {
                     .locales(levels.iter().copied().collect::<Vec<_>>().as_slice())?
                     .into_iter()
                     .collect();
-                if source.options.fallback == options::FallbackMode::Full {
+                if source.options.fallback == options::FallbackMode::Runtime {
                     set.insert(Default::default());
                 }
                 options::LocaleInclude::Explicit(set)
             }
             options::LocaleInclude::Explicit(mut set) => {
-                if source.options.fallback == options::FallbackMode::Full {
+                if source.options.fallback == options::FallbackMode::Runtime {
                     set.insert(Default::default());
                 }
                 options::LocaleInclude::Explicit(set)
@@ -212,54 +212,94 @@ impl DatagenProvider {
             use rayon_prelude::*;
 
             keys.into_par_iter().try_for_each(|key| {
-                let payloads = provider
+                let supported_locales = provider
                     .supported_locales_for_key(key)
-                    .map_err(|e| e.with_key(key))?
-                    .into_par_iter()
-                    .map(|locale| {
-                        let req = DataRequest {
-                            locale: &locale,
-                            metadata: Default::default(),
-                        };
-                        log::trace!("Generating payload: {key}/{locale}");
-                        let payload = provider
-                            .load_data(key, req)
-                            .and_then(DataResponse::take_payload)
-                            .map_err(|e| e.with_req(key, req))?;
-                        Ok::<_, DataError>((locale, payload))
-                    })
-                    .collect::<Result<std::collections::HashMap<_, _>, _>>()?;
+                    .map_err(|e| e.with_key(key))?;
 
-                log::info!("Writing key: {key}");
-                if payloads.len() == 1 && payloads.get(Default::default()).is_some() {
-                    let (locale, payload) = payloads.into_iter().next().unwrap();
-                    exporter.put_payload(key, &locale, &payload)?;
-                    exporter
-                        .flush_with_fallback(key, icu_provider::datagen::FallbackMode::Singleton)
-                } else if provider.source.options.fallback == options::FallbackMode::Full {
-                    // TODO(#2683): Figure out how to compare `DataPayload<ExportMarker>` for equality
-                    // to actually dedupe
-                    payloads
-                        .iter()
-                        .try_for_each(|(locale, payload)| {
-                            exporter.put_payload(key, locale, payload)
-                        })
-                        .and_then(|()| {
-                            exporter
-                                .flush_with_fallback(key, icu_provider::datagen::FallbackMode::Full)
-                        })
-                        .map_err(|e| e.with_key(key))
-                } else {
-                    payloads
-                        .iter()
-                        .try_for_each(|(locale, payload)| {
-                            exporter.put_payload(key, locale, payload)
-                        })
-                        .and_then(|()| {
-                            exporter
-                                .flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
-                        })
-                        .map_err(|e| e.with_key(key))
+                if supported_locales.len() == 1 && supported_locales[0] == Default::default() {
+                    // Singleton key
+                    let payload = provider
+                        .load_data(key, Default::default())
+                        .and_then(DataResponse::take_payload)
+                        .map_err(|e| e.with_req(key, Default::default()))?;
+
+                    exporter.put_payload(key, &Default::default(), &payload)?;
+                    return exporter
+                        .flush_with_fallback(key, icu_provider::datagen::FallbackMode::Singleton);
+                }
+
+                match provider.source.options.fallback {
+                    options::FallbackMode::Legacy => {
+                        supported_locales
+                            .into_par_iter()
+                            .try_for_each(|locale| {
+                                let req = DataRequest {
+                                    locale: &locale,
+                                    metadata: Default::default(),
+                                };
+                                let payload = provider
+                                    .load_data(key, req)
+                                    .and_then(DataResponse::take_payload)
+                                    .map_err(|e| e.with_req(key, req))?;
+                                exporter.put_payload(key, &locale, &payload)
+                            })
+                            .map_err(|e| e.with_key(key))?;
+
+                        exporter
+                            .flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
+                            .map_err(|e| e.with_key(key))
+                    }
+                    options::FallbackMode::Runtime => {
+                        let payloads = supported_locales.into_iter()
+                            .map(|locale| {
+                                let req = DataRequest {
+                                    locale: &locale,
+                                    metadata: Default::default(),
+                                };
+                                let payload = provider
+                                    .load_data(key, req)
+                                    .and_then(DataResponse::take_payload)
+                                    .map_err(|e| e.with_req(key, req))?;
+                                Ok::<_, DataError>((locale, payload))
+                            })
+                            .collect::<Result<std::collections::HashMap<_, _>, _>>().map_err(|e| e.with_key(key))?;
+
+                        // TODO(#2683): Figure out how to compare `DataPayload<ExportMarker>` for equality
+                        // to actually dedupe payloads
+
+                        payloads
+                            .into_par_iter()
+                            .try_for_each(|(locale, payload)| {
+                                exporter.put_payload(key, &locale, &payload).map_err(|e| e.with_key(key))
+                            })?;
+                        exporter
+                            .flush_with_fallback(key, icu_provider::datagen::FallbackMode::Full)
+                            .map_err(|e| e.with_key(key))
+                    }
+                    options::FallbackMode::Expand => match &provider.source.options.locales {
+                        options::LocaleInclude::Explicit(requested_locales) => {
+                            let provider = icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable(provider.clone())?;
+                            requested_locales
+                                .into_par_iter()
+                                .try_for_each(|locale| {
+                                    let locale = locale.into();
+                                    let req = DataRequest {
+                                        locale: &locale,
+                                        metadata: Default::default(),
+                                    };
+                                    let payload = provider
+                                        .load_data(key, req)
+                                        .and_then(DataResponse::take_payload)
+                                        .map_err(|e| e.with_req(key, req))?;
+                                    exporter.put_payload(key, &locale, &payload).map_err(|e| e.with_key(key))
+                                })?;
+                                exporter.flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
+                                .map_err(|e| e.with_key(key))
+                        }
+                        _ => Err(DataError::custom(
+                            "FallbackMode::Expand requires LocaleInclude::Explicit or LocaleInclude::CldrSet",
+                        )),
+                    },
                 }
             })?;
 

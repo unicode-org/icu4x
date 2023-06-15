@@ -55,6 +55,7 @@ icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collec
 icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde"] }
 icu_locid = { version = "1.2.0", path = "../../components/locid", features = ["std", "serde"] }
 icu_provider = { version = "1.2.0", path = "../core", features = ["std", "log_error_context", "datagen"]}
+icu_provider_adapters = { version = "1.2.0", path = "../adapters" }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["alloc", "serde", "zerovec"], default-features = false }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
@@ -90,7 +91,6 @@ simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu" }
-icu_provider_adapters = { version = "1.2.0", path = "../adapters" }
 icu_testdata = { path = "../testdata", features = ["buffer"] }
 repodata = { path = "../../provider/repodata" }
 

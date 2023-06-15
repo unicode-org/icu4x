@@ -21,6 +21,6 @@
             "pretty": true
         }
     },
-    "fallback": "Full",
+    "fallback": "Expand",
     "overwrite": true
 }

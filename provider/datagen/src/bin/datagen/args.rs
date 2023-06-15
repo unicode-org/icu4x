@@ -47,8 +47,9 @@ enum CollationTable {
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Fallback {
-    None,
-    Full,
+    Legacy,
+    Runtime,
+    Expand,
 }
 
 impl CollationTable {
@@ -229,7 +230,7 @@ pub struct Cli {
     #[arg(help = "Load a TOML config")]
     config: Option<PathBuf>,
 
-    #[arg(short, long, value_enum, default_value_t = Fallback::None)]
+    #[arg(short, long, value_enum, default_value_t = Fallback::Legacy)]
     fallback: Fallback,
 }
 
@@ -267,8 +268,9 @@ impl Cli {
                     .collect(),
                 export: self.make_exporter()?,
                 fallback: match self.fallback {
-                    Fallback::None => config::FallbackMode::None,
-                    Fallback::Full => config::FallbackMode::Full,
+                    Fallback::Legacy => config::FallbackMode::Legacy,
+                    Fallback::Runtime => config::FallbackMode::Runtime,
+                    Fallback::Expand => config::FallbackMode::Expand,
                 },
                 overwrite: self.overwrite,
             }
