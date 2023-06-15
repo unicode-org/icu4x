@@ -88,7 +88,7 @@ impl Astronomical {
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3884-L3952
     pub fn ephemeris_correction(moment: Moment) -> f64 {
         let year = moment.inner().floor() / 365.2425;
-        let year_int = (if year > 0.0 {year + 1.0} else {year - 1.0}) as i32;
+        let year_int = (if year > 0.0 { year + 1.0 } else { year }) as i32;
         let gregorian: Date<Gregorian> = Date::try_new_gregorian_date(year_int, 7, 1)
             .expect("Date generation failed for {year} July 1");
         let iso: Date<Iso> = gregorian.to_iso();
@@ -102,13 +102,19 @@ impl Astronomical {
         let y1820 = ((year_int - 1820) as f64) / 100.0;
 
         if 2051 <= year_int && year_int <= 2150 {
-            (8.0 * (year_int as f64).powi(2) + 8.0 * 1820f64.powi(2) - 30527.0 * (year_int as f64) + 2975050.0) / 216000000.0
+            (8.0 * (year_int as f64).powi(2) + 8.0 * 1820f64.powi(2) - 30527.0 * (year_int as f64)
+                + 2975050.0)
+                / 216000000.0
         } else if 2006 <= year_int && year_int <= 2050 {
             1573.0 / 2160000.0
                 + 10739.0 * y2000 / 2880000000.0
                 + 207.0 * y2000.powi(2) / 3200000000.0
         } else if 1987 <= year_int && year_int <= 2005 {
-            (1.0 / 86400.0) * (63.86 + 0.3345 * y2000 - 0.060374 * y2000.powi(2) + 0.0017275 * y2000.powi(3) + 0.000651814 * y2000.powi(4) + 0.00002373599 * y2000.powi(5))
+            (1.0 / 86400.0)
+                * (63.86 + 0.3345 * y2000 - 0.060374 * y2000.powi(2)
+                    + 0.0017275 * y2000.powi(3)
+                    + 0.000651814 * y2000.powi(4)
+                    + 0.00002373599 * y2000.powi(5))
         } else if 1900 <= year_int && year_int <= 1986 {
             -0.00002 + 0.000297 * c + 0.025184 * c.powi(2) - 0.181133 * c.powi(3)
                 + 0.553040 * c.powi(4)
@@ -166,7 +172,8 @@ impl Astronomical {
     /// The number of uniform length centuries (36525 days measured in dynamical time)
     /// before or after noon on January 1, 2000
     pub fn julian_centuries(moment: Moment) -> f64 {
-        (1.0 / 36525.0) * (Self::dynamical_from_universal(moment) - J2000)
+        let intermediate = Self::dynamical_from_universal(moment);
+        (1.0 / 36525.0) * (intermediate - J2000)
     }
 
     /// The moment (in universal time) of the nth new moon after
@@ -181,16 +188,22 @@ impl Astronomical {
                 - (0.00000015 * c.powi(3))
                 + (0.00000000073 * c.powi(4)));
         let e = 1.0 - (0.002516 * c) - (0.0000074 * c.powi(2));
-        let solar_anomaly =
-            2.5534 + (1236.85 * 29.10535670 * c) - (0.0000014 * c.powi(2)) - (0.00000011 * c.powi(3));
-        let lunar_anomaly =
-            201.5643 + (385.81693528 * 1236.85 * c) + (0.0107582 * c.powi(2)) + (0.00001238 * c.powi(3))
-                - (0.000000058 * c.powi(4));
-        let moon_argument =
-            160.7108 + (390.67050284 * 1236.85 * c) - (0.0016118 * c.powi(2)) - (0.00000227 * c.powi(3))
-                + (0.000000011 * c.powi(4));
-        let omega =
-            124.7746 + (-1.56375588 * 1236.85 * c) + (0.0020672 * c.powi(2)) + (0.00000215 * c.powi(3));
+        let solar_anomaly = 2.5534 + (1236.85 * 29.10535670 * c)
+            - (0.0000014 * c.powi(2))
+            - (0.00000011 * c.powi(3));
+        let lunar_anomaly = 201.5643
+            + (385.81693528 * 1236.85 * c)
+            + (0.0107582 * c.powi(2))
+            + (0.00001238 * c.powi(3))
+            - (0.000000058 * c.powi(4));
+        let moon_argument = 160.7108 + (390.67050284 * 1236.85 * c)
+            - (0.0016118 * c.powi(2))
+            - (0.00000227 * c.powi(3))
+            + (0.000000011 * c.powi(4));
+        let omega = 124.7746
+            + (-1.56375588 * 1236.85 * c)
+            + (0.0020672 * c.powi(2))
+            + (0.00000215 * c.powi(3));
         let v: [f64; 24] = [
             -0.40720, 0.17241, 0.01608, 0.01039, 0.00739, -0.00514, 0.00208, -0.00111, -0.00057,
             0.00056, -0.00042, 0.00042, 0.00038, -0.00024, -0.00007, 0.00004, 0.00004, 0.00003,
@@ -321,8 +334,7 @@ impl Astronomical {
     }
 
     fn lunar_anomaly(c: f64) -> f64 {
-        (134.9633964 + 477198.8675055 * c + 0.0087414 * c.powi(2)
-            - 1.0 / 69699.0 * c.powi(3)
+        (134.9633964 + 477198.8675055 * c + 0.0087414 * c.powi(2) + 1.0 / 69699.0 * c.powi(3)
             - 1.0 / 14712000.0 * c.powi(4))
         .rem_euclid(360.0)
     }
@@ -344,7 +356,7 @@ impl Astronomical {
     /// of the sun and the moon.
     pub fn lunar_phase(moment: Moment) -> f64 {
         let t0 = Self::nth_new_moon(0);
-        let n = ((moment - t0).div_euclid(MEAN_SYNODIC_MONTH).round() as i32);
+        let n = (moment - t0).div_euclid(MEAN_SYNODIC_MONTH).round() as i32;
         let a = (Self::lunar_longitude(moment) - Self::solar_longitude(moment)).rem_euclid(360.0);
         let b = 360.0 * (((moment - Self::nth_new_moon(n)) / MEAN_SYNODIC_MONTH).rem_euclid(1.0));
         if (a - b).abs() > 180.0 {
@@ -356,7 +368,6 @@ impl Astronomical {
 
     /// The longitude of the Sun at a given Moment in degrees
     pub fn solar_longitude(moment: Moment) -> f64 {
-        // TODO: Do line-by-line comparison with lisp code to improve accuracy
         let c = Self::julian_centuries(moment);
         let x: [f64; 49] = [
             403406.0, 195207.0, 119433.0, 112392.0, 3891.0, 2819.0, 1721.0, 660.0, 350.0, 334.0,
@@ -545,29 +556,26 @@ mod tests {
             // Checking ephemeris correction
             let ephemeris = Astronomical::ephemeris_correction(moment);
             let expected_ephemeris_value = expected_ephemeris[i];
-            assert!(ephemeris > expected_ephemeris_value  - 0.0005, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
-            assert!(ephemeris < expected_ephemeris_value + 0.0005, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+            assert!(ephemeris > expected_ephemeris_value  - 0.0001, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+            assert!(ephemeris < expected_ephemeris_value + 0.0001, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
 
             // Checking solar_longitude
             let solar_long = Astronomical::solar_longitude(moment + 0.5);
-            // The solar longitude calculation is acceptable if accurate within +/- 2 arcminutes, or approx. 0.033 degrees
             let expected_solar_long_value = expected_solar_long[i];
-            assert!(solar_long > expected_solar_long_value - 0.033, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
-            assert!(solar_long < expected_solar_long_value + 0.033, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
+            assert!(solar_long > expected_solar_long_value - 0.0001, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
+            assert!(solar_long < expected_solar_long_value + 0.0001, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
 
             // Checking lunar_longitude
             let lunar_long = Astronomical::lunar_longitude(moment);
-            // The lunar longitude calculation is acceptable if accurate within +/- 2 arcminutes, or approx. 0.033 degrees
             let expected_lunar_long_value = expected_lunar_long[i];
-            assert!(lunar_long > expected_lunar_long_value - 0.033, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
-            assert!(lunar_long < expected_lunar_long_value + 0.033, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
+            assert!(lunar_long > expected_lunar_long_value - 0.0001, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
+            assert!(lunar_long < expected_lunar_long_value + 0.0001, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
 
             // Checking new_moon_at_or_after
             let next_new_moon = Astronomical::new_moon_at_or_after(moment);
-            // The next new moon calculation is acceptable if accurate within +/- 0.001 days (approx 1.44 mins)
             let expected_next_new_moon_moment = Moment::new(expected_next_new_moon[i]);
-            assert!(expected_next_new_moon_moment > next_new_moon - 0.001, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
-            assert!(expected_next_new_moon_moment < next_new_moon + 0.001, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+            assert!(expected_next_new_moon_moment > next_new_moon - 0.0001, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+            assert!(expected_next_new_moon_moment < next_new_moon + 0.0001, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
         }
     }
 
@@ -575,13 +583,20 @@ mod tests {
     fn check_astronomy_0th_new_moon() {
         // Checks the accuracy of the 0th new moon to be on January 11th
         let zeroth_new_moon = Astronomical::nth_new_moon(0);
-        assert_eq!(zeroth_new_moon.inner() as i32, 11, "0th new moon check failed with nth_new_moon(0) = {zeroth_new_moon:?}");
+        assert_eq!(
+            zeroth_new_moon.inner() as i32,
+            11,
+            "0th new moon check failed with nth_new_moon(0) = {zeroth_new_moon:?}"
+        );
     }
 
     #[test]
     fn check_num_of_new_moon_0() {
         // Tests the function num_of_new_moon_at_or_after() returns 0 for moment 0
-        assert_eq!(Astronomical::num_of_new_moon_at_or_after(Moment::new(0.0)), 0);
+        assert_eq!(
+            Astronomical::num_of_new_moon_at_or_after(Moment::new(0.0)),
+            0
+        );
     }
 
     #[test]
@@ -598,7 +613,13 @@ mod tests {
             iters += 1;
             moment += 31.0;
         }
-        assert!(iters > 500, "Testing failed: less than the expected number of testing iterations");
-        assert!(iters < max_iters, "Testing failed: more than the expected number of testing iterations");
+        assert!(
+            iters > 500,
+            "Testing failed: less than the expected number of testing iterations"
+        );
+        assert!(
+            iters < max_iters,
+            "Testing failed: more than the expected number of testing iterations"
+        );
     }
 }
