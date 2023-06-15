@@ -260,9 +260,9 @@ impl Persian {
                 .unwrap()
                 .to_i64_date()) as i32;
         let month = if day_of_year <= 186 {
-            libm::ceilf(day_of_year as f32 / 31.0) as u8
+            ((day_of_year + 30) / 31) as u8
         } else {
-            libm::ceilf((day_of_year as f32 - 6.0) / 30.0) as u8
+            ((day_of_year - 6 + 29) / 30) as u8
         };
         #[allow(clippy::unwrap_used)] // month and day
         let day = (date - Self::fixed_from_persian_integers(year, month, 1).unwrap() + 1) as u8;
