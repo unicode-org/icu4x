@@ -7,20 +7,20 @@
 //! ```rust
 //! use icu::calendar::{Date, DateTime};
 //!
-//! // `PersianDate` type
+//! // `Date` type
 //! let persian_date = Date::try_new_persian_date(1348, 10, 11)
 //!     .expect("Failed to initialize Persian Date instance.");
 //!
-//! // `PersianDateTime` type
+//! // `DateTime` type
 //! let persian_datetime = DateTime::try_new_persian_datetime(1348, 10, 11, 13, 1, 0)
 //!     .expect("Failed to initialize Persian DateTime instance.");
 //!
-//! // `PersianDate` checks
+//! // `Date` checks
 //! assert_eq!(persian_date.year().number, 1348);
 //! assert_eq!(persian_date.month().ordinal, 10);
 //! assert_eq!(persian_date.day_of_month().0, 11);
 //!
-//! // `PersianDateTime` checks
+//! // `DateTime` checks
 //! assert_eq!(persian_datetime.date.year().number, 1348);
 //! assert_eq!(persian_datetime.date.month().ordinal, 10);
 //! assert_eq!(persian_datetime.date.day_of_month().0, 11);
@@ -58,7 +58,7 @@ const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian(ArithmeticDate {
 /// # Era codes
 /// This calendar supports only one era code, which starts from the year of the Hijra, designated as "AH".
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-#[non_exhaustive]
+#[allow(clippy::exhaustive_structs)]
 pub struct Persian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
@@ -416,9 +416,9 @@ impl DateTime<Persian> {
         })
     }
 }
-mod tests {
 
-    #[cfg(test)]
+#[cfg(test)]
+mod tests {
     use super::*;
     #[derive(Debug)]
     struct DateCase {

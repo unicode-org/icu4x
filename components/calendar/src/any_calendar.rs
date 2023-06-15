@@ -640,7 +640,7 @@ pub enum AnyCalendarKind {
     Coptic,
     /// The kind of an [`Iso`] calendar
     Iso,
-    // The kind of an [`Persian`] calendar
+    /// The kind of a [`Persian`] calendar
     Persian,
 }
 
