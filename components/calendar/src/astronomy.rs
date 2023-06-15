@@ -10,6 +10,7 @@ use crate::rata_die::RataDie;
 use crate::types::Moment;
 use crate::{Date, Gregorian};
 
+#[derive(Debug)]
 pub struct Location {
     latitude: f32,  // latitude from -90 to 90
     longitude: f32, // longitude from -180 to 180
@@ -25,6 +26,12 @@ pub const J2000: Moment = Moment::new(730120.5);
 
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180
+    ///
+    /// ```rust
+    /// use icu::calendar::astronomy::Location;
+    ///
+    /// let location: Location = Location::new(29.3, -132.6, 1032.5);
+    /// ```
     pub fn new(latitude_input: f32, longitude_input: f32, elevation_input: f32) -> Location {
         let result = Location {
             latitude: latitude_input,
@@ -35,7 +42,7 @@ impl Location {
         result
     }
 
-    pub fn check(&self) {
+    fn check(&self) {
         if self.latitude < -90.0 || self.latitude > 90.0 {
             debug_assert!(false, "Locations must have latitudes from -90.0 to 90.0.");
         }
@@ -44,19 +51,43 @@ impl Location {
         }
     }
 
-    /// Get the direction from loc1 to loc2 in degrees east of due north
-    pub fn direction(loc1: Location, loc2: Location) -> f32 {
-        let y = (loc2.longitude - loc1.longitude).to_radians().sin();
-        let x = (loc1.latitude.to_radians().cos() * loc2.latitude.to_radians().tan())
-            - (loc1.latitude.to_radians().sin()
-                * (loc1.longitude - loc2.longitude).to_radians().cos());
-        if (x == y && y == 0.0) || loc2.latitude == 90.0 {
-            0.0
-        } else if loc2.latitude == -90.0 {
-            180.0
-        } else {
-            y.atan2(x)
-        }
+    /// Get the longitude of a location
+    ///
+    /// ```rust
+    /// use icu::calendar::astronomy::Location;
+    ///
+    /// let location: Location = Location::new(29.3, -132.6, 1032.5);
+    /// let longitude: f32 = location.longitude();
+    /// assert_eq!(longitude, -132.6);
+    /// ```
+    pub fn longitude(&self) -> f32 {
+        self.longitude
+    }
+
+    /// Get the latitude of a location
+    ///
+    /// ```rust
+    /// use icu::calendar::astronomy::Location;
+    ///
+    /// let location: Location = Location::new(29.3, -132.6, 1032.5);
+    /// let latitude: f32 = location.latitude();
+    /// assert_eq!(latitude, 29.3);
+    /// ```
+    pub fn latitude(&self) -> f32 {
+        self.latitude
+    }
+
+    /// Get the elevation of a location
+    ///
+    /// ```rust
+    /// use icu::calendar::astronomy::Location;
+    ///
+    /// let location: Location = Location::new(29.3, -132.6, 1032.5);
+    /// let elevation: f32 = location.elevation();
+    /// assert_eq!(elevation, 1032.5);
+    /// ```
+    pub fn elevation(&self) -> f32 {
+        self.elevation
     }
 
     /// Convert a longitude into a mean time zone;
@@ -78,6 +109,7 @@ impl Location {
     }
 }
 
+#[derive(Debug)]
 pub struct Astronomical;
 
 impl Astronomical {
