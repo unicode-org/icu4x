@@ -1135,5 +1135,19 @@ mod tests {
                 "Japanese (With historical eras)",
             ),
         );
+
+        single_test_roundtrip(persian, "ah", 477, "M03", 1);
+        single_test_roundtrip(persian, "ah", 2083, "M07", 21);
+        single_test_roundtrip(persian, "ah", 1600, "M12", 20);
+        single_test_error(
+            persian,
+            "ah",
+            100,
+            "M9",
+            1,
+            CalendarError::UnknownMonthCode("M9".parse().unwrap(), "Persian"),
+        );
+        single_test_error(persian, "ah", 0, "M03", 1, CalendarError::OutOfRange);
+        single_test_error(persian, "ah", 0, "M03", 1, CalendarError::OutOfRange);
     }
 }

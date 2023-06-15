@@ -35,7 +35,6 @@ use crate::helpers::{div_rem_euclid, div_rem_euclid64, i64_to_i32, I32Result};
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
-use crate::Gregorian;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
 use core::marker::PhantomData;
@@ -57,7 +56,7 @@ const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian(ArithmeticDate {
 ///
 /// # Era codes
 /// This calendar supports only one era code, which starts from the year of the Hijra, designated as "AH".
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct Persian;
 
@@ -392,6 +391,7 @@ impl DateTime<Persian> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Gregorian;
     #[derive(Debug)]
     struct DateCase {
         year: i32,
