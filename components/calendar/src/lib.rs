@@ -129,7 +129,7 @@ pub mod indian;
 pub mod iso;
 pub mod japanese;
 pub mod julian;
-mod persian;
+pub mod persian;
 pub mod provider;
 mod rata_die;
 pub mod types;

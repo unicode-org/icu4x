@@ -2,12 +2,36 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module contains types and implementations for the Persian calendar.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime};
+//!
+//! // `PersianDate` type
+//! let persian_date = Date::try_new_persian_date(1348, 10, 11)
+//!     .expect("Failed to initialize Persian Date instance.");
+//!
+//! // `PersianDateTime` type
+//! let persian_datetime = DateTime::try_new_persian_datetime(1348, 10, 11, 13, 1, 0)
+//!     .expect("Failed to initialize Persian DateTime instance.");
+//!
+//! // `PersianDate` checks
+//! assert_eq!(persian_date.year().number, 1348);
+//! assert_eq!(persian_date.month().ordinal, 10);
+//! assert_eq!(persian_date.day_of_month().0, 11);
+//!
+//! // `PersianDateTime` checks
+//! assert_eq!(persian_datetime.date.year().number, 1348);
+//! assert_eq!(persian_datetime.date.month().ordinal, 10);
+//! assert_eq!(persian_datetime.date.day_of_month().0, 11);
+//! assert_eq!(persian_datetime.time.hour.number(), 13);
+//! assert_eq!(persian_datetime.time.minute.number(), 1);
+//! assert_eq!(persian_datetime.time.second.number(), 0);
+//! ```
+
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::gregorian::year_as_gregorian;
-use crate::helpers::{
-    div_rem_euclid, div_rem_euclid64, i64_to_i32, quotient, quotient64, I32Result,
-};
+use crate::helpers::{div_rem_euclid, div_rem_euclid64, i64_to_i32, I32Result};
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
@@ -32,12 +56,13 @@ const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian(ArithmeticDate {
 /// [Persian Calendar]: https://en.wikipedia.org/wiki/Solar_Hijri_calendar
 ///
 /// # Era codes
-/// This calendar supports two era codes: '"BH"', and '"AH"', which correspond to the dates before the Hijrah and after the Hijrah
-
+/// This calendar supports only one era code, which starts from the year of the Hijra, designated as "AH".
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Persian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+
+/// The inner date type used for representing [`Date`]s of [`Persian`]. See [`Date`] and [`Persian`] for more details.
 pub struct PersianDateInner(ArithmeticDate<Persian>);
 
 impl CalendarArithmetic for Persian {
@@ -64,7 +89,7 @@ impl CalendarArithmetic for Persian {
         let d = div_rem_euclid(p_year, 2820);
         let year = d.1 + 474;
 
-        (div_rem_euclid((year + 38) * 31, 128).1 < 31)
+        div_rem_euclid((year + 38) * 31, 128).1 < 31
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
@@ -98,11 +123,6 @@ impl Calendar for Persian {
                 return Err(CalendarError::OutOfRange);
             }
             year
-        } else if era.0 == tinystr!(16, "bh") {
-            if year <= 0 {
-                return Err(CalendarError::OutOfRange);
-            }
-            1 - year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
@@ -186,10 +206,16 @@ impl Calendar for Persian {
 }
 
 impl Persian {
+    /// Constructs a new Persian Calendar
     pub fn new() -> Self {
         Self
     }
 
+    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
+    // The fixed date algorithms are from
+    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
+    //
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4803
     fn fixed_from_arithmetic_persian(p_date: PersianDateInner) -> RataDie {
         let p_year = i64::from(p_date.0.year);
         let month = i64::from(p_date.0.month);
@@ -209,14 +235,14 @@ impl Persian {
                 + 365 * (year - 1)
                 + z.0
                 + if month <= 7 {
-                    (31 * (month - 1))
+                    31 * (month - 1)
                 } else {
-                    (30 * (month - 1) + 6)
+                    30 * (month - 1) + 6
                 }
                 + day,
         )
     }
-
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4857
     fn arithmetic_persian_from_fixed(date: RataDie) -> Date<Persian> {
         let year = Self::arithmetic_persian_year_from_fixed(date);
         let year = match i64_to_i32(year) {
@@ -244,6 +270,7 @@ impl Persian {
         Date::try_new_persian_date(year, month, day).unwrap()
     }
 
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4829
     fn arithmetic_persian_year_from_fixed(date: RataDie) -> i64 {
         #[allow(clippy::unwrap_used)] // valid year,month,day
         let d0 = date - Self::fixed_from_persian_integers(475, 1, 1).unwrap();
@@ -294,11 +321,14 @@ impl Persian {
     }
 
     fn days_in_provided_year_core(year: i32) -> u32 {
-        let fixed_year = Self::fixed_from_persian_integers(year, 1, 1).unwrap().to_i64_date();
-        let next_fixed_year = Self::fixed_from_persian_integers(year+1, 1, 1).unwrap().to_i64_date();
+        let fixed_year = Self::fixed_from_persian_integers(year, 1, 1)
+            .unwrap()
+            .to_i64_date();
+        let next_fixed_year = Self::fixed_from_persian_integers(year + 1, 1, 1)
+            .unwrap()
+            .to_i64_date();
 
         (next_fixed_year - fixed_year) as u32
-
     }
 
     fn year_as_persian(year: i32) -> types::FormattableYear {
@@ -319,6 +349,20 @@ impl Persian {
 }
 
 impl Date<Persian> {
+    /// Construct new Persian Date.
+    ///
+    /// Has no negative years, only era is the AH/AP.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_persian = Date::try_new_persian_date(1392, 4, 25)
+    ///     .expect("Failed to initialize Persian Date instance.");
+    ///
+    /// assert_eq!(date_persian.year().number, 1392);
+    /// assert_eq!(date_persian.month().ordinal, 4);
+    /// assert_eq!(date_persian.day_of_month().0, 25);
+    /// ```
     pub fn try_new_persian_date(
         year: i32,
         month: u8,
@@ -340,6 +384,21 @@ impl Date<Persian> {
 }
 
 impl DateTime<Persian> {
+    /// Construct a new Persian datetime from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let datetime_persian = DateTime::try_new_persian_datetime(474, 10, 11, 13, 1, 0)
+    ///     .expect("Failed to initialize Persian DateTime instance.");
+    ///
+    /// assert_eq!(datetime_persian.date.year().number, 474);
+    /// assert_eq!(datetime_persian.date.month().ordinal, 10);
+    /// assert_eq!(datetime_persian.date.day_of_month().0, 11);
+    /// assert_eq!(datetime_persian.time.hour.number(), 13);
+    /// assert_eq!(datetime_persian.time.minute.number(), 1);
+    /// assert_eq!(datetime_persian.time.second.number(), 0);
+    /// ```
     pub fn try_new_persian_datetime(
         year: i32,
         month: u8,
@@ -768,9 +827,11 @@ mod tests {
 
     #[test]
     fn days_in_provided_year_test() {
-
         for case in CASES.iter() {
-            assert_eq!(Persian::days_in_provided_year_core(case.year),Persian::days_in_provided_year(case.year));
+            assert_eq!(
+                Persian::days_in_provided_year_core(case.year),
+                Persian::days_in_provided_year(case.year)
+            );
         }
     }
 
