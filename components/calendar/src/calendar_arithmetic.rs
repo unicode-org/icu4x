@@ -16,7 +16,7 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub month: u8,
     /// 1-based day of month
     pub day: u8,
-    pub marker: PhantomData<C>,
+    marker: PhantomData<C>,
 }
 
 pub trait CalendarArithmetic: Calendar {
@@ -43,7 +43,7 @@ pub trait CalendarArithmetic: Calendar {
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
-    pub fn new_unchecked(year: i32, month: u8, day: u8) -> Self {
+    pub const fn new_unchecked(year: i32, month: u8, day: u8) -> Self {
         ArithmeticDate {
             year,
             month,

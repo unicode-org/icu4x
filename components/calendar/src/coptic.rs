@@ -38,7 +38,6 @@ use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 /// The [Coptic Calendar]
@@ -219,12 +218,8 @@ impl Coptic {
     }
 
     pub(crate) fn fixed_from_coptic_integers(year: i32, month: u8, day: u8) -> RataDie {
-        Self::fixed_from_coptic(ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        })
+        // TODO: Should we check bounds here?
+        Self::fixed_from_coptic(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990

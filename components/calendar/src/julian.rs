@@ -37,7 +37,6 @@ use crate::helpers::{i64_to_i32, quotient64, I32Result};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
@@ -238,12 +237,8 @@ impl Julian {
     }
 
     pub(crate) const fn fixed_from_julian_integers(year: i32, month: u8, day: u8) -> RataDie {
-        Self::fixed_from_julian(ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        })
+        // TODO: Should we check bounds here?
+        Self::fixed_from_julian(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     /// Convenience function so we can call days_in_year without

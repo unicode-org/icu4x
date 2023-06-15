@@ -249,7 +249,7 @@ impl Date<Iso> {
 
     /// Constructs an ISO date representing the UNIX epoch on January 1, 1970.
     pub fn unix_epoch() -> Self {
-        Date::from_raw(IsoDateInner(ArithmeticDate::new(1970, 1, 1)), Iso)
+        Date::from_raw(IsoDateInner(ArithmeticDate::new_unchecked(1970, 1, 1)), Iso)
     }
 }
 
