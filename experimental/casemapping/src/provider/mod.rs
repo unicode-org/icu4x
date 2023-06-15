@@ -88,16 +88,17 @@ impl<'de> serde::Deserialize<'de> for CaseMappingV1<'de> {
             pub unfold: CaseMappingUnfoldData<'data>,
         }
 
-        let raw = Raw::deserialize(deserializer)?;
+        let Raw {
+            trie,
+            exceptions,
+            unfold,
+        } = Raw::deserialize(deserializer)?;
         let result = Self {
-            trie: raw.trie,
-            exceptions: raw.exceptions,
-            unfold: raw.unfold,
+            trie,
+            exceptions,
+            unfold,
         };
-        use serde::de::Error;
-        result
-            .validate()
-            .map_err(|_| D::Error::custom("validation error"))?;
+        debug_assert!(result.validate().is_ok());
         Ok(result)
     }
 }
