@@ -1444,6 +1444,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "serde",
+ "writeable",
  "yoke",
  "zerovec",
 ]
