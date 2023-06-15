@@ -1,4 +1,5 @@
 use std::{
+    collections::HashSet,
     iter::Peekable,
     str::{CharIndices, Chars},
 };
@@ -65,6 +66,7 @@ type Result<T, E = ParseError> = core::result::Result<T, E>;
 //     ParsedOpSet(ParsedOpSet),
 // }
 
+#[derive(Debug, Clone, Copy)]
 enum Operation {
     Union,
     Difference,
@@ -74,7 +76,7 @@ enum Operation {
 // note: "compiles" the set while building, so no intermediate parse tree, it's directly compiled.
 pub struct UnicodeSetBuilder<'a> {
     single_set: CodePointInversionListBuilder,
-    multi_set: Vec<String>,
+    multi_set: HashSet<String>,
     iter: &'a mut Peekable<CharIndices<'a>>,
     next_op: Operation,
     inverted: bool,
@@ -92,7 +94,7 @@ impl<'a> UnicodeSetBuilder<'a> {
     fn new_inner(iter: &'a mut Peekable<CharIndices<'a>>) -> Self {
         UnicodeSetBuilder {
             single_set: CodePointInversionListBuilder::new(),
-            multi_set: Vec::new(),
+            multi_set: Default::default(),
             iter,
             next_op: Operation::Union,
             inverted: false,
@@ -107,18 +109,14 @@ impl<'a> UnicodeSetBuilder<'a> {
         }
     }
 
-    fn parse_property_perl(&mut self) -> Result<()> {
-        self.consume('\\')?;
-        self.consume('p')?;
-
-        // temp: parse what's between { and }
+    fn parse_property_inner(&mut self, end: char) -> Result<()> {
+        // temp until property data loading: parse what comes until end
         let mut buffer = String::new();
 
-        self.consume('{')?;
         loop {
             match self.peek_char() {
                 None => return Err(ParseError::eof()),
-                Some('}') => {
+                Some(c) if *c == end => {
                     self.iter.next();
                     break;
                 }
@@ -129,57 +127,204 @@ impl<'a> UnicodeSetBuilder<'a> {
             }
         }
 
-        self.multi_set.push(buffer);
+        self.process_strings([buffer].into());
+
+        Ok(())
+
+
+    }
+
+    fn parse_property_perl(&mut self) -> Result<()> {
+        self.consume('\\')?;
+        self.consume('p')?;
+        self.consume('{')?;
+
+        self.parse_property_inner('}')?;
+
         Ok(())
     }
 
     // starts with :, consumes the trailing :]
     fn parse_property_posix(&mut self) -> Result<()> {
         self.consume(':')?;
-        // temp: parse what's between : and :
-        let mut buffer = String::new();
 
-        loop {
-            match self.peek_char() {
-                None => return Err(ParseError::eof()),
-                Some(':') => {
-                    self.iter.next();
-                    break;
-                }
-                Some(c) => {
-                    buffer.push(*c);
-                    self.iter.next();
-                }
-            }
-        }
+        self.parse_property_inner(':')?;
 
         self.consume(']')?;
 
-        self.multi_set.push(buffer);
         Ok(())
     }
 
-    fn parse_unicode_set_inner(&mut self) -> Result<()> {
-        self.consume('[')?;
-
+    fn unicode_set_start(&mut self) -> bool {
         match self.peek_char() {
-            None => Err(ParseError::eof()),
-            Some(&':') => self.parse_property_posix(),
-            Some(c) => {
-                // parse other kind of set, either char or unicode based, also need to check for ^
-                // TODO: check precedence of [^ set1 op set2] - when is ^ applied - is applied to whole set after parsing
-                todo!()
-            }
+            Some(&'\\') => {},
+            Some(&'[') => return true,
+            _ => return false,
+        }
+
+        // need to look one more char into the future. Peekable doesnt lend itself well to this, so maybe think about using a different iterator internally
+
+        let mut future = self.iter.clone();
+        future.next();
+
+        match future.peek() {
+            Some(&(_, 'p')) => true,
+            _ => false,
         }
     }
 
+    // beginning [ is already consumed
+    fn parse_unicode_set_inner(&mut self) -> Result<()> {
+        // special cases for the first char after [
+        match self.peek_char() {
+            None => return Err(ParseError::eof()),
+            Some(&'^') => {
+                self.iter.next();
+                self.inverted = true;
+            },
+            Some(&'-') => {
+                self.iter.next();
+                self.single_set.add_char('-');
+            },
+            _ => {},
+        }
+
+        // repeatedly parse the following:
+        // char
+        // char-char
+        // {multi}
+        // unicodeset
+        // & and - operators, but only between unicodesets
+
+        fn legal_char(c: char) -> bool {
+            !(
+                c == '&'
+                || c == '-'
+                // actually maybe \\ is fine, because that is valid for an escape sequence, which is valid when we want a char.
+                // problem: need to differentiate between \escape and \p...
+                || c == '\\'
+                || c == '['
+                || c == ']'
+                || c == '{'
+                || c == '}'
+                || c.is_ascii_whitespace()
+            )
+        }
+
+        enum State {
+            Begin,
+            Char,
+            CharMinus,
+            AfterUnicodeSet,
+            AfterOp,
+        }
+        use State::*;
+
+        let mut state = Begin;
+        let mut prev_char = None;
+
+        loop {
+            match (state, self.peek_char().copied()) {
+                (_, None) => return Err(ParseError::eof()),
+                (Begin | Char | AfterUnicodeSet, Some(']')) => {
+                    self.iter.next();
+                    if let Some(prev) = prev_char {
+                        self.single_set.add_char(prev);
+                        prev_char = None;
+                    }
+
+                    return Ok(());
+                },
+                (Begin | Char | AfterUnicodeSet, Some(c)) if legal_char(c)  => {
+                    self.iter.next();
+                    if let Some(prev) = prev_char {
+                        self.single_set.add_char(prev);
+                    }
+                    prev_char = Some(c);
+                    state = Char;
+                },
+                (CharMinus, Some(end)) if legal_char(end) => {
+                    let start = prev_char.ok_or(ParseError::internal())?;
+                    if start > end {
+                        // todo: better error message
+                        return Err(ParseError::unexpected(self.peek_index()?, end));
+                    }
+
+                    self.iter.next();
+
+                    self.single_set.add_range(&(start..=end));
+                    prev_char = None;
+                    state = Begin;
+                },
+                (Begin | Char | AfterUnicodeSet | AfterOp, Some(_)) if self.unicode_set_start() => {
+                    if let Some(prev) = prev_char {
+                        self.single_set.add_char(prev);
+                        prev_char = None;
+                    }
+
+                    // needed for mutable borrow issues
+                    let mut tmp_iter = self.iter.clone();
+                    let mut inner_builder = UnicodeSetBuilder::new_inner(&mut tmp_iter);
+                    inner_builder.parse_unicode_set()?;
+                    *self.iter = tmp_iter;
+                    let (single, multi) = inner_builder.finalize();
+
+                    self.process_chars(single.build());
+                    self.process_strings(multi);
+
+                    
+                    state = AfterUnicodeSet;
+                },
+                (Char, Some('-')) => {
+                    self.iter.next();
+
+                    state = CharMinus;
+                },
+                (AfterUnicodeSet, Some(op@('-' | '&'))) => {
+                    let op = match op {
+                        '&' => Operation::Intersection,
+                        '-' => Operation::Difference,
+                        _ => return Err(ParseError::internal()),
+                    };
+                    // I suppose this could also be a variable in this function, doesnt need to be on the builder?
+                    self.next_op = op;
+
+                    state = AfterOp;
+                },
+                (_, Some(c)) => return Err(ParseError::unexpected(self.peek_index()?, c)),
+            }
+        }
+
+
+        todo!()
+    }
+
+
+    // the entry point, parses a full UnicodeSet. ignores remaining input
     pub fn parse_unicode_set(&mut self) -> Result<()> {
         match self.peek_char() {
             None => Err(ParseError::eof()),
             Some('\\') => self.parse_property_perl(),
-            Some('[') => self.parse_unicode_set_inner(),
+            Some('[') => {
+                self.iter.next();
+                if let Some(&':') = self.peek_char() {
+                    self.parse_property_posix()
+                } else {
+                    self.parse_unicode_set_inner()
+                }
+            },
             Some(&c) => Err(ParseError::unexpected(self.peek_index()?, c)),
         }
+    }
+
+    fn finalize(mut self) -> (CodePointInversionListBuilder, HashSet<String>) {
+        if self.inverted {
+            // code point inversion, removes all strings
+            self.multi_set.drain();
+            self.single_set.complement();
+        }
+
+        (self.single_set, self.multi_set)
     }
 
     fn peek_char(&mut self) -> Option<&char> {
@@ -193,6 +338,56 @@ impl<'a> UnicodeSetBuilder<'a> {
             .map(|&(idx, _)| idx)
             .ok_or(ParseError::internal())
     }
+
+    // BELOW IS WRONG, WE CAN HAVE BOTH KINDS AT SAME LEVEL, BUT STILL ONLY NEED op-handling for recursive UNICODE SETS because only UNICODE SETS are allowed to follow an op. others are implicitly additive
+    // actually this might only be needed for processing sequences of ops in the case of a ContainerUnicodeSet, in the case
+    // of a LeafUnicodeSet (i.e., one that contains chars, char ranges and multi codepoint elements), we cannot have other ops
+    // fn process_string(&mut self, s: String) {
+    //     match self.next_op
+    // }
+    fn process_strings(&mut self, other_strings: HashSet<String>) {
+        match self.next_op {
+            Operation::Union => self.multi_set.extend(other_strings.into_iter()),
+            Operation::Difference => {
+                self.multi_set = self.multi_set.difference(&other_strings).cloned().collect()
+            }
+            Operation::Intersection => {
+                self.multi_set = self
+                    .multi_set
+                    .intersection(&other_strings)
+                    .cloned()
+                    .collect()
+            }
+        }
+        // we consumed the operation, so we reset to the default Union
+        self.reset_op();
+    }
+
+    fn process_chars<'any>(&mut self, other_chars: CodePointInversionList<'any>) {
+        match self.next_op {
+            Operation::Union => self.single_set.add_set(&other_chars),
+            Operation::Difference => self.single_set.remove_set(&other_chars),
+            Operation::Intersection => self.single_set.retain_set(&other_chars),
+        }
+
+        // we consumed the operation, so we reset to the default Union
+        self.reset_op();
+    }
+
+    fn reset_op(&mut self) {
+        self.next_op = Operation::Union;
+    }
+}
+
+pub fn parse(source: &str) -> Result<()> {
+    let mut iter = source.char_indices().peekable();
+    let mut builder = UnicodeSetBuilder::new_inner(&mut iter);
+
+    builder.parse_unicode_set()?;
+
+    // convert builder.single and builder.multi to an actual CodePointInversionListAndStringList
+
+    Ok(())
 }
 
 // fn parse_unicode_set(source: &str) -> Result<ParsedUnicodeSet, ParseError> {
