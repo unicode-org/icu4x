@@ -298,40 +298,12 @@ impl Persian {
             .map(Self::fixed_from_arithmetic_persian)
     }
 
-    // Persian New Year occuring in March of Gregorian year (g_year) to fixed date
-    fn nowruz(g_year: i32) -> RataDie {
-        let iso_from_fixed: Date<Iso> =
-            Iso::iso_from_fixed(RataDie::new(FIXED_PERSIAN_EPOCH.to_i64_date()));
-        let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
-        let persian_year = g_year - greg_date_from_fixed.year().number + 1;
-        let _year = if persian_year <= 0 {
-            persian_year - 1
-        } else {
-            persian_year
-        };
-        #[allow(clippy::unwrap_used)] // valid day and month
-        Self::fixed_from_persian_integers(_year, 1, 1).unwrap()
-    }
-
     fn days_in_year_direct(year: i32) -> u32 {
         if Persian::is_leap_year(year) {
             366
         } else {
             365
         }
-    }
-
-    fn days_in_provided_year_core(year: i32) -> u32 {
-        #[allow(clippy::unwrap_used)] // valid month and day
-        let fixed_year = Self::fixed_from_persian_integers(year, 1, 1)
-            .unwrap()
-            .to_i64_date();
-        #[allow(clippy::unwrap_used)] // valid month and day
-        let next_fixed_year = Self::fixed_from_persian_integers(year + 1, 1, 1)
-            .unwrap()
-            .to_i64_date();
-
-        (next_fixed_year - fixed_year) as u32
     }
 
     fn year_as_persian(year: i32) -> types::FormattableYear {
@@ -601,6 +573,34 @@ mod tests {
         },
     ];
 
+    // Persian New Year occuring in March of Gregorian year (g_year) to fixed date
+    fn nowruz(g_year: i32) -> RataDie {
+        let iso_from_fixed: Date<Iso> =
+            Iso::iso_from_fixed(RataDie::new(FIXED_PERSIAN_EPOCH.to_i64_date()));
+        let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
+        let persian_year = g_year - greg_date_from_fixed.year().number + 1;
+        let _year = if persian_year <= 0 {
+            persian_year - 1
+        } else {
+            persian_year
+        };
+        #[allow(clippy::unwrap_used)] // valid day and month
+        Persian::fixed_from_persian_integers(_year, 1, 1).unwrap()
+    }
+
+    fn days_in_provided_year_core(year: i32) -> u32 {
+        #[allow(clippy::unwrap_used)] // valid month and day
+        let fixed_year = Persian::fixed_from_persian_integers(year, 1, 1)
+            .unwrap()
+            .to_i64_date();
+        #[allow(clippy::unwrap_used)] // valid month and day
+        let next_fixed_year = Persian::fixed_from_persian_integers(year + 1, 1, 1)
+            .unwrap()
+            .to_i64_date();
+
+        (next_fixed_year - fixed_year) as u32
+    }
+
     #[test]
     fn test_persian_leap_year() {
         let mut leap_years: [i32; 33] = [0; 33];
@@ -832,7 +832,7 @@ mod tests {
     fn days_in_provided_year_test() {
         for case in CASES.iter() {
             assert_eq!(
-                Persian::days_in_provided_year_core(case.year),
+                days_in_provided_year_core(case.year),
                 Persian::days_in_provided_year(case.year)
             );
         }
@@ -893,7 +893,7 @@ mod tests {
 
     #[test]
     fn test_nowruz() {
-        let fixed_date = Persian::nowruz(622).to_i64_date();
+        let fixed_date = nowruz(622).to_i64_date();
         assert_eq!(fixed_date, FIXED_PERSIAN_EPOCH.to_i64_date());
 
         let years = [
@@ -908,7 +908,7 @@ mod tests {
         ];
 
         for year in years {
-            let two_thousand_eight_to_fixed = Persian::nowruz(year).to_i64_date();
+            let two_thousand_eight_to_fixed = nowruz(year).to_i64_date();
             let iso_date = Date::try_new_iso_date(year, 3, 21).unwrap();
             let persian_year =
                 Persian::arithmetic_persian_year_from_fixed(Iso::fixed_from_iso(iso_date.inner));
