@@ -250,6 +250,7 @@ where
         }
     }
 
+    // TODO: split up this function into key/value parsing, and then property loading
     fn parse_property_inner(&mut self, end: char) -> Result<()> {
         // only supports ECMA-262 for the moment. UnicodeSet spec ignores whitespace, '-', and '_',
         // but ECMA-262 requires '_', so we'll allow that.
