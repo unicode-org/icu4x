@@ -576,7 +576,6 @@ impl<'data> CaseMappingV1<'data> {
 // enumeration imply that hard-coded special cases exist for this
 // language.
 #[derive(Copy, Clone, Eq, PartialEq)]
-#[allow(dead_code)]
 pub enum CaseMapLocale {
     Root,
     Turkish,
@@ -586,14 +585,21 @@ pub enum CaseMapLocale {
     Armenian,
 }
 
-impl From<&Locale> for CaseMapLocale {
-    fn from(loc: &Locale) -> Self {
-        match loc.id.language.as_str() {
-            "tr" | "az" => Self::Turkish,
-            "lt" => Self::Lithuanian,
-            "el" => Self::Greek,
-            "nl" => Self::Dutch,
-            "hy" => Self::Armenian,
+impl CaseMapLocale {
+    pub const fn from_locale(loc: &Locale) -> Self {
+        use icu_locid::{subtags::Language, subtags_language as language};
+        const TR: Language = language!("tr");
+        const AZ: Language = language!("az");
+        const LT: Language = language!("lt");
+        const EL: Language = language!("el");
+        const NL: Language = language!("nl");
+        const HY: Language = language!("hy");
+        match loc.id.language {
+            TR | AZ => Self::Turkish,
+            LT => Self::Lithuanian,
+            EL => Self::Greek,
+            NL => Self::Dutch,
+            HY => Self::Armenian,
             _ => Self::Root,
         }
     }

@@ -1440,6 +1440,7 @@ version = "0.7.2"
 dependencies = [
  "databake",
  "displaydoc",
+ "icu_casemapping_data",
  "icu_collections",
  "icu_locid",
  "icu_provider",

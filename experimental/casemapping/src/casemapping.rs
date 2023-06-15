@@ -22,27 +22,79 @@ pub struct CaseMapping {
     locale: CaseMapLocale,
 }
 
+#[cfg(feature = "data")]
+impl Default for CaseMapping {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CaseMapping {
-    /// A constructor which takes a [`DataProvider`] and creates a [`CaseMapping`].
+    /// A constructor which creates a [`CaseMapping`].
     ///
-    /// TODO before stabilitzation: make this return a crate-scoped error.
-    pub fn try_new<P>(provider: &P) -> Result<CaseMapping, DataError>
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        Self {
+            data: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_PROPS_CASEMAP_V1),
+            locale: CaseMapLocale::Root,
+        }
+    }
+
+    /// A constructor which creates a [`CaseMapping`] for the given locale.
+    ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new_with_locale(locale: &Locale) -> Self {
+        let locale = CaseMapLocale::from_locale(locale);
+        Self {
+            data: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_PROPS_CASEMAP_V1),
+            locale,
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
+    #[cfg(skip)]
+    functions: [
+        new,
+        try_new_with_any_provider,
+        try_new_with_buffer_provider,
+        try_new_unstable,
+        Self,
+    ]);
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapping, DataError>
     where
         P: DataProvider<CaseMappingV1Marker> + ?Sized,
     {
-        Self::try_new_with_locale(provider, &Locale::UND)
+        Self::try_new_with_locale_unstable(provider, &Locale::UND)
     }
 
-    /// A constructor which takes a [`DataProvider`] and creates a [`CaseMapping`] for the given locale.
-    ///
-    /// TODO before stabilitzation: make this return a crate-scoped error.
-    pub fn try_new_with_locale<P>(provider: &P, locale: &Locale) -> Result<CaseMapping, DataError>
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: &Locale, error: DataError,
+    #[cfg(skip)]
+    functions: [
+        new_with_locale,
+        try_new_with_locale_with_any_provider,
+        try_new_with_locale_with_buffer_provider,
+        try_new_with_locale_unstable,
+        Self,
+    ]);
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_with_locale_unstable<P>(
+        provider: &P,
+        locale: &Locale,
+    ) -> Result<CaseMapping, DataError>
     where
         P: DataProvider<CaseMappingV1Marker> + ?Sized,
     {
         let data = provider.load(Default::default())?.take_payload()?;
-        debug_assert!(data.get().validate().is_ok());
-        let locale = CaseMapLocale::from(locale);
+        let locale = CaseMapLocale::from_locale(locale);
         Ok(Self { data, locale })
     }
 
