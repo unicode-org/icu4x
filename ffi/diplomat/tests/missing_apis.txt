@@ -37,6 +37,14 @@ icu::locid_transform::LocaleExpander::new#FnInStruct
 icu::locid_transform::LocaleExpander::new_extended#FnInStruct
 icu::locid_transform::fallback::FallbackSupplement#Enum
 icu::locid_transform::fallback::LocaleFallbacker::new#FnInStruct
+icu::normalizer::ComposingNormalizer::new_nfc#FnInStruct
+icu::normalizer::ComposingNormalizer::new_nfkc#FnInStruct
+icu::normalizer::ComposingNormalizer::new_uts46_without_ignored_and_disallowed#FnInStruct
+icu::normalizer::DecomposingNormalizer::new_nfd#FnInStruct
+icu::normalizer::DecomposingNormalizer::new_nfkd#FnInStruct
+icu::normalizer::properties::CanonicalCombiningClassMap::new#FnInStruct
+icu::normalizer::properties::CanonicalComposition::new#FnInStruct
+icu::normalizer::properties::CanonicalDecomposition::new#FnInStruct
 icu::plurals::PluralRules::try_new#FnInStruct
 icu::plurals::PluralRules::try_new_cardinal#FnInStruct
 icu::plurals::PluralRules::try_new_ordinal#FnInStruct

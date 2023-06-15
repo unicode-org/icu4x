@@ -11,8 +11,7 @@ use icu_normalizer::DecomposingNormalizer;
 
 #[test]
 fn test_nfd_basic() {
-    let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("Ä"), "A\u{0308}");
     assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");
@@ -29,8 +28,7 @@ fn test_nfd_basic() {
 
 #[test]
 fn test_nfkd_basic() {
-    let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("Ä"), "A\u{0308}");
     assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");
@@ -50,10 +48,7 @@ fn test_nfkd_basic() {
 #[cfg(feature = "experimental")]
 fn test_uts46d_basic() {
     let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed(
-            &icu_testdata::unstable(),
-        )
-        .unwrap();
+        DecomposingNormalizer::new_uts46_decomposed_without_ignored_and_disallowed();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("Ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");
@@ -79,8 +74,7 @@ fn test_uts46d_basic() {
 
 #[test]
 fn test_nfc_basic() {
-    let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
     assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("A\u{0308}"), "Ä");
     assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
@@ -98,8 +92,7 @@ fn test_nfc_basic() {
 
 #[test]
 fn test_nfkc_basic() {
-    let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfkc();
     assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("A\u{0308}"), "Ä");
     assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
@@ -120,10 +113,7 @@ fn test_nfkc_basic() {
 #[cfg(feature = "experimental")]
 fn test_uts46_basic() {
     let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_unstable(
-            &icu_testdata::unstable(),
-        )
-        .unwrap();
+        ComposingNormalizer::new_uts46_without_ignored_and_disallowed();
     assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("A\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
@@ -152,8 +142,7 @@ type StackString = arraystring::ArrayString<arraystring::typenum::U48>;
 
 #[test]
 fn test_nfd_str_to() {
-    let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
 
     let mut buf = StackString::new();
     assert!(normalizer.normalize_to("ä", &mut buf).is_ok());
@@ -166,8 +155,7 @@ fn test_nfd_str_to() {
 
 #[test]
 fn test_nfd_utf8_to() {
-    let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -186,8 +174,7 @@ type StackVec = arrayvec::ArrayVec<u16, 32>;
 
 #[test]
 fn test_nfd_utf16_to() {
-    let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -204,8 +191,7 @@ fn test_nfd_utf16_to() {
 
 #[test]
 fn test_nfc_str_to() {
-    let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
 
     let mut buf = StackString::new();
     assert!(normalizer.normalize_to("a\u{0308}", &mut buf).is_ok());
@@ -220,8 +206,7 @@ fn test_nfc_str_to() {
 
 #[test]
 fn test_nfc_utf8_to() {
-    let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -238,8 +223,7 @@ fn test_nfc_utf8_to() {
 
 #[test]
 fn test_nfc_utf16_to() {
-    let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -256,8 +240,7 @@ fn test_nfc_utf16_to() {
 
 #[test]
 fn test_nfc_utf8_to_errors() {
-    let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -286,8 +269,7 @@ fn test_nfc_utf8_to_errors() {
 
 #[test]
 fn test_nfd_utf8_to_errors() {
-    let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -316,8 +298,7 @@ fn test_nfd_utf8_to_errors() {
 
 #[test]
 fn test_nfc_utf16_to_errors() {
-    let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -424,8 +405,7 @@ fn test_nfc_utf16_to_errors() {
 
 #[test]
 fn test_nfd_utf16_to_errors() {
-    let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -567,14 +547,10 @@ fn parse_hex(mut hexes: &[u8]) -> [StackString; 5] {
 
 #[test]
 fn test_conformance() {
-    let nfd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
+    let nfd: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let nfkd: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
+    let nfc: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let nfkc: ComposingNormalizer = ComposingNormalizer::new_nfkc();
 
     let mut prev = 0u32;
     let mut part = 0u8;
@@ -718,7 +694,7 @@ fn test_conformance() {
 //     let builder = CodePointSetBuilder::new();
 //     let set: CodePointSet = builder.build();
 
-//     let normalizer: ComposingNormalizer = ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
+//     let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
 //     {
 //         let mut norm_iter = normalizer.normalize_iter("A\u{AC00}\u{11A7}".chars());
 //         // Pessimize passthrough to avoid hiding bugs.
@@ -765,14 +741,10 @@ fn char_to_str(c: char, sink: &mut StackString) {
 
 #[test]
 fn test_conformance_utf16() {
-    let nfd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
+    let nfd: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let nfkd: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
+    let nfc: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let nfkc: ComposingNormalizer = ComposingNormalizer::new_nfkc();
 
     let mut input = StackVec::new();
     let mut normalized = StackVec::new();
@@ -982,14 +954,10 @@ fn test_conformance_utf16() {
 
 #[test]
 fn test_conformance_utf8() {
-    let nfd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
+    let nfd: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let nfkd: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
+    let nfc: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let nfkc: ComposingNormalizer = ComposingNormalizer::new_nfkc();
 
     let mut input = StackString::new();
     let mut normalized = StackString::new();
@@ -1255,7 +1223,7 @@ fn test_conformance_utf8() {
 
 #[test]
 fn test_canonical_composition() {
-    let comp = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let comp = CanonicalComposition::new();
 
     assert_eq!(comp.compose('a', 'b'), None); // Just two starters
 
@@ -1274,7 +1242,7 @@ fn test_canonical_composition() {
 
 #[test]
 fn test_canonical_decomposition() {
-    let decomp = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let decomp = CanonicalDecomposition::new();
 
     assert_eq!(
         decomp.decompose('ä'),
@@ -1317,19 +1285,18 @@ fn test_canonical_decomposition() {
 
 #[test]
 fn test_ccc() {
-    let map = CanonicalCombiningClassMap::try_new_unstable(&icu_testdata::unstable()).unwrap();
-    let props =
-        icu_properties::maps::load_canonical_combining_class(&icu_testdata::unstable()).unwrap();
-    let sb = props.as_borrowed();
+    let map = CanonicalCombiningClassMap::new();
     for u in 0..=0x10FFFF {
-        assert_eq!(map.get32(u), sb.get32(u));
+        assert_eq!(
+            map.get32(u),
+            icu_properties::maps::canonical_combining_class().get32(u)
+        );
     }
 }
 
 #[test]
 fn test_utf16_basic() {
-    let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
+    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
 
     assert_eq!(
         normalizer.normalize_utf16(&[0x0061]).as_slice(),
@@ -1343,14 +1310,10 @@ fn test_utf16_basic() {
 
 #[test]
 fn test_is_normalized() {
-    let nfd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
+    let nfd: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let nfkd: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
+    let nfc: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let nfkc: ComposingNormalizer = ComposingNormalizer::new_nfkc();
 
     let aaa = "aaa";
     assert!(nfd.is_normalized(aaa));
