@@ -74,15 +74,15 @@ enum Operation {
 }
 
 // note: "compiles" the set while building, so no intermediate parse tree, it's directly compiled.
-pub struct UnicodeSetBuilder<'a> {
+pub struct UnicodeSetBuilder<'a, 'b> {
     single_set: CodePointInversionListBuilder,
     multi_set: HashSet<String>,
-    iter: &'a mut Peekable<CharIndices<'a>>,
+    iter: &'b mut Peekable<CharIndices<'a>>,
     next_op: Operation,
     inverted: bool,
 }
 
-impl<'a> UnicodeSetBuilder<'a> {
+impl<'a, 'b> UnicodeSetBuilder<'a, 'b> {
     // TODO: the parse_ functions might need an "op" argument that tells them whether to add or subtract or intersect the parsed content
     // maybe also rename in that case to collect_x or handle_x? parse could be fine though.
 
@@ -91,7 +91,7 @@ impl<'a> UnicodeSetBuilder<'a> {
     //     UnicodeSetBuilder::new_inner(&mut source.char_indices().peekable())
     // }
 
-    fn new_inner(iter: &'a mut Peekable<CharIndices<'a>>) -> Self {
+    fn new_inner(iter: &'b mut Peekable<CharIndices<'a>>) -> UnicodeSetBuilder<'a, 'b> {
         UnicodeSetBuilder {
             single_set: CodePointInversionListBuilder::new(),
             multi_set: Default::default(),
@@ -174,7 +174,9 @@ impl<'a> UnicodeSetBuilder<'a> {
     }
 
     // beginning [ is already consumed
+    //fn parse_unicode_set_inner<'b: 'a>(&'b mut self) -> Result<()> {
     fn parse_unicode_set_inner(&mut self) -> Result<()> {
+    //fn parse_unicode_set_inner(&mut self) -> Result<()> {
         // special cases for the first char after [
         match self.peek_char() {
             None => return Err(ParseError::eof()),
@@ -263,15 +265,14 @@ impl<'a> UnicodeSetBuilder<'a> {
                     }
 
                     // needed for mutable borrow issues
-                    let mut tmp_iter = self.iter.clone();
-                    let mut inner_builder = UnicodeSetBuilder::new_inner(&mut tmp_iter);
+                    //let mut tmp_iter = self.iter.clone();
+                    let mut inner_builder = UnicodeSetBuilder::new_inner(self.iter);
                     inner_builder.parse_unicode_set()?;
-                    *self.iter = tmp_iter;
                     let (single, multi) = inner_builder.finalize();
+                    //*self.iter = tmp_iter;
 
                     self.process_chars(single.build());
                     self.process_strings(multi);
-
                     
                     state = AfterUnicodeSet;
                 },
