@@ -818,10 +818,8 @@ mod tests {
         // 683 is the amount of leap years in a 2820 Persian year cycle
         assert_eq!(leap_year_results.len(), 683);
 
-        let mut index = 0;
-        for case in CASES.iter() {
+        for (index, case) in CASES.iter().enumerate() {
             leap_years[index] = case.year;
-            index += 1;
         }
         for (year, bool) in leap_years.iter().zip(expected_values.iter()) {
             assert_eq!(Persian::is_leap_year(*year), *bool);
