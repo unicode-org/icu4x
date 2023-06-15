@@ -134,6 +134,7 @@ pub mod provider;
 mod rata_die;
 pub mod types;
 mod week_of;
+mod chinese;
 
 pub mod week {
     //! Functions for week-of-month and week-of-year arithmetic.

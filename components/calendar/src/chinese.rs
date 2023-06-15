@@ -3,9 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::calendar_arithmetic::ArithmeticDate;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::helpers::{adjusted_rem_euclid};
 use crate::iso::{Iso, IsoDateInner};
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use crate::rata_die::RataDie;
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, astronomy};
+use crate::astronomy::{Astronomical, Location};
 use tinystr::tinystr;
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
@@ -20,7 +23,22 @@ pub struct ChineseDateInner {
     leap_month: u8,
 }
 
-impl CalendarArithmetic for Chinese { // Should this be implemented??
+impl CalendarArithmetic for Chinese {
+    fn month_days(year: i32, month: u8) -> u8 {
+        todo!()
+    }
+
+    fn months_for_every_year(year: i32) -> u8 {
+        todo!()
+    }
+
+    fn is_leap_year(year: i32) -> bool {
+        todo!()
+    }
+
+    fn last_month_day_in_year(year: i32) -> (u8, u8) {
+        todo!()
+    } // Should this be implemented??
 
 }
 
@@ -109,14 +127,21 @@ impl Calendar for Chinese {
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         todo!();
     }
+
+    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
+        todo!()
+    }
 }
 
 impl Date<Chinese> {
 
-    /// Construct a new Chinese date using the -2636-based year system
+    /// Construct a new Chinese date;
+    /// year represents the year counted infinitely from -2636 (2637 BCE);
+    /// leap_month indicates whether the month of the given date is a leap month
     pub fn try_new_chinese_date(
         year: i32,
         month: u8,
+        leap_month: bool,
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
         todo!();
@@ -140,6 +165,27 @@ impl DateTime<Chinese> {
 }
 
 impl Chinese {
+    
+    // pub(crate) fn chinese_from_fixed(fixed: RataDie) -> Date<Chinese> {
+    //     let s1 = Self::chinese_winter_solstice_on_or_before(fixed);
+    //     let s2 = Self::chinese_winter_solstice_on_or_before(s1 + 370);
+    //     let m12 = Self::chinese_new_moon_on_or_after(s1 + 1);
+    //     let next_m11 = Self::chinese_new_moon_before(s2 + 1);
+    //     let m = Self::chinese_new_moon_before(fixed + 1);
+    //     let leap_year = ((next_m11 - m12) / astronomy::MEAN_SYNODIC_MONTH).round() == 12;
+    //     let month = adjusted_rem_euclid(((m - m12) / astronomy::MEAN_SYNODIC_MONTH).round() - (if leap_year && Self::chinese_prior_leap_month(m12, m) { 1 } else { 0 }), 12);
+    //     let leap_month = leap_year && Self::chinese_no_major_solar_term(m) && !Self::chinese_prior_leap_month(m12, Self::chinese_new_moon_before(m));
+    //     let year = (1.5 - (month / 12) + ((fixed - CHINESE_EPOCH) / astronomy::MEAN_TROPICAL_YEAR)).floor();
+    //     let day = fixed - m + 1;
+    //     Date::try_new_chinese_date(year, month, leap_month, day).unwrap()
+    // }
 
+    // pub(crate) fn fixed_from_chinese(chinese: Date<Chinese>) -> RataDie {
+    //     let mid_year = CHINESE_EPOCH + astronomy::MEAN_TROPICAL_YEAR.quotient(2);
+    //     let new_year = Self::chinese_new_year_on_or_before(mid_year);
+    //     let p = Self::chinese_new_moon_on_or_after(new_year + (month - 1) * 29);
+    //     let d = Self::chinese_from_fixed(p);
+
+    // }
 
 }
