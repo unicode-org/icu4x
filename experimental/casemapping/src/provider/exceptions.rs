@@ -12,9 +12,11 @@ use icu_provider::prelude::*;
 
 use super::data::MappingKind;
 use super::exception_helpers::{ExceptionBits, ExceptionSlot, SlotPresence};
+#[cfg(any(feature = "serde", feature = "datagen"))]
 use crate::error::Error;
 use crate::internals::ClosureSet;
 use core::fmt;
+#[cfg(any(feature = "serde", feature = "datagen"))]
 use core::ops::Range;
 use core::ptr;
 use std::borrow::Cow;
@@ -59,6 +61,7 @@ impl<'data> CaseMappingExceptions<'data> {
         exception.unwrap_or(ExceptionULE::empty_exception())
     }
 
+    #[cfg(any(feature = "serde", feature = "datagen"))]
     pub(crate) fn validate(&self) -> Result<Range<u16>, Error> {
         for exception in self.exceptions.iter() {
             exception.validate()?;
@@ -347,6 +350,7 @@ impl ExceptionULE {
         }
     }
 
+    #[cfg(any(feature = "serde", feature = "datagen"))]
     pub(crate) fn validate(&self) -> Result<(), Error> {
         // check that ICU4C specific fields are not set
         // check that there is enough space for all the offsets

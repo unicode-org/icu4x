@@ -17,6 +17,7 @@
 
 use icu_provider::prelude::*;
 
+#[cfg(any(feature = "serde", feature = "datagen"))]
 use crate::error::Error;
 use crate::provider::data::CaseMappingData;
 use crate::provider::exceptions::CaseMappingExceptions;
@@ -33,6 +34,17 @@ pub mod exceptions;
 mod exceptions_builder;
 pub mod unfold;
 
+#[cfg(feature = "data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_casemapping;
+    icu_casemapping_data::impl_props_casemap_v1!(Baked);
+};
+
 /// This type contains all of the casemapping data
 ///
 /// The methods in the provider module are primarily about accessing its data,
@@ -46,7 +58,6 @@ pub mod unfold;
 /// </div>
 #[icu_provider::data_struct(CaseMappingV1Marker = "props/casemap@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -57,14 +68,38 @@ pub mod unfold;
 /// convert characters and strings to upper, lower, or title case.
 pub struct CaseMappingV1<'data> {
     /// Case mapping data
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, CaseMappingData>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     /// Exceptions to the case mapping data
     pub exceptions: CaseMappingExceptions<'data>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     /// Reverse case folding data.
     pub unfold: CaseMappingUnfoldData<'data>,
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for CaseMappingV1<'de> {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        #[derive(serde::Deserialize)]
+        pub struct Raw<'data> {
+            #[serde(borrow)]
+            pub trie: CodePointTrie<'data, CaseMappingData>,
+            #[serde(borrow)]
+            pub exceptions: CaseMappingExceptions<'data>,
+            #[serde(borrow)]
+            pub unfold: CaseMappingUnfoldData<'data>,
+        }
+
+        let raw = Raw::deserialize(deserializer)?;
+        let result = Self {
+            trie: raw.trie,
+            exceptions: raw.exceptions,
+            unfold: raw.unfold,
+        };
+        use serde::de::Error;
+        result
+            .validate()
+            .map_err(|_| D::Error::custom("validation error"))?;
+        Ok(result)
+    }
 }
 
 impl<'data> CaseMappingV1<'data> {
@@ -113,7 +148,8 @@ impl<'data> CaseMappingV1<'data> {
     /// already been validated. Calling this function is only
     /// necessary if you are concerned about data corruption after
     /// deserializing.
-    pub(crate) fn validate(&self) -> Result<(), Error> {
+    #[cfg(any(feature = "serde", feature = "datagen"))]
+    pub(crate) fn validate(&self) -> Result<(), crate::error::Error> {
         // First, validate that exception data is well-formed.
         let valid_exception_indices = self.exceptions.validate()?;
 
