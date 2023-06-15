@@ -66,7 +66,7 @@ mod tests {
 
     #[test]
     fn test_simple_mappings() {
-        let case_mapping = CaseMapping::try_new(&crate::DatagenProvider::for_test())
+        let case_mapping = CaseMapping::try_new_unstable(&crate::DatagenProvider::for_test())
             .expect("Loading was successful");
 
         // Basic case mapping
@@ -110,16 +110,18 @@ mod tests {
     // These tests are taken from StringCaseTest::TestCaseConversion in ICU4C.
     #[test]
     fn test_full_mappings() {
-        let case_mapping = CaseMapping::try_new(&crate::DatagenProvider::for_test())
+        let case_mapping = CaseMapping::try_new_unstable(&crate::DatagenProvider::for_test())
             .expect("Loading was successful");
 
         let turkish_locale = Locale::from_str("tr").expect("Parsing was successful");
-        let turkish_case_mapping =
-            CaseMapping::try_new_with_locale(&crate::DatagenProvider::for_test(), &turkish_locale)
-                .expect("Loading was successful");
+        let turkish_case_mapping = CaseMapping::try_new_with_locale_unstable(
+            &crate::DatagenProvider::for_test(),
+            &turkish_locale,
+        )
+        .expect("Loading was successful");
 
         let lithuanian_locale = Locale::from_str("lt").expect("Parsing was successful");
-        let lithuanian_case_mapping = CaseMapping::try_new_with_locale(
+        let lithuanian_case_mapping = CaseMapping::try_new_with_locale_unstable(
             &crate::DatagenProvider::for_test(),
             &lithuanian_locale,
         )
