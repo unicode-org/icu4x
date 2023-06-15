@@ -228,11 +228,6 @@ where
     // TODO: the parse_ functions might need an "op" argument that tells them whether to add or subtract or intersect the parsed content
     // maybe also rename in that case to collect_x or handle_x? parse could be fine though.
 
-    // move this out into a static parse function that completes (i.e., drops) the created UnicodeSetBuilder before returning
-    // fn new(source: &'a str) -> Self {
-    //     UnicodeSetBuilder::new_inner(&mut source.char_indices().peekable())
-    // }
-
     fn new_inner(
         iter: &'b mut Peekable<CharIndices<'a>>,
         provider: &'c P,
@@ -258,6 +253,8 @@ where
     fn parse_property_inner(&mut self, end: char) -> Result<()> {
         // only supports ECMA-262 for the moment. UnicodeSet spec ignores whitespace, '-', and '_',
         // but ECMA-262 requires '_', so we'll allow that.
+        // TODO: support loose matching on keys (e.g., "AS  -_-  CII_Hex_ D-igit")
+        // TODO: support other properties
 
         let mut key_buffer = String::new();
         let mut value_buffer = String::new();
@@ -421,6 +418,7 @@ where
     }
 
     // parses and consumes '{' (s char)+ s '}'
+    // TODO: decide on names for multi-codepoint-sequences and adjust both struct fields and fn names
     fn parse_multi(&mut self) -> Result<()> {
         self.consume('{')?;
 
@@ -568,6 +566,7 @@ where
                     };
                     self.iter.next();
                     // I suppose this could also be a variable in this function, doesnt need to be on the builder?
+                    // TODO: the above
                     self.next_op = op;
 
                     state = AfterOp;
@@ -575,8 +574,6 @@ where
                 (_, Some(c)) => return Err(ParseError::unexpected(self.peek_index()?, c)),
             }
         }
-
-        todo!()
     }
 
     // the entry point, parses a full UnicodeSet. ignores remaining input
