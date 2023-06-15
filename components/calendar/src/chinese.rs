@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::astronomy::{Astronomical, Location};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{adjusted_rem_euclid};
+use crate::helpers::adjusted_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, astronomy};
-use crate::astronomy::{Astronomical, Location};
+use crate::{
+    astronomy, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
+};
 use tinystr::tinystr;
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
@@ -39,7 +41,6 @@ impl CalendarArithmetic for Chinese {
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
         todo!()
     } // Should this be implemented??
-
 }
 
 impl Calendar for Chinese {
@@ -84,7 +85,7 @@ impl Calendar for Chinese {
 
     #[doc(hidden)] // unstable
     /// Calculate `date2 - date` as a duration
-    /// 
+    ///
     /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
     /// differ on date, the date for the first calendar is used, and `date2` may be converted if necessary.
     fn until(
@@ -134,7 +135,6 @@ impl Calendar for Chinese {
 }
 
 impl Date<Chinese> {
-
     /// Construct a new Chinese date;
     /// year represents the year counted infinitely from -2636 (2637 BCE);
     /// leap_month indicates whether the month of the given date is a leap month
@@ -149,7 +149,6 @@ impl Date<Chinese> {
 }
 
 impl DateTime<Chinese> {
-
     /// Construct a new Chinese datetime from integers using the
     /// -2636-based year system
     pub fn try_new_chinese_datetime(
@@ -165,7 +164,6 @@ impl DateTime<Chinese> {
 }
 
 impl Chinese {
-    
     // pub(crate) fn chinese_from_fixed(fixed: RataDie) -> Date<Chinese> {
     //     let s1 = Self::chinese_winter_solstice_on_or_before(fixed);
     //     let s2 = Self::chinese_winter_solstice_on_or_before(s1 + 370);
@@ -187,5 +185,4 @@ impl Chinese {
     //     let d = Self::chinese_from_fixed(p);
 
     // }
-
 }
