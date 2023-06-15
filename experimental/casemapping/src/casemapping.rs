@@ -3,9 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::internals::{CaseMapLocale, FoldOptions};
+use crate::provider::data::MappingKind;
 use crate::provider::CaseMappingV1Marker;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
+use writeable::Writeable;
 
 /// A struct with the ability to convert characters and strings to uppercase or lowercase,
 /// or fold them to a normalized form for case-insensitive comparison.
@@ -140,24 +142,50 @@ impl CaseMapping {
     /// Returns the full lowercase mapping of the given string.
     /// This function is context and locale sensitive.
     pub fn to_full_lowercase(&self, src: &str) -> String {
-        self.data.get().full_lowercase(src, self.locale)
+        self.data
+            .get()
+            .full_helper_writeable(src, self.locale, MappingKind::Lower)
+            .write_to_string()
+            .into_owned()
     }
 
     /// Returns the full uppercase mapping of the given string.
     /// This function is context and locale sensitive.
     pub fn to_full_uppercase(&self, src: &str) -> String {
-        self.data.get().full_uppercase(src, self.locale)
+        self.data
+            .get()
+            .full_helper_writeable(src, self.locale, MappingKind::Upper)
+            .write_to_string()
+            .into_owned()
+    }
+
+    /// Returns the full titlecase mapping of the given string.
+    /// This function is context and locale sensitive.
+    pub fn to_full_titlecase(&self, src: &str) -> String {
+        self.data
+            .get()
+            .full_helper_writeable(src, self.locale, MappingKind::Title)
+            .write_to_string()
+            .into_owned()
     }
 
     /// Case-folds the characters in the given string.
     /// This function is locale-independent and context-insensitive.
     pub fn full_fold(&self, src: &str) -> String {
-        self.data.get().full_folding(src, CaseMapLocale::Root)
+        self.data
+            .get()
+            .full_helper_writeable(src, CaseMapLocale::Root, MappingKind::Fold)
+            .write_to_string()
+            .into_owned()
     }
 
     /// Case-folds the characters in the given string, using Turkic (T) mappings for dotted/dotless I.
     /// This function is locale-independent and context-insensitive.
     pub fn full_fold_turkic(&self, src: &str) -> String {
-        self.data.get().full_folding(src, CaseMapLocale::Turkish)
+        self.data
+            .get()
+            .full_helper_writeable(src, CaseMapLocale::Turkish, MappingKind::Fold)
+            .write_to_string()
+            .into_owned()
     }
 }
