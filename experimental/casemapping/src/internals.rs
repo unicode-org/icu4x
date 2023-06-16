@@ -9,9 +9,9 @@
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::CaseMappingV1;
+use core::fmt;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_locid::Locale;
-use std::fmt;
 use writeable::Writeable;
 
 // Used to control the behavior of CaseMapping::fold.

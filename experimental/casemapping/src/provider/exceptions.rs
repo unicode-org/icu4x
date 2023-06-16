@@ -15,11 +15,11 @@ use super::exception_helpers::{ExceptionBits, ExceptionSlot, SlotPresence};
 #[cfg(any(feature = "serde", feature = "datagen"))]
 use crate::error::Error;
 use crate::internals::ClosureSet;
+use alloc::borrow::Cow;
 use core::fmt;
 #[cfg(any(feature = "serde", feature = "datagen"))]
 use core::ops::Range;
 use core::ptr;
-use std::borrow::Cow;
 use zerovec::ule::AsULE;
 use zerovec::VarZeroVec;
 
@@ -466,6 +466,7 @@ pub struct DecodedException<'a> {
 impl<'a> DecodedException<'a> {
     /// Convert to a wire-format encodeable (VarULE-encodeable) [`Exception`]
     pub fn encode(&self) -> Exception<'static> {
+        use alloc::string::String;
         let bits = self.bits;
         let mut slot_presence = SlotPresence(0);
         let mut data = String::new();

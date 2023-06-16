@@ -13,6 +13,7 @@ readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
+categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
@@ -47,5 +48,5 @@ icu_casemapping_data = { path = "data", optional = true }
 [features]
 std = ["icu_collections/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
-datagen = ["serde", "std", "dep:databake", "zerovec/databake", "icu_collections/databake"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 data = ["dep:icu_casemapping_data"]

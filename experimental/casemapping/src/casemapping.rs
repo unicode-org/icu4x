@@ -7,6 +7,7 @@ use crate::provider::data::MappingKind;
 use crate::provider::CaseMappingV1Marker;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
+use alloc::string::String;
 use writeable::Writeable;
 
 /// A struct with the ability to convert characters and strings to uppercase or lowercase,

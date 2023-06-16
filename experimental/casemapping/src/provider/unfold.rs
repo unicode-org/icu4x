@@ -6,6 +6,8 @@
 
 #[cfg(feature = "datagen")]
 use crate::error::Error;
+#[cfg(feature = "datagen")]
+use alloc::string::String;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
