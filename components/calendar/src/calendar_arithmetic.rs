@@ -260,11 +260,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
     /// the month and day
-    pub fn new_from_solar_ordinals(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Self, CalendarError> {
+    pub fn new_from_solar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
         let max_month = C::months_for_every_year(year);
         if month > max_month {
             return Err(CalendarError::Overflow {
