@@ -27,7 +27,6 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_segmenter",
     "icu_timezone",
     "litemap",
-    "libm",
     "memchr",
     "regex-automata",
     "smallvec",

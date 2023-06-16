@@ -31,7 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{ceil_div, div_rem_euclid, div_rem_euclid64, i64_to_i32, I32Result};
+use crate::helpers::{ceil_div, div_rem_euclid64, i64_to_i32, I32Result};
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
@@ -55,7 +55,7 @@ const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian(ArithmeticDate {
 /// [Persian Calendar]: https://en.wikipedia.org/wiki/Solar_Hijri_calendar
 ///
 /// # Era codes
-/// This calendar supports only one era code, which starts from the year of the Hijra, designated as "AH".
+/// This calendar supports only one era code, which starts from the year of the Hijra, designated as "ah".
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct Persian;
@@ -80,16 +80,17 @@ impl CalendarArithmetic for Persian {
         12
     }
 
-    fn is_leap_year(mut p_year: i32) -> bool {
+    fn is_leap_year(p_year: i32) -> bool {
+        let mut p_year = p_year as i64;
         if 0 < p_year {
             p_year -= 474;
         } else {
             p_year -= 473;
         };
-        let d = div_rem_euclid(p_year, 2820);
+        let d = div_rem_euclid64(p_year, 2820);
         let year = d.1 + 474;
 
-        div_rem_euclid((year + 38) * 31, 128).1 < 31
+        div_rem_euclid64((year + 38) * 31, 128).1 < 31
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
@@ -119,7 +120,7 @@ impl Calendar for Persian {
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
         let year = if era.0 == tinystr!(16, "ah") {
-            if year <= 0 {
+            if year == 0 {
                 return Err(CalendarError::OutOfRange);
             }
             year
@@ -185,13 +186,13 @@ impl Calendar for Persian {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year - 1;
-        let next_year = date.0.year + 1;
+        let prev_year = date.0.year.saturating_sub(1);
+        let next_year = date.0.year.saturating_add(1);
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Persian::year_as_persian(prev_year),
-            days_in_prev_year: Persian::days_in_year_direct(prev_year),
+            days_in_prev_year: Persian::days_in_provided_year(prev_year),
             next_year: Persian::year_as_persian(next_year),
         }
     }
@@ -255,10 +256,7 @@ impl Persian {
             I32Result::WithinRange(y) => y,
         };
         #[allow(clippy::unwrap_used)] // valid month,day
-        let day_of_year = 1_i64 + date.to_i64_date()
-            - Self::fixed_from_persian_integers(year, 1, 1)
-                .unwrap()
-                .to_i64_date();
+        let day_of_year = 1_i64 + (date - Self::fixed_from_persian_integers(year, 1, 1).unwrap());
         let month = if day_of_year <= 186 {
             ceil_div(day_of_year, 31) as u8
         } else {
@@ -297,27 +295,11 @@ impl Persian {
             .map(Self::fixed_from_arithmetic_persian)
     }
 
-    fn days_in_year_direct(year: i32) -> u32 {
-        if Persian::is_leap_year(year) {
-            366
-        } else {
-            365
-        }
-    }
-
     fn year_as_persian(year: i32) -> types::FormattableYear {
-        if year > 0 {
-            types::FormattableYear {
-                era: types::Era(tinystr!(16, "ah")),
-                number: year,
-                related_iso: None,
-            }
-        } else {
-            types::FormattableYear {
-                era: types::Era(tinystr!(16, "bh")),
-                number: year,
-                related_iso: None,
-            }
+        types::FormattableYear {
+            era: types::Era(tinystr!(16, "ah")),
+            number: year,
+            related_iso: None,
         }
     }
 }
@@ -349,9 +331,20 @@ impl Date<Persian> {
             marker: PhantomData,
         };
 
-        let bound = inner.days_in_month();
-        if day > bound {
-            return Err(CalendarError::OutOfRange);
+        let max_month = Persian::months_for_every_year(year);
+        if month > max_month {
+            return Err(CalendarError::Overflow {
+                field: "month",
+                max: max_month as usize,
+            });
+        }
+
+        let max_day = Persian::month_days(year, month);
+        if day > max_day {
+            return Err(CalendarError::Overflow {
+                field: "day",
+                max: max_day as usize,
+            });
         }
         Ok(Date::from_raw(PersianDateInner(inner), Persian))
     }
@@ -916,6 +909,52 @@ mod tests {
                 )),
                 persian_year
             );
+        }
+    }
+
+    #[test]
+    fn test_day_of_year_info() {
+        #[derive(Debug)]
+        struct TestCase {
+            input: i32,
+            expected_prev: i32,
+            expected_next: i32,
+        }
+
+        let test_cases = vec![
+            TestCase {
+                input: 0,
+                expected_prev: -1,
+                expected_next: 1,
+            },
+            TestCase {
+                input: i32::MAX,
+                expected_prev: i32::MAX - 1,
+                expected_next: i32::MAX, // can't go above i32::MAX
+            },
+            TestCase {
+                input: i32::MIN + 1,
+                expected_prev: i32::MIN,
+                expected_next: i32::MIN + 2,
+            },
+            TestCase {
+                input: i32::MIN,
+                expected_prev: i32::MIN, // can't go below i32::MIN
+                expected_next: i32::MIN + 1,
+            },
+        ];
+
+        for case in test_cases {
+            let date = PersianDateInner(ArithmeticDate {
+                year: (case.input),
+                month: 1,
+                day: 1,
+                marker: PhantomData,
+            });
+            let info = Persian::day_of_year_info(&Persian, &date);
+
+            assert_eq!(info.prev_year.number, case.expected_prev, "{:?}", case);
+            assert_eq!(info.next_year.number, case.expected_next, "{:?}", case);
         }
     }
 }
