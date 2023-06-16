@@ -212,19 +212,18 @@ impl DatagenProvider {
             use rayon_prelude::*;
 
             keys.into_par_iter().try_for_each(|key| {
-                let mut supported_locales: HashSet<DataLocale> = provider
-                    .supported_locales_for_key(key)
-                    .map_err(|e| e.with_key(key))?.into_iter().collect();
-
-                if supported_locales.len() == 1 && supported_locales.iter().next().unwrap() == &DataLocale::default() {
-                    // Singleton key
+                if key.metadata().singleton {
                     let payload = provider
                         .load_data(key, Default::default())
                         .and_then(DataResponse::take_payload)
                         .map_err(|e| e.with_req(key, Default::default()))?;
 
-                    return exporter.flush_singleton(key, &payload);
+                    return exporter.flush_singleton(key, &payload).map_err(|e| e.with_req(key, Default::default()));
                 }
+
+                let mut supported_locales: HashSet<DataLocale> = provider
+                    .supported_locales_for_key(key)
+                    .map_err(|e| e.with_key(key))?.into_iter().collect();
 
                 match provider.source.options.fallback {
                     options::FallbackMode::Legacy => {

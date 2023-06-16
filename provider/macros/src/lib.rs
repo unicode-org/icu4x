@@ -355,12 +355,14 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 } else {
                     quote! {None}
                 };
+            let singleton = false; // TODO(#2683)
             result.extend(quote!(
                 impl icu_provider::KeyedDataMarker for #marker_name {
                     const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str, icu_provider::DataKeyMetadata::construct_internal(
                         #fallback_by_expr,
                         #extension_key_expr,
-                        #fallback_supplement_expr
+                        #fallback_supplement_expr,
+                        #singleton,
                     ));
                 }
             ));
