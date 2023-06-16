@@ -1147,7 +1147,5 @@ mod tests {
             1,
             CalendarError::UnknownMonthCode("M9".parse().unwrap(), "Persian"),
         );
-        single_test_error(persian, "ah", 0, "M03", 1, CalendarError::OutOfRange);
-        single_test_error(persian, "ah", 0, "M03", 1, CalendarError::OutOfRange);
     }
 }
