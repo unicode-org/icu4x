@@ -212,11 +212,11 @@ impl DatagenProvider {
             use rayon_prelude::*;
 
             keys.into_par_iter().try_for_each(|key| {
-                let supported_locales = provider
+                let mut supported_locales: HashSet<DataLocale> = provider
                     .supported_locales_for_key(key)
-                    .map_err(|e| e.with_key(key))?;
+                    .map_err(|e| e.with_key(key))?.into_iter().collect();
 
-                if supported_locales.len() == 1 && supported_locales[0] == Default::default() {
+                if supported_locales.len() == 1 && supported_locales.iter().next().unwrap() == &DataLocale::default() {
                     // Singleton key
                     let payload = provider
                         .load_data(key, Default::default())
@@ -250,7 +250,7 @@ impl DatagenProvider {
                             .map_err(|e| e.with_key(key))
                     }
                     options::FallbackMode::Runtime => {
-                        let payloads = supported_locales.into_iter()
+                        let payloads = supported_locales.into_par_iter()
                             .map(|locale| {
                                 let req = DataRequest {
                                     locale: &locale,
@@ -279,10 +279,10 @@ impl DatagenProvider {
                     options::FallbackMode::Expand => match &provider.source.options.locales {
                         options::LocaleInclude::Explicit(requested_locales) => {
                             let provider = icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable(provider.clone())?;
-                            requested_locales
+                            supported_locales.extend(requested_locales.iter().map(Into::into));
+                            supported_locales
                                 .into_par_iter()
                                 .try_for_each(|locale| {
-                                    let locale = locale.into();
                                     let req = DataRequest {
                                         locale: &locale,
                                         metadata: Default::default(),

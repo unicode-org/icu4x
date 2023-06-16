@@ -290,6 +290,7 @@ impl LocaleFallbacker {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "data")]
+    #[allow(clippy::new_ret_no_self)] // keeping constructors together
     pub const fn new() -> LocaleFallbackerBorrowed<'static> {
         LocaleFallbackerBorrowed {
             likely_subtags: crate::provider::Baked::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1,

@@ -61,3 +61,4 @@ denylist = ["bench"]
 
 [[example]]
 name = "and_list"
+required-features = ["data"]
