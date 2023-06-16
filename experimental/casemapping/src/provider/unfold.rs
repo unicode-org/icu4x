@@ -48,6 +48,7 @@ impl<'data> CaseMappingUnfoldData<'data> {
     // Rust strings are UTF8 by default. To avoid the cost of converting from UTF16 on access,
     // we convert the ICU data into a more convenient format during construction.
     #[cfg(feature = "datagen")]
+    #[allow(clippy::indexing_slicing)] // panics are ok in datagen
     pub(crate) fn try_from_icu(raw: &[u16]) -> Result<Self, Error> {
         const ROWS_INDEX: usize = 0;
         const ROW_WIDTH_INDEX: usize = 1;

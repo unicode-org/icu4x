@@ -387,7 +387,7 @@ impl ExceptionULE {
             if decoded.full.is_some() {
                 let data = self
                     .get_fullmappings_slot_data()
-                    .expect("already known to succeed");
+                    .ok_or(Error::Validation("fullmappings slot doesn't parse"))?;
                 let mut chars = data.chars();
                 let i1 = u32::from(
                     chars
@@ -411,7 +411,8 @@ impl ExceptionULE {
                     ));
                 }
                 let rest = chars.as_str();
-                let len = u32::try_from(rest.len()).unwrap();
+                let len = u32::try_from(rest.len())
+                    .map_err(|_| Error::Validation("len too large for u32"))?;
 
                 if i1 > len || i2 > len || i3 > len {
                     return Err(Error::Validation(
@@ -491,7 +492,7 @@ impl<'a> DecodedException<'a> {
             if simple_case_delta >= SURROGATES_START {
                 simple_case_delta += SURROGATES_LEN;
             }
-            let simple_case_delta = char::try_from(simple_case_delta).unwrap();
+            let simple_case_delta = char::try_from(simple_case_delta).unwrap_or('\0');
             data.push(simple_case_delta)
         }
 

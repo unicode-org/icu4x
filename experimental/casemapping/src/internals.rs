@@ -340,6 +340,7 @@ impl<'data> CaseMappingV1<'data> {
         }
 
         impl<'a> Writeable for FullCaseWriteable<'a> {
+            #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
             fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
                 // To speed up the copying of long runs where nothing changes, we keep track
                 // of the start of the uncopied chunk, and don't copy it until we have to.
@@ -347,7 +348,7 @@ impl<'data> CaseMappingV1<'data> {
 
                 let src = self.src;
                 for (i, c) in src.char_indices() {
-                    let context = ContextIterator::new(src, i);
+                    let context = ContextIterator::new(&src[..i], &src[i..]);
                     match self.data.full_helper(c, context, self.locale, self.mapping) {
                         FullMappingResult::CodePoint(c2) => {
                             if c == c2 {
@@ -540,10 +541,10 @@ pub(crate) struct ContextIterator<'a> {
 
 impl<'a> ContextIterator<'a> {
     // Returns a context iterator with the characters before
-    // and after the character at a given index.
-    pub fn new(s: &'a str, idx: usize) -> Self {
-        let before = &s[..idx];
-        let mut char_and_after = s[idx..].chars();
+    // and after the character at a given index, given the preceding
+    // string and the succeding string including the character itself
+    pub fn new(before: &'a str, char_and_after: &'a str) -> Self {
+        let mut char_and_after = char_and_after.chars();
         char_and_after.next(); // skip the character itself
         let after = char_and_after.as_str();
         Self { before, after }
