@@ -28,6 +28,7 @@ pub enum ParseErrorKind {
     UnknownProperty,
     Eof,
     Internal,
+    Unimplemented,
 }
 
 // pub struct ParseError {
@@ -65,6 +66,10 @@ impl ParseError {
     fn unknown_property() -> Self {
         Self::new_without_offset(ParseErrorKind::UnknownProperty)
     }
+
+    fn unimplemented(offset: usize) -> Self {
+        Self::new_with_offset(offset, ParseErrorKind::Unimplemented)
+    }
 }
 
 type Result<T, E = ParseError> = core::result::Result<T, E>;
@@ -80,12 +85,13 @@ type Result<T, E = ParseError> = core::result::Result<T, E>;
 //     ParsedOpSet(ParsedOpSet),
 // }
 
+// note: this ignores the ambiguity between \escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
 fn legal_char(c: char) -> bool {
     !(c == '&'
             || c == '-'
-            // actually maybe \\ is fine, because that is valid for an escape sequence, which is valid when we want a char.
-            // problem: need to differentiate between \escape and \p...
-            || c == '\\'
+            // // actually maybe \\ is fine, because that is valid for an escape sequence, which is valid when we want a char.
+            // // problem: need to differentiate between \escape and \p...
+            // || c == '\\'
             || c == '['
             || c == ']'
             || c == '{'
@@ -418,6 +424,42 @@ where
         }
     }
 
+    fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[u8; N]> {
+        let mut result = [0; N];
+
+    }
+
+    // starts with \ and consumes the whole escape sequence
+    fn parse_escaped_char(&mut self) -> Result<char> {
+        self.consume('\\')?;
+
+        let (_, next_char) = self.iter.next().ok_or(ParseError::eof())?;
+
+        if !['u', 'U', 'x', 'N'].contains(&next_char) {
+            // return self.iter.next().map(|(_, raw)| raw).ok_or(ParseError::eof());
+            return Ok(next_char);
+        }
+
+        match next_char {
+            'u' => {
+                // 'u' (hex{4} | bracketedHex) -- TODO: implement bracketedHex
+                let exact: [u8; 4] = self.parse_exact_hex_digits()?;
+                // TODO: figure this out
+                let num = u16::from_be_bytes(exact);
+            },
+            'U' => {},
+            'x' => {},
+            'N' => {
+                // parse code point with name in {}
+                // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
+                Err(ParseError::unimplemented(self.peek_index()?))
+            },
+            _ => {
+                Ok(next_char)
+            },
+        }
+    }
+
     // parses and consumes '{' (s char)+ s '}'
     // TODO: decide on names for multi-codepoint-sequences and adjust both struct fields and fn names
     fn parse_multi(&mut self) -> Result<()> {
@@ -435,10 +477,16 @@ where
                     break;
                 }
                 // TODO: this must also be legal_char, and handle escapes
-                Some(c) => {
-                    buffer.push(*c);
+                Some(&c) if legal_char(c) => {
+                    buffer.push(c);
                     self.iter.next();
                 }
+                Some(&'\\') => {
+                    // handle escaped char
+                    let unescaped = self.parse_escaped_char()?;
+                    buffer.push(unescaped);
+                }
+                Some(&c) => return Err(ParseError::unexpected(self.peek_index()?, c)),
             }
         }
 
@@ -495,8 +543,37 @@ where
 
         loop {
             self.skip_whitespace();
-            // eprintln!("state: {:?}, next: {:?}", state, self.peek_char());
-            match (state, self.peek_char().copied()) {
+            eprintln!("state: {:?}, next: {:?}", state, self.peek_char());
+
+            // handling unicodesets separately, because of ambiguity between escaped characters and perl property names
+            if self.unicode_set_start() {
+                // maybe put into inner function
+                match (state, self.peek_char()) {
+                    (_, None) => return Err(ParseError::eof()),
+                    (Begin | Char | AfterUnicodeSet | AfterOp, Some(_)) => {
+                        if let Some(prev) = prev_char {
+                            self.single_set.add_char(prev);
+                            prev_char = None;
+                        }
+    
+                        let mut inner_builder =
+                            UnicodeSetBuilder::new_inner(self.iter, self.property_provider);
+                        inner_builder.parse_unicode_set()?;
+                        let (single, multi) = inner_builder.finalize();
+    
+                        self.process_chars(single.build());
+                        self.process_strings(multi);
+    
+                        state = AfterUnicodeSet;
+                    },
+                    (_, Some(&c)) => return Err(ParseError::unexpected(self.peek_index()?, c)),
+                }
+                continue;
+            }
+
+
+            // no UnicodeSets can occur in this match block, they would've been caught by the above match 
+            match (state, self.peek_char()) {
                 (_, None) => return Err(ParseError::eof()),
                 (Begin | Char | AfterUnicodeSet, Some(']')) => {
                     self.iter.next();
@@ -507,8 +584,13 @@ where
 
                     return Ok(());
                 }
-                (Begin | Char | AfterUnicodeSet, Some(c)) if legal_char(c) => {
-                    self.iter.next();
+                (Begin | Char | AfterUnicodeSet, Some(&c)) if legal_char(c) => {
+                    let mut c = c;
+                    if c == '\\' {
+                        c = self.parse_escaped_char()?;
+                    } else {
+                        self.iter.next();
+                    }
                     if let Some(prev) = prev_char {
                         self.single_set.add_char(prev);
                     }
@@ -516,20 +598,26 @@ where
                     state = Char;
                 }
                 // TODO: handle escapes
-                (CharMinus, Some(end)) if legal_char(end) => {
+                (CharMinus, Some(&end)) if legal_char(end) => {
+                    // store offset now because parsing escaped char would return an inconsistent offset afterwards
+                    let begin_offset = self.peek_index()?;
                     let start = prev_char.ok_or(ParseError::internal())?;
+                    let mut end = end;
+                    if end == '\\' {
+                        end = self.parse_escaped_char()?;
+                    } else {
+                        self.iter.next();
+                    }
                     if start > end {
                         // todo: better error message
-                        return Err(ParseError::unexpected(self.peek_index()?, end));
+                        return Err(ParseError::unexpected(begin_offset, end));
                     }
-
-                    self.iter.next();
 
                     self.single_set.add_range(&(start..=end));
                     prev_char = None;
                     state = Begin;
                 }
-                (Begin | Char | AfterUnicodeSet, Some('{')) => {
+                (Begin | Char | AfterUnicodeSet, Some(&'{')) => {
                     if let Some(prev) = prev_char {
                         self.single_set.add_char(prev);
                         prev_char = None;
@@ -538,41 +626,26 @@ where
                     self.parse_multi()?;
                     state = Begin;
                 }
-                (Begin | Char | AfterUnicodeSet | AfterOp, Some(_)) if self.unicode_set_start() => {
-                    if let Some(prev) = prev_char {
-                        self.single_set.add_char(prev);
-                        prev_char = None;
-                    }
-
-                    let mut inner_builder =
-                        UnicodeSetBuilder::new_inner(self.iter, self.property_provider);
-                    inner_builder.parse_unicode_set()?;
-                    let (single, multi) = inner_builder.finalize();
-
-                    self.process_chars(single.build());
-                    self.process_strings(multi);
-
-                    state = AfterUnicodeSet;
-                }
                 (Char, Some('-')) => {
                     self.iter.next();
 
                     state = CharMinus;
                 }
-                (AfterUnicodeSet, Some(op @ ('-' | '&'))) => {
-                    let op = match op {
-                        '&' => Operation::Intersection,
-                        '-' => Operation::Difference,
-                        _ => return Err(ParseError::internal()),
-                    };
+                (AfterUnicodeSet, Some(&'-')) => {
                     self.iter.next();
                     // I suppose this could also be a variable in this function, doesnt need to be on the builder?
                     // TODO: the above
-                    self.next_op = op;
-
+                    self.next_op = Operation::Difference;
                     state = AfterOp;
                 }
-                (_, Some(c)) => return Err(ParseError::unexpected(self.peek_index()?, c)),
+                (AfterUnicodeSet, Some(&'&')) => {
+                    self.iter.next();
+                    // I suppose this could also be a variable in this function, doesnt need to be on the builder?
+                    // TODO: the above
+                    self.next_op = Operation::Intersection;
+                    state = AfterOp;
+                }
+                (_, Some(&c)) => return Err(ParseError::unexpected(self.peek_index()?, c)),
             }
         }
     }
@@ -779,6 +852,7 @@ mod tests {
         parse("[:Case_Ignorable:]").unwrap();
         parse("[[:Case_Ignorable=false:]&[0-Z]]").unwrap();
         parse("[[:^Case_Ignorable=false:]&[0-Z]]").unwrap();
+        parse(r"[\\ \  \[]").unwrap();
     }
 }
 
