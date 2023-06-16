@@ -10,8 +10,6 @@ macro_rules! __impl_collator_meta_v1 {
         impl icu_provider::DataProvider<icu_collator::provider::CollationMetadataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_collator::provider::CollationMetadataV1Marker>, icu_provider::DataError> {
                 let locale = req.locale;
-                #[allow(unused_mut)]
-                let mut metadata = icu_provider::DataResponseMetadata::default();
                 match {
                     static UND: <icu_collator::provider::CollationMetadataV1Marker as icu_provider::DataMarker>::Yokeable = icu_collator::provider::CollationMetadataV1 { bits: 1u32 };
                     static TH: <icu_collator::provider::CollationMetadataV1Marker as icu_provider::DataMarker>::Yokeable = icu_collator::provider::CollationMetadataV1 { bits: 297u32 };
@@ -23,7 +21,7 @@ macro_rules! __impl_collator_meta_v1 {
                         Err(_) => Err(icu_provider::DataErrorKind::MissingLocale),
                     }
                 } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata }),
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_collator::provider::CollationMetadataV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

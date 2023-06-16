@@ -10,8 +10,6 @@ macro_rules! __impl_relativetime_short_quarter_v1 {
         impl icu_provider::DataProvider<icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
                 let locale = req.locale;
-                #[allow(unused_mut)]
-                let mut metadata = icu_provider::DataResponseMetadata::default();
                 match {
                     static TH: <icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu_relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -138,7 +136,7 @@ macro_rules! __impl_relativetime_short_quarter_v1 {
                         Err(_) => Err(icu_provider::DataErrorKind::MissingLocale),
                     }
                 } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata }),
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

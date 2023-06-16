@@ -10,8 +10,6 @@ macro_rules! __impl_datetime_japanese_datesymbols_v1 {
         impl icu_provider::DataProvider<icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker>, icu_provider::DataError> {
                 let locale = req.locale;
-                #[allow(unused_mut)]
-                let mut metadata = icu_provider::DataResponseMetadata::default();
                 match {
                     static JA: <icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                         months: icu_datetime::provider::calendar::months::ContextsV1 { format: icu_datetime::provider::calendar::months::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([alloc::borrow::Cow::Borrowed("1月"), alloc::borrow::Cow::Borrowed("2月"), alloc::borrow::Cow::Borrowed("3月"), alloc::borrow::Cow::Borrowed("4月"), alloc::borrow::Cow::Borrowed("5月"), alloc::borrow::Cow::Borrowed("6月"), alloc::borrow::Cow::Borrowed("7月"), alloc::borrow::Cow::Borrowed("8月"), alloc::borrow::Cow::Borrowed("9月"), alloc::borrow::Cow::Borrowed("10月"), alloc::borrow::Cow::Borrowed("11月"), alloc::borrow::Cow::Borrowed("12月")]), narrow: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([alloc::borrow::Cow::Borrowed("1"), alloc::borrow::Cow::Borrowed("2"), alloc::borrow::Cow::Borrowed("3"), alloc::borrow::Cow::Borrowed("4"), alloc::borrow::Cow::Borrowed("5"), alloc::borrow::Cow::Borrowed("6"), alloc::borrow::Cow::Borrowed("7"), alloc::borrow::Cow::Borrowed("8"), alloc::borrow::Cow::Borrowed("9"), alloc::borrow::Cow::Borrowed("10"), alloc::borrow::Cow::Borrowed("11"), alloc::borrow::Cow::Borrowed("12")]), short: None, wide: icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([alloc::borrow::Cow::Borrowed("1月"), alloc::borrow::Cow::Borrowed("2月"), alloc::borrow::Cow::Borrowed("3月"), alloc::borrow::Cow::Borrowed("4月"), alloc::borrow::Cow::Borrowed("5月"), alloc::borrow::Cow::Borrowed("6月"), alloc::borrow::Cow::Borrowed("7月"), alloc::borrow::Cow::Borrowed("8月"), alloc::borrow::Cow::Borrowed("9月"), alloc::borrow::Cow::Borrowed("10月"), alloc::borrow::Cow::Borrowed("11月"), alloc::borrow::Cow::Borrowed("12月")]) }, stand_alone: None },
@@ -306,7 +304,7 @@ macro_rules! __impl_datetime_japanese_datesymbols_v1 {
                         Err(_) => Err(icu_provider::DataErrorKind::MissingLocale),
                     }
                 } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata }),
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

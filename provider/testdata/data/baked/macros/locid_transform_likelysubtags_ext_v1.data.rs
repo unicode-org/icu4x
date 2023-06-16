@@ -40,8 +40,6 @@ macro_rules! __impl_locid_transform_likelysubtags_ext_v1 {
         impl icu_provider::DataProvider<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker>, icu_provider::DataError> {
                 let locale = req.locale;
-                #[allow(unused_mut)]
-                let mut metadata = icu_provider::DataResponseMetadata::default();
                 match {
                     if locale.is_empty() {
                         Ok(Self::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1)
@@ -49,7 +47,7 @@ macro_rules! __impl_locid_transform_likelysubtags_ext_v1 {
                         Err(icu_provider::DataErrorKind::ExtraneousLocale)
                     }
                 } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata }),
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }

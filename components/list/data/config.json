@@ -21,6 +21,5 @@
             "pretty": true
         }
     },
-    "fallback": "Runtime",
     "overwrite": true
 }

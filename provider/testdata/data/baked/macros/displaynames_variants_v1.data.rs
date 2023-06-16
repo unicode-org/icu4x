@@ -10,8 +10,6 @@ macro_rules! __impl_displaynames_variants_v1 {
         impl icu_provider::DataProvider<icu_displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_displaynames::provider::VariantDisplayNamesV1Marker>, icu_provider::DataError> {
                 let locale = req.locale;
-                #[allow(unused_mut)]
-                let mut metadata = icu_provider::DataResponseMetadata::default();
                 match {
                     static EN: <icu_displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu_displaynames::provider::VariantDisplayNamesV1 {
                         names: unsafe {
@@ -84,7 +82,7 @@ macro_rules! __impl_displaynames_variants_v1 {
                         Err(_) => Err(icu_provider::DataErrorKind::MissingLocale),
                     }
                 } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata }),
+                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
                     Err(e) => Err(e.with_req(<icu_displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }
