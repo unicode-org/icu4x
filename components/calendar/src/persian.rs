@@ -39,6 +39,8 @@ use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit
 use ::tinystr::tinystr;
 use core::marker::PhantomData;
 
+// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4720
+// Book states that the Persian epoch is the date: 3/19/622 and since the Persian Calendar has no year 0, the best choice was to use the Julian function.
 const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian(ArithmeticDate {
     year: (622),
     month: (3),
@@ -79,7 +81,7 @@ impl CalendarArithmetic for Persian {
     fn months_for_every_year(_: i32) -> u8 {
         12
     }
-
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4789
     fn is_leap_year(p_year: i32) -> bool {
         let mut p_year = p_year as i64;
         if 0 < p_year {
@@ -120,9 +122,6 @@ impl Calendar for Persian {
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
         let year = if era.0 == tinystr!(16, "ah") {
-            if year == 0 {
-                return Err(CalendarError::OutOfRange);
-            }
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
