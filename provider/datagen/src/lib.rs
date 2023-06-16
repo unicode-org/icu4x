@@ -150,24 +150,21 @@ impl DatagenProvider {
 
         source.options.locales = match core::mem::take(&mut source.options.locales) {
             options::LocaleInclude::None => options::LocaleInclude::Explicit(Default::default()),
-            options::LocaleInclude::CldrSet(levels) => {
-                let mut set: HashSet<_> = source
+            options::LocaleInclude::CldrSet(levels) => options::LocaleInclude::Explicit(
+                source
                     .locales(levels.iter().copied().collect::<Vec<_>>().as_slice())?
                     .into_iter()
-                    .collect();
-                if source.options.fallback == options::FallbackMode::Runtime {
-                    set.insert(Default::default());
-                }
-                options::LocaleInclude::Explicit(set)
-            }
-            options::LocaleInclude::Explicit(mut set) => {
-                if source.options.fallback == options::FallbackMode::Runtime {
-                    set.insert(Default::default());
-                }
-                options::LocaleInclude::Explicit(set)
-            }
+                    .collect(),
+            ),
+            options::LocaleInclude::Explicit(set) => options::LocaleInclude::Explicit(set),
             options::LocaleInclude::All => options::LocaleInclude::All,
         };
+
+        if source.options.fallback == options::FallbackMode::Runtime {
+            if let options::LocaleInclude::Explicit(ref mut set) = source.options.locales {
+                set.insert(Default::default());
+            }
+        }
 
         Ok(Self { source })
     }
