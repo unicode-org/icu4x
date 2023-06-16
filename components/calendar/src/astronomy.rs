@@ -64,7 +64,7 @@ impl Location {
     /// let longitude: f32 = location.longitude();
     /// assert_eq!(longitude, -132.6);
     /// ```
-    pub fn longitude(&self) -> f32 {
+    pub fn longitude(&self) -> f64 {
         self.longitude
     }
 
@@ -77,7 +77,7 @@ impl Location {
     /// let latitude: f32 = location.latitude();
     /// assert_eq!(latitude, 29.3);
     /// ```
-    pub fn latitude(&self) -> f32 {
+    pub fn latitude(&self) -> f64 {
         self.latitude
     }
 
@@ -90,7 +90,7 @@ impl Location {
     /// let elevation: f32 = location.elevation();
     /// assert_eq!(elevation, 1032.5);
     /// ```
-    pub fn elevation(&self) -> f32 {
+    pub fn elevation(&self) -> f64 {
         self.elevation
     }
 
