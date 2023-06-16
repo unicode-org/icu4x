@@ -27,6 +27,7 @@ pub fn div_rem_euclid64(n: i64, d: i64) -> (i64, i64) {
         (a - 1, d + b)
     }
 }
+
 /// Calculates `n / d` such that the remainder is always positive.
 /// This is achieved by performing an integer division and then, if the numerator is positive and there is a non-zero remainder,
 /// incrementing the quotient by 1.
