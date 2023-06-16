@@ -45,6 +45,7 @@ enum CollationTable {
     SearchAll,
 }
 
+// Mirrors crate::options::FallbackMode
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Fallback {
     Legacy,
