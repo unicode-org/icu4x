@@ -466,10 +466,9 @@ pub struct DecodedException<'a> {
 impl<'a> DecodedException<'a> {
     /// Convert to a wire-format encodeable (VarULE-encodeable) [`Exception`]
     pub fn encode(&self) -> Exception<'static> {
-        use alloc::string::String;
         let bits = self.bits;
         let mut slot_presence = SlotPresence(0);
-        let mut data = String::new();
+        let mut data = alloc::string::String::new();
         if let Some(lowercase) = self.lowercase {
             slot_presence.add_slot(ExceptionSlot::Lower);
             data.push(lowercase)
