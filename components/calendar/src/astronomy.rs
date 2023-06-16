@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-/// This file contains important structs and functions relating to location,
-/// time, and astronomy; these are intended for calender calculations and based off
-/// _Calendrical Calculations_ by Reingold & Dershowitz.
+//! This file contains important structs and functions relating to location,
+//! time, and astronomy; these are intended for calender calculations and based off
+//! _Calendrical Calculations_ by Reingold & Dershowitz.
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
