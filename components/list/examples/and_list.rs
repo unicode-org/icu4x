@@ -14,7 +14,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
     let list_formatter =
-        ListFormatter::try_new_and_with_length(&locale!("es-MX").into(), ListLength::Wide).unwrap();
+        ListFormatter::try_new_and_with_length(&locale!("es").into(), ListLength::Wide).unwrap();
 
     println!(
         "{}",
