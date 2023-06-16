@@ -9,8 +9,8 @@
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::CaseMappingV1;
+use crate::set::ClosureSet;
 use core::fmt;
-use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_locid::Locale;
 use writeable::Writeable;
 
@@ -386,14 +386,14 @@ impl<'data> CaseMappingV1<'data> {
         }
     }
 
-    // Adds all simple case mappings and the full case folding for `c` to `set`.
-    // Also adds special case closure mappings.
-    // The character itself is not added.
-    // For example, the mappings
-    // - for s include long s
-    // - for sharp s include ss
-    // - for k include the Kelvin sign
-    fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
+    /// Adds all simple case mappings and the full case folding for `c` to `set`.
+    /// Also adds special case closure mappings.
+    /// The character itself is not added.
+    /// For example, the mappings
+    /// - for s include long s
+    /// - for sharp s include ss
+    /// - for k include the Kelvin sign
+    pub(crate) fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
         // Hardcode the case closure of i and its relatives and ignore the
         // data file data for these characters.
         // The Turkic dotless i and dotted I with their case mapping conditions
@@ -461,17 +461,11 @@ impl<'data> CaseMappingV1<'data> {
         exception.add_full_and_closure_mappings(set);
     }
 
-    // Maps the string to single code points and adds the associated case closure
-    // mappings.
-    // The string is mapped to code points if it is their full case folding string.
-    // In other words, this performs a reverse full case folding and then
-    // adds the case closure items of the resulting code points.
-    // If the string is found and its closure applied, then
-    // the string itself is added as well as part of its code points' closure.
-    //
-    // Returns true if the string was found
-    #[allow(dead_code)]
-    fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
+    /// Maps the string to single code points and adds the associated case closure
+    /// mappings.
+    ///
+    /// (see docs on CaseMapping::add_string_case_closure)
+    pub(crate) fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
         if s.chars().count() <= 1 {
             // The string is too short to find any match.
             return false;
@@ -537,25 +531,6 @@ impl<'a> FullMappingResult<'a> {
             FullMappingResult::Remove => {}
         }
     }
-}
-
-// Interface for adding items to a closure set.
-pub trait ClosureSet {
-    /// Add a character to the set
-    fn add_char(&mut self, c: char);
-    /// Add a string to the set
-    fn add_string(&mut self, string: &str);
-}
-
-impl ClosureSet for CodePointInversionListBuilder {
-    fn add_char(&mut self, c: char) {
-        self.add_char(c)
-    }
-
-    // The current version of CodePointInversionList doesn't include strings.
-    // Trying to add a string is a no-op that will be optimized away.
-    #[inline]
-    fn add_string(&mut self, _string: &str) {}
 }
 
 pub(crate) struct ContextIterator<'a> {

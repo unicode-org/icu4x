@@ -36,11 +36,13 @@ extern crate alloc;
 
 mod casemapping;
 pub mod provider;
+mod set;
 
 mod error;
 mod internals;
 
 pub use casemapping::CaseMapping;
 pub use error::Error as CaseMappingError;
+pub use set::ClosureSet;
 #[doc(no_inline)]
 pub use CaseMappingError as Error;

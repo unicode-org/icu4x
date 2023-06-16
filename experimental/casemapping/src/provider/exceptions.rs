@@ -14,7 +14,7 @@ use super::data::MappingKind;
 use super::exception_helpers::{ExceptionBits, ExceptionSlot, SlotPresence};
 #[cfg(any(feature = "serde", feature = "datagen"))]
 use crate::error::Error;
-use crate::internals::ClosureSet;
+use crate::set::ClosureSet;
 use alloc::borrow::Cow;
 use core::fmt;
 #[cfg(any(feature = "serde", feature = "datagen"))]
