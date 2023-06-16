@@ -223,9 +223,7 @@ impl DatagenProvider {
                         .and_then(DataResponse::take_payload)
                         .map_err(|e| e.with_req(key, Default::default()))?;
 
-                    exporter.put_payload(key, &Default::default(), &payload)?;
-                    return exporter
-                        .flush_with_fallback(key, icu_provider::datagen::FallbackMode::Singleton);
+                    return exporter.flush_singleton(key, &payload);
                 }
 
                 match provider.source.options.fallback {

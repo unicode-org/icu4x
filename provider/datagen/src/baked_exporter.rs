@@ -257,6 +257,63 @@ impl BakedExporter {
             log::info!("{}", crate_name);
         }
     }
+
+    fn write_impl_macro(
+        &self,
+        body: TokenStream,
+        key: DataKey,
+        marker: syn::Path,
+        ident: String,
+    ) -> Result<(), DataError> {
+        let doc = format!(
+            " Implement [`DataProvider<{}>`](icu_provider::DataProvider) on the given struct using the data",
+            marker.segments.iter().next_back().unwrap().ident
+        );
+
+        let prefixed_macro_ident = format!("__impl_{ident}").parse::<TokenStream>().unwrap();
+
+        self.write_to_file(
+            PathBuf::from(format!("macros/{}.data.rs", ident)),
+            quote! {
+                #[doc = #doc]
+                /// hardcoded in this file. This allows the struct to be used with
+                /// `icu`'s `_unstable` constructors.
+                #[doc(hidden)]
+                #[macro_export]
+                macro_rules! #prefixed_macro_ident {
+                    ($provider:path) => {
+                        #body
+                    }
+                }
+            },
+        )?;
+
+        let feature = if !self.insert_feature_gates {
+            quote!()
+        } else if marker.segments.iter().next_back().unwrap().ident
+            == "DateSkeletonPatternsV1Marker"
+        {
+            quote! { #[cfg(feature = "icu_datetime_experimental")] }
+        } else {
+            let feature = marker.segments.iter().next().unwrap().ident.to_string();
+            quote! { #[cfg(feature = #feature)] }
+        };
+
+        let data = ImplData {
+            feature: feature.to_string(),
+            marker: quote!(#marker).to_string(),
+            macro_ident: format!("impl_{ident}"),
+            prefixed_macro_ident: prefixed_macro_ident.to_string(),
+            hash_ident: ident.to_ascii_uppercase(),
+            mod_ident: ident,
+        };
+
+        self.impl_data
+            .lock()
+            .expect("poison")
+            .insert(key.path().get(), data);
+        Ok(())
+    }
 }
 
 impl DataExporter for BakedExporter {
@@ -280,6 +337,54 @@ impl DataExporter for BakedExporter {
         Ok(())
     }
 
+    fn flush_singleton(
+        &self,
+        key: DataKey,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        let marker =
+            syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
+                .unwrap();
+
+        let ident = key
+            .path()
+            .to_ascii_lowercase()
+            .replace('@', "_v")
+            .replace('/', "_");
+
+        let singleton_ident = format!("SINGLETON_{}", ident.to_ascii_uppercase())
+            .parse::<TokenStream>()
+            .unwrap();
+
+        let bake = payload.tokenize(&self.dependencies);
+
+        self.write_impl_macro(quote! {
+            #[clippy::msrv = "1.61"]
+            impl $provider {
+                // Exposing singleton structs as consts allows us to get rid of fallibility
+                #[doc(hidden)]
+                pub const #singleton_ident: &'static <#marker as icu_provider::DataMarker>::Yokeable = &#bake;
+            }
+
+            #[clippy::msrv = "1.61"]
+            impl icu_provider::DataProvider<#marker> for $provider {
+                fn load(
+                    &self,
+                    req: icu_provider::DataRequest,
+                ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
+                    if req.locale.is_empty() {
+                        Ok(icu_provider::DataResponse {
+                            payload: Some(icu_provider::DataPayload::from_static_ref(Self::#singleton_ident)),
+                            metadata: Default::default(),
+                        })
+                    } else {
+                        Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    }
+                }
+            }
+        }, key, marker, ident)
+    }
+
     fn flush_with_fallback(
         &self,
         key: DataKey,
@@ -289,42 +394,42 @@ impl DataExporter for BakedExporter {
             syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
                 .unwrap();
 
-        let is_datetime_skeletons =
-            marker.segments.iter().next_back().unwrap().ident == "DateSkeletonPatternsV1Marker";
+        let (struct_type, into_data_payload) = if marker.segments.iter().next_back().unwrap().ident
+            == "DateSkeletonPatternsV1Marker"
+        {
+            (
+                quote! {
+                    &'static [(
+                        &'static [icu_datetime::fields::Field],
+                        icu_datetime::pattern::runtime::PatternPlurals<'static>
+                    )]
+                },
+                quote! {
+                    icu_provider::DataPayload::from_owned(icu_datetime::provider::calendar::DateSkeletonPatternsV1(
+                        payload
+                            .iter()
+                            .map(|(fields, pattern)| (
+                                icu_datetime::provider::calendar::SkeletonV1((*fields).into()),
+                                icu_provider::prelude::zerofrom::ZeroFrom::zero_from(pattern)
+                            ))
+                            .collect(),
+                    ))
 
-        let feature = if !self.insert_feature_gates {
-            quote!()
-        } else if is_datetime_skeletons {
-            quote! { #[cfg(feature = "icu_datetime_experimental")] }
+                },
+            )
         } else {
-            let feature = marker.segments.iter().next().unwrap().ident.to_string();
-            if !feature.starts_with("icu_provider") {
-                quote! { #[cfg(feature = #feature)] }
-            } else {
-                quote!()
-            }
+            (
+                quote!(<#marker as icu_provider::DataMarker>::Yokeable),
+                quote!(icu_provider::DataPayload::from_static_ref(payload)),
+            )
         };
 
-        let values = self.data.lock().expect("poison").remove(&key);
-
-        let values = values
-            .unwrap_or_default()
-            .into_iter()
-            .map(|(payload_bake_string, locales)| {
-                (payload_bake_string.parse::<TokenStream>().unwrap(), locales)
-            })
-            .collect::<Vec<_>>();
-
-        let struct_type = if is_datetime_skeletons {
-            quote! {
-                &'static [(
-                    &'static [icu_datetime::fields::Field],
-                    icu_datetime::pattern::runtime::PatternPlurals<'static>
-                )]
-            }
-        } else {
-            quote! { <#marker as icu_provider::DataMarker>::Yokeable }
-        };
+        let values = self
+            .data
+            .lock()
+            .expect("poison")
+            .remove(&key)
+            .unwrap_or_default();
 
         let ident = key
             .path()
@@ -332,45 +437,8 @@ impl DataExporter for BakedExporter {
             .replace('@', "_v")
             .replace('/', "_");
 
-        let mut singleton = None.into_iter();
-
-        let lookup = if values.is_empty() {
+        let body = if values.is_empty() {
             quote!(Err(icu_provider::DataErrorKind::MissingLocale))
-        } else if fallback_mode == FallbackMode::Singleton {
-            if values.iter().map(|(_, l)| l.len()).sum::<usize>() != 1 {
-                Err(DataError::custom(
-                    "Singleton mode needs exactly one payload",
-                ))?;
-            }
-            let (bake, locale) = values.into_iter().next().unwrap();
-            let locale = locale.into_iter().next().unwrap();
-
-            if locale != "und" {
-                Err(DataError::custom("Singleton mode needs the default locale"))?;
-            }
-
-            let singleton_ident = format!("SINGLETON_{}", ident.to_ascii_uppercase())
-                .parse::<TokenStream>()
-                .unwrap();
-
-            // Exposing singleton structs separately allows us to get rid of fallibility by using
-            // the struct directly.
-            singleton = Some(quote! {
-                #[clippy::msrv = "1.61"]
-                impl $provider {
-                    #[doc(hidden)]
-                    pub const #singleton_ident: &'static #struct_type = &#bake;
-                }
-            })
-            .into_iter();
-
-            quote! {
-                if locale.is_empty() {
-                    Ok(Self::#singleton_ident)
-                } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                }
-            }
         } else {
             let mut map = BTreeMap::new();
             let mut statics = Vec::new();
@@ -381,125 +449,79 @@ impl DataExporter for BakedExporter {
                     &first_locale.to_ascii_uppercase().replace('-', "_"),
                 )
                 .unwrap();
+                let bake = bake.parse::<TokenStream>().unwrap();
                 statics.push(quote! { static #anchor: #struct_type = #bake; });
                 map.extend(locales.into_iter().map(|l| (l, anchor.clone())));
             }
 
             let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
 
-            let lookup = quote! {
-                #(#statics)*
-                match [#(#keys),*].binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse()) {
-                    Ok(i) => Ok(*unsafe {
-                        // Safe because keys and values have the same length
-                        [#(&#values),*].get_unchecked(i)
-                    }),
-                    Err(_) => Err(icu_provider::DataErrorKind::MissingLocale)
-                }
-            };
+            let n = keys.len();
+
+            statics.push(quote!(static VALUES: [& #struct_type; #n] = [#(&#values),*];));
+
+            statics.push(quote!(static KEYS: [&str; #n] = [#(#keys),*];));
+            let search = quote!(KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse()));
 
             match fallback_mode {
-                FallbackMode::None => lookup,
+                FallbackMode::None => quote! {
+                    #(#statics)*
+                    let locale = req.locale;
+                    match #search {
+                        Ok(i) => {
+                            // Safe because KEYS and VALUES have the same length
+                            let payload = *unsafe { VALUES.get_unchecked(i) };
+                            Ok(icu_provider::DataResponse {
+                                payload: Some(#into_data_payload),
+                                metadata: Default::default(),
+                            })
+                        }
+                        Err(_) => Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    }
+                },
                 FallbackMode::Full => {
                     self.dependencies.insert("icu_locid_transform/data");
                     quote! {
+                        #(#statics)*
                         let mut fallback_iterator = icu_locid_transform::fallback::LocaleFallbacker::new()
-                            .fallback_for(<#marker as icu_provider::KeyedDataMarker>::KEY.into(), locale.clone());
+                            .fallback_for(<#marker as icu_provider::KeyedDataMarker>::KEY.into(), req.locale.clone());
                         loop {
                             let locale = fallback_iterator.get();
-                            if let Ok(result) = {#lookup} {
+                            if let Ok(i) = #search {
+                                let mut metadata = icu_provider::DataResponseMetadata::default();
                                 metadata.locale = Some(fallback_iterator.take());
-                                break Ok(result);
+                                // Safe because KEYS and VALUES have the same length
+                                let payload = *unsafe { VALUES.get_unchecked(i) };
+                                return Ok(DataResponse {
+                                    payload: Some(#into_data_payload),
+                                    metadata
+                                });
                             }
                             if fallback_iterator.get().is_empty() {
-                                break Err(icu_provider::DataErrorKind::MissingLocale);
+                                return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req));
                             }
                             fallback_iterator.step();
                         }
                     }
                 }
-                FallbackMode::Singleton => unreachable!(),
                 f => {
-                    log::warn!("Unknown fallback mode {f:?}");
-                    lookup
+                    return Err(DataError::custom("Unknown fallback mode")
+                        .with_display_context(&format!("{f:?}")))
                 }
             }
         };
 
-        let into_data_payload = if is_datetime_skeletons {
-            quote! {
-                icu_provider::DataPayload::from_owned(icu_datetime::provider::calendar::DateSkeletonPatternsV1(
-                    payload
-                        .iter()
-                        .map(|(fields, pattern)| (
-                            icu_datetime::provider::calendar::SkeletonV1((*fields).into()),
-                            icu_provider::prelude::zerofrom::ZeroFrom::zero_from(pattern)
-                        ))
-                        .collect(),
-                ))
-
-            }
-        } else {
-            quote! {
-                icu_provider::DataPayload::from_static_ref(payload)
-            }
-        };
-
-        let doc = format!(
-            " Implement [`DataProvider<{}>`](icu_provider::DataProvider) on the given struct using the data",
-            marker.segments.iter().next_back().unwrap().ident
-        );
-        let prefixed_macro_ident = format!("__impl_{ident}").parse::<TokenStream>().unwrap();
-        self.write_to_file(
-            PathBuf::from(format!("macros/{}.data.rs", ident)),
-            quote!{
-                #[doc = #doc]
-                /// hardcoded in this file. This allows the struct to be used with
-                /// `icu`'s `_unstable` constructors.
-                #[doc(hidden)]
-                #[macro_export]
-                macro_rules! #prefixed_macro_ident {
-                    ($provider:path) => {
-                        #(#singleton)*
-
-                        #[clippy::msrv = "1.61"]
-                        impl icu_provider::DataProvider<#marker> for $provider {
-                            fn load(
-                                &self,
-                                req: icu_provider::DataRequest,
-                            ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
-                                let locale = req.locale;
-                                #[allow(unused_mut)] // mutable for fallback
-                                let mut metadata = icu_provider::DataResponseMetadata::default();
-                                match {#lookup} {
-                                    Ok(payload) => Ok(icu_provider::DataResponse {
-                                        payload: Some(#into_data_payload),
-                                        metadata,
-                                    }),
-                                    Err(e) => Err(e.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
-                                }
-                            }
-                        }
-                    }
+        self.write_impl_macro(quote!{
+            #[clippy::msrv = "1.61"]
+            impl icu_provider::DataProvider<#marker> for $provider {
+                fn load(
+                    &self,
+                    req: icu_provider::DataRequest,
+                ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
+                    #body
                 }
             }
-        )?;
-
-        let data = ImplData {
-            feature: feature.to_string(),
-            marker: quote!(#marker).to_string(),
-            macro_ident: format!("impl_{ident}"),
-            prefixed_macro_ident: prefixed_macro_ident.to_string(),
-            hash_ident: ident.to_ascii_uppercase(),
-            mod_ident: ident,
-        };
-
-        self.impl_data
-            .lock()
-            .expect("poison")
-            .insert(key.path().get(), data);
-
-        Ok(())
+        }, key, marker, ident)
     }
 
     fn close(&mut self) -> Result<(), DataError> {

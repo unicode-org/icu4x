@@ -30,8 +30,6 @@ pub enum FallbackMode {
     None,
     /// Full fallback
     Full,
-    /// Singleton key
-    Singleton,
 }
 
 impl Default for FallbackMode {
@@ -51,7 +49,18 @@ pub trait DataExporter: Sync {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError>;
 
-    /// Function called after all keys have been fully dumped.
+    /// Function called for singleton keys.
+    /// Takes non-mut self as it can be called concurrently.
+    fn flush_singleton(
+        &self,
+        key: DataKey,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.put_payload(key, &Default::default(), payload)?;
+        self.flush_with_fallback(key, FallbackMode::None)
+    }
+
+    /// Function called after a non-singleton key has been fully dumped.
     /// Takes non-mut self as it can be called concurrently.
     fn flush_with_fallback(
         &self,
@@ -156,6 +165,16 @@ impl DataExporter for MultiExporter {
         self.0
             .iter()
             .try_for_each(|e| e.put_payload(key, locale, payload))
+    }
+
+    fn flush_singleton(
+        &self,
+        key: DataKey,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.0
+            .iter()
+            .try_for_each(|e| e.flush_singleton(key, payload))
     }
 
     fn flush_with_fallback(
