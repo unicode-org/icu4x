@@ -64,16 +64,17 @@ pub trait DataExporter: Sync {
     /// Takes non-mut self as it can be called concurrently.
     fn flush_with_fallback(
         &self,
-        _key: DataKey,
+        key: DataKey,
         _fallback_mode: FallbackMode,
     ) -> Result<(), DataError> {
-        Ok(())
+        #[allow(deprecated)]
+        self.flush(key)
     }
 
     /// Use `self.flush_with_fallback(key, FallbackMode::None)`
     #[deprecated(since = "1.3.0", note = "Use `self.flush_with_fallback`")]
-    fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        self.flush_with_fallback(key, FallbackMode::None)
+    fn flush(&self, _key: DataKey) -> Result<(), DataError> {
+        Ok(())
     }
 
     /// This function has to be called before the object is dropped (after all
