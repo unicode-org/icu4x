@@ -15,17 +15,17 @@ use crate::{Date, Gregorian};
 /// given as latitude in degrees from -90 to 90,
 /// longitude in degrees from -180 to 180,
 /// and elevation in meters.
-pub(crate) struct Location {
+pub struct Location {
     latitude: f64,  // latitude from -90 to 90
     longitude: f64, // longitude from -180 to 180
     elevation: f64, // elevation in meters
 }
 
-// The mean synodic month in days of 86400 atomic seconds
-// (86400 = 24 * 60 * 60)
+/// The mean synodic month in days of 86400 atomic seconds
+/// (86400 seconds = 24 hours * 60 minutes/hour * 60 seconds/minute)
 pub const MEAN_SYNODIC_MONTH: f64 = 29.530588861;
 
-// The Moment of noon on January 1, 2000
+/// The Moment of noon on January 1, 2000
 pub const J2000: Moment = Moment::new(730120.5);
 
 impl Location {
@@ -46,11 +46,13 @@ impl Location {
         result
     }
 
+    // Ensures a Location has latitude between -90 and 90
+    // and longitude between -180 and 180 degrees.
     fn check(&self) {
-        if self.latitude < -90.0 || self.latitude > 90.0 {
+        if self.latitude <= -90.0 || self.latitude >= 90.0 {
             debug_assert!(false, "Locations must have latitudes from -90.0 to 90.0.");
         }
-        if self.longitude < -180.00 || self.longitude > 180.0 {
+        if self.longitude <= -180.00 || self.longitude >= 180.0 {
             debug_assert!(false, "Locations must have longitudes from -180 to 180.");
         }
     }
@@ -114,6 +116,8 @@ impl Location {
 }
 
 #[derive(Debug)]
+/// The Astronomical struct provides functions which support astronomical
+/// calculations used by many observational calendars.
 pub struct Astronomical;
 
 impl Astronomical {
