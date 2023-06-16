@@ -492,7 +492,7 @@ impl<'data> CaseMappingV1<'data> {
 // An internal representation of locale. Non-Root values of this
 // enumeration imply that hard-coded special cases exist for this
 // language.
-#[derive(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum CaseMapLocale {
     Root,
     Turkish,

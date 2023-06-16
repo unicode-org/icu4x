@@ -5,9 +5,9 @@
 use crate::internals::{CaseMapLocale, FoldOptions};
 use crate::provider::data::MappingKind;
 use crate::provider::CaseMappingV1Marker;
+use alloc::string::String;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
-use alloc::string::String;
 use writeable::Writeable;
 
 /// A struct with the ability to convert characters and strings to uppercase or lowercase,
@@ -19,7 +19,7 @@ use writeable::Writeable;
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
 /// </div>
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CaseMapping {
     data: DataPayload<CaseMappingV1Marker>,
     locale: CaseMapLocale,

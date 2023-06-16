@@ -92,7 +92,7 @@ impl<'data> CaseMappingExceptions<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[zerovec::make_varule(ExceptionULE)]
-#[derive(PartialEq, Eq, Clone, Default)]
+#[derive(PartialEq, Eq, Clone, Default, Debug)]
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(
     feature = "serde",

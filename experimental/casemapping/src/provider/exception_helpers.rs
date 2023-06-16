@@ -158,7 +158,7 @@ impl SlotPresence {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Copy, Clone, PartialEq, Eq, ULE)]
+#[derive(Copy, Clone, PartialEq, Eq, ULE, Debug)]
 #[repr(transparent)]
 pub struct ExceptionBitsULE(pub u8);
 
