@@ -27,7 +27,10 @@ pub fn div_rem_euclid64(n: i64, d: i64) -> (i64, i64) {
         (a - 1, d + b)
     }
 }
-
+/// Calculates `n / d` such that the remainder is always positive.
+/// This is achieved by performing an integer division and then, if the numerator is positive and there is a non-zero remainder,
+/// incrementing the quotient by 1.
+/// This is equivalent to ceiling() in the Reingold/Dershowitz Lisp code
 pub fn ceil_div(n: i64, d: i64) -> i64 {
     debug_assert!(d > 0);
     let (a, b) = (n / d, n % d);
