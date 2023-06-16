@@ -11,10 +11,14 @@ use crate::types::Moment;
 use crate::{Date, Gregorian};
 
 #[derive(Debug)]
-pub struct Location {
-    latitude: f32,  // latitude from -90 to 90
-    longitude: f32, // longitude from -180 to 180
-    elevation: f32, // elevation in meters
+/// A Location on the Earth given as a latitude, longitude, and elevation,
+/// given as latitude in degrees from -90 to 90,
+/// longitude in degrees from -180 to 180,
+/// and elevation in meters.
+pub(crate) struct Location {
+    latitude: f64,  // latitude from -90 to 90
+    longitude: f64, // longitude from -180 to 180
+    elevation: f64, // elevation in meters
 }
 
 // The mean synodic month in days of 86400 atomic seconds
@@ -32,11 +36,11 @@ impl Location {
     ///
     /// let location: Location = Location::new(29.3, -132.6, 1032.5);
     /// ```
-    pub fn new(latitude_input: f32, longitude_input: f32, elevation_input: f32) -> Location {
+    pub fn new(latitude: f64, longitude: f64, elevation: f64) -> Location {
         let result = Location {
-            latitude: latitude_input,
-            longitude: longitude_input,
-            elevation: elevation_input,
+            latitude,
+            longitude,
+            elevation,
         };
         result.check();
         result
