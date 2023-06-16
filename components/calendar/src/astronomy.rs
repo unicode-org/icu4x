@@ -300,7 +300,6 @@ impl Astronomical {
 
     /// Longitude of the moon (in degrees) at a given moment
     pub fn lunar_longitude(moment: Moment) -> f64 {
-        // TODO: Do line-by-line comparison with lisp code to improve accuracy
         let c = Self::julian_centuries(moment);
         let l = Self::mean_lunar_longitude(c);
         let d = Self::lunar_elongation(c);
