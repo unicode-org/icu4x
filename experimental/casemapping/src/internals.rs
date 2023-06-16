@@ -9,9 +9,9 @@
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::CaseMappingV1;
-use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+use crate::set::ClosureSet;
+use core::fmt;
 use icu_locid::Locale;
-use std::fmt;
 use writeable::Writeable;
 
 // Used to control the behavior of CaseMapping::fold.
@@ -340,6 +340,7 @@ impl<'data> CaseMappingV1<'data> {
         }
 
         impl<'a> Writeable for FullCaseWriteable<'a> {
+            #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
             fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
                 // To speed up the copying of long runs where nothing changes, we keep track
                 // of the start of the uncopied chunk, and don't copy it until we have to.
@@ -347,7 +348,7 @@ impl<'data> CaseMappingV1<'data> {
 
                 let src = self.src;
                 for (i, c) in src.char_indices() {
-                    let context = ContextIterator::new(src, i);
+                    let context = ContextIterator::new(&src[..i], &src[i..]);
                     match self.data.full_helper(c, context, self.locale, self.mapping) {
                         FullMappingResult::CodePoint(c2) => {
                             if c == c2 {
@@ -386,14 +387,14 @@ impl<'data> CaseMappingV1<'data> {
         }
     }
 
-    // Adds all simple case mappings and the full case folding for `c` to `set`.
-    // Also adds special case closure mappings.
-    // The character itself is not added.
-    // For example, the mappings
-    // - for s include long s
-    // - for sharp s include ss
-    // - for k include the Kelvin sign
-    fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
+    /// Adds all simple case mappings and the full case folding for `c` to `set`.
+    /// Also adds special case closure mappings.
+    /// The character itself is not added.
+    /// For example, the mappings
+    /// - for s include long s
+    /// - for sharp s include ss
+    /// - for k include the Kelvin sign
+    pub(crate) fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
         // Hardcode the case closure of i and its relatives and ignore the
         // data file data for these characters.
         // The Turkic dotless i and dotted I with their case mapping conditions
@@ -461,17 +462,11 @@ impl<'data> CaseMappingV1<'data> {
         exception.add_full_and_closure_mappings(set);
     }
 
-    // Maps the string to single code points and adds the associated case closure
-    // mappings.
-    // The string is mapped to code points if it is their full case folding string.
-    // In other words, this performs a reverse full case folding and then
-    // adds the case closure items of the resulting code points.
-    // If the string is found and its closure applied, then
-    // the string itself is added as well as part of its code points' closure.
-    //
-    // Returns true if the string was found
-    #[allow(dead_code)]
-    fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
+    /// Maps the string to single code points and adds the associated case closure
+    /// mappings.
+    ///
+    /// (see docs on CaseMapping::add_string_case_closure)
+    pub(crate) fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
         if s.chars().count() <= 1 {
             // The string is too short to find any match.
             return false;
@@ -492,7 +487,7 @@ impl<'data> CaseMappingV1<'data> {
 // An internal representation of locale. Non-Root values of this
 // enumeration imply that hard-coded special cases exist for this
 // language.
-#[derive(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum CaseMapLocale {
     Root,
     Turkish,
@@ -539,25 +534,6 @@ impl<'a> FullMappingResult<'a> {
     }
 }
 
-// Interface for adding items to a closure set.
-pub trait ClosureSet {
-    /// Add a character to the set
-    fn add_char(&mut self, c: char);
-    /// Add a string to the set
-    fn add_string(&mut self, string: &str);
-}
-
-impl ClosureSet for CodePointInversionListBuilder {
-    fn add_char(&mut self, c: char) {
-        self.add_char(c)
-    }
-
-    // The current version of CodePointInversionList doesn't include strings.
-    // Trying to add a string is a no-op that will be optimized away.
-    #[inline]
-    fn add_string(&mut self, _string: &str) {}
-}
-
 pub(crate) struct ContextIterator<'a> {
     before: &'a str,
     after: &'a str,
@@ -565,10 +541,10 @@ pub(crate) struct ContextIterator<'a> {
 
 impl<'a> ContextIterator<'a> {
     // Returns a context iterator with the characters before
-    // and after the character at a given index.
-    pub fn new(s: &'a str, idx: usize) -> Self {
-        let before = &s[..idx];
-        let mut char_and_after = s[idx..].chars();
+    // and after the character at a given index, given the preceding
+    // string and the succeding string including the character itself
+    pub fn new(before: &'a str, char_and_after: &'a str) -> Self {
+        let mut char_and_after = char_and_after.chars();
         char_and_after.next(); // skip the character itself
         let after = char_and_after.as_str();
         Self { before, after }

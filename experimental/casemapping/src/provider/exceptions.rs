@@ -14,12 +14,12 @@ use super::data::MappingKind;
 use super::exception_helpers::{ExceptionBits, ExceptionSlot, SlotPresence};
 #[cfg(any(feature = "serde", feature = "datagen"))]
 use crate::error::Error;
-use crate::internals::ClosureSet;
+use crate::set::ClosureSet;
+use alloc::borrow::Cow;
 use core::fmt;
 #[cfg(any(feature = "serde", feature = "datagen"))]
 use core::ops::Range;
 use core::ptr;
-use std::borrow::Cow;
 use zerovec::ule::AsULE;
 use zerovec::VarZeroVec;
 
@@ -92,7 +92,7 @@ impl<'data> CaseMappingExceptions<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[zerovec::make_varule(ExceptionULE)]
-#[derive(PartialEq, Eq, Clone, Default)]
+#[derive(PartialEq, Eq, Clone, Default, Debug)]
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(
     feature = "serde",
@@ -387,7 +387,7 @@ impl ExceptionULE {
             if decoded.full.is_some() {
                 let data = self
                     .get_fullmappings_slot_data()
-                    .expect("already known to succeed");
+                    .ok_or(Error::Validation("fullmappings slot doesn't parse"))?;
                 let mut chars = data.chars();
                 let i1 = u32::from(
                     chars
@@ -411,7 +411,8 @@ impl ExceptionULE {
                     ));
                 }
                 let rest = chars.as_str();
-                let len = u32::try_from(rest.len()).unwrap();
+                let len = u32::try_from(rest.len())
+                    .map_err(|_| Error::Validation("len too large for u32"))?;
 
                 if i1 > len || i2 > len || i3 > len {
                     return Err(Error::Validation(
@@ -468,7 +469,7 @@ impl<'a> DecodedException<'a> {
     pub fn encode(&self) -> Exception<'static> {
         let bits = self.bits;
         let mut slot_presence = SlotPresence(0);
-        let mut data = String::new();
+        let mut data = alloc::string::String::new();
         if let Some(lowercase) = self.lowercase {
             slot_presence.add_slot(ExceptionSlot::Lower);
             data.push(lowercase)
@@ -491,7 +492,7 @@ impl<'a> DecodedException<'a> {
             if simple_case_delta >= SURROGATES_START {
                 simple_case_delta += SURROGATES_LEN;
             }
-            let simple_case_delta = char::try_from(simple_case_delta).unwrap();
+            let simple_case_delta = char::try_from(simple_case_delta).unwrap_or('\0');
             data.push(simple_case_delta)
         }
 

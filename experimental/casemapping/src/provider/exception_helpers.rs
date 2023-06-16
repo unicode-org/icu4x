@@ -134,7 +134,22 @@ impl SlotPresence {
     }
 }
 
-/// The bitflags on an exception header (bits 8-15, see docs on [`ExceptionHeaderULE`])
+/// The bitflags on an exception header.
+///
+/// Format from icu4c, documented in casepropsbuilder.cpp, shifted 8 bits since ICU4C has this packed
+/// alongside a SlotPresence
+///
+/// ```text
+///            0  Double-width slots. If set, then each optional slot is stored as two
+///               elements of the array (high and low halves of 32-bit values) instead of
+///               a single element.
+///            1  Has no simple case folding, even if there is a simple lowercase mapping
+///           2  The value in the delta slot is negative
+///           3  Is case-sensitive (not exposed)
+///       4..5  Dot type
+///           6  Has conditional special casing
+///           7  Has conditional case folding
+/// ```
 ///
 /// All bits are valid, though in ICU4X data bits 0 and 2 are not used
 ///
@@ -143,7 +158,7 @@ impl SlotPresence {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Copy, Clone, PartialEq, Eq, ULE)]
+#[derive(Copy, Clone, PartialEq, Eq, ULE, Debug)]
 #[repr(transparent)]
 pub struct ExceptionBitsULE(pub u8);
 

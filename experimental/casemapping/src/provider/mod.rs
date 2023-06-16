@@ -122,6 +122,7 @@ impl<'data> CaseMappingV1<'data> {
 
         let trie_index = ZeroVec::alloc_from_slice(trie_index);
 
+        #[allow(clippy::unwrap_used)] // datagen only
         let trie_data = trie_data
             .iter()
             .map(|&i| {
@@ -150,6 +151,7 @@ impl<'data> CaseMappingV1<'data> {
     /// necessary if you are concerned about data corruption after
     /// deserializing.
     #[cfg(any(feature = "serde", feature = "datagen"))]
+    #[allow(unused)] // is only used in debug mode for serde
     pub(crate) fn validate(&self) -> Result<(), crate::error::Error> {
         // First, validate that exception data is well-formed.
         let valid_exception_indices = self.exceptions.validate()?;

@@ -4,10 +4,10 @@
 
 //! The primary per-codepoint casefolding data
 
+#[cfg(feature = "datagen")]
+use alloc::collections::BTreeMap;
 use core::num::TryFromIntError;
 use icu_collections::codepointtrie::TrieValue;
-#[cfg(feature = "datagen")]
-use std::collections::HashMap;
 use zerovec::ule::{AsULE, RawBytesULE, ULE};
 use zerovec::ZeroVecError;
 
@@ -258,7 +258,7 @@ impl CaseMappingData {
     // a mapping from old to new, this function updates the exception
     // index if necessary.
     #[cfg(feature = "datagen")]
-    pub(crate) fn with_updated_exception(self, updates: &HashMap<u16, u16>) -> Self {
+    pub(crate) fn with_updated_exception(self, updates: &BTreeMap<u16, u16>) -> Self {
         let kind = if let CaseMappingDataKind::Exception(ty, index) = self.kind {
             if let Some(updated_exception) = updates.get(&index) {
                 CaseMappingDataKind::Exception(ty, *updated_exception)

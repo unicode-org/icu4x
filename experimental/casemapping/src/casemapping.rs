@@ -5,6 +5,8 @@
 use crate::internals::{CaseMapLocale, FoldOptions};
 use crate::provider::data::MappingKind;
 use crate::provider::CaseMappingV1Marker;
+use crate::set::ClosureSet;
+use alloc::string::String;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::Writeable;
@@ -18,7 +20,7 @@ use writeable::Writeable;
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
 /// </div>
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CaseMapping {
     data: DataPayload<CaseMappingV1Marker>,
     locale: CaseMapLocale,
@@ -139,9 +141,62 @@ impl CaseMapping {
             .simple_fold(c, FoldOptions::with_turkic_mappings())
     }
 
-    /// Returns the full lowercase mapping of the given string.
+    /// Returns the full lowercase mapping of the given string as a [`Writeable`].
     /// This function is context and locale sensitive.
-    pub fn to_full_lowercase(&self, src: &str) -> String {
+    ///
+    /// See [`Self::to_full_lowercase_string()`] for the equivalent convenience function that returns a String
+    pub fn to_full_lowercase<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
+        self.data
+            .get()
+            .full_helper_writeable(src, self.locale, MappingKind::Lower)
+    }
+
+    /// Returns the full uppercase mapping of the given string as a [`Writeable`].
+    /// This function is context and locale sensitive.
+    ///
+    /// See [`Self::to_full_uppercase_string()`] for the equivalent convenience function that returns a String
+    pub fn to_full_uppercase<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
+        self.data
+            .get()
+            .full_helper_writeable(src, self.locale, MappingKind::Upper)
+    }
+
+    /// Returns the full titlecase mapping of the given string as a [`Writeable`].
+    /// This function is context and locale sensitive.
+    ///
+    /// See [`Self::to_full_titlecase_string()`] for the equivalent convenience function that returns a String
+    pub fn to_full_titlecase<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
+        self.data
+            .get()
+            .full_helper_writeable(src, self.locale, MappingKind::Title)
+    }
+
+    /// Case-folds the characters in the given string as a [`Writeable`].
+    /// This function is locale-independent and context-insensitive.
+    ///
+    /// See [`Self::full_fold_string()`] for the equivalent convenience function that returns a String
+    pub fn full_fold<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
+        self.data
+            .get()
+            .full_helper_writeable(src, CaseMapLocale::Root, MappingKind::Fold)
+    }
+
+    /// Case-folds the characters in the given string as a [`Writeable`],
+    /// using Turkic (T) mappings for dotted/dotless I.
+    /// This function is locale-independent and context-insensitive.
+    ///
+    /// See [`Self::full_fold_turkic_string()`] for the equivalent convenience function that returns a String
+    pub fn full_fold_turkic<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
+        self.data
+            .get()
+            .full_helper_writeable(src, CaseMapLocale::Turkish, MappingKind::Fold)
+    }
+
+    /// Returns the full lowercase mapping of the given string as a String.
+    /// This function is context and locale sensitive.
+    ///
+    /// See [`Self::to_full_lowercase()`] for the equivalent lower-level function that returns a [`Writeable`]
+    pub fn to_full_lowercase_string(&self, src: &str) -> String {
         self.data
             .get()
             .full_helper_writeable(src, self.locale, MappingKind::Lower)
@@ -149,9 +204,11 @@ impl CaseMapping {
             .into_owned()
     }
 
-    /// Returns the full uppercase mapping of the given string.
+    /// Returns the full uppercase mapping of the given string as a String.
     /// This function is context and locale sensitive.
-    pub fn to_full_uppercase(&self, src: &str) -> String {
+    ///
+    /// See [`Self::to_full_uppercase()`] for the equivalent lower-level function that returns a [`Writeable`]
+    pub fn to_full_uppercase_string(&self, src: &str) -> String {
         self.data
             .get()
             .full_helper_writeable(src, self.locale, MappingKind::Upper)
@@ -159,9 +216,11 @@ impl CaseMapping {
             .into_owned()
     }
 
-    /// Returns the full titlecase mapping of the given string.
+    /// Returns the full titlecase mapping of the given string as a String.
     /// This function is context and locale sensitive.
-    pub fn to_full_titlecase(&self, src: &str) -> String {
+    ///
+    /// See [`Self::to_full_titlecase()`] for the equivalent lower-level function that returns a [`Writeable`]
+    pub fn to_full_titlecase_string(&self, src: &str) -> String {
         self.data
             .get()
             .full_helper_writeable(src, self.locale, MappingKind::Title)
@@ -169,9 +228,11 @@ impl CaseMapping {
             .into_owned()
     }
 
-    /// Case-folds the characters in the given string.
+    /// Case-folds the characters in the given string as a String.
     /// This function is locale-independent and context-insensitive.
-    pub fn full_fold(&self, src: &str) -> String {
+    ///
+    /// See [`Self::full_fold()`] for the equivalent lower-level function that returns a [`Writeable`]
+    pub fn full_fold_string(&self, src: &str) -> String {
         self.data
             .get()
             .full_helper_writeable(src, CaseMapLocale::Root, MappingKind::Fold)
@@ -179,13 +240,46 @@ impl CaseMapping {
             .into_owned()
     }
 
-    /// Case-folds the characters in the given string, using Turkic (T) mappings for dotted/dotless I.
+    /// Case-folds the characters in the given string as a String,
+    /// using Turkic (T) mappings for dotted/dotless I.
     /// This function is locale-independent and context-insensitive.
-    pub fn full_fold_turkic(&self, src: &str) -> String {
+    ///
+    /// See [`Self::full_fold_turkic()`] for the equivalent lower-level function that returns a [`Writeable`]
+    pub fn full_fold_turkic_string(&self, src: &str) -> String {
         self.data
             .get()
             .full_helper_writeable(src, CaseMapLocale::Turkish, MappingKind::Fold)
             .write_to_string()
             .into_owned()
+    }
+
+    /// Adds all simple case mappings and the full case folding for `c` to `set`.
+    /// Also adds special case closure mappings.
+    ///
+    /// In other words, this adds all strings/characters that this casemaps to, as
+    /// well as all characters that may casemap to this one.
+    ///
+    /// The character itself is not added.
+    ///
+    /// For example, the mappings
+    /// - for s include long s
+    /// - for sharp s include ss
+    /// - for k include the Kelvin sign
+    pub fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
+        self.data.get().add_case_closure(c, set);
+    }
+
+    /// Maps the string to single code points and adds the associated case closure
+    /// mappings, if they exist.
+    ///
+    /// The string is mapped to code points if it is their full case folding string.
+    /// In other words, this performs a reverse full case folding and then
+    /// adds the case closure items of the resulting code points.
+    /// If the string is found and its closure applied, then
+    /// the string itself is added as well as part of its code points' closure.
+    ///
+    /// Returns true if the string was found
+    pub fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
+        self.data.get().add_string_case_closure(s, set)
     }
 }
