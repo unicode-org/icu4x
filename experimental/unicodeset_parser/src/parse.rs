@@ -409,9 +409,13 @@ where
         let mut value_buffer = String::new();
 
         enum State {
+            // initial state, nothing parsed yet
             Begin,
+            // non-empty property name
             PropertyName,
+            // property name parsed, '=' or '≠' parsed, no value parsed yet
             PropertyValueBegin,
+            // non-empty property name, non-empty property value
             PropertyValue,
         }
         use State::*;
