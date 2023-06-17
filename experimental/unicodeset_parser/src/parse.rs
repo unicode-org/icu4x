@@ -11,8 +11,6 @@ use icu_properties::sets::{load_for_ecma262_unstable, CodePointSetData};
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
 
-// Parses UnicodeSets
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ParseErrorKind {
     UnexpectedChar(char),
@@ -30,6 +28,8 @@ pub enum ParseError {
     WithOffset { offset: usize, kind: ParseErrorKind },
     WithOutOffset(ParseErrorKind),
 }
+
+type Result<T, E = ParseError> = core::result::Result<T, E>;
 
 impl ParseError {
     fn new_with_offset(offset: usize, kind: ParseErrorKind) -> Self {
@@ -157,8 +157,6 @@ impl ParseError {
     }
 }
 
-type Result<T, E = ParseError> = core::result::Result<T, E>;
-
 // necessary because char::is_whitespace is not equivalent to [:Pattern_White_Space:]
 #[inline]
 fn is_char_pattern_white_space(c: char) -> bool {
@@ -175,7 +173,7 @@ fn is_char_pattern_white_space(c: char) -> bool {
     )
 }
 
-// note: this ignores the ambiguity between \escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
+// this ignores the ambiguity between \escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
 fn legal_char_start(c: char) -> bool {
     // TODO: need to handle $ for pre-input/post-input. Maybe add field on self to indicate this option? How do we represent the special meaning in the wire-format? \uffff is used by unicode utilities.
     // ICU4J: https://github.com/unicode-org/icu/blob/388b768262684300bf47bcee8796a9327ccc2652/icu4j/main/classes/core/src/com/ibm/icu/text/UnicodeSet.java#L583
@@ -198,7 +196,7 @@ enum Operation {
 }
 
 // note: "compiles" the set while building, so no intermediate parse tree, it's directly compiled.
-pub struct UnicodeSetBuilder<'a, 'b, 'c, P>
+struct UnicodeSetBuilder<'a, 'b, 'c, P>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -334,313 +332,21 @@ where
         }
     }
 
-    fn consume(&mut self, expected: char) -> Result<()> {
-        match self.iter.next() {
+    // the entry point, parses a full UnicodeSet. ignores remaining input
+    fn parse_unicode_set(&mut self) -> Result<()> {
+        match self.peek_char() {
             None => Err(ParseError::eof()),
-            Some((offset, c)) if c != expected => Err(ParseError::unexpected(offset, c)),
-            _ => Ok(()),
-        }
-    }
-
-    // also returns whether the set needs to be inverted or not
-    fn load_property_codepoints(&self, key: &str, value: &str) -> Result<(CodePointSetData, bool)> {
-        // we support:
-        // [:gc = value:]
-        // [:sc = value:]
-        // [:scx = value:] -- TODO: implement scx
-        // [:value:] - looks up value in gc, sc and scx
-        // [:prop:] - binary property, returns codepoints that have the property
-        // [:prop = truthy/falsy:] - same as above
-
-        let mut inverted = false;
-
-        if value.is_empty() {
-            // key is binary property, or a value of gc, sc, scx
-
-            // try loading a binary property, if it fails, try loading a gc, sc, scx value
-            let set = load_for_ecma262_unstable(self.property_provider, key)
-                .or_else(|_| self.try_load_general_category(key))
-                .or_else(|_| self.try_load_script(key))?;
-            // .or_else(|_| self.try_load_script_extensions(key))?;
-
-            Ok((set, inverted))
-        } else {
-            // key is gc, sc, scx
-            // value is a property value
-            // OR
-            // key is a binary property and value is a truthy/falsy value
-
-            // UnicodeProperty::parse_ecma262_name would be good to have to avoid this duplication:
-            let set = match key {
-                "General_Category" | "gc" => self.try_load_general_category(value)?,
-                "Script" | "sc" => self.try_load_script(value)?,
-                // "Script_Extensions" | "scx" => {
-                //     // https://www.unicode.org/reports/tr24/#Script_Extensions
-                //     // the UnicodeSet utils page takes lists of scripts as values, but I'm not sure how to implement that using load_script_with_extensions_unstable.
-                //     // skipped for now.
-                _ => {
-                    // try prop = true case
-                    let set = load_for_ecma262_unstable(self.property_provider, key)
-                        .map_err(|_| ParseError::unknown_property())?;
-                    let normalized_value = value.to_ascii_lowercase();
-                    let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
-                    let falsy = matches!(normalized_value.as_str(), "false" | "f" | "no" | "n");
-                    if truthy == falsy {
-                        return Err(ParseError::unknown_property());
-                    }
-                    inverted = falsy;
-                    set
-                }
-            };
-
-            Ok((set, inverted))
-        }
-    }
-
-    fn parse_property_inner(&mut self, end: char) -> Result<()> {
-        // only supports ECMA-262. UnicodeSet spec ignores whitespace, '-', and '_',
-        // but ECMA-262 requires '_', so we'll allow that.
-        // TODO: support loose matching on property names (e.g., "AS  -_-  CII_Hex_ D-igit")
-        // TODO: support more properties than ECMA-262
-
-        let property_offset;
-
-        let mut key_buffer = String::new();
-        let mut value_buffer = String::new();
-
-        enum State {
-            // initial state, nothing parsed yet
-            Begin,
-            // non-empty property name
-            PropertyName,
-            // property name parsed, '=' or '≠' parsed, no value parsed yet
-            PropertyValueBegin,
-            // non-empty property name, non-empty property value
-            PropertyValue,
-        }
-        use State::*;
-
-        let mut state = Begin;
-        // whether '=' (true) or '≠' (false) was parsed
-        let mut equality = true;
-
-        loop {
-            self.skip_whitespace();
-            match (state, self.peek_char()) {
-                (_, None) => return Err(ParseError::eof()),
-                (PropertyName | PropertyValue, Some(c)) if *c == end => {
-                    // byte index of (full) property name/value is one back
-                    property_offset = self.peek_index()? - 1;
-                    self.iter.next();
-                    break;
-                }
-                (Begin | PropertyName, Some(&c)) if c.is_ascii_alphanumeric() || c == '_' => {
-                    key_buffer.push(c);
-                    self.iter.next();
-                    state = PropertyName;
-                }
-                (PropertyName, Some(&c @ ('=' | '≠'))) => {
-                    equality = c == '=';
-                    self.iter.next();
-                    state = PropertyValueBegin;
-                }
-                (PropertyValue | PropertyValueBegin, Some(&c)) => {
-                    value_buffer.push(c);
-                    self.iter.next();
-                    state = PropertyValue;
-                }
-                (_, Some(&c)) => return Err(ParseError::unexpected(self.peek_index()?, c)),
-            }
-        }
-
-        if !equality {
-            self.inverted = !self.inverted;
-        }
-
-        let (set, inverted) = self
-            .load_property_codepoints(&key_buffer, &value_buffer)
-            .map_err(|e| e.or_with_offset(property_offset))?;
-        if inverted {
-            self.inverted = !self.inverted;
-        }
-        self.single_set.add_set(&set.to_code_point_inversion_list());
-
-        Ok(())
-    }
-
-    // starts with \p{ or \P{, consumes the trailing }
-    fn parse_property_perl(&mut self) -> Result<()> {
-        self.consume('\\')?;
-        match self.iter.next() {
-            None => return Err(ParseError::eof()),
-            Some((_, 'p')) => {}
-            Some((_, 'P')) => self.inverted = true,
-            Some((offset, c)) => return Err(ParseError::unexpected(offset, c)),
-        }
-        self.consume('{')?;
-
-        self.parse_property_inner('}')?;
-
-        Ok(())
-    }
-
-    // starts with :, consumes the trailing :]
-    fn parse_property_posix(&mut self) -> Result<()> {
-        self.consume(':')?;
-        match self.peek_char() {
-            None => return Err(ParseError::eof()),
-            Some(&'^') => {
-                self.inverted = true;
+            Some('\\') => self.parse_property_perl(),
+            Some('[') => {
                 self.iter.next();
-            }
-            _ => {}
-        }
-
-        self.parse_property_inner(':')?;
-
-        self.consume(']')?;
-
-        Ok(())
-    }
-
-    fn peek_unicode_set_start(&mut self) -> bool {
-        match self.peek_char() {
-            Some(&'\\') => {}
-            Some(&'[') => return true,
-            _ => return false,
-        }
-
-        // need to look one more char into the future. Peekable doesnt lend itself well to this,
-        // so maybe think about using a different iterator internally
-        let mut future = self.iter.clone();
-        future.next();
-
-        match future.peek() {
-            // perl property
-            Some(&(_, 'p' | 'P')) => true,
-            _ => false,
-        }
-    }
-
-    // parses [0-9a-fA-F]{N}
-    fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[char; N]> {
-        let mut result = [0 as char; N];
-        for slot in result.iter_mut() {
-            let (offset, c) = self.iter.next().ok_or(ParseError::eof())?;
-            if !c.is_ascii_hexdigit() {
-                return Err(ParseError::unexpected(offset, c));
-            }
-            *slot = c;
-        }
-        Ok(result)
-    }
-
-    // starts with \ and consumes the whole escape sequence
-    fn parse_escaped_char(&mut self) -> Result<char> {
-        self.consume('\\')?;
-
-        let (offset, next_char) = self.iter.next().ok_or(ParseError::eof())?;
-
-        if !['u', 'U', 'x', 'N'].contains(&next_char) {
-            return Ok(next_char);
-        }
-
-        match next_char {
-            'u' => {
-                // 'u' (hex{4} | bracketedHex)
-                if let Some(&(offset, '{')) = self.iter.peek() {
-                    // TODO: implement bracketedHex
-                    return Err(ParseError::unimplemented(offset));
+                if let Some(&':') = self.peek_char() {
+                    self.parse_property_posix()
+                } else {
+                    self.parse_unicode_set_inner()
                 }
-                let exact: [char; 4] = self.parse_exact_hex_digits()?;
-                let hex_digits = exact.iter().collect::<String>();
-                let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
-                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
             }
-            'x' => {
-                // 'x' (hex{2} | bracketedHex)
-                if let Some(&(offset, '{')) = self.iter.peek() {
-                    return Err(ParseError::unimplemented(offset));
-                }
-                let exact: [char; 2] = self.parse_exact_hex_digits()?;
-                let hex_digits = exact.iter().collect::<String>();
-                let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
-                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
-            }
-            'U' => {
-                // 'U00' ('0' hex{5} | '10' hex{4})
-                self.consume('0')?;
-                self.consume('0')?;
-                let hex_digits = match self.peek_char() {
-                    Some(&'0') => {
-                        self.iter.next();
-                        let exact: [char; 5] = self.parse_exact_hex_digits()?;
-                        exact.iter().collect::<String>()
-                    }
-                    Some(&'1') => {
-                        self.iter.next();
-                        self.consume('0')?;
-                        let exact: [char; 4] = self.parse_exact_hex_digits()?;
-                        ['1', '0'].iter().chain(exact.iter()).collect::<String>()
-                    }
-                    Some(&c) => return Err(ParseError::unexpected(self.peek_index()?, c)),
-                    None => return Err(ParseError::eof()),
-                };
-                let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
-                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
-            }
-            'N' => {
-                // parse code point with name in {}
-                // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
-                Err(ParseError::unimplemented(self.peek_index()?))
-            }
-            _ => Ok(next_char),
+            Some(&c) => Err(ParseError::unexpected(self.peek_index()?, c)),
         }
-    }
-
-    // parses and consumes '{' (s char)+ s '}'
-    // TODO: decide on names for multi-codepoint-sequences and adjust both struct fields and fn names
-    fn parse_multi(&mut self) -> Result<()> {
-        self.consume('{')?;
-
-        let mut buffer = String::new();
-
-        loop {
-            self.skip_whitespace();
-
-            match self.peek_char() {
-                None => return Err(ParseError::eof()),
-                Some(c) if *c == '}' => {
-                    self.iter.next();
-                    break;
-                }
-                Some(&c) if legal_char_start(c) => {
-                    let mut c = c;
-                    if c == '\\' {
-                        c = self.parse_escaped_char()?;
-                    } else {
-                        self.iter.next();
-                    }
-                    buffer.push(c);
-                }
-                Some(&c) => return Err(ParseError::unexpected(self.peek_index()?, c)),
-            }
-        }
-
-        if buffer.chars().count() > 1 {
-            self.multi_set.insert(buffer);
-        } else {
-            // empty or single char
-            if let Some(c) = buffer.chars().next() {
-                // a single-codepoint multi-codepoint-sequence is interpreted as a character
-                self.single_set.add_char(c);
-            }
-        }
-
-        Ok(())
     }
 
     // beginning [ is already consumed
@@ -730,26 +436,16 @@ where
                     return Ok(());
                 }
                 (Begin | Char | AfterUnicodeSet, Some(&c)) if legal_char_start(c) => {
-                    let mut c = c;
-                    if c == '\\' {
-                        c = self.parse_escaped_char()?;
-                    } else {
-                        self.iter.next();
-                    }
+                    let c = self.parse_char()?;
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
                     prev_char = Some(c);
                     state = Char;
                 }
-                (CharMinus, Some(&end)) if legal_char_start(end) => {
+                (CharMinus, Some(&c)) if legal_char_start(c) => {
                     let start = prev_char.ok_or(ParseError::internal())?;
-                    let mut end = end;
-                    if end == '\\' {
-                        end = self.parse_escaped_char()?;
-                    } else {
-                        self.iter.next();
-                    }
+                    let end = self.parse_char()?;
                     if start > end {
                         // TODO: better error message (e.g., "start greater than end in range")
                         // offset - 1, because we already consumed the end char (and its offset)
@@ -787,20 +483,267 @@ where
         }
     }
 
-    // the entry point, parses a full UnicodeSet. ignores remaining input
-    pub fn parse_unicode_set(&mut self) -> Result<()> {
-        match self.peek_char() {
-            None => Err(ParseError::eof()),
-            Some('\\') => self.parse_property_perl(),
-            Some('[') => {
-                self.iter.next();
-                if let Some(&':') = self.peek_char() {
-                    self.parse_property_posix()
-                } else {
-                    self.parse_unicode_set_inner()
+    // parses and consumes '{' (s char)+ s '}'
+    // TODO: decide on names for multi-codepoint-sequences and adjust both struct fields and fn names
+    fn parse_multi(&mut self) -> Result<()> {
+        self.consume('{')?;
+
+        let mut buffer = String::new();
+
+        loop {
+            self.skip_whitespace();
+
+            match self.peek_char() {
+                None => return Err(ParseError::eof()),
+                Some(c) if *c == '}' => {
+                    self.iter.next();
+                    break;
                 }
+                Some(&c) if legal_char_start(c) => {
+                    let c = self.parse_char()?;
+                    buffer.push(c);
+                }
+                Some(&c) => return Err(ParseError::unexpected(self.peek_index()?, c)),
             }
-            Some(&c) => Err(ParseError::unexpected(self.peek_index()?, c)),
+        }
+
+        if buffer.chars().count() > 1 {
+            self.multi_set.insert(buffer);
+        } else {
+            // empty or single char
+            if let Some(c) = buffer.chars().next() {
+                // a single-codepoint multi-codepoint-sequence is interpreted as a character
+                self.single_set.add_char(c);
+            }
+        }
+
+        Ok(())
+    }
+
+    // starts with \ and consumes the whole escape sequence
+    fn parse_escaped_char(&mut self) -> Result<char> {
+        self.consume('\\')?;
+
+        let (offset, next_char) = self.iter.next().ok_or(ParseError::eof())?;
+
+        if !['u', 'U', 'x', 'N'].contains(&next_char) {
+            return Ok(next_char);
+        }
+
+        match next_char {
+            'u' => {
+                // 'u' (hex{4} | bracketedHex)
+                if let Some(&(offset, '{')) = self.iter.peek() {
+                    // TODO: implement bracketedHex
+                    return Err(ParseError::unimplemented(offset));
+                }
+                let exact: [char; 4] = self.parse_exact_hex_digits()?;
+                let hex_digits = exact.iter().collect::<String>();
+                let num =
+                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
+                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
+            }
+            'x' => {
+                // 'x' (hex{2} | bracketedHex)
+                if let Some(&(offset, '{')) = self.iter.peek() {
+                    return Err(ParseError::unimplemented(offset));
+                }
+                let exact: [char; 2] = self.parse_exact_hex_digits()?;
+                let hex_digits = exact.iter().collect::<String>();
+                let num =
+                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
+                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
+            }
+            'U' => {
+                // 'U00' ('0' hex{5} | '10' hex{4})
+                self.consume('0')?;
+                self.consume('0')?;
+                let hex_digits = match self.peek_char() {
+                    Some(&'0') => {
+                        self.iter.next();
+                        let exact: [char; 5] = self.parse_exact_hex_digits()?;
+                        exact.iter().collect::<String>()
+                    }
+                    Some(&'1') => {
+                        self.iter.next();
+                        self.consume('0')?;
+                        let exact: [char; 4] = self.parse_exact_hex_digits()?;
+                        ['1', '0'].iter().chain(exact.iter()).collect::<String>()
+                    }
+                    Some(&c) => return Err(ParseError::unexpected(self.peek_index()?, c)),
+                    None => return Err(ParseError::eof()),
+                };
+                let num =
+                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
+                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
+            }
+            'N' => {
+                // parse code point with name in {}
+                // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
+                Err(ParseError::unimplemented(self.peek_index()?))
+            }
+            _ => Ok(next_char),
+        }
+    }
+
+    // starts with :, consumes the trailing :]
+    fn parse_property_posix(&mut self) -> Result<()> {
+        self.consume(':')?;
+        match self.peek_char() {
+            None => return Err(ParseError::eof()),
+            Some(&'^') => {
+                self.inverted = true;
+                self.iter.next();
+            }
+            _ => {}
+        }
+
+        self.parse_property_inner(':')?;
+
+        self.consume(']')?;
+
+        Ok(())
+    }
+
+    // starts with \p{ or \P{, consumes the trailing }
+    fn parse_property_perl(&mut self) -> Result<()> {
+        self.consume('\\')?;
+        match self.iter.next() {
+            None => return Err(ParseError::eof()),
+            Some((_, 'p')) => {}
+            Some((_, 'P')) => self.inverted = true,
+            Some((offset, c)) => return Err(ParseError::unexpected(offset, c)),
+        }
+        self.consume('{')?;
+
+        self.parse_property_inner('}')?;
+
+        Ok(())
+    }
+
+    fn parse_property_inner(&mut self, end: char) -> Result<()> {
+        // only supports ECMA-262. UnicodeSet spec ignores whitespace, '-', and '_',
+        // but ECMA-262 requires '_', so we'll allow that.
+        // TODO: support loose matching on property names (e.g., "AS  -_-  CII_Hex_ D-igit")
+        // TODO: support more properties than ECMA-262
+
+        let property_offset;
+
+        let mut key_buffer = String::new();
+        let mut value_buffer = String::new();
+
+        enum State {
+            // initial state, nothing parsed yet
+            Begin,
+            // non-empty property name
+            PropertyName,
+            // property name parsed, '=' or '≠' parsed, no value parsed yet
+            PropertyValueBegin,
+            // non-empty property name, non-empty property value
+            PropertyValue,
+        }
+        use State::*;
+
+        let mut state = Begin;
+        // whether '=' (true) or '≠' (false) was parsed
+        let mut equality = true;
+
+        loop {
+            self.skip_whitespace();
+            match (state, self.peek_char()) {
+                (_, None) => return Err(ParseError::eof()),
+                (PropertyName | PropertyValue, Some(c)) if *c == end => {
+                    // byte index of (full) property name/value is one back
+                    property_offset = self.peek_index()? - 1;
+                    self.iter.next();
+                    break;
+                }
+                (Begin | PropertyName, Some(&c)) if c.is_ascii_alphanumeric() || c == '_' => {
+                    key_buffer.push(c);
+                    self.iter.next();
+                    state = PropertyName;
+                }
+                (PropertyName, Some(&c @ ('=' | '≠'))) => {
+                    equality = c == '=';
+                    self.iter.next();
+                    state = PropertyValueBegin;
+                }
+                (PropertyValue | PropertyValueBegin, Some(&c)) => {
+                    value_buffer.push(c);
+                    self.iter.next();
+                    state = PropertyValue;
+                }
+                (_, Some(&c)) => return Err(ParseError::unexpected(self.peek_index()?, c)),
+            }
+        }
+
+        if !equality {
+            self.inverted = !self.inverted;
+        }
+
+        let (set, inverted) = self
+            .load_property_codepoints(&key_buffer, &value_buffer)
+            .map_err(|e| e.or_with_offset(property_offset))?;
+        if inverted {
+            self.inverted = !self.inverted;
+        }
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+
+        Ok(())
+    }
+
+    // also returns whether the set needs to be inverted or not
+    fn load_property_codepoints(&self, key: &str, value: &str) -> Result<(CodePointSetData, bool)> {
+        // we support:
+        // [:gc = value:]
+        // [:sc = value:]
+        // [:scx = value:] -- TODO: implement scx
+        // [:value:] - looks up value in gc, sc and scx
+        // [:prop:] - binary property, returns codepoints that have the property
+        // [:prop = truthy/falsy:] - same as above
+
+        let mut inverted = false;
+
+        if value.is_empty() {
+            // key is binary property, or a value of gc, sc, scx
+
+            // try loading a binary property, if it fails, try loading a gc, sc, scx value
+            let set = load_for_ecma262_unstable(self.property_provider, key)
+                .or_else(|_| self.try_load_general_category(key))
+                .or_else(|_| self.try_load_script(key))?;
+            // .or_else(|_| self.try_load_script_extensions(key))?;
+
+            Ok((set, inverted))
+        } else {
+            // key is gc, sc, scx
+            // value is a property value
+            // OR
+            // key is a binary property and value is a truthy/falsy value
+
+            // UnicodeProperty::parse_ecma262_name would be good to have to avoid this duplication:
+            let set = match key {
+                "General_Category" | "gc" => self.try_load_general_category(value)?,
+                "Script" | "sc" => self.try_load_script(value)?,
+                // "Script_Extensions" | "scx" => {
+                //     // https://www.unicode.org/reports/tr24/#Script_Extensions
+                //     // the UnicodeSet utils page takes lists of scripts as values, but I'm not sure how to implement that using load_script_with_extensions_unstable.
+                //     // skipped for now.
+                _ => {
+                    // try prop = true case
+                    let set = load_for_ecma262_unstable(self.property_provider, key)
+                        .map_err(|_| ParseError::unknown_property())?;
+                    let normalized_value = value.to_ascii_lowercase();
+                    let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
+                    let falsy = matches!(normalized_value.as_str(), "false" | "f" | "no" | "n");
+                    if truthy == falsy {
+                        return Err(ParseError::unknown_property());
+                    }
+                    inverted = falsy;
+                    set
+                }
+            };
+
+            Ok((set, inverted))
         }
     }
 
@@ -814,12 +757,63 @@ where
         (self.single_set, self.multi_set)
     }
 
+    fn peek_unicode_set_start(&mut self) -> bool {
+        match self.peek_char() {
+            Some(&'\\') => {}
+            Some(&'[') => return true,
+            _ => return false,
+        }
+
+        // need to look one more char into the future. Peekable doesnt lend itself well to this,
+        // so maybe think about using a different iterator internally
+        let mut future = self.iter.clone();
+        future.next();
+
+        match future.peek() {
+            // perl property
+            Some(&(_, 'p' | 'P')) => true,
+            _ => false,
+        }
+    }
+
+    // parses either a raw char or an escaped char. all chars are allowed
+    fn parse_char(&mut self) -> Result<char> {
+        let &c = self.peek_char().ok_or(ParseError::eof())?;
+        if c == '\\' {
+            self.parse_escaped_char()
+        } else {
+            self.iter.next();
+            c
+        }
+    }
+
+    // parses [0-9a-fA-F]{N}
+    fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[char; N]> {
+        let mut result = [0 as char; N];
+        for slot in result.iter_mut() {
+            let (offset, c) = self.iter.next().ok_or(ParseError::eof())?;
+            if !c.is_ascii_hexdigit() {
+                return Err(ParseError::unexpected(offset, c));
+            }
+            *slot = c;
+        }
+        Ok(result)
+    }
+
     fn skip_whitespace(&mut self) {
         while let Some(&c) = self.peek_char() {
             if !is_char_pattern_white_space(c) {
                 break;
             }
             self.iter.next();
+        }
+    }
+
+    fn consume(&mut self, expected: char) -> Result<()> {
+        match self.iter.next() {
+            None => Err(ParseError::eof()),
+            Some((offset, c)) if c != expected => Err(ParseError::unexpected(offset, c)),
+            _ => Ok(()),
         }
     }
 
