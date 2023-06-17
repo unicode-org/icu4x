@@ -893,7 +893,6 @@ where
     }
 }
 
-
 /// Parses a UnicodeSet pattern and returns a UnicodeSet.
 ///
 /// Supports a subset of the syntax described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
@@ -1004,7 +1003,10 @@ mod tests {
             (r"[a-`]", r"[a-`<-- error: unexpected character '`'"),
             // > 1 byte in UTF-8 edge case
             (r"ä", r"ä<-- error: unexpected character 'ä'"),
-            (r"[\xe5-\xe4]", r"[\xe5-\xe4<-- error: unexpected character 'ä'"),
+            (
+                r"[\xe5-\xe4]",
+                r"[\xe5-\xe4<-- error: unexpected character 'ä'",
+            ),
             (r"[\xe5-ä]", r"[\xe5-ä<-- error: unexpected character 'ä'"),
         ];
         for (source, expected_err) in cases {
