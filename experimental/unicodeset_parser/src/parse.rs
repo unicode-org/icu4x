@@ -29,6 +29,7 @@ pub enum ParseErrorKind {
     Eof,
     Internal,
     Unimplemented,
+    InvalidEscape,
 }
 
 // pub struct ParseError {
@@ -69,6 +70,10 @@ impl ParseError {
 
     fn unimplemented(offset: usize) -> Self {
         Self::new_with_offset(offset, ParseErrorKind::Unimplemented)
+    }
+
+    fn invalid_escape(offset: usize) -> Self {
+        Self::new_with_offset(offset, ParseErrorKind::InvalidEscape)
     }
 }
 
@@ -424,16 +429,24 @@ where
         }
     }
 
-    fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[u8; N]> {
-        let mut result = [0; N];
-
+    fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[char; N]> {
+        let mut result = [0 as char; N];
+        for i in 0..N {
+            let (offset, c) = self.iter.next().ok_or(ParseError::eof())?;
+            if !c.is_ascii_hexdigit() {
+                // TODO: is this offset correct? check all offset errors in this file for consistency
+                return Err(ParseError::unexpected(offset, c));
+            }
+            result[i] = c;
+        }
+        Ok(result)
     }
 
     // starts with \ and consumes the whole escape sequence
     fn parse_escaped_char(&mut self) -> Result<char> {
         self.consume('\\')?;
 
-        let (_, next_char) = self.iter.next().ok_or(ParseError::eof())?;
+        let (offset, next_char) = self.iter.next().ok_or(ParseError::eof())?;
 
         if !['u', 'U', 'x', 'N'].contains(&next_char) {
             // return self.iter.next().map(|(_, raw)| raw).ok_or(ParseError::eof());
@@ -443,12 +456,42 @@ where
         match next_char {
             'u' => {
                 // 'u' (hex{4} | bracketedHex) -- TODO: implement bracketedHex
-                let exact: [u8; 4] = self.parse_exact_hex_digits()?;
-                // TODO: figure this out
-                let num = u16::from_be_bytes(exact);
+                let exact: [char; 4] = self.parse_exact_hex_digits()?;
+                let hex_digits = exact.iter().collect::<String>();
+                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
+                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
             },
-            'U' => {},
-            'x' => {},
+            'U' => {
+                // 'U00' ('0' hex{5} | '10' hex{4})
+                self.consume('0')?;
+                self.consume('0')?;
+                match self.peek_char() {
+                    Some(&'0') => {
+                        self.iter.next();
+                        let exact: [char; 5] = self.parse_exact_hex_digits()?;
+                        let hex_digits = exact.iter().collect::<String>();
+                        let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
+                        char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
+                    },
+                    Some(&'1') => {
+                        self.iter.next();
+                        self.consume('0')?;
+                        let exact: [char; 4] = self.parse_exact_hex_digits()?;
+                        let hex_digits = ['1', '0'].iter().chain(exact.iter()).collect::<String>();
+                        let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
+                        char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
+                    },
+                    Some(&c) => Err(ParseError::unexpected(self.peek_index()?, c)),
+                    None => Err(ParseError::eof()),
+                }
+            },
+            'x' => {
+                // 'x' (hex{2} | bracketedHex)
+                let exact: [char; 2] = self.parse_exact_hex_digits()?;
+                let hex_digits = exact.iter().collect::<String>();
+                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
+                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
+            },
             'N' => {
                 // parse code point with name in {}
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
@@ -478,13 +521,13 @@ where
                 }
                 // TODO: this must also be legal_char, and handle escapes
                 Some(&c) if legal_char(c) => {
+                    let mut c = c;
+                    if c == '\\' {
+                        c = self.parse_escaped_char()?;
+                    } else {
+                        self.iter.next();
+                    }
                     buffer.push(c);
-                    self.iter.next();
-                }
-                Some(&'\\') => {
-                    // handle escaped char
-                    let unescaped = self.parse_escaped_char()?;
-                    buffer.push(unescaped);
                 }
                 Some(&c) => return Err(ParseError::unexpected(self.peek_index()?, c)),
             }
@@ -849,10 +892,15 @@ mod tests {
         parse("[:g c =Lowe rCASEl etter:]").unwrap();
         parse("[[:g c ≠Lowe rCASEl etter:]&[0-z]]").unwrap();
         parse("[:ll:]").unwrap();
+        parse(r"\p{ll}").unwrap();
         parse("[:Case_Ignorable:]").unwrap();
         parse("[[:Case_Ignorable=false:]&[0-Z]]").unwrap();
         parse("[[:^Case_Ignorable=false:]&[0-Z]]").unwrap();
         parse(r"[\\ \  \[]").unwrap();
+        parse(r"[{A \u0308}]").unwrap();
+        parse(r"[{A \U00000308}]").unwrap();
+        parse(r"[{\x61 \U00000308}]").unwrap();
+        parse(r"[\x61{\x61 \U00000308}]").unwrap();
     }
 }
 
