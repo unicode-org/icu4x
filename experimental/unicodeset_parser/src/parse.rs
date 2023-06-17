@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use std::{
     collections::HashSet,
     iter::Peekable,
@@ -20,7 +21,7 @@ use zerovec::VarZeroVec;
 
 // Parses UnicodeSets
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ParseErrorKind {
     UnexpectedChar(char),
     UnknownProperty,
@@ -32,6 +33,8 @@ pub enum ParseErrorKind {
 
 #[derive(Debug, Clone)]
 pub enum ParseError {
+    // offset is the index to an arbitrary byte in the last character in the source that makes sense
+    // to display as location for the error
     WithOffset { offset: usize, kind: ParseErrorKind },
     WithOutOffset(ParseErrorKind),
 }
@@ -43,6 +46,13 @@ impl ParseError {
 
     fn new_without_offset(kind: ParseErrorKind) -> Self {
         ParseError::WithOutOffset(kind)
+    }
+
+    fn or_with_offset(self, offset: usize) -> Self {
+        match self {
+            ParseError::WithOffset { .. } => self,
+            ParseError::WithOutOffset(kind) => ParseError::WithOffset { offset, kind },
+        }
     }
 
     fn eof() -> Self {
@@ -68,12 +78,115 @@ impl ParseError {
     fn invalid_escape(offset: usize) -> Self {
         Self::new_with_offset(offset, ParseErrorKind::InvalidEscape)
     }
+
+    /// Pretty-prints this error and if applicable, shows where the error occurred in the source.
+    ///
+    /// Must be called with the same source that was used to parse the set.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_unicodeset_parser::*;
+    ///
+    /// let source = "[[abc]-x]";
+    /// let set = parse(source);
+    /// assert!(set.is_err());
+    /// let err = set.unwrap_err();
+    /// assert_eq!(err.fmt_with_source(source).to_string(), "[[abc]-x<-- error: unexpected character 'x'");
+    /// ```
+    ///
+    /// ```
+    /// use icu_unicodeset_parser::*;
+    ///
+    /// let source = r"[\N{LATIN CAPITAL LETTER A}]";
+    /// let set = parse(source);
+    /// assert!(set.is_err());
+    /// let err = set.unwrap_err();
+    /// assert_eq!(err.fmt_with_source(source).to_string(), r"[\N<-- error: unimplemented");
+    /// ```
+    pub fn fmt_with_source(&self, source: &str) -> impl Display {
+        let (offset, kind) = match self {
+            ParseError::WithOffset { offset, kind } => (Some(*offset), *kind),
+            ParseError::WithOutOffset(kind) => (None, *kind),
+        };
+
+        if kind == ParseErrorKind::Eof {
+            return format!("{source}<-- error: unexpected end of input");
+        }
+        let mut s = String::new();
+        if let Some(offset) = offset {
+            if offset < source.len() {
+                // offset points to any byte of the last character we want to display.
+                // in the case of ASCII, this is easy - we just display bytes [..=offset].
+                // however, if the last character is more than one byte in UTF-8
+                // we cannot use ..=offset, because that would potentially include only partial
+                // bytes of last character in our string. hence we must find the start of the
+                // following character and use that as the end of our string.
+
+                // offset points into the last character we want to include, hence the start of the
+                // first character we want to exclude is at least offset + 1.
+                let mut exclusive_end = offset + 1;
+                // replace this loop with str::ceil_char_boundary once stable
+                for _ in 0..3 {
+                    // is_char_boundary handles reaching the end of the source string correctly
+                    if source.is_char_boundary(exclusive_end) {
+                        break;
+                    }
+                    exclusive_end += 1;
+                }
+
+                s.push_str(&source[..exclusive_end]);
+                s.push_str("<-- ");
+            }
+        }
+        s.push_str("error: ");
+        match kind {
+            ParseErrorKind::UnexpectedChar(c) => {
+                s.push_str(&format!("unexpected character '{}'", c.escape_debug()));
+            }
+            ParseErrorKind::UnknownProperty => {
+                s.push_str("unknown property");
+            }
+            ParseErrorKind::Eof => {
+                s.push_str("unexpected end of input");
+            }
+            ParseErrorKind::Internal => {
+                s.push_str("internal error");
+            }
+            ParseErrorKind::Unimplemented => {
+                s.push_str("unimplemented");
+            }
+            ParseErrorKind::InvalidEscape => {
+                s.push_str("invalid escape sequence");
+            }
+        }
+
+        s
+    }
 }
 
 type Result<T, E = ParseError> = core::result::Result<T, E>;
 
+// necessary because char::is_whitespace is not equivalent to [:Pattern_White_Space:]
+#[inline]
+fn is_char_pattern_white_space(c: char) -> bool {
+    matches!(
+        c,
+        '\u{0009}'
+            ..='\u{000D}'
+                | '\u{0020}'
+                | '\u{0085}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{2028}'
+                | '\u{2029}'
+    )
+}
+
 // note: this ignores the ambiguity between \escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
 fn legal_char_start(c: char) -> bool {
+    // TODO: need to handle $ for pre-input/post-input. Maybe add field on self to indicate this option? How do we represent the special meaning in the wire-format? \uffff is used by unicode utilities.
+    // ICU4J: https://github.com/unicode-org/icu/blob/388b768262684300bf47bcee8796a9327ccc2652/icu4j/main/classes/core/src/com/ibm/icu/text/UnicodeSet.java#L583
     !(c == '&'
             || c == '-'
             // legal because it starts an escape sequence
@@ -82,7 +195,7 @@ fn legal_char_start(c: char) -> bool {
             || c == ']'
             || c == '{'
             || c == '}'
-            || c.is_ascii_whitespace())
+            || is_char_pattern_white_space(c))
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -242,28 +355,28 @@ where
         // we support:
         // [:gc = value:]
         // [:sc = value:]
-        // [:scx = value:]
+        // [:scx = value:] -- TODO: implement scx
         // [:value:] - looks up value in gc, sc and scx
         // [:prop:] - binary property, returns codepoints that have the property
-        // [:prop = true:] - same as above
+        // [:prop = truthy/falsy:] - same as above
 
         let mut inverted = false;
 
         if value.is_empty() {
-            // key_buffer is binary property, or value of gc, sc, scx
+            // key is binary property, or a value of gc, sc, scx
 
             // try loading a binary property, if it fails, try loading a gc, sc, scx value
             let set = load_for_ecma262_unstable(self.property_provider, key)
                 .or_else(|_| self.try_load_general_category(key))
                 .or_else(|_| self.try_load_script(key))?;
-            // .or_else(|_| self.try_load_script_extensions(&key_buffer))?;
+            // .or_else(|_| self.try_load_script_extensions(key))?;
 
             Ok((set, inverted))
         } else {
-            // key_buffer is gc, sc, scx
-            // value_buffer is value
+            // key is gc, sc, scx
+            // value is a property value
             // OR
-            // key_buffer is a binary property and value is a truthy/falsy value
+            // key is a binary property and value is a truthy/falsy value
 
             // UnicodeProperty::parse_ecma262_name would be good to have to avoid this duplication:
             let set = match key {
@@ -292,12 +405,13 @@ where
         }
     }
 
-    // TODO: split up this function into key/value parsing, and then property loading
     fn parse_property_inner(&mut self, end: char) -> Result<()> {
-        // only supports ECMA-262 for the moment. UnicodeSet spec ignores whitespace, '-', and '_',
+        // only supports ECMA-262. UnicodeSet spec ignores whitespace, '-', and '_',
         // but ECMA-262 requires '_', so we'll allow that.
-        // TODO: support loose matching on keys (e.g., "AS  -_-  CII_Hex_ D-igit")
-        // TODO: support other properties
+        // TODO: support loose matching on property names (e.g., "AS  -_-  CII_Hex_ D-igit")
+        // TODO: support more properties than ECMA-262
+
+        let property_offset;
 
         let mut key_buffer = String::new();
         let mut value_buffer = String::new();
@@ -311,7 +425,7 @@ where
         use State::*;
 
         let mut state = Begin;
-        // whether = (true) or ≠ (false) was parsed
+        // whether '=' (true) or '≠' (false) was parsed
         let mut equality = true;
 
         loop {
@@ -319,6 +433,8 @@ where
             match (state, self.peek_char()) {
                 (_, None) => return Err(ParseError::eof()),
                 (PropertyName | PropertyValue, Some(c)) if *c == end => {
+                    // byte index of (full) property name/value is one back
+                    property_offset = self.peek_index()? - 1;
                     self.iter.next();
                     break;
                 }
@@ -345,7 +461,9 @@ where
             self.inverted = !self.inverted;
         }
 
-        let (set, inverted) = self.load_property_codepoints(&key_buffer, &value_buffer)?;
+        let (set, inverted) = self
+            .load_property_codepoints(&key_buffer, &value_buffer)
+            .map_err(|e| e.or_with_offset(property_offset))?;
         if inverted {
             self.inverted = !self.inverted;
         }
@@ -354,6 +472,7 @@ where
         Ok(())
     }
 
+    // starts with \p{ or \P{, consumes the trailing }
     fn parse_property_perl(&mut self) -> Result<()> {
         self.consume('\\')?;
         match self.iter.next() {
@@ -388,31 +507,31 @@ where
         Ok(())
     }
 
-    fn unicode_set_start(&mut self) -> bool {
+    fn peek_unicode_set_start(&mut self) -> bool {
         match self.peek_char() {
             Some(&'\\') => {}
             Some(&'[') => return true,
             _ => return false,
         }
 
-        // need to look one more char into the future. Peekable doesnt lend itself well to this, so maybe think about using a different iterator internally
-
+        // need to look one more char into the future. Peekable doesnt lend itself well to this,
+        // so maybe think about using a different iterator internally
         let mut future = self.iter.clone();
         future.next();
 
         match future.peek() {
             // perl property
-            Some(&(_, 'p')) => true,
+            Some(&(_, 'p' | 'P')) => true,
             _ => false,
         }
     }
 
+    // parses [0-9a-fA-F]{N}
     fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[char; N]> {
         let mut result = [0 as char; N];
         for i in 0..N {
             let (offset, c) = self.iter.next().ok_or(ParseError::eof())?;
             if !c.is_ascii_hexdigit() {
-                // TODO: is this offset correct? check all offset errors in this file for consistency
                 return Err(ParseError::unexpected(offset, c));
             }
             result[i] = c;
@@ -432,8 +551,23 @@ where
 
         match next_char {
             'u' => {
-                // 'u' (hex{4} | bracketedHex) -- TODO: implement bracketedHex
+                // 'u' (hex{4} | bracketedHex)
+                if let Some(&(offset, '{')) = self.iter.peek() {
+                    // TODO: implement bracketedHex
+                    return Err(ParseError::unimplemented(offset));
+                }
                 let exact: [char; 4] = self.parse_exact_hex_digits()?;
+                let hex_digits = exact.iter().collect::<String>();
+                let num =
+                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
+                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
+            }
+            'x' => {
+                // 'x' (hex{2} | bracketedHex)
+                if let Some(&(offset, '{')) = self.iter.peek() {
+                    return Err(ParseError::unimplemented(offset));
+                }
+                let exact: [char; 2] = self.parse_exact_hex_digits()?;
                 let hex_digits = exact.iter().collect::<String>();
                 let num =
                     u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
@@ -458,14 +592,6 @@ where
                     Some(&c) => return Err(ParseError::unexpected(self.peek_index()?, c)),
                     None => return Err(ParseError::eof()),
                 };
-                let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
-                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
-            }
-            'x' => {
-                // 'x' (hex{2} | bracketedHex)
-                let exact: [char; 2] = self.parse_exact_hex_digits()?;
-                let hex_digits = exact.iter().collect::<String>();
                 let num =
                     u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
                 char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
@@ -495,7 +621,6 @@ where
                     self.iter.next();
                     break;
                 }
-                // TODO: this must also be legal_char, and handle escapes
                 Some(&c) if legal_char_start(c) => {
                     let mut c = c;
                     if c == '\\' {
@@ -523,9 +648,7 @@ where
     }
 
     // beginning [ is already consumed
-    //fn parse_unicode_set_inner<'b: 'a>(&'b mut self) -> Result<()> {
     fn parse_unicode_set_inner(&mut self) -> Result<()> {
-        //fn parse_unicode_set_inner(&mut self) -> Result<()> {
         // special cases for the first char after [
         match self.peek_char() {
             None => return Err(ParseError::eof()),
@@ -549,10 +672,19 @@ where
 
         #[derive(Debug, Clone, Copy)]
         enum State {
+            // a state equivalent to the beginning
             Begin,
+            // a state after a char. implies `prev_char` is Some(_), because we need to buffer it
+            // in case it is part of a range, e.g., a-z
             Char,
+            // in the middle of parsing a range. implies `prev_char` is Some(_), and the next
+            // element must be a char as well
             CharMinus,
+            // state directly after parsing a recursive unicode set. operators are only allowed
+            // in this state
             AfterUnicodeSet,
+            // state directly after parsing an operator. forces the next element to be a recursive
+            // unicode set
             AfterOp,
         }
         use State::*;
@@ -566,8 +698,7 @@ where
             eprintln!("state: {:?}, next: {:?}", state, self.peek_char());
 
             // handling unicodesets separately, because of ambiguity between escaped characters and perl property names
-            if self.unicode_set_start() {
-                // maybe put into inner function
+            if self.peek_unicode_set_start() {
                 match (state, self.peek_char()) {
                     (_, None) => return Err(ParseError::eof()),
                     (Begin | Char | AfterUnicodeSet | AfterOp, Some(_)) => {
@@ -592,7 +723,7 @@ where
                 continue;
             }
 
-            // no UnicodeSets can occur in this match block, they would've been caught by the above match
+            // no UnicodeSets can occur in this match block, as they would've been caught by the above match
             match (state, self.peek_char()) {
                 (_, None) => return Err(ParseError::eof()),
                 (Begin | Char | AfterUnicodeSet, Some(']')) => {
@@ -617,10 +748,7 @@ where
                     prev_char = Some(c);
                     state = Char;
                 }
-                // TODO: handle escapes
                 (CharMinus, Some(&end)) if legal_char_start(end) => {
-                    // store offset now because parsing escaped char would return an inconsistent offset afterwards
-                    let begin_offset = self.peek_index()?;
                     let start = prev_char.ok_or(ParseError::internal())?;
                     let mut end = end;
                     if end == '\\' {
@@ -629,8 +757,9 @@ where
                         self.iter.next();
                     }
                     if start > end {
-                        // todo: better error message
-                        return Err(ParseError::unexpected(begin_offset, end));
+                        // TODO: better error message (e.g., "start greater than end in range")
+                        // offset - 1, because we already consumed the end char (and its offset)
+                        return Err(ParseError::unexpected(self.peek_index()? - 1, end));
                     }
 
                     self.single_set.add_range(&(start..=end));
@@ -684,7 +813,7 @@ where
 
     fn finalize(mut self) -> (CodePointInversionListBuilder, HashSet<String>) {
         if self.inverted {
-            // code point inversion, removes all strings
+            // code point inversion; removes all strings
             self.multi_set.drain();
             self.single_set.complement();
         }
@@ -692,10 +821,9 @@ where
         (self.single_set, self.multi_set)
     }
 
-    // TODO: Everywhere, check if .is_whitespace() matches :Pattern_White_Space:
     fn skip_whitespace(&mut self) {
         while let Some(&c) = self.peek_char() {
-            if !c.is_whitespace() {
+            if !is_char_pattern_white_space(c) {
                 break;
             }
             self.iter.next();
@@ -714,12 +842,6 @@ where
             .ok_or(ParseError::internal())
     }
 
-    // BELOW IS WRONG, WE CAN HAVE BOTH KINDS AT SAME LEVEL, BUT STILL ONLY NEED op-handling for recursive UNICODE SETS because only UNICODE SETS are allowed to follow an op. others are implicitly additive
-    // actually this might only be needed for processing sequences of ops in the case of a ContainerUnicodeSet, in the case
-    // of a LeafUnicodeSet (i.e., one that contains chars, char ranges and multi codepoint elements), we cannot have other ops
-    // fn process_string(&mut self, s: String) {
-    //     match self.next_op
-    // }
     fn process_strings(&mut self, op: Operation, other_strings: HashSet<String>) {
         match op {
             Operation::Union => self.multi_set.extend(other_strings.into_iter()),
@@ -736,7 +858,7 @@ where
         }
     }
 
-    fn process_chars<'any>(&mut self, op: Operation, other_chars: CodePointInversionList<'any>) {
+    fn process_chars(&mut self, op: Operation, other_chars: CodePointInversionList) {
         match op {
             Operation::Union => self.single_set.add_set(&other_chars),
             Operation::Difference => self.single_set.remove_set(&other_chars),
@@ -771,7 +893,15 @@ where
     }
 }
 
+
+/// Parses a UnicodeSet pattern and returns a UnicodeSet.
+///
+/// Supports a subset of the syntax described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
+///
+/// TODO: more docs here
 pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static>> {
+    // TODO: add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly
+
     // TODO: turn this into an arg
     let provider = icu_testdata::unstable();
 
@@ -779,7 +909,7 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
     let mut builder = UnicodeSetBuilder::new_inner(&mut iter, &provider);
 
     builder.parse_unicode_set()?;
-    let (mut single, multi) = builder.finalize();
+    let (single, multi) = builder.finalize();
     let built_single = single.build();
 
     let mut strings = multi.into_iter().collect::<Vec<_>>();
@@ -806,10 +936,6 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
     let cpinvlistandstrlist = CodePointInversionListAndStringList::try_from(built_single, zerovec)
         .map_err(|_| ParseError::internal())?;
 
-    // todo continue here, build set, return it, impl debug on stuff, and have test run
-
-    // convert builder.single and builder.multi to an actual CodePointInversionListAndStringList
-
     Ok(cpinvlistandstrlist)
 }
 
@@ -834,11 +960,56 @@ mod tests {
         assert_eq!(cpinvlistandstrlist.size(), it_size);
     }
 
+    fn assert_is_error_and_message_eq(source: &str, expected_err: &str) {
+        let result = parse(source);
+        assert!(result.is_err());
+        let err = result.unwrap_err();
+        assert_eq!(err.fmt_with_source(source).to_string(), expected_err);
+    }
+
     #[test]
     fn test_parse() {
         let parsed = parse("[a-z]").unwrap();
         let v: Vec<String> = vec![];
         assert_contains(&parsed, 'a'..='z', v.iter().map(|s| s.as_str()));
+    }
+
+    #[test]
+    fn test_error_messages() {
+        let cases = [
+            (r"[a-z[\]]", r"[a-z[\]]<-- error: unexpected end of input"),
+            (r"", r"<-- error: unexpected end of input"),
+            (r"[{]", r"[{]<-- error: unexpected character ']'"),
+            (
+                r"[:general_category:]",
+                r"[:general_category<-- error: unknown property",
+            ),
+            (r"[:ll=true:]", r"[:ll=true<-- error: unknown property"),
+            (r"[:=", r"[:=<-- error: unexpected character '='"),
+            (r"[\xag]", r"[\xag<-- error: unexpected character 'g'"),
+            (r"[\x{61 2 3}]", r"[\x{<-- error: unimplemented"),
+            (
+                r"[{this is a minus -}]",
+                r"[{this is a minus -<-- error: unexpected character '-'",
+            ),
+            (r"[--]", r"[--<-- error: unexpected character '-'"),
+            (r"[a-z-]", r"[a-z-<-- error: unexpected character '-'"),
+            // TODO: might be better as "[a-\p<-- error: unexpected character 'p'"
+            (r"[a-\p{ll}]", r"[a-\<-- error: unexpected character '\\'"),
+            (r"[a-&]", r"[a-&<-- error: unexpected character '&'"),
+            (r"[a&b]", r"[a&<-- error: unexpected character '&'"),
+            (r"[[set]&b]", r"[[set]&b<-- error: unexpected character 'b'"),
+            (r"[[set]&]", r"[[set]&]<-- error: unexpected character ']'"),
+            (r"[a-\x60]", r"[a-\x60<-- error: unexpected character '`'"),
+            (r"[a-`]", r"[a-`<-- error: unexpected character '`'"),
+            // > 1 byte in UTF-8 edge case
+            (r"ä", r"ä<-- error: unexpected character 'ä'"),
+            (r"[\xe5-\xe4]", r"[\xe5-\xe4<-- error: unexpected character 'ä'"),
+            (r"[\xe5-ä]", r"[\xe5-ä<-- error: unexpected character 'ä'"),
+        ];
+        for (source, expected_err) in cases {
+            assert_is_error_and_message_eq(source, expected_err);
+        }
     }
 
     // TODO: delete
@@ -866,68 +1037,3 @@ mod tests {
         parse(r"[\x61{\x61 \U00000308}]").unwrap();
     }
 }
-
-// fn parse_unicode_set(source: &str) -> Result<ParsedUnicodeSet, ParseError> {
-//     let mut it = source.char_indices().peekable();
-
-// }
-
-// // https://www.unicode.org/reports/tr35/#Unicode_Sets
-// // Only ECMA-262 properties are supported at the moment
-// pub fn parse_unicode_set_unstable<P>(provider: &P, source: &str) -> Result<ParsedUnicodeSet, ParseError>
-// where
-//     P: ?Sized
-//         + DataProvider<AsciiHexDigitV1Marker>
-//         + DataProvider<AlphabeticV1Marker>
-//         + DataProvider<BidiControlV1Marker>
-//         + DataProvider<BidiMirroredV1Marker>
-//         + DataProvider<CaseIgnorableV1Marker>
-//         + DataProvider<CasedV1Marker>
-//         + DataProvider<ChangesWhenCasefoldedV1Marker>
-//         + DataProvider<ChangesWhenCasemappedV1Marker>
-//         + DataProvider<ChangesWhenLowercasedV1Marker>
-//         + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-//         + DataProvider<ChangesWhenTitlecasedV1Marker>
-//         + DataProvider<ChangesWhenUppercasedV1Marker>
-//         + DataProvider<DashV1Marker>
-//         + DataProvider<DefaultIgnorableCodePointV1Marker>
-//         + DataProvider<DeprecatedV1Marker>
-//         + DataProvider<DiacriticV1Marker>
-//         + DataProvider<EmojiV1Marker>
-//         + DataProvider<EmojiComponentV1Marker>
-//         + DataProvider<EmojiModifierV1Marker>
-//         + DataProvider<EmojiModifierBaseV1Marker>
-//         + DataProvider<EmojiPresentationV1Marker>
-//         + DataProvider<ExtendedPictographicV1Marker>
-//         + DataProvider<ExtenderV1Marker>
-//         + DataProvider<GraphemeBaseV1Marker>
-//         + DataProvider<GraphemeExtendV1Marker>
-//         + DataProvider<HexDigitV1Marker>
-//         + DataProvider<IdsBinaryOperatorV1Marker>
-//         + DataProvider<IdsTrinaryOperatorV1Marker>
-//         + DataProvider<IdContinueV1Marker>
-//         + DataProvider<IdStartV1Marker>
-//         + DataProvider<IdeographicV1Marker>
-//         + DataProvider<JoinControlV1Marker>
-//         + DataProvider<LogicalOrderExceptionV1Marker>
-//         + DataProvider<LowercaseV1Marker>
-//         + DataProvider<MathV1Marker>
-//         + DataProvider<NoncharacterCodePointV1Marker>
-//         + DataProvider<PatternSyntaxV1Marker>
-//         + DataProvider<PatternWhiteSpaceV1Marker>
-//         + DataProvider<QuotationMarkV1Marker>
-//         + DataProvider<RadicalV1Marker>
-//         + DataProvider<RegionalIndicatorV1Marker>
-//         + DataProvider<SentenceTerminalV1Marker>
-//         + DataProvider<SoftDottedV1Marker>
-//         + DataProvider<TerminalPunctuationV1Marker>
-//         + DataProvider<UnifiedIdeographV1Marker>
-//         + DataProvider<UppercaseV1Marker>
-//         + DataProvider<VariationSelectorV1Marker>
-//         + DataProvider<WhiteSpaceV1Marker>
-//         + DataProvider<XidContinueV1Marker>
-//         + DataProvider<XidStartV1Marker>,
-// {
-//     // Hmm... how to factor out the data loading if the function I want to use uses a DataProvider interface.
-
-// }
