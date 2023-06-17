@@ -1,9 +1,5 @@
 use std::fmt::Display;
-use std::{
-    collections::HashSet,
-    iter::Peekable,
-    str::{CharIndices, Chars},
-};
+use std::{collections::HashSet, iter::Peekable, str::CharIndices};
 
 use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
@@ -11,13 +7,9 @@ use icu_collections::{
 };
 use icu_properties::maps::{load_general_category, load_script};
 use icu_properties::provider::*;
-use icu_properties::script::{load_script_with_extensions_unstable, ScriptWithExtensions};
-use icu_properties::sets::{
-    load_for_ecma262_unstable, load_for_general_category_group, CodePointSetData,
-};
+use icu_properties::sets::{load_for_ecma262_unstable, CodePointSetData};
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
-use zerovec::VarZeroVec;
 
 // Parses UnicodeSets
 
@@ -529,12 +521,12 @@ where
     // parses [0-9a-fA-F]{N}
     fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[char; N]> {
         let mut result = [0 as char; N];
-        for i in 0..N {
+        for slot in result.iter_mut() {
             let (offset, c) = self.iter.next().ok_or(ParseError::eof())?;
             if !c.is_ascii_hexdigit() {
                 return Err(ParseError::unexpected(offset, c));
             }
-            result[i] = c;
+            *slot = c;
         }
         Ok(result)
     }
@@ -702,9 +694,8 @@ where
                 match (state, self.peek_char()) {
                     (_, None) => return Err(ParseError::eof()),
                     (Begin | Char | AfterUnicodeSet | AfterOp, Some(_)) => {
-                        if let Some(prev) = prev_char {
+                        if let Some(prev) = prev_char.take() {
                             self.single_set.add_char(prev);
-                            prev_char = None;
                         }
 
                         let mut inner_builder =
@@ -728,9 +719,8 @@ where
                 (_, None) => return Err(ParseError::eof()),
                 (Begin | Char | AfterUnicodeSet, Some(']')) => {
                     self.iter.next();
-                    if let Some(prev) = prev_char {
+                    if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
-                        prev_char = None;
                     }
 
                     return Ok(());
@@ -742,7 +732,7 @@ where
                     } else {
                         self.iter.next();
                     }
-                    if let Some(prev) = prev_char {
+                    if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
                     prev_char = Some(c);
@@ -767,9 +757,8 @@ where
                     state = Begin;
                 }
                 (Begin | Char | AfterUnicodeSet, Some(&'{')) => {
-                    if let Some(prev) = prev_char {
+                    if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
-                        prev_char = None;
                     }
 
                     self.parse_multi()?;
