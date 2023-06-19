@@ -492,7 +492,7 @@ where
 
             match self.peek_char() {
                 None => return Err(ParseError::eof()),
-                Some(c) if *c == '}' => {
+                Some(&c) if c == '}' => {
                     self.iter.next();
                     break;
                 }
