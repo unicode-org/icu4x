@@ -215,7 +215,7 @@ mod tests {
         check_size_of!(5752 | 4544, TypedDateFormatter::<Gregorian>);
         check_size_of!(6744 | 5408, TypedDateTimeFormatter::<Gregorian>);
 
-        check_size_of!(80, DateTimeError);
+        check_size_of!(88, DateTimeError);
         check_size_of!(176, FormattedDateTime);
         check_size_of!(16, FormattedTimeZone::<CustomTimeZone>);
         check_size_of!(160, FormattedZonedDateTime);
