@@ -961,6 +961,26 @@ where
 /// assert!(set.contains_range(&elements));
 /// assert_eq!(elements.count(), set.size());
 /// ```
+/// 
+/// Inversions remove strings
+/// ```
+/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
+/// 
+/// let set = parse_unstable(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// assert!(set.contains_char('z'));
+/// assert_eq!(set.size(), 1);
+/// assert!(!set.has_strings());
+/// ```
+/// 
+/// Set operators (including the implicit union) have the same precedence and are left-associative
+/// ```
+/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
+/// 
+/// let set = parse_unstable("[[ace][bdf] - [abc][def]]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let elements = 'd'..='f';
+/// assert!(set.contains_range(&elements));
+/// assert_eq!(set.size(), elements.count());
+/// ```
 pub fn parse_unstable<P>(
     source: &str,
     options: UnicodeSetBuilderOptions,
