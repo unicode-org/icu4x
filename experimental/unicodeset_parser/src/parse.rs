@@ -308,7 +308,7 @@ where
         iter: &'b mut Peekable<CharIndices<'a>>,
         options: UnicodeSetBuilderOptions,
         provider: &'c P,
-    ) -> UnicodeSetBuilder<'a, 'b, 'c, P> {
+    ) -> Self {
         UnicodeSetBuilder {
             single_set: CodePointInversionListBuilder::new(),
             multi_set: Default::default(),
