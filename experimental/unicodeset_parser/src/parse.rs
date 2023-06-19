@@ -68,51 +68,6 @@ pub struct ParseError {
 type Result<T, E = ParseError> = core::result::Result<T, E>;
 
 impl ParseError {
-    // fn new_with_offset(offset: usize, kind: ParseErrorKind) -> Self {
-    //     ParseError {
-    //         offset: Some(offset),
-    //         kind,
-    //     }
-    // }
-
-    // fn new_without_offset(kind: ParseErrorKind) -> Self {
-    //     ParseError { offset: None, kind }
-    // }
-
-    fn or_with_offset(self, offset: usize) -> Self {
-        match self.offset {
-            Some(_) => self,
-            None => ParseError {
-                offset: Some(offset),
-                ..self
-            },
-        }
-    }
-
-    // fn eof() -> Self {
-    //     Self::new_without_offset(ParseErrorKind::Eof)
-    // }
-
-    // fn unexpected(offset: usize, c: char) -> Self {
-    //     Self::new_with_offset(offset, ParseErrorKind::UnexpectedChar(c))
-    // }
-
-    // fn internal() -> Self {
-    //     Self::new_without_offset(ParseErrorKind::Internal)
-    // }
-
-    // fn unknown_property() -> Self {
-    //     Self::new_without_offset(ParseErrorKind::UnknownProperty)
-    // }
-
-    // fn unimplemented(offset: usize) -> Self {
-    //     Self::new_with_offset(offset, ParseErrorKind::Unimplemented)
-    // }
-
-    // fn invalid_escape(offset: usize) -> Self {
-    //     Self::new_with_offset(offset, ParseErrorKind::InvalidEscape)
-    // }
-
     /// Pretty-prints this error and if applicable, shows where the error occurred in the source.
     ///
     /// Must be called with the same source that was used to parse the set.
@@ -200,6 +155,16 @@ impl ParseError {
     /// Returns the [`ParseErrorKind`] of this error.
     pub fn kind(&self) -> ParseErrorKind {
         self.kind
+    }
+
+    fn or_with_offset(self, offset: usize) -> Self {
+        match self.offset {
+            Some(_) => self,
+            None => ParseError {
+                offset: Some(offset),
+                ..self
+            },
+        }
     }
 }
 
@@ -700,6 +665,7 @@ where
 
         let (set, inverted) = self
             .load_property_codepoints(&key_buffer, &value_buffer)
+            // any error that does not already have an offset should use the appropriate property offset
             .map_err(|e| e.or_with_offset(property_offset))?;
         if inverted {
             self.inverted = !self.inverted;
