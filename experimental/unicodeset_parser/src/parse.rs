@@ -384,7 +384,6 @@ where
 
         loop {
             self.skip_whitespace();
-            eprintln!("state: {:?}, next: {:?}", state, self.peek_char());
 
             // handling unicodesets separately, because of ambiguity between escaped characters and perl property names
             if self.peek_unicode_set_start() {
