@@ -35,6 +35,25 @@ pub enum ParseErrorKind {
     /// The provided escape sequence is not a valid Unicode code point.
     InvalidEscape,
 }
+use ParseErrorKind as PEK;
+
+impl ParseErrorKind {
+    fn with_offset(self, offset: usize) -> ParseError {
+        ParseError {
+            offset: Some(offset),
+            kind: self,
+        }
+    }
+}
+
+impl From<ParseErrorKind> for ParseError {
+    fn from(kind: ParseErrorKind) -> Self {
+        ParseError {
+            offset: None,
+            kind
+        }
+    }
+}
 
 /// The error type returned by the `parse` functions in this crate.
 ///
@@ -52,16 +71,16 @@ pub struct ParseError {
 type Result<T, E = ParseError> = core::result::Result<T, E>;
 
 impl ParseError {
-    fn new_with_offset(offset: usize, kind: ParseErrorKind) -> Self {
-        ParseError {
-            offset: Some(offset),
-            kind,
-        }
-    }
+    // fn new_with_offset(offset: usize, kind: ParseErrorKind) -> Self {
+    //     ParseError {
+    //         offset: Some(offset),
+    //         kind,
+    //     }
+    // }
 
-    fn new_without_offset(kind: ParseErrorKind) -> Self {
-        ParseError { offset: None, kind }
-    }
+    // fn new_without_offset(kind: ParseErrorKind) -> Self {
+    //     ParseError { offset: None, kind }
+    // }
 
     fn or_with_offset(self, offset: usize) -> Self {
         match self.offset {
@@ -73,29 +92,29 @@ impl ParseError {
         }
     }
 
-    fn eof() -> Self {
-        Self::new_without_offset(ParseErrorKind::Eof)
-    }
+    // fn eof() -> Self {
+    //     Self::new_without_offset(ParseErrorKind::Eof)
+    // }
 
-    fn unexpected(offset: usize, c: char) -> Self {
-        Self::new_with_offset(offset, ParseErrorKind::UnexpectedChar(c))
-    }
+    // fn unexpected(offset: usize, c: char) -> Self {
+    //     Self::new_with_offset(offset, ParseErrorKind::UnexpectedChar(c))
+    // }
 
-    fn internal() -> Self {
-        Self::new_without_offset(ParseErrorKind::Internal)
-    }
+    // fn internal() -> Self {
+    //     Self::new_without_offset(ParseErrorKind::Internal)
+    // }
 
-    fn unknown_property() -> Self {
-        Self::new_without_offset(ParseErrorKind::UnknownProperty)
-    }
+    // fn unknown_property() -> Self {
+    //     Self::new_without_offset(ParseErrorKind::UnknownProperty)
+    // }
 
-    fn unimplemented(offset: usize) -> Self {
-        Self::new_with_offset(offset, ParseErrorKind::Unimplemented)
-    }
+    // fn unimplemented(offset: usize) -> Self {
+    //     Self::new_with_offset(offset, ParseErrorKind::Unimplemented)
+    // }
 
-    fn invalid_escape(offset: usize) -> Self {
-        Self::new_with_offset(offset, ParseErrorKind::InvalidEscape)
-    }
+    // fn invalid_escape(offset: usize) -> Self {
+    //     Self::new_with_offset(offset, ParseErrorKind::InvalidEscape)
+    // }
 
     /// Pretty-prints this error and if applicable, shows where the error occurred in the source.
     ///
@@ -322,7 +341,7 @@ where
     // the entry point, parses a full UnicodeSet. ignores remaining input
     fn parse_unicode_set(&mut self) -> Result<()> {
         match self.peek_char() {
-            None => Err(ParseError::eof()),
+            None => Err(PEK::Eof.into()),
             Some('\\') => self.parse_property_perl(),
             Some('[') => {
                 self.iter.next();
@@ -332,7 +351,7 @@ where
                     self.parse_unicode_set_inner()
                 }
             }
-            Some(&c) => Err(ParseError::unexpected(self.peek_index()?, c)),
+            Some(&c) => self.error_here(PEK::UnexpectedChar(c)),
         }
     }
 
@@ -340,7 +359,7 @@ where
     fn parse_unicode_set_inner(&mut self) -> Result<()> {
         // special cases for the first char after [
         match self.peek_char() {
-            None => return Err(ParseError::eof()),
+            None => return Err(PEK::Eof.into()),
             Some(&'^') => {
                 self.iter.next();
                 self.inverted = true;
@@ -388,7 +407,7 @@ where
             // handling unicodesets separately, because of ambiguity between escaped characters and perl property names
             if self.peek_unicode_set_start() {
                 match (state, self.peek_char()) {
-                    (_, None) => return Err(ParseError::eof()),
+                    (_, None) => return Err(PEK::Eof.into()),
                     // parse a recursive unicode set
                     (Begin | Char | AfterUnicodeSet | AfterOp, Some(_)) => {
                         if let Some(prev) = prev_char.take() {
@@ -409,14 +428,14 @@ where
 
                         state = AfterUnicodeSet;
                     }
-                    (_, Some(&c)) => return Err(ParseError::unexpected(self.peek_index()?, c)),
+                    (_, Some(&c)) => return self.error_here(PEK::UnexpectedChar(c)),
                 }
                 continue;
             }
 
             // note: no UnicodeSets can occur in this match block, as they would've been caught by the above match
             match (state, self.peek_char()) {
-                (_, None) => return Err(ParseError::eof()),
+                (_, None) => return Err(PEK::Eof.into()),
                 // parse the end of this unicode set
                 (Begin | Char | AfterUnicodeSet, Some(']')) => {
                     self.iter.next();
@@ -437,12 +456,12 @@ where
                 }
                 // parse a literal char as the end of a range
                 (CharMinus, Some(&c)) if legal_char_start(c) => {
-                    let start = prev_char.ok_or(ParseError::internal())?;
+                    let start = prev_char.ok_or(PEK::Eof)?;
                     let end = self.parse_char(self.options.dollar_is_anchor)?;
                     if start > end {
                         // TODO: better error message (e.g., "start greater than end in range")
                         // note: offset - 1, because we already consumed the end char (and its offset)
-                        return Err(ParseError::unexpected(self.peek_index()? - 1, end));
+                        return Err(PEK::UnexpectedChar(end).with_offset(self.peek_index()? - 1));
                     }
 
                     self.single_set.add_range(&(start..=end));
@@ -475,7 +494,7 @@ where
                     operation = Operation::Intersection;
                     state = AfterOp;
                 }
-                (_, Some(&c)) => return Err(ParseError::unexpected(self.peek_index()?, c)),
+                (_, Some(&c)) => return self.error_here(PEK::UnexpectedChar(c)),
             }
         }
     }
@@ -491,7 +510,7 @@ where
             self.skip_whitespace();
 
             match self.peek_char() {
-                None => return Err(ParseError::eof()),
+                None => return Err(PEK::Eof.into()),
                 Some(&c) if c == '}' => {
                     self.iter.next();
                     break;
@@ -501,7 +520,7 @@ where
                     let c = self.parse_char(false)?;
                     buffer.push(c);
                 }
-                Some(&c) => return Err(ParseError::unexpected(self.peek_index()?, c)),
+                Some(&c) => return self.error_here(PEK::UnexpectedChar(c)),
             }
         }
 
@@ -523,7 +542,7 @@ where
     fn parse_escaped_char(&mut self) -> Result<char> {
         self.consume('\\')?;
 
-        let (offset, next_char) = self.iter.next().ok_or(ParseError::eof())?;
+        let (offset, next_char) = self.iter.next().ok_or(PEK::Eof)?;
 
         match next_char {
             'u' | 'x' if self.peek_char() == Some(&'{') => {
@@ -532,8 +551,8 @@ where
                 self.skip_whitespace();
                 let (hex_digits, end_offset) = self.parse_variable_length_hex()?;
                 let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
-                let c = char::try_from(num).map_err(|_| ParseError::invalid_escape(end_offset))?;
+                    u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                let c = char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
                 self.skip_whitespace();
                 self.consume('}')?;
                 Ok(c)
@@ -543,16 +562,16 @@ where
                 let exact: [char; 4] = self.parse_exact_hex_digits()?;
                 let hex_digits = exact.iter().collect::<String>();
                 let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
-                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
+                    u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'x' => {
                 // 'x' hex{2}
                 let exact: [char; 2] = self.parse_exact_hex_digits()?;
                 let hex_digits = exact.iter().collect::<String>();
                 let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
-                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
+                    u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'U' => {
                 // 'U00' ('0' hex{5} | '10' hex{4})
@@ -570,17 +589,17 @@ where
                         let exact: [char; 4] = self.parse_exact_hex_digits()?;
                         ['1', '0'].iter().chain(exact.iter()).collect::<String>()
                     }
-                    Some(&c) => return Err(ParseError::unexpected(self.peek_index()?, c)),
-                    None => return Err(ParseError::eof()),
+                    Some(&c) => return self.error_here(PEK::UnexpectedChar(c)),
+                    None => return Err(PEK::Eof.into()),
                 };
                 let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
-                char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
+                    u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'N' => {
                 // parse code point with name in {}
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
-                Err(ParseError::unimplemented(offset))
+                Err(PEK::Unimplemented.with_offset(offset))
             }
             'a' => Ok('\u{0007}'),
             'b' => Ok('\u{0008}'),
@@ -597,7 +616,7 @@ where
     fn parse_property_posix(&mut self) -> Result<()> {
         self.consume(':')?;
         match self.peek_char() {
-            None => return Err(ParseError::eof()),
+            None => return Err(PEK::Eof.into()),
             Some(&'^') => {
                 self.inverted = true;
                 self.iter.next();
@@ -616,10 +635,10 @@ where
     fn parse_property_perl(&mut self) -> Result<()> {
         self.consume('\\')?;
         match self.iter.next() {
-            None => return Err(ParseError::eof()),
+            None => return Err(PEK::Eof.into()),
             Some((_, 'p')) => {}
             Some((_, 'P')) => self.inverted = true,
-            Some((offset, c)) => return Err(ParseError::unexpected(offset, c)),
+            Some((offset, c)) => return Err(PEK::UnexpectedChar(c).with_offset(offset)),
         }
         self.consume('{')?;
 
@@ -658,7 +677,7 @@ where
         loop {
             self.skip_whitespace();
             match (state, self.peek_char()) {
-                (_, None) => return Err(ParseError::eof()),
+                (_, None) => return Err(PEK::Eof.into()),
                 // parse the end of the property expression
                 (PropertyName | PropertyValue, Some(c)) if *c == end => {
                     // byte index of (full) property name/value is one back
@@ -684,7 +703,7 @@ where
                     self.iter.next();
                     state = PropertyValue;
                 }
-                (_, Some(&c)) => return Err(ParseError::unexpected(self.peek_index()?, c)),
+                (_, Some(&c)) => return self.error_here(PEK::UnexpectedChar(c)),
             }
         }
 
@@ -742,12 +761,12 @@ where
                 _ => {
                     // try prop = truthy/falsy case
                     let set = load_for_ecma262_unstable(self.property_provider, key)
-                        .map_err(|_| ParseError::unknown_property())?;
+                        .map_err(|_| PEK::UnknownProperty)?;
                     let normalized_value = value.to_ascii_lowercase();
                     let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
                     let falsy = matches!(normalized_value.as_str(), "false" | "f" | "no" | "n");
                     if truthy == falsy {
-                        return Err(ParseError::unknown_property());
+                        return Err(PEK::UnknownProperty.into());
                     }
                     inverted = falsy;
                     set
@@ -795,7 +814,7 @@ where
     // parses either a raw char or an escaped char. all chars are allowed.
     // anchor_allowed determines whether $ is interpreted as $ or as \uFFFF
     fn parse_char(&mut self, anchor_allowed: bool) -> Result<char> {
-        let &c = self.peek_char().ok_or(ParseError::eof())?;
+        let &c = self.peek_char().ok_or(PEK::Eof)?;
         match c {
             '\\' => self.parse_escaped_char(),
             '$' if anchor_allowed => {
@@ -822,8 +841,8 @@ where
             self.iter.next();
         }
         if result.is_empty() {
-            let &(unexpected_offset, unexpected_char) = self.iter.peek().ok_or(ParseError::eof())?;
-            return Err(ParseError::unexpected(unexpected_offset, unexpected_char));
+            let &(unexpected_offset, unexpected_char) = self.iter.peek().ok_or(PEK::Eof)?;
+            return Err(PEK::UnexpectedChar(unexpected_char).with_offset(unexpected_offset));
         }
         Ok((result, end_offset))
     }
@@ -832,9 +851,9 @@ where
     fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[char; N]> {
         let mut result = [0 as char; N];
         for slot in result.iter_mut() {
-            let (offset, c) = self.iter.next().ok_or(ParseError::eof())?;
+            let (offset, c) = self.iter.next().ok_or(PEK::Eof)?;
             if !c.is_ascii_hexdigit() {
-                return Err(ParseError::unexpected(offset, c));
+                return Err(PEK::UnexpectedChar(c).with_offset(offset));
             }
             *slot = c;
         }
@@ -852,8 +871,8 @@ where
 
     fn consume(&mut self, expected: char) -> Result<()> {
         match self.iter.next() {
-            None => Err(ParseError::eof()),
-            Some((offset, c)) if c != expected => Err(ParseError::unexpected(offset, c)),
+            None => Err(PEK::Eof.into()),
+            Some((offset, c)) if c != expected => Err(PEK::UnexpectedChar(c).with_offset(offset)),
             _ => Ok(()),
         }
     }
@@ -867,7 +886,15 @@ where
         self.iter
             .peek()
             .map(|&(idx, _)| idx)
-            .ok_or(ParseError::internal())
+            .ok_or(PEK::Eof.into())
+    }
+    
+    #[inline]
+    fn error_here<T>(&mut self, kind: ParseErrorKind) -> Result<T> {
+        match self.iter.peek() {
+            None => Err(kind.into()),
+            Some(&(offset, _)) => Err(kind.with_offset(offset)),
+        }
     }
 
     fn process_strings(&mut self, op: Operation, other_strings: HashSet<String>) {
@@ -896,26 +923,26 @@ where
 
     fn try_load_general_category(&self, name: &str) -> Result<CodePointSetData> {
         let name_map = GeneralCategory::get_name_to_enum_mapper(self.property_provider)
-            .map_err(|_| ParseError::internal())?;
+            .map_err(|_| PEK::Internal)?;
         let gc_value = name_map
             .as_borrowed()
             .get_loose(name)
-            .ok_or(ParseError::unknown_property())?;
+            .ok_or(PEK::UnknownProperty)?;
         let property_map =
-            load_general_category(self.property_provider).map_err(|_| ParseError::internal())?;
+            load_general_category(self.property_provider).map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(gc_value);
         Ok(set)
     }
 
     fn try_load_script(&self, name: &str) -> Result<CodePointSetData> {
         let name_map = Script::get_name_to_enum_mapper(self.property_provider)
-            .map_err(|_| ParseError::internal())?;
+            .map_err(|_| PEK::Internal)?;
         let sc_value = name_map
             .as_borrowed()
             .get_loose(name)
-            .ok_or(ParseError::unknown_property())?;
+            .ok_or(PEK::UnknownProperty)?;
         let property_map =
-            load_script(self.property_provider).map_err(|_| ParseError::internal())?;
+            load_script(self.property_provider).map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(sc_value);
         Ok(set)
     }
@@ -1062,7 +1089,7 @@ where
     let zerovec = (&strings).into();
 
     let cpinvlistandstrlist = CodePointInversionListAndStringList::try_from(built_single, zerovec)
-        .map_err(|_| ParseError::internal())?;
+        .map_err(|_| PEK::Internal)?;
 
     Ok(cpinvlistandstrlist)
 }
