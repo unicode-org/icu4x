@@ -470,12 +470,12 @@ where
             self.skip_whitespace();
 
             match self.must_peek_char()? {
-                &c if c == '}' => {
+                '}' => {
                     self.iter.next();
                     break;
                 }
                 &c if legal_char_start(c) => {
-                    // '$' in multi-codepoint-sequences is not an anchor, no matter what
+                    // '$' in multi-codepoint-sequences is not an anchor, no matter what the option is set to
                     let c = self.parse_char(false)?;
                     buffer.push(c);
                 }
