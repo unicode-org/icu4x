@@ -204,11 +204,10 @@ fn is_char_pattern_white_space(c: char) -> bool {
 }
 
 // this ignores the ambiguity between \escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
+// returns whether the provided char signifies the start of a literal char (raw or escaped - so \ is a legal char start)
 fn legal_char_start(c: char) -> bool {
     !(c == '&'
             || c == '-'
-            // \ is legal because it starts an escape sequence
-            // || c == '\\'
             || c == '['
             || c == ']'
             || c == '{'
@@ -391,6 +390,7 @@ where
             if self.peek_unicode_set_start() {
                 match (state, self.peek_char()) {
                     (_, None) => return Err(ParseError::eof()),
+                    // parse a recursive unicode set
                     (Begin | Char | AfterUnicodeSet | AfterOp, Some(_)) => {
                         if let Some(prev) = prev_char.take() {
                             self.single_set.add_char(prev);
@@ -418,6 +418,7 @@ where
             // note: no UnicodeSets can occur in this match block, as they would've been caught by the above match
             match (state, self.peek_char()) {
                 (_, None) => return Err(ParseError::eof()),
+                // parse the end of this unicode set
                 (Begin | Char | AfterUnicodeSet, Some(']')) => {
                     self.iter.next();
                     if let Some(prev) = prev_char.take() {
@@ -426,6 +427,7 @@ where
 
                     return Ok(());
                 }
+                // parse a literal char (either individually or as the start of a range)
                 (Begin | Char | AfterUnicodeSet, Some(&c)) if legal_char_start(c) => {
                     let c = self.parse_char(self.options.dollar_is_anchor)?;
                     if let Some(prev) = prev_char.take() {
@@ -434,6 +436,7 @@ where
                     prev_char = Some(c);
                     state = Char;
                 }
+                // parse a literal char as the end of a range
                 (CharMinus, Some(&c)) if legal_char_start(c) => {
                     let start = prev_char.ok_or(ParseError::internal())?;
                     let end = self.parse_char(self.options.dollar_is_anchor)?;
@@ -447,6 +450,7 @@ where
                     prev_char = None;
                     state = Begin;
                 }
+                // parse a multi-codepoint-sequence
                 (Begin | Char | AfterUnicodeSet, Some(&'{')) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
@@ -455,15 +459,18 @@ where
                     self.parse_multi()?;
                     state = Begin;
                 }
+                // start parsing a char range
                 (Char, Some('-')) => {
                     self.iter.next();
                     state = CharMinus;
                 }
+                // start parsing a unicode set difference
                 (AfterUnicodeSet, Some(&'-')) => {
                     self.iter.next();
                     operation = Operation::Difference;
                     state = AfterOp;
                 }
+                // start parsing a unicode set difference
                 (AfterUnicodeSet, Some(&'&')) => {
                     self.iter.next();
                     operation = Operation::Intersection;
@@ -654,22 +661,26 @@ where
             self.skip_whitespace();
             match (state, self.peek_char()) {
                 (_, None) => return Err(ParseError::eof()),
+                // parse the end of the property expression
                 (PropertyName | PropertyValue, Some(c)) if *c == end => {
                     // byte index of (full) property name/value is one back
                     property_offset = self.peek_index()? - 1;
                     self.iter.next();
                     break;
                 }
+                // parse the property name
                 (Begin | PropertyName, Some(&c)) if c.is_ascii_alphanumeric() || c == '_' => {
                     key_buffer.push(c);
                     self.iter.next();
                     state = PropertyName;
                 }
+                // parse the name-value separator
                 (PropertyName, Some(&c @ ('=' | '≠'))) => {
                     equality = c == '=';
                     self.iter.next();
                     state = PropertyValueBegin;
                 }
+                // parse the property value
                 (PropertyValue | PropertyValueBegin, Some(&c)) if c != end => {
                     value_buffer.push(c);
                     self.iter.next();
