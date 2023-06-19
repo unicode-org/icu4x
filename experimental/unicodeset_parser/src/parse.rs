@@ -742,7 +742,7 @@ where
                 //     // the UnicodeSet utils page takes lists of scripts as values, but I'm not sure how to implement that using load_script_with_extensions_unstable.
                 //     // skipped for now.
                 _ => {
-                    // try prop = true case
+                    // try prop = truthy/falsy case
                     let set = load_for_ecma262_unstable(self.property_provider, key)
                         .map_err(|_| ParseError::unknown_property())?;
                     let normalized_value = value.to_ascii_lowercase();
