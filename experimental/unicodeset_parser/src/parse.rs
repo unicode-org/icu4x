@@ -912,6 +912,8 @@ where
 /// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList).
 ///
 /// Supports a subset of the syntax described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
+/// (_Note: This is technically wrong, as we do support `[]` and `[^]`, which is disallowed by UTS35,
+/// as accepted syntax for the empty set and the full (code point) set, respectively._)
 ///
 /// The error type of the returned Result can be pretty-printed with [`ParseError::fmt_with_source`].
 ///
