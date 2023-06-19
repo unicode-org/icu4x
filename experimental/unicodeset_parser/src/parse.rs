@@ -238,64 +238,7 @@ pub struct UnicodeSetBuilderOptions {
 }
 
 // this builds the set on-the-fly while parsing it
-struct UnicodeSetBuilder<'a, 'b, 'c, P>
-where
-    P: ?Sized
-        + DataProvider<AsciiHexDigitV1Marker>
-        + DataProvider<AlphabeticV1Marker>
-        + DataProvider<BidiControlV1Marker>
-        + DataProvider<BidiMirroredV1Marker>
-        + DataProvider<CaseIgnorableV1Marker>
-        + DataProvider<CasedV1Marker>
-        + DataProvider<ChangesWhenCasefoldedV1Marker>
-        + DataProvider<ChangesWhenCasemappedV1Marker>
-        + DataProvider<ChangesWhenLowercasedV1Marker>
-        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-        + DataProvider<ChangesWhenTitlecasedV1Marker>
-        + DataProvider<ChangesWhenUppercasedV1Marker>
-        + DataProvider<DashV1Marker>
-        + DataProvider<DefaultIgnorableCodePointV1Marker>
-        + DataProvider<DeprecatedV1Marker>
-        + DataProvider<DiacriticV1Marker>
-        + DataProvider<EmojiV1Marker>
-        + DataProvider<EmojiComponentV1Marker>
-        + DataProvider<EmojiModifierV1Marker>
-        + DataProvider<EmojiModifierBaseV1Marker>
-        + DataProvider<EmojiPresentationV1Marker>
-        + DataProvider<ExtendedPictographicV1Marker>
-        + DataProvider<ExtenderV1Marker>
-        + DataProvider<GraphemeBaseV1Marker>
-        + DataProvider<GraphemeExtendV1Marker>
-        + DataProvider<HexDigitV1Marker>
-        + DataProvider<IdsBinaryOperatorV1Marker>
-        + DataProvider<IdsTrinaryOperatorV1Marker>
-        + DataProvider<IdContinueV1Marker>
-        + DataProvider<IdStartV1Marker>
-        + DataProvider<IdeographicV1Marker>
-        + DataProvider<JoinControlV1Marker>
-        + DataProvider<LogicalOrderExceptionV1Marker>
-        + DataProvider<LowercaseV1Marker>
-        + DataProvider<MathV1Marker>
-        + DataProvider<NoncharacterCodePointV1Marker>
-        + DataProvider<PatternSyntaxV1Marker>
-        + DataProvider<PatternWhiteSpaceV1Marker>
-        + DataProvider<QuotationMarkV1Marker>
-        + DataProvider<RadicalV1Marker>
-        + DataProvider<RegionalIndicatorV1Marker>
-        + DataProvider<SentenceTerminalV1Marker>
-        + DataProvider<SoftDottedV1Marker>
-        + DataProvider<TerminalPunctuationV1Marker>
-        + DataProvider<UnifiedIdeographV1Marker>
-        + DataProvider<UppercaseV1Marker>
-        + DataProvider<VariationSelectorV1Marker>
-        + DataProvider<WhiteSpaceV1Marker>
-        + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryNameToValueV1Marker>
-        + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
-        + DataProvider<ScriptV1Marker>
-        + DataProvider<XidStartV1Marker>,
-{
+struct UnicodeSetBuilder<'a, 'b, 'c, P: ?Sized> {
     single_set: CodePointInversionListBuilder,
     multi_set: HashSet<String>,
     iter: &'b mut Peekable<CharIndices<'a>>,
