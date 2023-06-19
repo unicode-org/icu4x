@@ -8,7 +8,7 @@ use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap, ZeroSlice};
 
-#[icu_provider::data_struct(AliasesV1Marker = "locid_transform/aliases@1")]
+#[icu_provider::data_struct(marker(AliasesV1Marker, "locid_transform/aliases@1", singleton))]
 #[derive(PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
