@@ -48,10 +48,7 @@ impl ParseErrorKind {
 
 impl From<ParseErrorKind> for ParseError {
     fn from(kind: ParseErrorKind) -> Self {
-        ParseError {
-            offset: None,
-            kind
-        }
+        ParseError { offset: None, kind }
     }
 }
 
@@ -457,7 +454,9 @@ where
                     if start > end {
                         // TODO: better error message (e.g., "start greater than end in range")
                         // note: offset - 1, because we already consumed the end char (and its offset)
-                        return Err(PEK::UnexpectedChar(end).with_offset(self.must_peek_index()? - 1));
+                        return Err(
+                            PEK::UnexpectedChar(end).with_offset(self.must_peek_index()? - 1)
+                        );
                     }
 
                     self.single_set.add_range(&(start..=end));
@@ -545,9 +544,9 @@ where
                 self.iter.next();
                 self.skip_whitespace();
                 let (hex_digits, end_offset) = self.parse_variable_length_hex()?;
-                let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                let c = char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
+                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                let c =
+                    char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
                 self.skip_whitespace();
                 self.consume('}')?;
                 Ok(c)
@@ -556,16 +555,14 @@ where
                 // 'u' hex{4}
                 let exact: [char; 4] = self.parse_exact_hex_digits()?;
                 let hex_digits = exact.iter().collect::<String>();
-                let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
                 char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'x' => {
                 // 'x' hex{2}
                 let exact: [char; 2] = self.parse_exact_hex_digits()?;
                 let hex_digits = exact.iter().collect::<String>();
-                let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
                 char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'U' => {
@@ -586,8 +583,7 @@ where
                     }
                     &c => return self.error_here(PEK::UnexpectedChar(c)),
                 };
-                let num =
-                    u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
                 char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'N' => {
@@ -890,7 +886,7 @@ where
     fn peek_char(&mut self) -> Option<&char> {
         self.iter.peek().map(|(_, c)| c)
     }
-    
+
     #[inline]
     fn error_here<T>(&mut self, kind: ParseErrorKind) -> Result<T> {
         match self.iter.peek() {
@@ -937,14 +933,13 @@ where
     }
 
     fn try_load_script(&self, name: &str) -> Result<CodePointSetData> {
-        let name_map = Script::get_name_to_enum_mapper(self.property_provider)
-            .map_err(|_| PEK::Internal)?;
+        let name_map =
+            Script::get_name_to_enum_mapper(self.property_provider).map_err(|_| PEK::Internal)?;
         let sc_value = name_map
             .as_borrowed()
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
-        let property_map =
-            load_script(self.property_provider).map_err(|_| PEK::Internal)?;
+        let property_map = load_script(self.property_provider).map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(sc_value);
         Ok(set)
     }
