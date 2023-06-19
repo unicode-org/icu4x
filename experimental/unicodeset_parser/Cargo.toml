@@ -31,7 +31,7 @@ icu_provider = { path = "../../provider/core" }
 
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec",  features = ["yoke"] }
-displaydoc = { version = "0.2.3", default-features = false }
+log = "0.4"
 
 [dev-dependencies]
 icu_testdata = { version = "1.2.0", path = "../../provider/testdata" }

@@ -763,6 +763,11 @@ where
     fn finalize(mut self) -> (CodePointInversionListBuilder, HashSet<String>) {
         if self.inverted {
             // code point inversion; removes all strings
+            if !self.multi_set.is_empty() {
+                log::info!(
+                    "Inverting a unicode set with strings. This removes all strings entirely."
+                );
+            }
             self.multi_set.drain();
             self.single_set.complement();
         }
