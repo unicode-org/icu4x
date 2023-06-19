@@ -850,6 +850,7 @@ where
         self.iter.peek().map(|(_, c)| c)
     }
 
+    // TODO: return Result<!> once ! is stable
     #[inline]
     fn error_here<T>(&mut self, kind: ParseErrorKind) -> Result<T> {
         match self.iter.peek() {
