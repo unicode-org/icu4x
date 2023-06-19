@@ -55,7 +55,7 @@ icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider = { path = "../../provider/core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_datetime", "icu_timezone", "icu_calendar", "icu_decimal", "icu_plurals"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_datetime", "icu_timezone", "icu_calendar", "icu_decimal", "icu_plurals", "icu_locid_transform"] }
 litemap = { path = "../../utils/litemap" }
 
 serde = { version = "1.0", features = ["derive"] }
