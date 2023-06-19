@@ -27,6 +27,3 @@
 mod parse;
 
 pub use parse::{parse_unstable, ParseError, ParseErrorKind, UnicodeSetBuilderOptions};
-
-#[cfg(test)]
-mod tests {}
