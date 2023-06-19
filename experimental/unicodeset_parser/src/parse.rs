@@ -141,7 +141,7 @@ impl ParseError {
                 // offset points into the last character we want to include, hence the start of the
                 // first character we want to exclude is at least offset + 1.
                 let mut exclusive_end = offset + 1;
-                // replace this loop with str::ceil_char_boundary once stable
+                // TODO: replace this loop with str::ceil_char_boundary once stable
                 for _ in 0..3 {
                     // is_char_boundary returns true at the latest once exclusive_end == source.len()
                     if source.is_char_boundary(exclusive_end) {

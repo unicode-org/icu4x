@@ -70,6 +70,7 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_personnames",
     "icu_relativetime",
     "icu_compactdecimal",
+    "icu_unicodeset_parser",
 ];
 
 /// Dependencies allowed when opting in to LSTM segmenter
