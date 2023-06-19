@@ -67,7 +67,8 @@ fn test_keyed_data_marker() {
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::FallbackPriority::const_default(),
                         None,
-                        None
+                        None,
+                        false,
                     ));
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
@@ -105,7 +106,8 @@ fn test_multi_named_keyed_data_marker() {
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::FallbackPriority::const_default(),
                         None,
-                        None
+                        None,
+                        false,
                     ));
             }
             #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
@@ -119,7 +121,8 @@ fn test_multi_named_keyed_data_marker() {
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::FallbackPriority::const_default(),
                         None,
-                        None
+                        None,
+                        false,
                     ));
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
@@ -150,7 +153,8 @@ fn test_databake() {
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::FallbackPriority::const_default(),
                         None,
-                        None
+                        None,
+                        false,
                     ));
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
@@ -171,7 +175,8 @@ fn test_attributes() {
                 "demo/bar@1",
                 fallback_by = "region",
                 extension_key = "ca",
-                fallback_supplement = "collation"
+                fallback_supplement = "collation",
+                singleton,
             ),
         ],
         quote!(
@@ -194,7 +199,8 @@ fn test_attributes() {
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::FallbackPriority::Region,
                         Some(icu_provider::_internal::extensions_unicode_key!("ca")),
-                        Some(icu_provider::FallbackSupplement::Collation)
+                        Some(icu_provider::FallbackSupplement::Collation),
+                        true,
                     ));
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
