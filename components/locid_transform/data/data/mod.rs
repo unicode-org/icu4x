@@ -20,6 +20,7 @@ macro_rules! __impl_data_provider {
         impl_locid_transform_likelysubtags_ext_v1!($provider);
         impl_locid_transform_likelysubtags_l_v1!($provider);
         impl_locid_transform_likelysubtags_sr_v1!($provider);
+        impl_locid_transform_script_dir_v1!($provider);
     };
 }
 #[doc(inline)]
@@ -47,6 +48,7 @@ macro_rules! __impl_any_provider {
                 const LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::LikelySubtagsExtendedV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const LOCID_TRANSFORM_SCRIPT_DIR_V1: icu_provider::DataKeyHash = <icu_locid_transform::provider::ScriptDirectionV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
                     FALLBACK_LIKELYSUBTAGS_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     FALLBACK_PARENTS_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::LocaleFallbackParentsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
@@ -55,6 +57,7 @@ macro_rules! __impl_any_provider {
                     LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::LikelySubtagsExtendedV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    LOCID_TRANSFORM_SCRIPT_DIR_V1 => icu_provider::DataProvider::<icu_locid_transform::provider::ScriptDirectionV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }

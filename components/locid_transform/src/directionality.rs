@@ -43,12 +43,37 @@ pub struct LocaleDirectionality {
 }
 
 impl LocaleDirectionality {
-    /// A constructor which takes a [`DataProvider`] and creates a [`LocaleDirectionality`].
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    /// A constructor which creates a [`LocaleDirectionality`].
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        Self {
+            script_direction: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_SCRIPT_DIR_V1,
+            ),
+            expander: LocaleExpander::new(),
+        }
+    }
+
+    // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl AnyProvider + ?Sized),
+    ) -> Result<LocaleDirectionality, LocaleTransformError> {
+        let expander = LocaleExpander::try_new_with_any_provider(provider)?;
+        Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
+    }
+
+    // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new)]
+    #[cfg(feature = "serde")]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<LocaleDirectionality, LocaleTransformError> {
+        let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
+        Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleDirectionality, LocaleTransformError>
     where
         P: DataProvider<ScriptDirectionV1Marker>
@@ -58,25 +83,6 @@ impl LocaleDirectionality {
     {
         let expander = LocaleExpander::try_new_unstable(provider)?;
         Self::try_new_with_expander_unstable(provider, expander)
-    }
-
-    // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
-    #[doc = icu_provider::gen_any_buffer_docs!(ANY, icu_provider, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<LocaleDirectionality, LocaleTransformError> {
-        let expander = LocaleExpander::try_new_with_any_provider(provider)?;
-        Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
-    }
-
-    // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
-    #[doc = icu_provider::gen_any_buffer_docs!(BUFFER, icu_provider, Self::try_new_unstable)]
-    #[cfg(feature = "serde")]
-    pub fn try_new_with_buffer_provider(
-        provider: &(impl BufferProvider + ?Sized),
-    ) -> Result<LocaleDirectionality, LocaleTransformError> {
-        let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
-        Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
     }
 
     /// Creates a [`LocaleDirectionality`] with a custom [`LocaleExpander`] object.

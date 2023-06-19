@@ -12,12 +12,14 @@ use icu_provider::prelude::*;
 
 use super::data::MappingKind;
 use super::exception_helpers::{ExceptionBits, ExceptionSlot, SlotPresence};
+#[cfg(any(feature = "serde", feature = "datagen"))]
 use crate::error::Error;
-use crate::internals::ClosureSet;
+use crate::set::ClosureSet;
+use alloc::borrow::Cow;
 use core::fmt;
+#[cfg(any(feature = "serde", feature = "datagen"))]
 use core::ops::Range;
 use core::ptr;
-use std::borrow::Cow;
 use zerovec::ule::AsULE;
 use zerovec::VarZeroVec;
 
@@ -27,6 +29,12 @@ const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
 /// This represents case mapping exceptions that can't be represented as a delta applied to
 /// the original code point. The codepoint
 /// trie in CaseMapping stores indices into this VarZeroVec.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen", 
@@ -53,6 +61,7 @@ impl<'data> CaseMappingExceptions<'data> {
         exception.unwrap_or(ExceptionULE::empty_exception())
     }
 
+    #[cfg(any(feature = "serde", feature = "datagen"))]
     pub(crate) fn validate(&self) -> Result<Range<u16>, Error> {
         for exception in self.exceptions.iter() {
             exception.validate()?;
@@ -76,8 +85,14 @@ impl<'data> CaseMappingExceptions<'data> {
 /// this type will have GIGO behavior when constructed with invalid `data`.
 ///
 /// The format of `data` is documented on the field
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[zerovec::make_varule(ExceptionULE)]
-#[derive(PartialEq, Eq, Clone, Default)]
+#[derive(PartialEq, Eq, Clone, Default, Debug)]
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(
     feature = "serde",
@@ -335,6 +350,7 @@ impl ExceptionULE {
         }
     }
 
+    #[cfg(any(feature = "serde", feature = "datagen"))]
     pub(crate) fn validate(&self) -> Result<(), Error> {
         // check that ICU4C specific fields are not set
         // check that there is enough space for all the offsets
@@ -371,7 +387,7 @@ impl ExceptionULE {
             if decoded.full.is_some() {
                 let data = self
                     .get_fullmappings_slot_data()
-                    .expect("already known to succeed");
+                    .ok_or(Error::Validation("fullmappings slot doesn't parse"))?;
                 let mut chars = data.chars();
                 let i1 = u32::from(
                     chars
@@ -395,7 +411,8 @@ impl ExceptionULE {
                     ));
                 }
                 let rest = chars.as_str();
-                let len = u32::try_from(rest.len()).unwrap();
+                let len = u32::try_from(rest.len())
+                    .map_err(|_| Error::Validation("len too large for u32"))?;
 
                 if i1 > len || i2 > len || i3 > len {
                     return Err(Error::Validation(
@@ -419,6 +436,12 @@ impl fmt::Debug for ExceptionULE {
 
 /// A decoded [`Exception`] type, with all of the data parsed out into
 /// separate fields.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
@@ -446,7 +469,7 @@ impl<'a> DecodedException<'a> {
     pub fn encode(&self) -> Exception<'static> {
         let bits = self.bits;
         let mut slot_presence = SlotPresence(0);
-        let mut data = String::new();
+        let mut data = alloc::string::String::new();
         if let Some(lowercase) = self.lowercase {
             slot_presence.add_slot(ExceptionSlot::Lower);
             data.push(lowercase)
@@ -469,7 +492,7 @@ impl<'a> DecodedException<'a> {
             if simple_case_delta >= SURROGATES_START {
                 simple_case_delta += SURROGATES_LEN;
             }
-            let simple_case_delta = char::try_from(simple_case_delta).unwrap();
+            let simple_case_delta = char::try_from(simple_case_delta).unwrap_or('\0');
             data.push(simple_case_delta)
         }
 

@@ -97,6 +97,10 @@ serde = [
     "icu_segmenter/serde",
     "icu_timezone/serde",
 ]
+data = [
+    "icu_list/data",
+    "icu_plurals/data",
+]
 serde_human = [
     "icu_list/serde_human"
 ]
@@ -105,11 +109,12 @@ icu_datetime_experimental = [
 ]
 experimental = [
     "icu_casemapping",
+    "icu_compactdecimal",
     "icu_datetime_experimental",
     "icu_displaynames",
     "icu_locid_transform/experimental",
+    "icu_plurals/experimental",
     "icu_relativetime",
-    "icu_compactdecimal",
     "icu_unicodeset_parser",
 ]
 
