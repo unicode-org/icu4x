@@ -917,8 +917,8 @@ where
 /// # Limitations
 ///
 /// * Currently, we only support the [ECMA-262 properties](https://tc39.es/ecma262/#table-nonbinary-unicode-properties) except `Script_Extensions`.
-/// The property names must match the exact spelling listed in ECMA-262. Note that we do support UTS35 syntax for abbreviated `General_Category`
-/// and `Script` property values, i.e., `[:Latn:]` and `[:Ll:]` are both valid, with the former implying the `Script` property, and the latter the
+/// The property names must match the exact spelling listed in ECMA-262. Note that we do support UTS35 syntax for elided `General_Category`
+/// and `Script` property names, i.e., `[:Latn:]` and `[:Ll:]` are both valid, with the former implying the `Script` property, and the latter the
 /// `General_Category` property.
 /// * We do not support `\N{Unicode code point name}` character escaping. Use any other escape method described in UTS35.
 ///
