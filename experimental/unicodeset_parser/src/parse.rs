@@ -36,14 +36,14 @@ pub enum ParseErrorKind {
     InvalidEscape,
 }
 
-/// The error type returned by the `parse` functions in this crate. 
-/// 
+/// The error type returned by the `parse` functions in this crate.
+///
 /// See [`ParseError::fmt_with_source`] for pretty-printing and [`ParseErrorKind`] of the
 /// different types of errors represented by this struct.
 #[derive(Debug, Clone)]
 pub struct ParseError {
     // offset is the index to an arbitrary byte in the last character in the source that makes sense
-    // to display as location for the error, e.g., the unexpected character itself or 
+    // to display as location for the error, e.g., the unexpected character itself or
     // for an unknown property name the last character of the name.
     offset: Option<usize>,
     kind: ParseErrorKind,
@@ -53,17 +53,23 @@ type Result<T, E = ParseError> = core::result::Result<T, E>;
 
 impl ParseError {
     fn new_with_offset(offset: usize, kind: ParseErrorKind) -> Self {
-        ParseError { offset: Some(offset), kind }
+        ParseError {
+            offset: Some(offset),
+            kind,
+        }
     }
 
     fn new_without_offset(kind: ParseErrorKind) -> Self {
-        ParseError{ offset: None, kind }
+        ParseError { offset: None, kind }
     }
 
     fn or_with_offset(self, offset: usize) -> Self {
         match self.offset {
             Some(_) => self,
-            None => ParseError { offset: Some(offset), ..self },
+            None => ParseError {
+                offset: Some(offset),
+                ..self
+            },
         }
     }
 
@@ -143,7 +149,7 @@ impl ParseError {
                     }
                     exclusive_end += 1;
                 }
-                
+
                 // exclusive_end is at most source.len() due to str::is_char_boundary and at least 0 by type
                 #[allow(clippy::indexing_slicing)]
                 s.push_str(&source[..exclusive_end]);
@@ -556,10 +562,10 @@ where
             (Some(single_char), None) => {
                 // multi-codepoint-sequences containing a single char are interpreted as a single char
                 self.single_set.add_char(single_char);
-            },
+            }
             _ => {
                 self.multi_set.insert(buffer);
-            },
+            }
         }
 
         Ok(())
@@ -961,41 +967,41 @@ where
 /// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList).
 ///
 /// Supports a subset of the syntax described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
-/// 
+///
 /// The error type of the returned Result can be pretty-printed with [`ParseError::fmt_with_source`].
 ///
 /// # Limitations
-/// 
-/// * Currently, we only support the [ECMA-262 properties](https://tc39.es/ecma262/#table-nonbinary-unicode-properties) except `Script_Extensions`. 
+///
+/// * Currently, we only support the [ECMA-262 properties](https://tc39.es/ecma262/#table-nonbinary-unicode-properties) except `Script_Extensions`.
 /// The property names must match the exact spelling listed in ECMA-262. Note that we do support UTS35 syntax for abbreviated `General_Category`
 /// and `Script` property values, i.e., `[:Latn:]` and `[:Ll:]` are both valid, with the former implying the `Script` property, and the latter the
 /// `General_Category` property.
 /// * We do not support `\N{Unicode code point name}` character escaping. Use any other escape method described in UTS35.
-/// 
+///
 /// # Stability
-/// 
+///
 /// [📚 Help choosing a constructor](icu_provider::constructors)
 /// <div class="stab unstable">
 /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
 /// </div>
-/// 
+///
 /// # Examples
-/// 
+///
 /// Parse ranges
 /// ```
 /// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
-/// 
+///
 /// let set = parse("[a-zA-Z0-9]", Default::default(), &icu_testdata::unstable()).unwrap();
-/// 
+///
 /// assert!(set.contains_range(&('a'..='z')));
 /// assert!(set.contains_range(&('A'..='Z')));
 /// assert!(set.contains_range(&('0'..='9')));
 /// ```
-/// 
+///
 /// Parse properties, set operations, inner sets
 /// ```
 /// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
-/// 
+///
 /// let set = parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]", Default::default(), &icu_testdata::unstable()).unwrap();
 /// let elements = 'a'..='z';
 /// assert!(set.contains_range(&elements));
@@ -1062,7 +1068,7 @@ where
         + DataProvider<ScriptNameToValueV1Marker>
         + DataProvider<ScriptV1Marker>
         + DataProvider<XidStartV1Marker>,
- {
+{
     // TODO: add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly
     // ^ will likely need a different iterator type on UnicodeSetBuilder
     // TODO: think about returning byte-length of the parsed unicodeset for use in transliterator, or add public function that accepts a peekable char iterator?
@@ -1109,11 +1115,19 @@ mod tests {
         let mut it_size = 0;
         for c in single {
             it_size += 1;
-            assert!(cpinvlistandstrlist.contains_char(c), "missing char from parsed set: '{}'", c.escape_debug());
+            assert!(
+                cpinvlistandstrlist.contains_char(c),
+                "missing char from parsed set: '{}'",
+                c.escape_debug()
+            );
         }
         for s in multi {
             it_size += 1;
-            assert!(cpinvlistandstrlist.contains(s), "missing string from parsed set: \"{}\"", s.escape_debug());
+            assert!(
+                cpinvlistandstrlist.contains(s),
+                "missing string from parsed set: \"{}\"",
+                s.escape_debug()
+            );
         }
         assert_eq!(cpinvlistandstrlist.size(), it_size);
     }
