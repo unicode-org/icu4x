@@ -207,12 +207,12 @@ fn is_char_pattern_white_space(c: char) -> bool {
 // returns whether the provided char signifies the start of a literal char (raw or escaped - so \ is a legal char start)
 fn legal_char_start(c: char) -> bool {
     !(c == '&'
-            || c == '-'
-            || c == '['
-            || c == ']'
-            || c == '{'
-            || c == '}'
-            || is_char_pattern_white_space(c))
+        || c == '-'
+        || c == '['
+        || c == ']'
+        || c == '{'
+        || c == '}'
+        || is_char_pattern_white_space(c))
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -961,21 +961,21 @@ where
 /// assert!(set.contains_range(&elements));
 /// assert_eq!(elements.count(), set.size());
 /// ```
-/// 
+///
 /// Inversions remove strings
 /// ```
 /// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
-/// 
+///
 /// let set = parse_unstable(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]", Default::default(), &icu_testdata::unstable()).unwrap();
 /// assert!(set.contains_char('z'));
 /// assert_eq!(set.size(), 1);
 /// assert!(!set.has_strings());
 /// ```
-/// 
+///
 /// Set operators (including the implicit union) have the same precedence and are left-associative
 /// ```
 /// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
-/// 
+///
 /// let set = parse_unstable("[[ace][bdf] - [abc][def]]", Default::default(), &icu_testdata::unstable()).unwrap();
 /// let elements = 'd'..='f';
 /// assert!(set.contains_range(&elements));
