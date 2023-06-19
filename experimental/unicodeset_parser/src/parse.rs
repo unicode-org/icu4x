@@ -26,7 +26,7 @@ pub enum ParseError {
     // offset is the index to an arbitrary byte in the last character in the source that makes sense
     // to display as location for the error
     WithOffset { offset: usize, kind: ParseErrorKind },
-    WithOutOffset(ParseErrorKind),
+    WithoutOffset(ParseErrorKind),
 }
 
 type Result<T, E = ParseError> = core::result::Result<T, E>;
@@ -37,13 +37,13 @@ impl ParseError {
     }
 
     fn new_without_offset(kind: ParseErrorKind) -> Self {
-        ParseError::WithOutOffset(kind)
+        ParseError::WithoutOffset(kind)
     }
 
     fn or_with_offset(self, offset: usize) -> Self {
         match self {
             ParseError::WithOffset { .. } => self,
-            ParseError::WithOutOffset(kind) => ParseError::WithOffset { offset, kind },
+            ParseError::WithoutOffset(kind) => ParseError::WithOffset { offset, kind },
         }
     }
 
@@ -81,7 +81,7 @@ impl ParseError {
     /// use icu_unicodeset_parser::*;
     ///
     /// let source = "[[abc]-x]";
-    /// let set = parse(source);
+    /// let set = parse(source, Default::default());
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
     /// assert_eq!(err.fmt_with_source(source).to_string(), "[[abc]-x<-- error: unexpected character 'x'");
@@ -91,7 +91,7 @@ impl ParseError {
     /// use icu_unicodeset_parser::*;
     ///
     /// let source = r"[\N{LATIN CAPITAL LETTER A}]";
-    /// let set = parse(source);
+    /// let set = parse(source, Default::default());
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
     /// assert_eq!(err.fmt_with_source(source).to_string(), r"[\N<-- error: unimplemented");
@@ -99,7 +99,7 @@ impl ParseError {
     pub fn fmt_with_source(&self, source: &str) -> impl Display {
         let (offset, kind) = match self {
             ParseError::WithOffset { offset, kind } => (Some(*offset), *kind),
-            ParseError::WithOutOffset(kind) => (None, *kind),
+            ParseError::WithoutOffset(kind) => (None, *kind),
         };
 
         if kind == ParseErrorKind::Eof {
@@ -113,7 +113,7 @@ impl ParseError {
                 // however, if the last character is more than one byte in UTF-8
                 // we cannot use ..=offset, because that would potentially include only partial
                 // bytes of last character in our string. hence we must find the start of the
-                // following character and use that as the end of our string.
+                // following character and use that as the (exclusive) end of our string.
 
                 // offset points into the last character we want to include, hence the start of the
                 // first character we want to exclude is at least offset + 1.
@@ -195,6 +195,18 @@ enum Operation {
     Intersection,
 }
 
+/// Options for parsing a UnicodeSet.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct UnicodeSetBuilderOptions {
+    /// If true, the dollar sign '$' is treated as an anchor and replaced with U+FFFF whenever
+    /// it appears as a single codepoint (e.g., `[$]`) or as part of a range (e.g., `[\uFF00-$]`).
+    /// Note that '$' is never replaced in a property, nor in a multi-codepoint expression,
+    /// no matter what this option is set to.
+    ///
+    /// This option is useful for implementations that interpret U+FFFF as a special value.
+    pub dollar_is_anchor: bool,
+}
+
 // note: "compiles" the set while building, so no intermediate parse tree, it's directly compiled.
 struct UnicodeSetBuilder<'a, 'b, 'c, P>
 where
@@ -258,6 +270,7 @@ where
     multi_set: HashSet<String>,
     iter: &'b mut Peekable<CharIndices<'a>>,
     inverted: bool,
+    options: UnicodeSetBuilderOptions,
     property_provider: &'c P,
 }
 
@@ -321,6 +334,7 @@ where
 {
     fn new_inner(
         iter: &'b mut Peekable<CharIndices<'a>>,
+        options: UnicodeSetBuilderOptions,
         provider: &'c P,
     ) -> UnicodeSetBuilder<'a, 'b, 'c, P> {
         UnicodeSetBuilder {
@@ -328,6 +342,7 @@ where
             multi_set: Default::default(),
             iter,
             inverted: false,
+            options,
             property_provider: provider,
         }
     }
@@ -408,8 +423,11 @@ where
                             self.single_set.add_char(prev);
                         }
 
-                        let mut inner_builder =
-                            UnicodeSetBuilder::new_inner(self.iter, self.property_provider);
+                        let mut inner_builder = UnicodeSetBuilder::new_inner(
+                            self.iter,
+                            self.options,
+                            self.property_provider,
+                        );
                         inner_builder.parse_unicode_set()?;
                         let (single, multi) = inner_builder.finalize();
 
@@ -436,7 +454,7 @@ where
                     return Ok(());
                 }
                 (Begin | Char | AfterUnicodeSet, Some(&c)) if legal_char_start(c) => {
-                    let c = self.parse_char()?;
+                    let c = self.parse_char(self.options.dollar_is_anchor)?;
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
@@ -445,7 +463,7 @@ where
                 }
                 (CharMinus, Some(&c)) if legal_char_start(c) => {
                     let start = prev_char.ok_or(ParseError::internal())?;
-                    let end = self.parse_char()?;
+                    let end = self.parse_char(self.options.dollar_is_anchor)?;
                     if start > end {
                         // TODO: better error message (e.g., "start greater than end in range")
                         // offset - 1, because we already consumed the end char (and its offset)
@@ -500,7 +518,8 @@ where
                     break;
                 }
                 Some(&c) if legal_char_start(c) => {
-                    let c = self.parse_char()?;
+                    // '$' in multi-codepoint-sequences is not an anchor, no matter what
+                    let c = self.parse_char(false)?;
                     buffer.push(c);
                 }
                 Some(&c) => return Err(ParseError::unexpected(self.peek_index()?, c)),
@@ -526,17 +545,21 @@ where
 
         let (offset, next_char) = self.iter.next().ok_or(ParseError::eof())?;
 
-        if !['u', 'U', 'x', 'N'].contains(&next_char) {
-            return Ok(next_char);
-        }
-
         match next_char {
+            'u' | 'x' if self.peek_char() == Some(&'{') => {
+                // bracketedHex
+                self.iter.next();
+                self.skip_whitespace();
+                let (hex_digits, end_offset) = self.parse_variable_length_hex()?;
+                let num =
+                    u32::from_str_radix(&hex_digits, 16).map_err(|_| ParseError::internal())?;
+                let c = char::try_from(num).map_err(|_| ParseError::invalid_escape(end_offset))?;
+                self.skip_whitespace();
+                self.consume('}')?;
+                Ok(c)
+            }
             'u' => {
-                // 'u' (hex{4} | bracketedHex)
-                if let Some(&(offset, '{')) = self.iter.peek() {
-                    // TODO: implement bracketedHex
-                    return Err(ParseError::unimplemented(offset));
-                }
+                // 'u' hex{4}
                 let exact: [char; 4] = self.parse_exact_hex_digits()?;
                 let hex_digits = exact.iter().collect::<String>();
                 let num =
@@ -544,10 +567,7 @@ where
                 char::try_from(num).map_err(|_| ParseError::invalid_escape(offset))
             }
             'x' => {
-                // 'x' (hex{2} | bracketedHex)
-                if let Some(&(offset, '{')) = self.iter.peek() {
-                    return Err(ParseError::unimplemented(offset));
-                }
+                // 'x' hex{2}
                 let exact: [char; 2] = self.parse_exact_hex_digits()?;
                 let hex_digits = exact.iter().collect::<String>();
                 let num =
@@ -580,8 +600,15 @@ where
             'N' => {
                 // parse code point with name in {}
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
-                Err(ParseError::unimplemented(self.peek_index()?))
+                Err(ParseError::unimplemented(offset))
             }
+            'a' => Ok('\u{0007}'),
+            'b' => Ok('\u{0008}'),
+            't' => Ok('\u{0009}'),
+            'n' => Ok('\u{000A}'),
+            'v' => Ok('\u{000B}'),
+            'f' => Ok('\u{000C}'),
+            'r' => Ok('\u{000D}'),
             _ => Ok(next_char),
         }
     }
@@ -668,7 +695,7 @@ where
                     self.iter.next();
                     state = PropertyValueBegin;
                 }
-                (PropertyValue | PropertyValueBegin, Some(&c)) => {
+                (PropertyValue | PropertyValueBegin, Some(&c)) if c != end => {
                     value_buffer.push(c);
                     self.iter.next();
                     state = PropertyValue;
@@ -776,15 +803,40 @@ where
         }
     }
 
-    // parses either a raw char or an escaped char. all chars are allowed
-    fn parse_char(&mut self) -> Result<char> {
+    // parses either a raw char or an escaped char. all chars are allowed.
+    // anchor_allowed determines whether $ is interpreted as $ or as \uFFFF
+    fn parse_char(&mut self, anchor_allowed: bool) -> Result<char> {
         let &c = self.peek_char().ok_or(ParseError::eof())?;
-        if c == '\\' {
-            self.parse_escaped_char()
-        } else {
-            self.iter.next();
-            c
+        match c {
+            '\\' => self.parse_escaped_char(),
+            '$' if anchor_allowed => {
+                self.iter.next();
+                Ok('\u{FFFF}')
+            }
+            _ => {
+                self.iter.next();
+                Ok(c)
+            }
         }
+    }
+
+    // parses [0-9a-fA-F]{1..6}
+    fn parse_variable_length_hex(&mut self) -> Result<(String, usize)> {
+        let mut result = String::new();
+        let mut end_offset = 0;
+        while let Some(&(offset, c)) = self.iter.peek() {
+            if result.len() >= 6 || !c.is_ascii_hexdigit() {
+                break;
+            }
+            result.push(c);
+            end_offset = offset;
+            self.iter.next();
+        }
+        if result.is_empty() {
+            let &(unexpected_offset, unexpected_char) = self.iter.peek().ok_or(ParseError::eof())?;
+            return Err(ParseError::unexpected(unexpected_offset, unexpected_char));
+        }
+        Ok((result, end_offset))
     }
 
     // parses [0-9a-fA-F]{N}
@@ -885,14 +937,20 @@ where
 /// Supports a subset of the syntax described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
 ///
 /// TODO: more docs here
-pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static>> {
+pub fn parse(
+    source: &str,
+    options: UnicodeSetBuilderOptions,
+) -> Result<CodePointInversionListAndStringList<'static>> {
     // TODO: add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly
+    // ^ will likely need a different iterator type on UnicodeSetBuilder
+    // TODO: think about returning byte-length of the parsed unicodeset for use in transliterator, or add public function that accepts a peekable char iterator?
+
 
     // TODO: turn this into an arg
     let provider = icu_testdata::unstable();
 
     let mut iter = source.char_indices().peekable();
-    let mut builder = UnicodeSetBuilder::new_inner(&mut iter, &provider);
+    let mut builder = UnicodeSetBuilder::new_inner(&mut iter, options, &provider);
 
     builder.parse_unicode_set()?;
     let (single, multi) = builder.finalize();
@@ -929,7 +987,14 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
 mod tests {
     use super::*;
 
-    fn assert_contains<'a, 'b>(
+    const OPTIONS_ANCHOR: UnicodeSetBuilderOptions = UnicodeSetBuilderOptions {
+        dollar_is_anchor: true,
+    };
+    const OPTIONS_NO_ANCHOR: UnicodeSetBuilderOptions = UnicodeSetBuilderOptions {
+        dollar_is_anchor: false,
+    };
+
+    fn assert_set_equality<'a, 'b>(
         cpinvlistandstrlist: &CodePointInversionListAndStringList<'a>,
         single: impl Iterator<Item = char>,
         multi: impl Iterator<Item = &'b str>,
@@ -937,27 +1002,47 @@ mod tests {
         let mut it_size = 0;
         for c in single {
             it_size += 1;
-            assert!(cpinvlistandstrlist.contains_char(c));
+            assert!(cpinvlistandstrlist.contains_char(c), "missing char from parsed set: '{}'", c.escape_debug());
         }
         for s in multi {
             it_size += 1;
-            assert!(cpinvlistandstrlist.contains(s));
+            assert!(cpinvlistandstrlist.contains(s), "missing string from parsed set: \"{}\"", s.escape_debug());
         }
         assert_eq!(cpinvlistandstrlist.size(), it_size);
     }
 
-    fn assert_is_error_and_message_eq(source: &str, expected_err: &str) {
-        let result = parse(source);
+    fn assert_is_error_and_message_eq(
+        options: UnicodeSetBuilderOptions,
+        source: &str,
+        expected_err: &str,
+    ) {
+        let result = parse(source, options);
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert_eq!(err.fmt_with_source(source).to_string(), expected_err);
     }
 
     #[test]
-    fn test_parse() {
-        let parsed = parse("[a-z]").unwrap();
-        let v: Vec<String> = vec![];
-        assert_contains(&parsed, 'a'..='z', v.iter().map(|s| s.as_str()));
+    fn test_semantics() {
+        // TODO: fix reporting for failing tests (should show actual case that failed)
+        let cases: [(_, _, _, Vec<String>); 10] = [
+            (OPTIONS_NO_ANCHOR, "[a]", 'a'..='a', vec![]),
+            (OPTIONS_NO_ANCHOR, r"[\n]", '\n'..='\n', vec![]),
+            (OPTIONS_NO_ANCHOR, "[\\\n]", '\n'..='\n', vec![]),
+            // empty - whitespace is skipped
+            (OPTIONS_NO_ANCHOR, "[\n]", 'b'..='a', vec![]),
+            (OPTIONS_NO_ANCHOR, "[a-z]", 'a'..='z', vec![]),
+            (OPTIONS_NO_ANCHOR, "[$]", '$'..='$', vec![]),
+            (OPTIONS_NO_ANCHOR, "[{$}]", '$'..='$', vec![]),
+            (OPTIONS_ANCHOR, "[$]", '\u{ffff}'..='\u{ffff}', vec![]),
+            (OPTIONS_ANCHOR, r"[\$]", '$'..='$', vec![]),
+            (OPTIONS_ANCHOR, "[{$}]", '$'..='$', vec![]),
+            // TODO: add more tests, look for ICU tests
+        ];
+        for (options, source, single, multi) in cases {
+            let parsed = parse(source, options).unwrap();
+            assert_set_equality(&parsed, single.clone(), multi.iter().map(|s| s.as_str()));
+        }
     }
 
     #[test]
@@ -966,14 +1051,19 @@ mod tests {
             (r"[a-z[\]]", r"[a-z[\]]<-- error: unexpected end of input"),
             (r"", r"<-- error: unexpected end of input"),
             (r"[{]", r"[{]<-- error: unexpected character ']'"),
+            // we match ECMA-262 strictly, so case matters
             (
                 r"[:general_category:]",
                 r"[:general_category<-- error: unknown property",
             ),
             (r"[:ll=true:]", r"[:ll=true<-- error: unknown property"),
             (r"[:=", r"[:=<-- error: unexpected character '='"),
+            // property names may not be empty
+            (r"[::]", r"[::<-- error: unexpected character ':'"),
+            (r"[:=hello:]", r"[:=<-- error: unexpected character '='"),
+            // property values may not be empty
+            (r"[:gc=:]", r"[:gc=:<-- error: unexpected character ':'"),
             (r"[\xag]", r"[\xag<-- error: unexpected character 'g'"),
-            (r"[\x{61 2 3}]", r"[\x{<-- error: unimplemented"),
             (
                 r"[{this is a minus -}]",
                 r"[{this is a minus -<-- error: unexpected character '-'",
@@ -988,8 +1078,20 @@ mod tests {
             (r"[[set]&]", r"[[set]&]<-- error: unexpected character ']'"),
             (r"[a-\x60]", r"[a-\x60<-- error: unexpected character '`'"),
             (r"[a-`]", r"[a-`<-- error: unexpected character '`'"),
+            (r"[\x{6g}]", r"[\x{6g<-- error: unexpected character 'g'"),
+            (r"[\x{g}]", r"[\x{g<-- error: unexpected character 'g'"),
+            (r"[\x{}]", r"[\x{}<-- error: unexpected character '}'"),
+            (
+                r"[\x{dabeef}]",
+                r"[\x{dabeef<-- error: invalid escape sequence",
+            ),
+            (
+                r"[\x{10ffff0}]",
+                r"[\x{10ffff0<-- error: unexpected character '0'",
+            ),
             // > 1 byte in UTF-8 edge case
             (r"ä", r"ä<-- error: unexpected character 'ä'"),
+            (r"\p{gc=ä}", r"\p{gc=ä<-- error: unknown property"),
             (
                 r"[\xe5-\xe4]",
                 r"[\xe5-\xe4<-- error: unexpected character 'ä'",
@@ -997,32 +1099,34 @@ mod tests {
             (r"[\xe5-ä]", r"[\xe5-ä<-- error: unexpected character 'ä'"),
         ];
         for (source, expected_err) in cases {
-            assert_is_error_and_message_eq(source, expected_err);
+            assert_is_error_and_message_eq(OPTIONS_NO_ANCHOR, source, expected_err);
         }
     }
 
     // TODO: delete
     #[test]
     fn test_playground() {
-        parse("[a-zA-Z : ]").unwrap();
+        let o = OPTIONS_NO_ANCHOR;
+        parse("[a-zA-Z : ]", o).unwrap();
         parse(
             "[a-zA-Z[^043]&[-2]-[-]{   h\
         ell o}]",
+            o,
         )
         .unwrap();
-        parse("[[abc][def]-[abc][def]]").unwrap();
-        parse("[^[^]]").unwrap();
-        parse("[:g c =Lowe rCASEl etter:]").unwrap();
-        parse("[[:g c ≠Lowe rCASEl etter:]&[0-z]]").unwrap();
-        parse("[:ll:]").unwrap();
-        parse(r"\p{ll}").unwrap();
-        parse("[:Case_Ignorable:]").unwrap();
-        parse("[[:Case_Ignorable=false:]&[0-Z]]").unwrap();
-        parse("[[:^Case_Ignorable=false:]&[0-Z]]").unwrap();
-        parse(r"[\\ \  \[]").unwrap();
-        parse(r"[{A \u0308}]").unwrap();
-        parse(r"[{A \U00000308}]").unwrap();
-        parse(r"[{\x61 \U00000308}]").unwrap();
-        parse(r"[\x61{\x61 \U00000308}]").unwrap();
+        parse("[[abc][def]-[abc][def]]", o).unwrap();
+        parse("[^[^]]", o).unwrap();
+        parse("[:g c =Lowe rCASEl etter:]", o).unwrap();
+        parse("[[:g c ≠Lowe rCASEl etter:]&[0-z]]", o).unwrap();
+        parse("[:ll:]", o).unwrap();
+        parse(r"\p{ll}", o).unwrap();
+        parse("[:Case_Ignorable:]", o).unwrap();
+        parse("[[:Case_Ignorable=false:]&[0-Z]]", o).unwrap();
+        parse("[[:^Case_Ignorable=false:]&[0-Z]]", o).unwrap();
+        parse(r"[\\ \  \[]", o).unwrap();
+        parse(r"[{A \u0308}]", o).unwrap();
+        parse(r"[{A \U00000308}]", o).unwrap();
+        parse(r"[{\x61 \U00000308}]", o).unwrap();
+        parse(r"[\x61{\x61 \U00000308}]", o).unwrap();
     }
 }
