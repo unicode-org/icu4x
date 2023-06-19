@@ -7,7 +7,7 @@
 //! This crate provides parsing functionality for [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
 //! Parses into [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList).
 //!
-//! See [`parse`](crate::parse) for more information.
+//! See [`parse_unstable`](crate::parse_unstable) for more information.
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(
@@ -26,7 +26,7 @@
 
 mod parse;
 
-pub use parse::{parse, ParseError, ParseErrorKind, UnicodeSetBuilderOptions};
+pub use parse::{parse_unstable, ParseError, ParseErrorKind, UnicodeSetBuilderOptions};
 
 #[cfg(test)]
 mod tests {}

@@ -107,7 +107,7 @@ impl ParseError {
     /// use icu_unicodeset_parser::*;
     ///
     /// let source = "[[abc]-x]";
-    /// let set = parse(source, Default::default(), &icu_testdata::unstable());
+    /// let set = parse_unstable(source, Default::default(), &icu_testdata::unstable());
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
     /// assert_eq!(err.fmt_with_source(source).to_string(), "[[abc]-x<-- error: unexpected character 'x'");
@@ -117,7 +117,7 @@ impl ParseError {
     /// use icu_unicodeset_parser::*;
     ///
     /// let source = r"[\N{LATIN CAPITAL LETTER A}]";
-    /// let set = parse(source, Default::default(), &icu_testdata::unstable());
+    /// let set = parse_unstable(source, Default::default(), &icu_testdata::unstable());
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
     /// assert_eq!(err.fmt_with_source(source).to_string(), r"[\N<-- error: unimplemented");
@@ -989,9 +989,9 @@ where
 ///
 /// Parse ranges
 /// ```
-/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
 ///
-/// let set = parse("[a-zA-Z0-9]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let set = parse_unstable("[a-zA-Z0-9]", Default::default(), &icu_testdata::unstable()).unwrap();
 ///
 /// assert!(set.contains_range(&('a'..='z')));
 /// assert!(set.contains_range(&('A'..='Z')));
@@ -1000,14 +1000,14 @@ where
 ///
 /// Parse properties, set operations, inner sets
 /// ```
-/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
 ///
-/// let set = parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let set = parse_unstable("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]", Default::default(), &icu_testdata::unstable()).unwrap();
 /// let elements = 'a'..='z';
 /// assert!(set.contains_range(&elements));
 /// assert_eq!(elements.count(), set.size());
 /// ```
-pub fn parse<P>(
+pub fn parse_unstable<P>(
     source: &str,
     options: UnicodeSetBuilderOptions,
     provider: &P,
@@ -1137,7 +1137,7 @@ mod tests {
         source: &str,
         expected_err: &str,
     ) {
-        let result = parse(source, options, &td!());
+        let result = parse_unstable(source, options, &td!());
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert_eq!(err.fmt_with_source(source).to_string(), expected_err);
@@ -1160,7 +1160,7 @@ mod tests {
             // TODO: add more tests, look for ICU tests
         ];
         for (options, source, single, multi) in cases {
-            let parsed = parse(source, options, &td!()).unwrap();
+            let parsed = parse_unstable(source, options, &td!()).unwrap();
             assert_set_equality(&parsed, single.clone(), multi.iter().map(|s| s.as_str()));
         }
     }
