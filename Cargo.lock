@@ -1323,7 +1323,6 @@ dependencies = [
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
- "icu_unicodeset_parser",
  "writeable",
 ]
 

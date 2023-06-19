@@ -48,7 +48,6 @@ icu_casemapping = { version = "0.7.1", path = "../../experimental/casemapping", 
 icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", default-features = false, optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
 icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
-icu_unicodeset_parser = { version = "0.1.0", path = "../../experimental/unicodeset_parser", default-features = false, optional = true }
 
 # For docs links
 icu_provider = { version = "1.2.0", path = "../../provider/core", default-features = false }
@@ -115,7 +114,6 @@ experimental = [
     "icu_locid_transform/experimental",
     "icu_plurals/experimental",
     "icu_relativetime",
-    "icu_unicodeset_parser",
 ]
 
 [package.metadata.cargo-all-features]
