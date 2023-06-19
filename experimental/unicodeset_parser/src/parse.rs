@@ -506,8 +506,7 @@ where
         }
 
         let mut chars = buffer.chars();
-        let (x1, x2) = (chars.next(), chars.next());
-        match (x1, x2) {
+        match (chars.next(), chars.next()) {
             (Some(single_char), None) => {
                 // multi-codepoint-sequences containing a single char are interpreted as a single char
                 self.single_set.add_char(single_char);
