@@ -302,7 +302,7 @@ where
 
     // the entry point, parses a full UnicodeSet. ignores remaining input
     fn parse_unicode_set(&mut self) -> Result<()> {
-        match self.must_peek_char()? {
+        match *self.must_peek_char()? {
             '\\' => self.parse_property_perl(),
             '[' => {
                 self.iter.next();
@@ -312,7 +312,7 @@ where
                     self.parse_unicode_set_inner()
                 }
             }
-            &c => self.error_here(PEK::UnexpectedChar(c)),
+            c => self.error_here(PEK::UnexpectedChar(c)),
         }
     }
 
@@ -366,7 +366,7 @@ where
 
             // handling unicodesets separately, because of ambiguity between escaped characters and perl property names
             if self.peek_unicode_set_start() {
-                match (state, self.must_peek_char()?) {
+                match (state, *self.must_peek_char()?) {
                     // parse a recursive unicode set
                     (Begin | Char | AfterUnicodeSet | AfterOp, _) => {
                         if let Some(prev) = prev_char.take() {
@@ -387,13 +387,13 @@ where
 
                         state = AfterUnicodeSet;
                     }
-                    (_, &c) => return self.error_here(PEK::UnexpectedChar(c)),
+                    (_, c) => return self.error_here(PEK::UnexpectedChar(c)),
                 }
                 continue;
             }
 
             // note: no UnicodeSets can occur in this match block, as they would've been caught by the above match
-            match (state, self.must_peek_char()?) {
+            match (state, *self.must_peek_char()?) {
                 // parse the end of this unicode set
                 (Begin | Char | AfterUnicodeSet, ']') => {
                     self.iter.next();
@@ -404,7 +404,7 @@ where
                     return Ok(());
                 }
                 // parse a literal char (either individually or as the start of a range)
-                (Begin | Char | AfterUnicodeSet, &c) if legal_char_start(c) => {
+                (Begin | Char | AfterUnicodeSet, c) if legal_char_start(c) => {
                     let c = self.parse_char(self.options.dollar_is_anchor)?;
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
@@ -413,7 +413,7 @@ where
                     state = Char;
                 }
                 // parse a literal char as the end of a range
-                (CharMinus, &c) if legal_char_start(c) => {
+                (CharMinus, c) if legal_char_start(c) => {
                     let start = prev_char.ok_or(PEK::Eof)?;
                     let end = self.parse_char(self.options.dollar_is_anchor)?;
                     if start > end {
@@ -454,7 +454,7 @@ where
                     operation = Operation::Intersection;
                     state = AfterOp;
                 }
-                (_, &c) => return self.error_here(PEK::UnexpectedChar(c)),
+                (_, c) => return self.error_here(PEK::UnexpectedChar(c)),
             }
         }
     }
@@ -469,17 +469,17 @@ where
         loop {
             self.skip_whitespace();
 
-            match self.must_peek_char()? {
+            match *self.must_peek_char()? {
                 '}' => {
                     self.iter.next();
                     break;
                 }
-                &c if legal_char_start(c) => {
+                c if legal_char_start(c) => {
                     // '$' in multi-codepoint-sequences is not an anchor, no matter what the option is set to
                     let c = self.parse_char(false)?;
                     buffer.push(c);
                 }
-                &c => return self.error_here(PEK::UnexpectedChar(c)),
+                c => return self.error_here(PEK::UnexpectedChar(c)),
             }
         }
 
@@ -534,19 +534,19 @@ where
                 // 'U00' ('0' hex{5} | '10' hex{4})
                 self.consume('0')?;
                 self.consume('0')?;
-                let hex_digits = match self.must_peek_char()? {
-                    &'0' => {
+                let hex_digits = match *self.must_peek_char()? {
+                    '0' => {
                         self.iter.next();
                         let exact: [char; 5] = self.parse_exact_hex_digits()?;
                         exact.iter().collect::<String>()
                     }
-                    &'1' => {
+                    '1' => {
                         self.iter.next();
                         self.consume('0')?;
                         let exact: [char; 4] = self.parse_exact_hex_digits()?;
                         ['1', '0'].iter().chain(exact.iter()).collect::<String>()
                     }
-                    &c => return self.error_here(PEK::UnexpectedChar(c)),
+                    c => return self.error_here(PEK::UnexpectedChar(c)),
                 };
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
                 char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
@@ -570,12 +570,9 @@ where
     // starts with :, consumes the trailing :]
     fn parse_property_posix(&mut self) -> Result<()> {
         self.consume(':')?;
-        match self.must_peek_char()? {
-            &'^' => {
-                self.inverted = true;
-                self.iter.next();
-            }
-            _ => {}
+        if *self.must_peek_char()? == '^' {
+            self.inverted = true;
+            self.iter.next();
         }
 
         self.parse_property_inner(':')?;
@@ -629,33 +626,33 @@ where
 
         loop {
             self.skip_whitespace();
-            match (state, self.must_peek_char()?) {
+            match (state, *self.must_peek_char()?) {
                 // parse the end of the property expression
-                (PropertyName | PropertyValue, &c) if c == end => {
+                (PropertyName | PropertyValue, c) if c == end => {
                     // byte index of (full) property name/value is one back
                     property_offset = self.must_peek_index()? - 1;
                     self.iter.next();
                     break;
                 }
                 // parse the property name
-                (Begin | PropertyName, &c) if c.is_ascii_alphanumeric() || c == '_' => {
+                (Begin | PropertyName, c) if c.is_ascii_alphanumeric() || c == '_' => {
                     key_buffer.push(c);
                     self.iter.next();
                     state = PropertyName;
                 }
                 // parse the name-value separator
-                (PropertyName, &c @ ('=' | '≠')) => {
+                (PropertyName, c @ ('=' | '≠')) => {
                     equality = c == '=';
                     self.iter.next();
                     state = PropertyValueBegin;
                 }
                 // parse the property value
-                (PropertyValue | PropertyValueBegin, &c) if c != end => {
+                (PropertyValue | PropertyValueBegin, c) if c != end => {
                     value_buffer.push(c);
                     self.iter.next();
                     state = PropertyValue;
                 }
-                (_, &c) => return self.error_here(PEK::UnexpectedChar(c)),
+                (_, c) => return self.error_here(PEK::UnexpectedChar(c)),
             }
         }
 
@@ -767,7 +764,7 @@ where
     // parses either a raw char or an escaped char. all chars are allowed.
     // anchor_allowed determines whether $ is interpreted as $ or as \uFFFF
     fn parse_char(&mut self, anchor_allowed: bool) -> Result<char> {
-        let &c = self.must_peek_char()?;
+        let c = *self.must_peek_char()?;
         match c {
             '\\' => self.parse_escaped_char(),
             '$' if anchor_allowed => {
@@ -794,7 +791,7 @@ where
             self.iter.next();
         }
         if result.is_empty() {
-            let &(unexpected_offset, unexpected_char) = self.must_peek()?;
+            let (unexpected_offset, unexpected_char) = *self.must_peek()?;
             return Err(PEK::UnexpectedChar(unexpected_char).with_offset(unexpected_offset));
         }
         Ok((result, end_offset))
