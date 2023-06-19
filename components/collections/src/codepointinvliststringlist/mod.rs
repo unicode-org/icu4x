@@ -9,6 +9,8 @@
 //!
 //! It is an implementation of the the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
+use core::ops::RangeBounds;
+
 use crate::codepointinvlist::{
     CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError,
 };
@@ -204,6 +206,16 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     /// assert!(!cpilsl.contains_char('🨫'));  // U+1FA2B NEUTRAL CHESS TURNED QUEEN
     pub fn contains_char(&self, ch: char) -> bool {
         self.contains32(ch as u32)
+    }
+
+    /// See [`CodePointInversionList::contains_range`]. Ignores strings.
+    pub fn contains_range(&self, range: &impl RangeBounds<char>) -> bool {
+        self.cp_inv_list.contains_range(range)
+    }
+
+    /// See [`CodePointInversionList::contains_set`]. Ignores strings.
+    pub fn contains_char_set(&self, set: &CodePointInversionList) -> bool {
+        self.cp_inv_list.contains_set(set)
     }
 }
 

@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use std::fmt::Display;
 use std::{collections::HashSet, iter::Peekable, str::CharIndices};
 
@@ -11,39 +15,55 @@ use icu_properties::sets::{load_for_ecma262_unstable, CodePointSetData};
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
 
+/// The kind of error that occurred.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum ParseErrorKind {
+    /// An unexpected character was encountered. This variant implies the other variants
+    /// (notably `UnknownProperty` and `Unimplemented`) do not apply.
     UnexpectedChar(char),
+    /// The property name or value is unknown. For property names, make sure you use the spelling
+    /// defined in [ECMA-262](https://tc39.es/ecma262/#table-nonbinary-unicode-properties).
     UnknownProperty,
+    /// The source is an incomplete unicode set.
     Eof,
+    /// Something unexpected went wrong with our code. Please file a bug report on GitHub.
     Internal,
+    /// The provided syntax is not supported by us. Note that unknown properties will return the
+    /// `UnknownProperty` variant, not this one.
     Unimplemented,
+    /// The provided escape sequence is not a valid Unicode code point.
     InvalidEscape,
 }
 
+/// The error type returned by the `parse` functions in this crate. 
+/// 
+/// See [`ParseError::fmt_with_source`] for pretty-printing and [`ParseErrorKind`] of the
+/// different types of errors represented by this struct.
 #[derive(Debug, Clone)]
-pub enum ParseError {
+pub struct ParseError {
     // offset is the index to an arbitrary byte in the last character in the source that makes sense
-    // to display as location for the error
-    WithOffset { offset: usize, kind: ParseErrorKind },
-    WithoutOffset(ParseErrorKind),
+    // to display as location for the error, e.g., the unexpected character itself or 
+    // for an unknown property name the last character of the name.
+    offset: Option<usize>,
+    kind: ParseErrorKind,
 }
 
 type Result<T, E = ParseError> = core::result::Result<T, E>;
 
 impl ParseError {
     fn new_with_offset(offset: usize, kind: ParseErrorKind) -> Self {
-        ParseError::WithOffset { offset, kind }
+        ParseError { offset: Some(offset), kind }
     }
 
     fn new_without_offset(kind: ParseErrorKind) -> Self {
-        ParseError::WithoutOffset(kind)
+        ParseError{ offset: None, kind }
     }
 
     fn or_with_offset(self, offset: usize) -> Self {
-        match self {
-            ParseError::WithOffset { .. } => self,
-            ParseError::WithoutOffset(kind) => ParseError::WithOffset { offset, kind },
+        match self.offset {
+            Some(_) => self,
+            None => ParseError { offset: Some(offset), ..self },
         }
     }
 
@@ -81,7 +101,7 @@ impl ParseError {
     /// use icu_unicodeset_parser::*;
     ///
     /// let source = "[[abc]-x]";
-    /// let set = parse(source, Default::default());
+    /// let set = parse(source, Default::default(), &icu_testdata::unstable());
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
     /// assert_eq!(err.fmt_with_source(source).to_string(), "[[abc]-x<-- error: unexpected character 'x'");
@@ -91,16 +111,13 @@ impl ParseError {
     /// use icu_unicodeset_parser::*;
     ///
     /// let source = r"[\N{LATIN CAPITAL LETTER A}]";
-    /// let set = parse(source, Default::default());
+    /// let set = parse(source, Default::default(), &icu_testdata::unstable());
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
     /// assert_eq!(err.fmt_with_source(source).to_string(), r"[\N<-- error: unimplemented");
     /// ```
     pub fn fmt_with_source(&self, source: &str) -> impl Display {
-        let (offset, kind) = match self {
-            ParseError::WithOffset { offset, kind } => (Some(*offset), *kind),
-            ParseError::WithoutOffset(kind) => (None, *kind),
-        };
+        let ParseError { offset, kind } = *self;
 
         if kind == ParseErrorKind::Eof {
             return format!("{source}<-- error: unexpected end of input");
@@ -120,13 +137,15 @@ impl ParseError {
                 let mut exclusive_end = offset + 1;
                 // replace this loop with str::ceil_char_boundary once stable
                 for _ in 0..3 {
-                    // is_char_boundary handles reaching the end of the source string correctly
+                    // is_char_boundary returns true at the latest once exclusive_end == source.len()
                     if source.is_char_boundary(exclusive_end) {
                         break;
                     }
                     exclusive_end += 1;
                 }
-
+                
+                // exclusive_end is at most source.len() due to str::is_char_boundary and at least 0 by type
+                #[allow(clippy::indexing_slicing)]
                 s.push_str(&source[..exclusive_end]);
                 s.push_str("<-- ");
             }
@@ -155,9 +174,14 @@ impl ParseError {
 
         s
     }
+
+    /// Returns the [`ParseErrorKind`] of this error.
+    pub fn kind(&self) -> ParseErrorKind {
+        self.kind
+    }
 }
 
-// necessary because char::is_whitespace is not equivalent to [:Pattern_White_Space:]
+// necessary helper because char::is_whitespace is not equivalent to [:Pattern_White_Space:]
 #[inline]
 fn is_char_pattern_white_space(c: char) -> bool {
     matches!(
@@ -175,11 +199,9 @@ fn is_char_pattern_white_space(c: char) -> bool {
 
 // this ignores the ambiguity between \escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
 fn legal_char_start(c: char) -> bool {
-    // TODO: need to handle $ for pre-input/post-input. Maybe add field on self to indicate this option? How do we represent the special meaning in the wire-format? \uffff is used by unicode utilities.
-    // ICU4J: https://github.com/unicode-org/icu/blob/388b768262684300bf47bcee8796a9327ccc2652/icu4j/main/classes/core/src/com/ibm/icu/text/UnicodeSet.java#L583
     !(c == '&'
             || c == '-'
-            // legal because it starts an escape sequence
+            // \ is legal because it starts an escape sequence
             // || c == '\\'
             || c == '['
             || c == ']'
@@ -195,8 +217,10 @@ enum Operation {
     Intersection,
 }
 
+// TODO: if UnicodeSetBuilder is staying private, this should have a more generic name like ParseOptions or UnicodeSetParseOptions
 /// Options for parsing a UnicodeSet.
 #[derive(Debug, Clone, Copy, Default)]
+#[non_exhaustive]
 pub struct UnicodeSetBuilderOptions {
     /// If true, the dollar sign '$' is treated as an anchor and replaced with U+FFFF whenever
     /// it appears as a single codepoint (e.g., `[$]`) or as part of a range (e.g., `[\uFF00-$]`).
@@ -207,7 +231,7 @@ pub struct UnicodeSetBuilderOptions {
     pub dollar_is_anchor: bool,
 }
 
-// note: "compiles" the set while building, so no intermediate parse tree, it's directly compiled.
+// this builds the set on-the-fly while parsing it
 struct UnicodeSetBuilder<'a, 'b, 'c, P>
 where
     P: ?Sized
@@ -442,7 +466,7 @@ where
                 continue;
             }
 
-            // no UnicodeSets can occur in this match block, as they would've been caught by the above match
+            // note: no UnicodeSets can occur in this match block, as they would've been caught by the above match
             match (state, self.peek_char()) {
                 (_, None) => return Err(ParseError::eof()),
                 (Begin | Char | AfterUnicodeSet, Some(']')) => {
@@ -466,7 +490,7 @@ where
                     let end = self.parse_char(self.options.dollar_is_anchor)?;
                     if start > end {
                         // TODO: better error message (e.g., "start greater than end in range")
-                        // offset - 1, because we already consumed the end char (and its offset)
+                        // note: offset - 1, because we already consumed the end char (and its offset)
                         return Err(ParseError::unexpected(self.peek_index()? - 1, end));
                     }
 
@@ -526,14 +550,16 @@ where
             }
         }
 
-        if buffer.chars().count() > 1 {
-            self.multi_set.insert(buffer);
-        } else {
-            // empty or single char
-            if let Some(c) = buffer.chars().next() {
-                // a single-codepoint multi-codepoint-sequence is interpreted as a character
-                self.single_set.add_char(c);
-            }
+        let mut chars = buffer.chars();
+        let (x1, x2) = (chars.next(), chars.next());
+        match (x1, x2) {
+            (Some(single_char), None) => {
+                // multi-codepoint-sequences containing a single char are interpreted as a single char
+                self.single_set.add_char(single_char);
+            },
+            _ => {
+                self.multi_set.insert(buffer);
+            },
         }
 
         Ok(())
@@ -873,7 +899,7 @@ where
         self.iter.peek().map(|(_, c)| c)
     }
 
-    // returns a result for ergonomics in the usual use-case of knowing that the iterator is not empty, without resorting to .unwrap()
+    // returns a Result for ergonomics in the usual use-case of knowing that the iterator is not empty, without resorting to .unwrap()
     fn peek_index(&mut self) -> Result<usize> {
         self.iter
             .peek()
@@ -932,25 +958,117 @@ where
     }
 }
 
-/// Parses a UnicodeSet pattern and returns a UnicodeSet.
+/// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList).
 ///
 /// Supports a subset of the syntax described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
+/// 
+/// The error type of the returned Result can be pretty-printed with [`ParseError::fmt_with_source`].
 ///
-/// TODO: more docs here
-pub fn parse(
+/// # Limitations
+/// 
+/// * Currently, we only support the [ECMA-262 properties](https://tc39.es/ecma262/#table-nonbinary-unicode-properties) except `Script_Extensions`. 
+/// The property names must match the exact spelling listed in ECMA-262. Note that we do support UTS35 syntax for abbreviated `General_Category`
+/// and `Script` property values, i.e., `[:Latn:]` and `[:Ll:]` are both valid, with the former implying the `Script` property, and the latter the
+/// `General_Category` property.
+/// * We do not support `\N{Unicode code point name}` character escaping. Use any other escape method described in UTS35.
+/// 
+/// # Stability
+/// 
+/// [📚 Help choosing a constructor](icu_provider::constructors)
+/// <div class="stab unstable">
+/// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+/// </div>
+/// 
+/// # Examples
+/// 
+/// Parse ranges
+/// ```
+/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
+/// 
+/// let set = parse("[a-zA-Z0-9]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// 
+/// assert!(set.contains_range(&('a'..='z')));
+/// assert!(set.contains_range(&('A'..='Z')));
+/// assert!(set.contains_range(&('0'..='9')));
+/// ```
+/// 
+/// Parse properties, set operations, inner sets
+/// ```
+/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
+/// 
+/// let set = parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let elements = 'a'..='z';
+/// assert!(set.contains_range(&elements));
+/// assert_eq!(elements.count(), set.size());
+/// ```
+pub fn parse<P>(
     source: &str,
     options: UnicodeSetBuilderOptions,
-) -> Result<CodePointInversionListAndStringList<'static>> {
+    provider: &P,
+) -> Result<CodePointInversionListAndStringList<'static>>
+where
+    P: ?Sized
+        + DataProvider<AsciiHexDigitV1Marker>
+        + DataProvider<AlphabeticV1Marker>
+        + DataProvider<BidiControlV1Marker>
+        + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CaseIgnorableV1Marker>
+        + DataProvider<CasedV1Marker>
+        + DataProvider<ChangesWhenCasefoldedV1Marker>
+        + DataProvider<ChangesWhenCasemappedV1Marker>
+        + DataProvider<ChangesWhenLowercasedV1Marker>
+        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
+        + DataProvider<ChangesWhenTitlecasedV1Marker>
+        + DataProvider<ChangesWhenUppercasedV1Marker>
+        + DataProvider<DashV1Marker>
+        + DataProvider<DefaultIgnorableCodePointV1Marker>
+        + DataProvider<DeprecatedV1Marker>
+        + DataProvider<DiacriticV1Marker>
+        + DataProvider<EmojiV1Marker>
+        + DataProvider<EmojiComponentV1Marker>
+        + DataProvider<EmojiModifierV1Marker>
+        + DataProvider<EmojiModifierBaseV1Marker>
+        + DataProvider<EmojiPresentationV1Marker>
+        + DataProvider<ExtendedPictographicV1Marker>
+        + DataProvider<ExtenderV1Marker>
+        + DataProvider<GraphemeBaseV1Marker>
+        + DataProvider<GraphemeExtendV1Marker>
+        + DataProvider<HexDigitV1Marker>
+        + DataProvider<IdsBinaryOperatorV1Marker>
+        + DataProvider<IdsTrinaryOperatorV1Marker>
+        + DataProvider<IdContinueV1Marker>
+        + DataProvider<IdStartV1Marker>
+        + DataProvider<IdeographicV1Marker>
+        + DataProvider<JoinControlV1Marker>
+        + DataProvider<LogicalOrderExceptionV1Marker>
+        + DataProvider<LowercaseV1Marker>
+        + DataProvider<MathV1Marker>
+        + DataProvider<NoncharacterCodePointV1Marker>
+        + DataProvider<PatternSyntaxV1Marker>
+        + DataProvider<PatternWhiteSpaceV1Marker>
+        + DataProvider<QuotationMarkV1Marker>
+        + DataProvider<RadicalV1Marker>
+        + DataProvider<RegionalIndicatorV1Marker>
+        + DataProvider<SentenceTerminalV1Marker>
+        + DataProvider<SoftDottedV1Marker>
+        + DataProvider<TerminalPunctuationV1Marker>
+        + DataProvider<UnifiedIdeographV1Marker>
+        + DataProvider<UppercaseV1Marker>
+        + DataProvider<VariationSelectorV1Marker>
+        + DataProvider<WhiteSpaceV1Marker>
+        + DataProvider<XidContinueV1Marker>
+        + DataProvider<GeneralCategoryNameToValueV1Marker>
+        + DataProvider<GeneralCategoryV1Marker>
+        + DataProvider<ScriptNameToValueV1Marker>
+        + DataProvider<ScriptV1Marker>
+        + DataProvider<XidStartV1Marker>,
+ {
     // TODO: add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly
     // ^ will likely need a different iterator type on UnicodeSetBuilder
     // TODO: think about returning byte-length of the parsed unicodeset for use in transliterator, or add public function that accepts a peekable char iterator?
 
-
-    // TODO: turn this into an arg
-    let provider = icu_testdata::unstable();
-
     let mut iter = source.char_indices().peekable();
-    let mut builder = UnicodeSetBuilder::new_inner(&mut iter, options, &provider);
+    let mut builder = UnicodeSetBuilder::new_inner(&mut iter, options, provider);
 
     builder.parse_unicode_set()?;
     let (single, multi) = builder.finalize();
@@ -959,23 +1077,6 @@ pub fn parse(
     let mut strings = multi.into_iter().collect::<Vec<_>>();
     strings.sort();
     let zerovec = (&strings).into();
-
-    // debug things (TODO: delete):
-    eprintln!("UnicodeSet: {source}");
-    eprintln!("Single:");
-    eprint!("[");
-    for c in built_single.iter_chars() {
-        eprint!("{},", c);
-    }
-    eprintln!("]");
-    if !strings.is_empty() {
-        eprintln!("Strings:");
-        eprint!("[");
-        for s in &strings {
-            eprint!("{{{}}},", s);
-        }
-        eprintln!("]");
-    }
 
     let cpinvlistandstrlist = CodePointInversionListAndStringList::try_from(built_single, zerovec)
         .map_err(|_| ParseError::internal())?;
@@ -986,6 +1087,12 @@ pub fn parse(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    macro_rules! td {
+        () => {
+            icu_testdata::unstable()
+        };
+    }
 
     const OPTIONS_ANCHOR: UnicodeSetBuilderOptions = UnicodeSetBuilderOptions {
         dollar_is_anchor: true,
@@ -1016,7 +1123,7 @@ mod tests {
         source: &str,
         expected_err: &str,
     ) {
-        let result = parse(source, options);
+        let result = parse(source, options, &td!());
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert_eq!(err.fmt_with_source(source).to_string(), expected_err);
@@ -1024,7 +1131,6 @@ mod tests {
 
     #[test]
     fn test_semantics() {
-        // TODO: fix reporting for failing tests (should show actual case that failed)
         let cases: [(_, _, _, Vec<String>); 10] = [
             (OPTIONS_NO_ANCHOR, "[a]", 'a'..='a', vec![]),
             (OPTIONS_NO_ANCHOR, r"[\n]", '\n'..='\n', vec![]),
@@ -1040,7 +1146,7 @@ mod tests {
             // TODO: add more tests, look for ICU tests
         ];
         for (options, source, single, multi) in cases {
-            let parsed = parse(source, options).unwrap();
+            let parsed = parse(source, options, &td!()).unwrap();
             assert_set_equality(&parsed, single.clone(), multi.iter().map(|s| s.as_str()));
         }
     }
@@ -1101,32 +1207,5 @@ mod tests {
         for (source, expected_err) in cases {
             assert_is_error_and_message_eq(OPTIONS_NO_ANCHOR, source, expected_err);
         }
-    }
-
-    // TODO: delete
-    #[test]
-    fn test_playground() {
-        let o = OPTIONS_NO_ANCHOR;
-        parse("[a-zA-Z : ]", o).unwrap();
-        parse(
-            "[a-zA-Z[^043]&[-2]-[-]{   h\
-        ell o}]",
-            o,
-        )
-        .unwrap();
-        parse("[[abc][def]-[abc][def]]", o).unwrap();
-        parse("[^[^]]", o).unwrap();
-        parse("[:g c =Lowe rCASEl etter:]", o).unwrap();
-        parse("[[:g c ≠Lowe rCASEl etter:]&[0-z]]", o).unwrap();
-        parse("[:ll:]", o).unwrap();
-        parse(r"\p{ll}", o).unwrap();
-        parse("[:Case_Ignorable:]", o).unwrap();
-        parse("[[:Case_Ignorable=false:]&[0-Z]]", o).unwrap();
-        parse("[[:^Case_Ignorable=false:]&[0-Z]]", o).unwrap();
-        parse(r"[\\ \  \[]", o).unwrap();
-        parse(r"[{A \u0308}]", o).unwrap();
-        parse(r"[{A \U00000308}]", o).unwrap();
-        parse(r"[{\x61 \U00000308}]", o).unwrap();
-        parse(r"[\x61{\x61 \U00000308}]", o).unwrap();
     }
 }
