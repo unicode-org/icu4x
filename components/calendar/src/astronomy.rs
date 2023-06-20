@@ -109,7 +109,8 @@ impl Astronomical {
     pub(crate) fn ephemeris_correction(moment: Moment) -> f64 {
         let year = moment.inner().floor() / 365.2425;
         let year_int = (if year > 0.0 { year + 1.0 } else { year }) as i32;
-        #[allow(clippy::expect_used)] // Month and day are guaranteed to be valid, year is not checked in Iso Date constructor
+        #[allow(clippy::expect_used)]
+        // Month and day are guaranteed to be valid, year is not checked in Iso Date constructor
         let gregorian: Date<Gregorian> = Date::try_new_gregorian_date(year_int, 7, 1)
             .expect("Date generation failed for {year} July 1");
         let iso: Date<Iso> = gregorian.to_iso();
