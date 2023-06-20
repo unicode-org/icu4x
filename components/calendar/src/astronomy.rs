@@ -39,14 +39,18 @@ impl Location {
     /// assert_eq!(valid.latitude(), 29.3);
     /// assert_eq!(valid.longitude(), -132.6);
     /// assert_eq!(valid.elevation(), 1032.5);
-    /// 
+    ///
     /// let invalid_lat = Location::try_new(95.0, -132.6, 1032.5);
     /// assert!(invalid_lat.is_err());
-    /// 
+    ///
     /// let invalid_long = Location::try_new(29.3, -190.0, 1032.5);
     /// assert!(invalid_long.is_err());
     /// ```
-    pub fn try_new(latitude: f64, longitude: f64, elevation: f64) -> Result<Location, LocationError> {
+    pub fn try_new(
+        latitude: f64,
+        longitude: f64,
+        elevation: f64,
+    ) -> Result<Location, LocationError> {
         if latitude < -90.0 || latitude > 90.0 {
             return Err(LocationError::LatitudeOutOfBounds(latitude));
         }
@@ -223,45 +227,55 @@ impl Astronomical {
             + (-1.56375588 * 1236.85 * c)
             + (0.0020672 * c.powi(2))
             + (0.00000215 * c.powi(3));
-        let v: [f64; 24] = [
+        let sine_coeff: [f64; 24] = [
             -0.40720, 0.17241, 0.01608, 0.01039, 0.00739, -0.00514, 0.00208, -0.00111, -0.00057,
             0.00056, -0.00042, 0.00042, 0.00038, -0.00024, -0.00007, 0.00004, 0.00004, 0.00003,
             0.00003, -0.00003, 0.00003, -0.00002, -0.00002, 0.00002,
         ];
-        let w: [f64; 24] = [
+        let e_factor: [f64; 24] = [
             0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 2.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0,
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
         ];
-        let x: [f64; 24] = [
+        let solar_coeff: [f64; 24] = [
             0.0, 1.0, 0.0, 0.0, -1.0, 1.0, 2.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, -1.0, 2.0, 0.0, 3.0,
             1.0, 0.0, 1.0, -1.0, -1.0, 1.0, 0.0,
         ];
-        let y: [f64; 24] = [
+        let lunar_coeff: [f64; 24] = [
             1.0, 0.0, 2.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 0.0, 0.0, 2.0, 1.0, 2.0, 0.0,
             1.0, 2.0, 1.0, 1.0, 1.0, 3.0, 4.0,
         ];
-        let z: [f64; 24] = [
+        let moon_coeff: [f64; 24] = [
             0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, -2.0, 2.0, 0.0, 0.0, 2.0, -2.0, 0.0, 0.0, -2.0, 0.0,
             -2.0, 2.0, 2.0, 2.0, -2.0, 0.0, 0.0,
         ];
-        let i: [f64; 13] = [
+        let add_const: [f64; 13] = [
             251.88, 251.83, 349.42, 84.66, 141.74, 207.14, 154.84, 34.52, 207.19, 291.34, 161.72,
             239.56, 331.55,
         ];
-        let j: [f64; 13] = [
+        let add_coeff: [f64; 13] = [
             0.016321, 26.651886, 36.412478, 18.206239, 53.303771, 2.453732, 7.306860, 27.261239,
             0.121824, 1.844379, 24.198154, 25.513099, 3.592518,
         ];
-        let l: [f64; 13] = [
+        let add_factor: [f64; 13] = [
             0.000165, 0.000164, 0.000126, 0.000110, 0.000062, 0.000060, 0.000056, 0.000047,
             0.000042, 0.000040, 0.000037, 0.000035, 0.000023,
         ];
         let mut correction = -0.00017 * omega.to_radians().sin();
         let mut sum = 0.0;
-        for g in 0..v.len() {
-            sum += v[g]
-                * e.powf(w[g])
-                * (x[g] * solar_anomaly + y[g] * lunar_anomaly + z[g] * moon_argument)
+        for (v, w, x, y, z) in sine_coeff
+            .iter()
+            .zip(
+                e_factor.iter().zip(
+                    solar_coeff
+                        .iter()
+                        .zip(lunar_coeff.iter().zip(moon_coeff.iter())),
+                ),
+            )
+            .map(|(v, (w, (x, (y, z))))| (v, w, x, y, z))
+        {
+            sum += v
+                * e.powf(*w)
+                * (x * solar_anomaly + y * lunar_anomaly + z * moon_argument)
                     .to_radians()
                     .sin();
         }
@@ -271,8 +285,12 @@ impl Astronomical {
                 .to_radians()
                 .sin();
         let mut additional = 0.0;
-        for g in 0..i.len() {
-            additional += l[g] * (i[g] + j[g] * k).to_radians().sin();
+        for (i, j, l) in add_const
+            .iter()
+            .zip(add_coeff.iter().zip(add_factor.iter()))
+            .map(|(i, (j, l))| (i, j, l))
+        {
+            additional += l * (i + j * k).to_radians().sin();
         }
         Self::universal_from_dynamical(approx + correction + extra + additional)
     }
@@ -286,7 +304,7 @@ impl Astronomical {
         let ml = Self::lunar_anomaly(c);
         let f = Self::moon_node(c);
         let e = 1.0 - (0.002516 * c) - (0.0000074 * c.powi(2));
-        let v: [f64; 59] = [
+        let sine_coeff: [f64; 59] = [
             6288774.0, 1274027.0, 658314.0, 213618.0, -185116.0, -114332.0, 58793.0, 57066.0,
             53322.0, 45758.0, -40923.0, -34720.0, -30383.0, 15327.0, -12528.0, 10980.0, 10675.0,
             10034.0, 8548.0, -7888.0, -6766.0, -5163.0, 4987.0, 4036.0, 3994.0, 3861.0, 3665.0,
@@ -294,25 +312,25 @@ impl Astronomical {
             1215.0, -1110.0, -892.0, -810.0, 759.0, -713.0, -700.0, 691.0, 596.0, 549.0, 537.0,
             520.0, -487.0, -399.0, -381.0, 351.0, -340.0, 330.0, 327.0, -323.0, 299.0, 294.0,
         ];
-        let w: [f64; 59] = [
+        let args_lunar_elongation: [f64; 59] = [
             0.0, 2.0, 2.0, 0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 4.0,
             0.0, 4.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 4.0, 2.0, 0.0, 2.0, 2.0, 1.0, 2.0, 0.0, 0.0,
             2.0, 2.0, 2.0, 4.0, 0.0, 3.0, 2.0, 4.0, 0.0, 2.0, 2.0, 2.0, 4.0, 0.0, 4.0, 1.0, 2.0,
             0.0, 1.0, 3.0, 4.0, 2.0, 0.0, 1.0, 2.0,
         ];
-        let x: [f64; 59] = [
+        let args_solar_anomaly: [f64; 59] = [
             0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
             0.0, 0.0, 1.0, 1.0, 0.0, 1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, -2.0, 1.0, 2.0,
             -2.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, -1.0, 2.0, 2.0, 1.0, -1.0, 0.0, 0.0, -1.0, 0.0,
             1.0, 0.0, 1.0, 0.0, 0.0, -1.0, 2.0, 1.0, 0.0,
         ];
-        let y: [f64; 59] = [
+        let args_lunar_anomaly: [f64; 59] = [
             1.0, -1.0, 0.0, 2.0, 0.0, 0.0, -2.0, -1.0, 1.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 1.0,
             -1.0, 3.0, -2.0, -1.0, 0.0, -1.0, 0.0, 1.0, 2.0, 0.0, -3.0, -2.0, -1.0, -2.0, 1.0, 0.0,
             2.0, 0.0, -1.0, 1.0, 0.0, -1.0, 2.0, -1.0, 1.0, -2.0, -1.0, -1.0, -2.0, 0.0, 1.0, 4.0,
             0.0, -2.0, 0.0, 2.0, 1.0, -2.0, -3.0, 2.0, 1.0, -1.0, 3.0,
         ];
-        let z: [f64; 59] = [
+        let args_moon_node: [f64; 59] = [
             0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 2.0, -2.0, 0.0,
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0,
             0.0, -2.0, 2.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0,
@@ -320,12 +338,19 @@ impl Astronomical {
         ];
         let mut correction = 1.0 / 1000000.0;
         let mut correction_operand = 0.0;
-        for i in 0..x.len() {
-            correction_operand += v[i]
-                * e.powf(x[i].abs())
-                * (w[i] * d + x[i] * ms + y[i] * ml + z[i] * f)
-                    .to_radians()
-                    .sin();
+        for (v, w, x, y, z) in sine_coeff
+            .iter()
+            .zip(
+                args_lunar_elongation.iter().zip(
+                    args_solar_anomaly
+                        .iter()
+                        .zip(args_lunar_anomaly.iter().zip(args_moon_node.iter())),
+                ),
+            )
+            .map(|(v, (w, (x, (y, z))))| (v, w, x, y, z))
+        {
+            correction_operand +=
+                v * e.powf(x.abs()) * (w * d + x * ms + y * ml + z * f).to_radians().sin();
         }
         correction *= correction_operand;
         let venus = 3958.0 / 1000000.0 * (119.75 + c * 131.849).to_radians().sin();
@@ -387,20 +412,20 @@ impl Astronomical {
     /// The longitude of the Sun at a given Moment in degrees
     pub fn solar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
-        let x: [f64; 49] = [
+        let coefficients: [f64; 49] = [
             403406.0, 195207.0, 119433.0, 112392.0, 3891.0, 2819.0, 1721.0, 660.0, 350.0, 334.0,
             314.0, 268.0, 242.0, 234.0, 158.0, 132.0, 129.0, 114.0, 99.0, 93.0, 86.0, 78.0, 72.0,
             68.0, 64.0, 46.0, 38.0, 37.0, 32.0, 29.0, 28.0, 27.0, 27.0, 25.0, 24.0, 21.0, 21.0,
             20.0, 18.0, 17.0, 14.0, 13.0, 13.0, 13.0, 12.0, 10.0, 10.0, 10.0, 10.0,
         ];
-        let y: [f64; 49] = [
+        let addends: [f64; 49] = [
             270.54861, 340.19128, 63.91854, 331.26220, 317.843, 86.631, 240.052, 310.26, 247.23,
             260.87, 297.82, 343.14, 166.79, 81.53, 3.50, 132.75, 182.95, 162.03, 29.8, 266.4,
             249.2, 157.6, 257.8, 185.1, 69.9, 8.0, 197.1, 250.4, 65.3, 162.7, 341.5, 291.6, 98.5,
             146.7, 110.0, 5.2, 342.6, 230.9, 256.1, 45.3, 242.9, 115.2, 151.8, 285.3, 53.3, 126.6,
             205.7, 85.9, 146.1,
         ];
-        let z: [f64; 49] = [
+        let multipliers: [f64; 49] = [
             0.9287892,
             35999.1376958,
             35999.4089666,
@@ -452,8 +477,12 @@ impl Astronomical {
             90073.778,
         ];
         let mut lambda = 0.0;
-        for i in 0..x.len() {
-            lambda += x[i] * (y[i] + z[i] * c).to_radians().sin();
+        for (x, y, z) in coefficients
+            .iter()
+            .zip(addends.iter().zip(multipliers.iter()))
+            .map(|(x, (y, z))| (x, y, z))
+        {
+            lambda += x * (y + z * c).to_radians().sin();
         }
         lambda *= 0.000005729577951308232;
         lambda += 282.7771834 + 36000.76953744 * c;
