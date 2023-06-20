@@ -939,10 +939,11 @@ where
 /// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
 ///
 /// let set = parse_unstable("[a-zA-Z0-9]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let code_points = set.code_points();
 ///
-/// assert!(set.contains_range(&('a'..='z')));
-/// assert!(set.contains_range(&('A'..='Z')));
-/// assert!(set.contains_range(&('0'..='9')));
+/// assert!(code_points.contains_range(&('a'..='z')));
+/// assert!(code_points.contains_range(&('A'..='Z')));
+/// assert!(code_points.contains_range(&('0'..='9')));
 /// ```
 ///
 /// Parse properties, set operations, inner sets
@@ -951,7 +952,7 @@ where
 ///
 /// let set = parse_unstable("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]", Default::default(), &icu_testdata::unstable()).unwrap();
 /// let elements = 'a'..='z';
-/// assert!(set.contains_range(&elements));
+/// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(elements.count(), set.size());
 /// ```
 ///
@@ -971,7 +972,7 @@ where
 ///
 /// let set = parse_unstable("[[ace][bdf] - [abc][def]]", Default::default(), &icu_testdata::unstable()).unwrap();
 /// let elements = 'd'..='f';
-/// assert!(set.contains_range(&elements));
+/// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(set.size(), elements.count());
 /// ```
 pub fn parse_unstable<P>(
