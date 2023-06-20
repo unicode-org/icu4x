@@ -202,6 +202,8 @@ impl Astronomical {
     /// The moment (in universal time) of the nth new moon after
     /// (or before if n is negative) the new moon of January 11, 1 CE,
     /// which is the first new moon after R.D. 0.
+    /// 
+    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4288-L4377
     pub fn nth_new_moon(n: i32) -> Moment {
         let n0 = 24724.0;
         let k = (n as f64) - n0;
@@ -296,6 +298,8 @@ impl Astronomical {
     }
 
     /// Longitude of the moon (in degrees) at a given moment
+    /// 
+    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4215-L4278
     pub fn lunar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let l = Self::mean_lunar_longitude(c);
@@ -359,35 +363,51 @@ impl Astronomical {
         (l + correction + venus + jupiter + flat_earth + Self::nutation(moment)).rem_euclid(360.0)
     }
 
+    // Mean longitude of the moon (in degrees) at a given Moment in Julian centuries
+    //
+    // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4148-L4158
     fn mean_lunar_longitude(c: f64) -> f64 {
         (218.3164477 + 481267.88123421 * c - 0.0015786 * c.powi(2) + 1.0 / 538841.0 * c.powi(3)
             - 1.0 / 65194000.0 * c.powi(4))
         .rem_euclid(360.0)
     }
 
+    // Lunar elongation (the moon's angular distance east of the Sun) at a given Moment in Julian centuries
+    //
+    // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4160-L4170
     fn lunar_elongation(c: f64) -> f64 {
         (297.85019021 + 445267.1114034 * c - 0.0018819 * c.powi(2) + 1.0 / 545868.0 * c.powi(3)
             - 1.0 / 113065000.0 * c.powi(4))
         .rem_euclid(360.0)
     }
 
+    // Average anomaly of the sun (in degrees) at a given Moment in Julian centuries
+    //
+    // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4172-L4182
     fn solar_anomaly(c: f64) -> f64 {
         (357.5291092 + 35999.0502909 * c - 0.0001536 * c.powi(2) + 1.0 / 24490000.0 * c.powi(3))
             .rem_euclid(360.0)
     }
 
+    // Average anomaly of the moon (in degrees) at a given Moment in Julian centuries
+    //
+    // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4184-L4194
     fn lunar_anomaly(c: f64) -> f64 {
         (134.9633964 + 477198.8675055 * c + 0.0087414 * c.powi(2) + 1.0 / 69699.0 * c.powi(3)
             - 1.0 / 14712000.0 * c.powi(4))
         .rem_euclid(360.0)
     }
 
+    // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4196-L4206
     fn moon_node(c: f64) -> f64 {
         (93.2720950 + 483202.0175233 * c - 0.0036539 * c.powi(2) - 1.0 / 3526000.0 * c.powi(3)
             + 1.0 / 863310000.0 * c.powi(4))
         .rem_euclid(360.0)
     }
 
+    // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
+    // 
+    // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4037-L4047
     fn nutation(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let a = 124.90 - 1934.134 * c + 0.002063 * c * c;
