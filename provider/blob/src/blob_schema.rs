@@ -80,8 +80,8 @@ impl<'data> BlobSchemaV1<'data> {
         let mut seen_min = false;
         let mut seen_max = false;
         for cursor in self.keys.iter0() {
-            for (_, idx) in cursor.iter1_copied() {
-                debug_assert!(idx < self.buffers.len());
+            for (locale, idx) in cursor.iter1_copied() {
+                debug_assert!(idx < self.buffers.len() || locale == Index32U8::SENTINEL);
                 if idx == 0 {
                     seen_min = true;
                 }
@@ -120,4 +120,8 @@ impl<'a> ZeroMapKV<'a> for Index32U8 {
     type Slice = VarZeroSlice<Index32U8, Index32>;
     type GetType = Index32U8;
     type OwnedType = Box<Index32U8>;
+}
+
+impl Index32U8 {
+    pub(crate) const SENTINEL: &Self = unsafe { core::mem::transmute::<&[u8], _>(&[]) };
 }
