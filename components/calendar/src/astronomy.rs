@@ -16,7 +16,7 @@ use crate::{Date, Gregorian};
 /// given as latitude in degrees from -90 to 90,
 /// longitude in degrees from -180 to 180,
 /// and elevation in meters.
-pub struct Location {
+pub(crate) struct Location {
     latitude: f64,  // latitude from -90 to 90
     longitude: f64, // longitude from -180 to 180
     elevation: f64, // elevation in meters
@@ -24,29 +24,15 @@ pub struct Location {
 
 /// The mean synodic month in days of 86400 atomic seconds
 /// (86400 seconds = 24 hours * 60 minutes/hour * 60 seconds/minute)
-pub const MEAN_SYNODIC_MONTH: f64 = 29.530588861;
+pub(crate) const MEAN_SYNODIC_MONTH: f64 = 29.530588861;
 
 /// The Moment of noon on January 1, 2000
-pub const J2000: Moment = Moment::new(730120.5);
+pub(crate) const J2000: Moment = Moment::new(730120.5);
 
 impl Location {
-    /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180
-    ///
-    /// ```rust
-    /// use icu::calendar::astronomy::Location;
-    ///
-    /// let valid: Location = Location::try_new(29.3, -132.6, 1032.5).unwrap();
-    /// assert_eq!(valid.latitude(), 29.3);
-    /// assert_eq!(valid.longitude(), -132.6);
-    /// assert_eq!(valid.elevation(), 1032.5);
-    ///
-    /// let invalid_lat = Location::try_new(95.0, -132.6, 1032.5);
-    /// assert!(invalid_lat.is_err());
-    ///
-    /// let invalid_long = Location::try_new(29.3, -190.0, 1032.5);
-    /// assert!(invalid_long.is_err());
-    /// ```
-    pub fn try_new(
+    /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
+    /// attempting to create a location outside of these bounds will result in a LocationError.
+    pub(crate) fn try_new(
         latitude: f64,
         longitude: f64,
         elevation: f64,
@@ -65,17 +51,17 @@ impl Location {
     }
 
     /// Get the longitude of a Location
-    pub fn longitude(&self) -> f64 {
+    pub(crate) fn longitude(&self) -> f64 {
         self.longitude
     }
 
     /// Get the latitude of a Location
-    pub fn latitude(&self) -> f64 {
+    pub(crate) fn latitude(&self) -> f64 {
         self.latitude
     }
 
     /// Get the elevation of a Location
-    pub fn elevation(&self) -> f64 {
+    pub(crate) fn elevation(&self) -> f64 {
         self.elevation
     }
 
@@ -83,17 +69,17 @@ impl Location {
     /// this yields the difference in Moment given a longitude
     /// e.g. a longitude of 90 degrees is 0.25 (90 / 360) days ahead
     /// of a location with a longitude of 0 degrees.
-    pub fn zone_from_longitude(longitude: f64) -> f64 {
+    pub(crate) fn zone_from_longitude(longitude: f64) -> f64 {
         longitude / 360.0
     }
 
     /// Convert from local mean time to universal time given a location
-    pub fn universal_from_local(local_time: Moment, location: Location) -> Moment {
+    pub(crate) fn universal_from_local(local_time: Moment, location: Location) -> Moment {
         local_time - Self::zone_from_longitude(location.longitude as f64)
     }
 
     /// Convert from universal time to local time given a location
-    pub fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
+    pub(crate) fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
         universal_time + Self::zone_from_longitude(location.longitude as f64)
     }
 }
@@ -101,7 +87,7 @@ impl Location {
 #[derive(Debug)]
 /// The Astronomical struct provides functions which support astronomical
 /// calculations used by many observational calendars.
-pub struct Astronomical;
+pub(crate) struct Astronomical;
 
 impl Astronomical {
     /// Function for the ephemeris correction, which corrects the
@@ -109,7 +95,7 @@ impl Astronomical {
     /// and universal time
     ///
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3884-L3952
-    pub fn ephemeris_correction(moment: Moment) -> f64 {
+    pub(crate) fn ephemeris_correction(moment: Moment) -> f64 {
         let year = moment.inner().floor() / 365.2425;
         let year_int = (if year > 0.0 { year + 1.0 } else { year }) as i32;
         let gregorian: Date<Gregorian> = Date::try_new_gregorian_date(year_int, 7, 1)
@@ -183,18 +169,18 @@ impl Astronomical {
     }
 
     /// Include the ephemeris correction to universal time, yielding dynamical time
-    pub fn dynamical_from_universal(universal: Moment) -> Moment {
+    pub(crate) fn dynamical_from_universal(universal: Moment) -> Moment {
         universal + Self::ephemeris_correction(universal)
     }
 
     /// Remove the ephemeris correction from dynamical time, yielding universal time
-    pub fn universal_from_dynamical(dynamical: Moment) -> Moment {
+    pub(crate) fn universal_from_dynamical(dynamical: Moment) -> Moment {
         dynamical - Self::ephemeris_correction(dynamical)
     }
 
     /// The number of uniform length centuries (36525 days measured in dynamical time)
     /// before or after noon on January 1, 2000
-    pub fn julian_centuries(moment: Moment) -> f64 {
+    pub(crate) fn julian_centuries(moment: Moment) -> f64 {
         let intermediate = Self::dynamical_from_universal(moment);
         (1.0 / 36525.0) * (intermediate - J2000)
     }
@@ -204,7 +190,7 @@ impl Astronomical {
     /// which is the first new moon after R.D. 0.
     ///
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4288-L4377
-    pub fn nth_new_moon(n: i32) -> Moment {
+    pub(crate) fn nth_new_moon(n: i32) -> Moment {
         let n0 = 24724.0;
         let k = (n as f64) - n0;
         let c = k / 1236.85;
@@ -300,7 +286,7 @@ impl Astronomical {
     /// Longitude of the moon (in degrees) at a given moment
     ///
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4215-L4278
-    pub fn lunar_longitude(moment: Moment) -> f64 {
+    pub(crate) fn lunar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let l = Self::mean_lunar_longitude(c);
         let d = Self::lunar_elongation(c);
@@ -417,7 +403,7 @@ impl Astronomical {
 
     /// The phase of the moon at a given Moment, defined as the difference in longitudes
     /// of the sun and the moon.
-    pub fn lunar_phase(moment: Moment) -> f64 {
+    pub(crate) fn lunar_phase(moment: Moment) -> f64 {
         let t0 = Self::nth_new_moon(0);
         let n = (moment - t0).div_euclid(MEAN_SYNODIC_MONTH).round() as i32;
         let a = (Self::lunar_longitude(moment) - Self::solar_longitude(moment)).rem_euclid(360.0);
@@ -430,7 +416,7 @@ impl Astronomical {
     }
 
     /// The longitude of the Sun at a given Moment in degrees
-    pub fn solar_longitude(moment: Moment) -> f64 {
+    pub(crate) fn solar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let coefficients: [f64; 49] = [
             403406.0, 195207.0, 119433.0, 112392.0, 3891.0, 2819.0, 1721.0, 660.0, 350.0, 334.0,
@@ -515,13 +501,13 @@ impl Astronomical {
 
     /// Find the time of the new moon preceding a given Moment
     /// (the last new moon before moment)
-    pub fn new_moon_before(moment: Moment) -> Moment {
+    pub(crate) fn new_moon_before(moment: Moment) -> Moment {
         Self::nth_new_moon(Self::num_of_new_moon_at_or_after(moment) - 1)
     }
 
     /// Find the time of the new moon following a given Moment
     /// (the first new moon after moment)
-    pub fn new_moon_at_or_after(moment: Moment) -> Moment {
+    pub(crate) fn new_moon_at_or_after(moment: Moment) -> Moment {
         Self::nth_new_moon(Self::num_of_new_moon_at_or_after(moment))
     }
 
@@ -806,5 +792,35 @@ mod tests {
             iters < max_iters,
             "Testing failed: more than the expected number of testing iterations"
         );
+    }
+
+    #[test]
+    fn check_location_valid_case() {
+        // Checks that location construction and functions work for various valid lats and longs
+        let mut long = -180.0;
+        let mut lat = -90.0;
+        while long <= 180.0 {
+            while lat <= 90.0 {
+
+                let location: Location = Location::try_new(lat, long, 1000.0).unwrap();
+                assert_eq!(lat, location.latitude());
+                assert_eq!(long, location.longitude());
+
+                lat += 1.0;
+            }
+            long += 1.0;
+        }
+    }
+
+    #[test]
+    fn check_location_errors() {
+        let lat_too_small = Location::try_new(-90.1, 15.0, 1000.0).unwrap_err();
+        assert_eq!(lat_too_small, LocationError::LatitudeOutOfBounds(-90.1));
+        let lat_too_large = Location::try_new(90.1, -15.0, 1000.0).unwrap_err();
+        assert_eq!(lat_too_large, LocationError::LatitudeOutOfBounds(90.1));
+        let long_too_small = Location::try_new(15.0, 180.1, 1000.0).unwrap_err();
+        assert_eq!(long_too_small, LocationError::LongitudeOutOfBounds(180.1));
+        let long_too_large = Location::try_new(-15.0, -180.1, 1000.0).unwrap_err();
+        assert_eq!(long_too_large, LocationError::LongitudeOutOfBounds(-180.1));
     }
 }
