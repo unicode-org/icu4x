@@ -125,7 +125,8 @@ impl Astronomical {
         let y1820 = ((year_int - 1820) as f64) / 100.0;
 
         if (2051..=2150).contains(&year_int) {
-            (8.0 * libm::pow(year_int as f64, 2.0) + 8.0 * libm::pow(1820.0, 2.0) - 30527.0 * (year_int as f64)
+            (8.0 * libm::pow(year_int as f64, 2.0) + 8.0 * libm::pow(1820.0, 2.0)
+                - 30527.0 * (year_int as f64)
                 + 2975050.0)
                 / 216000000.0
         } else if (2006..=2050).contains(&year_int) {
@@ -166,7 +167,9 @@ impl Astronomical {
                     + 0.000140272128 * libm::pow(y1600, 3.0))
         } else if (500..=1599).contains(&year_int) {
             (1.0 / 86400.0)
-                * (1574.2 - 556.01 * y1000 + 71.23472 * libm::pow(y1000, 2.0) + 0.319781 * libm::pow(y1000, 3.0)
+                * (1574.2 - 556.01 * y1000
+                    + 71.23472 * libm::pow(y1000, 2.0)
+                    + 0.319781 * libm::pow(y1000, 3.0)
                     - 0.8503463 * libm::pow(y1000, 4.0)
                     - 0.005050998 * libm::pow(y1000, 5.0)
                     + 0.0083572073 * libm::pow(y1000, 6.0))
@@ -281,13 +284,13 @@ impl Astronomical {
         {
             sum += v
                 * libm::pow(e, *w)
-                * libm::sin((x * solar_anomaly + y * lunar_anomaly + z * moon_argument)
-                    .to_radians());
+                * libm::sin(
+                    (x * solar_anomaly + y * lunar_anomaly + z * moon_argument).to_radians(),
+                );
         }
         correction += sum;
         let extra = 0.000325
-            * libm::sin((299.77 + (132.8475848 * c) - (0.009173 * libm::pow(c, 2.0)))
-                .to_radians());
+            * libm::sin((299.77 + (132.8475848 * c) - (0.009173 * libm::pow(c, 2.0))).to_radians());
         let mut additional = 0.0;
         for (i, j, l) in add_const
             .iter()
@@ -356,14 +359,19 @@ impl Astronomical {
             )
             .map(|(v, (w, (x, (y, z))))| (v, w, x, y, z))
         {
-            correction_operand +=
-                v * libm::pow(e, libm::fabs(*x)) * libm::sin((w * d + x * ms + y * ml + z * f).to_radians());
+            correction_operand += v
+                * libm::pow(e, libm::fabs(*x))
+                * libm::sin((w * d + x * ms + y * ml + z * f).to_radians());
         }
         correction *= correction_operand;
         let venus = 3958.0 / 1000000.0 * libm::sin((119.75 + c * 131.849).to_radians());
         let jupiter = 318.0 / 1000000.0 * libm::sin((53.09 + c * 479264.29).to_radians());
         let flat_earth = 1962.0 / 1000000.0 * libm::sin((l - f).to_radians());
-        div_rem_euclid_f64(l + correction + venus + jupiter + flat_earth + Self::nutation(moment), 360.0).1
+        div_rem_euclid_f64(
+            l + correction + venus + jupiter + flat_earth + Self::nutation(moment),
+            360.0,
+        )
+        .1
     }
 
     // Mean longitude of the moon (in degrees) at a given Moment in Julian centuries
@@ -371,8 +379,13 @@ impl Astronomical {
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4148-L4158
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn mean_lunar_longitude(c: f64) -> f64 {
-        div_rem_euclid_f64(218.3164477 + 481267.88123421 * c - 0.0015786 * libm::pow(c, 2.0) + 1.0 / 538841.0 * libm::pow(c, 3.0)
-            - 1.0 / 65194000.0 * libm::pow(c, 4.0), 360.0).1
+        div_rem_euclid_f64(
+            218.3164477 + 481267.88123421 * c - 0.0015786 * libm::pow(c, 2.0)
+                + 1.0 / 538841.0 * libm::pow(c, 3.0)
+                - 1.0 / 65194000.0 * libm::pow(c, 4.0),
+            360.0,
+        )
+        .1
     }
 
     // Lunar elongation (the moon's angular distance east of the Sun) at a given Moment in Julian centuries
@@ -380,8 +393,13 @@ impl Astronomical {
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4160-L4170
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn lunar_elongation(c: f64) -> f64 {
-        div_rem_euclid_f64(297.85019021 + 445267.1114034 * c - 0.0018819 * libm::pow(c, 2.0) + 1.0 / 545868.0 * libm::pow(c, 3.0)
-            - 1.0 / 113065000.0 * libm::pow(c, 4.0), 360.0).1
+        div_rem_euclid_f64(
+            297.85019021 + 445267.1114034 * c - 0.0018819 * libm::pow(c, 2.0)
+                + 1.0 / 545868.0 * libm::pow(c, 3.0)
+                - 1.0 / 113065000.0 * libm::pow(c, 4.0),
+            360.0,
+        )
+        .1
     }
 
     // Average anomaly of the sun (in degrees) at a given Moment in Julian centuries
@@ -389,7 +407,12 @@ impl Astronomical {
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4172-L4182
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn solar_anomaly(c: f64) -> f64 {
-        div_rem_euclid_f64(357.5291092 + 35999.0502909 * c - 0.0001536 * libm::pow(c, 2.0) + 1.0 / 24490000.0 * libm::pow(c, 3.0), 360.0).1
+        div_rem_euclid_f64(
+            357.5291092 + 35999.0502909 * c - 0.0001536 * libm::pow(c, 2.0)
+                + 1.0 / 24490000.0 * libm::pow(c, 3.0),
+            360.0,
+        )
+        .1
     }
 
     // Average anomaly of the moon (in degrees) at a given Moment in Julian centuries
@@ -397,15 +420,28 @@ impl Astronomical {
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4184-L4194
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn lunar_anomaly(c: f64) -> f64 {
-        div_rem_euclid_f64(134.9633964 + 477198.8675055 * c + 0.0087414 * libm::pow(c, 2.0) + 1.0 / 69699.0 * libm::pow(c, 3.0)
-            - 1.0 / 14712000.0 * libm::pow(c, 4.0), 360.0).1
+        div_rem_euclid_f64(
+            134.9633964
+                + 477198.8675055 * c
+                + 0.0087414 * libm::pow(c, 2.0)
+                + 1.0 / 69699.0 * libm::pow(c, 3.0)
+                - 1.0 / 14712000.0 * libm::pow(c, 4.0),
+            360.0,
+        )
+        .1
     }
 
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4196-L4206
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn moon_node(c: f64) -> f64 {
-        div_rem_euclid_f64(93.2720950 + 483202.0175233 * c - 0.0036539 * libm::pow(c, 2.0) - 1.0 / 3526000.0 * libm::pow(c, 3.0)
-            + 1.0 / 863310000.0 * libm::pow(c, 4.0), 360.0).1
+        div_rem_euclid_f64(
+            93.2720950 + 483202.0175233 * c
+                - 0.0036539 * libm::pow(c, 2.0)
+                - 1.0 / 3526000.0 * libm::pow(c, 3.0)
+                + 1.0 / 863310000.0 * libm::pow(c, 4.0),
+            360.0,
+        )
+        .1
     }
 
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
@@ -425,8 +461,13 @@ impl Astronomical {
     pub(crate) fn lunar_phase(moment: Moment) -> f64 {
         let t0 = Self::nth_new_moon(0);
         let n = libm::round(div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0) as i32;
-        let a = div_rem_euclid_f64(Self::lunar_longitude(moment) - Self::solar_longitude(moment), 360.0).1;
-        let b = 360.0 * (div_rem_euclid_f64((moment - Self::nth_new_moon(n)) / MEAN_SYNODIC_MONTH, 1.0).1);
+        let a = div_rem_euclid_f64(
+            Self::lunar_longitude(moment) - Self::solar_longitude(moment),
+            360.0,
+        )
+        .1;
+        let b = 360.0
+            * (div_rem_euclid_f64((moment - Self::nth_new_moon(n)) / MEAN_SYNODIC_MONTH, 1.0).1);
         if libm::fabs(a - b) > 180.0 {
             b
         } else {
