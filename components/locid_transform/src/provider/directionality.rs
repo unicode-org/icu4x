@@ -6,7 +6,11 @@ use super::*;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
-#[icu_provider::data_struct(marker(ScriptDirectionV1Marker, "locid_transform/script_dir@1", singleton))]
+#[icu_provider::data_struct(marker(
+    ScriptDirectionV1Marker,
+    "locid_transform/script_dir@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",

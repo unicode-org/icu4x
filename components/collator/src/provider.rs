@@ -421,7 +421,11 @@ impl CollationMetadataV1 {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CollationSpecialPrimariesV1Marker, "collator/prim@1", singleton))]
+#[icu_provider::data_struct(marker(
+    CollationSpecialPrimariesV1Marker,
+    "collator/prim@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

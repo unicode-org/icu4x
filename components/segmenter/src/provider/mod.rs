@@ -37,7 +37,7 @@ use zerovec::ZeroVec;
     marker(LineBreakDataV1Marker, "segmenter/line@1", singleton),
     marker(WordBreakDataV1Marker, "segmenter/word@1", singleton),
     marker(GraphemeClusterBreakDataV1Marker, "segmenter/grapheme@1", singleton),
-    marker(SentenceBreakDataV1Marker, "segmenter/sentence@1", singleton),
+    marker(SentenceBreakDataV1Marker, "segmenter/sentence@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(

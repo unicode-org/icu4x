@@ -627,8 +627,16 @@ expand!(
             "exemplarchars/punctuation",
             false
         ),
-        (ExemplarCharactersNumbersV1Marker, "exemplarchars/numbers", false),
-        (ExemplarCharactersIndexV1Marker, "exemplarchars/index", false),
+        (
+            ExemplarCharactersNumbersV1Marker,
+            "exemplarchars/numbers",
+            false
+        ),
+        (
+            ExemplarCharactersIndexV1Marker,
+            "exemplarchars/index",
+            false
+        ),
     ),
     (
         // code point maps
