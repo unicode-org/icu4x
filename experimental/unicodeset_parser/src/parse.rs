@@ -709,8 +709,6 @@ where
                 //     // skipped for now.
                 _ => {
                     // try prop = truthy/falsy case
-                    let set = load_for_ecma262_unstable(self.property_provider, key)
-                        .map_err(|_| PEK::UnknownProperty)?;
                     let normalized_value = value.to_ascii_lowercase();
                     let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
                     let falsy = matches!(normalized_value.as_str(), "false" | "f" | "no" | "n");
@@ -718,6 +716,8 @@ where
                         return Err(PEK::UnknownProperty.into());
                     }
                     inverted = falsy;
+                    let set = load_for_ecma262_unstable(self.property_provider, key)
+                        .map_err(|_| PEK::UnknownProperty)?;
                     set
                 }
             };
