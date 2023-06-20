@@ -16,6 +16,7 @@ use crate::{Date, Gregorian};
 /// given as latitude in degrees from -90 to 90,
 /// longitude in degrees from -180 to 180,
 /// and elevation in meters.
+#[allow(dead_code)] // TODO: Remove dead_code tag after use
 pub(crate) struct Location {
     latitude: f64,  // latitude from -90 to 90
     longitude: f64, // longitude from -180 to 180
@@ -24,14 +25,17 @@ pub(crate) struct Location {
 
 /// The mean synodic month in days of 86400 atomic seconds
 /// (86400 seconds = 24 hours * 60 minutes/hour * 60 seconds/minute)
+#[allow(dead_code)] // TODO: Remove dead_code tag after use
 pub(crate) const MEAN_SYNODIC_MONTH: f64 = 29.530588861;
 
 /// The Moment of noon on January 1, 2000
+#[allow(dead_code)] // TODO: Remove dead_code tag after use
 pub(crate) const J2000: Moment = Moment::new(730120.5);
 
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
     /// attempting to create a location outside of these bounds will result in a LocationError.
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn try_new(
         latitude: f64,
         longitude: f64,
@@ -51,16 +55,19 @@ impl Location {
     }
 
     /// Get the longitude of a Location
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn longitude(&self) -> f64 {
         self.longitude
     }
 
     /// Get the latitude of a Location
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn latitude(&self) -> f64 {
         self.latitude
     }
 
     /// Get the elevation of a Location
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn elevation(&self) -> f64 {
         self.elevation
     }
@@ -69,16 +76,19 @@ impl Location {
     /// this yields the difference in Moment given a longitude
     /// e.g. a longitude of 90 degrees is 0.25 (90 / 360) days ahead
     /// of a location with a longitude of 0 degrees.
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn zone_from_longitude(longitude: f64) -> f64 {
         longitude / 360.0
     }
 
     /// Convert from local mean time to universal time given a location
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn universal_from_local(local_time: Moment, location: Location) -> Moment {
         local_time - Self::zone_from_longitude(location.longitude as f64)
     }
 
     /// Convert from universal time to local time given a location
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
         universal_time + Self::zone_from_longitude(location.longitude as f64)
     }
@@ -95,6 +105,7 @@ impl Astronomical {
     /// and universal time
     ///
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3884-L3952
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn ephemeris_correction(moment: Moment) -> f64 {
         let year = moment.inner().floor() / 365.2425;
         let year_int = (if year > 0.0 { year + 1.0 } else { year }) as i32;
@@ -169,17 +180,20 @@ impl Astronomical {
     }
 
     /// Include the ephemeris correction to universal time, yielding dynamical time
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn dynamical_from_universal(universal: Moment) -> Moment {
         universal + Self::ephemeris_correction(universal)
     }
 
     /// Remove the ephemeris correction from dynamical time, yielding universal time
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn universal_from_dynamical(dynamical: Moment) -> Moment {
         dynamical - Self::ephemeris_correction(dynamical)
     }
 
     /// The number of uniform length centuries (36525 days measured in dynamical time)
     /// before or after noon on January 1, 2000
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn julian_centuries(moment: Moment) -> f64 {
         let intermediate = Self::dynamical_from_universal(moment);
         (1.0 / 36525.0) * (intermediate - J2000)
@@ -190,6 +204,7 @@ impl Astronomical {
     /// which is the first new moon after R.D. 0.
     ///
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4288-L4377
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn nth_new_moon(n: i32) -> Moment {
         let n0 = 24724.0;
         let k = (n as f64) - n0;
@@ -286,6 +301,7 @@ impl Astronomical {
     /// Longitude of the moon (in degrees) at a given moment
     ///
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4215-L4278
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn lunar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let l = Self::mean_lunar_longitude(c);
@@ -352,6 +368,7 @@ impl Astronomical {
     // Mean longitude of the moon (in degrees) at a given Moment in Julian centuries
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4148-L4158
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn mean_lunar_longitude(c: f64) -> f64 {
         (218.3164477 + 481267.88123421 * c - 0.0015786 * c.powi(2) + 1.0 / 538841.0 * c.powi(3)
             - 1.0 / 65194000.0 * c.powi(4))
@@ -361,6 +378,7 @@ impl Astronomical {
     // Lunar elongation (the moon's angular distance east of the Sun) at a given Moment in Julian centuries
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4160-L4170
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn lunar_elongation(c: f64) -> f64 {
         (297.85019021 + 445267.1114034 * c - 0.0018819 * c.powi(2) + 1.0 / 545868.0 * c.powi(3)
             - 1.0 / 113065000.0 * c.powi(4))
@@ -370,6 +388,7 @@ impl Astronomical {
     // Average anomaly of the sun (in degrees) at a given Moment in Julian centuries
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4172-L4182
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn solar_anomaly(c: f64) -> f64 {
         (357.5291092 + 35999.0502909 * c - 0.0001536 * c.powi(2) + 1.0 / 24490000.0 * c.powi(3))
             .rem_euclid(360.0)
@@ -378,6 +397,7 @@ impl Astronomical {
     // Average anomaly of the moon (in degrees) at a given Moment in Julian centuries
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4184-L4194
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn lunar_anomaly(c: f64) -> f64 {
         (134.9633964 + 477198.8675055 * c + 0.0087414 * c.powi(2) + 1.0 / 69699.0 * c.powi(3)
             - 1.0 / 14712000.0 * c.powi(4))
@@ -385,6 +405,7 @@ impl Astronomical {
     }
 
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4196-L4206
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn moon_node(c: f64) -> f64 {
         (93.2720950 + 483202.0175233 * c - 0.0036539 * c.powi(2) - 1.0 / 3526000.0 * c.powi(3)
             + 1.0 / 863310000.0 * c.powi(4))
@@ -394,6 +415,7 @@ impl Astronomical {
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4037-L4047
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn nutation(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let a = 124.90 - 1934.134 * c + 0.002063 * c * c;
@@ -403,6 +425,7 @@ impl Astronomical {
 
     /// The phase of the moon at a given Moment, defined as the difference in longitudes
     /// of the sun and the moon.
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn lunar_phase(moment: Moment) -> f64 {
         let t0 = Self::nth_new_moon(0);
         let n = (moment - t0).div_euclid(MEAN_SYNODIC_MONTH).round() as i32;
@@ -416,6 +439,7 @@ impl Astronomical {
     }
 
     /// The longitude of the Sun at a given Moment in degrees
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn solar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let coefficients: [f64; 49] = [
@@ -492,27 +516,31 @@ impl Astronomical {
         }
         lambda *= 0.000005729577951308232;
         lambda += 282.7771834 + 36000.76953744 * c;
-        (lambda + Self::abberation(c, moment) + Self::nutation(moment)).rem_euclid(360.0)
+        (lambda + Self::abberation(c) + Self::nutation(moment)).rem_euclid(360.0)
     }
 
-    fn abberation(c: f64, moment: Moment) -> f64 {
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
+    fn abberation(c: f64) -> f64 {
         0.0000974 * (177.63 + 35999.01848 * c).to_radians().cos() - 0.005575
     }
 
     /// Find the time of the new moon preceding a given Moment
     /// (the last new moon before moment)
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn new_moon_before(moment: Moment) -> Moment {
         Self::nth_new_moon(Self::num_of_new_moon_at_or_after(moment) - 1)
     }
 
     /// Find the time of the new moon following a given Moment
     /// (the first new moon after moment)
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn new_moon_at_or_after(moment: Moment) -> Moment {
         Self::nth_new_moon(Self::num_of_new_moon_at_or_after(moment))
     }
 
     // Function to find the number of the new moon at or after a given moment;
     // helper function for new_moon_before and new_moon_at_or_after
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn num_of_new_moon_at_or_after(moment: Moment) -> i32 {
         let t0: Moment = Self::nth_new_moon(0);
         let phi = Self::lunar_phase(moment);
