@@ -138,14 +138,19 @@ category = "ICU4X Data"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-exec --fail-on-error cargo build -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking --release
+
+if array_is_empty ${@}
+    mode = set "--release"
+    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemapping experimental/compactdecimal experimental/displaynames experimental/relativetime
+else
+    mode = set "--bin=icu4x-datagen" # need some valid argument
+    components = set ${@}
+end
+
 root = pwd
-
-components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemapping experimental/compactdecimal experimental/displaynames experimental/relativetime
-
 for component in ${components}
     cd "${component}/data"
-    exec --fail-on-error ${root}/target/release/icu4x-datagen --config config.json
+    exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking ${mode} -- --config config.json
     cd "${root}"
 end
 '''
@@ -176,7 +181,7 @@ category = "ICU4X Data"
 dependencies = ["bakeddata"]
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error target/release/icu4x-datagen --locales basic moderate --keys experimental-all --format mod --out nonbake
+exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking --release -- --locales basic moderate --keys experimental-all --format mod --out nonbake
 rm -r nonbake
 '''
 

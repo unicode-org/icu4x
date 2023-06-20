@@ -294,7 +294,8 @@ impl LocaleCanonicalizer {
     /// Some BCP47 canonicalization data is not part of the CLDR json package. Because
     /// of this, some canonicalizations are not performed, e.g. the canonicalization of
     /// `und-u-ca-islamicc` to `und-u-ca-islamic-civil`. This will be fixed in a future
-    /// release once the missing data has been added to the CLDR json data.
+    /// release once the missing data has been added to the CLDR json data. See:
+    /// <https://github.com/unicode-org/icu4x/issues/746>
     ///
     /// # Examples
     ///

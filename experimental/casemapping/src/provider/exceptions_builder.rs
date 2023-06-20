@@ -7,8 +7,10 @@ use crate::provider::exception_helpers::{
     ExceptionBits, ExceptionBitsULE, ExceptionSlot, SlotPresence,
 };
 use crate::provider::exceptions::{CaseMappingExceptions, DecodedException};
-use std::borrow::Cow;
-use std::collections::HashMap;
+use alloc::borrow::Cow;
+use alloc::collections::BTreeMap;
+use alloc::string::String;
+use alloc::vec::Vec;
 use zerovec::ule::{AsULE, ULE};
 
 /// The header for exception types as found in ICU4C data. See [`ExceptionHeaderULE`]
@@ -155,9 +157,9 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
 
     pub(crate) fn build(
         mut self,
-    ) -> Result<(CaseMappingExceptions<'static>, HashMap<u16, u16>), Error> {
+    ) -> Result<(CaseMappingExceptions<'static>, BTreeMap<u16, u16>), Error> {
         let mut exceptions = Vec::new();
-        let mut idx_map = HashMap::new();
+        let mut idx_map = BTreeMap::new();
         // The format of the raw data from ICU4C is the same as the format described in
         // exceptions.rs, with the exception of full mapping and closure strings. The
         // header and non-string slots can be copied over without modification. For string

@@ -14,6 +14,9 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::calendar::AnyCalendar::new#FnInEnum
+icu::calendar::AnyCalendar::new_for_locale#FnInEnum
+icu::calendar::week::WeekCalculator::try_new#FnInStruct
 icu::locid_transform::Direction#Enum
 icu::locid_transform::LocaleCanonicalizer::new#FnInStruct
 icu::locid_transform::LocaleCanonicalizer::new_with_expander#FnInStruct
