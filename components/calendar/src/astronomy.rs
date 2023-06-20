@@ -801,7 +801,6 @@ mod tests {
         let mut lat = -90.0;
         while long <= 180.0 {
             while lat <= 90.0 {
-
                 let location: Location = Location::try_new(lat, long, 1000.0).unwrap();
                 assert_eq!(lat, location.latitude());
                 assert_eq!(long, location.longitude());
