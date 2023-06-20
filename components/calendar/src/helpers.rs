@@ -59,16 +59,6 @@ pub const fn quotient64(n: i64, d: i64) -> i64 {
     }
 }
 
-/// Return y if x.rem_euclid(y) == 0, x.rem_euclid(y) otherwise
-pub fn adjusted_rem_euclid(x: i32, y: i32) -> i32 {
-    let remainder = div_rem_euclid(x, y).1;
-    if remainder == 0 {
-        y
-    } else {
-        remainder
-    }
-}
-
 #[test]
 fn test_div_rem_euclid() {
     assert_eq!(div_rem_euclid(i32::MIN, 1), (-2147483648, 0));
