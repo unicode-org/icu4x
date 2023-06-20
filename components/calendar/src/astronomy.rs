@@ -202,7 +202,7 @@ impl Astronomical {
     /// The moment (in universal time) of the nth new moon after
     /// (or before if n is negative) the new moon of January 11, 1 CE,
     /// which is the first new moon after R.D. 0.
-    /// 
+    ///
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4288-L4377
     pub fn nth_new_moon(n: i32) -> Moment {
         let n0 = 24724.0;
@@ -298,7 +298,7 @@ impl Astronomical {
     }
 
     /// Longitude of the moon (in degrees) at a given moment
-    /// 
+    ///
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4215-L4278
     pub fn lunar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
@@ -406,7 +406,7 @@ impl Astronomical {
     }
 
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
-    // 
+    //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4037-L4047
     fn nutation(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
@@ -548,101 +548,219 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_astronomy_functions() {
-        // Tests the following test cases given a RataDie and expected values for
-        // Ephemeris Correction, Solar Longitude at 12:00:00 UT,
-        // lunar longitude at 00:00:00 UT, and the Moment of the next New Moon
-        //
-        // Test cases are based off pages 452-453 of _Calendrical Calculations_
-        // by Reingold & Dershowitz
-
+    // Checks that ephemeris_correction gives the same values as the lisp reference code for the given RD test cases
+    // (See function definition for lisp reference)
+    fn check_ephemeris_correction() {
         let rd_vals = [
             -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
             470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
             664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
         ];
         let expected_ephemeris = [
-            0.214169, 0.143632, 0.114444, 0.107183, 0.069498, 0.057506, 0.044758, 0.017397,
-            0.012796, 0.008869, 0.007262, 0.005979, 0.005740, 0.003875, 0.003157, 0.002393,
-            0.001731, 0.001669, 0.000615, 0.000177, 0.000101, 0.000171, 0.000136, 0.000061,
-            0.000014, 0.000276, 0.000296, 0.000302, 0.000302, 0.000675, 0.000712, 0.000963,
-            0.002913,
+            0.2141698518518519,
+            0.14363257367091617,
+            0.11444429141515931,
+            0.10718320232694657,
+            0.06949806372337948,
+            0.05750681225096574,
+            0.04475812294339828,
+            0.017397257248984357,
+            0.012796798891589713,
+            0.008869421568656596,
+            0.007262628304956149,
+            0.005979700330107665,
+            0.005740181544555194,
+            0.0038756713829057486,
+            0.0031575183970409424,
+            0.0023931271439193596,
+            0.0017316532690131062,
+            0.0016698814624679225,
+            6.150149905066665E-4,
+            1.7716816592592584E-4,
+            1.016458530046296E-4,
+            1.7152348357870364E-4,
+            1.3696411598154996E-4,
+            6.153868613872005E-5,
+            1.4168812498149138E-5,
+            2.767107192307865E-4,
+            2.9636802723679223E-4,
+            3.028239003387824E-4,
+            3.028239003387824E-4,
+            6.75088347496296E-4,
+            7.128242445629627E-4,
+            9.633446296296293E-4,
+            0.0029138888888888877,
+        ];
+        for (rd, expected_ephemeris) in rd_vals.iter().zip(expected_ephemeris.iter()) {
+            let moment: Moment = Moment::new(*rd as f64);
+            let ephemeris = Astronomical::ephemeris_correction(moment);
+            let expected_ephemeris_value = expected_ephemeris;
+            assert!(ephemeris > expected_ephemeris_value * 0.99999999, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+            assert!(ephemeris < expected_ephemeris_value * 1.00000001, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+        }
+    }
+
+    #[test]
+    // Checks that solar_longitude gives the same values as the lisp reference code for the given RD test cases
+    // (See function definition for lisp reference)
+    fn check_solar_longitude() {
+        let rd_vals = [
+            -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+            470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
+            664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
         ];
         let expected_solar_long = [
-            119.473431, 254.248961, 181.435996, 188.663922, 289.091566, 59.119741, 228.314554,
-            34.460769, 63.187995, 2.457591, 350.475934, 13.498220, 37.403920, 81.028130,
-            313.860493, 19.954430, 176.059431, 344.922951, 79.964921, 99.302317, 121.535304,
-            88.567428, 129.289884, 6.146910, 28.251993, 151.780699, 185.945867, 28.555607,
-            193.347892, 357.151254, 336.170692, 228.184879, 116.439352,
+            119.47343190503307,
+            254.2489611345809,
+            181.43599673954304,
+            188.66392267483752,
+            289.0915666249348,
+            59.11974154849304,
+            228.31455470912624,
+            34.46076992887538,
+            63.18799596698955,
+            2.4575913259759545,
+            350.475934906397,
+            13.498220866371412,
+            37.403920329437824,
+            81.02813003520714,
+            313.86049865107634,
+            19.95443016415811,
+            176.05943166351062,
+            344.92295174632454,
+            79.96492181924987,
+            99.30231774304411,
+            121.53530416596914,
+            88.56742889029556,
+            129.289884101192,
+            6.146910693067184,
+            28.25199345351575,
+            151.7806330331332,
+            185.94586701843946,
+            28.55560762159439,
+            193.3478921554779,
+            357.15125499424175,
+            336.1706924761211,
+            228.18487947607719,
+            116.43935225951282,
+        ];
+        for (rd, expected_solar_long) in rd_vals.iter().zip(expected_solar_long.iter()) {
+            let moment: Moment = Moment::new(*rd as f64);
+            let solar_long = Astronomical::solar_longitude(moment + 0.5);
+            let expected_solar_long_value = expected_solar_long;
+            assert!(solar_long > expected_solar_long_value * 0.99999999, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
+            assert!(solar_long < expected_solar_long_value * 1.00000001, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
+        }
+    }
+
+    #[test]
+    // Checks that lunar_longitude gives the same values as the lisp reference code for the given RD test cases
+    // (See function definition for lisp reference)
+    fn check_lunar_longitude() {
+        let rd_vals = [
+            -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+            470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
+            664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
         ];
         let expected_lunar_long = [
-            244.853905, 208.856738, 213.746842, 292.046243, 156.819014, 108.055632, 39.356097,
-            98.565851, 332.958296, 92.259651, 78.132029, 274.946995, 128.362844, 89.518450,
-            24.607322, 53.485956, 187.898520, 320.172362, 314.042566, 145.474063, 185.030507,
-            142.189132, 253.743375, 151.648685, 287.987743, 25.626707, 290.288300, 189.913142,
-            284.931730, 152.339044, 51.662265, 26.6820606, 175.500822,
+            244.85390528515035,
+            208.85673853696503,
+            213.74684265158967,
+            292.04624333935743,
+            156.81901407583166,
+            108.0556329349528,
+            39.35609790324581,
+            98.56585102192106,
+            332.95829627335894,
+            92.25965175091615,
+            78.13202909213766,
+            274.9469953879383,
+            128.3628442664409,
+            89.51845094326185,
+            24.607322526832988,
+            53.4859568448797,
+            187.89852001941696,
+            320.1723620959754,
+            314.0425667275923,
+            145.47406514043587,
+            185.03050779751646,
+            142.18913274552065,
+            253.74337531953228,
+            151.64868501335397,
+            287.9877436469169,
+            25.626707154435444,
+            290.28830064619893,
+            189.91314245171338,
+            284.93173002623826,
+            152.3390442635215,
+            51.66226507971774,
+            26.68206023138705,
+            175.5008226195208,
+        ];
+        for (rd, expected_lunar_long) in rd_vals.iter().zip(expected_lunar_long.iter()) {
+            let moment: Moment = Moment::new(*rd as f64);
+            let lunar_long = Astronomical::lunar_longitude(moment);
+            let expected_lunar_long_value = expected_lunar_long;
+            assert!(lunar_long > expected_lunar_long_value * 0.99999999, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
+            assert!(lunar_long < expected_lunar_long_value * 1.00000001, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
+        }
+    }
+
+    #[test]
+    // Checks that next_new_moon gives the same values as the lisp reference code for the given RD test cases
+    // (See function definition for lisp reference)
+    fn check_next_new_moon() {
+        let rd_vals = [
+            -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+            470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
+            664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
         ];
         let expected_next_new_moon = [
-            -214174.605828,
-            -61382.995328,
-            25495.809776,
-            49238.502448,
-            171318.435313,
-            210180.691849,
-            253442.859367,
-            369763.746413,
-            400091.578343,
-            434376.578106,
-            452627.191972,
-            470167.578360,
-            473858.853276,
-            507878.666842,
-            524179.247062,
-            544702.753873,
-            567146.513181,
-            569479.203258,
-            601727.033557,
-            613449.762129,
-            626620.369801,
-            645579.076748,
-            664242.886718,
-            671418.970538,
-            694807.563371,
-            704433.491182,
-            708863.597000,
-            709424.404929,
-            709602.082686,
-            727291.209400,
-            728737.447691,
-            744329.573999,
-            764676.191273,
+            -214174.60582868298,
+            -61382.99532831192,
+            25495.80977675628,
+            49238.50244808781,
+            171318.43531326813,
+            210180.69184966758,
+            253442.85936730343,
+            369763.74641362444,
+            400091.5783431683,
+            434376.5781067696,
+            452627.1919724953,
+            470167.57836052414,
+            473858.8532764285,
+            507878.6668429224,
+            524179.2470620894,
+            544702.7538732041,
+            567146.5131819838,
+            569479.2032589674,
+            601727.0335578924,
+            613449.7621296605,
+            626620.3698017383,
+            645579.0767485882,
+            664242.8867184789,
+            671418.970538101,
+            694807.5633711396,
+            704433.4911827276,
+            708863.5970001582,
+            709424.4049294397,
+            709602.0826867367,
+            727291.2094001573,
+            728737.4476913146,
+            744329.5739998783,
+            764676.1912733881,
         ];
-        for i in 0..rd_vals.len() {
-            let moment = Moment::new(rd_vals[i] as f64);
-
-            // Checking ephemeris correction
-            let ephemeris = Astronomical::ephemeris_correction(moment);
-            let expected_ephemeris_value = expected_ephemeris[i];
-            assert!(ephemeris > expected_ephemeris_value  - 0.0001, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
-            assert!(ephemeris < expected_ephemeris_value + 0.0001, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
-
-            // Checking solar_longitude
-            let solar_long = Astronomical::solar_longitude(moment + 0.5);
-            let expected_solar_long_value = expected_solar_long[i];
-            assert!(solar_long > expected_solar_long_value - 0.0001, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
-            assert!(solar_long < expected_solar_long_value + 0.0001, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
-
-            // Checking lunar_longitude
-            let lunar_long = Astronomical::lunar_longitude(moment);
-            let expected_lunar_long_value = expected_lunar_long[i];
-            assert!(lunar_long > expected_lunar_long_value - 0.0001, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
-            assert!(lunar_long < expected_lunar_long_value + 0.0001, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
-
-            // Checking new_moon_at_or_after
+        for (rd, expected_next_new_moon) in rd_vals.iter().zip(expected_next_new_moon.iter()) {
+            let moment: Moment = Moment::new(*rd as f64);
             let next_new_moon = Astronomical::new_moon_at_or_after(moment);
-            let expected_next_new_moon_moment = Moment::new(expected_next_new_moon[i]);
-            assert!(expected_next_new_moon_moment > next_new_moon - 0.0001, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
-            assert!(expected_next_new_moon_moment < next_new_moon + 0.0001, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+            let expected_next_new_moon_moment = Moment::new(*expected_next_new_moon);
+            if *expected_next_new_moon > 0.0 {
+                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * 0.99999999, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * 1.00000001, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+            } else {
+                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * 1.00000001, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * 0.99999999, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+            }
         }
     }
 
