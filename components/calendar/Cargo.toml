@@ -39,6 +39,8 @@ writeable = { version = "0.5.1", path = "../../utils/writeable" }
 databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
+libm = { version = "0.2", default-features = false }
+
 [dev-dependencies]
 criterion = "0.4"
 icu = { path = "../icu", default-features = false }

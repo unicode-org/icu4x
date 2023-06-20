@@ -1357,6 +1357,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "icu_testdata",
+ "libm",
  "serde",
  "serde_json",
  "tinystr",

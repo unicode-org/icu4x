@@ -28,6 +28,17 @@ pub fn div_rem_euclid64(n: i64, d: i64) -> (i64, i64) {
     }
 }
 
+/// [`div_rem_euclid`] for f64
+pub fn div_rem_euclid_f64(n: f64, d: f64) -> (f64, f64) {
+    debug_assert!(d > 0.0);
+    let (a, b) = (n / d, n % d);
+    if n >= 0.0 || b == 0.0 {
+        (a, b)
+    } else {
+        (a - 1.0, d + b)
+    }
+}
+
 /// Calculate `n / d` such that the remainder is always positive.
 /// This is equivalent to quotient() in the Reingold/Dershowitz Lisp code
 ///
