@@ -9,7 +9,7 @@ macro_rules! __impl_fallback_likelysubtags_v1 {
         #[clippy::msrv = "1.61"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_FALLBACK_LIKELYSUBTAGS_V1: &'static <icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::DataMarker>::Yokeable = &icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1 {
+            pub const SINGLETON_FALLBACK_LIKELYSUBTAGS_V1: &'static <icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::DataMarker>::Yokeable = &icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1 {
                 l2s: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"am\0ar\0as\0be\0bg\0bgcbhobn\0brxchrcv\0doiel\0fa\0gu\0he\0hi\0hy\0ja\0ka\0kk\0km\0kn\0ko\0kokks\0ky\0lo\0maimk\0ml\0mn\0mnimr\0my\0ne\0or\0pa\0ps\0rajru\0sa\0satsd\0si\0sr\0ta\0te\0tg\0th\0ti\0tt\0uk\0ur\0yuezh\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EthiArabBengCyrlCyrlDevaDevaBengDevaCherCyrlDevaGrekArabGujrHebrDevaArmnJpanGeorCyrlKhmrKndaKoreDevaArabCyrlLaooDevaCyrlMlymCyrlBengDevaMymrDevaOryaGuruArabDevaCyrlDevaOlckArabSinhCyrlTamlTeluCyrlThaiEthiCyrlCyrlArabHantHans") })
@@ -29,8 +29,8 @@ macro_rules! __impl_fallback_likelysubtags_v1 {
             };
         }
         #[clippy::msrv = "1.61"]
-        impl icu_provider::DataProvider<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker>, icu_provider::DataError> {
+        impl icu_provider::DataProvider<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker>, icu_provider::DataError> {
                 let locale = req.locale;
                 match {
                     if locale.is_empty() {
@@ -40,7 +40,7 @@ macro_rules! __impl_fallback_likelysubtags_v1 {
                     }
                 } {
                     Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
-                    Err(e) => Err(e.with_req(<icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
+                    Err(e) => Err(e.with_req(<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
                 }
             }
         }

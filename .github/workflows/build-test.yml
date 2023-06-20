@@ -233,7 +233,6 @@ jobs:
 
   # ci-job-full-datagen
   full-datagen:
-    needs: [testdata]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3

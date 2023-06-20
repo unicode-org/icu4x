@@ -11,9 +11,9 @@ use icu_locid::{
     subtags::{Language, Region, Script},
     LanguageIdentifier,
 };
+use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_provider_adapters::fallback::provider::*;
 use std::collections::BTreeMap;
 use writeable::Writeable;
 use zerovec::{maps::ZeroMap2d, ule::UnvalidatedStr};

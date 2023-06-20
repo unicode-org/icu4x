@@ -895,6 +895,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "ecma402_traits"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b0c2a4ea26259c41a15dcd263be230bdb0a113246a046e8288738879a8304e4"
+
+[[package]]
 name = "either"
 version = "1.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1321,6 +1327,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu4x_ecma402"
+version = "0.8.0"
+dependencies = [
+ "ecma402_traits",
+ "icu",
+ "icu_provider",
+ "writeable",
+]
+
+[[package]]
 name = "icu_benchmark_binsize"
 version = "0.0.0"
 dependencies = [
@@ -1354,6 +1370,7 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
+ "icu_calendar_data",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
@@ -1364,6 +1381,10 @@ dependencies = [
  "writeable",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_calendar_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_capi"
@@ -1421,13 +1442,19 @@ version = "0.7.2"
 dependencies = [
  "databake",
  "displaydoc",
+ "icu_casemapping_data",
  "icu_collections",
  "icu_locid",
  "icu_provider",
  "serde",
+ "writeable",
  "yoke",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_casemapping_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_codepointtrie_builder"
@@ -1466,6 +1493,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_collator_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_collections"
 version = "1.2.0"
 dependencies = [
@@ -1501,6 +1532,10 @@ dependencies = [
  "writeable",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_compactdecimal_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_datagen"
@@ -1588,6 +1623,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_datetime_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_decimal"
 version = "1.2.0"
 dependencies = [
@@ -1610,6 +1649,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_decimal_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_depcheck"
 version = "0.1.0"
 
@@ -1626,6 +1669,10 @@ dependencies = [
  "tinystr",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_displaynames_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_ffi_coverage"
@@ -1672,14 +1719,18 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
+ "icu_list_data",
  "icu_provider",
- "icu_testdata",
  "postcard",
  "regex-automata",
  "serde",
  "serde_json",
  "writeable",
 ]
+
+[[package]]
+name = "icu_list_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_locid"
@@ -1709,6 +1760,7 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_locid",
+ "icu_locid_transform_data",
  "icu_provider",
  "icu_testdata",
  "serde",
@@ -1717,6 +1769,10 @@ dependencies = [
  "writeable",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_locid_transform_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -1740,6 +1796,10 @@ dependencies = [
  "write16",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_normalizer_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_pattern"
@@ -1803,6 +1863,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_properties_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_provider"
 version = "1.2.0"
 dependencies = [
@@ -1830,6 +1894,7 @@ version = "1.2.0"
 dependencies = [
  "databake",
  "icu_locid",
+ "icu_locid_transform",
  "icu_provider",
  "icu_provider_fs",
  "icu_testdata",
@@ -1904,6 +1969,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_relativetime_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_segmenter"
 version = "1.2.1"
 dependencies = [
@@ -1924,6 +1993,10 @@ dependencies = [
  "utf8_iter",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_segmenter_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_testdata"

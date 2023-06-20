@@ -279,7 +279,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
                     any::type_name::<F>()
                 );
             }
-            self.entire_slice.reserve(shift as usize);
+            self.entire_slice.resize(new_slice_len, 0);
         }
 
         // Now that we've ensured there's enough space, we can shift the data around.
@@ -287,6 +287,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             // Note: There are no references introduced between pointer creation and pointer use, and all
             //       raw pointers are derived from a single &mut. This preserves pointer provenance.
             let slice_range = self.entire_slice.as_mut_ptr_range();
+            let old_slice_end = slice_range.start.add(slice_len);
             let data_start = slice_range
                 .start
                 .add(LENGTH_WIDTH + METADATA_WIDTH + len * F::INDEX_WIDTH);
@@ -316,7 +317,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
             // Shift data after the element to its new position.
             shift_bytes(
-                prev_element_p.end..slice_range.end,
+                prev_element_p.end..old_slice_end,
                 prev_element_p
                     .start
                     .offset((new_size as i64 + index_shift) as isize),

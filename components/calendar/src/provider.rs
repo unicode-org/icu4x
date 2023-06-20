@@ -21,6 +21,19 @@ use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
 
+#[cfg(feature = "data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_calendar;
+    icu_calendar_data::impl_calendar_japanese_v1!(Baked);
+    icu_calendar_data::impl_calendar_japanext_v1!(Baked);
+    icu_calendar_data::impl_datetime_week_data_v1!(Baked);
+};
+
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!

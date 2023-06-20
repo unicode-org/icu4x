@@ -867,6 +867,7 @@ locid_transform/likelysubtags@1, und, 4691B, d7ae441bbc9e1b75
 locid_transform/likelysubtags_ext@1, und, 75692B, d502bcb0acd0e4e4
 locid_transform/likelysubtags_l@1, und, 1810B, e172457d83d68447
 locid_transform/likelysubtags_sr@1, und, 2881B, 35aefe3344692def
+locid_transform/script_dir@1, und, 668B, 70fd2cd5dd8c5c20
 normalizer/comp@1, und, 5092B, af440f86c4dd5eda
 normalizer/decomp@1, und, 4155B, 5ddfdac7a9e061ca
 normalizer/nfd@1, und, 26794B, c40f7786ed5f8124
@@ -989,7 +990,7 @@ props/alnum@1, und, 6179B, 66f9bcaabdbeaa23
 props/bc@1, und, 9468B, a628834e07382120
 props/bidiauxiliaryprops@1, und, 4672B, 82f34dee36202d63
 props/blank@1, und, 66B, 1e75f3c7a32d0e8a
-props/casemap@1, und, 23338B, d041b2cdfc86279d
+props/casemap@1, und, 23363B, adbf5afac05f5a98
 props/ccc@1, und, 5270B, 85887761e8c0b554
 props/ea@1, und, 4939B, de9bdf3107a1a963
 props/exemplarchars/auxiliary@1, ar, 103B, 81ba9ba73c59c4c4
