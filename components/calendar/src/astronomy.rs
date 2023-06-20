@@ -5,6 +5,7 @@
 //! This file contains important structs and functions relating to location,
 //! time, and astronomy; these are intended for calender calculations and based off
 //! _Calendrical Calculations_ by Reingold & Dershowitz.
+use crate::error::LocationError;
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
@@ -34,64 +35,42 @@ impl Location {
     /// ```rust
     /// use icu::calendar::astronomy::Location;
     ///
-    /// let location: Location = Location::new(29.3, -132.6, 1032.5);
+    /// let valid: Location = Location::try_new(29.3, -132.6, 1032.5).unwrap();
+    /// assert_eq!(valid.latitude(), 29.3);
+    /// assert_eq!(valid.longitude(), -132.6);
+    /// assert_eq!(valid.elevation(), 1032.5);
+    /// 
+    /// let invalid_lat = Location::try_new(95.0, -132.6, 1032.5);
+    /// assert!(invalid_lat.is_err());
+    /// 
+    /// let invalid_long = Location::try_new(29.3, -190.0, 1032.5);
+    /// assert!(invalid_long.is_err());
     /// ```
-    pub fn new(latitude: f64, longitude: f64, elevation: f64) -> Location {
-        let result = Location {
+    pub fn try_new(latitude: f64, longitude: f64, elevation: f64) -> Result<Location, LocationError> {
+        if latitude < -90.0 || latitude > 90.0 {
+            return Err(LocationError::LatitudeOutOfBounds(latitude));
+        }
+        if longitude < -180.0 || longitude > 180.0 {
+            return Err(LocationError::LongitudeOutOfBounds(longitude));
+        }
+        Ok(Location {
             latitude,
             longitude,
             elevation,
-        };
-        result.check();
-        result
+        })
     }
 
-    // Ensures a Location has latitude between -90 and 90
-    // and longitude between -180 and 180 degrees.
-    fn check(&self) {
-        if self.latitude <= -90.0 || self.latitude >= 90.0 {
-            debug_assert!(false, "Locations must have latitudes from -90.0 to 90.0.");
-        }
-        if self.longitude <= -180.00 || self.longitude >= 180.0 {
-            debug_assert!(false, "Locations must have longitudes from -180 to 180.");
-        }
-    }
-
-    /// Get the longitude of a location
-    ///
-    /// ```rust
-    /// use icu::calendar::astronomy::Location;
-    ///
-    /// let location: Location = Location::new(29.3, -132.6, 1032.5);
-    /// let longitude: f32 = location.longitude();
-    /// assert_eq!(longitude, -132.6);
-    /// ```
+    /// Get the longitude of a Location
     pub fn longitude(&self) -> f64 {
         self.longitude
     }
 
-    /// Get the latitude of a location
-    ///
-    /// ```rust
-    /// use icu::calendar::astronomy::Location;
-    ///
-    /// let location: Location = Location::new(29.3, -132.6, 1032.5);
-    /// let latitude: f32 = location.latitude();
-    /// assert_eq!(latitude, 29.3);
-    /// ```
+    /// Get the latitude of a Location
     pub fn latitude(&self) -> f64 {
         self.latitude
     }
 
-    /// Get the elevation of a location
-    ///
-    /// ```rust
-    /// use icu::calendar::astronomy::Location;
-    ///
-    /// let location: Location = Location::new(29.3, -132.6, 1032.5);
-    /// let elevation: f32 = location.elevation();
-    /// assert_eq!(elevation, 1032.5);
-    /// ```
+    /// Get the elevation of a Location
     pub fn elevation(&self) -> f64 {
         self.elevation
     }
