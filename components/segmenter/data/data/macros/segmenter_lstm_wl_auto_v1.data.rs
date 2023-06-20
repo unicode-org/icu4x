@@ -75,23 +75,11 @@ macro_rules! __impl_segmenter_lstm_wl_auto_v1 {
                 ));
                 static VALUES: [&<icu_segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::DataMarker>::Yokeable; 4usize] = [&KM, &LO, &MY, &TH];
                 static KEYS: [&str; 4usize] = ["km", "lo", "my", "th"];
-                let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
-                    payload
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
-                    let mut fallback_iterator = icu_locid_transform::fallback::LocaleFallbacker::new().fallback_for(<icu_segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::KeyedDataMarker>::KEY.into(), req.locale.clone());
-                    loop {
-                        if fallback_iterator.get().is_empty() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu_calendar::provider::WeekDataV1Marker as icu_provider::KeyedDataMarker>::KEY, req));
-                        }
-                        if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
-                            metadata.locale = Some(fallback_iterator.take());
-                            break payload;
-                        }
-                        fallback_iterator.step();
-                    }
-                };
-                Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata })
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu_segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                }
             }
         }
     };

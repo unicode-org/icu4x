@@ -496,7 +496,7 @@ impl DataExporter for BakedExporter {
                         // We have to manually break the loop
                         quote! {
                             if fallback_iterator.get().is_empty() {
-                                return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu_calendar::provider::WeekDataV1Marker as icu_provider::KeyedDataMarker>::KEY, req));
+                                return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req));
                             }
                         }
                     };
