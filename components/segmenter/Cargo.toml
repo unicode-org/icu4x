@@ -44,7 +44,7 @@ libm = { version = "0.2", default-features = false, optional = true }
 
 [dev-dependencies]
 criterion = "0.4"
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_segmenter", "icu_properties"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_segmenter", "icu_properties", "icu_locid_transform"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_json = "1.0"
 icu = { path = "../../components/icu" }
