@@ -16,6 +16,11 @@
 
 icu::calendar::AnyCalendar::new#FnInEnum
 icu::calendar::AnyCalendar::new_for_locale#FnInEnum
+icu::calendar::Date::try_new_persian_date#FnInStruct
+icu::calendar::DateTime::try_new_persian_datetime#FnInStruct
+icu::calendar::persian::Persian#Struct
+icu::calendar::persian::Persian::new#FnInStruct
+icu::calendar::persian::PersianDateInner#Struct
 icu::calendar::week::WeekCalculator::try_new#FnInStruct
 icu::locid_transform::Direction#Enum
 icu::locid_transform::LocaleCanonicalizer::new#FnInStruct

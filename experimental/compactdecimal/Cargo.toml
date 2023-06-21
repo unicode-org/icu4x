@@ -45,7 +45,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 
 [dev-dependencies]
 icu_locid = { path = "../../components/locid" }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals", "icu_decimal", "icu_compactdecimal", "buffer"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals", "icu_decimal", "icu_compactdecimal", "icu_locid_transform", "buffer"] }
 
 [features]
 std = ["fixed_decimal/std", "icu_decimal/std", "icu_plurals/std", "icu_provider/std"]

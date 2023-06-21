@@ -45,7 +45,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 
 [dev-dependencies]
 icu = { path = "../../components/icu", features = ["icu_relativetime"] }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals", "icu_decimal", "icu_relativetime"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals", "icu_decimal", "icu_relativetime", "icu_locid_transform"] }
 
 [features]
 std = ["fixed_decimal/std", "icu_decimal/std", "icu_plurals/std", "icu_provider/std"]
