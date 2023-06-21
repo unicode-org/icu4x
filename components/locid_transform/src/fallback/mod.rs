@@ -290,17 +290,12 @@ impl LocaleFallbacker {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "data")]
-    pub const fn new() -> Self {
-        Self {
-            likely_subtags: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1,
-            ),
-            parents: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_FALLBACK_PARENTS_V1,
-            ),
-            collation_supplement: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1,
-            )),
+    #[allow(clippy::new_ret_no_self)] // keeping constructors together
+    pub const fn new() -> LocaleFallbackerBorrowed<'static> {
+        LocaleFallbackerBorrowed {
+            likely_subtags: crate::provider::Baked::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1,
+            parents: crate::provider::Baked::SINGLETON_FALLBACK_PARENTS_V1,
+            collation_supplement: Some(crate::provider::Baked::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1),
         }
     }
 

@@ -219,10 +219,7 @@ mod tests {
             .unwrap();
         let grph_payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .as_deserializing()
-            .load(DataRequest {
-                locale: &icu_locid::locale!("ja").into(),
-                metadata: Default::default(),
-            })
+            .load(Default::default())
             .unwrap()
             .take_payload()
             .unwrap();

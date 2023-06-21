@@ -6,6 +6,33 @@
 
 pub use crate::transform::cldr::source::CoverageLevel;
 
+/// Defines how fallback will apply to the generated data.
+#[derive(Debug, PartialEq, Clone, Copy, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
+pub enum FallbackMode {
+    /// This mode tries to generate data for the supplied locales. If data doesn't exist for a locale, it will be skipped.
+    ///
+    /// This is the pre-1.2 behavior, and requires manual runtime fallback.
+    Legacy,
+    /// This mode generates a minimum set of data that is sufficient under fallback at runtime. For example if en and en-US have
+    /// the same values, en-US will not be included, as it is available through fallback.
+    ///
+    /// Data generated in this mode automatically uses runtime fallback, it is not possible to use such data without fallback.
+    Runtime,
+    /// This mode generates data for *exactly* the supplied locales. If data doesn't exist for a locale, fallback will be
+    /// performed and the fallback value will be exported. Note that for data exporters that deduplicate values (such as
+    /// `BakedExporter` and `BlobDataExporter`), the only impact on data size will be additional keys (i.e `en-US`).
+    ///
+    /// Data generated in this mode can be used without runtime fallback and guarantees that all locales are present.
+    Expand,
+}
+
+impl Default for FallbackMode {
+    fn default() -> Self {
+        Self::Legacy
+    }
+}
+
 use icu_locid::LanguageIdentifier;
 use std::collections::HashSet;
 
@@ -23,6 +50,9 @@ pub struct Options {
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
     pub collations: HashSet<String>,
+    /// The type of fallback that the data should be generated for. If locale fallback is
+    /// used at runtime, smaller data can be generated.
+    pub fallback: FallbackMode,
 }
 
 /// Defines the locaes to include

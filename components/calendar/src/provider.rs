@@ -71,8 +71,8 @@ pub struct EraStartDate {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(JapaneseErasV1Marker, "calendar/japanese@1"),
-    marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1")
+    marker(JapaneseErasV1Marker, "calendar/japanese@1", singleton),
+    marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(

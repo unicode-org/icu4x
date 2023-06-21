@@ -12,7 +12,11 @@ use zerovec::ZeroMap;
 use zerovec::ZeroMap2d;
 
 /// Locale fallback rules derived from likely subtags data.
-#[icu_provider::data_struct(LocaleFallbackLikelySubtagsV1Marker = "fallback/likelysubtags@1")]
+#[icu_provider::data_struct(marker(
+    LocaleFallbackLikelySubtagsV1Marker,
+    "fallback/likelysubtags@1",
+    singleton
+))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -55,7 +59,11 @@ pub const DEFAULT_SCRIPT: Script = script!("Latn");
 pub const DEFAULT_REGION: Region = region!("ZZ");
 
 /// Locale fallback rules derived from CLDR parent locales data.
-#[icu_provider::data_struct(LocaleFallbackParentsV1Marker = "fallback/parents@1")]
+#[icu_provider::data_struct(marker(
+    LocaleFallbackParentsV1Marker,
+    "fallback/parents@1",
+    singleton
+))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -74,7 +82,8 @@ pub struct LocaleFallbackParentsV1<'data> {
 /// Key-specific supplemental fallback data.
 #[icu_provider::data_struct(marker(
     CollationFallbackSupplementV1Marker,
-    "fallback/supplement/co@1"
+    "fallback/supplement/co@1",
+    singleton,
 ))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
