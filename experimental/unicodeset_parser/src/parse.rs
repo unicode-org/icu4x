@@ -81,7 +81,7 @@ impl ParseError {
     /// let set = parse_unstable(source, Default::default(), &icu_testdata::unstable());
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
-    /// assert_eq!(err.fmt_with_source(source).to_string(), "[[abc]-x<-- error: unexpected character 'x'");
+    /// assert_eq!(err.fmt_with_source(source).to_string(), "[[abc]-x← error: unexpected character 'x'");
     /// ```
     ///
     /// ```
@@ -91,13 +91,13 @@ impl ParseError {
     /// let set = parse_unstable(source, Default::default(), &icu_testdata::unstable());
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
-    /// assert_eq!(err.fmt_with_source(source).to_string(), r"[\N<-- error: unimplemented");
+    /// assert_eq!(err.fmt_with_source(source).to_string(), r"[\N← error: unimplemented");
     /// ```
     pub fn fmt_with_source(&self, source: &str) -> impl Display {
         let ParseError { offset, kind } = *self;
 
         if kind == ParseErrorKind::Eof {
-            return format!("{source}<-- error: unexpected end of input");
+            return format!("{source}← error: unexpected end of input");
         }
         let mut s = String::new();
         if let Some(offset) = offset {
@@ -124,7 +124,7 @@ impl ParseError {
                 // exclusive_end is at most source.len() due to str::is_char_boundary and at least 0 by type
                 #[allow(clippy::indexing_slicing)]
                 s.push_str(&source[..exclusive_end]);
-                s.push_str("<-- ");
+                s.push_str("← ");
             }
         }
         s.push_str("error: ");
@@ -1135,55 +1135,55 @@ mod tests {
     #[test]
     fn test_error_messages() {
         let cases = [
-            (r"[a-z[\]]", r"[a-z[\]]<-- error: unexpected end of input"),
-            (r"", r"<-- error: unexpected end of input"),
-            (r"[{]", r"[{]<-- error: unexpected character ']'"),
+            (r"[a-z[\]]", r"[a-z[\]]← error: unexpected end of input"),
+            (r"", r"← error: unexpected end of input"),
+            (r"[{]", r"[{]← error: unexpected character ']'"),
             // we match ECMA-262 strictly, so case matters
             (
                 r"[:general_category:]",
-                r"[:general_category<-- error: unknown property",
+                r"[:general_category← error: unknown property",
             ),
-            (r"[:ll=true:]", r"[:ll=true<-- error: unknown property"),
-            (r"[:=", r"[:=<-- error: unexpected character '='"),
+            (r"[:ll=true:]", r"[:ll=true← error: unknown property"),
+            (r"[:=", r"[:=← error: unexpected character '='"),
             // property names may not be empty
-            (r"[::]", r"[::<-- error: unexpected character ':'"),
-            (r"[:=hello:]", r"[:=<-- error: unexpected character '='"),
+            (r"[::]", r"[::← error: unexpected character ':'"),
+            (r"[:=hello:]", r"[:=← error: unexpected character '='"),
             // property values may not be empty
-            (r"[:gc=:]", r"[:gc=:<-- error: unexpected character ':'"),
-            (r"[\xag]", r"[\xag<-- error: unexpected character 'g'"),
+            (r"[:gc=:]", r"[:gc=:← error: unexpected character ':'"),
+            (r"[\xag]", r"[\xag← error: unexpected character 'g'"),
             (
                 r"[{this is a minus -}]",
-                r"[{this is a minus -<-- error: unexpected character '-'",
+                r"[{this is a minus -← error: unexpected character '-'",
             ),
-            (r"[--]", r"[--<-- error: unexpected character '-'"),
-            (r"[a-z-]", r"[a-z-<-- error: unexpected character '-'"),
-            // TODO: might be better as "[a-\p<-- error: unexpected character 'p'"
-            (r"[a-\p{ll}]", r"[a-\<-- error: unexpected character '\\'"),
-            (r"[a-&]", r"[a-&<-- error: unexpected character '&'"),
-            (r"[a&b]", r"[a&<-- error: unexpected character '&'"),
-            (r"[[set]&b]", r"[[set]&b<-- error: unexpected character 'b'"),
-            (r"[[set]&]", r"[[set]&]<-- error: unexpected character ']'"),
-            (r"[a-\x60]", r"[a-\x60<-- error: unexpected character '`'"),
-            (r"[a-`]", r"[a-`<-- error: unexpected character '`'"),
-            (r"[\x{6g}]", r"[\x{6g<-- error: unexpected character 'g'"),
-            (r"[\x{g}]", r"[\x{g<-- error: unexpected character 'g'"),
-            (r"[\x{}]", r"[\x{}<-- error: unexpected character '}'"),
+            (r"[--]", r"[--← error: unexpected character '-'"),
+            (r"[a-z-]", r"[a-z-← error: unexpected character '-'"),
+            // TODO: might be better as "[a-\p← error: unexpected character 'p'"
+            (r"[a-\p{ll}]", r"[a-\← error: unexpected character '\\'"),
+            (r"[a-&]", r"[a-&← error: unexpected character '&'"),
+            (r"[a&b]", r"[a&← error: unexpected character '&'"),
+            (r"[[set]&b]", r"[[set]&b← error: unexpected character 'b'"),
+            (r"[[set]&]", r"[[set]&]← error: unexpected character ']'"),
+            (r"[a-\x60]", r"[a-\x60← error: unexpected character '`'"),
+            (r"[a-`]", r"[a-`← error: unexpected character '`'"),
+            (r"[\x{6g}]", r"[\x{6g← error: unexpected character 'g'"),
+            (r"[\x{g}]", r"[\x{g← error: unexpected character 'g'"),
+            (r"[\x{}]", r"[\x{}← error: unexpected character '}'"),
             (
                 r"[\x{dabeef}]",
-                r"[\x{dabeef<-- error: invalid escape sequence",
+                r"[\x{dabeef← error: invalid escape sequence",
             ),
             (
                 r"[\x{10ffff0}]",
-                r"[\x{10ffff0<-- error: unexpected character '0'",
+                r"[\x{10ffff0← error: unexpected character '0'",
             ),
             // > 1 byte in UTF-8 edge case
-            (r"ä", r"ä<-- error: unexpected character 'ä'"),
-            (r"\p{gc=ä}", r"\p{gc=ä<-- error: unknown property"),
+            (r"ä", r"ä← error: unexpected character 'ä'"),
+            (r"\p{gc=ä}", r"\p{gc=ä← error: unknown property"),
             (
                 r"[\xe5-\xe4]",
-                r"[\xe5-\xe4<-- error: unexpected character 'ä'",
+                r"[\xe5-\xe4← error: unexpected character 'ä'",
             ),
-            (r"[\xe5-ä]", r"[\xe5-ä<-- error: unexpected character 'ä'"),
+            (r"[\xe5-ä]", r"[\xe5-ä← error: unexpected character 'ä'"),
         ];
         for (source, expected_err) in cases {
             assert_is_error_and_message_eq(OPTIONS_NO_ANCHOR, source, expected_err);
