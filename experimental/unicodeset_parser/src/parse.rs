@@ -301,11 +301,11 @@ where
 
     // the entry point, parses a full UnicodeSet. ignores remaining input
     fn parse_unicode_set(&mut self) -> Result<()> {
-        match *self.must_peek_char()? {
+        match self.must_peek_char()? {
             '\\' => self.parse_property_perl(),
             '[' => {
                 self.iter.next();
-                if let Some(&':') = self.peek_char() {
+                if let Some(':') = self.peek_char() {
                     self.parse_property_posix()
                 } else {
                     self.parse_unicode_set_inner()
@@ -365,7 +365,7 @@ where
 
             // handling unicodesets separately, because of ambiguity between escaped characters and perl property names
             if self.peek_unicode_set_start() {
-                match (state, *self.must_peek_char()?) {
+                match (state, self.must_peek_char()?) {
                     // parse a recursive unicode set
                     (Begin | Char | AfterUnicodeSet | AfterOp, _) => {
                         if let Some(prev) = prev_char.take() {
@@ -392,7 +392,7 @@ where
             }
 
             // note: no UnicodeSets can occur in this match block, as they would've been caught by the above match
-            match (state, *self.must_peek_char()?) {
+            match (state, self.must_peek_char()?) {
                 // parse the end of this unicode set
                 (Begin | Char | AfterUnicodeSet, ']') => {
                     self.iter.next();
@@ -468,7 +468,7 @@ where
         loop {
             self.skip_whitespace();
 
-            match *self.must_peek_char()? {
+            match self.must_peek_char()? {
                 '}' => {
                     self.iter.next();
                     break;
@@ -503,7 +503,7 @@ where
         let (offset, next_char) = self.must_next()?;
 
         match next_char {
-            'u' | 'x' if self.peek_char() == Some(&'{') => {
+            'u' | 'x' if self.peek_char() == Some('{') => {
                 // bracketedHex
                 self.iter.next();
                 self.skip_whitespace();
@@ -533,7 +533,7 @@ where
                 // 'U00' ('0' hex{5} | '10' hex{4})
                 self.consume('0')?;
                 self.consume('0')?;
-                let hex_digits = match *self.must_peek_char()? {
+                let hex_digits = match self.must_peek_char()? {
                     '0' => {
                         self.iter.next();
                         let exact: [char; 5] = self.parse_exact_hex_digits()?;
@@ -569,7 +569,7 @@ where
     // starts with :, consumes the trailing :]
     fn parse_property_posix(&mut self) -> Result<()> {
         self.consume(':')?;
-        if *self.must_peek_char()? == '^' {
+        if self.must_peek_char()? == '^' {
             self.inverted = true;
             self.iter.next();
         }
@@ -625,7 +625,7 @@ where
 
         loop {
             self.skip_whitespace();
-            match (state, *self.must_peek_char()?) {
+            match (state, self.must_peek_char()?) {
                 // parse the end of the property expression
                 (PropertyName | PropertyValue, c) if c == end => {
                     // byte index of (full) property name/value is one back
@@ -743,8 +743,8 @@ where
 
     fn peek_unicode_set_start(&mut self) -> bool {
         match self.peek_char() {
-            Some(&'\\') => {}
-            Some(&'[') => return true,
+            Some('\\') => {}
+            Some('[') => return true,
             _ => return false,
         }
 
@@ -763,7 +763,7 @@ where
     // parses either a raw char or an escaped char. all chars are allowed.
     // anchor_allowed determines whether $ is interpreted as $ or as \uFFFF
     fn parse_char(&mut self, anchor_allowed: bool) -> Result<char> {
-        let c = *self.must_peek_char()?;
+        let c = self.must_peek_char()?;
         match c {
             '\\' => self.parse_escaped_char(),
             '$' if anchor_allowed => {
@@ -790,7 +790,7 @@ where
             self.iter.next();
         }
         if result.is_empty() {
-            let (unexpected_offset, unexpected_char) = *self.must_peek()?;
+            let (unexpected_offset, unexpected_char) = self.must_peek()?;
             return Err(PEK::UnexpectedChar(unexpected_char).with_offset(unexpected_offset));
         }
         Ok((result, end_offset))
@@ -810,7 +810,7 @@ where
     }
 
     fn skip_whitespace(&mut self) {
-        while let Some(&c) = self.peek_char() {
+        while let Some(c) = self.peek_char() {
             if !is_char_pattern_white_space(c) {
                 break;
             }
@@ -831,22 +831,22 @@ where
     }
 
     // use this whenever an empty iterator would imply an Eof error
-    fn must_peek(&mut self) -> Result<&(usize, char)> {
-        self.iter.peek().ok_or(PEK::Eof.into())
+    fn must_peek(&mut self) -> Result<(usize, char)> {
+        self.iter.peek().copied().ok_or(PEK::Eof.into())
     }
 
     // see must_peek
-    fn must_peek_char(&mut self) -> Result<&char> {
+    fn must_peek_char(&mut self) -> Result<char> {
         self.must_peek().map(|(_, c)| c)
     }
 
     // see must_peek
     fn must_peek_index(&mut self) -> Result<usize> {
-        self.must_peek().map(|&(idx, _)| idx)
+        self.must_peek().map(|(idx, _)| idx)
     }
 
-    fn peek_char(&mut self) -> Option<&char> {
-        self.iter.peek().map(|(_, c)| c)
+    fn peek_char(&mut self) -> Option<char> {
+        self.iter.peek().map(|&(_, c)| c)
     }
 
     // TODO: return Result<!> once ! is stable
