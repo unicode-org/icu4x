@@ -458,8 +458,12 @@ impl Astronomical {
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn lunar_phase(moment: Moment) -> f64 {
         let t0 = Self::nth_new_moon(0);
-        let maybe_n = i64_to_i32(libm::round(div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0) as i64);
-        debug_assert!(matches!(maybe_n, I32Result::WithinRange(_)), "Lunar phase moment should be in range of i32");
+        let maybe_n =
+            i64_to_i32(libm::round(div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0) as i64);
+        debug_assert!(
+            matches!(maybe_n, I32Result::WithinRange(_)),
+            "Lunar phase moment should be in range of i32"
+        );
         let n = maybe_n.saturate();
         let a = div_rem_euclid_f64(
             Self::lunar_longitude(moment) - Self::solar_longitude(moment),
@@ -585,8 +589,12 @@ impl Astronomical {
     fn num_of_new_moon_at_or_after(moment: Moment) -> i32 {
         let t0: Moment = Self::nth_new_moon(0);
         let phi = Self::lunar_phase(moment);
-        let maybe_n = i64_to_i32(libm::round((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0) as i64);
-        debug_assert!(matches!(maybe_n, I32Result::WithinRange(_)), "Lunar phase moment should be in range of i32");
+        let maybe_n =
+            i64_to_i32(libm::round((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0) as i64);
+        debug_assert!(
+            matches!(maybe_n, I32Result::WithinRange(_)),
+            "Lunar phase moment should be in range of i32"
+        );
         let n = maybe_n.saturate();
         let mut result = n;
         let mut iters = 0;
