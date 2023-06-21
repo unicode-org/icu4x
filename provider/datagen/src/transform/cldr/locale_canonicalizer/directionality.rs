@@ -10,12 +10,6 @@ use icu_provider::prelude::*;
 
 impl DataProvider<ScriptDirectionV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ScriptDirectionV1Marker>, DataError> {
-        // We treat searching for `und` as a request for all data. Other requests
-        // are not currently supported.
-        if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.into_error());
-        }
-
         let data: &cldr_serde::directionality::Resource = self
             .source
             .cldr()?

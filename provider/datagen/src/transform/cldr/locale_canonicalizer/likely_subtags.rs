@@ -13,12 +13,6 @@ use std::collections::{BTreeMap, HashSet};
 
 impl DataProvider<LikelySubtagsV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
-        // We treat searching for und as a request for all data. Other requests
-        // are not currently supported.
-        if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.into_error());
-        }
-
         let resources = LikelySubtagsResources::try_from_source_data(&self.source)?;
 
         Ok(DataResponse {
@@ -39,12 +33,6 @@ impl DataProvider<LikelySubtagsExtendedV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LikelySubtagsExtendedV1Marker>, DataError> {
-        // We treat searching for und as a request for all data. Other requests
-        // are not currently supported.
-        if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.into_error());
-        }
-
         let resources = LikelySubtagsResources::try_from_source_data(&self.source)?;
 
         Ok(DataResponse {

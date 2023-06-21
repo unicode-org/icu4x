@@ -23,12 +23,6 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvide
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
-        // We treat searching for `und` as a request for all data. Other requests
-        // are not currently supported.
-        if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.into_error());
-        }
-
         let resources = LikelySubtagsResources::try_from_source_data(&self.source)?;
 
         let metadata = DataResponseMetadata::default();
@@ -44,12 +38,6 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
-        // We treat searching for `und` as a request for all data. Other requests
-        // are not currently supported.
-        if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.into_error());
-        }
-
         let parents_data: &cldr_serde::parent_locales::Resource = self
             .source
             .cldr()?

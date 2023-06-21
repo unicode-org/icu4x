@@ -59,6 +59,9 @@ impl<'data> BlobSchemaV1<'data> {
             .get0(&key.hashed())
             .ok_or(DataErrorKind::MissingDataKey)
             .and_then(|cursor| {
+                if key.metadata().singleton && !req.locale.is_empty() {
+                    return Err(DataErrorKind::ExtraneousLocale)
+                }
                 cursor
                     .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
                     .ok_or(DataErrorKind::MissingLocale)
