@@ -41,10 +41,7 @@ impl DataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
 
         let case_mapping =
             CaseMappingV1::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)
-                .map_err(|e| {
-                    DataError::custom("Could not create CaseMappingInternals")
-                        .with_display_context(&e)
-                })?;
+                ?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(case_mapping)),
