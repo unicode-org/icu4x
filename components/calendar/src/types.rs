@@ -9,6 +9,7 @@ use crate::helpers;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
+use core::ops::{Add, AddAssign, Sub, SubAssign};
 use core::str::FromStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
@@ -704,5 +705,60 @@ impl From<usize> for IsoWeekday {
             ordinal = 7;
         }
         unsafe { core::mem::transmute(ordinal) }
+    }
+}
+
+/// A moment is a RataDie with a fractional part giving the time of day.
+///
+/// NOTE: This should not cause overflow errors for most cases, but consider
+/// alternative implementations if necessary.
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+pub(crate) struct Moment(f64);
+
+/// Add a number of days to a Moment
+impl Add<f64> for Moment {
+    type Output = Self;
+    fn add(self, rhs: f64) -> Self::Output {
+        Self(self.0 + rhs)
+    }
+}
+
+impl AddAssign<f64> for Moment {
+    fn add_assign(&mut self, rhs: f64) {
+        self.0 += rhs;
+    }
+}
+
+/// Subtract a number of days from a Moment
+impl Sub<f64> for Moment {
+    type Output = Self;
+    fn sub(self, rhs: f64) -> Self::Output {
+        Self(self.0 - rhs)
+    }
+}
+
+impl SubAssign<f64> for Moment {
+    fn sub_assign(&mut self, rhs: f64) {
+        self.0 -= rhs;
+    }
+}
+
+/// Calculate the number of days between two moments
+impl Sub for Moment {
+    type Output = f64;
+    fn sub(self, rhs: Self) -> Self::Output {
+        self.0 - rhs.0
+    }
+}
+
+impl Moment {
+    /// Create a new moment
+    pub const fn new(value: f64) -> Moment {
+        Moment(value)
+    }
+
+    /// Get the inner field of a Moment
+    pub const fn inner(self) -> f64 {
+        self.0
     }
 }

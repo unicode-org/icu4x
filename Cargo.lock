@@ -1373,6 +1373,7 @@ dependencies = [
  "icu_calendar_data",
  "icu_locid",
  "icu_provider",
+ "libm",
  "serde",
  "serde_json",
  "tinystr",

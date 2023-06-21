@@ -58,6 +58,18 @@ pub enum CalendarError {
     Data(DataError),
 }
 
+/// A list of error outcomes for exceeding location bounds
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
+pub enum LocationError {
+    /// Latitude value was out of bounds
+    #[displaydoc("Latitude {0} outside bounds of -90 to 90")]
+    LatitudeOutOfBounds(f64),
+
+    /// Longitude value was out of bounds
+    #[displaydoc("Longitude {0} outside bounds of -180 to 180")]
+    LongitudeOutOfBounds(f64),
+}
+
 impl From<core::num::ParseIntError> for CalendarError {
     fn from(_: core::num::ParseIntError) -> Self {
         CalendarError::Parse
