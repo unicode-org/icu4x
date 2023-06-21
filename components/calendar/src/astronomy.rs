@@ -554,10 +554,10 @@ impl Astronomical {
     }
 
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
-    // This code differs from the lisp/book code by taking in a julian centuries value instead of
-    // a Moment; this is because aberration is only ever called in the fn solar_longitude, which
-    // already converts moment to julian centuries. Thus this function takes the julian centuries
-    // to avoid unnecessarily calculating the same value twice.
+                        // This code differs from the lisp/book code by taking in a julian centuries value instead of
+                        // a Moment; this is because aberration is only ever called in the fn solar_longitude, which
+                        // already converts moment to julian centuries. Thus this function takes the julian centuries
+                        // to avoid unnecessarily calculating the same value twice.
     fn aberration(c: f64) -> f64 {
         0.0000974 * libm::cos((177.63 + 35999.01848 * c).to_radians()) - 0.005575
     }
