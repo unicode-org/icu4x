@@ -36,10 +36,6 @@ impl Default for CaseMapping {
 impl CaseMapping {
     /// A constructor which creates a [`CaseMapping`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
     /// # Example
     ///
     /// ```rust
@@ -49,6 +45,10 @@ impl CaseMapping {
     ///
     /// assert_eq!(cm.to_full_uppercase_string("hello world"), "HELLO WORLD");
     /// ```
+    ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "data")]
     pub const fn new() -> Self {
         Self {
@@ -64,9 +64,6 @@ impl CaseMapping {
     /// comprises of Turkish, Lithuanian, Greek, Dutch, and Armenian. All other languages
     /// will have the behavior of the root locale. Regions and scripts are ignored.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     /// # Example
     ///
     /// ```rust
@@ -77,6 +74,10 @@ impl CaseMapping {
     ///
     /// assert_eq!(cm.to_full_uppercase_string("istanbul"), "İSTANBUL");
     /// ```
+    ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "data")]
     pub const fn new_with_locale(locale: &Locale) -> Self {
         let locale = CaseMapLocale::from_locale(locale);
