@@ -4,7 +4,7 @@
 
 use core::str::FromStr;
 use icu_casemapping::CaseMapping;
-use icu_locid::Locale;
+use icu_locid::locale;
 
 #[test]
 fn test_simple_mappings() {
@@ -53,13 +53,11 @@ fn test_simple_mappings() {
 fn test_full_mappings() {
     let case_mapping = CaseMapping::new();
 
-    let turkish_locale = Locale::from_str("tr").expect("Parsing was successful");
-    let turkish_case_mapping =
-        CaseMapping::new_with_locale(&turkish_locale);
+    let turkish_locale = locale!("tr");
+    let turkish_case_mapping = CaseMapping::new_with_locale(&turkish_locale);
 
-    let lithuanian_locale = Locale::from_str("lt").expect("Parsing was successful");
-    let lithuanian_case_mapping =
-        CaseMapping::new_with_locale(&lithuanian_locale);
+    let lithuanian_locale = locale!("lt");
+    let lithuanian_case_mapping = CaseMapping::new_with_locale(&lithuanian_locale);
 
     let uppercase_greek = "ΙΕΣΥΣ ΧΡΙΣΤΟΣ"; // "IESUS CHRISTOS"
     let lowercase_greek = "ιεσυς χριστος"; // "IESUS CHRISTOS"
@@ -202,4 +200,22 @@ fn test_full_mappings() {
     let turkic = "assμffi\u{10434}iı";
     assert_eq!(case_mapping.full_fold_string(initial), simple);
     assert_eq!(case_mapping.full_fold_turkic_string(initial), turkic);
+}
+
+#[test]
+fn test_armenian() {
+    let cm = CaseMapping::new();
+    let cm_e = CaseMapping::new_with_locale(&locale!("hy"));
+    let cm_w = CaseMapping::new_with_locale(&locale!("hyw"));
+
+    let s = "և Երևանի";
+
+    assert_eq!(cm.to_full_uppercase_string(s), "ԵՒ ԵՐԵՒԱՆԻ");
+    assert_eq!(cm_e.to_full_uppercase_string(s), "ԵՎ ԵՐԵՎԱՆԻ");
+    assert_eq!(cm_w.to_full_uppercase_string(s), "ԵՒ ԵՐԵՒԱՆԻ");
+
+    // Titlecase doesn't work yet
+    // assert_eq!(cm.to_full_titlecase_string(s), "Եւ Երևանի");
+    // assert_eq!(cm_e.to_full_titlecase_string(s), "Եվ Երևանի");
+    // assert_eq!(cm_w.to_full_titlecase_string(s), "Եւ Երևանի");
 }

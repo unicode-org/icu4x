@@ -281,7 +281,7 @@ impl<'data> CaseMappingV1<'data> {
         c: char,
         context: ContextIterator,
         locale: CaseMapLocale,
-        _is_title: bool,
+        is_title: bool,
     ) -> Option<FullMappingResult> {
         if locale == CaseMapLocale::Turkish && c == 'i' {
             // In Turkic languages, i turns into a dotted capital I.
@@ -295,16 +295,15 @@ impl<'data> CaseMappingV1<'data> {
             // Remove dot_above after i with upper or titlecase.
             return Some(FullMappingResult::Remove);
         }
-        // TODO: ICU4C has a non-standard extension for Armenian ligature ech-yiwn.
-        // Should we also implement it?
-        // if c == '\u{587}' {
-        //     return match (locale, is_title) {
-        // 	(CaseMapLocale::Armenian, false) => Some(FullMappingResult::String("ԵՎ")),
-        // 	(CaseMapLocale::Armenian, true) => Some(FullMappingResult::String("Եվ")),
-        // 	(_, false) => Some(FullMappingResult::String("ԵՒ")),
-        // 	(_, true) => Some(FullMappingResult::String("Եւ")),
-        //     }
-        // }
+        // ICU4C's non-standard extension for Armenian ligature ech-yiwn.
+        if c == '\u{587}' {
+            return match (locale, is_title) {
+                (CaseMapLocale::Armenian, false) => Some(FullMappingResult::String("ԵՎ")),
+                (CaseMapLocale::Armenian, true) => Some(FullMappingResult::String("Եվ")),
+                (_, false) => Some(FullMappingResult::String("ԵՒ")),
+                (_, true) => Some(FullMappingResult::String("Եւ")),
+            };
+        }
         None
     }
 
