@@ -40,8 +40,7 @@ impl DataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
         let unfold = &toml.unfold.unfold;
 
         let case_mapping =
-            CaseMappingV1::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)
-                ?;
+            CaseMappingV1::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(case_mapping)),
