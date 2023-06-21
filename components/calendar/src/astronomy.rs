@@ -171,7 +171,7 @@ impl Astronomical {
                 - 0.005050998 * libm::pow(y1000, 5.0)
                 + 0.0083572073 * libm::pow(y1000, 6.0))
                 / 86400.0
-        } else if (-500..=499).contains(&year_int) {
+        } else if (-499..=499).contains(&year_int) {
             (10583.6 - 1014.41 * y0 + 33.78311 * libm::pow(y0, 2.0)
                 - 5.952053 * libm::pow(y0, 3.0)
                 - 0.1798452 * libm::pow(y0, 4.0)
