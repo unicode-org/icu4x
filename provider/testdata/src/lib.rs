@@ -169,7 +169,6 @@ pub fn any_no_fallback() -> impl AnyProvider {
 /// This deserializes a large data blob from static memory, please cache the result if you
 /// are calling this repeatedly and care about performance
 #[cfg(feature = "buffer")]
-#[cfg(feature = "icu_locid_transform")]
 pub fn buffer() -> impl BufferProvider {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
