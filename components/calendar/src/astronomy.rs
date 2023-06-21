@@ -593,7 +593,7 @@ impl Astronomical {
             i64_to_i32(libm::round((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0) as i64);
         debug_assert!(
             matches!(maybe_n, I32Result::WithinRange(_)),
-            "Lunar phase moment should be in range of i32"
+            "Num of new moon should be in range of i32"
         );
         let n = maybe_n.saturate();
         let mut result = n;
