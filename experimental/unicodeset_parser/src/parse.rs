@@ -336,6 +336,7 @@ where
         // {multi}
         // unicodeset
         // & and - operators, but only between unicodesets
+        // TODO(#3557): Parse string ranges, {ax}-{bz}
 
         #[derive(Debug, Clone, Copy)]
         enum State {
@@ -416,7 +417,7 @@ where
                     let start = prev_char.ok_or(PEK::Eof)?;
                     let end = self.parse_char(self.options.dollar_is_anchor)?;
                     if start > end {
-                        // TODO: better error message (e.g., "start greater than end in range")
+                        // TODO(#3558): Better error message (e.g., "start greater than end in range")?
                         // note: offset - 1, because we already consumed the end char (and its offset)
                         return Err(
                             PEK::UnexpectedChar(end).with_offset(self.must_peek_index()? - 1)
@@ -497,6 +498,7 @@ where
     }
 
     // starts with \ and consumes the whole escape sequence
+    // TODO(#3557): Multi-code-point escapes. Would mean that this function could return either a char or a String.
     fn parse_escaped_char(&mut self) -> Result<char> {
         self.consume('\\')?;
 
@@ -599,8 +601,8 @@ where
     fn parse_property_inner(&mut self, end: char) -> Result<()> {
         // only supports ECMA-262. UnicodeSet spec ignores whitespace, '-', and '_',
         // but ECMA-262 requires '_', so we'll allow that.
-        // TODO: support loose matching on property names (e.g., "AS  -_-  CII_Hex_ D-igit")
-        // TODO: support more properties than ECMA-262
+        // TODO(#3559): support loose matching on property names (e.g., "AS  -_-  CII_Hex_ D-igit")
+        // TODO(#3559): support more properties than ECMA-262
 
         let property_offset;
 
@@ -676,7 +678,7 @@ where
         // we support:
         // [:gc = value:]
         // [:sc = value:]
-        // [:scx = value:] -- TODO: implement scx
+        // [:scx = value:] -- TODO(#3555): Implement Script_Extensions property
         // [:value:] - looks up value in gc, sc and scx
         // [:prop:] - binary property, returns codepoints that have the property
         // [:prop = truthy/falsy:] - same as above
@@ -1044,9 +1046,9 @@ where
         + DataProvider<ScriptV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
-    // TODO: add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly
+    // TODO(#3550): Add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly?
     // ^ will likely need a different iterator type on UnicodeSetBuilder
-    // TODO: think about returning byte-length of the parsed unicodeset for use in transliterator, or add public function that accepts a peekable char iterator?
+    // TODO(#3550): Think about returning byte-length of the parsed UnicodeSet for use in the transliterator parser, or add public function that accepts a peekable char iterator?
 
     let mut iter = source.char_indices().peekable();
     let mut builder = UnicodeSetBuilder::new_internal(&mut iter, options, provider);
@@ -1132,7 +1134,7 @@ mod tests {
             (OPTIONS_ANCHOR, "[$]", '\u{ffff}'..='\u{ffff}', vec![]),
             (OPTIONS_ANCHOR, r"[\$]", '$'..='$', vec![]),
             (OPTIONS_ANCHOR, "[{$}]", '$'..='$', vec![]),
-            // TODO: add more tests, look for ICU tests
+            // TODO(#3556): Add more tests
         ];
         for (options, source, single, multi) in cases {
             let parsed = parse_unstable(source, options, &td!()).unwrap();
@@ -1165,7 +1167,7 @@ mod tests {
             ),
             (r"[--]", r"[--← error: unexpected character '-'"),
             (r"[a-z-]", r"[a-z-← error: unexpected character '-'"),
-            // TODO: might be better as "[a-\p← error: unexpected character 'p'"
+            // TODO(#3558): Might be better as "[a-\p← error: unexpected character 'p'"?
             (r"[a-\p{ll}]", r"[a-\← error: unexpected character '\\'"),
             (r"[a-&]", r"[a-&← error: unexpected character '&'"),
             (r"[a&b]", r"[a&← error: unexpected character '&'"),
