@@ -706,7 +706,7 @@ where
                     }
                     inverted = falsy;
                     try_binary = Some(key);
-                },
+                }
             }
         } else {
             // key is binary property
@@ -716,9 +716,22 @@ where
             try_binary = Some(key);
         }
 
-        let set = try_gc.map(|key| self.try_load_general_category(key)).unwrap_or(Err(PEK::UnknownProperty.into()))
-            .or_else(|_| try_sc.map(|key| self.try_load_script(key)).unwrap_or(Err(PEK::UnknownProperty.into())))
-            .or_else(|_| try_binary.map(|key| load_for_ecma262_unstable(self.property_provider, key).map_err(|_| PEK::UnknownProperty)).unwrap_or(Err(PEK::UnknownProperty)))?;
+        let set = try_gc
+            .map(|key| self.try_load_general_category(key))
+            .unwrap_or(Err(PEK::UnknownProperty.into()))
+            .or_else(|_| {
+                try_sc
+                    .map(|key| self.try_load_script(key))
+                    .unwrap_or(Err(PEK::UnknownProperty.into()))
+            })
+            .or_else(|_| {
+                try_binary
+                    .map(|key| {
+                        load_for_ecma262_unstable(self.property_provider, key)
+                            .map_err(|_| PEK::UnknownProperty)
+                    })
+                    .unwrap_or(Err(PEK::UnknownProperty))
+            })?;
         Ok((set, inverted))
     }
 
