@@ -214,10 +214,21 @@ fn test_ceil_div() {
     }
 }
 
+#[derive(Copy, Clone, Debug)]
 pub enum I32Result {
     BelowMin(i64),
     WithinRange(i32),
     AboveMax(i64),
+}
+
+impl I32Result {
+    pub const fn saturate(self) -> i32 {
+        match self {
+            I32Result::BelowMin(_) => i32::MIN,
+            I32Result::WithinRange(x) => x,
+            I32Result::AboveMax(_) => i32::MAX,
+        }
+    }
 }
 
 #[inline]
@@ -233,11 +244,7 @@ pub const fn i64_to_i32(input: i64) -> I32Result {
 
 #[inline]
 pub const fn i64_to_saturated_i32(input: i64) -> i32 {
-    match i64_to_i32(input) {
-        I32Result::BelowMin(_) => i32::MIN,
-        I32Result::WithinRange(x) => x,
-        I32Result::AboveMax(_) => i32::MAX,
-    }
+    i64_to_i32(input).saturate()
 }
 
 #[test]

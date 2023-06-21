@@ -6,7 +6,7 @@
 //! time, and astronomy; these are intended for calender calculations and based off
 //! _Calendrical Calculations_ by Reingold & Dershowitz.
 use crate::error::LocationError;
-use crate::helpers::div_rem_euclid_f64;
+use crate::helpers::{div_rem_euclid_f64, i64_to_i32, I32Result};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
@@ -108,6 +108,7 @@ impl Astronomical {
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3884-L3952
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn ephemeris_correction(moment: Moment) -> f64 {
+        // TODO: Change this to directly convert from moment to Gregorian year through a separate fn
         let year = moment.inner() / 365.2425;
         let year_int = (if year > 0.0 { year + 1.0 } else { year }) as i32;
         #[allow(clippy::expect_used)]
@@ -457,7 +458,9 @@ impl Astronomical {
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn lunar_phase(moment: Moment) -> f64 {
         let t0 = Self::nth_new_moon(0);
-        let n = libm::round(div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0) as i32;
+        let maybe_n = i64_to_i32(libm::round(div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0) as i64);
+        debug_assert!(matches!(maybe_n, I32Result::WithinRange(_)), "Lunar phase moment should be in range of i32");
+        let n = maybe_n.saturate();
         let a = div_rem_euclid_f64(
             Self::lunar_longitude(moment) - Self::solar_longitude(moment),
             360.0,
@@ -582,7 +585,9 @@ impl Astronomical {
     fn num_of_new_moon_at_or_after(moment: Moment) -> i32 {
         let t0: Moment = Self::nth_new_moon(0);
         let phi = Self::lunar_phase(moment);
-        let n = libm::round((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0) as i32;
+        let maybe_n = i64_to_i32(libm::round((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0) as i64);
+        debug_assert!(matches!(maybe_n, I32Result::WithinRange(_)), "Lunar phase moment should be in range of i32");
+        let n = maybe_n.saturate();
         let mut result = n;
         let mut iters = 0;
         let max_iters = 245_000_000;
@@ -598,6 +603,9 @@ impl Astronomical {
 mod tests {
 
     use super::*;
+
+    const TEST_LOWER_BOUND: f64 = 0.99999999;
+    const TEST_UPPER_BOUND: f64 = 1.00000001;
 
     #[test]
     // Checks that ephemeris_correction gives the same values as the lisp reference code for the given RD test cases
@@ -647,8 +655,8 @@ mod tests {
             let moment: Moment = Moment::new(*rd as f64);
             let ephemeris = Astronomical::ephemeris_correction(moment);
             let expected_ephemeris_value = expected_ephemeris;
-            assert!(ephemeris > expected_ephemeris_value * 0.99999999, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
-            assert!(ephemeris < expected_ephemeris_value * 1.00000001, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+            assert!(ephemeris > expected_ephemeris_value * TEST_LOWER_BOUND, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+            assert!(ephemeris < expected_ephemeris_value * TEST_UPPER_BOUND, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
         }
     }
 
@@ -700,8 +708,8 @@ mod tests {
             let moment: Moment = Moment::new(*rd as f64);
             let solar_long = Astronomical::solar_longitude(moment + 0.5);
             let expected_solar_long_value = expected_solar_long;
-            assert!(solar_long > expected_solar_long_value * 0.99999999, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
-            assert!(solar_long < expected_solar_long_value * 1.00000001, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
+            assert!(solar_long > expected_solar_long_value * TEST_LOWER_BOUND, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
+            assert!(solar_long < expected_solar_long_value * TEST_UPPER_BOUND, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
         }
     }
 
@@ -753,8 +761,8 @@ mod tests {
             let moment: Moment = Moment::new(*rd as f64);
             let lunar_long = Astronomical::lunar_longitude(moment);
             let expected_lunar_long_value = expected_lunar_long;
-            assert!(lunar_long > expected_lunar_long_value * 0.99999999, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
-            assert!(lunar_long < expected_lunar_long_value * 1.00000001, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
+            assert!(lunar_long > expected_lunar_long_value * TEST_LOWER_BOUND, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
+            assert!(lunar_long < expected_lunar_long_value * TEST_UPPER_BOUND, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
         }
     }
 
@@ -807,11 +815,11 @@ mod tests {
             let next_new_moon = Astronomical::new_moon_at_or_after(moment);
             let expected_next_new_moon_moment = Moment::new(*expected_next_new_moon);
             if *expected_next_new_moon > 0.0 {
-                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * 0.99999999, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
-                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * 1.00000001, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * TEST_LOWER_BOUND, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * TEST_UPPER_BOUND, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
             } else {
-                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * 1.00000001, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
-                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * 0.99999999, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * TEST_UPPER_BOUND, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * TEST_LOWER_BOUND, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
             }
         }
     }
