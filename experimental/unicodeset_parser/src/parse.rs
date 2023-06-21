@@ -683,47 +683,43 @@ where
 
         let mut inverted = false;
 
-        if value.is_empty() {
-            // key is binary property, or a value of gc, sc, scx
+        let mut try_gc = None;
+        let mut try_sc = None;
+        let mut try_binary = None;
 
-            // try loading a binary property, if it fails, try loading a gc, sc, scx value
-            let set = load_for_ecma262_unstable(self.property_provider, key)
-                .or_else(|_| self.try_load_general_category(key))
-                .or_else(|_| self.try_load_script(key))?;
-            // .or_else(|_| self.try_load_script_extensions(key))?;
-
-            Ok((set, inverted))
-        } else {
+        if !value.is_empty() {
             // key is gc, sc, scx
             // value is a property value
             // OR
             // key is a binary property and value is a truthy/falsy value
 
-            // UnicodeProperty::parse_ecma262_name would be good to have to avoid this duplication:
-            let set = match key {
-                "General_Category" | "gc" => self.try_load_general_category(value)?,
-                "Script" | "sc" => self.try_load_script(value)?,
-                // "Script_Extensions" | "scx" => {
-                //     // https://www.unicode.org/reports/tr24/#Script_Extensions
-                //     // the UnicodeSet utils page takes lists of scripts as values, but I'm not sure how to implement that using load_script_with_extensions_unstable.
-                //     // skipped for now.
+            match key {
+                "General_Category" | "gc" => try_gc = Some(value),
+                "Script" | "sc" => try_sc = Some(value),
                 _ => {
-                    // try prop = truthy/falsy case
                     let normalized_value = value.to_ascii_lowercase();
                     let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
                     let falsy = matches!(normalized_value.as_str(), "false" | "f" | "no" | "n");
+                    // value must either match truthy or falsy
                     if truthy == falsy {
                         return Err(PEK::UnknownProperty.into());
                     }
                     inverted = falsy;
-                    let set = load_for_ecma262_unstable(self.property_provider, key)
-                        .map_err(|_| PEK::UnknownProperty)?;
-                    set
-                }
-            };
-
-            Ok((set, inverted))
+                    try_binary = Some(key);
+                },
+            }
+        } else {
+            // key is binary property
+            // OR a value of gc, sc, scx
+            try_gc = Some(key);
+            try_sc = Some(key);
+            try_binary = Some(key);
         }
+
+        let set = try_gc.map(|key| self.try_load_general_category(key)).unwrap_or(Err(PEK::UnknownProperty.into()))
+            .or_else(|_| try_sc.map(|key| self.try_load_script(key)).unwrap_or(Err(PEK::UnknownProperty.into())))
+            .or_else(|_| try_binary.map(|key| load_for_ecma262_unstable(self.property_provider, key).map_err(|_| PEK::UnknownProperty)).unwrap_or(Err(PEK::UnknownProperty)))?;
+        Ok((set, inverted))
     }
 
     fn finalize(mut self) -> (CodePointInversionListBuilder, HashSet<String>) {
