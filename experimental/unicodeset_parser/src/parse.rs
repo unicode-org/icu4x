@@ -683,9 +683,12 @@ where
 
         let mut inverted = false;
 
-        let mut try_gc = None;
-        let mut try_sc = None;
-        let mut try_binary = None;
+        // contains a value for the General_Category property that needs to be tried
+        let mut try_gc = Err(PEK::UnknownProperty.into());
+        // contains a value for the Script property that needs to be tried
+        let mut try_sc = Err(PEK::UnknownProperty.into());
+        // contains a supposed binary property name that needs to be tried
+        let mut try_binary = Err(PEK::UnknownProperty.into());
 
         if !value.is_empty() {
             // key is gc, sc, scx
@@ -694,8 +697,8 @@ where
             // key is a binary property and value is a truthy/falsy value
 
             match key {
-                "General_Category" | "gc" => try_gc = Some(value),
-                "Script" | "sc" => try_sc = Some(value),
+                "General_Category" | "gc" => try_gc = Ok(value),
+                "Script" | "sc" => try_sc = Ok(value),
                 _ => {
                     let normalized_value = value.to_ascii_lowercase();
                     let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
@@ -704,34 +707,25 @@ where
                     if truthy == falsy {
                         return Err(PEK::UnknownProperty.into());
                     }
+                    // correctness: if we reach this point, only `try_binary` can be Ok, hence
+                    // it does not matter that further down we unconditionally return `inverted`,
+                    // because only `try_binary` can enter that code path.
                     inverted = falsy;
-                    try_binary = Some(key);
+                    try_binary = Ok(key);
                 }
             }
         } else {
             // key is binary property
             // OR a value of gc, sc, scx
-            try_gc = Some(key);
-            try_sc = Some(key);
-            try_binary = Some(key);
+            try_gc = Ok(key);
+            try_sc = Ok(key);
+            try_binary = Ok(key);
         }
 
         let set = try_gc
-            .map(|key| self.try_load_general_category(key))
-            .unwrap_or(Err(PEK::UnknownProperty.into()))
-            .or_else(|_| {
-                try_sc
-                    .map(|key| self.try_load_script(key))
-                    .unwrap_or(Err(PEK::UnknownProperty.into()))
-            })
-            .or_else(|_| {
-                try_binary
-                    .map(|key| {
-                        load_for_ecma262_unstable(self.property_provider, key)
-                            .map_err(|_| PEK::UnknownProperty)
-                    })
-                    .unwrap_or(Err(PEK::UnknownProperty))
-            })?;
+            .and_then(|value| self.try_load_general_category(value))
+            .or_else(|_| try_sc.and_then(|value| self.try_load_script(value)))
+            .or_else(|_| try_binary.and_then(|value| self.try_load_ecma262_binary(value)))?;
         Ok((set, inverted))
     }
 
@@ -914,6 +908,11 @@ where
         let property_map = load_script(self.property_provider).map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(sc_value);
         Ok(set)
+    }
+
+    fn try_load_ecma262_binary(&self, name: &str) -> Result<CodePointSetData> {
+        load_for_ecma262_unstable(self.property_provider, name)
+            .map_err(|_| PEK::UnknownProperty.into())
     }
 }
 
