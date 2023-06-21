@@ -34,10 +34,10 @@ use zerovec::ZeroVec;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    LineBreakDataV1Marker = "segmenter/line@1",
-    WordBreakDataV1Marker = "segmenter/word@1",
-    GraphemeClusterBreakDataV1Marker = "segmenter/grapheme@1",
-    SentenceBreakDataV1Marker = "segmenter/sentence@1"
+    marker(LineBreakDataV1Marker, "segmenter/line@1", singleton),
+    marker(WordBreakDataV1Marker, "segmenter/word@1", singleton),
+    marker(GraphemeClusterBreakDataV1Marker, "segmenter/grapheme@1", singleton),
+    marker(SentenceBreakDataV1Marker, "segmenter/sentence@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(

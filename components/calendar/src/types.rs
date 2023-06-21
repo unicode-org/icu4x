@@ -713,7 +713,7 @@ impl From<usize> for IsoWeekday {
 /// NOTE: This should not cause overflow errors for most cases, but consider
 /// alternative implementations if necessary.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
-pub struct Moment(f64);
+pub(crate) struct Moment(f64);
 
 /// Add a number of days to a Moment
 impl Add<f64> for Moment {

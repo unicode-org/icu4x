@@ -26,6 +26,7 @@ use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
+use icu_provider::{DataKeyMetadata, FallbackPriority};
 use zerofrom::ZeroFrom;
 
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
@@ -166,7 +167,11 @@ impl<'data> PropertyUnicodeSetV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(ScriptWithExtensionsPropertyV1Marker = "props/scx@1")]
+#[icu_provider::data_struct(marker(
+    ScriptWithExtensionsPropertyV1Marker,
+    "props/scx@1",
+    singleton
+))]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 
@@ -338,7 +343,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 macro_rules! expand {
     (
         ($(($code_point_set_marker:ident, $bin_cp_s:literal),)+),
-        ($(($unicode_set_marker:ident, $bin_us_s:literal),)+),
+        ($(($unicode_set_marker:ident, $bin_us_s:literal, $us_singleton:literal),)+),
         ($(($code_point_map_marker:ident,
             $name_value_marker:ident,
 
@@ -364,7 +369,7 @@ macro_rules! expand {
                     type Yokeable = PropertyCodePointSetV1<'static>;
                 }
                 impl KeyedDataMarker for $code_point_set_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"));
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                 }
 
             )+
@@ -387,7 +392,7 @@ macro_rules! expand {
                     type Yokeable = PropertyUnicodeSetV1<'static>;
                 }
                 impl KeyedDataMarker for $unicode_set_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"));
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, $us_singleton));
                 }
             )+
 
@@ -408,7 +413,7 @@ macro_rules! expand {
                 }
 
                 impl KeyedDataMarker for $code_point_map_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"));
+                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                 }
 
 
@@ -426,7 +431,7 @@ macro_rules! expand {
                 }
 
                 impl KeyedDataMarker for $name_value_marker {
-                    const KEY: DataKey = data_key!(concat!("propnames/from/", $enum_s, "@1"));
+                    const KEY: DataKey = data_key!(concat!("propnames/from/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                 }
 
                 $(
@@ -444,7 +449,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_short_name_marker_sparse {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/short/sparse/", $enum_s, "@1"));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/sparse/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                     }
 
                     #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
@@ -461,7 +466,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_long_name_marker_sparse {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/long/sparse/", $enum_s, "@1"));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/sparse/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                     }
                 )?
 
@@ -480,7 +485,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_short_name_marker_linear {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear/", $enum_s, "@1"));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                     }
 
                     #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
@@ -497,7 +502,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_long_name_marker_linear {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                     }
                 )?
 
@@ -534,7 +539,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_long_name_marker_linear4 {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                     }
                 )?
             )+
@@ -614,18 +619,28 @@ expand!(
     ),
     (
         // UnicodeSets (code points + strings)
-        (BasicEmojiV1Marker, "Basic_Emoji"),
-        (ExemplarCharactersMainV1Marker, "exemplarchars/main"),
+        (BasicEmojiV1Marker, "Basic_Emoji", true),
+        (ExemplarCharactersMainV1Marker, "exemplarchars/main", false),
         (
             ExemplarCharactersAuxiliaryV1Marker,
-            "exemplarchars/auxiliary"
+            "exemplarchars/auxiliary",
+            false
         ),
         (
             ExemplarCharactersPunctuationV1Marker,
-            "exemplarchars/punctuation"
+            "exemplarchars/punctuation",
+            false
         ),
-        (ExemplarCharactersNumbersV1Marker, "exemplarchars/numbers"),
-        (ExemplarCharactersIndexV1Marker, "exemplarchars/index"),
+        (
+            ExemplarCharactersNumbersV1Marker,
+            "exemplarchars/numbers",
+            false
+        ),
+        (
+            ExemplarCharactersIndexV1Marker,
+            "exemplarchars/index",
+            false
+        ),
     ),
     (
         // code point maps

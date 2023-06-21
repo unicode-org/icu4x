@@ -14,6 +14,28 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::calendar::AnyCalendar::new#FnInEnum
+icu::calendar::AnyCalendar::new_for_locale#FnInEnum
+icu::calendar::Date::try_new_persian_date#FnInStruct
+icu::calendar::DateTime::try_new_persian_datetime#FnInStruct
+icu::calendar::persian::Persian#Struct
+icu::calendar::persian::Persian::new#FnInStruct
+icu::calendar::persian::PersianDateInner#Struct
+icu::calendar::week::WeekCalculator::try_new#FnInStruct
+icu::locid_transform::Direction#Enum
+icu::locid_transform::LocaleCanonicalizer::new#FnInStruct
+icu::locid_transform::LocaleCanonicalizer::new_with_expander#FnInStruct
+icu::locid_transform::LocaleDirectionality#Struct
+icu::locid_transform::LocaleDirectionality::get#FnInStruct
+icu::locid_transform::LocaleDirectionality::is_left_to_right#FnInStruct
+icu::locid_transform::LocaleDirectionality::is_right_to_left#FnInStruct
+icu::locid_transform::LocaleDirectionality::new#FnInStruct
+icu::locid_transform::LocaleDirectionality::try_new_unstable#FnInStruct
+icu::locid_transform::LocaleDirectionality::try_new_with_expander_unstable#FnInStruct
+icu::locid_transform::LocaleExpander::new#FnInStruct
+icu::locid_transform::LocaleExpander::new_extended#FnInStruct
+icu::locid_transform::fallback::FallbackSupplement#Enum
+icu::locid_transform::fallback::LocaleFallbacker::new#FnInStruct
 icu::plurals::PluralRules::try_new#FnInStruct
 icu::plurals::PluralRules::try_new_cardinal#FnInStruct
 icu::plurals::PluralRules::try_new_ordinal#FnInStruct

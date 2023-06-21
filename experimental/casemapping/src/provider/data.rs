@@ -2,24 +2,32 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! The primary per-codepoint casefolding data
+
+#[cfg(feature = "datagen")]
+use alloc::collections::BTreeMap;
 use core::num::TryFromIntError;
 use icu_collections::codepointtrie::TrieValue;
-#[cfg(feature = "datagen")]
-use std::collections::HashMap;
 use zerovec::ule::{AsULE, RawBytesULE, ULE};
 use zerovec::ZeroVecError;
 
-// The case of a Unicode character
+/// The case of a Unicode character
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 pub enum CaseType {
-    // Lowercase letter
+    /// Lowercase letter
     Lower = 1,
-    // Uppercase letter
+    /// Uppercase letter
     Upper = 2,
-    // Titlecase letter
+    /// Titlecase letter
     Title = 3,
 }
 
@@ -32,7 +40,7 @@ impl CaseType {
     //
     // Returns None for uncased
     #[inline]
-    pub fn from_masked_bits(b: u16) -> Option<Self> {
+    pub(crate) fn from_masked_bits(b: u16) -> Option<Self> {
         debug_assert!(b & Self::CASE_MASK == b);
         match b {
             0 => None,
@@ -43,22 +51,34 @@ impl CaseType {
     }
 }
 
-// The dot type of a Unicode character. This indicates how dotted
-// letters (like `i` and `j`) combine with accents placed above the
-// letter.
+/// The dot type of a Unicode character. This indicates how dotted
+/// letters (like `i` and `j`) combine with accents placed above the
+/// letter.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 pub enum DotType {
-    // Normal characters with combining class 0
+    /// Normal characters with combining class 0
     NoDot = 0,
-    // Soft-dotted characters with combining class 0
+    /// Soft-dotted characters with combining class 0
     SoftDotted = 1,
-    // "Above" accents with combining class 230
+    /// "Above" accents with combining class 230
     Above = 2,
-    // Other accent characters
+    /// Other accent characters
     OtherAccent = 3,
+}
+
+impl Default for DotType {
+    fn default() -> Self {
+        DotType::NoDot
+    }
 }
 
 impl DotType {
@@ -88,32 +108,63 @@ pub(crate) enum MappingKind {
     Title = 3,
 }
 
+/// Case mapping data associated with a single code point
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 pub struct CaseMappingData {
+    /// Whether this is default-ignoreable
     pub ignoreable: bool,
-    /// The delta between this code point and its upper/lowercase equivalent.
+    /// The rest of the case mapping data
     pub kind: CaseMappingDataKind,
 }
 
+/// A subset of case mapping data associated with a single code point
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum CaseMappingDataKind {
+    /// This code point is an exception. Provides the case type of its own case
+    /// and the exception index stored in [`CaseMappingExceptions`]
+    ///
+    /// [`CaseMappingExceptions`]: crate::provider::exceptions::CaseMappingExceptions
     Exception(Option<CaseType>, u16),
+    /// This code point is uncased, and has the following extra data
     Uncased(NonExceptionData),
+    /// This code point is cased. We store the extra data, its case type, and a *delta*
+    /// that can be used to get its casemapped codepoint.
     Delta(NonExceptionData, CaseType, i16),
 }
 
+/// Data that is stored in CaseMappingData when it is *not* an exception
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct NonExceptionData {
+    /// Whether or not the type is case-sensitive
     pub sensitive: bool,
+    /// The "dot type"
     pub dot_type: DotType,
 }
 
@@ -207,7 +258,7 @@ impl CaseMappingData {
     // a mapping from old to new, this function updates the exception
     // index if necessary.
     #[cfg(feature = "datagen")]
-    pub(crate) fn with_updated_exception(self, updates: &HashMap<u16, u16>) -> Self {
+    pub(crate) fn with_updated_exception(self, updates: &BTreeMap<u16, u16>) -> Self {
         let kind = if let CaseMappingDataKind::Exception(ty, index) = self.kind {
             if let Some(updated_exception) = updates.get(&index) {
                 CaseMappingDataKind::Exception(ty, *updated_exception)
@@ -275,7 +326,13 @@ impl TrieValue for CaseMappingData {
 ///         3 titlecase
 ///         The runtime code relies on the case-ignorable and case type bits 2..0
 ///         to be the lowest bits with this encoding.
+/// ```
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[repr(transparent)]
 pub struct CaseMappingDataULE(RawBytesULE<2>);

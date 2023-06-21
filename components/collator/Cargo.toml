@@ -47,7 +47,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 arraystring = "0.3.0"
 atoi = "1.0.0"
 icu = { path = "../icu" }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_collator", "icu_normalizer"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_collator", "icu_normalizer", "icu_locid_transform"] }
 criterion = "0.4"
 
 [features]

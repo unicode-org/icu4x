@@ -2,38 +2,26 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data provider struct definitions for vertical fallback.
-//!
-//! Read more about data providers: [`icu_provider`]
-
-// Provider structs must be stable
-#![allow(clippy::exhaustive_structs)]
-
+use super::*;
 use icu_locid::extensions::unicode::Key;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{subtags_region as region, subtags_script as script};
-use tinystr::UnvalidatedTinyAsciiStr;
-
 use icu_provider::prelude::*;
-
 use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 use zerovec::ZeroMap2d;
 
-// We use UnvalidatedTinyAsciiStrs for map keys, as we then don't have to
-// validate them on deserialization. Map lookup can be done even if they
-// are not valid tags or strings (an invalid key will just become inaccessible).
-type UnvalidatedLanguage = UnvalidatedTinyAsciiStr<3>;
-type UnvalidatedScript = UnvalidatedTinyAsciiStr<4>;
-type UnvalidatedRegion = UnvalidatedTinyAsciiStr<3>;
-
 /// Locale fallback rules derived from likely subtags data.
-#[icu_provider::data_struct(LocaleFallbackLikelySubtagsV1Marker = "fallback/likelysubtags@1")]
+#[icu_provider::data_struct(marker(
+    LocaleFallbackLikelySubtagsV1Marker,
+    "fallback/likelysubtags@1",
+    singleton
+))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_provider_adapters::fallback::provider),
+    databake(path = icu_locid_transform::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -71,12 +59,16 @@ pub const DEFAULT_SCRIPT: Script = script!("Latn");
 pub const DEFAULT_REGION: Region = region!("ZZ");
 
 /// Locale fallback rules derived from CLDR parent locales data.
-#[icu_provider::data_struct(LocaleFallbackParentsV1Marker = "fallback/parents@1")]
+#[icu_provider::data_struct(marker(
+    LocaleFallbackParentsV1Marker,
+    "fallback/parents@1",
+    singleton
+))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_provider_adapters::fallback::provider),
+    databake(path = icu_locid_transform::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -90,13 +82,14 @@ pub struct LocaleFallbackParentsV1<'data> {
 /// Key-specific supplemental fallback data.
 #[icu_provider::data_struct(marker(
     CollationFallbackSupplementV1Marker,
-    "fallback/supplement/co@1"
+    "fallback/supplement/co@1",
+    singleton,
 ))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_provider_adapters::fallback::provider),
+    databake(path = icu_locid_transform::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]

@@ -170,6 +170,10 @@ pub struct DataKeyMetadata {
     ///
     /// For more information, see `LocaleFallbackConfig::fallback_supplement`.
     pub fallback_supplement: Option<FallbackSupplement>,
+    /// Whether the key has a singleton value, as opposed to per-locale values. Singleton
+    /// keys behave differently, e.g. they never perform fallback, and can be optimized
+    /// in data providers.
+    pub singleton: bool,
 }
 
 impl DataKeyMetadata {
@@ -179,6 +183,7 @@ impl DataKeyMetadata {
             fallback_priority: FallbackPriority::const_default(),
             extension_key: None,
             fallback_supplement: None,
+            singleton: false,
         }
     }
 
@@ -187,11 +192,13 @@ impl DataKeyMetadata {
         fallback_priority: FallbackPriority,
         extension_key: Option<icu_locid::extensions::unicode::Key>,
         fallback_supplement: Option<FallbackSupplement>,
+        singleton: bool,
     ) -> Self {
         Self {
             fallback_priority,
             extension_key,
             fallback_supplement,
+            singleton,
         }
     }
 }

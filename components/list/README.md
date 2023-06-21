@@ -11,12 +11,11 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_and_with_length_unstable(
-    &icu_testdata::unstable(),
+let list_formatter = ListFormatter::try_new_and_with_length(
     &locale!("es").into(),
     ListLength::Wide,
 )
-.expect("Data should load successfully");
+.expect("locale should be present");
 
 assert_writeable_eq!(
     list_formatter.format(["España", "Suiza"].iter()),
@@ -34,12 +33,11 @@ assert_writeable_eq!(
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_or_with_length_unstable(
-    &icu_testdata::unstable(),
+let list_formatter = ListFormatter::try_new_or_with_length(
     &locale!("th").into(),
     ListLength::Short,
 )
-.expect("Data should load successfully");
+.expect("locale should be present");
 
 // We can use any Writeables as inputs
 assert_writeable_eq!(list_formatter.format(1..=3), "1, 2 หรือ 3",);
@@ -49,12 +47,11 @@ assert_writeable_eq!(list_formatter.format(1..=3), "1, 2 หรือ 3",);
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_unit_with_length_unstable(
-    &icu_testdata::unstable(),
+let list_formatter = ListFormatter::try_new_unit_with_length(
     &locale!("en").into(),
     ListLength::Wide,
 )
-.expect("Data should load successfully");
+.expect("locale should be present");
 
 assert_writeable_eq!(
     list_formatter.format(["1ft", "2in"].iter()),
