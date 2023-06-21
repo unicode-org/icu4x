@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::Error;
 use crate::provider::exception_helpers::{
     ExceptionBits, ExceptionBitsULE, ExceptionSlot, SlotPresence,
 };
@@ -11,6 +10,7 @@ use alloc::borrow::Cow;
 use alloc::collections::BTreeMap;
 use alloc::string::String;
 use alloc::vec::Vec;
+use icu_provider::DataError;
 use zerovec::ule::{AsULE, ULE};
 
 /// The header for exception types as found in ICU4C data. See [`ExceptionHeaderULE`]
@@ -129,16 +129,16 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
     fn done(&self) -> bool {
         self.raw_data_idx >= self.raw_data.len()
     }
-    fn read_raw(&mut self) -> Result<u16, Error> {
+    fn read_raw(&mut self) -> Result<u16, DataError> {
         let result = self
             .raw_data
             .get(self.raw_data_idx)
-            .ok_or(Error::Validation("Incomplete data"))?;
+            .ok_or(DataError::custom("Incomplete exception data"))?;
         self.raw_data_idx += 1;
         Ok(*result)
     }
 
-    fn read_slot(&mut self) -> Result<u32, Error> {
+    fn read_slot(&mut self) -> Result<u32, DataError> {
         if self.double_slots {
             let hi = self.read_raw()? as u32;
             let lo = self.read_raw()? as u32;
@@ -157,7 +157,7 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
 
     pub(crate) fn build(
         mut self,
-    ) -> Result<(CaseMappingExceptions<'static>, BTreeMap<u16, u16>), Error> {
+    ) -> Result<(CaseMappingExceptions<'static>, BTreeMap<u16, u16>), DataError> {
         let mut exceptions = Vec::new();
         let mut idx_map = BTreeMap::new();
         // The format of the raw data from ICU4C is the same as the format described in
@@ -206,7 +206,7 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
                     if let Ok(ch) = char::try_from(value) {
                         *output = Some(ch)
                     } else {
-                        return Err(Error::Validation(
+                        return Err(DataError::custom(
                             "Found non-char value in casemapping exceptions data",
                         ));
                     }
@@ -242,9 +242,10 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
                     let slice = &self
                         .raw_data
                         .get(start..end)
-                        .ok_or(Error::Validation("Incomplete string data"))?;
-                    let string =
-                        char::decode_utf16(slice.iter().copied()).collect::<Result<String, _>>()?;
+                        .ok_or(DataError::custom("Incomplete string data"))?;
+                    let string = char::decode_utf16(slice.iter().copied())
+                        .collect::<Result<String, _>>()
+                        .map_err(|_| DataError::custom("Found non-utf16 exceptions data"))?;
                     self.skip_string(&string);
                     *mapping = string.into()
                 }
@@ -257,10 +258,11 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
                 let slice = &self
                     .raw_data
                     .get(start..)
-                    .ok_or(Error::Validation("Incomplete string data"))?;
+                    .ok_or(DataError::custom("Incomplete string data"))?;
                 let string = char::decode_utf16(slice.iter().copied())
                     .take(len)
-                    .collect::<Result<String, _>>()?;
+                    .collect::<Result<String, _>>()
+                    .map_err(|_| DataError::custom("Found non-utf16 exceptions data"))?;
                 self.skip_string(&string);
                 exception.closure = Some(string.into())
             }
@@ -272,7 +274,7 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
             let new_exception_index = if let Ok(idx) = u16::try_from(exceptions.len()) {
                 idx
             } else {
-                return Err(Error::Validation("More than u16 exceptions"));
+                return Err(DataError::custom("More than u16 exceptions"));
             };
             idx_map.insert(old_idx, new_exception_index);
             exceptions.push(exception.encode());

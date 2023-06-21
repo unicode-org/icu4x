@@ -50,3 +50,8 @@ std = ["icu_collections/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 data = ["dep:icu_casemapping_data"]
+
+
+[[test]]
+name = "conversions"
+required-features = ["data"]
