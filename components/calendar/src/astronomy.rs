@@ -344,8 +344,7 @@ impl Astronomical {
             0.0, -2.0, 2.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0,
             -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
         ];
-        let mut correction = 1.0 / 1000000.0;
-        let mut correction_operand = 0.0;
+        let mut correction = 0.0;
         for (v, w, x, y, z) in sine_coeff
             .iter()
             .zip(
@@ -357,11 +356,11 @@ impl Astronomical {
             )
             .map(|(v, (w, (x, (y, z))))| (v, w, x, y, z))
         {
-            correction_operand += v
+            correction += v
                 * libm::pow(e, libm::fabs(*x))
                 * libm::sin((w * d + x * ms + y * ml + z * f).to_radians());
         }
-        correction *= correction_operand;
+        correction /= 1000000.0;
         let venus = 3958.0 / 1000000.0 * libm::sin((119.75 + c * 131.849).to_radians());
         let jupiter = 318.0 / 1000000.0 * libm::sin((53.09 + c * 479264.29).to_radians());
         let flat_earth = 1962.0 / 1000000.0 * libm::sin((l - f).to_radians());
