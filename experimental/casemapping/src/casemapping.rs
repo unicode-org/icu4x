@@ -197,9 +197,22 @@ impl CaseMapping {
     /// Returns the simple case folding of the given char.
     /// For full mappings, use [`CaseMapping::full_fold`].
     ///
-    /// You can use the case folding to perform caseless matches on characters
-    /// provided they don't full-casefold to strings. To avoid that situation,
-    /// convert to a string and use [`CaseMapping::full_fold`].
+    /// This function can be used to perform caseless matches on
+    /// individual characters.
+    /// > *Note:* With Unicode 15.0 data, there are three
+    /// > pairs of characters for which equivalence under this
+    /// > function is inconsistent with equivalence of the
+    /// > one-character strings under [`CaseMapping::full_fold`].
+    /// > This is resolved in Unicode 15.1 and later.
+    ///
+    /// For compatibility applications where simple case folding
+    /// of strings is required, this function can be applied to
+    /// each character of a string.  Note that the resulting
+    /// equivalence relation is different from that obtained
+    /// by [`CaseMapping::full_fold`]:
+    /// The strings "Straße" and "STRASSE" are distinct
+    /// under simple case folding, but are equivalent under
+    /// default (full) case folding.
     ///
     /// # Example
     ///
