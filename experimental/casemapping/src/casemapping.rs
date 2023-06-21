@@ -161,16 +161,6 @@ impl CaseMapping {
             .full_helper_writeable(src, self.locale, MappingKind::Upper)
     }
 
-    /// Returns the full titlecase mapping of the given string as a [`Writeable`].
-    /// This function is context and locale sensitive.
-    ///
-    /// See [`Self::to_full_titlecase_string()`] for the equivalent convenience function that returns a String
-    pub fn to_full_titlecase<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
-        self.data
-            .get()
-            .full_helper_writeable(src, self.locale, MappingKind::Title)
-    }
-
     /// Case-folds the characters in the given string as a [`Writeable`].
     /// This function is locale-independent and context-insensitive.
     ///
@@ -212,18 +202,6 @@ impl CaseMapping {
         self.data
             .get()
             .full_helper_writeable(src, self.locale, MappingKind::Upper)
-            .write_to_string()
-            .into_owned()
-    }
-
-    /// Returns the full titlecase mapping of the given string as a String.
-    /// This function is context and locale sensitive.
-    ///
-    /// See [`Self::to_full_titlecase()`] for the equivalent lower-level function that returns a [`Writeable`]
-    pub fn to_full_titlecase_string(&self, src: &str) -> String {
-        self.data
-            .get()
-            .full_helper_writeable(src, self.locale, MappingKind::Title)
             .write_to_string()
             .into_owned()
     }
