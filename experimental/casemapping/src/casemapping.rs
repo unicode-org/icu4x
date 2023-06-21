@@ -194,10 +194,12 @@ impl CaseMapping {
         self.data.get().simple_title(c)
     }
 
-    /// Returns the simple case folding mapping of the given char.
+    /// Returns the simple case folding of the given char.
     /// For full mappings, use [`CaseMapping::full_fold`].
     ///
-    /// You can use the case folding to compare characters case insensitively.
+    /// You can use the case folding to perform caseless matches on characters
+    /// provided they don't full-casefold to strings. To avoid that situation,
+    /// convert to a string and use [`CaseMapping::full_fold`].
     ///
     /// # Example
     ///
@@ -224,10 +226,15 @@ impl CaseMapping {
         self.data.get().simple_fold(c, FoldOptions::default())
     }
 
-    /// Returns the simple case folding mapping of the given char, using Turkic (T) mappings for
+    /// Returns the simple case folding of the given char, using Turkic (T) mappings for
     /// dotted/dotless i. This function does not fold `i` and `I` to the same character. Instead,
     /// `I` will fold to `ı`, and `İ` will fold to `i`. Otherwise, this is the same as
     /// [`CaseMapping::fold()`].
+    ///
+    /// You can use the case folding to perform Turkic caseless matches on characters
+    /// provided they don't full-casefold to strings. To avoid that situation,
+    /// convert to a string and use [`CaseMapping::full_fold_turkic`].
+    ///
     ///
     /// # Example
     ///
