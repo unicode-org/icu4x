@@ -41,7 +41,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 criterion = "0.4"
 icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_decimal"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_decimal", "icu_locid_transform"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 rand = "0.8"
 rand_pcg = "0.3"
