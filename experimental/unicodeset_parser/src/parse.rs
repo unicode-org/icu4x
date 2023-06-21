@@ -284,7 +284,7 @@ where
         + DataProvider<ScriptV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
-    fn new_inner(
+    fn new_internal(
         iter: &'b mut Peekable<CharIndices<'a>>,
         options: UnicodeSetBuilderOptions,
         provider: &'c P,
@@ -372,7 +372,7 @@ where
                             self.single_set.add_char(prev);
                         }
 
-                        let mut inner_builder = UnicodeSetBuilder::new_inner(
+                        let mut inner_builder = UnicodeSetBuilder::new_internal(
                             self.iter,
                             self.options,
                             self.property_provider,
@@ -1049,7 +1049,7 @@ where
     // TODO: think about returning byte-length of the parsed unicodeset for use in transliterator, or add public function that accepts a peekable char iterator?
 
     let mut iter = source.char_indices().peekable();
-    let mut builder = UnicodeSetBuilder::new_inner(&mut iter, options, provider);
+    let mut builder = UnicodeSetBuilder::new_internal(&mut iter, options, provider);
 
     builder.parse_unicode_set()?;
     let (single, multi) = builder.finalize();
