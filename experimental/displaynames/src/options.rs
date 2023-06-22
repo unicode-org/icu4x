@@ -15,8 +15,7 @@
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
 /// options.style = Some(Style::Short);
-/// let display_name = RegionDisplayNames::try_new_unstable(
-///     &icu_testdata::unstable(),
+/// let display_name = RegionDisplayNames::try_new(
 ///     &locale.into(),
 ///     options,
 /// )
