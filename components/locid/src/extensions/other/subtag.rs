@@ -16,7 +16,8 @@ impl_tinystr_subtag!(
     /// assert_eq!(subtag!("Foo").as_str(), "foo");
     /// ```
     Subtag,
-    extensions::other::Subtag,
+    extensions::other,
+    subtag,
     extensions_other_subtag,
     2..=8,
     s,

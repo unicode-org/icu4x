@@ -159,7 +159,7 @@ impl LocaleDirectionality {
     /// Using a script directly:
     ///
     /// ```
-    /// use icu_locid::subtags_script as script;
+    /// use icu_locid::subtags::script;
     /// use icu_locid::Locale;
     /// use icu_locid_transform::{Direction, LocaleDirectionality};
     ///

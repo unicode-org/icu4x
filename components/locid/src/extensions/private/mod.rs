@@ -32,7 +32,8 @@ mod other;
 use alloc::vec::Vec;
 use core::ops::Deref;
 
-pub use other::Subtag;
+#[doc(inline)]
+pub use other::{subtag, Subtag};
 
 use crate::helpers::ShortSlice;
 use crate::parser::ParserError;

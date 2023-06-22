@@ -7,7 +7,10 @@ use std::cmp::Ordering;
 use crate::testutil::ResolvedLocaleAdapter;
 use crate::*;
 use icu_collator::{provider::CollationDataV1Marker, Collator, CollatorOptions, Strength};
-use icu_locid::{langid, locale, subtags::Language, subtags_language as language};
+use icu_locid::{
+    langid, locale,
+    subtags::{language, Language},
+};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use writeable::Writeable;
 

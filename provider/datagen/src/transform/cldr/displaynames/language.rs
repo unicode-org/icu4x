@@ -218,7 +218,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNamesV
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags_language as language};
+    use icu_locid::{locale, subtags::language};
 
     #[test]
     fn test_basic_lang_display_names() {

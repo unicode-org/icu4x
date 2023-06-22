@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use icu_locid::{subtags, subtags_language as language, LanguageIdentifier};
+use icu_locid::{
+    subtags::{self, language},
+    LanguageIdentifier,
+};
 use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -271,9 +274,7 @@ fn test_appendix_c_cmp() {
 
 #[test]
 fn test_basic() {
-    use icu_locid::{
-        subtags_language as language, subtags_region as region, subtags_script as script,
-    };
+    use icu_locid::subtags::{language, region, script};
 
     let provider = crate::DatagenProvider::for_test();
     let data: DataPayload<AliasesV1Marker> = provider

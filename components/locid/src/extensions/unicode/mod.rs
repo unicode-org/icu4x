@@ -36,11 +36,14 @@ mod key;
 mod keywords;
 mod value;
 
-pub use attribute::Attribute;
+#[doc(inline)]
+pub use attribute::{attribute, Attribute};
 pub use attributes::Attributes;
-pub use key::Key;
+#[doc(inline)]
+pub use key::{key, Key};
 pub use keywords::Keywords;
-pub use value::Value;
+#[doc(inline)]
+pub use value::{value, Value};
 
 use crate::helpers::ShortSlice;
 use crate::parser::ParserError;

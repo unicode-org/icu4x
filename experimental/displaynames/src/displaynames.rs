@@ -16,7 +16,7 @@ use icu_provider::prelude::*;
 ///
 /// ```
 /// use icu_displaynames::{DisplayNamesOptions, RegionDisplayNames};
-/// use icu_locid::{locale, subtags_region as region};
+/// use icu_locid::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -91,7 +91,7 @@ impl RegionDisplayNames {
 ///
 /// ```
 /// use icu_displaynames::{DisplayNamesOptions, ScriptDisplayNames};
-/// use icu_locid::{locale, subtags_script as script};
+/// use icu_locid::{locale, subtags::script};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -167,7 +167,7 @@ impl ScriptDisplayNames {
 ///
 /// ```
 /// use icu_displaynames::{DisplayNamesOptions, VariantDisplayNames};
-/// use icu_locid::{locale, subtags_variant as variant};
+/// use icu_locid::{locale, subtags::variant};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -238,7 +238,7 @@ impl VariantDisplayNames {
 ///
 /// ```
 /// use icu_displaynames::{DisplayNamesOptions, LanguageDisplayNames};
-/// use icu_locid::{locale, subtags_language as language};
+/// use icu_locid::{locale, subtags::language};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -319,7 +319,7 @@ impl LanguageDisplayNames {
 ///
 /// ```
 /// use icu_displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
-/// use icu_locid::{locale, subtags_language as language};
+/// use icu_locid::{locale, subtags::language};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();

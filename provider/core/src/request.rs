@@ -339,7 +339,7 @@ impl DataLocale {
     ///
     /// ```
     /// use icu_locid::{
-    ///     langid, locale, subtags_language as language, subtags_region as region,
+    ///     langid, locale, subtags::{language, region},
     ///     Locale,
     /// };
     /// use icu_provider::prelude::*;

@@ -21,7 +21,8 @@ impl_tinystr_subtag!(
     /// assert_eq!(attr, attribute!("buddhist"));
     /// ```
     Attribute,
-    extensions::unicode::Attribute,
+    extensions::unicode,
+    attribute,
     extensions_unicode_attribute,
     3..=8,
     s,

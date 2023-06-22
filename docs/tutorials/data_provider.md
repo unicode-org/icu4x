@@ -261,7 +261,7 @@ The following example illustrates how to overwrite the decimal separators for a 
 use icu::decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
 use icu::locid::locale;
-use icu::locid::subtags_region as region;
+use icu::locid::subtags::region;
 use std::borrow::Cow;
 use tinystr::tinystr;
 

@@ -214,7 +214,8 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 #[test]
 fn test_basic() {
     use icu_locid::{
-        langid, subtags_language as language, subtags_region as region, subtags_script as script,
+        langid,
+        subtags::{language, region, script},
     };
 
     let provider = crate::DatagenProvider::for_test();
