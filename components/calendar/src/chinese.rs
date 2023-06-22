@@ -178,7 +178,9 @@ impl DateTime<Chinese> {
 impl Chinese {
     // TODO: A lot of the functions used here require converting between Moment and RataDie frequently.
     // This can quickly become tedious and annoying, so once the code works, we should consider making
-    // some of these functions take generic types and then implementing them for Moment and RataDie.
+    // some of these functions take generic types and then implementing them for Moment and RataDie,
+    // or otherwise figure out the optimal way to rewrite these functions to improve consistency and
+    // decrease the amount of times as_rata_die() and as_moment() need to be called.
 
     /// Get the current major solar term of an ISO date
     pub fn major_solar_term_from_iso(iso: IsoDateInner) -> i32 {
@@ -310,7 +312,36 @@ impl Chinese {
             iters += 1;
             day += 1;
         }
+        debug_assert!(iters < max_iters, "Number of iterations was higher than expected");
         day
+    }
+
+    /// Get the ISO date of the nearest Chinese New Year on or before a given ISO date
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::chinese::Chinese;
+    /// 
+    /// let date = Date::try_new_iso_date(2023, 6, 22).expect("Failed to initialize ISO Date");
+    /// let chinese_new_year = Chinese::chinese_new_year_on_or_before_iso(date);
+    /// assert_eq!(chinese_new_year.year().number, 2023);
+    /// assert_eq!(chinese_new_year.month().ordinal, 1);
+    /// assert_eq!(chinese_new_year.day_of_month().0, 22);
+    /// ```
+    pub fn chinese_new_year_on_or_before_iso(iso: Date<Iso>) -> Date<Iso> {
+        let iso_inner = iso.inner;
+        let fixed = Iso::fixed_from_iso(iso_inner);
+        let result_fixed = Self::chinese_new_year_on_or_before_fixed_date(fixed);
+        Iso::iso_from_fixed(result_fixed)
+    }
+
+    /// Get the fixed date of the nearest Chinese New Year on or before a given fixed date.
+    pub(crate) fn chinese_new_year_on_or_before_fixed_date(date: RataDie) -> RataDie {
+        let new_year = Self::chinese_new_year_in_sui(date);
+        if date >= new_year {
+            new_year
+        } else {
+            Self::chinese_new_year_in_sui(date - 180)
+        }
     }
 }
 
@@ -320,11 +351,20 @@ mod test {
 
     #[test]
     fn test_chinese_new_moon_directionality() {
-        for i in (-255..1000).step_by(31) {
+        for i in (-1000..1000).step_by(31) {
             let moment = Moment::new(i as f64);
             let before = Chinese::chinese_new_moon_before(moment);
             let after = Chinese::chinese_new_moon_on_or_after(moment);
             assert!(before < after, "Chinese new moon directionality failed for Moment: {moment:?}, with:\n\tBefore: {before:?}\n\tAfter: {after:?}");
         }
+    }
+
+    #[test]
+    fn test_chinese_new_year_on_or_before() {
+        let date = Date::try_new_iso_date(2023, 6, 22).expect("Failed to initialize ISO Date");
+        let chinese_new_year = Chinese::chinese_new_year_on_or_before_iso(date);
+        assert_eq!(chinese_new_year.year().number, 2023);
+        assert_eq!(chinese_new_year.month().ordinal, 1);
+        assert_eq!(chinese_new_year.day_of_month().0, 22);
     }
 }

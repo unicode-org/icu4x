@@ -578,7 +578,7 @@ impl Astronomical {
         let rate = MEAN_TROPICAL_YEAR / 360.0;
         let tau =
             moment - rate * div_rem_euclid_f64(Self::solar_longitude(moment) - angle, 360.0).1;
-        let delta = interval_mod_f64(Self::solar_longitude(tau), -180.0, 180.0);
+        let delta = interval_mod_f64(Self::solar_longitude(tau) - angle, -180.0, 180.0);
         let result_rhs = tau - rate * delta;
         if moment < result_rhs {
             moment
