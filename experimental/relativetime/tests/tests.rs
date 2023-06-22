@@ -14,11 +14,10 @@ macro_rules! generate_test {
         #[test]
         fn $test_name(){
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
-                &icu_testdata::unstable(),
                 &locale!("en").into(),
                 $options
             )
-            .expect("Data should load successfully.");
+            .expect("locale should be present");
 
             $(
                 assert_writeable_eq!(
@@ -28,11 +27,10 @@ macro_rules! generate_test {
             )+
 
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
-                &icu_testdata::unstable(),
                 &locale!("ar").into(),
                 $options
             )
-            .expect("Data should load successfully.");
+            .expect("locale should be present");
 
             $(
                 assert_writeable_eq!(
@@ -45,7 +43,7 @@ macro_rules! generate_test {
 }
 generate_test!(
     test_long_second_always,
-    try_new_long_second_unstable,
+    try_new_long_second,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -70,7 +68,7 @@ generate_test!(
 );
 generate_test!(
     test_long_second_auto,
-    try_new_long_second_unstable,
+    try_new_long_second,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -95,7 +93,7 @@ generate_test!(
 );
 generate_test!(
     test_long_minute_always,
-    try_new_long_minute_unstable,
+    try_new_long_minute,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -120,7 +118,7 @@ generate_test!(
 );
 generate_test!(
     test_long_minute_auto,
-    try_new_long_minute_unstable,
+    try_new_long_minute,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -145,7 +143,7 @@ generate_test!(
 );
 generate_test!(
     test_long_hour_always,
-    try_new_long_hour_unstable,
+    try_new_long_hour,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -170,7 +168,7 @@ generate_test!(
 );
 generate_test!(
     test_long_hour_auto,
-    try_new_long_hour_unstable,
+    try_new_long_hour,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -195,7 +193,7 @@ generate_test!(
 );
 generate_test!(
     test_long_day_always,
-    try_new_long_day_unstable,
+    try_new_long_day,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -220,7 +218,7 @@ generate_test!(
 );
 generate_test!(
     test_long_day_auto,
-    try_new_long_day_unstable,
+    try_new_long_day,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -245,7 +243,7 @@ generate_test!(
 );
 generate_test!(
     test_long_week_always,
-    try_new_long_week_unstable,
+    try_new_long_week,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -270,7 +268,7 @@ generate_test!(
 );
 generate_test!(
     test_long_week_auto,
-    try_new_long_week_unstable,
+    try_new_long_week,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -295,7 +293,7 @@ generate_test!(
 );
 generate_test!(
     test_long_month_always,
-    try_new_long_month_unstable,
+    try_new_long_month,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -320,7 +318,7 @@ generate_test!(
 );
 generate_test!(
     test_long_month_auto,
-    try_new_long_month_unstable,
+    try_new_long_month,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -345,7 +343,7 @@ generate_test!(
 );
 generate_test!(
     test_long_quarter_always,
-    try_new_long_quarter_unstable,
+    try_new_long_quarter,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -370,7 +368,7 @@ generate_test!(
 );
 generate_test!(
     test_long_quarter_auto,
-    try_new_long_quarter_unstable,
+    try_new_long_quarter,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -395,7 +393,7 @@ generate_test!(
 );
 generate_test!(
     test_long_year_always,
-    try_new_long_year_unstable,
+    try_new_long_year,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -420,7 +418,7 @@ generate_test!(
 );
 generate_test!(
     test_long_year_auto,
-    try_new_long_year_unstable,
+    try_new_long_year,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -445,7 +443,7 @@ generate_test!(
 );
 generate_test!(
     test_short_second_always,
-    try_new_short_second_unstable,
+    try_new_short_second,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -470,7 +468,7 @@ generate_test!(
 );
 generate_test!(
     test_short_second_auto,
-    try_new_short_second_unstable,
+    try_new_short_second,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -495,7 +493,7 @@ generate_test!(
 );
 generate_test!(
     test_short_minute_always,
-    try_new_short_minute_unstable,
+    try_new_short_minute,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -520,7 +518,7 @@ generate_test!(
 );
 generate_test!(
     test_short_minute_auto,
-    try_new_short_minute_unstable,
+    try_new_short_minute,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -545,7 +543,7 @@ generate_test!(
 );
 generate_test!(
     test_short_hour_always,
-    try_new_short_hour_unstable,
+    try_new_short_hour,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -570,7 +568,7 @@ generate_test!(
 );
 generate_test!(
     test_short_hour_auto,
-    try_new_short_hour_unstable,
+    try_new_short_hour,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -595,7 +593,7 @@ generate_test!(
 );
 generate_test!(
     test_short_day_always,
-    try_new_short_day_unstable,
+    try_new_short_day,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -620,7 +618,7 @@ generate_test!(
 );
 generate_test!(
     test_short_day_auto,
-    try_new_short_day_unstable,
+    try_new_short_day,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -645,7 +643,7 @@ generate_test!(
 );
 generate_test!(
     test_short_week_always,
-    try_new_short_week_unstable,
+    try_new_short_week,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -670,7 +668,7 @@ generate_test!(
 );
 generate_test!(
     test_short_week_auto,
-    try_new_short_week_unstable,
+    try_new_short_week,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -695,7 +693,7 @@ generate_test!(
 );
 generate_test!(
     test_short_month_always,
-    try_new_short_month_unstable,
+    try_new_short_month,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -720,7 +718,7 @@ generate_test!(
 );
 generate_test!(
     test_short_month_auto,
-    try_new_short_month_unstable,
+    try_new_short_month,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -745,7 +743,7 @@ generate_test!(
 );
 generate_test!(
     test_short_quarter_always,
-    try_new_short_quarter_unstable,
+    try_new_short_quarter,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -770,7 +768,7 @@ generate_test!(
 );
 generate_test!(
     test_short_quarter_auto,
-    try_new_short_quarter_unstable,
+    try_new_short_quarter,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -795,7 +793,7 @@ generate_test!(
 );
 generate_test!(
     test_short_year_always,
-    try_new_short_year_unstable,
+    try_new_short_year,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -820,7 +818,7 @@ generate_test!(
 );
 generate_test!(
     test_short_year_auto,
-    try_new_short_year_unstable,
+    try_new_short_year,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -845,7 +843,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_second_always,
-    try_new_narrow_second_unstable,
+    try_new_narrow_second,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -870,7 +868,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_second_auto,
-    try_new_narrow_second_unstable,
+    try_new_narrow_second,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -895,7 +893,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_minute_always,
-    try_new_narrow_minute_unstable,
+    try_new_narrow_minute,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -920,7 +918,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_minute_auto,
-    try_new_narrow_minute_unstable,
+    try_new_narrow_minute,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -945,7 +943,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_hour_always,
-    try_new_narrow_hour_unstable,
+    try_new_narrow_hour,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -970,7 +968,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_hour_auto,
-    try_new_narrow_hour_unstable,
+    try_new_narrow_hour,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -995,7 +993,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_day_always,
-    try_new_narrow_day_unstable,
+    try_new_narrow_day,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -1020,7 +1018,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_day_auto,
-    try_new_narrow_day_unstable,
+    try_new_narrow_day,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -1045,7 +1043,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_week_always,
-    try_new_narrow_week_unstable,
+    try_new_narrow_week,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -1070,7 +1068,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_week_auto,
-    try_new_narrow_week_unstable,
+    try_new_narrow_week,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -1095,7 +1093,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_month_always,
-    try_new_narrow_month_unstable,
+    try_new_narrow_month,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -1120,7 +1118,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_month_auto,
-    try_new_narrow_month_unstable,
+    try_new_narrow_month,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -1145,7 +1143,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_quarter_always,
-    try_new_narrow_quarter_unstable,
+    try_new_narrow_quarter,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -1170,7 +1168,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_quarter_auto,
-    try_new_narrow_quarter_unstable,
+    try_new_narrow_quarter,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
@@ -1195,7 +1193,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_year_always,
-    try_new_narrow_year_unstable,
+    try_new_narrow_year,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Always
     },
@@ -1220,7 +1218,7 @@ generate_test!(
 );
 generate_test!(
     test_narrow_year_auto,
-    try_new_narrow_year_unstable,
+    try_new_narrow_year,
     RelativeTimeFormatterOptions {
         numeric: Numeric::Auto
     },
