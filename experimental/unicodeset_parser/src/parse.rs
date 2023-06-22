@@ -636,6 +636,8 @@ where
                     break;
                 }
                 // parse the property name
+                // NOTE: this might be too strict, because in the case of e.g. [:value:], we might want to
+                // allow [:lower-case-letter:] ([:gc=lower-case-letter:] works)
                 (Begin | PropertyName, c) if c.is_ascii_alphanumeric() || c == '_' => {
                     key_buffer.push(c);
                     self.iter.next();
@@ -1069,6 +1071,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use std::ops::RangeInclusive;
+
     use super::*;
 
     macro_rules! td {
@@ -1084,29 +1088,65 @@ mod tests {
         dollar_is_anchor: false,
     };
 
-    fn assert_set_equality<'a, 'b>(
-        cpinvlistandstrlist: &CodePointInversionListAndStringList<'a>,
-        single: impl Iterator<Item = char>,
-        multi: impl Iterator<Item = &'b str>,
-    ) {
-        let mut it_size = 0;
-        for c in single {
-            it_size += 1;
-            assert!(
-                cpinvlistandstrlist.contains_char(c),
-                "missing char from parsed set: '{}'",
-                c.escape_debug()
-            );
+    // "aabxzz" => [a..=a, b..=x, z..=z]
+    fn range_iter_from_str(s: &str) -> impl Iterator<Item = RangeInclusive<u32>> {
+        debug_assert_eq!(
+            s.chars().count() % 2,
+            0,
+            "string \"{}\" does not contain an even number of code points",
+            s.escape_debug()
+        );
+        let mut res = vec![];
+        let mut skip = false;
+        for (a, b) in s.chars().zip(s.chars().skip(1)) {
+            if skip {
+                skip = false;
+                continue;
+            }
+            let a = a as u32;
+            let b = b as u32;
+            res.push(a..=b);
+            skip = true;
         }
+
+        res.into_iter()
+    }
+
+    fn assert_set_equality<'a>(
+        source: &str,
+        cpinvlistandstrlist: &CodePointInversionListAndStringList,
+        single: impl Iterator<Item = RangeInclusive<u32>>,
+        multi: impl Iterator<Item = &'a str>,
+    ) {
+        let expected_ranges: HashSet<_> = single.collect();
+        let actual_ranges: HashSet<_> = cpinvlistandstrlist.code_points().iter_ranges().collect();
+        assert_eq!(
+            actual_ranges,
+            expected_ranges,
+            "got unexpected ranges {:?}, expected {:?} for parsed set \"{}\"",
+            actual_ranges,
+            expected_ranges,
+            source.escape_debug()
+        );
+        let mut expected_size = cpinvlistandstrlist.code_points().size();
         for s in multi {
-            it_size += 1;
+            expected_size += 1;
             assert!(
                 cpinvlistandstrlist.contains(s),
-                "missing string from parsed set: \"{}\"",
-                s.escape_debug()
+                "missing string \"{}\" from parsed set \"{}\"",
+                s.escape_debug(),
+                source.escape_debug()
             );
         }
-        assert_eq!(cpinvlistandstrlist.size(), it_size);
+        let actual_size = cpinvlistandstrlist.size();
+        assert_eq!(
+            actual_size,
+            expected_size,
+            "got unexpected size {}, expected {} for parsed set \"{}\"",
+            actual_size,
+            expected_size,
+            source.escape_debug()
+        );
     }
 
     fn assert_is_error_and_message_eq(
@@ -1122,23 +1162,120 @@ mod tests {
 
     #[test]
     fn test_semantics() {
-        let cases: [(_, _, _, Vec<String>); 10] = [
-            (OPTIONS_NO_ANCHOR, "[a]", 'a'..='a', vec![]),
-            (OPTIONS_NO_ANCHOR, r"[\n]", '\n'..='\n', vec![]),
-            (OPTIONS_NO_ANCHOR, "[\\\n]", '\n'..='\n', vec![]),
+        const D: UnicodeSetBuilderOptions = OPTIONS_ANCHOR;
+        const ALL_CHARS: &str = "\x00\u{10FFFF}";
+        let cases: Vec<(_, _, _, Vec<&str>)> = vec![
+            // simple
+            (D, "[a]", "aa", vec![]),
+            (D, "[]", "", vec![]),
+            (D, "[qax]", "aaqqxx", vec![]),
+            (D, "[a-z]", "az", vec![]),
+            // whitespace escaping
+            (D, r"[\n]", "\n\n", vec![]),
+            (D, "[\\\n]", "\n\n", vec![]),
             // empty - whitespace is skipped
-            (OPTIONS_NO_ANCHOR, "[\n]", 'b'..='a', vec![]),
-            (OPTIONS_NO_ANCHOR, "[a-z]", 'a'..='z', vec![]),
-            (OPTIONS_NO_ANCHOR, "[$]", '$'..='$', vec![]),
-            (OPTIONS_NO_ANCHOR, "[{$}]", '$'..='$', vec![]),
-            (OPTIONS_ANCHOR, "[$]", '\u{ffff}'..='\u{ffff}', vec![]),
-            (OPTIONS_ANCHOR, r"[\$]", '$'..='$', vec![]),
-            (OPTIONS_ANCHOR, "[{$}]", '$'..='$', vec![]),
-            // TODO(#3556): Add more tests
+            (D, "[\n]", "", vec![]),
+            (D, "[\u{9}]", "", vec![]),
+            (D, "[\u{A}]", "", vec![]),
+            (D, "[\u{B}]", "", vec![]),
+            (D, "[\u{C}]", "", vec![]),
+            (D, "[\u{D}]", "", vec![]),
+            (D, "[\u{20}]", "", vec![]),
+            (D, "[\u{85}]", "", vec![]),
+            (D, "[\u{200E}]", "", vec![]),
+            (D, "[\u{200F}]", "", vec![]),
+            (D, "[\u{2028}]", "", vec![]),
+            (D, "[\u{2029}]", "", vec![]),
+            // but not all "whitespace", only Pattern_White_Space:
+            (D, "[\u{A0}]", "\u{A0}\u{A0}", vec![]), // non-breaking space
+            // anchor
+            (OPTIONS_NO_ANCHOR, "[$]", "$$", vec![]),
+            (OPTIONS_NO_ANCHOR, "[{$}]", "$$", vec![]),
+            (D, "[$]", "\u{ffff}\u{ffff}", vec![]),
+            (D, r"[\$]", "$$", vec![]),
+            (D, "[{$}]", "$$", vec![]),
+            // set operations
+            (D, "[[a-z]&[b-z]]", "bz", vec![]),
+            (D, "[[a-z]-[b-z]]", "aa", vec![]),
+            (D, "[[a-z][b-z]]", "az", vec![]),
+            (D, "[[a-a][b-z]]", "az", vec![]),
+            (D, "[[a-z{abc}]&[b-z{abc}{abx}]]", "bz", vec!["abc"]),
+            (D, "[[{abx}a-z{abc}]&[b-z{abc}]]", "bz", vec!["abc"]),
+            (D, "[[a-z{abx}]-[{abx}b-z{abc}]]", "aa", vec![]),
+            (D, "[[a-z{abx}{abc}]-[{abx}b-z]]", "aa", vec!["abc"]),
+            (D, "[[a-z{abc}][b-z{abx}]]", "az", vec!["abc", "abx"]),
+            // associativity
+            (D, "[[a-a][b-z] - [a-d][e-z]]", "ez", vec![]),
+            (D, "[[a-a][b-z] - [a-d]&[e-z]]", "ez", vec![]),
+            (D, "[[a-a][b-z] - [a-z][]]", "", vec![]),
+            (D, "[[a-a][b-z] - [a-z]&[]]", "", vec![]),
+            (D, "[[a-a][b-z] & [a-z]-[]]", "az", vec![]),
+            (D, "[[a-a][b-z] & []-[a-z]]", "", vec![]),
+            (D, "[[a-a][b-z] & [a-b][x-z]]", "abxz", vec![]),
+            (D, "[[a-z]-[a-b]-[y-z]]", "cx", vec![]),
+            // escape tests
+            (D, r"[\x61-\x63]", "ac", vec![]),
+            (D, r"[a-\x63]", "ac", vec![]),
+            (D, r"[\x61-c]", "ac", vec![]),
+            (D, r"[\u0061-\x63]", "ac", vec![]),
+            (D, r"[\U00000061-\x63]", "ac", vec![]),
+            (D, r"[\x{61}-\x63]", "ac", vec![]),
+            (D, r"[\u{61}-\x63]", "ac", vec![]),
+            (D, r"[\u{61}{hello\ world}]", "aa", vec!["hello world"]),
+            (D, r"[{hello\ world}\u{61}]", "aa", vec!["hello world"]),
+            (D, r"[{h\u{65}llo\ world}]", "", vec!["hello world"]),
+            // complement tests
+            (D, r"[^]", ALL_CHARS, vec![]),
+            (D, r"[[^]-[^a-z]]", "az", vec![]),
+            (D, r"[^{h\u{65}llo\ world}]", ALL_CHARS, vec![]),
+            (
+                D,
+                r"[^[{h\u{65}llo\ world}]-[{hello\ world}]]",
+                ALL_CHARS,
+                vec![],
+            ),
+            (
+                D,
+                r"[^[\x00-\U0010FFFF]-[\u0100-\U0010FFFF]]",
+                "\u{100}\u{10FFFF}",
+                vec![],
+            ),
+            (D, r"[^[^a-z]]", "az", vec![]),
+            (D, r"[^[^^]]", "^^", vec![]),
+            // binary properties
+            (D, r"[:AHex:]", "09afAF", vec![]),
+            (D, r"[:AHex=True:]", "09afAF", vec![]),
+            (D, r"[:AHex=T:]", "09afAF", vec![]),
+            (D, r"[:AHex=Yes:]", "09afAF", vec![]),
+            (D, r"[:AHex=Y:]", "09afAF", vec![]),
+            (D, r"[:^AHex≠True:]", "09afAF", vec![]),
+            (D, r"[:AHex≠False:]", "09afAF", vec![]),
+            (D, r"[[:^AHex≠False:]&[\x00-\x10]]", "\0\x10", vec![]),
+            (D, r"\p{AHex}", "09afAF", vec![]),
+            (D, r"\p{AHex=True}", "09afAF", vec![]),
+            (D, r"\p{AHex=T}", "09afAF", vec![]),
+            (D, r"\p{AHex=Yes}", "09afAF", vec![]),
+            (D, r"\p{AHex=Y}", "09afAF", vec![]),
+            (D, r"\P{AHex≠True}", "09afAF", vec![]),
+            (D, r"\p{AHex≠False}", "09afAF", vec![]),
+            // general category
+            (D, r"[[:gc=lower-case-letter:]&[a-zA-Z]]", "az", vec![]),
+            (D, r"[[:lower case letter:]&[a-zA-Z]]", "az", vec![]),
+            // scripts
+            (D, r"[[:sc=latn:]&[a-zA-Z]]", "azAZ", vec![]),
+            (D, r"[[:sc=Latin:]&[a-zA-Z]]", "azAZ", vec![]),
+            (D, r"[[:Latin:]&[a-zA-Z]]", "azAZ", vec![]),
+            (D, r"[[:latn:]&[a-zA-Z]]", "azAZ", vec![]),
+            // TODO(#3556): Add more tests (specifically conformance tests if they exist)
         ];
         for (options, source, single, multi) in cases {
             let parsed = parse_unstable(source, options, &td!()).unwrap();
-            assert_set_equality(&parsed, single.clone(), multi.iter().map(|s| s.as_str()));
+            assert_set_equality(
+                source,
+                &parsed,
+                range_iter_from_str(single),
+                multi.into_iter(),
+            );
         }
     }
 
@@ -1167,6 +1304,7 @@ mod tests {
             ),
             (r"[--]", r"[--← error: unexpected character '-'"),
             (r"[a-z-]", r"[a-z-← error: unexpected character '-'"),
+            (r"[a-b-z]", r"[a-b-← error: unexpected character '-'"),
             // TODO(#3558): Might be better as "[a-\p← error: unexpected character 'p'"?
             (r"[a-\p{ll}]", r"[a-\← error: unexpected character '\\'"),
             (r"[a-&]", r"[a-&← error: unexpected character '&'"),
