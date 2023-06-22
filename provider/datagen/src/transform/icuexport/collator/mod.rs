@@ -7,8 +7,8 @@
 
 use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
+use icu_locid::extensions::unicode::key;
 use icu_locid::extensions::unicode::Value;
-use icu_locid::extensions_unicode_key as key;
 use icu_locid::subtags::language;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;

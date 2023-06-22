@@ -19,9 +19,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{
-///     extensions::unicode::Value, extensions_unicode_value as value,
-/// };
+/// use icu::locid::extensions::unicode::{Value, value};
 /// use writeable::assert_writeable_eq;
 ///
 /// assert_writeable_eq!(value!("gregory"), "gregory");

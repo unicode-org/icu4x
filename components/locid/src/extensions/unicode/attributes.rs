@@ -83,8 +83,7 @@ impl Attributes {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Attribute, Attributes};
-    /// use icu::locid::extensions_unicode_attribute as attribute;
+    /// use icu::locid::extensions::unicode::{Attribute, Attributes, attribute};
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut attributes = Attributes::from_vec_unchecked(vec![

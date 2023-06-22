@@ -12,11 +12,7 @@
 //!
 //! ```
 //! use icu::locid::Locale;
-//! use icu::locid::{
-//!     extensions::unicode::Unicode,
-//!     extensions_unicode_attribute as attribute,
-//!     extensions_unicode_key as key, extensions_unicode_value as value,
-//! };
+//! use icu::locid::extensions::unicode::{Unicode, attribute, key, value};
 //!
 //! let loc: Locale = "en-US-u-foobar-hc-h12".parse().expect("Parsing failed.");
 //!
@@ -67,9 +63,7 @@ use litemap::LiteMap;
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{
-///     extensions_unicode_key as key, extensions_unicode_value as value,
-/// };
+/// use icu::locid::extensions::unicode::{key, value};
 ///
 /// let loc: Locale =
 ///     "de-u-hc-h12-ca-buddhist".parse().expect("Parsing failed.");

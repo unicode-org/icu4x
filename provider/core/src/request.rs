@@ -441,10 +441,7 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{
-    ///     extensions_unicode_key as key, extensions_unicode_value as value,
-    ///     Locale,
-    /// };
+    /// use icu_locid::{Locale, extensions::unicode::{key, value}};
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
