@@ -28,6 +28,17 @@ pub fn div_rem_euclid64(n: i64, d: i64) -> (i64, i64) {
     }
 }
 
+/// [`div_rem_euclid`] for f64
+pub fn div_rem_euclid_f64(n: f64, d: f64) -> (f64, f64) {
+    debug_assert!(d > 0.0);
+    let (a, b) = (n / d, n % d);
+    if n >= 0.0 || b == 0.0 {
+        (a, b)
+    } else {
+        (a - 1.0, d + b)
+    }
+}
+
 /// Calculates `n / d` such that the remainder is always positive.
 /// This is achieved by performing an integer division and then, if the numerator is positive and there is a non-zero remainder,
 /// incrementing the quotient by 1.
@@ -203,10 +214,21 @@ fn test_ceil_div() {
     }
 }
 
+#[derive(Copy, Clone, Debug)]
 pub enum I32Result {
     BelowMin(i64),
     WithinRange(i32),
     AboveMax(i64),
+}
+
+impl I32Result {
+    pub const fn saturate(self) -> i32 {
+        match self {
+            I32Result::BelowMin(_) => i32::MIN,
+            I32Result::WithinRange(x) => x,
+            I32Result::AboveMax(_) => i32::MAX,
+        }
+    }
 }
 
 #[inline]
@@ -222,11 +244,7 @@ pub const fn i64_to_i32(input: i64) -> I32Result {
 
 #[inline]
 pub const fn i64_to_saturated_i32(input: i64) -> i32 {
-    match i64_to_i32(input) {
-        I32Result::BelowMin(_) => i32::MIN,
-        I32Result::WithinRange(x) => x,
-        I32Result::AboveMax(_) => i32::MAX,
-    }
+    i64_to_i32(input).saturate()
 }
 
 #[test]

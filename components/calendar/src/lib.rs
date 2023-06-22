@@ -116,6 +116,7 @@ mod date;
 mod datetime;
 
 pub mod any_calendar;
+mod astronomy;
 pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;

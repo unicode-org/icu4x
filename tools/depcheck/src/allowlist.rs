@@ -26,6 +26,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_provider_adapters", // not included in icu, but needed generally
     "icu_segmenter",
     "icu_timezone",
+    "libm",
     "litemap",
     "memchr",
     "regex-automata",

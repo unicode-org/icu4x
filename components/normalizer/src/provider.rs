@@ -27,7 +27,11 @@ use zerovec::ZeroVec;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
+#[icu_provider::data_struct(marker(
+    CanonicalDecompositionDataV1Marker,
+    "normalizer/nfd@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -46,8 +50,12 @@ pub struct DecompositionDataV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    CompatibilityDecompositionSupplementV1Marker = "normalizer/nfkd@1",
-    Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1"
+    marker(
+        CompatibilityDecompositionSupplementV1Marker,
+        "normalizer/nfkd@1",
+        singleton
+    ),
+    marker(Uts46DecompositionSupplementV1Marker, "normalizer/uts46d@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
@@ -95,8 +103,12 @@ impl DecompositionSupplementV1<'_> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    CanonicalDecompositionTablesV1Marker = "normalizer/nfdex@1",
-    CompatibilityDecompositionTablesV1Marker = "normalizer/nfkdex@1"
+    marker(CanonicalDecompositionTablesV1Marker, "normalizer/nfdex@1", singleton),
+    marker(
+        CompatibilityDecompositionTablesV1Marker,
+        "normalizer/nfkdex@1",
+        singleton
+    )
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
@@ -118,7 +130,7 @@ pub struct DecompositionTablesV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(CanonicalCompositionsV1Marker = "normalizer/comp@1")]
+#[icu_provider::data_struct(marker(CanonicalCompositionsV1Marker, "normalizer/comp@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -138,7 +150,11 @@ pub struct CanonicalCompositionsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(NonRecursiveDecompositionSupplementV1Marker = "normalizer/decomp@1")]
+#[icu_provider::data_struct(marker(
+    NonRecursiveDecompositionSupplementV1Marker,
+    "normalizer/decomp@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

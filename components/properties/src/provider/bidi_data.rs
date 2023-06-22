@@ -33,7 +33,11 @@ use zerovec::ZeroVecError;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(BidiAuxiliaryPropertiesV1Marker = "props/bidiauxiliaryprops@1")]
+#[icu_provider::data_struct(marker(
+    BidiAuxiliaryPropertiesV1Marker,
+    "props/bidiauxiliaryprops@1",
+    singleton
+))]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 

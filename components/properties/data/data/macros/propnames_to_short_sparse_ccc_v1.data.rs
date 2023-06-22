@@ -19,16 +19,10 @@ macro_rules! __impl_propnames_to_short_sparse_ccc_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker>, icu_provider::DataError> {
-                let locale = req.locale;
-                match {
-                    if locale.is_empty() {
-                        Ok(Self::SINGLETON_PROPNAMES_TO_SHORT_SPARSE_CCC_V1)
-                    } else {
-                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                    }
-                } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
-                    Err(e) => Err(e.with_req(<icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
+                if req.locale.is_empty() {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_PROPNAMES_TO_SHORT_SPARSE_CCC_V1)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
                 }
             }
         }

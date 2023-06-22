@@ -25,5 +25,6 @@
             "pretty": true
         }
     },
+    "fallback": "Legacy",
     "overwrite": true
 }

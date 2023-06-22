@@ -39,6 +39,7 @@ databake = { version = "0.1.3", path = "../../utils/databake", features = ["deri
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
 icu_plurals_data = { path = "data", optional = true }
+icu_locid_transform = { path = "../../components/locid_transform", features = ["data"], optional = true }
 
 [dev-dependencies]
 criterion = "0.4"
@@ -55,7 +56,7 @@ serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
 datagen = ["serde", "zerovec/databake", "dep:databake"]
 experimental = []
 bench = ["serde"]
-data = ["dep:icu_plurals_data"]
+data = ["dep:icu_plurals_data", "dep:icu_locid_transform"]
 
 [lib]
 path = "src/lib.rs"

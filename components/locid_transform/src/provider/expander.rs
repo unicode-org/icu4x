@@ -7,7 +7,11 @@ use icu_locid::subtags::{Language, Region, Script};
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
-#[icu_provider::data_struct(LikelySubtagsV1Marker = "locid_transform/likelysubtags@1")]
+#[icu_provider::data_struct(marker(
+    LikelySubtagsV1Marker,
+    "locid_transform/likelysubtags@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -57,7 +61,11 @@ pub struct LikelySubtagsV1<'data> {
     pub und: (Language, Script, Region),
 }
 
-#[icu_provider::data_struct(LikelySubtagsForLanguageV1Marker = "locid_transform/likelysubtags_l@1")]
+#[icu_provider::data_struct(marker(
+    LikelySubtagsForLanguageV1Marker,
+    "locid_transform/likelysubtags_l@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -123,9 +131,11 @@ impl<'data> LikelySubtagsForLanguageV1<'data> {
     }
 }
 
-#[icu_provider::data_struct(
-    LikelySubtagsForScriptRegionV1Marker = "locid_transform/likelysubtags_sr@1"
-)]
+#[icu_provider::data_struct(marker(
+    LikelySubtagsForScriptRegionV1Marker,
+    "locid_transform/likelysubtags_sr@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -177,7 +187,11 @@ impl<'data> From<LikelySubtagsV1<'data>> for LikelySubtagsForScriptRegionV1<'dat
     }
 }
 
-#[icu_provider::data_struct(LikelySubtagsExtendedV1Marker = "locid_transform/likelysubtags_ext@1")]
+#[icu_provider::data_struct(marker(
+    LikelySubtagsExtendedV1Marker,
+    "locid_transform/likelysubtags_ext@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
