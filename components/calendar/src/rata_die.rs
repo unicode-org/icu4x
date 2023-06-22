@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::ops::{Add, AddAssign, Sub, SubAssign};
 use crate::types::Moment;
+use core::ops::{Add, AddAssign, Sub, SubAssign};
 
 /// The *Rata Die*, or *R.D.*, or `fixed_date`: number of days since January 1, 1 CE.
 ///

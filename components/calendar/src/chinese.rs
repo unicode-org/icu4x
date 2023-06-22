@@ -5,15 +5,15 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Astronomical, Location};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{adjusted_rem_euclid, i64_to_i32, I32Result, quotient};
-use crate::iso::{Iso, IsoDateInner, self};
+use crate::helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result};
+use crate::iso::{self, Iso, IsoDateInner};
 use crate::rata_die::RataDie;
+use crate::types::Moment;
 use crate::{
     astronomy, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
-use crate::types::Moment;
-use tinystr::tinystr;
 use core::marker::PhantomData;
+use tinystr::tinystr;
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
 const CHINESE_EPOCH: RataDie = RataDie::new(-963099); // Feb. 15, 2637 BCE (-2636)
@@ -23,7 +23,7 @@ const CHINESE_EPOCH: RataDie = RataDie::new(-963099); // Feb. 15, 2637 BCE (-263
 /// on the time in Beijing. Before 1929, local time was used, represented as UTC+(1397/180 h).
 /// In 1929, China adopted a standard time zone based on 120 degrees of longitude, meaning
 /// from 1929 onward, all new moon calculations are based on UTC+8h.
-/// 
+///
 /// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day)
 const UTC_OFFSET_PRE_1929: f64 = (1397.0 / 180.0) / 24.0;
 const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
@@ -176,13 +176,12 @@ impl DateTime<Chinese> {
 }
 
 impl Chinese {
-
     /// Get the current major solar term of an ISO date
     pub fn major_solar_term_from_iso(iso: IsoDateInner) -> i32 {
         let fixed: RataDie = Iso::fixed_from_iso(iso);
         Self::major_solar_term_from_fixed(fixed)
     }
-    
+
     /// Get the current major solar term of a fixed date, output as an integer from 1..=12.
     pub(crate) fn major_solar_term_from_fixed(date: RataDie) -> i32 {
         let moment: Moment = date.as_moment();
@@ -228,6 +227,26 @@ impl Chinese {
         }
     }
 
+    // The fixed date in Chinese standard time of the next new moon
+    // on or after the given moment.
+    fn chinese_new_moon_on_or_after(moment: Moment) -> RataDie {
+        let new_moon_moment = Astronomical::new_moon_at_or_after(Self::midnight_in_china(moment));
+        let chinese_offset = Self::chinese_offset(new_moon_moment.as_rata_die());
+        Location::standard_from_universal(new_moon_moment, chinese_offset).as_rata_die()
+    }
+
+    // The fixed date in Chinese standard time of the previous new moon
+    // before the given moment.
+    fn chinese_new_moon_before(moment: Moment) -> RataDie {
+        let new_moon_moment = Astronomical::new_moon_before(Self::midnight_in_china(moment));
+        let chinese_offset = Self::chinese_offset(new_moon_moment.as_rata_die());
+        Location::standard_from_universal(new_moon_moment, chinese_offset).as_rata_die()
+    }
+
+    // Universal time of midnight at start of a Moment in China
+    fn midnight_in_china(date: Moment) -> Moment {
+        Location::universal_from_standard(date, Self::chinese_offset(date.as_rata_die()))
+    }
 }
 
 #[cfg(test)]
@@ -235,6 +254,12 @@ mod test {
     use super::*;
 
     #[test]
-    fn andrew_test() {
+    fn test_chinese_new_moon_directionality() {
+        for i in (-255..1000).step_by(31) {
+            let moment = Moment::new(i as f64);
+            let before = Chinese::chinese_new_moon_before(moment);
+            let after = Chinese::chinese_new_moon_on_or_after(moment);
+            assert!(before < after, "Chinese new moon directionality failed for Moment: {moment:?}, with:\n\tBefore: {before:?}\n\tAfter: {after:?}");
+        }
     }
 }

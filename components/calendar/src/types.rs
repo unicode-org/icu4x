@@ -6,6 +6,9 @@
 
 use crate::error::CalendarError;
 use crate::helpers;
+use crate::helpers::i64_to_i32;
+use crate::helpers::I32Result;
+use crate::rata_die::RataDie;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
@@ -760,5 +763,19 @@ impl Moment {
     /// Get the inner field of a Moment
     pub const fn inner(self) -> f64 {
         self.0
+    }
+
+    /// Get the RataDie of a Moment
+    pub fn as_rata_die(&self) -> RataDie {
+        RataDie::new(libm::floor(self.0) as i64)
+    }
+}
+
+#[test]
+fn test_moment_to_rata_die_conversion() {
+    for i in -1000..=1000 {
+        let moment = Moment::new(i as f64);
+        let rata_die = moment.as_rata_die();
+        assert_eq!(rata_die.to_i64_date(), i);
     }
 }
