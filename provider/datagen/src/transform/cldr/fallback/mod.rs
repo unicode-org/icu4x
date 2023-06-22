@@ -21,7 +21,7 @@ use zerovec::{maps::ZeroMap2d, ule::UnvalidatedStr};
 impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        req: DataRequest,
+        _: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
         let resources = LikelySubtagsResources::try_from_source_data(&self.source)?;
 
@@ -36,7 +36,7 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvide
 impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        req: DataRequest,
+        _: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
         let parents_data: &cldr_serde::parent_locales::Resource = self
             .source
