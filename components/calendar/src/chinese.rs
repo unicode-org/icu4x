@@ -176,6 +176,10 @@ impl DateTime<Chinese> {
 }
 
 impl Chinese {
+    // TODO: A lot of the functions used here require converting between Moment and RataDie frequently.
+    // This can quickly become tedious and annoying, so once the code works, we should consider making
+    // some of these functions take generic types and then implementing them for Moment and RataDie.
+
     /// Get the current major solar term of an ISO date
     pub fn major_solar_term_from_iso(iso: IsoDateInner) -> i32 {
         let fixed: RataDie = Iso::fixed_from_iso(iso);
@@ -194,6 +198,26 @@ impl Chinese {
         );
         let s = solar_longitude.saturate();
         adjusted_rem_euclid(2 + quotient(s, 30), 12)
+    }
+
+    // Returns true if the month of a given fixed date does not have a major solar term,
+    // false otherwise.
+    fn chinese_no_major_solar_term(date: RataDie) -> bool {
+        Self::major_solar_term_from_fixed(date)
+            == Self::major_solar_term_from_fixed(Self::chinese_new_moon_on_or_after(
+                (date + 1).as_moment(),
+            ))
+    }
+
+    // Returns true if there is a Chinese leap month on or after the lunar month starting on fixed day first
+    // and at or before the lunar month starting at fixed date after.
+    fn chinese_prior_leap_month(before: RataDie, after: RataDie) -> bool {
+        after >= before
+            && (Self::chinese_no_major_solar_term(after)
+                || Self::chinese_prior_leap_month(
+                    before,
+                    Self::chinese_new_moon_before(after.as_moment()),
+                ))
     }
 
     /// Get the current major solar term of an ISO date
@@ -246,6 +270,47 @@ impl Chinese {
     // Universal time of midnight at start of a Moment in China
     fn midnight_in_china(date: Moment) -> Moment {
         Location::universal_from_standard(date, Self::chinese_offset(date.as_rata_die()))
+    }
+
+    // Determines the fixed date of the Chinese new year in the sui4 (solar year based on the winter solstice)
+    // which contains the fixed date passed as an argument.
+    fn chinese_new_year_in_sui(date: RataDie) -> RataDie {
+        let prior_solstice = Self::chinese_winter_solstice_on_or_before(date); // s1
+        let following_solstice = Self::chinese_winter_solstice_on_or_before(prior_solstice + 370); // s2
+        let month_after_eleventh =
+            Self::chinese_new_moon_on_or_after((prior_solstice + 1).as_moment()); // m12
+        let month_after_twelfth =
+            Self::chinese_new_moon_on_or_after((month_after_eleventh + 1).as_moment()); // m13
+        let next_eleventh_month =
+            Self::chinese_new_moon_before((following_solstice + 1).as_moment()); // next-m11
+        let m12_float = month_after_eleventh.as_moment().inner();
+        let next_m11_float = next_eleventh_month.as_moment().inner();
+        let lhs_argument =
+            libm::round((next_m11_float - m12_float) / astronomy::MEAN_SYNODIC_MONTH) as i64;
+        if lhs_argument == 12
+            && (Self::chinese_no_major_solar_term(month_after_eleventh)
+                || Self::chinese_no_major_solar_term(month_after_twelfth))
+        {
+            Self::chinese_new_moon_on_or_after((month_after_twelfth + 1).as_moment())
+        } else {
+            month_after_twelfth
+        }
+    }
+
+    // Get the moment of the nearest winter solstice on or before a given fixed date
+    fn chinese_winter_solstice_on_or_before(date: RataDie) -> RataDie {
+        let approx =
+            Astronomical::estimate_prior_solar_longitude(270.0, date.as_moment()).as_rata_die();
+        let mut iters = 0;
+        let max_iters = 367;
+        let mut day = approx;
+        while iters < max_iters
+            && 270.0 < Astronomical::solar_longitude(Self::midnight_in_china((day + 1).as_moment()))
+        {
+            iters += 1;
+            day += 1;
+        }
+        day
     }
 }
 

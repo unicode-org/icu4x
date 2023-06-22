@@ -6,8 +6,6 @@
 
 use crate::error::CalendarError;
 use crate::helpers;
-use crate::helpers::i64_to_i32;
-use crate::helpers::I32Result;
 use crate::rata_die::RataDie;
 use core::convert::TryFrom;
 use core::convert::TryInto;
@@ -761,7 +759,7 @@ impl Moment {
     }
 
     /// Get the inner field of a Moment
-    pub const fn inner(self) -> f64 {
+    pub const fn inner(&self) -> f64 {
         self.0
     }
 
