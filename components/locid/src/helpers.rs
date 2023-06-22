@@ -471,7 +471,7 @@ macro_rules! impl_tinystr_subtag {
         ///
         #[doc = concat!("[`", stringify!($name), "`]: crate::", $(stringify!($path), "::",)+ stringify!($name))]
         #[macro_export]
-        // #[doc(hidden)]
+        #[doc(hidden)]
         macro_rules! $legacy_macro_name {
             ($string:literal) => {{
                 use $crate::$($path ::)+ $name;
@@ -492,7 +492,7 @@ macro_rules! impl_tinystr_subtag {
             fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                 env.insert("icu_locid");
                 let string = self.as_str();
-                databake::quote! { icu_locid::$macro_name!(#string) }
+                databake::quote! { icu_locid::$($path::)+ $macro_name!(#string) }
             }
         }
 

@@ -318,7 +318,7 @@ fn test_basic() {
         data.get().script.iter().next().unwrap(),
         (
             &script!("Qaai").into_tinystr().to_unvalidated(),
-            &icu_locid::subtags_script!("Zinh")
+            &script!("Zinh")
         )
     );
 
@@ -327,6 +327,6 @@ fn test_basic() {
             .region_num
             .get(&region!("768").into_tinystr().to_unvalidated())
             .unwrap(),
-        &icu_locid::subtags_region!("TG")
+        &region!("TG")
     );
 }

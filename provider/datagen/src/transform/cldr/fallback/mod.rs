@@ -6,8 +6,8 @@ use crate::transform::cldr::cldr_serde;
 
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use icu_locid::{
-    extensions::unicode::Key,
-    extensions_unicode_key, langid,
+    extensions::unicode::{key, Key},
+    langid,
     subtags::{Language, Region, Script},
     LanguageIdentifier,
 };
@@ -78,12 +78,8 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvide
             ("yue".into(), (&langid!("zh-Hant")).into()), //
         ];
         let unicode_extension_defaults_list: [(Key, &UnvalidatedStr, &UnvalidatedStr); 2] = [
-            (extensions_unicode_key!("co"), "zh".into(), "pinyin".into()),
-            (
-                extensions_unicode_key!("co"),
-                "zh-Hant".into(),
-                "stroke".into(),
-            ),
+            (key!("co"), "zh".into(), "pinyin".into()),
+            (key!("co"), "zh-Hant".into(), "stroke".into()),
         ];
         let data = LocaleFallbackSupplementV1 {
             parents: parents_list.into_iter().collect(),
