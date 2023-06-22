@@ -120,7 +120,7 @@ mod astronomy;
 pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
-mod chinese;
+pub mod chinese;
 pub mod coptic;
 mod duration;
 mod error;

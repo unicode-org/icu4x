@@ -5,16 +5,28 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Astronomical, Location};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::adjusted_rem_euclid;
-use crate::iso::{Iso, IsoDateInner};
+use crate::helpers::{adjusted_rem_euclid, i64_to_i32, I32Result, quotient};
+use crate::iso::{Iso, IsoDateInner, self};
 use crate::rata_die::RataDie;
 use crate::{
     astronomy, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
+use crate::types::Moment;
 use tinystr::tinystr;
+use core::marker::PhantomData;
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
 const CHINESE_EPOCH: RataDie = RataDie::new(-963099); // Feb. 15, 2637 BCE (-2636)
+
+/// The Chinese calendar relies on knowing the current day at the moment of a new moon;
+/// however, this can vary depending on location. As such, new moon calculations are based
+/// on the time in Beijing. Before 1929, local time was used, represented as UTC+(1397/180 h).
+/// In 1929, China adopted a standard time zone based on 120 degrees of longitude, meaning
+/// from 1929 onward, all new moon calculations are based on UTC+8h.
+/// 
+/// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day)
+const UTC_OFFSET_PRE_1929: f64 = (1397.0 / 180.0) / 24.0;
+const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Chinese;
@@ -164,25 +176,65 @@ impl DateTime<Chinese> {
 }
 
 impl Chinese {
-    // pub(crate) fn chinese_from_fixed(fixed: RataDie) -> Date<Chinese> {
-    //     let s1 = Self::chinese_winter_solstice_on_or_before(fixed);
-    //     let s2 = Self::chinese_winter_solstice_on_or_before(s1 + 370);
-    //     let m12 = Self::chinese_new_moon_on_or_after(s1 + 1);
-    //     let next_m11 = Self::chinese_new_moon_before(s2 + 1);
-    //     let m = Self::chinese_new_moon_before(fixed + 1);
-    //     let leap_year = ((next_m11 - m12) / astronomy::MEAN_SYNODIC_MONTH).round() == 12;
-    //     let month = adjusted_rem_euclid(((m - m12) / astronomy::MEAN_SYNODIC_MONTH).round() - (if leap_year && Self::chinese_prior_leap_month(m12, m) { 1 } else { 0 }), 12);
-    //     let leap_month = leap_year && Self::chinese_no_major_solar_term(m) && !Self::chinese_prior_leap_month(m12, Self::chinese_new_moon_before(m));
-    //     let year = (1.5 - (month / 12) + ((fixed - CHINESE_EPOCH) / astronomy::MEAN_TROPICAL_YEAR)).floor();
-    //     let day = fixed - m + 1;
-    //     Date::try_new_chinese_date(year, month, leap_month, day).unwrap()
-    // }
 
-    // pub(crate) fn fixed_from_chinese(chinese: Date<Chinese>) -> RataDie {
-    //     let mid_year = CHINESE_EPOCH + astronomy::MEAN_TROPICAL_YEAR.quotient(2);
-    //     let new_year = Self::chinese_new_year_on_or_before(mid_year);
-    //     let p = Self::chinese_new_moon_on_or_after(new_year + (month - 1) * 29);
-    //     let d = Self::chinese_from_fixed(p);
+    /// Get the current major solar term of an ISO date
+    pub fn major_solar_term_from_iso(iso: IsoDateInner) -> i32 {
+        let fixed: RataDie = Iso::fixed_from_iso(iso);
+        Self::major_solar_term_from_fixed(fixed)
+    }
+    
+    /// Get the current major solar term of a fixed date, output as an integer from 1..=12.
+    pub(crate) fn major_solar_term_from_fixed(date: RataDie) -> i32 {
+        let moment: Moment = date.as_moment();
+        let offset = Self::chinese_offset(date);
+        let universal: Moment = Location::universal_from_standard(moment, offset);
+        let solar_longitude = i64_to_i32(Astronomical::solar_longitude(universal) as i64);
+        debug_assert!(
+            matches!(solar_longitude, I32Result::WithinRange(_)),
+            "Solar longitude should be in range of i32"
+        );
+        let s = solar_longitude.saturate();
+        adjusted_rem_euclid(2 + quotient(s, 30), 12)
+    }
 
-    // }
+    /// Get the current major solar term of an ISO date
+    pub fn minor_solar_term_from_iso(iso: IsoDateInner) -> i32 {
+        let fixed: RataDie = Iso::fixed_from_iso(iso);
+        Self::minor_solar_term_from_fixed(fixed)
+    }
+
+    /// Get the current minor solar term of a fixed date, output as an integer from 1..=12.
+    pub(crate) fn minor_solar_term_from_fixed(date: RataDie) -> i32 {
+        let moment: Moment = date.as_moment();
+        let offset = Self::chinese_offset(date);
+        let universal: Moment = Location::universal_from_standard(moment, offset);
+        let solar_longitude = i64_to_i32(Astronomical::solar_longitude(universal) as i64);
+        debug_assert!(
+            matches!(solar_longitude, I32Result::WithinRange(_)),
+            "Solar longitude should be in range of i32"
+        );
+        let s = solar_longitude.saturate();
+        adjusted_rem_euclid(3 + quotient(s - 15, 30), 12)
+    }
+
+    // Returns UTC_OFFSET_PRE_1929 if the year is before 1929,
+    // returns UTC_OFFSET_POST_1929 if the year is 1929 or after.
+    fn chinese_offset(date: RataDie) -> f64 {
+        let year = Iso::iso_from_fixed(date).year().number;
+        if year < 1929 {
+            UTC_OFFSET_PRE_1929
+        } else {
+            UTC_OFFSET_POST_1929
+        }
+    }
+
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn andrew_test() {
+    }
 }

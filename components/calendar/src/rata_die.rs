@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::ops::{Add, AddAssign, Sub, SubAssign};
+use crate::types::Moment;
 
 /// The *Rata Die*, or *R.D.*, or `fixed_date`: number of days since January 1, 1 CE.
 ///
@@ -46,6 +47,10 @@ impl RataDie {
     /// Calculate the number of days between two RataDie in a const-friendly way
     pub const fn const_diff(self, rhs: Self) -> i64 {
         self.0 - rhs.0
+    }
+
+    pub const fn as_moment(&self) -> Moment {
+        Moment::new(self.0 as f64)
     }
 }
 

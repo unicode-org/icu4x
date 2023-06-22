@@ -13,7 +13,7 @@ use crate::types::Moment;
 use crate::{Date, Gregorian};
 
 #[derive(Debug)]
-/// A Location on the Earth given as a latitude, longitude, and elevation,
+/// A Location on the Earth given as a latitude, longitude, and elevation.
 /// given as latitude in degrees from -90 to 90,
 /// longitude in degrees from -180 to 180,
 /// and elevation in meters.
@@ -32,6 +32,14 @@ pub(crate) const MEAN_SYNODIC_MONTH: f64 = 29.530588861;
 /// The Moment of noon on January 1, 2000
 #[allow(dead_code)] // TODO: Remove dead_code tag after use
 pub(crate) const J2000: Moment = Moment::new(730120.5);
+
+/// The minimum allowable UTC offset (-12 hours) in fractional days (-0.5 days)
+#[allow(dead_code)] // TODO: Remove dead_code tag after use
+pub(crate) const MIN_UTC_OFFSET: f64 = -0.5;
+
+/// The maximum allowable UTC offset (+14 hours) in fractional days (14.0 / 24.0 days)
+#[allow(dead_code)] // TODO: Remove dead_code tag after use
+pub(crate) const MAX_UTC_OFFSET: f64 = 14.0 / 24.0;
 
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
@@ -92,6 +100,26 @@ impl Location {
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
         universal_time + Self::zone_from_longitude(location.longitude)
+    }
+
+    /// Given a UTC-offset in hours and a Moment in universal time,
+    /// return the Moment in standard time in the time zone with the given offset.
+    /// The field utc_offset should be within the range of possible offsets given by
+    /// the constant fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
+    pub(crate) fn standard_from_universal(universal_moment: Moment, utc_offset: f64) -> Moment {
+        debug_assert!(utc_offset > MIN_UTC_OFFSET && utc_offset < MAX_UTC_OFFSET, "UTC offset {utc_offset} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)");
+        universal_moment + utc_offset
+    }
+
+    /// Given a UTC-offset in hours and a Moment in standard time,
+    /// return the Moment in universal time from the time zone with the given offset.
+    /// The field utc_offset should be within the range of possible offsets given by
+    /// the constand fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
+    pub(crate) fn universal_from_standard(standard_moment: Moment, utc_offset: f64) -> Moment {
+        debug_assert!(utc_offset > MIN_UTC_OFFSET && utc_offset < MAX_UTC_OFFSET, "UTC offset {utc_offset} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)");
+        standard_moment - utc_offset
     }
 }
 
