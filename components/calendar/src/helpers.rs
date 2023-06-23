@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::astronomy::PI;
+
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///
 /// Also see [`i32::div_euclid`], [`i32::rem_euclid`].
@@ -108,7 +110,30 @@ pub fn arccos_degrees(x: f64) -> f64 {
 // Arcsine of x in degrees
 pub fn arcsin_degrees(x: f64) -> f64 {
     let radians = x.asin();
-    radians.to_degrees()  
+    radians.to_degrees()
+}
+
+fn mod_degrees(x: f64) -> f64 {
+    ((x % 360.0) + 360.0) % 360.0
+}
+
+// Arctan of x,y in degrees
+pub fn arctan_degrees(y: f64, x: f64) -> Result<f64, &'static str> {
+    if x == 0.0 && y == 0.0 {
+        Err("Both x and y are zero")
+    } else if x == 0.0 {
+        if y > 0.0 { Ok(90.0) } else { Ok(-90.0) }
+    } else {
+        let alpha = (y / x).atan() * 180.0 / PI;
+        Ok(mod_degrees(if x >= 0.0 { alpha } else { alpha + 180.0 }))
+    }
+}
+
+pub fn poly(x: f64, coeffs: Vec<f64>) -> f64 {
+    match coeffs.split_first() {
+        Some((first, rest)) => first + x * poly(x, rest.to_vec()),
+        None => 0.0,
+    }
 }
 // A generic function that finds a value within an interval
 // where a certain condition is satisfied.
