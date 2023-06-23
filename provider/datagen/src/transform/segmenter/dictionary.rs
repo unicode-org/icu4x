@@ -57,6 +57,7 @@ macro_rules! implement {
                 &self,
                 req: DataRequest,
             ) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
                 let data = self.load_dictionary_data(req)?;
                 Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),

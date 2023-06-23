@@ -210,7 +210,8 @@ macro_rules! expand {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider
             {
-                fn load(&self, _: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    self.check_req::<$marker>(req)?;
                     let source_cpt_data = &get_enumerated_prop(&self.source, $prop_name)?.code_point_trie;
 
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
@@ -235,7 +236,8 @@ macro_rules! expand {
 
             impl DataProvider<$marker_n2e> for crate::DatagenProvider
             {
-                fn load(&self, _: DataRequest) -> Result<DataResponse<$marker_n2e>, DataError> {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_n2e>, DataError> {
+                    self.check_req::<$marker_n2e>(req)?;
                     let data = get_enumerated_prop(&self.source, $prop_name)
                         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
@@ -260,7 +262,8 @@ macro_rules! expand {
             $(
                 impl DataProvider<$marker_e2sns> for crate::DatagenProvider
                 {
-                    fn load(&self, _: DataRequest) -> Result<DataResponse<$marker_e2sns>, DataError> {
+                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2sns>, DataError> {
+                        self.check_req::<$marker_e2sns>(req)?;
                         load_values_to_names_sparse(self, $prop_name, true)
                     }
                 }
@@ -276,7 +279,8 @@ macro_rules! expand {
 
                 impl DataProvider<$marker_e2lns> for crate::DatagenProvider
                 {
-                    fn load(&self, _: DataRequest) -> Result<DataResponse<$marker_e2lns>, DataError> {
+                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2lns>, DataError> {
+                        self.check_req::<$marker_e2lns>(req)?;
                         load_values_to_names_sparse(self, $prop_name, false)
                     }
                 }
@@ -294,9 +298,9 @@ macro_rules! expand {
             $(
                 impl DataProvider<$marker_e2snl> for crate::DatagenProvider
                 {
-                    fn load(&self, _: DataRequest) -> Result<DataResponse<$marker_e2snl>, DataError> {
+                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2snl>, DataError> {
+                        self.check_req::<$marker_e2snl>(req)?;
                         load_values_to_names_linear(self, $prop_name, true)
-
                     }
                 }
 
@@ -311,9 +315,9 @@ macro_rules! expand {
 
                 impl DataProvider<$marker_e2lnl> for crate::DatagenProvider
                 {
-                    fn load(&self, _: DataRequest) -> Result<DataResponse<$marker_e2lnl>, DataError> {
+                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2lnl>, DataError> {
+                        self.check_req::<$marker_e2lnl>(req)?;
                         load_values_to_names_linear(self, $prop_name, false)
-
                     }
                 }
 
@@ -330,7 +334,8 @@ macro_rules! expand {
             $(
                 impl DataProvider<$marker_e2snl4> for crate::DatagenProvider
                 {
-                    fn load(&self, _: DataRequest) -> Result<DataResponse<$marker_e2snl4>, DataError> {
+                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2snl4>, DataError> {
+                        self.check_req::<$marker_e2snl4>(req)?;
                         load_values_to_names_linear4(self, $prop_name, true)
                     }
                 }
@@ -346,7 +351,8 @@ macro_rules! expand {
 
                 impl DataProvider<$marker_e2lnl4> for crate::DatagenProvider
                 {
-                    fn load(&self, _: DataRequest) -> Result<DataResponse<$marker_e2lnl4>, DataError> {
+                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2lnl4>, DataError> {
+                        self.check_req::<$marker_e2lnl4>(req)?;
                         // Tiny4 is only for short names
                         load_values_to_names_linear(self, $prop_name, false)
                     }
@@ -385,10 +391,12 @@ fn get_mask_prop<'a>(
 impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        _: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV1Marker>, DataError> {
         use icu_properties::GeneralCategoryGroup;
         use zerovec::ule::AsULE;
+
+        self.check_req::<GeneralCategoryMaskNameToValueV1Marker>(req)?;
 
         let data = get_mask_prop(&self.source, "gcm")?;
         let data_struct = get_prop_values_map(&data.values, |v| {

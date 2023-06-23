@@ -131,6 +131,7 @@ macro_rules! collation_provider {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    self.check_req::<$marker>(req)?;
                     let $toml_data: &collator_serde::$serde_struct = self
                         .source
                         .icuexport()?

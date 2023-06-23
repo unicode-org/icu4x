@@ -186,6 +186,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LstmForWordLineAutoV1Marker>, DataError> {
+        self.check_req::<LstmForWordLineAutoV1Marker>(req)?;
         let model = if req.locale.language() == langid!("th").language {
             "Thai_codepoints_exclusive_model4_heavy"
         } else if req.locale.language() == langid!("my").language {

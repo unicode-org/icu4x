@@ -14,7 +14,8 @@ use std::convert::TryFrom;
 mod ucase_serde;
 
 impl DataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
+        self.check_req::<CaseMappingV1Marker>(req)?;
         let toml = &self
             .source
             .icuexport()?

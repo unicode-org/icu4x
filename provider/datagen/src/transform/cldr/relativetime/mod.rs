@@ -73,6 +73,7 @@ macro_rules! make_data_provider {
                     &self,
                     req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
+                    self.check_req::<$marker>(req)?;
                     let langid = req.locale.get_langid();
                     let resource: &cldr_serde::date_fields::Resource = self
                         .source

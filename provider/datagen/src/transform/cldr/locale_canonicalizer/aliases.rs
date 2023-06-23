@@ -12,7 +12,8 @@ use tinystr::TinyAsciiStr;
 use zerovec::ZeroSlice;
 
 impl DataProvider<AliasesV1Marker> for crate::DatagenProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
+        self.check_req::<AliasesV1Marker>(req)?;
         let data: &cldr_serde::aliases::Resource = self
             .source
             .cldr()?
