@@ -5,14 +5,14 @@
 //! This file contains important structs and functions relating to location,
 //! time, and astronomy; these are intended for calender calculations and based off
 //! _Calendrical Calculations_ by Reingold & Dershowitz.
-use crate::error::LocationError;
-use crate::helpers::{div_rem_euclid_f64, i64_to_i32, invert_angular, I32Result};
+use crate::error::{CalendarError, LocationError};
+use crate::helpers::*;
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
 use crate::{Date, Gregorian};
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, Default)]
 /// A Location on the Earth given as a latitude, longitude, and elevation,
 /// given as latitude in degrees from -90 to 90,
 /// longitude in degrees from -180 to 180,
@@ -23,6 +23,8 @@ pub(crate) struct Location {
     longitude: f64, // longitude from -180 to 180
     elevation: f64, // elevation in meters
 }
+
+pub(crate) const PI: f64 = 3.14159;
 
 /// The mean synodic month in days of 86400 atomic seconds
 /// (86400 seconds = 24 hours * 60 minutes/hour * 60 seconds/minute)
@@ -87,9 +89,18 @@ impl Location {
     pub(crate) fn zone_from_longitude(longitude: f64) -> f64 {
         longitude / 360.0
     }
+    // Convert standard time to local mean time given a location and a time zone with given offset
+    #[allow(dead_code)]
+    pub(crate) fn standard_from_local(
+        standard_time: Moment,
+        location: Location,
+        utc_offset: f64,
+    ) -> Moment {
+        let universal_time = Self::universal_from_standard(standard_time, utc_offset);
+        Self::local_from_universal(universal_time, location)
+    }
 
     /// Convert from local mean time to universal time given a location
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn universal_from_local(local_time: Moment, location: Location) -> Moment {
         local_time - Self::zone_from_longitude(location.longitude)
     }
@@ -107,6 +118,15 @@ impl Location {
     pub(crate) fn universal_from_standard(standard_moment: Moment, utc_offset: f64) -> Moment {
         debug_assert!(utc_offset > MIN_UTC_OFFSET && utc_offset < MAX_UTC_OFFSET, "UTC offset {utc_offset} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)");
         standard_moment - utc_offset
+    }
+    /// Given a Moment in standard time and UTC-offset in hours,
+    /// return the Moment in standard time from the time zone with the given offset.
+    /// The field utc_offset should be within the range of possible offsets given by
+    /// the constand fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
+    #[allow(dead_code)]
+    pub(crate) fn standard_from_universal(standard_time: Moment, utc_offset: f64) -> Moment {
+        debug_assert!(utc_offset > MIN_UTC_OFFSET && utc_offset < MAX_UTC_OFFSET, "UTC offset {utc_offset} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)");
+        standard_time + utc_offset
     }
 }
 
@@ -213,10 +233,146 @@ impl Astronomical {
 
     /// The number of uniform length centuries (36525 days measured in dynamical time)
     /// before or after noon on January 1, 2000
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn julian_centuries(moment: Moment) -> f64 {
         let intermediate = Self::dynamical_from_universal(moment);
         (intermediate - J2000) / 36525.0
+    }
+
+    pub(crate) fn equation_of_time(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let lambda = poly(c, vec![280.46645, 36000.76983, 0.0003032]);
+        let anomaly = poly(c, vec![357.52910, 35999.05030, -0.0001559, -0.00000048]);
+        let eccentricity = poly(c, vec![0.016708617, -0.000042037, -0.0000001236]);
+        let varepsilon = Self::obliquity(moment);
+        let y = tan_degrees(varepsilon / 2.0).powi(2);
+        let equation = 1.0 / (2.0 * PI)
+            * (y * sin_degrees(2.0 * lambda) - 2.0 * eccentricity * sin_degrees(anomaly)
+                + 4.0 * eccentricity * y * sin_degrees(anomaly) * cos_degrees(2.0 * lambda)
+                - 0.5 * y.powi(2) * sin_degrees(4.0 * lambda)
+                - 1.25 * eccentricity.powi(2) * sin_degrees(2.0 * anomaly));
+
+        equation.signum() * equation.abs().min(12.0 / 24.0)
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn dusk(date: f64, location: Location, alpha: f64) -> Moment {
+        let evening = false;
+        let result = Self::moment_of_depression(Moment::new(date + 18.0), location, alpha, evening);
+
+        match result {
+            Ok(m) => Location::standard_from_local(m, location, alpha),
+            Err(_) => Moment::new(date),
+        }
+    }
+
+    // Calculates the obliquity of the ecliptic at a given moment
+    pub fn obliquity(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let angle = 23.0 + 26.0 / 60.0 + 21.448 / 3600.0;
+        let list = [0.0, -46.8150 / 3600.0, -0.00059 / 3600.0, 0.001813 / 3600.0];
+
+        let mut result = angle;
+        let mut c_power = c;
+        for coef in list.into_iter().skip(1) {
+            result += coef * c_power;
+            c_power *= c;
+        }
+        result
+    }
+    // Calculates declination at a given Moment of UTC time for the latitude and longitude of an object lambda
+    pub(crate) fn declination(moment: Moment, beta: f64, lambda: f64) -> f64 {
+        let varepsilon = Self::obliquity(moment);
+        arcsin_degrees(
+            sin_degrees(beta) * cos_degrees(varepsilon)
+                + cos_degrees(beta) * sin_degrees(varepsilon) * sin_degrees(lambda),
+        )
+    }
+    #[allow(dead_code)]
+    pub(crate) fn right_ascension(
+        moment: Moment,
+        beta: f64,
+        lambda: f64,
+    ) -> Result<f64, &'static str> {
+        let varepsilon = Self::obliquity(moment);
+        arctan_degrees(
+            sin_degrees(lambda) * cos_degrees(varepsilon)
+                - tan_degrees(beta) * sin_degrees(varepsilon),
+            cos_degrees(lambda),
+        )
+    }
+
+    pub(crate) fn local_from_apparent(moment: Moment, location: Location) -> Moment {
+        moment - Self::equation_of_time(Location::universal_from_local(moment, location))
+    }
+
+    pub(crate) fn approx_moment_of_depression(
+        moment: Moment,
+        location: Location,
+        alpha: f64,
+        early: bool,
+    ) -> Result<Moment, CalendarError> {
+        let mut t = Self::sine_offset(moment, location, alpha);
+        let date = moment.as_rata_die().to_i64_date() as f64;
+        let alt = if alpha >= 0.0 {
+            if early {
+                date
+            } else {
+                date + 1.0
+            }
+        } else {
+            date + 12.0 / 24.0
+        };
+
+        let value = if t.abs() > 1.0 {
+            t = Self::sine_offset(Moment::new(alt), location, alpha);
+            t
+        } else {
+            t
+        };
+
+        if value.abs() <= 1.0 {
+            let offset = div_rem_euclid_f64(arcsin_degrees(value) / 360.0, 1.0 / 2.0).1;
+            let offset = if offset < -12.0 / 24.0 {
+                offset + 1.0
+            } else if offset >= 12.0 / 24.0 {
+                offset - 1.0
+            } else {
+                offset
+            };
+
+            let moment = Moment::new(
+                date + if early {
+                    6.0 / 24.0 - offset
+                } else {
+                    18.0 / 24.0 + offset
+                },
+            );
+            Ok(Self::local_from_apparent(moment, location))
+        } else {
+            return Err(CalendarError::DepressionAngleUnreachable);
+        }
+    }
+
+    pub(crate) fn moment_of_depression(
+        approx: Moment,
+        location: Location,
+        alpha: f64,
+        early: bool,
+    ) -> Result<Moment, CalendarError> {
+        let moment = Self::approx_moment_of_depression(approx, location, alpha, early)?;
+        if (approx - moment).abs() < 30.0 {
+            Ok(moment)
+        } else {
+            Self::moment_of_depression(moment, location, alpha, early)
+        }
+    }
+    // Refraction angle at given moment in given location
+    pub(crate) fn refraction(moment: Moment, location: Location) -> f64 {
+        // The moment is not used.
+        let h = location.elevation.max(0.0);
+        let earth_r = 6.372e6; // Radius of Earth.
+        let dip = (earth_r / (earth_r + h)).acos().to_degrees(); // Depression of visible horizon.
+        dip + 34.0 + 19.0 * h.sqrt()
     }
 
     /// The moment (in universal time) of the nth new moon after
@@ -315,6 +471,15 @@ impl Astronomical {
         }
         Self::universal_from_dynamical(approx + correction + extra + additional)
     }
+
+    #[allow(dead_code)]
+    pub(crate) fn sidereal_from_moment(moment: Moment) -> f64 {
+        let c = (moment - J2000) / 36525.0;
+        let angle = 280.46061837 + c * (36525.0 * 360.98564736629 + 0.000387933 - c / 38710000.0);
+        angle % 360.0
+    }
+
+    // TODO LUNAR LATITUDE
 
     /// Longitude of the moon (in degrees) at a given moment
     ///
@@ -457,6 +622,8 @@ impl Astronomical {
         .1
     }
 
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
+    fn moonlag(date: f64, location: Location) {}
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4037-L4047
@@ -634,6 +801,15 @@ impl Astronomical {
             result += 1;
         }
         result
+    }
+    #[allow(dead_code)]
+    pub(crate) fn sine_offset(moment: Moment, location: Location, alpha: f64) -> f64 {
+        let phi = location.latitude;
+        let tee_prime = Location::universal_from_local(moment, location);
+        let delta = Self::declination(tee_prime, 0.0, Self::solar_longitude(tee_prime));
+
+        tan_degrees(phi) * tan_degrees(delta)
+            + sin_degrees(alpha) / (cos_degrees(delta) * cos_degrees(phi))
     }
 }
 

@@ -122,7 +122,11 @@ pub fn arctan_degrees(y: f64, x: f64) -> Result<f64, &'static str> {
     if x == 0.0 && y == 0.0 {
         Err("Both x and y are zero")
     } else if x == 0.0 {
-        if y > 0.0 { Ok(90.0) } else { Ok(-90.0) }
+        if y > 0.0 {
+            Ok(90.0)
+        } else {
+            Ok(-90.0)
+        }
     } else {
         let alpha = (y / x).atan() * 180.0 / PI;
         Ok(mod_degrees(if x >= 0.0 { alpha } else { alpha + 180.0 }))
