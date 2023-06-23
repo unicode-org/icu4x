@@ -161,6 +161,9 @@ macro_rules! collation_provider {
 
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                    if <$marker>::KEY.metadata().singleton {
+                        return Ok(vec![Default::default()])
+                    }
                     Ok(self.source.options.locales.filter_by_langid_equality(self
                         .source
                         .icuexport()?
