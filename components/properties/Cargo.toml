@@ -39,6 +39,9 @@ tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = 
 
 unicode-bidi = { version = "0.3.13", default-features = false, optional = true }
 
+icu_properties_data = { path = "data", optional = true }
+icu_locid_transform = { path = "../../components/locid_transform", features = ["data"], optional = true }
+
 [dev-dependencies]
 icu = { path = "../icu", default-features = false }
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_properties", "icu_locid_transform"] }
@@ -48,3 +51,4 @@ std = ["icu_collections/std", "icu_provider/std"]
 serde = ["dep:serde", "tinystr/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "tinystr/databake"]
 bidi = [ "dep:unicode-bidi" ]
+data = ["dep:icu_properties_data", "dep:icu_locid_transform"]

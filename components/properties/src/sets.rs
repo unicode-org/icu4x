@@ -48,20 +48,7 @@ impl DataMarker for ErasedSetlikeMarker {
 impl CodePointSetData {
     /// Construct a borrowed version of this type that can be queried.
     ///
-    /// This avoids a potential small underlying cost per API call (ex: `contains()`) by consolidating it
-    /// up front.
-    ///
-    /// ```rust
-    /// use icu_properties::sets;
-    ///
-    /// let data = sets::load_alphabetic(&icu_testdata::unstable())
-    ///     .expect("The data should be valid");
-    ///
-    /// let alphabetic = data.as_borrowed();
-    ///
-    /// assert!(!alphabetic.contains('3'));
-    /// assert!(alphabetic.contains('A'));
-    /// ```
+    /// This owned version if returned by functions that use a runtime data provider.
     #[inline]
     pub fn as_borrowed(&self) -> CodePointSetDataBorrowed<'_> {
         CodePointSetDataBorrowed {
@@ -125,10 +112,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// ```rust
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_alphabetic(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let alphabetic = data.as_borrowed();
+    /// let alphabetic = sets::alphabetic();
     ///
     /// assert!(!alphabetic.contains('3'));
     /// assert!(!alphabetic.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
@@ -145,10 +129,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// ```rust
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_alphabetic(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let alphabetic = data.as_borrowed();
+    /// let alphabetic = sets::alphabetic();
     ///
     /// assert!(!alphabetic.contains32(0x0A69));  // U+0A69 GURMUKHI DIGIT THREE
     /// assert!(alphabetic.contains32(0x00C4));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
@@ -170,9 +151,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data = sets::load_alphabetic(&icu_testdata::unstable())
-    ///     .expect("The data should be valid");
-    /// let alphabetic = data.as_borrowed();
+    /// let alphabetic = sets::alphabetic();
     /// let mut ranges = alphabetic.iter_ranges();
     ///
     /// assert_eq!(Some(0x0041..=0x005A), ranges.next()); // 'A'..'Z'
@@ -195,9 +174,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data = sets::load_alphabetic(&icu_testdata::unstable())
-    ///     .expect("The data should be valid");
-    /// let alphabetic = data.as_borrowed();
+    /// let alphabetic = sets::alphabetic();
     /// let mut ranges = alphabetic.iter_ranges();
     ///
     /// assert_eq!(Some(0x0041..=0x005A), ranges.next()); // 'A'..'Z'
@@ -341,14 +318,25 @@ macro_rules! make_code_point_set_property {
         marker: $marker_name:ident;
         keyed_data_marker: $keyed_data_marker:ty;
         func:
-        $(#[$attr:meta])*
+        $(#[$doc:meta])+
+        $cvis:vis const fn $constname:ident() => $singleton_name:ident;
         $vis:vis fn $funcname:ident();
     ) => {
-        $(#[$attr])*
+        #[doc = concat!("[`", stringify!($constname), "()`] with a runtime data provider argument.")]
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<CodePointSetData, PropertiesError> {
             load_set_data(provider)
+        }
+
+        $(#[$doc])*
+        ///
+        /// ✨ **Enabled with the `"data"` feature.**
+        #[cfg(feature = "data")]
+        $cvis const fn $constname() -> CodePointSetDataBorrowed<'static> {
+            CodePointSetDataBorrowed {
+                set: crate::provider::Baked::$singleton_name,
+            }
         }
     }
 }
@@ -365,16 +353,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_ascii_hex_digit(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let ascii_hex_digit = data.as_borrowed();
+    /// let ascii_hex_digit = sets::ascii_hex_digit();
     ///
     /// assert!(ascii_hex_digit.contains('3'));
     /// assert!(!ascii_hex_digit.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
     /// assert!(ascii_hex_digit.contains('A'));
     /// assert!(!ascii_hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
+    pub const fn ascii_hex_digit() => SINGLETON_PROPS_AHEX_V1;
     pub fn load_ascii_hex_digit();
 }
 
@@ -386,6 +372,7 @@ make_code_point_set_property! {
     /// Characters with the Alphabetic or Decimal_Number property
     /// This is defined for POSIX compatibility.
 
+    pub const fn alnum() => SINGLETON_PROPS_ALNUM_V1;
     pub fn load_alnum();
 }
 
@@ -401,10 +388,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_alphabetic(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let alphabetic = data.as_borrowed();
+    /// let alphabetic = sets::alphabetic();
     ///
     /// assert!(!alphabetic.contains('3'));
     /// assert!(!alphabetic.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
@@ -412,6 +396,7 @@ make_code_point_set_property! {
     /// assert!(alphabetic.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
 
+    pub const fn alphabetic() => SINGLETON_PROPS_ALPHA_V1;
     pub fn load_alphabetic();
 }
 
@@ -428,15 +413,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_bidi_control(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let bidi_control = data.as_borrowed();
+    /// let bidi_control = sets::bidi_control();
     ///
     /// assert!(bidi_control.contains32(0x200F));  // RIGHT-TO-LEFT MARK
     /// assert!(!bidi_control.contains('ش'));  // U+0634 ARABIC LETTER SHEEN
     /// ```
 
+    pub const fn bidi_control() => SINGLETON_PROPS_BIDI_C_V1;
     pub fn load_bidi_control();
 }
 
@@ -452,10 +435,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_bidi_mirrored(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let bidi_mirrored = data.as_borrowed();
+    /// let bidi_mirrored = sets::bidi_mirrored();
     ///
     /// assert!(bidi_mirrored.contains('['));
     /// assert!(bidi_mirrored.contains(']'));
@@ -463,6 +443,7 @@ make_code_point_set_property! {
     /// assert!(!bidi_mirrored.contains('ཉ'));  // U+0F49 TIBETAN LETTER NYA
     /// ```
 
+    pub const fn bidi_mirrored() => SINGLETON_PROPS_BIDI_M_V1;
     pub fn load_bidi_mirrored();
 }
 
@@ -473,6 +454,7 @@ make_code_point_set_property! {
     func:
     /// Horizontal whitespace characters
 
+    pub const fn blank() => SINGLETON_PROPS_BLANK_V1;
     pub fn load_blank();
 }
 
@@ -488,15 +470,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_cased(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let cased = data.as_borrowed();
+    /// let cased = sets::cased();
     ///
     /// assert!(cased.contains('Ꙡ'));  // U+A660 CYRILLIC CAPITAL LETTER REVERSED TSE
     /// assert!(!cased.contains('ދ'));  // U+078B THAANA LETTER DHAALU
     /// ```
 
+    pub const fn cased() => SINGLETON_PROPS_CASED_V1;
     pub fn load_cased();
 }
 
@@ -512,15 +492,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_case_ignorable(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let case_ignorable = data.as_borrowed();
+    /// let case_ignorable = sets::case_ignorable();
     ///
     /// assert!(case_ignorable.contains(':'));
     /// assert!(!case_ignorable.contains('λ'));  // U+03BB GREEK SMALL LETTER LAMDA
     /// ```
 
+    pub const fn case_ignorable() => SINGLETON_PROPS_CI_V1;
     pub fn load_case_ignorable();
 }
 
@@ -532,6 +510,7 @@ make_code_point_set_property! {
     /// Characters that are excluded from composition
     /// See <https://unicode.org/Public/UNIDATA/CompositionExclusions.txt>
 
+    pub const fn full_composition_exclusion() => SINGLETON_PROPS_COMP_EX_V1;
     pub fn load_full_composition_exclusion();
 }
 
@@ -547,15 +526,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_changes_when_casefolded(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let changes_when_casefolded = data.as_borrowed();
+    /// let changes_when_casefolded = sets::changes_when_casefolded();
     ///
     /// assert!(changes_when_casefolded.contains('ß'));  // U+00DF LATIN SMALL LETTER SHARP S
     /// assert!(!changes_when_casefolded.contains('ᜉ'));  // U+1709 TAGALOG LETTER PA
     /// ```
 
+    pub const fn changes_when_casefolded() => SINGLETON_PROPS_CWCF_V1;
     pub fn load_changes_when_casefolded();
 }
 
@@ -566,6 +543,7 @@ make_code_point_set_property! {
     func:
     /// Characters which may change when they undergo case mapping
 
+    pub const fn changes_when_casemapped() => SINGLETON_PROPS_CWCM_V1;
     pub fn load_changes_when_casemapped();
 }
 
@@ -581,15 +559,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_changes_when_nfkc_casefolded(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let changes_when_nfkc_casefolded = data.as_borrowed();
+    /// let changes_when_nfkc_casefolded = sets::changes_when_nfkc_casefolded();
     ///
     /// assert!(changes_when_nfkc_casefolded.contains('🄵'));  // U+1F135 SQUARED LATIN CAPITAL LETTER F
     /// assert!(!changes_when_nfkc_casefolded.contains('f'));
     /// ```
 
+    pub const fn changes_when_nfkc_casefolded() => SINGLETON_PROPS_CWKCF_V1;
     pub fn load_changes_when_nfkc_casefolded();
 }
 
@@ -605,15 +581,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_changes_when_lowercased(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let changes_when_lowercased = data.as_borrowed();
+    /// let changes_when_lowercased = sets::changes_when_lowercased();
     ///
     /// assert!(changes_when_lowercased.contains('Ⴔ'));  // U+10B4 GEORGIAN CAPITAL LETTER PHAR
     /// assert!(!changes_when_lowercased.contains('ფ'));  // U+10E4 GEORGIAN LETTER PHAR
     /// ```
 
+    pub const fn changes_when_lowercased() => SINGLETON_PROPS_CWL_V1;
     pub fn load_changes_when_lowercased();
 }
 
@@ -629,15 +603,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_changes_when_titlecased(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let changes_when_titlecased = data.as_borrowed();
+    /// let changes_when_titlecased = sets::changes_when_titlecased();
     ///
     /// assert!(changes_when_titlecased.contains('æ'));  // U+00E6 LATIN SMALL LETTER AE
     /// assert!(!changes_when_titlecased.contains('Æ'));  // U+00E6 LATIN CAPITAL LETTER AE
     /// ```
 
+    pub const fn changes_when_titlecased() => SINGLETON_PROPS_CWT_V1;
     pub fn load_changes_when_titlecased();
 }
 
@@ -653,15 +625,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_changes_when_uppercased(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let changes_when_uppercased = data.as_borrowed();
+    /// let changes_when_uppercased = sets::changes_when_uppercased();
     ///
     /// assert!(changes_when_uppercased.contains('ւ'));  // U+0582 ARMENIAN SMALL LETTER YIWN
     /// assert!(!changes_when_uppercased.contains('Ւ'));  // U+0552 ARMENIAN CAPITAL LETTER YIWN
     /// ```
 
+    pub const fn changes_when_uppercased() => SINGLETON_PROPS_CWU_V1;
     pub fn load_changes_when_uppercased();
 }
 
@@ -678,16 +648,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_dash(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let dash = data.as_borrowed();
+    /// let dash = sets::dash();
     ///
     /// assert!(dash.contains('⸺'));  // U+2E3A TWO-EM DASH
     /// assert!(dash.contains('-'));  // U+002D
     /// assert!(!dash.contains('='));  // U+003D
     /// ```
 
+    pub const fn dash() => SINGLETON_PROPS_DASH_V1;
     pub fn load_dash();
 }
 
@@ -704,15 +672,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_deprecated(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let deprecated = data.as_borrowed();
+    /// let deprecated = sets::deprecated();
     ///
     /// assert!(deprecated.contains('ឣ'));  // U+17A3 KHMER INDEPENDENT VOWEL QAQ
     /// assert!(!deprecated.contains('A'));
     /// ```
 
+    pub const fn deprecated() => SINGLETON_PROPS_DEP_V1;
     pub fn load_deprecated();
 }
 
@@ -731,15 +697,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_default_ignorable_code_point(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let default_ignorable_code_point = data.as_borrowed();
+    /// let default_ignorable_code_point = sets::default_ignorable_code_point();
     ///
     /// assert!(default_ignorable_code_point.contains32(0x180B));  // MONGOLIAN FREE VARIATION SELECTOR ONE
     /// assert!(!default_ignorable_code_point.contains('E'));
     /// ```
 
+    pub const fn default_ignorable_code_point() => SINGLETON_PROPS_DI_V1;
     pub fn load_default_ignorable_code_point();
 }
 
@@ -755,15 +719,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_diacritic(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let diacritic = data.as_borrowed();
+    /// let diacritic = sets::diacritic();
     ///
     /// assert!(diacritic.contains('\u{05B3}'));  // HEBREW POINT HATAF QAMATS
     /// assert!(!diacritic.contains('א'));  // U+05D0 HEBREW LETTER ALEF
     /// ```
 
+    pub const fn diacritic() => SINGLETON_PROPS_DIA_V1;
     pub fn load_diacritic();
 }
 
@@ -779,15 +741,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_emoji_modifier_base(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let emoji_modifier_base = data.as_borrowed();
+    /// let emoji_modifier_base = sets::emoji_modifier_base();
     ///
     /// assert!(emoji_modifier_base.contains('✊'));  // U+270A RAISED FIST
     /// assert!(!emoji_modifier_base.contains('⛰'));  // U+26F0 MOUNTAIN
     /// ```
 
+    pub const fn emoji_modifier_base() => SINGLETON_PROPS_EBASE_V1;
     pub fn load_emoji_modifier_base();
 }
 
@@ -804,10 +764,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_emoji_component(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let emoji_component = data.as_borrowed();
+    /// let emoji_component = sets::emoji_component();
     ///
     /// assert!(emoji_component.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
     /// assert!(emoji_component.contains32(0x20E3));  // COMBINING ENCLOSING KEYCAP
@@ -815,6 +772,7 @@ make_code_point_set_property! {
     /// assert!(!emoji_component.contains('T'));
     /// ```
 
+    pub const fn emoji_component() => SINGLETON_PROPS_ECOMP_V1;
     pub fn load_emoji_component();
 }
 
@@ -830,15 +788,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_emoji_modifier(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let emoji_modifier = data.as_borrowed();
+    /// let emoji_modifier = sets::emoji_modifier();
     ///
     /// assert!(emoji_modifier.contains32(0x1F3FD));  // EMOJI MODIFIER FITZPATRICK TYPE-4
     /// assert!(!emoji_modifier.contains32(0x200C));  // ZERO WIDTH NON-JOINER
     /// ```
 
+    pub const fn emoji_modifier() => SINGLETON_PROPS_EMOD_V1;
     pub fn load_emoji_modifier();
 }
 
@@ -854,15 +810,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_emoji(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let emoji = data.as_borrowed();
+    /// let emoji = sets::emoji();
     ///
     /// assert!(emoji.contains('🔥'));  // U+1F525 FIRE
     /// assert!(!emoji.contains('V'));
     /// ```
 
+    pub const fn emoji() => SINGLETON_PROPS_EMOJI_V1;
     pub fn load_emoji();
 }
 
@@ -878,15 +832,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_emoji_presentation(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let emoji_presentation = data.as_borrowed();
+    /// let emoji_presentation = sets::emoji_presentation();
     ///
     /// assert!(emoji_presentation.contains('🦬')); // U+1F9AC BISON
     /// assert!(!emoji_presentation.contains('♻'));  // U+267B BLACK UNIVERSAL RECYCLING SYMBOL
     /// ```
 
+    pub const fn emoji_presentation() => SINGLETON_PROPS_EPRES_V1;
     pub fn load_emoji_presentation();
 }
 
@@ -903,16 +855,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_extender(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let extender = data.as_borrowed();
+    /// let extender = sets::extender();
     ///
     /// assert!(extender.contains('ヾ'));  // U+30FE KATAKANA VOICED ITERATION MARK
     /// assert!(extender.contains('ー'));  // U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK
     /// assert!(!extender.contains('・'));  // U+30FB KATAKANA MIDDLE DOT
     /// ```
 
+    pub const fn extender() => SINGLETON_PROPS_EXT_V1;
     pub fn load_extender();
 }
 
@@ -929,15 +879,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_extended_pictographic(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let extended_pictographic = data.as_borrowed();
+    /// let extended_pictographic = sets::extended_pictographic();
     ///
     /// assert!(extended_pictographic.contains('🥳')); // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
     /// assert!(!extended_pictographic.contains('🇪'));  // U+1F1EA REGIONAL INDICATOR SYMBOL LETTER E
     /// ```
 
+    pub const fn extended_pictographic() => SINGLETON_PROPS_EXTPICT_V1;
     pub fn load_extended_pictographic();
 }
 
@@ -949,6 +897,7 @@ make_code_point_set_property! {
     /// Visible characters.
     /// This is defined for POSIX compatibility.
 
+    pub const fn graph() => SINGLETON_PROPS_GRAPH_V1;
     pub fn load_graph();
 }
 
@@ -965,16 +914,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_grapheme_base(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let grapheme_base = data.as_borrowed();
+    /// let grapheme_base = sets::grapheme_base();
     ///
     /// assert!(grapheme_base.contains('ക'));  // U+0D15 MALAYALAM LETTER KA
     /// assert!(grapheme_base.contains('\u{0D3F}'));  // U+0D3F MALAYALAM VOWEL SIGN I
     /// assert!(!grapheme_base.contains('\u{0D3E}'));  // U+0D3E MALAYALAM VOWEL SIGN AA
     /// ```
 
+    pub const fn grapheme_base() => SINGLETON_PROPS_GR_BASE_V1;
     pub fn load_grapheme_base();
 }
 
@@ -991,16 +938,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_grapheme_extend(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let grapheme_extend = data.as_borrowed();
+    /// let grapheme_extend = sets::grapheme_extend();
     ///
     /// assert!(!grapheme_extend.contains('ക'));  // U+0D15 MALAYALAM LETTER KA
     /// assert!(!grapheme_extend.contains('\u{0D3F}'));  // U+0D3F MALAYALAM VOWEL SIGN I
     /// assert!(grapheme_extend.contains('\u{0D3E}'));  // U+0D3E MALAYALAM VOWEL SIGN AA
     /// ```
 
+    pub const fn grapheme_extend() => SINGLETON_PROPS_GR_EXT_V1;
     pub fn load_grapheme_extend();
 }
 
@@ -1012,6 +957,7 @@ make_code_point_set_property! {
     /// Deprecated property. Formerly proposed for programmatic determination of grapheme
     /// cluster boundaries.
 
+    pub const fn grapheme_link() => SINGLETON_PROPS_GR_LINK_V1;
     pub fn load_grapheme_link();
 }
 
@@ -1028,10 +974,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_hex_digit(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let hex_digit = data.as_borrowed();
+    /// let hex_digit = sets::hex_digit();
     ///
     /// assert!(hex_digit.contains('0'));
     /// assert!(!hex_digit.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
@@ -1041,6 +984,7 @@ make_code_point_set_property! {
     /// assert!(!hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
 
+    pub const fn hex_digit() => SINGLETON_PROPS_HEX_V1;
     pub fn load_hex_digit();
 }
 
@@ -1052,6 +996,7 @@ make_code_point_set_property! {
     /// Deprecated property. Dashes which are used to mark connections between pieces of
     /// words, plus the Katakana middle dot.
 
+    pub const fn hyphen() => SINGLETON_PROPS_HYPHEN_V1;
     pub fn load_hyphen();
 }
 
@@ -1070,10 +1015,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_id_continue(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let id_continue = data.as_borrowed();
+    /// let id_continue = sets::id_continue();
     ///
     /// assert!(id_continue.contains('x'));
     /// assert!(id_continue.contains('1'));
@@ -1083,6 +1025,7 @@ make_code_point_set_property! {
     /// assert!(id_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
+    pub const fn id_continue() => SINGLETON_PROPS_IDC_V1;
     pub fn load_id_continue();
 }
 
@@ -1099,15 +1042,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_ideographic(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let ideographic = data.as_borrowed();
+    /// let ideographic = sets::ideographic();
     ///
     /// assert!(ideographic.contains('川'));  // U+5DDD CJK UNIFIED IDEOGRAPH-5DDD
     /// assert!(!ideographic.contains('밥'));  // U+BC25 HANGUL SYLLABLE BAB
     /// ```
 
+    pub const fn ideographic() => SINGLETON_PROPS_IDEO_V1;
     pub fn load_ideographic();
 }
 
@@ -1125,10 +1066,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_id_start(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let id_start = data.as_borrowed();
+    /// let id_start = sets::id_start();
     ///
     /// assert!(id_start.contains('x'));
     /// assert!(!id_start.contains('1'));
@@ -1138,6 +1076,7 @@ make_code_point_set_property! {
     /// assert!(id_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
+    pub const fn id_start() => SINGLETON_PROPS_IDS_V1;
     pub fn load_id_start();
 }
 
@@ -1153,15 +1092,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_ids_binary_operator(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let ids_binary_operator = data.as_borrowed();
+    /// let ids_binary_operator = sets::ids_binary_operator();
     ///
     /// assert!(ids_binary_operator.contains32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
     /// assert!(!ids_binary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
     /// ```
 
+    pub const fn ids_binary_operator() => SINGLETON_PROPS_IDSB_V1;
     pub fn load_ids_binary_operator();
 }
 
@@ -1177,10 +1114,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_ids_trinary_operator(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let ids_trinary_operator = data.as_borrowed();
+    /// let ids_trinary_operator = sets::ids_trinary_operator();
     ///
     /// assert!(ids_trinary_operator.contains32(0x2FF2));  // IDEOGRAPHIC DESCRIPTION CHARACTER LEFT TO MIDDLE AND RIGHT
     /// assert!(ids_trinary_operator.contains32(0x2FF3));  // IDEOGRAPHIC DESCRIPTION CHARACTER ABOVE TO MIDDLE AND BELOW
@@ -1189,6 +1123,7 @@ make_code_point_set_property! {
     /// assert!(!ids_trinary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
     /// ```
 
+    pub const fn ids_trinary_operator() => SINGLETON_PROPS_IDST_V1;
     pub fn load_ids_trinary_operator();
 }
 
@@ -1205,16 +1140,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_join_control(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let join_control = data.as_borrowed();
+    /// let join_control = sets::join_control();
     ///
     /// assert!(join_control.contains32(0x200C));  // ZERO WIDTH NON-JOINER
     /// assert!(join_control.contains32(0x200D));  // ZERO WIDTH JOINER
     /// assert!(!join_control.contains32(0x200E));
     /// ```
 
+    pub const fn join_control() => SINGLETON_PROPS_JOIN_C_V1;
     pub fn load_join_control();
 }
 
@@ -1230,15 +1163,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_logical_order_exception(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let logical_order_exception = data.as_borrowed();
+    /// let logical_order_exception = sets::logical_order_exception();
     ///
     /// assert!(logical_order_exception.contains('ແ'));  // U+0EC1 LAO VOWEL SIGN EI
     /// assert!(!logical_order_exception.contains('ະ'));  // U+0EB0 LAO VOWEL SIGN A
     /// ```
 
+    pub const fn logical_order_exception() => SINGLETON_PROPS_LOE_V1;
     pub fn load_logical_order_exception();
 }
 
@@ -1254,15 +1185,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_lowercase(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let lowercase = data.as_borrowed();
+    /// let lowercase = sets::lowercase();
     ///
     /// assert!(lowercase.contains('a'));
     /// assert!(!lowercase.contains('A'));
     /// ```
 
+    pub const fn lowercase() => SINGLETON_PROPS_LOWER_V1;
     pub fn load_lowercase();
 }
 
@@ -1278,10 +1207,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_math(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let math = data.as_borrowed();
+    /// let math = sets::math();
     ///
     /// assert!(math.contains('='));
     /// assert!(math.contains('+'));
@@ -1291,6 +1217,7 @@ make_code_point_set_property! {
     /// assert!(math.contains('∕'));  // U+2215 DIVISION SLASH
     /// ```
 
+    pub const fn math() => SINGLETON_PROPS_MATH_V1;
     pub fn load_math();
 }
 
@@ -1306,16 +1233,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_noncharacter_code_point(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let noncharacter_code_point = data.as_borrowed();
+    /// let noncharacter_code_point = sets::noncharacter_code_point();
     ///
     /// assert!(noncharacter_code_point.contains32(0xFDD0));
     /// assert!(noncharacter_code_point.contains32(0xFFFF));
     /// assert!(!noncharacter_code_point.contains32(0x10000));
     /// ```
 
+    pub const fn noncharacter_code_point() => SINGLETON_PROPS_NCHAR_V1;
     pub fn load_noncharacter_code_point();
 }
 
@@ -1326,6 +1251,7 @@ make_code_point_set_property! {
     func:
     /// Characters that are inert under NFC, i.e., they do not interact with adjacent characters
 
+    pub const fn nfc_inert() => SINGLETON_PROPS_NFCINERT_V1;
     pub fn load_nfc_inert();
 }
 
@@ -1336,6 +1262,7 @@ make_code_point_set_property! {
     func:
     /// Characters that are inert under NFD, i.e., they do not interact with adjacent characters
 
+    pub const fn nfd_inert() => SINGLETON_PROPS_NFDINERT_V1;
     pub fn load_nfd_inert();
 }
 
@@ -1346,6 +1273,7 @@ make_code_point_set_property! {
     func:
     /// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters
 
+    pub const fn nfkc_inert() => SINGLETON_PROPS_NFKCINERT_V1;
     pub fn load_nfkc_inert();
 }
 
@@ -1356,6 +1284,7 @@ make_code_point_set_property! {
     func:
     /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters
 
+    pub const fn nfkd_inert() => SINGLETON_PROPS_NFKDINERT_V1;
     pub fn load_nfkd_inert();
 }
 
@@ -1373,16 +1302,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_pattern_syntax(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let pattern_syntax = data.as_borrowed();
+    /// let pattern_syntax = sets::pattern_syntax();
     ///
     /// assert!(pattern_syntax.contains('{'));
     /// assert!(pattern_syntax.contains('⇒'));  // U+21D2 RIGHTWARDS DOUBLE ARROW
     /// assert!(!pattern_syntax.contains('0'));
     /// ```
 
+    pub const fn pattern_syntax() => SINGLETON_PROPS_PAT_SYN_V1;
     pub fn load_pattern_syntax();
 }
 
@@ -1400,10 +1327,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_pattern_white_space(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let pattern_white_space = data.as_borrowed();
+    /// let pattern_white_space = sets::pattern_white_space();
     ///
     /// assert!(pattern_white_space.contains(' '));
     /// assert!(pattern_white_space.contains32(0x2029));  // PARAGRAPH SEPARATOR
@@ -1411,6 +1335,7 @@ make_code_point_set_property! {
     /// assert!(!pattern_white_space.contains32(0x00A0));  // NO-BREAK SPACE
     /// ```
 
+    pub const fn pattern_white_space() => SINGLETON_PROPS_PAT_WS_V1;
     pub fn load_pattern_white_space();
 }
 
@@ -1422,6 +1347,7 @@ make_code_point_set_property! {
     /// A small class of visible format controls, which precede and then span a sequence of
     /// other characters, usually digits.
 
+    pub const fn prepended_concatenation_mark() => SINGLETON_PROPS_PCM_V1;
     pub fn load_prepended_concatenation_mark();
 }
 
@@ -1433,6 +1359,7 @@ make_code_point_set_property! {
     /// Printable characters (visible characters and whitespace).
     /// This is defined for POSIX compatibility.
 
+    pub const fn print() => SINGLETON_PROPS_PRINT_V1;
     pub fn load_print();
 }
 
@@ -1448,16 +1375,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_quotation_mark(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let quotation_mark = data.as_borrowed();
+    /// let quotation_mark = sets::quotation_mark();
     ///
     /// assert!(quotation_mark.contains('\''));
     /// assert!(quotation_mark.contains('„'));  // U+201E DOUBLE LOW-9 QUOTATION MARK
     /// assert!(!quotation_mark.contains('<'));
     /// ```
 
+    pub const fn quotation_mark() => SINGLETON_PROPS_QMARK_V1;
     pub fn load_quotation_mark();
 }
 
@@ -1473,15 +1398,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_radical(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let radical = data.as_borrowed();
+    /// let radical = sets::radical();
     ///
     /// assert!(radical.contains('⺆'));  // U+2E86 CJK RADICAL BOX
     /// assert!(!radical.contains('丹'));  // U+F95E CJK COMPATIBILITY IDEOGRAPH-F95E
     /// ```
 
+    pub const fn radical() => SINGLETON_PROPS_RADICAL_V1;
     pub fn load_radical();
 }
 
@@ -1497,16 +1420,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_regional_indicator(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let regional_indicator = data.as_borrowed();
+    /// let regional_indicator = sets::regional_indicator();
     ///
     /// assert!(regional_indicator.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
     /// assert!(!regional_indicator.contains('Ⓣ'));  // U+24C9 CIRCLED LATIN CAPITAL LETTER T
     /// assert!(!regional_indicator.contains('T'));
     /// ```
 
+    pub const fn regional_indicator() => SINGLETON_PROPS_RI_V1;
     pub fn load_regional_indicator();
 }
 
@@ -1523,15 +1444,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_soft_dotted(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let soft_dotted = data.as_borrowed();
+    /// let soft_dotted = sets::soft_dotted();
     ///
     /// assert!(soft_dotted.contains('і'));  //U+0456 CYRILLIC SMALL LETTER BYELORUSSIAN-UKRAINIAN I
     /// assert!(!soft_dotted.contains('ı'));  // U+0131 LATIN SMALL LETTER DOTLESS I
     /// ```
 
+    pub const fn soft_dotted() => SINGLETON_PROPS_SD_V1;
     pub fn load_soft_dotted();
 }
 
@@ -1543,6 +1462,7 @@ make_code_point_set_property! {
     /// Characters that are starters in terms of Unicode normalization and combining character
     /// sequences
 
+    pub const fn segment_starter() => SINGLETON_PROPS_SEGSTART_V1;
     pub fn load_segment_starter();
 }
 
@@ -1554,6 +1474,7 @@ make_code_point_set_property! {
     /// Characters that are either the source of a case mapping or in the target of a case
     /// mapping
 
+    pub const fn case_sensitive() => SINGLETON_PROPS_SENSITIVE_V1;
     pub fn load_case_sensitive();
 }
 
@@ -1569,10 +1490,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_sentence_terminal(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let sentence_terminal = data.as_borrowed();
+    /// let sentence_terminal = sets::sentence_terminal();
     ///
     /// assert!(sentence_terminal.contains('.'));
     /// assert!(sentence_terminal.contains('?'));
@@ -1581,6 +1499,7 @@ make_code_point_set_property! {
     /// assert!(!sentence_terminal.contains('¿'));  // U+00BF INVERTED QUESTION MARK
     /// ```
 
+    pub const fn sentence_terminal() => SINGLETON_PROPS_STERM_V1;
     pub fn load_sentence_terminal();
 }
 
@@ -1596,10 +1515,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_terminal_punctuation(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let terminal_punctuation = data.as_borrowed();
+    /// let terminal_punctuation = sets::terminal_punctuation();
     ///
     /// assert!(terminal_punctuation.contains('.'));
     /// assert!(terminal_punctuation.contains('?'));
@@ -1608,6 +1524,7 @@ make_code_point_set_property! {
     /// assert!(!terminal_punctuation.contains('¿'));  // U+00BF INVERTED QUESTION MARK
     /// ```
 
+    pub const fn terminal_punctuation() => SINGLETON_PROPS_TERM_V1;
     pub fn load_terminal_punctuation();
 }
 
@@ -1623,16 +1540,14 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_unified_ideograph(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let unified_ideograph = data.as_borrowed();
+    /// let unified_ideograph = sets::unified_ideograph();
     ///
     /// assert!(unified_ideograph.contains('川'));  // U+5DDD CJK UNIFIED IDEOGRAPH-5DDD
     /// assert!(unified_ideograph.contains('木'));  // U+6728 CJK UNIFIED IDEOGRAPH-6728
     /// assert!(!unified_ideograph.contains('𛅸'));  // U+1B178 NUSHU CHARACTER-1B178
     /// ```
 
+    pub const fn unified_ideograph() => SINGLETON_PROPS_UIDEO_V1;
     pub fn load_unified_ideograph();
 }
 
@@ -1648,15 +1563,13 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_uppercase(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let uppercase = data.as_borrowed();
+    /// let uppercase = sets::uppercase();
     ///
     /// assert!(uppercase.contains('U'));
     /// assert!(!uppercase.contains('u'));
     /// ```
 
+    pub const fn uppercase() => SINGLETON_PROPS_UPPER_V1;
     pub fn load_uppercase();
 }
 
@@ -1672,10 +1585,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_variation_selector(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let variation_selector = data.as_borrowed();
+    /// let variation_selector = sets::variation_selector();
     ///
     /// assert!(variation_selector.contains32(0x180D));  // MONGOLIAN FREE VARIATION SELECTOR THREE
     /// assert!(!variation_selector.contains32(0x303E));  // IDEOGRAPHIC VARIATION INDICATOR
@@ -1684,6 +1594,7 @@ make_code_point_set_property! {
     /// assert!(variation_selector.contains32(0xE01EF));  // VARIATION SELECTOR-256
     /// ```
 
+    pub const fn variation_selector() => SINGLETON_PROPS_VS_V1;
     pub fn load_variation_selector();
 }
 
@@ -1700,10 +1611,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_white_space(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let white_space = data.as_borrowed();
+    /// let white_space = sets::white_space();
     ///
     /// assert!(white_space.contains(' '));
     /// assert!(white_space.contains32(0x000A));  // NEW LINE
@@ -1711,6 +1619,7 @@ make_code_point_set_property! {
     /// assert!(!white_space.contains32(0x200B));  // ZERO WIDTH SPACE
     /// ```
 
+    pub const fn white_space() => SINGLETON_PROPS_WSPACE_V1;
     pub fn load_white_space();
 }
 
@@ -1722,6 +1631,7 @@ make_code_point_set_property! {
     /// Hexadecimal digits
     /// This is defined for POSIX compatibility.
 
+    pub const fn xdigit() => SINGLETON_PROPS_XDIGIT_V1;
     pub fn load_xdigit();
 }
 
@@ -1738,10 +1648,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_xid_continue(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let xid_continue = data.as_borrowed();
+    /// let xid_continue = sets::xid_continue();
     ///
     /// assert!(xid_continue.contains('x'));
     /// assert!(xid_continue.contains('1'));
@@ -1751,6 +1658,7 @@ make_code_point_set_property! {
     /// assert!(!xid_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
+    pub const fn xid_continue() => SINGLETON_PROPS_XIDC_V1;
     pub fn load_xid_continue();
 }
 
@@ -1768,10 +1676,7 @@ make_code_point_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_xid_start(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let xid_start = data.as_borrowed();
+    /// let xid_start = sets::xid_start();
     ///
     /// assert!(xid_start.contains('x'));
     /// assert!(!xid_start.contains('1'));
@@ -1781,6 +1686,7 @@ make_code_point_set_property! {
     /// assert!(!xid_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
+    pub const fn xid_start() => SINGLETON_PROPS_XIDS_V1;
     pub fn load_xid_start();
 }
 
@@ -1797,14 +1703,24 @@ macro_rules! make_unicode_set_property {
         marker: $marker_name:ident;
         keyed_data_marker: $keyed_data_marker:ty;
         func:
-        $(#[$attr:meta])*
+        $(#[$doc:meta])+
+        $cvis:vis const fn $constname:ident() => $singleton:ident;
         $vis:vis fn $funcname:ident();
     ) => {
-        $(#[$attr])*
+        #[doc = concat!("[`", stringify!($constname), "()`] with a runtime data provider argument.")]
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<UnicodeSetData, PropertiesError> {
             Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(UnicodeSetData::from_data)?)
+        }
+        $(#[$doc])*
+        ///
+        /// ✨ **Enabled with the `"data"` feature.**
+        #[cfg(feature = "data")]
+        $cvis const fn $constname() -> UnicodeSetDataBorrowed<'static> {
+            UnicodeSetDataBorrowed {
+                set: crate::provider::Baked::$singleton
+            }
         }
     }
 }
@@ -1823,10 +1739,7 @@ make_unicode_set_property! {
     /// ```
     /// use icu_properties::sets;
     ///
-    /// let data =
-    ///     sets::load_basic_emoji(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let basic_emoji = data.as_borrowed();
+    /// let basic_emoji = sets::basic_emoji();
     ///
     /// assert!(!basic_emoji.contains32(0x0020));
     /// assert!(!basic_emoji.contains_char('\n'));
@@ -1835,7 +1748,7 @@ make_unicode_set_property! {
     /// assert!(basic_emoji.contains("\u{1F6E4}\u{FE0F}")); // railway track
     /// assert!(!basic_emoji.contains("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
     /// ```
-
+    pub const fn basic_emoji() => SINGLETON_PROPS_BASIC_EMOJI_V1;
     pub fn load_basic_emoji();
 }
 
@@ -1856,6 +1769,17 @@ pub fn load_for_general_category_group(
         .map(|cpm_range| cpm_range.range);
     let set = CodePointInversionList::from_iter(matching_gc_ranges);
     Ok(CodePointSetData::from_code_point_inversion_list(set))
+}
+
+/// Return a [`CodePointSetData`] for a value or a grouping of values of the General_Category property. See [`GeneralCategoryGroup`].
+#[cfg(feature = "data")]
+pub fn for_general_category_group(enum_val: GeneralCategoryGroup) -> CodePointSetData {
+    let matching_gc_ranges = maps::general_category()
+        .iter_ranges()
+        .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
+        .map(|cpm_range| cpm_range.range);
+    let set = CodePointInversionList::from_iter(matching_gc_ranges);
+    CodePointSetData::from_code_point_inversion_list(set)
 }
 
 /// Returns a type capable of looking up values for a property specified as a string, as long as it is a
@@ -1880,16 +1804,92 @@ pub fn load_for_general_category_group(
 /// ```rust
 /// use icu::properties::sets;
 ///
-/// let data =
-///     sets::load_for_ecma262_unstable(&icu_testdata::unstable(), "Emoji")
+/// let emoji = sets::load_for_ecma262("Emoji")
 ///         .expect("loading data failed");
-/// let emoji = data.as_borrowed();
 ///
 /// assert!(emoji.contains('🔥')); // U+1F525 FIRE
 /// assert!(!emoji.contains('V'));
 /// ```
 ///
 /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
+#[cfg(feature = "data")]
+pub fn load_for_ecma262(name: &str) -> Result<CodePointSetDataBorrowed, PropertiesError> {
+    use crate::runtime::UnicodeProperty;
+
+    let prop = if let Some(prop) = UnicodeProperty::parse_ecma262_name(name) {
+        prop
+    } else {
+        return Err(PropertiesError::UnexpectedPropertyName);
+    };
+    Ok(match prop {
+        UnicodeProperty::AsciiHexDigit => ascii_hex_digit(),
+        UnicodeProperty::Alphabetic => alphabetic(),
+        UnicodeProperty::BidiControl => bidi_control(),
+        UnicodeProperty::BidiMirrored => bidi_mirrored(),
+        UnicodeProperty::CaseIgnorable => case_ignorable(),
+        UnicodeProperty::Cased => cased(),
+        UnicodeProperty::ChangesWhenCasefolded => changes_when_casefolded(),
+        UnicodeProperty::ChangesWhenCasemapped => changes_when_casemapped(),
+        UnicodeProperty::ChangesWhenLowercased => changes_when_lowercased(),
+        UnicodeProperty::ChangesWhenNfkcCasefolded => changes_when_nfkc_casefolded(),
+        UnicodeProperty::ChangesWhenTitlecased => changes_when_titlecased(),
+        UnicodeProperty::ChangesWhenUppercased => changes_when_uppercased(),
+        UnicodeProperty::Dash => dash(),
+        UnicodeProperty::DefaultIgnorableCodePoint => default_ignorable_code_point(),
+        UnicodeProperty::Deprecated => deprecated(),
+        UnicodeProperty::Diacritic => diacritic(),
+        UnicodeProperty::Emoji => emoji(),
+        UnicodeProperty::EmojiComponent => emoji_component(),
+        UnicodeProperty::EmojiModifier => emoji_modifier(),
+        UnicodeProperty::EmojiModifierBase => emoji_modifier_base(),
+        UnicodeProperty::EmojiPresentation => emoji_presentation(),
+        UnicodeProperty::ExtendedPictographic => extended_pictographic(),
+        UnicodeProperty::Extender => extender(),
+        UnicodeProperty::GraphemeBase => grapheme_base(),
+        UnicodeProperty::GraphemeExtend => grapheme_extend(),
+        UnicodeProperty::HexDigit => hex_digit(),
+        UnicodeProperty::IdsBinaryOperator => ids_binary_operator(),
+        UnicodeProperty::IdsTrinaryOperator => ids_trinary_operator(),
+        UnicodeProperty::IdContinue => id_continue(),
+        UnicodeProperty::IdStart => id_start(),
+        UnicodeProperty::Ideographic => ideographic(),
+        UnicodeProperty::JoinControl => join_control(),
+        UnicodeProperty::LogicalOrderException => logical_order_exception(),
+        UnicodeProperty::Lowercase => lowercase(),
+        UnicodeProperty::Math => math(),
+        UnicodeProperty::NoncharacterCodePoint => noncharacter_code_point(),
+        UnicodeProperty::PatternSyntax => pattern_syntax(),
+        UnicodeProperty::PatternWhiteSpace => pattern_white_space(),
+        UnicodeProperty::QuotationMark => quotation_mark(),
+        UnicodeProperty::Radical => radical(),
+        UnicodeProperty::RegionalIndicator => regional_indicator(),
+        UnicodeProperty::SentenceTerminal => sentence_terminal(),
+        UnicodeProperty::SoftDotted => soft_dotted(),
+        UnicodeProperty::TerminalPunctuation => terminal_punctuation(),
+        UnicodeProperty::UnifiedIdeograph => unified_ideograph(),
+        UnicodeProperty::Uppercase => uppercase(),
+        UnicodeProperty::VariationSelector => variation_selector(),
+        UnicodeProperty::WhiteSpace => white_space(),
+        UnicodeProperty::XidContinue => xid_continue(),
+        UnicodeProperty::XidStart => xid_start(),
+        _ => return Err(PropertiesError::UnexpectedPropertyName),
+    })
+}
+
+icu_provider::gen_any_buffer_data_constructors!(
+    locale: skip,
+    name: &str,
+    result: Result<CodePointSetData, PropertiesError>,
+    #[cfg(skip)]
+    functions: [
+        load_for_ecma262,
+        load_for_ecma262_with_any_provider,
+        load_for_ecma262_with_buffer_provider,
+        load_for_ecma262_unstable,
+    ]
+);
+
+#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, load_for_ecma262)]
 pub fn load_for_ecma262_unstable<P>(
     provider: &P,
     name: &str,
@@ -1955,106 +1955,59 @@ where
         return Err(PropertiesError::UnexpectedPropertyName);
     };
     match prop {
-        UnicodeProperty::AsciiHexDigit => load_set_data::<AsciiHexDigitV1Marker, _>(provider),
-        UnicodeProperty::Alphabetic => load_set_data::<AlphabeticV1Marker, _>(provider),
-        UnicodeProperty::BidiControl => load_set_data::<BidiControlV1Marker, _>(provider),
-        UnicodeProperty::BidiMirrored => load_set_data::<BidiMirroredV1Marker, _>(provider),
-        UnicodeProperty::CaseIgnorable => load_set_data::<CaseIgnorableV1Marker, _>(provider),
-        UnicodeProperty::Cased => load_set_data::<CasedV1Marker, _>(provider),
-        UnicodeProperty::ChangesWhenCasefolded => {
-            load_set_data::<ChangesWhenCasefoldedV1Marker, _>(provider)
-        }
-        UnicodeProperty::ChangesWhenCasemapped => {
-            load_set_data::<ChangesWhenCasemappedV1Marker, _>(provider)
-        }
-        UnicodeProperty::ChangesWhenLowercased => {
-            load_set_data::<ChangesWhenLowercasedV1Marker, _>(provider)
-        }
-        UnicodeProperty::ChangesWhenNfkcCasefolded => {
-            load_set_data::<ChangesWhenNfkcCasefoldedV1Marker, _>(provider)
-        }
-        UnicodeProperty::ChangesWhenTitlecased => {
-            load_set_data::<ChangesWhenTitlecasedV1Marker, _>(provider)
-        }
-        UnicodeProperty::ChangesWhenUppercased => {
-            load_set_data::<ChangesWhenUppercasedV1Marker, _>(provider)
-        }
-        UnicodeProperty::Dash => load_set_data::<DashV1Marker, _>(provider),
-        UnicodeProperty::DefaultIgnorableCodePoint => {
-            load_set_data::<DefaultIgnorableCodePointV1Marker, _>(provider)
-        }
-        UnicodeProperty::Deprecated => load_set_data::<DeprecatedV1Marker, _>(provider),
-        UnicodeProperty::Diacritic => load_set_data::<DiacriticV1Marker, _>(provider),
-        UnicodeProperty::Emoji => load_set_data::<EmojiV1Marker, _>(provider),
-        UnicodeProperty::EmojiComponent => load_set_data::<EmojiComponentV1Marker, _>(provider),
-        UnicodeProperty::EmojiModifier => load_set_data::<EmojiModifierV1Marker, _>(provider),
-        UnicodeProperty::EmojiModifierBase => {
-            load_set_data::<EmojiModifierBaseV1Marker, _>(provider)
-        }
-        UnicodeProperty::EmojiPresentation => {
-            load_set_data::<EmojiPresentationV1Marker, _>(provider)
-        }
-        UnicodeProperty::ExtendedPictographic => {
-            load_set_data::<ExtendedPictographicV1Marker, _>(provider)
-        }
-        UnicodeProperty::Extender => load_set_data::<ExtenderV1Marker, _>(provider),
-        UnicodeProperty::GraphemeBase => load_set_data::<GraphemeBaseV1Marker, _>(provider),
-        UnicodeProperty::GraphemeExtend => load_set_data::<GraphemeExtendV1Marker, _>(provider),
-        UnicodeProperty::HexDigit => load_set_data::<HexDigitV1Marker, _>(provider),
-        UnicodeProperty::IdsBinaryOperator => {
-            load_set_data::<IdsBinaryOperatorV1Marker, _>(provider)
-        }
-        UnicodeProperty::IdsTrinaryOperator => {
-            load_set_data::<IdsTrinaryOperatorV1Marker, _>(provider)
-        }
-        UnicodeProperty::IdContinue => load_set_data::<IdContinueV1Marker, _>(provider),
-        UnicodeProperty::IdStart => load_set_data::<IdStartV1Marker, _>(provider),
-        UnicodeProperty::Ideographic => load_set_data::<IdeographicV1Marker, _>(provider),
-        UnicodeProperty::JoinControl => load_set_data::<JoinControlV1Marker, _>(provider),
-        UnicodeProperty::LogicalOrderException => {
-            load_set_data::<LogicalOrderExceptionV1Marker, _>(provider)
-        }
-        UnicodeProperty::Lowercase => load_set_data::<LowercaseV1Marker, _>(provider),
-        UnicodeProperty::Math => load_set_data::<MathV1Marker, _>(provider),
-        UnicodeProperty::NoncharacterCodePoint => {
-            load_set_data::<NoncharacterCodePointV1Marker, _>(provider)
-        }
-        UnicodeProperty::PatternSyntax => load_set_data::<PatternSyntaxV1Marker, _>(provider),
-        UnicodeProperty::PatternWhiteSpace => {
-            load_set_data::<PatternWhiteSpaceV1Marker, _>(provider)
-        }
-        UnicodeProperty::QuotationMark => load_set_data::<QuotationMarkV1Marker, _>(provider),
-        UnicodeProperty::Radical => load_set_data::<RadicalV1Marker, _>(provider),
-        UnicodeProperty::RegionalIndicator => {
-            load_set_data::<RegionalIndicatorV1Marker, _>(provider)
-        }
-        UnicodeProperty::SentenceTerminal => load_set_data::<SentenceTerminalV1Marker, _>(provider),
-        UnicodeProperty::SoftDotted => load_set_data::<SoftDottedV1Marker, _>(provider),
-        UnicodeProperty::TerminalPunctuation => {
-            load_set_data::<TerminalPunctuationV1Marker, _>(provider)
-        }
-        UnicodeProperty::UnifiedIdeograph => load_set_data::<UnifiedIdeographV1Marker, _>(provider),
-        UnicodeProperty::Uppercase => load_set_data::<UppercaseV1Marker, _>(provider),
-        UnicodeProperty::VariationSelector => {
-            load_set_data::<VariationSelectorV1Marker, _>(provider)
-        }
-        UnicodeProperty::WhiteSpace => load_set_data::<WhiteSpaceV1Marker, _>(provider),
-        UnicodeProperty::XidContinue => load_set_data::<XidContinueV1Marker, _>(provider),
-        UnicodeProperty::XidStart => load_set_data::<XidStartV1Marker, _>(provider),
+        UnicodeProperty::AsciiHexDigit => load_ascii_hex_digit(provider),
+        UnicodeProperty::Alphabetic => load_alphabetic(provider),
+        UnicodeProperty::BidiControl => load_bidi_control(provider),
+        UnicodeProperty::BidiMirrored => load_bidi_mirrored(provider),
+        UnicodeProperty::CaseIgnorable => load_case_ignorable(provider),
+        UnicodeProperty::Cased => load_cased(provider),
+        UnicodeProperty::ChangesWhenCasefolded => load_changes_when_casefolded(provider),
+        UnicodeProperty::ChangesWhenCasemapped => load_changes_when_casemapped(provider),
+        UnicodeProperty::ChangesWhenLowercased => load_changes_when_lowercased(provider),
+        UnicodeProperty::ChangesWhenNfkcCasefolded => load_changes_when_nfkc_casefolded(provider),
+        UnicodeProperty::ChangesWhenTitlecased => load_changes_when_titlecased(provider),
+        UnicodeProperty::ChangesWhenUppercased => load_changes_when_uppercased(provider),
+        UnicodeProperty::Dash => load_dash(provider),
+        UnicodeProperty::DefaultIgnorableCodePoint => load_default_ignorable_code_point(provider),
+        UnicodeProperty::Deprecated => load_deprecated(provider),
+        UnicodeProperty::Diacritic => load_diacritic(provider),
+        UnicodeProperty::Emoji => load_emoji(provider),
+        UnicodeProperty::EmojiComponent => load_emoji_component(provider),
+        UnicodeProperty::EmojiModifier => load_emoji_modifier(provider),
+        UnicodeProperty::EmojiModifierBase => load_emoji_modifier_base(provider),
+        UnicodeProperty::EmojiPresentation => load_emoji_presentation(provider),
+        UnicodeProperty::ExtendedPictographic => load_extended_pictographic(provider),
+        UnicodeProperty::Extender => load_extender(provider),
+        UnicodeProperty::GraphemeBase => load_grapheme_base(provider),
+        UnicodeProperty::GraphemeExtend => load_grapheme_extend(provider),
+        UnicodeProperty::HexDigit => load_hex_digit(provider),
+        UnicodeProperty::IdsBinaryOperator => load_ids_binary_operator(provider),
+        UnicodeProperty::IdsTrinaryOperator => load_ids_trinary_operator(provider),
+        UnicodeProperty::IdContinue => load_id_continue(provider),
+        UnicodeProperty::IdStart => load_id_start(provider),
+        UnicodeProperty::Ideographic => load_ideographic(provider),
+        UnicodeProperty::JoinControl => load_join_control(provider),
+        UnicodeProperty::LogicalOrderException => load_logical_order_exception(provider),
+        UnicodeProperty::Lowercase => load_lowercase(provider),
+        UnicodeProperty::Math => load_math(provider),
+        UnicodeProperty::NoncharacterCodePoint => load_noncharacter_code_point(provider),
+        UnicodeProperty::PatternSyntax => load_pattern_syntax(provider),
+        UnicodeProperty::PatternWhiteSpace => load_pattern_white_space(provider),
+        UnicodeProperty::QuotationMark => load_quotation_mark(provider),
+        UnicodeProperty::Radical => load_radical(provider),
+        UnicodeProperty::RegionalIndicator => load_regional_indicator(provider),
+        UnicodeProperty::SentenceTerminal => load_sentence_terminal(provider),
+        UnicodeProperty::SoftDotted => load_soft_dotted(provider),
+        UnicodeProperty::TerminalPunctuation => load_terminal_punctuation(provider),
+        UnicodeProperty::UnifiedIdeograph => load_unified_ideograph(provider),
+        UnicodeProperty::Uppercase => load_uppercase(provider),
+        UnicodeProperty::VariationSelector => load_variation_selector(provider),
+        UnicodeProperty::WhiteSpace => load_white_space(provider),
+        UnicodeProperty::XidContinue => load_xid_continue(provider),
+        UnicodeProperty::XidStart => load_xid_start(provider),
         _ => Err(PropertiesError::UnexpectedPropertyName),
     }
 }
-
-icu_provider::gen_any_buffer_constructors!(
-    locale: skip,
-    name: &str,
-    result: Result<CodePointSetData, PropertiesError>,
-    functions: [
-        load_for_ecma262_unstable,
-        load_for_ecma262_with_any_provider,
-        load_for_ecma262_with_buffer_provider
-    ]
-);
 
 #[cfg(test)]
 mod tests {
@@ -2064,11 +2017,7 @@ mod tests {
         use icu::properties::sets;
         use icu::properties::GeneralCategoryGroup;
 
-        let digits_data = sets::load_for_general_category_group(
-            &icu_testdata::unstable(),
-            GeneralCategoryGroup::Number,
-        )
-        .expect("The data should be valid");
+        let digits_data = sets::for_general_category_group(GeneralCategoryGroup::Number);
         let digits = digits_data.as_borrowed();
 
         assert!(digits.contains('5'));
@@ -2083,8 +2032,7 @@ mod tests {
         use icu::properties::maps;
         use icu::properties::Script;
 
-        let data = maps::load_script(&icu_testdata::unstable()).expect("The data should be valid");
-        let thai_data = data.as_borrowed().get_set_for_value(Script::Thai);
+        let thai_data = maps::SCRIPT.get_set_for_value(Script::Thai);
         let thai = thai_data.as_borrowed();
 
         assert!(thai.contains('\u{0e01}')); // U+0E01 THAI CHARACTER KO KAI
@@ -2101,20 +2049,14 @@ mod tests {
         use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 
         let test_group = |category: GeneralCategoryGroup, subcategories: &[GeneralCategory]| {
-            let category_set =
-                sets::load_for_general_category_group(&icu_testdata::unstable(), category)
-                    .expect("The data should be valid");
+            let category_set = sets::for_general_category_group(category);
             let category_set = category_set
                 .as_code_point_inversion_list()
                 .expect("The data should be valid");
 
-            let data = maps::load_general_category(&icu_testdata::unstable())
-                .expect("The data should be valid");
-            let gc = data.as_borrowed();
-
             let mut builder = CodePointInversionListBuilder::new();
             for subcategory in subcategories {
-                let gc_set_data = &gc.get_set_for_value(*subcategory);
+                let gc_set_data = &maps::GENERAL_CATEGORY.get_set_for_value(*subcategory);
                 let gc_set = gc_set_data.as_borrowed();
                 for range in gc_set.iter_ranges() {
                     builder.add_range_u32(&range);
@@ -2200,10 +2142,7 @@ mod tests {
         use icu::properties::maps;
         use icu::properties::GeneralCategory;
 
-        let data = maps::load_general_category(&icu_testdata::unstable())
-            .expect("The data should be valid");
-        let gc = data.as_borrowed();
-        let surrogates_data = gc.get_set_for_value(GeneralCategory::Surrogate);
+        let surrogates_data = maps::GENERAL_CATEGORY.get_set_for_value(GeneralCategory::Surrogate);
         let surrogates = surrogates_data.as_borrowed();
 
         assert!(surrogates.contains32(0xd800));
