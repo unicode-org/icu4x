@@ -11,7 +11,8 @@ use icu_collections::{
 };
 use icu_properties::maps::{load_general_category, load_script};
 use icu_properties::provider::*;
-use icu_properties::sets::{load_for_ecma262_unstable, CodePointSetData};
+use icu_properties::script::load_script_with_extensions_unstable;
+use icu_properties::sets::load_for_ecma262_unstable;
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
 
@@ -282,6 +283,7 @@ where
         + DataProvider<GeneralCategoryV1Marker>
         + DataProvider<ScriptNameToValueV1Marker>
         + DataProvider<ScriptV1Marker>
+        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
     fn new_internal(
@@ -663,25 +665,24 @@ where
             self.inverted = !self.inverted;
         }
 
-        let (set, inverted) = self
+        let inverted = self
             .load_property_codepoints(&key_buffer, &value_buffer)
             // any error that does not already have an offset should use the appropriate property offset
             .map_err(|e| e.or_with_offset(property_offset))?;
         if inverted {
             self.inverted = !self.inverted;
         }
-        self.single_set.add_set(&set.to_code_point_inversion_list());
 
         Ok(())
     }
 
-    // also returns whether the set needs to be inverted or not
-    fn load_property_codepoints(&self, key: &str, value: &str) -> Result<(CodePointSetData, bool)> {
+    // returns whether the set needs to be inverted or not
+    fn load_property_codepoints(&mut self, key: &str, value: &str) -> Result<bool> {
         // we support:
         // [:gc = value:]
         // [:sc = value:]
-        // [:scx = value:] -- TODO(#3555): Implement Script_Extensions property
-        // [:value:] - looks up value in gc, sc and scx
+        // [:scx = value:]
+        // [:value:] - looks up value in gc, sc
         // [:prop:] - binary property, returns codepoints that have the property
         // [:prop = truthy/falsy:] - same as above
 
@@ -691,6 +692,8 @@ where
         let mut try_gc = Err(PEK::UnknownProperty.into());
         // contains a value for the Script property that needs to be tried
         let mut try_sc = Err(PEK::UnknownProperty.into());
+        // contains a value for the Script_Extensions property that needs to be tried
+        let mut try_scx = Err(PEK::UnknownProperty.into());
         // contains a supposed binary property name that needs to be tried
         let mut try_binary = Err(PEK::UnknownProperty.into());
 
@@ -703,6 +706,7 @@ where
             match key {
                 "General_Category" | "gc" => try_gc = Ok(value),
                 "Script" | "sc" => try_sc = Ok(value),
+                "Script_Extensions" | "scx" => try_scx = Ok(value),
                 _ => {
                     let normalized_value = value.to_ascii_lowercase();
                     let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
@@ -720,17 +724,18 @@ where
             }
         } else {
             // key is binary property
-            // OR a value of gc, sc, scx
+            // OR a value of gc, sc (only gc or sc are supported as implicit keys by UTS35!)
             try_gc = Ok(key);
             try_sc = Ok(key);
             try_binary = Ok(key);
         }
 
-        let set = try_gc
-            .and_then(|value| self.try_load_general_category(value))
-            .or_else(|_| try_sc.and_then(|value| self.try_load_script(value)))
-            .or_else(|_| try_binary.and_then(|value| self.try_load_ecma262_binary(value)))?;
-        Ok((set, inverted))
+        try_gc
+            .and_then(|value| self.try_load_general_category_set(value))
+            .or_else(|_| try_sc.and_then(|value| self.try_load_script_set(value)))
+            .or_else(|_| try_scx.and_then(|value| self.try_load_script_extensions_set(value)))
+            .or_else(|_| try_binary.and_then(|value| self.try_load_ecma262_binary_set(value)))?;
+        Ok(inverted)
     }
 
     fn finalize(mut self) -> (CodePointInversionListBuilder, HashSet<String>) {
@@ -889,34 +894,56 @@ where
         }
     }
 
-    fn try_load_general_category(&self, name: &str) -> Result<CodePointSetData> {
+    fn try_load_general_category_set(&mut self, name: &str) -> Result<()> {
+        // TODO(#3550): This could be cached; does not depend on name.
         let name_map = GeneralCategory::get_name_to_enum_mapper(self.property_provider)
             .map_err(|_| PEK::Internal)?;
         let gc_value = name_map
             .as_borrowed()
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
             load_general_category(self.property_provider).map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(gc_value);
-        Ok(set)
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
     }
 
-    fn try_load_script(&self, name: &str) -> Result<CodePointSetData> {
+    fn try_get_script(&self, name: &str) -> Result<Script> {
+        // TODO(#3550): This could be cached; does not depend on name.
         let name_map =
             Script::get_name_to_enum_mapper(self.property_provider).map_err(|_| PEK::Internal)?;
-        let sc_value = name_map
+        name_map
             .as_borrowed()
             .get_loose(name)
-            .ok_or(PEK::UnknownProperty)?;
-        let property_map = load_script(self.property_provider).map_err(|_| PEK::Internal)?;
-        let set = property_map.as_borrowed().get_set_for_value(sc_value);
-        Ok(set)
+            .ok_or(PEK::UnknownProperty.into())
     }
 
-    fn try_load_ecma262_binary(&self, name: &str) -> Result<CodePointSetData> {
-        load_for_ecma262_unstable(self.property_provider, name)
-            .map_err(|_| PEK::UnknownProperty.into())
+    fn try_load_script_set(&mut self, name: &str) -> Result<()> {
+        let sc_value = self.try_get_script(name)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map = load_script(self.property_provider).map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(sc_value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_script_extensions_set(&mut self, name: &str) -> Result<()> {
+        // TODO(#3550): This could be cached; does not depend on name.
+        let scx = load_script_with_extensions_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let sc_value = self.try_get_script(name)?;
+        let set = scx.as_borrowed().get_script_extensions_set(sc_value);
+        self.single_set.add_set(&set);
+        Ok(())
+    }
+
+    fn try_load_ecma262_binary_set(&mut self, name: &str) -> Result<()> {
+        let set = load_for_ecma262_unstable(self.property_provider, name)
+            .map_err(|_| PEK::UnknownProperty)?;
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
     }
 }
 
@@ -1046,6 +1073,7 @@ where
         + DataProvider<GeneralCategoryV1Marker>
         + DataProvider<ScriptNameToValueV1Marker>
         + DataProvider<ScriptV1Marker>
+        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
     // TODO(#3550): Add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly?
@@ -1261,11 +1289,19 @@ mod tests {
             // general category
             (D, r"[[:gc=lower-case-letter:]&[a-zA-Z]]", "az", vec![]),
             (D, r"[[:lower case letter:]&[a-zA-Z]]", "az", vec![]),
-            // scripts
+            // script
             (D, r"[[:sc=latn:]&[a-zA-Z]]", "azAZ", vec![]),
             (D, r"[[:sc=Latin:]&[a-zA-Z]]", "azAZ", vec![]),
             (D, r"[[:Latin:]&[a-zA-Z]]", "azAZ", vec![]),
             (D, r"[[:latn:]&[a-zA-Z]]", "azAZ", vec![]),
+            // script extensions
+            (D, r"[[:scx=latn:]&[a-zA-Z]]", "azAZ", vec![]),
+            (D, r"[[:scx=Latin:]&[a-zA-Z]]", "azAZ", vec![]),
+            (D, r"[[:scx=Hira:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
+            (D, r"[[:sc=Hira:]&[\u30FC]]", "", vec![]),
+            (D, r"[[:scx=Kana:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
+            (D, r"[[:sc=Kana:]&[\u30FC]]", "", vec![]),
+            (D, r"[[:sc=Common:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
             // TODO(#3556): Add more tests (specifically conformance tests if they exist)
         ];
         for (options, source, single, multi) in cases {
