@@ -84,6 +84,146 @@ pub const fn quotient64(n: i64, d: i64) -> i64 {
     }
 }
 
+// A generic function that finds a value within an interval
+// where a certain condition is satisfied.
+pub fn binary_search<F, G>(mut l: f64, mut h: f64, test: F, end: G) -> f64
+where
+    F: Fn(f64) -> bool, // function that checks a condition to decide which direction to go.
+    G: Fn(f64, f64) -> bool, // function that checks if the interval is small enough to terminate the search.
+{
+    loop {
+        // Calculate the midpoint between `l` and `h`.
+        let x = (h + l) / 2.0;
+
+        // Determine which direction to go. `test` returns true if we need to go left.
+        let left = test(x);
+
+        l = if left { l } else { x };
+        h = if left { x } else { h };
+
+        // If the `end` condition is met (typically when the interval becomes smaller than a certain threshold),
+        // we break the loop and return the current midpoint `x`.
+        if end(h, l) {
+            return x;
+        }
+    }
+}
+
+pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
+    let varepsilon = 1.0 / 100000.0; // Desired accuracy
+    binary_search(
+        r.0,
+        r.1,
+        |x| div_rem_euclid_f64(f(x) - y, 360.0).1 < 180.0,
+        |u, l| (u - l) < varepsilon,
+    )
+}
+#[test]
+fn test_binary_search() {
+    struct TestCase {
+        test_fn: fn(f64) -> bool,
+        range: (f64, f64),
+        expected: f64,
+    }
+
+    let end = |h: f64, l: f64| (h - l).abs() < 0.0001;
+
+    let test_cases = [
+        TestCase {
+            test_fn: |x: f64| x >= 4.0,
+            range: (0.0, 10.0),
+            expected: 4.0,
+        },
+        TestCase {
+            test_fn: |x: f64| x * x >= 2.0,
+            range: (0.0, 2.0),
+            expected: 2.0f64.sqrt(),
+        },
+        TestCase {
+            test_fn: |x: f64| x >= -4.0,
+            range: (-10.0, 0.0),
+            expected: -4.0,
+        },
+        TestCase {
+            test_fn: |x: f64| x >= 0.0,
+            range: (0.0, 10.0),
+            expected: 0.0,
+        },
+        TestCase {
+            test_fn: |x: f64| x > 10.0,
+            range: (0.0, 10.0),
+            expected: 10.0,
+        },
+    ];
+
+    for case in test_cases {
+        let result = binary_search(case.range.0, case.range.1, case.test_fn, end);
+        assert!((result - case.expected).abs() < 0.0001);
+    }
+}
+
+#[test]
+fn test_invert_angular() {
+    struct TestCase {
+        f: fn(f64) -> f64,
+        y: f64,
+        r: (f64, f64),
+        expected: f64,
+    }
+
+    fn f1(x: f64) -> f64 {
+        div_rem_euclid_f64(2.0 * x, 360.0).1
+    }
+
+    fn f2(x: f64) -> f64 {
+        div_rem_euclid_f64(3.0 * x, 360.0).1
+    }
+
+    fn f3(x: f64) -> f64 {
+        div_rem_euclid_f64(x, 360.0).1
+    }
+    // tolerance for comparing floating points.
+    let tolerance = 1e-5;
+
+    let test_cases = [
+        TestCase {
+            f: f1,
+            y: 4.0,
+            r: (0.0, 10.0),
+            expected: 4.0,
+        },
+        TestCase {
+            f: f2,
+            y: 6.0,
+            r: (0.0, 20.0),
+            expected: 6.0,
+        },
+        TestCase {
+            f: f3,
+            y: 400.0,
+            r: (0.0, 10.0),
+            expected: 10.0,
+        },
+        TestCase {
+            f: f3,
+            y: 0.0,
+            r: (0.0, 10.0),
+            expected: 0.0,
+        },
+        TestCase {
+            f: f3,
+            y: 10.0,
+            r: (0.0, 10.0),
+            expected: 10.0,
+        },
+    ];
+
+    for case in test_cases {
+        let x = invert_angular(case.f, case.y, case.r);
+        assert!((div_rem_euclid_f64((case.f)(x), 360.0).1 - case.expected).abs() < tolerance);
+    }
+}
+
 #[test]
 fn test_div_rem_euclid() {
     assert_eq!(div_rem_euclid(i32::MIN, 1), (-2147483648, 0));
