@@ -3,9 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::astronomy::{Astronomical, Location};
+use crate::astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result};
+use crate::helpers::{
+    adjusted_rem_euclid, adjusted_rem_euclid64, adjusted_rem_euclid_f64, i64_to_i32, quotient,
+    quotient64, I32Result,
+};
 use crate::iso::{self, Iso, IsoDateInner};
 use crate::rata_die::RataDie;
 use crate::types::Moment;
@@ -33,26 +36,47 @@ pub struct Chinese;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct ChineseDateInner {
-    inner: ArithmeticDate<Chinese>, // Should this be an ArithmeticDate??
-    leap_month: u8,
+    // TODO: Reconcile differences between this and the design plan
+    year: i32,      // The number of elapsed Chinese years since inception of the calendar
+    month: u8,      // The number of the current month (could be a leap month)
+    leap_month: u8, // The month in the current year which is a leap month (0 if none)
+    day: u8,        // The day of the current month
 }
 
 impl CalendarArithmetic for Chinese {
     fn month_days(year: i32, month: u8) -> u8 {
-        todo!()
+        let mid_year = Self::fixed_mid_year_from_year(year);
+        let new_year = Chinese::chinese_new_year_on_or_before_fixed_date(mid_year);
+        let mut cur_month: u8 = 1;
+        let mut cur_rata_die = new_year;
+        let mut iters: u8 = 0;
+        let max_iters: u8 = 13;
+        while cur_month < month && iters < max_iters {
+            cur_rata_die = Chinese::chinese_new_moon_on_or_after((cur_rata_die + 1).as_moment());
+            cur_month += 1;
+            iters += 1;
+        }
+        debug_assert!(iters < max_iters, "Unexpectedly large number of iterations");
+        (Chinese::chinese_new_moon_on_or_after((cur_rata_die + 1).as_moment()) - cur_rata_die) as u8
+        // TODO: Add saturating functions to prevent overflow to u8
     }
 
     fn months_for_every_year(year: i32) -> u8 {
-        todo!()
+        if Self::is_leap_year(year) {
+            13
+        } else {
+            12
+        }
     }
 
     fn is_leap_year(year: i32) -> bool {
-        todo!()
+        let mid_year = Self::fixed_mid_year_from_year(year);
+        Self::fixed_date_is_in_leap_year(mid_year)
     }
 
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
         todo!()
-    } // Should this be implemented??
+    }
 }
 
 impl Calendar for Chinese {
@@ -148,15 +172,38 @@ impl Calendar for Chinese {
 
 impl Date<Chinese> {
     /// Construct a new Chinese date;
-    /// year represents the year counted infinitely from -2636 (2637 BCE);
-    /// leap_month indicates whether the month of the given date is a leap month
+    /// year represents the Chinese year counted infinitely with -2636 (2637 BCE) as year Chinese year 1;
+    /// leap_month indicates which month in a given year is a leap month
     pub fn try_new_chinese_date(
         year: i32,
         month: u8,
-        leap_month: bool,
+        leap_month: u8,
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
-        todo!();
+        let inner = ChineseDateInner {
+            year,
+            month,
+            leap_month,
+            day,
+        };
+
+        let max_month = Chinese::months_for_every_year(year);
+        if month > max_month {
+            return Err(CalendarError::Overflow {
+                field: "month",
+                max: max_month as usize,
+            });
+        }
+
+        let max_day = Chinese::month_days(year, month);
+        if day > max_day {
+            return Err(CalendarError::Overflow {
+                field: "day",
+                max: max_day as usize,
+            });
+        }
+
+        Ok(Date::from_raw(inner, Chinese))
     }
 }
 
@@ -312,7 +359,10 @@ impl Chinese {
             iters += 1;
             day += 1;
         }
-        debug_assert!(iters < max_iters, "Number of iterations was higher than expected");
+        debug_assert!(
+            iters < max_iters,
+            "Number of iterations was higher than expected"
+        );
         day
     }
 
@@ -320,7 +370,7 @@ impl Chinese {
     /// ```rust
     /// use icu::calendar::Date;
     /// use icu::calendar::chinese::Chinese;
-    /// 
+    ///
     /// let date = Date::try_new_iso_date(2023, 6, 22).expect("Failed to initialize ISO Date");
     /// let chinese_new_year = Chinese::chinese_new_year_on_or_before_iso(date);
     /// assert_eq!(chinese_new_year.year().number, 2023);
@@ -342,6 +392,85 @@ impl Chinese {
         } else {
             Self::chinese_new_year_in_sui(date - 180)
         }
+    }
+
+    /// Get a Date<Chinese> from a fixed date
+    ///
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
+    pub(crate) fn chinese_date_from_fixed(date: RataDie) -> Date<Chinese> {
+        let solstices = Self::get_chinese_winter_solstices(date);
+        let prior_solstice = solstices.0;
+        let month_after_eleventh =
+            Self::chinese_new_moon_on_or_after((prior_solstice + 1).as_moment());
+        let start_of_month = Self::chinese_new_moon_before((date + 1).as_moment());
+        let m_float = start_of_month.as_moment().inner();
+        let m12_float = month_after_eleventh.as_moment().inner();
+        let leap_year = Self::fixed_date_is_in_leap_year(date);
+        let month = adjusted_rem_euclid_f64(
+            libm::round((m_float - m12_float) / MEAN_SYNODIC_MONTH),
+            12.0,
+        );
+        let month_int = month as u8; // TODO: Add saturating functions to avoid overflow
+        let leap_month = if leap_year {
+            Self::get_leap_month_in_year(date)
+        } else {
+            0
+        };
+        let elapsed_years =
+            libm::floor(1.5 - month / 12.0 + ((date - CHINESE_EPOCH) as f64) / MEAN_TROPICAL_YEAR);
+        let elapsed_years_int = i64_to_i32(elapsed_years as i64);
+        debug_assert!(
+            matches!(elapsed_years_int, I32Result::WithinRange(_)),
+            "Chinese year should be in range of i32"
+        );
+        let year = elapsed_years_int.saturate();
+        let day = (date - start_of_month + 1) as u8;
+        Date::try_new_chinese_date(year, month_int, leap_month, day).unwrap()
+    }
+
+    /// Get the mid-year RataDie of a given year
+    fn fixed_mid_year_from_year(elapsed_years: i32) -> RataDie {
+        let cycle = quotient(elapsed_years - 1, 60) + 1;
+        let year = adjusted_rem_euclid(elapsed_years, 60);
+        CHINESE_EPOCH + ((((cycle - 1) * 60 + year - 1) as f64 + 0.5) * MEAN_TROPICAL_YEAR) as i64
+    }
+
+    /// Get the fixed date of the winter solstices immediately prior to and following a fixed date
+    /// Returned as a tuple (prior, following)
+    fn get_chinese_winter_solstices(date: RataDie) -> (RataDie, RataDie) {
+        let prior_solstice = Self::chinese_winter_solstice_on_or_before(date);
+        let following_solstice = Self::chinese_winter_solstice_on_or_before(prior_solstice + 370);
+        (prior_solstice, following_solstice)
+    }
+
+    /// Returns true if the fixed date given is in a leap year, false otherwise
+    fn fixed_date_is_in_leap_year(date: RataDie) -> bool {
+        let solstices = Self::get_chinese_winter_solstices(date);
+        let prior = solstices.0;
+        let following = solstices.1;
+        let month_after_eleventh =
+            Self::chinese_new_moon_on_or_after((prior + 1).as_moment()).as_moment();
+        let next_eleventh_month =
+            Self::chinese_new_moon_before((following + 1).as_moment()).as_moment();
+        libm::round((next_eleventh_month - month_after_eleventh) / MEAN_SYNODIC_MONTH) == 12.0
+    }
+
+    /// Given that a date is in a leap year, find which month in the year is a leap month.
+    /// Since the first month in which there are no major solar terms is a leap month,
+    /// this function cycles through months until it finds the leap month, then returns
+    /// the number of that month. This function assumes the date passed in is in a leap year
+    /// and tests to ensure this is the case by asserting that no more than twelve months are
+    /// analyzed.
+    fn get_leap_month_in_year(date: RataDie) -> u8 {
+        let mut cur = Chinese::chinese_new_year_on_or_before_fixed_date(date);
+        let mut result = 1;
+        let max_iters = 13;
+        while result < max_iters && !Self::chinese_no_major_solar_term(date) {
+            cur = Chinese::chinese_new_moon_on_or_after((cur + 1).as_moment());
+            result += 1;
+        }
+        debug_assert!(result < max_iters, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
+        result
     }
 }
 
@@ -366,5 +495,11 @@ mod test {
         assert_eq!(chinese_new_year.year().number, 2023);
         assert_eq!(chinese_new_year.month().ordinal, 1);
         assert_eq!(chinese_new_year.day_of_month().0, 22);
+    }
+
+    #[test]
+    fn test_chinese_from_fixed() {
+        let date = Chinese::chinese_date_from_fixed(RataDie::new(738694));
+        assert!(false);
     }
 }
