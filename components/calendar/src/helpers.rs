@@ -83,7 +83,33 @@ pub const fn quotient64(n: i64, d: i64) -> i64 {
         a - 1
     }
 }
+// cosine of x in radians
+pub fn cos_degrees(x: f64) -> f64 {
+    let radians = x.to_radians();
+    radians.cos()
+}
+// sine of x in radians
+pub fn sin_degrees(x: f64) -> f64 {
+    let radians = x.to_radians();
+    radians.sin()
+}
+// tan of x in radians
+pub fn tan_degrees(x: f64) -> f64 {
+    let radians = x.to_radians();
+    radians.tan()
+}
 
+// Arccosine of x in degrees
+pub fn arccos_degrees(x: f64) -> f64 {
+    let radians = x.acos();
+    radians.to_degrees()
+}
+
+// Arcsine of x in degrees
+pub fn arcsin_degrees(x: f64) -> f64 {
+    let radians = x.asin();
+    radians.to_degrees()  
+}
 // A generic function that finds a value within an interval
 // where a certain condition is satisfied.
 pub fn binary_search<F, G>(mut l: f64, mut h: f64, test: F, end: G) -> f64
