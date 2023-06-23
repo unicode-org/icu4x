@@ -6,7 +6,7 @@
 //! time, and astronomy; these are intended for calender calculations and based off
 //! _Calendrical Calculations_ by Reingold & Dershowitz.
 use crate::error::LocationError;
-use crate::helpers::{div_rem_euclid_f64, i64_to_i32, I32Result};
+use crate::helpers::{div_rem_euclid_f64, i64_to_i32, invert_angular, I32Result};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
@@ -32,6 +32,12 @@ pub(crate) const MEAN_SYNODIC_MONTH: f64 = 29.530588861;
 /// The Moment of noon on January 1, 2000
 #[allow(dead_code)] // TODO: Remove dead_code tag after use
 pub(crate) const J2000: Moment = Moment::new(730120.5);
+
+/// The minimum allowable UTC offset (-12 hours) in fractional days (-0.5 days)
+pub(crate) const MIN_UTC_OFFSET: f64 = -0.5;
+
+/// The maximum allowable UTC offset (+14 hours) in fractional days (14.0 / 24.0 days)
+pub(crate) const MAX_UTC_OFFSET: f64 = 14.0 / 24.0;
 
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
@@ -92,6 +98,15 @@ impl Location {
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
         universal_time + Self::zone_from_longitude(location.longitude)
+    }
+
+    /// Given a UTC-offset in hours and a Moment in standard time,
+    /// return the Moment in universal time from the time zone with the given offset.
+    /// The field utc_offset should be within the range of possible offsets given by
+    /// the constand fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
+    pub(crate) fn universal_from_standard(standard_moment: Moment, utc_offset: f64) -> Moment {
+        debug_assert!(utc_offset > MIN_UTC_OFFSET && utc_offset < MAX_UTC_OFFSET, "UTC offset {utc_offset} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)");
+        standard_moment - utc_offset
     }
 }
 
@@ -477,6 +492,21 @@ impl Astronomical {
         } else {
             a
         }
+    }
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
+    pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> f64 {
+        let tau = moment.inner()
+            - MEAN_SYNODIC_MONTH / (360.0 / phase) * ((Self::lunar_phase(moment) - phase) % 360.0);
+        let a = tau - 2.0;
+        let b = if moment.inner() <= (tau + 2.0) {
+            moment.inner()
+        } else {
+            Moment::new(tau + 2.0).inner()
+        };
+
+        let lunar_phase_f64 = |x: f64| -> f64 { Self::lunar_phase(Moment::new(x)) };
+
+        invert_angular(lunar_phase_f64, phase, (a, b))
     }
 
     /// The longitude of the Sun at a given Moment in degrees

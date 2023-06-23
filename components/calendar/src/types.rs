@@ -6,6 +6,7 @@
 
 use crate::error::CalendarError;
 use crate::helpers;
+use crate::rata_die::RataDie;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
@@ -760,5 +761,9 @@ impl Moment {
     /// Get the inner field of a Moment
     pub const fn inner(self) -> f64 {
         self.0
+    }
+    /// Get the RataDie of a Moment
+    pub fn as_rata_die(&self) -> RataDie {
+        RataDie::new(libm::floor(self.0) as i64)
     }
 }
