@@ -2032,7 +2032,7 @@ mod tests {
         use icu::properties::maps;
         use icu::properties::Script;
 
-        let thai_data = maps::SCRIPT.get_set_for_value(Script::Thai);
+        let thai_data = maps::script().get_set_for_value(Script::Thai);
         let thai = thai_data.as_borrowed();
 
         assert!(thai.contains('\u{0e01}')); // U+0E01 THAI CHARACTER KO KAI
@@ -2056,7 +2056,7 @@ mod tests {
 
             let mut builder = CodePointInversionListBuilder::new();
             for subcategory in subcategories {
-                let gc_set_data = &maps::GENERAL_CATEGORY.get_set_for_value(*subcategory);
+                let gc_set_data = &maps::general_category().get_set_for_value(*subcategory);
                 let gc_set = gc_set_data.as_borrowed();
                 for range in gc_set.iter_ranges() {
                     builder.add_range_u32(&range);
@@ -2142,7 +2142,8 @@ mod tests {
         use icu::properties::maps;
         use icu::properties::GeneralCategory;
 
-        let surrogates_data = maps::GENERAL_CATEGORY.get_set_for_value(GeneralCategory::Surrogate);
+        let surrogates_data =
+            maps::general_category().get_set_for_value(GeneralCategory::Surrogate);
         let surrogates = surrogates_data.as_borrowed();
 
         assert!(surrogates.contains32(0xd800));
