@@ -37,6 +37,7 @@ macro_rules! impl_data_provider {
     ($marker:ident, $expr:expr, calendared = $calendared:expr) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
                 if $calendared == "locale" && req.locale.is_empty() {
                     return Err(DataErrorKind::NeedsLocale.into_error());
                 }

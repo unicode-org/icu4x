@@ -38,6 +38,7 @@ impl IterableDataProvider<WeekDataV1Marker> for crate::DatagenProvider {
 
 impl DataProvider<WeekDataV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
+        self.check_req::<WeekDataV1Marker>(req)?;
         let territory = req
             .locale
             .region()

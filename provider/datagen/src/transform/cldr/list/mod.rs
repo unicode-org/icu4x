@@ -122,6 +122,7 @@ macro_rules! implement {
     ($marker:ident) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
                 load(self, req)
             }
         }

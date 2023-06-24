@@ -22,6 +22,7 @@ macro_rules! exemplar_chars_impls {
     ($data_marker_name:ident, $cldr_serde_field_name:ident) => {
         impl DataProvider<$data_marker_name> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$data_marker_name>, DataError> {
+                self.check_req::<$data_marker_name>(req)?;
                 let langid = req.locale.get_langid();
 
                 let data: &cldr_serde::exemplar_chars::Resource = self
