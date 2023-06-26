@@ -326,12 +326,14 @@ fn year_as_coptic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "ad")),
             number: year,
+            cyclic: 0,
             related_iso: None,
         }
     } else {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "bd")),
             number: 1 - year,
+            cyclic: 0,
             related_iso: None,
         }
     }

@@ -516,6 +516,7 @@ impl Iso {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "default")),
             number: year,
+            cyclic: 0,
             related_iso: None,
         }
     }

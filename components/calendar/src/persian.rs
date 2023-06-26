@@ -298,6 +298,7 @@ impl Persian {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "ah")),
             number: year,
+            cyclic: 0,
             related_iso: None,
         }
     }

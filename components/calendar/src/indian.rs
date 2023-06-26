@@ -188,6 +188,7 @@ impl Calendar for Indian {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year,
+            cyclic: 0,
             related_iso: None,
         }
     }
@@ -204,11 +205,13 @@ impl Calendar for Indian {
         let prev_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year - 1,
+            cyclic: 0,
             related_iso: None,
         };
         let next_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year + 1,
+            cyclic: 0,
             related_iso: None,
         };
         types::DayOfYearInfo {
