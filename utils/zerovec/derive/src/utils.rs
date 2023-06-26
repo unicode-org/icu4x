@@ -200,6 +200,32 @@ pub fn extract_zerovec_attributes(attrs: &mut Vec<Attribute>) -> Vec<Attribute> 
     ret
 }
 
+/// Extract attributes from field, and return them
+///
+/// Only current field attribute is `zerovec::varule(VarUleType)`
+pub fn extract_field_attributes(attrs: &mut Vec<Attribute>) -> Result<Option<Ident>> {
+    let mut zerovec_attrs = extract_zerovec_attributes(attrs);
+    let varule = extract_parenthetical_zerovec_attrs(&mut zerovec_attrs, "varule")?;
+
+    if varule.len() > 1 {
+        return Err(Error::new(
+            varule[1].span(),
+            format!("Found multiple #[zerovec::varule()] on one field"),
+        ));
+    }
+
+    if !zerovec_attrs.is_empty() {
+        return Err(Error::new(
+            zerovec_attrs[1].span(),
+            format!(
+                "Found unusable #[zerovec::] attrs on field, only #[zerovec::varule()] supported"
+            ),
+        ));
+    }
+
+    Ok(varule.get(0).cloned())
+}
+
 #[derive(Default, Copy, Clone)]
 pub struct ZeroVecAttrs {
     pub skip_kv: bool,
@@ -210,7 +236,7 @@ pub struct ZeroVecAttrs {
     pub hash: bool,
 }
 
-/// Removes all known zerovec:: attributes from attrs and validates them
+/// Removes all known zerovec:: attributes from struct attrs and validates them
 pub fn extract_attributes_common(
     attrs: &mut Vec<Attribute>,
     span: Span,
