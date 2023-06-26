@@ -68,6 +68,35 @@ impl ComplexPayloads {
     }
 
     #[cfg(feature = "lstm")]
+    #[cfg(feature = "data")]
+    pub(crate) fn new_lstm() -> Self {
+        #[allow(clippy::unwrap_used)]
+        // try_load is infallible if the provider only returns `MissingLocale`.
+        Self {
+            grapheme: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+            ),
+            my: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, locale!("my"))
+                .unwrap()
+                .map(DataPayload::cast)
+                .map(Err),
+            km: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, locale!("km"))
+                .unwrap()
+                .map(DataPayload::cast)
+                .map(Err),
+            lo: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, locale!("lo"))
+                .unwrap()
+                .map(DataPayload::cast)
+                .map(Err),
+            th: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, locale!("th"))
+                .unwrap()
+                .map(DataPayload::cast)
+                .map(Err),
+            ja: None,
+        }
+    }
+
+    #[cfg(feature = "lstm")]
     pub(crate) fn try_new_lstm<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker>
@@ -90,6 +119,51 @@ impl ComplexPayloads {
                 .map(Err),
             ja: None,
         })
+    }
+
+    #[cfg(feature = "data")]
+    pub(crate) fn new_dict() -> Self {
+        #[allow(clippy::unwrap_used)]
+        // try_load is infallible if the provider only returns `MissingLocale`.
+        Self {
+            grapheme: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+            ),
+            my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                &crate::provider::Baked,
+                locale!("my"),
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Ok),
+            km: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                &crate::provider::Baked,
+                locale!("km"),
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Ok),
+            lo: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                &crate::provider::Baked,
+                locale!("lo"),
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Ok),
+            th: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                &crate::provider::Baked,
+                locale!("th"),
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Ok),
+            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, _>(
+                &crate::provider::Baked,
+                locale!("ja"),
+            )
+            .unwrap()
+            .map(DataPayload::cast),
+        }
     }
 
     pub(crate) fn try_new_dict<D>(provider: &D) -> Result<Self, DataError>
@@ -119,6 +193,40 @@ impl ComplexPayloads {
     }
 
     #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
+    #[cfg(feature = "data")]
+    pub(crate) fn new_auto() -> Self {
+        #[allow(clippy::unwrap_used)]
+        // try_load is infallible if the provider only returns `MissingLocale`.
+        Self {
+            grapheme: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+            ),
+            my: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, locale!("my"))
+                .unwrap()
+                .map(DataPayload::cast)
+                .map(Err),
+            km: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, locale!("km"))
+                .unwrap()
+                .map(DataPayload::cast)
+                .map(Err),
+            lo: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, locale!("lo"))
+                .unwrap()
+                .map(DataPayload::cast)
+                .map(Err),
+            th: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, locale!("th"))
+                .unwrap()
+                .map(DataPayload::cast)
+                .map(Err),
+            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, _>(
+                &crate::provider::Baked,
+                locale!("ja"),
+            )
+            .unwrap()
+            .map(DataPayload::cast),
+        }
+    }
+
+    #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
     pub(crate) fn try_new_auto<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker>
@@ -143,6 +251,46 @@ impl ComplexPayloads {
             ja: try_load::<DictionaryForWordOnlyAutoV1Marker, D>(provider, locale!("ja"))?
                 .map(DataPayload::cast),
         })
+    }
+
+    #[cfg(feature = "data")]
+    pub(crate) fn new_southeast_asian() -> Self {
+        #[allow(clippy::unwrap_used)]
+        // try_load is infallible if the provider only returns `MissingLocale`.
+        Self {
+            grapheme: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+            ),
+            my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                &crate::provider::Baked,
+                locale!("my"),
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Ok),
+            km: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                &crate::provider::Baked,
+                locale!("km"),
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Ok),
+            lo: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                &crate::provider::Baked,
+                locale!("lo"),
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Ok),
+            th: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                &crate::provider::Baked,
+                locale!("th"),
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Ok),
+            ja: None,
+        }
     }
 
     pub(crate) fn try_new_southeast_asian<D>(provider: &D) -> Result<Self, DataError>
@@ -268,10 +416,8 @@ mod tests {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
 
-        let lstm =
-            ComplexPayloads::try_new_lstm(&icu_testdata::buffer().as_deserializing()).unwrap();
-        let dict =
-            ComplexPayloads::try_new_dict(&icu_testdata::buffer().as_deserializing()).unwrap();
+        let lstm = ComplexPayloads::new_lstm();
+        let dict = ComplexPayloads::new_dict();
 
         assert_eq!(
             complex_language_segment_str(&lstm, TEST_STR),
