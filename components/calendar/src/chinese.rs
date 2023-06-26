@@ -349,21 +349,21 @@ impl Chinese {
     // Get the moment of the nearest winter solstice on or before a given fixed date
     fn chinese_winter_solstice_on_or_before(date: RataDie) -> RataDie {
         let approx =
-            Astronomical::estimate_prior_solar_longitude(270.0, date.as_moment()).as_rata_die();
+            Astronomical::estimate_prior_solar_longitude(270.0, Self::midnight_in_china((date + 1).as_moment()));
         let mut iters = 0;
         let max_iters = 367;
-        let mut day = approx;
+        let mut day = Moment::new(libm::floor(approx.inner() - 1.0));
         while iters < max_iters
-            && 270.0 < Astronomical::solar_longitude(Self::midnight_in_china((day + 1).as_moment()))
+            && 270.0 >= Astronomical::solar_longitude(Self::midnight_in_china(day + 1.0))
         {
             iters += 1;
-            day += 1;
+            day += 1.0;
         }
         debug_assert!(
             iters < max_iters,
             "Number of iterations was higher than expected"
         );
-        day
+        day.as_rata_die()
     }
 
     /// Get the ISO date of the nearest Chinese New Year on or before a given ISO date
@@ -400,6 +400,7 @@ impl Chinese {
     pub(crate) fn chinese_date_from_fixed(date: RataDie) -> Date<Chinese> {
         let solstices = Self::get_chinese_winter_solstices(date);
         let prior_solstice = solstices.0;
+        let following_solstice = solstices.1;
         let month_after_eleventh =
             Self::chinese_new_moon_on_or_after((prior_solstice + 1).as_moment());
         let start_of_month = Self::chinese_new_moon_before((date + 1).as_moment());
@@ -495,11 +496,5 @@ mod test {
         assert_eq!(chinese_new_year.year().number, 2023);
         assert_eq!(chinese_new_year.month().ordinal, 1);
         assert_eq!(chinese_new_year.day_of_month().0, 22);
-    }
-
-    #[test]
-    fn test_chinese_from_fixed() {
-        let date = Chinese::chinese_date_from_fixed(RataDie::new(738694));
-        assert!(false);
     }
 }
