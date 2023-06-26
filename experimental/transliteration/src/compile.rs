@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::collections::HashMap;
 use super::dfaparsing as prs;
 use super::translit;
@@ -73,7 +74,7 @@ impl<'a> Compiler<'a> {
         icu_unicodeset_parser::parse_unstable(s, options, &icu_testdata::unstable()).map_err(|e| CompileError::unicodeset(sl!(), e))
     }
 
-    fn compile_target_pattern(&self, parsed_pattern: &[prs::PatternElement]) -> Result<translit::Replacer> {
+    fn compile_target_pattern(&self, parsed_pattern: &[prs::PatternElement]) -> Result<translit::Replacer<'a>> {
         let mut replacement = String::new();
         let mut cursor_from_beginning = None;
         for (idx, element) in parsed_pattern.into_iter().enumerate() {
@@ -121,7 +122,7 @@ impl<'a> Compiler<'a> {
 
         let cursor_from_end = cursor_from_beginning.map(|cfb| cfb - replacement.chars().count() as i32).unwrap_or(0);
         Ok(translit::Replacer {
-            replacement,
+            replacement: replacement.into(),
             cursor: cursor_from_end,
         })
     }
@@ -136,7 +137,7 @@ impl<'a> Compiler<'a> {
                 }
                 prs::PatternElement::UnicodeSet(s) => {
                     if !literal.is_empty() {
-                        pattern.push(translit::PatternElement::Literal(literal));
+                        pattern.push(translit::PatternElement::Literal(literal.into()));
                         literal = String::new();
                     }
                     let set = self.compile_unicode_set(s)?;
@@ -164,7 +165,7 @@ impl<'a> Compiler<'a> {
                         },
                         (1, Some(u@translit::PatternElement::UnicodeSet(_)), _) => {
                             if !literal.is_empty() {
-                                pattern.push(translit::PatternElement::Literal(literal));
+                                pattern.push(translit::PatternElement::Literal(literal.into()));
                                 literal = String::new();
                             }
                             pattern.push(u.clone());
@@ -174,11 +175,11 @@ impl<'a> Compiler<'a> {
                             // handle first element
                             if let Some(translit::PatternElement::Literal(s)) = variable_pattern.first() {
                                 literal.push_str(s);
-                                pattern.push(translit::PatternElement::Literal(literal));
+                                pattern.push(translit::PatternElement::Literal(literal.into()));
                                 literal = String::new();
                             } else {
                                 if !literal.is_empty() {
-                                    pattern.push(translit::PatternElement::Literal(literal));
+                                    pattern.push(translit::PatternElement::Literal(literal.into()));
                                     literal = String::new();
                                 }
                                 pattern.push(variable_pattern[0].clone());
@@ -202,7 +203,7 @@ impl<'a> Compiler<'a> {
             }
         }
         if !literal.is_empty() {
-            pattern.push(translit::PatternElement::Literal(literal));
+            pattern.push(translit::PatternElement::Literal(literal.into()));
         }
         Ok(translit::Pattern(pattern))
     }

@@ -292,6 +292,9 @@ fn main() {
     eprintln!("Compiled forward transliterator:");
     eprintln!("{}", fwd_translit);
 
+    let json = serde_json::ser::to_string_pretty(&fwd_translit).unwrap();
+    eprintln!("JSON-serialized forward transliterator:\n{json}\n--- end json forward ---");
+
     eprintln!("Forward transliteration:");
     eprintln!("{}", fwd_translit.transliterate(&source));
     // eprintln!("Backward translit:");

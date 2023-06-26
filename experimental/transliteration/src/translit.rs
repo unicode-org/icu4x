@@ -1,7 +1,9 @@
+use std::borrow::Cow;
 use std::fmt::{Display, Formatter};
 use std::thread::sleep;
 
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use serde::{Serialize, Deserialize};
 
 /*
 Differences to parsed types:
@@ -21,9 +23,11 @@ TODO: * zero-copify types
 
 type UnicodeSet<'a> = CodePointInversionListAndStringList<'a>;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum PatternElement<'a> {
-    Literal(String),
+    #[serde(borrow)]
+    Literal(Cow<'a, str>),
+    #[serde(borrow)]
     UnicodeSet(UnicodeSet<'a>),
 }
 
@@ -81,8 +85,8 @@ impl<'a> PatternElement<'a> {
 }
 
 // invariant: consecutive literals must be concatenated
-#[derive(Debug, Clone)]
-pub struct Pattern<'a>(pub Vec<PatternElement<'a>>);
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Pattern<'a>(#[serde(borrow)] pub Vec<PatternElement<'a>>);
 
 impl<'a> Pattern<'a> {
     // returns the length of the match if there was one
@@ -150,7 +154,7 @@ impl<'a> Display for Pattern<'a> {
                         format!("'{}'", l)
                     } else {
                         // no escaping needed
-                        l.clone()
+                        l.to_string()
                     };
                     write!(f, "{}", res)?
                 },
@@ -161,15 +165,17 @@ impl<'a> Display for Pattern<'a> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct Replacer {
-    pub replacement: String,
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Replacer<'a> {
+    #[serde(borrow)]
+    pub replacement: Cow<'a, str>,
     // offset from the end of the match, i.e., cursor = 0 is the default behavior,
     // -replacement.len() would be restarting from the beginning
     pub cursor: i32,
 }
 
-impl Display for Replacer {
+impl<'a> Display for Replacer<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         // TODO: need to figure out a solution for cases where the replacement contains chars that need escaping
         if self.cursor == 0 {
@@ -199,12 +205,16 @@ impl Display for Replacer {
 }
 
 // these types get serialized
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Rule<'a> {
+    #[serde(borrow)]
     pub ante: Option<Pattern<'a>>,
+    #[serde(borrow)]
     pub key: Pattern<'a>,
+    #[serde(borrow)]
     pub post: Option<Pattern<'a>>,
-    pub target: Replacer,
+    #[serde(borrow)]
+    pub target: Replacer<'a>,
 }
 
 impl<'a> Display for Rule<'a> {
@@ -226,8 +236,9 @@ enum MatchDirection {
     Backward,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Transliterator<'a> {
+    #[serde(borrow)]
     pub rules: Vec<Rule<'a>>,
 }
 
