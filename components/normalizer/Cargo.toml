@@ -42,11 +42,12 @@ zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
 databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
+icu_normalizer_data = { path = "data", optional = true }
+
 [dev-dependencies]
 arraystring = "0.3.0"
 arrayvec = "0.7.2"
 atoi = "1.0.0"
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_normalizer", "icu_properties", "icu_locid_transform"] }
 write16 = { version = "1.0", features = ["arrayvec"] }
 detone = "1.0.0"
 criterion = "0.4.0"
@@ -56,6 +57,7 @@ std = ["icu_collections/std", "icu_properties/std", "icu_provider/std"]
 serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_properties/serde"]
 datagen = ["serde", "dep:databake", "icu_collections/databake", "zerovec/databake", "icu_properties/datagen"]
 experimental = []
+data = ["dep:icu_normalizer_data", "icu_properties/data"]
 
 [[test]]
 name = "tests"
