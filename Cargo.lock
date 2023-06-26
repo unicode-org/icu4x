@@ -1859,6 +1859,8 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_collections",
+ "icu_locid_transform",
+ "icu_properties_data",
  "icu_provider",
  "icu_testdata",
  "serde",
