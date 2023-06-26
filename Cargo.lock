@@ -2075,6 +2075,19 @@ name = "icu_timezone_data"
 version = "0.0.0"
 
 [[package]]
+name = "icu_unicodeset_parser"
+version = "0.0.0"
+dependencies = [
+ "icu_collections",
+ "icu_properties",
+ "icu_provider",
+ "icu_testdata",
+ "log",
+ "tinystr",
+ "zerovec",
+]
+
+[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

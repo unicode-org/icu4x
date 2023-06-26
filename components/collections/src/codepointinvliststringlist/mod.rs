@@ -205,6 +205,11 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     pub fn contains_char(&self, ch: char) -> bool {
         self.contains32(ch as u32)
     }
+
+    /// Access the underlying [`CodePointInversionList`].
+    pub fn code_points(&self) -> &CodePointInversionList<'data> {
+        &self.cp_inv_list
+    }
 }
 
 impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
