@@ -309,6 +309,9 @@ macro_rules! make_map_property {
         $vis:vis fn $name:ident();
     ) => {
         #[doc = concat!("[`", stringify!($constname), "()`] with a runtime data provider argument.")]
+        ///
+        /// Note that this will return an owned version of the data. Functionality is available on 
+        /// the borrowed version, accessible through `.as_borrowed()`.
         $vis fn $name(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {

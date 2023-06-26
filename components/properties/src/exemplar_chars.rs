@@ -46,6 +46,9 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         $vis2:vis fn $constname:ident();
     ) => {
         #[doc = concat!("[`", stringify!($constname), "()`] with a runtime data provider argument.")]
+        ///
+        /// Note that this will return an owned version of the data. Functionality is available on 
+        /// the borrowed version, accessible through `.as_borrowed()`.
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized),
             locale: &DataLocale,
@@ -65,17 +68,16 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         #[cfg(feature = "data")]
         $vis2 fn $constname(
             locale: &DataLocale,
-        ) -> UnicodeSetData {
-            UnicodeSetData::from_data(
+        ) -> Result<UnicodeSetData, DataError> {
+            Ok(UnicodeSetData::from_data(
                 DataProvider::<$keyed_data_marker>::load(
                     &crate::provider::Baked,
                     DataRequest {
                         locale,
                         metadata: Default::default(),
                     })
-                    .and_then(DataResponse::take_payload)
-                    .expect("provider is infallible")
-            )
+                    .and_then(DataResponse::take_payload)?
+            ))
         }
     }
 }

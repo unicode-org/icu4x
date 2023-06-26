@@ -323,6 +323,9 @@ macro_rules! make_code_point_set_property {
         $vis:vis fn $funcname:ident();
     ) => {
         #[doc = concat!("[`", stringify!($constname), "()`] with a runtime data provider argument.")]
+        ///
+        /// Note that this will return an owned version of the data. Functionality is available on 
+        /// the borrowed version, accessible through `.as_borrowed()`.
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<CodePointSetData, PropertiesError> {
