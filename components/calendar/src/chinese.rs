@@ -171,9 +171,11 @@ impl Calendar for Chinese {
 }
 
 impl Date<Chinese> {
-    /// Construct a new Chinese date;
-    /// year represents the Chinese year counted infinitely with -2636 (2637 BCE) as year Chinese year 1;
-    /// leap_month indicates which month in a given year is a leap month
+    /// Construct a new Chinese date from a `year`, `month`, `leap_month`, and `day`.
+    /// `year` represents the Chinese year counted infinitely with -2636 (2637 BCE) as year Chinese year 1;
+    /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
+    /// `leap_month` indicates which month in a given year is a leap month;
+    /// `day` indicates the day of month
     pub fn try_new_chinese_date(
         year: i32,
         month: u8,
@@ -497,11 +499,5 @@ mod test {
         assert_eq!(chinese_new_year.year().number, 2023);
         assert_eq!(chinese_new_year.month().ordinal, 1);
         assert_eq!(chinese_new_year.day_of_month().0, 22);
-    }
-
-    #[test]
-    fn test_chinese_from_fixed() {
-        let date = Chinese::chinese_date_from_fixed(RataDie::new(738694));
-        assert!(false);
     }
 }
