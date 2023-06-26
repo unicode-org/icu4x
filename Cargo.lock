@@ -3596,6 +3596,8 @@ dependencies = [
  "icu_properties",
  "icu_testdata",
  "icu_unicodeset_parser",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
