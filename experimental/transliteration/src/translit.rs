@@ -1,6 +1,8 @@
 use std::fmt::{Display, Formatter};
 use std::thread::sleep;
 
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+
 /*
 Differences to parsed types:
  * Rules go only in one direction
@@ -14,43 +16,65 @@ Differences to parsed types:
 /*
 TODO: * zero-copify types
       * switch to proper UnicodeSet
+      * Switch to UTF-8 stuff - currently all offsets/cursors are chars, need to change some of them to bytes
 */
 
+type UnicodeSet<'a> = CodePointInversionListAndStringList<'a>;
+
 #[derive(Debug, Clone)]
-pub enum PatternElement {
+pub enum PatternElement<'a> {
     Literal(String),
-    UnicodeSet(String),
+    UnicodeSet(UnicodeSet<'a>),
 }
 
-impl PatternElement {
+fn string_matches_source(needle: &str, source: &[char], dir: MatchDirection) -> Option<u32> {
+    let needle_chars = needle.chars().collect::<Vec<_>>();
+
+    match dir {
+        MatchDirection::Forward => {
+            if source.starts_with(&needle_chars[..]) {
+                Some(needle_chars.len() as u32)
+            } else {
+                None
+            }
+        }
+        MatchDirection::Backward => {
+            if source.ends_with(&needle_chars[..]) {
+                Some(needle_chars.len() as u32)
+            } else {
+                None
+            }
+        }
+    }
+}
+
+impl<'a> PatternElement<'a> {
     fn matches(&self, source: &[char], dir: MatchDirection) -> Option<u32> {
         match self {
             PatternElement::Literal(s) => {
                 // dbg!(dir);
                 // dbg!(s);
                 // dbg!(source.iter().collect::<String>());
-                let s_chars = s.chars().collect::<Vec<_>>();
-
-                match dir {
+                string_matches_source(s, source, dir)
+            }
+            PatternElement::UnicodeSet(uset) => {
+                let char_to_check = match dir {
                     MatchDirection::Forward => {
-                        if source.starts_with(&s_chars[..]) {
-                            Some(s_chars.len() as u32)
-                        } else {
-                            None
-                        }
+                        source.first().copied().unwrap_or('\u{FFFF}')
                     }
                     MatchDirection::Backward => {
-                        if source.ends_with(&s_chars[..]) {
-                            Some(s_chars.len() as u32)
-                        } else {
-                            None
-                        }
+                        source.last().copied().unwrap_or('\u{FFFF}')
+                    }
+                };
+                if uset.contains_char(char_to_check) {
+                    return Some(1);
+                }
+                for s in uset.strings().iter() {
+                    if let Some(len) = string_matches_source(s, source, dir) {
+                        return Some(len);
                     }
                 }
-            }
-            PatternElement::UnicodeSet(_s) => {
-                // TODO: implement
-                Some(1)
+                None
             }
         }
     }
@@ -58,9 +82,9 @@ impl PatternElement {
 
 // invariant: consecutive literals must be concatenated
 #[derive(Debug, Clone)]
-pub struct Pattern(pub Vec<PatternElement>);
+pub struct Pattern<'a>(pub Vec<PatternElement<'a>>);
 
-impl Pattern {
+impl<'a> Pattern<'a> {
     // returns the length of the match if there was one
     fn matches(&self, source: &[char], dir: MatchDirection) -> Option<u32> {
         match dir {
@@ -104,7 +128,7 @@ impl Pattern {
     }
 }
 
-impl Display for Pattern {
+impl<'a> Display for Pattern<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         for element in &self.0 {
             match element {
@@ -130,7 +154,7 @@ impl Display for Pattern {
                     };
                     write!(f, "{}", res)?
                 },
-                PatternElement::UnicodeSet(s) => write!(f, "{}", s)?,
+                PatternElement::UnicodeSet(s) => write!(f, "{:?}", s)?,
             }
         }
         Ok(())
@@ -176,14 +200,14 @@ impl Display for Replacer {
 
 // these types get serialized
 #[derive(Debug, Clone)]
-pub struct Rule {
-    pub ante: Option<Pattern>,
-    pub key: Pattern,
-    pub post: Option<Pattern>,
+pub struct Rule<'a> {
+    pub ante: Option<Pattern<'a>>,
+    pub key: Pattern<'a>,
+    pub post: Option<Pattern<'a>>,
     pub target: Replacer,
 }
 
-impl Display for Rule {
+impl<'a> Display for Rule<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         if let Some(ante) = &self.ante {
             write!(f, "{} {{ ", ante)?;
@@ -203,11 +227,11 @@ enum MatchDirection {
 }
 
 #[derive(Debug, Clone)]
-pub struct Transliterator {
-    pub rules: Vec<Rule>,
+pub struct Transliterator<'a> {
+    pub rules: Vec<Rule<'a>>,
 }
 
-impl Display for Transliterator {
+impl<'a> Display for Transliterator<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "[\n")?;
         for rule in &self.rules {
@@ -217,7 +241,7 @@ impl Display for Transliterator {
     }
 }
 
-impl Transliterator {
+impl<'a> Transliterator<'a> {
     pub fn transliterate(&self, source: &str) -> String {
         /* Basic algorithm:
            Until the cursor is at the end of the string and there are no more rules to apply:

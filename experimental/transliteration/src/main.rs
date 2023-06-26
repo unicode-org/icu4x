@@ -252,20 +252,23 @@ fn pretty_print_rules(rules: &[Rule]) {
 // TODO: add "compile" function that: 1. compiles UnicodeSets (converts them into CodePointInversionLists) and 2. compiles variable references.
 
 fn main() {
-    let source = r#"
+    let source = "
 
     J'ai écouté.
 
     Überlegen ist ÜBERTRIEBEN gut für die Gesundheit. # demonstrates post context
 
+    string replacement: \u{61}\u{0308} Au0308
+
     hello world :) # demonstrates ante context and cursor
 
-    "#;
+    ";
 
     // let source = "hello world";
 
 
-    let rules = RULES_NO_UNICODE_SET;
+    // let rules = RULES_NO_UNICODE_SET;
+    let rules = RULES_ORIGINAL;
     //let rules = RULES_PUBLISHING;
     let mut it = rules.chars().peekable();
     let rules = dfaparsing::parse_rules(&mut it);

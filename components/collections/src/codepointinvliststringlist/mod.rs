@@ -17,7 +17,7 @@ use alloc::vec::Vec;
 use displaydoc::Display;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
-use zerovec::VarZeroVec;
+use zerovec::{VarZeroVec, VarZeroSlice};
 
 /// A data structure providing a concrete implementation of a `UnicodeSet`
 /// (which represents a set of code points and strings) using an inversion list for the code points and a simple
@@ -209,6 +209,11 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     /// Access the underlying [`CodePointInversionList`].
     pub fn code_points(&self) -> &CodePointInversionList<'data> {
         &self.cp_inv_list
+    }
+
+    /// Access the contained strings.
+    pub fn strings(&self) -> &VarZeroSlice<str> {
+        &self.str_list
     }
 }
 

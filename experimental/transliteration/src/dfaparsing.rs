@@ -5,6 +5,7 @@ use std::iter::Peekable;
 // use super::*;
 
 // TODO: parse transform rules and filter rules
+// TODO: parse escaped characters
 
 macro_rules! t {
     () => (
@@ -122,22 +123,16 @@ mod missingapis {
                         break;
                     }
                 }
-                Some('\\') => escaped = true,
-                Some(mut c) => {
-                    // handle special escape sequences
+                Some('\\') if !escaped => escaped = true,
+                Some('[') if !escaped => {
+                    depth += 1;
+                    set.push('[');
+                }
+                Some(c) => {
                     if escaped {
-                        match c {
-                            'n' => c = '\n',
-                            'r' => c = '\r',
-                            't' => c = '\t',
-                            _ => {}
-                        }
+                        set.push('\\');
+                        escaped = false;
                     }
-                    // handle new level
-                    if !escaped && c == '[' {
-                        depth += 1;
-                    }
-                    escaped = false;
                     set.push(c);
                 }
             }

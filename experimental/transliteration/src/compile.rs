@@ -24,10 +24,15 @@ impl core::fmt::Debug for SourceLocation {
 
 use CompileErrorKind as CEK;
 use SourceLocation as SL;
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu_unicodeset_parser::ParseError;
+use icu_unicodeset_parser::UnicodeSetBuilderOptions;
 
+// TODO: replicate unicodeset_parser error behavior?
 #[derive(Debug, Clone, Copy)]
 pub enum CompileErrorKind {
     Default,
+    UnicodeSetParseError(icu_unicodeset_parser::ParseError),
 }
 
 #[derive(Debug, Clone)]
@@ -44,23 +49,28 @@ impl CompileError {
     pub fn default(location: SourceLocation) -> Self {
         Self::new(location, CEK::Default)
     }
+
+    pub fn unicodeset(location: SourceLocation, inner: icu_unicodeset_parser::ParseError) -> Self {
+        Self::new(location, CEK::UnicodeSetParseError(inner))
+    }
 }
 pub type Result<T, E = CompileError> = core::result::Result<T, E>;
 
-pub(super) struct Compiler {
-    variables: HashMap<String, translit::Pattern>,
+pub(super) struct Compiler<'a> {
+    variables: HashMap<String, translit::Pattern<'a>>,
 }
 
-impl Compiler {
+impl<'a> Compiler<'a> {
     pub(super) fn new() -> Self {
         Self {
             variables: HashMap::new(),
         }
     }
 
-    fn compile_unicode_set(&self, s: &str) -> Result<String> {
-        // TODO: compile to e.g. CodePointInversionListAndStringList
-        Ok(s.to_owned())
+    fn compile_unicode_set(&self, s: &str) -> Result<CodePointInversionListAndStringList<'a>> {
+        let mut options = UnicodeSetBuilderOptions::default();
+        options.dollar_is_anchor = true;
+        icu_unicodeset_parser::parse_unstable(s, options, &icu_testdata::unstable()).map_err(|e| CompileError::unicodeset(sl!(), e))
     }
 
     fn compile_target_pattern(&self, parsed_pattern: &[prs::PatternElement]) -> Result<translit::Replacer> {
@@ -116,7 +126,7 @@ impl Compiler {
         })
     }
 
-    fn compile_source_pattern(&self, parsed_pattern: &[prs::PatternElement]) -> Result<translit::Pattern> {
+    fn compile_source_pattern(&self, parsed_pattern: &[prs::PatternElement]) -> Result<translit::Pattern<'a>> {
         let mut pattern = Vec::new();
         let mut literal = String::new();
         for element in parsed_pattern {
@@ -129,7 +139,8 @@ impl Compiler {
                         pattern.push(translit::PatternElement::Literal(literal));
                         literal = String::new();
                     }
-                    pattern.push(translit::PatternElement::UnicodeSet(self.compile_unicode_set(s)?));
+                    let set = self.compile_unicode_set(s)?;
+                    pattern.push(translit::PatternElement::UnicodeSet(set));
                 }
                 prs::PatternElement::Variable(s) => {
                     let variable_pattern = &self.variables
@@ -196,7 +207,7 @@ impl Compiler {
         Ok(translit::Pattern(pattern))
     }
 
-    fn compile_converison_rule_directed(&self, source: &prs::HalfRule, target: &prs::HalfRule) -> Result<translit::Rule> {
+    fn compile_converison_rule_directed(&self, source: &prs::HalfRule, target: &prs::HalfRule) -> Result<translit::Rule<'a>> {
         let ante = source.ante.as_ref().map(|ante| self.compile_source_pattern(&ante.0)).transpose()?;
         let key = self.compile_source_pattern(&source.key.0)?;
         let post = source.post.as_ref().map(|post| self.compile_source_pattern(&post.0)).transpose()?;
@@ -212,7 +223,7 @@ impl Compiler {
     }
 
     // returns (fwd, bwd)
-    fn compile_conversion_rule(&self, parsed_rule: &prs::ConversionRule) -> Result<(Option<translit::Rule>, Option<translit::Rule>)> {
+    fn compile_conversion_rule(&self, parsed_rule: &prs::ConversionRule) -> Result<(Option<translit::Rule<'a>>, Option<translit::Rule<'a>>)> {
         // we're doing some duplicate work here (compiling source and target key twice), but code is simpler
 
         let mut fwd_rule = None;
@@ -250,7 +261,7 @@ impl Compiler {
     }
 
     // returns (forward_transliterator, backwards_transliterator)
-    pub(super) fn compile(&mut self, parsed_rules: &[prs::Rule]) -> Result<(translit::Transliterator, translit::Transliterator)> {
+    pub(super) fn compile(&mut self, parsed_rules: &[prs::Rule]) -> Result<(translit::Transliterator<'a>, translit::Transliterator<'a>)> {
         let mut fwd_rules = Vec::new();
         let mut bwd_rules = Vec::new();
 

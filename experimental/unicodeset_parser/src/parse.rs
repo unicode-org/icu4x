@@ -57,7 +57,7 @@ impl From<ParseErrorKind> for ParseError {
 ///
 /// See [`ParseError::fmt_with_source`] for pretty-printing and [`ParseErrorKind`] of the
 /// different types of errors represented by this struct.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct ParseError {
     // offset is the index to an arbitrary byte in the last character in the source that makes sense
     // to display as location for the error, e.g., the unexpected character itself or
