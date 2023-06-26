@@ -16,6 +16,18 @@ use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap2d;
 
+#[cfg(feature = "data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_compactdecimal;
+    icu_compactdecimal_data::impl_compactdecimal_long_v1!(Baked);
+    icu_compactdecimal_data::impl_compactdecimal_short_v1!(Baked);
+};
+
 /// Relative time format V1 data struct.
 /// As in CLDR, this is a mapping from type (a power of ten, corresponding to
 /// the magnitude of the number being formatted) and count (a plural case or an

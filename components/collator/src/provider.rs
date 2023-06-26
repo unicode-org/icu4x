@@ -195,7 +195,8 @@ impl<'data> CollationDataV1<'data> {
     "collator/dia@1",
     extension_key = "co",
     fallback_by = "collation",
-    fallback_supplement = "collation"
+    fallback_supplement = "collation",
+    singleton,
 ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
@@ -216,7 +217,7 @@ pub struct CollationDiacriticsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(CollationJamoV1Marker = "collator/jamo@1")]
+#[icu_provider::data_struct(marker(CollationJamoV1Marker, "collator/jamo@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -420,7 +421,11 @@ impl CollationMetadataV1 {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(CollationSpecialPrimariesV1Marker = "collator/prim@1")]
+#[icu_provider::data_struct(marker(
+    CollationSpecialPrimariesV1Marker,
+    "collator/prim@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

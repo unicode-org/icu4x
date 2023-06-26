@@ -49,7 +49,6 @@ extern crate alloc;
 pub mod common;
 pub mod data_struct;
 pub mod errors;
-pub mod fallbacker;
 pub mod locale;
 pub mod logging;
 pub mod provider;
@@ -87,6 +86,8 @@ pub mod datetime_formatter;
 pub mod decimal;
 #[cfg(feature = "icu_displaynames")]
 pub mod displaynames;
+#[cfg(feature = "icu_locid_transform")]
+pub mod fallbacker;
 #[cfg(feature = "icu_decimal")]
 pub mod fixed_decimal;
 #[cfg(feature = "icu_list")]

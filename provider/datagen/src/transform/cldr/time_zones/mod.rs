@@ -29,6 +29,7 @@ macro_rules! impl_data_provider {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    self.check_req::<$marker>(req)?;
                     let langid = req.locale.get_langid();
 
                     let resource: &cldr_serde::time_zones::time_zone_names::Resource = self
@@ -256,10 +257,7 @@ mod tests {
         );
 
         let metazone_period: DataPayload<MetazonePeriodV1Marker> = provider
-            .load(DataRequest {
-                locale: &langid!("en").into(),
-                metadata: Default::default(),
-            })
+            .load(Default::default())
             .unwrap()
             .take_payload()
             .unwrap();

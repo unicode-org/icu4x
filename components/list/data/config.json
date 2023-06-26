@@ -1,0 +1,27 @@
+{
+    "keys": {
+        "Explicit": [
+            "list/and@1",
+            "list/or@1",
+            "list/unit@1"
+
+        ]
+    },
+    "locales": {
+        "CldrSet": [
+            "modern"
+        ]
+    },
+    "cldr": "Latest",
+    "icu_export": "Latest",
+    "segmenter_lstm": "Latest",
+    "export": {
+        "Baked": {
+            "output_path": "data",
+            "use_separate_crates": true,
+            "pretty": true
+        }
+    },
+    "fallback": "Runtime",
+    "overwrite": true
+}

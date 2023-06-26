@@ -26,6 +26,14 @@ export class ICU4XIsoDate {
 
   /**
 
+   * Creates a new {@link ICU4XIsoDate `ICU4XIsoDate`} representing January 1, 1970.
+
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch Rust documentation for `unix_epoch`} for more information.
+   */
+  static create_for_unix_epoch(): ICU4XIsoDate;
+
+  /**
+
    * Convert this date to one in a different calendar
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar Rust documentation for `to_calendar`} for more information.

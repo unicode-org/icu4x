@@ -236,6 +236,8 @@ pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
 
 #[cfg(test)]
 mod test {
+    use crate::rata_die::RataDie;
+
     use super::*;
     use types::Era;
 
@@ -345,7 +347,7 @@ mod test {
 
     #[derive(Debug)]
     struct TestCase {
-        fixed_date: i32,
+        fixed_date: RataDie,
         iso_year: i32,
         iso_month: u8,
         iso_day: u8,
@@ -384,7 +386,7 @@ mod test {
 
         let cases = [
             TestCase {
-                fixed_date: 1,
+                fixed_date: RataDie::new(1),
                 iso_year: 1,
                 iso_month: 1,
                 iso_day: 1,
@@ -394,7 +396,7 @@ mod test {
                 expected_day: 1,
             },
             TestCase {
-                fixed_date: 181,
+                fixed_date: RataDie::new(181),
                 iso_year: 1,
                 iso_month: 6,
                 iso_day: 30,
@@ -404,7 +406,7 @@ mod test {
                 expected_day: 30,
             },
             TestCase {
-                fixed_date: 1155,
+                fixed_date: RataDie::new(1155),
                 iso_year: 4,
                 iso_month: 2,
                 iso_day: 29,
@@ -414,7 +416,7 @@ mod test {
                 expected_day: 29,
             },
             TestCase {
-                fixed_date: 1344,
+                fixed_date: RataDie::new(1344),
                 iso_year: 4,
                 iso_month: 9,
                 iso_day: 5,
@@ -424,7 +426,7 @@ mod test {
                 expected_day: 5,
             },
             TestCase {
-                fixed_date: 36219,
+                fixed_date: RataDie::new(36219),
                 iso_year: 100,
                 iso_month: 3,
                 iso_day: 1,
@@ -558,7 +560,7 @@ mod test {
 
         let cases = [
             TestCase {
-                fixed_date: 0,
+                fixed_date: RataDie::new(0),
                 iso_year: 0,
                 iso_month: 12,
                 iso_day: 31,
@@ -568,7 +570,7 @@ mod test {
                 expected_day: 31,
             },
             TestCase {
-                fixed_date: -365, // This is a leap year
+                fixed_date: RataDie::new(-365), // This is a leap year
                 iso_year: 0,
                 iso_month: 1,
                 iso_day: 1,
@@ -578,7 +580,7 @@ mod test {
                 expected_day: 1,
             },
             TestCase {
-                fixed_date: -366,
+                fixed_date: RataDie::new(-366),
                 iso_year: -1,
                 iso_month: 12,
                 iso_day: 31,
@@ -588,7 +590,7 @@ mod test {
                 expected_day: 31,
             },
             TestCase {
-                fixed_date: -1461,
+                fixed_date: RataDie::new(-1461),
                 iso_year: -4,
                 iso_month: 12,
                 iso_day: 31,
@@ -598,7 +600,7 @@ mod test {
                 expected_day: 31,
             },
             TestCase {
-                fixed_date: -1826,
+                fixed_date: RataDie::new(-1826),
                 iso_year: -4,
                 iso_month: 1,
                 iso_day: 1,
@@ -621,8 +623,8 @@ mod test {
         // than the other, without exception.
         for i in -100..100 {
             for j in -100..100 {
-                let iso_i: Date<Iso> = Iso::iso_from_fixed(i);
-                let iso_j: Date<Iso> = Iso::iso_from_fixed(j);
+                let iso_i: Date<Iso> = Iso::iso_from_fixed(RataDie::new(i));
+                let iso_j: Date<Iso> = Iso::iso_from_fixed(RataDie::new(j));
 
                 let greg_i: Date<Gregorian> = Date::new_from_iso(iso_i, Gregorian);
                 let greg_j: Date<Gregorian> = Date::new_from_iso(iso_j, Gregorian);

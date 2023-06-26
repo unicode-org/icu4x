@@ -1,0 +1,30 @@
+{
+    "keys": {
+        "Explicit": [
+            "collator/data@1",
+            "collator/dia@1",
+            "collator/jamo@1",
+            "collator/meta@1",
+            "collator/prim@1",
+            "collator/reord@1"
+
+        ]
+    },
+    "locales": {
+        "CldrSet": [
+            "modern"
+        ]
+    },
+    "cldr": "Latest",
+    "icu_export": "Latest",
+    "segmenter_lstm": "Latest",
+    "export": {
+        "Baked": {
+            "output_path": "data",
+            "use_separate_crates": true,
+            "pretty": true
+        }
+    },
+    "fallback": "Runtime",
+    "overwrite": true
+}

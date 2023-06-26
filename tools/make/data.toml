@@ -132,20 +132,58 @@ args = [
     "--overwrite",
 ]
 
-[tasks.full-data]
-description = "Builds a complete postcard file from latest CLDR and icu_exportdata."
+[tasks.bakeddata]
+description = "Builds full baked data"
 category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys=experimental-all",
-    "--locales=full",
-    "--format=blob",
-    "--out=/dev/null",
-    "--overwrite",
-]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+if array_is_empty ${@}
+    mode = set "--release"
+    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemapping experimental/compactdecimal experimental/displaynames experimental/relativetime
+else
+    mode = set "--bin=icu4x-datagen" # need some valid argument
+    components = set ${@}
+end
+
+root = pwd
+for component in ${components}
+    cd "${component}/data"
+    exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking ${mode} -- --config config.json
+    cd "${root}"
+end
+'''
+
+[tasks.bakeddata-check]
+description = "Rebuild baked data and ensure that the working copy is clean"
+category = "ICU4X Data"
+dependencies = ["bakeddata"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    msg = array "" ""
+    array_push ${msg} "Baked data needs to be updated. Please run `cargo make bakeddata`"
+    array_push ${msg} ""
+    array_push ${msg} "${output.stdout}"
+    msg = array_join ${msg} "\n"
+    trigger_error ${msg}
+end
+'''
+
+[tasks.full-data]
+description = "Builds a complete postcard file from latest data."
+category = "ICU4X Data"
+dependencies = ["bakeddata"]
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking --release -- --locales basic moderate --keys experimental-all --format mod --out nonbake
+rm -r nonbake
+'''
 
 [tasks.download-repo-sources]
 description = "Download fresh CLDR JSON and icuexportdata, overwriting the existing CLDR JSON/icuexportdata."

@@ -27,12 +27,11 @@
 //! use icu::locid::locale;
 //! use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 //!
-//! let pr = PluralRules::try_new_unstable(
-//!     &icu_testdata::unstable(),
+//! let pr = PluralRules::try_new(
 //!     &locale!("en").into(),
 //!     PluralRuleType::Cardinal,
 //! )
-//! .expect("Failed to construct a PluralRules struct.");
+//! .expect("locale should be present");
 //!
 //! assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 //! ```
@@ -140,12 +139,11 @@ pub enum PluralRuleType {
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
-/// let pr = PluralRules::try_new_unstable(
-///     &icu_testdata::unstable(),
+/// let pr = PluralRules::try_new(
 ///     &locale!("en").into(),
 ///     PluralRuleType::Cardinal,
 /// )
-/// .expect("Failed to construct a PluralRules struct.");
+/// .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
@@ -272,12 +270,11 @@ impl PluralCategory {
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
-/// let pr = PluralRules::try_new_unstable(
-///     &icu_testdata::unstable(),
+/// let pr = PluralRules::try_new(
 ///     &locale!("en").into(),
 ///     PluralRuleType::Cardinal,
 /// )
-/// .expect("Failed to construct a PluralRules struct.");
+/// .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
@@ -289,153 +286,81 @@ impl PluralCategory {
 pub struct PluralRules(DataPayload<ErasedPluralRulesV1Marker>);
 
 impl PluralRules {
-    /// Constructs a new `PluralRules` for a given locale, [`type`] and [`data provider`].
-    ///
-    /// This constructor will fail if the [`Data Provider`] does not have the data.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::locale;
-    /// use icu::plurals::{PluralRuleType, PluralRules};
-    ///
-    /// let _ = PluralRules::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale!("en").into(),
-    ///     PluralRuleType::Cardinal,
-    /// );
-    /// ```
-    ///
-    /// [`type`]: PluralRuleType
-    /// [`data provider`]: icu_provider
-    pub fn try_new_unstable<D>(
-        data_provider: &D,
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        rule_type: PluralRuleType,
+        error: PluralsError,
+        /// Constructs a new `PluralRules` for a given locale and type.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locid::locale;
+        /// use icu::plurals::{PluralRuleType, PluralRules};
+        ///
+        /// let _ = PluralRules::try_new(
+        ///     &locale!("en").into(),
+        ///     PluralRuleType::Cardinal,
+        /// ).expect("locale should be present");
+        /// ```
+        ///
+        /// [`type`]: PluralRuleType
+        /// [`data provider`]: icu_provider
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable(
+        data_provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized),
         locale: &DataLocale,
         rule_type: PluralRuleType,
-    ) -> Result<Self, PluralsError>
-    where
-        D: DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized,
-    {
+    ) -> Result<Self, PluralsError> {
         match rule_type {
             PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(data_provider, locale),
             PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(data_provider, locale),
         }
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        rule_type: PluralRuleType,
-        error: PluralsError
-    );
-
-    /// Constructs a new `PluralRules` for a given locale for cardinal numbers.
-    ///
-    /// Cardinal plural forms express quantities of units such as time, currency or distance,
-    /// used in conjunction with a number expressed in decimal digits (i.e. "2", not "two").
-    ///
-    /// For example, English has two forms for cardinals:
-    ///
-    /// * [`One`]: `1 day`
-    /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::locale;
-    /// use icu::plurals::{PluralCategory, PluralRules};
-    ///
-    /// let rules = PluralRules::try_new_cardinal_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale!("ru").into(),
-    /// )
-    /// .expect("Data should be present");
-    ///
-    /// assert_eq!(rules.category_for(2_usize), PluralCategory::Few);
-    /// ```
-    ///
-    /// [`One`]: PluralCategory::One
-    /// [`Other`]: PluralCategory::Other
-    pub fn try_new_cardinal_unstable<D>(
-        data_provider: &D,
-        locale: &DataLocale,
-    ) -> Result<Self, PluralsError>
-    where
-        D: DataProvider<CardinalV1Marker> + ?Sized,
-    {
-        Ok(Self(
-            data_provider
-                .load(DataRequest {
-                    locale,
-                    metadata: Default::default(),
-                })?
-                .take_payload()?
-                .cast(),
-        ))
-    }
-
-    icu_provider::gen_any_buffer_constructors!(
+    icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: skip,
         error: PluralsError,
+        /// Constructs a new `PluralRules` for a given locale for cardinal numbers.
+        ///
+        /// Cardinal plural forms express quantities of units such as time, currency or distance,
+        /// used in conjunction with a number expressed in decimal digits (i.e. "2", not "two").
+        ///
+        /// For example, English has two forms for cardinals:
+        ///
+        /// * [`One`]: `1 day`
+        /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locid::locale;
+        /// use icu::plurals::{PluralCategory, PluralRules};
+        ///
+        /// let rules = PluralRules::try_new_cardinal(&locale!("ru").into()).expect("locale should be present");
+        ///
+        /// assert_eq!(rules.category_for(2_usize), PluralCategory::Few);
+        /// ```
+        ///
+        /// [`One`]: PluralCategory::One
+        /// [`Other`]: PluralCategory::Other
         functions: [
-            Self::try_new_cardinal_unstable,
+            try_new_cardinal,
             try_new_cardinal_with_any_provider,
-            try_new_cardinal_with_buffer_provider
+            try_new_cardinal_with_buffer_provider,
+            try_new_cardinal_unstable,
+            Self,
         ]
     );
 
-    /// Constructs a new `PluralRules` for a given locale for ordinal numbers.
-    ///
-    /// Ordinal plural forms denote the order of items in a set and are always integers.
-    ///
-    /// For example, English has four forms for ordinals:
-    ///
-    /// * [`One`]: `1st floor`, `21st floor`, `101st floor`
-    /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
-    /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
-    /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::locale;
-    /// use icu::plurals::{PluralCategory, PluralRules};
-    ///
-    /// let rules = PluralRules::try_new_ordinal_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale!("ru").into(),
-    /// )
-    /// .expect("Data should be present");
-    ///
-    /// assert_eq!(rules.category_for(2_usize), PluralCategory::Other);
-    /// ```
-    ///
-    /// [`One`]: PluralCategory::One
-    /// [`Two`]: PluralCategory::Two
-    /// [`Few`]: PluralCategory::Few
-    /// [`Other`]: PluralCategory::Other
-    pub fn try_new_ordinal_unstable<D>(
-        data_provider: &D,
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
+    pub fn try_new_cardinal_unstable(
+        data_provider: &(impl DataProvider<CardinalV1Marker> + ?Sized),
         locale: &DataLocale,
-    ) -> Result<Self, PluralsError>
-    where
-        D: DataProvider<OrdinalV1Marker> + ?Sized,
-    {
+    ) -> Result<Self, PluralsError> {
         Ok(Self(
             data_provider
                 .load(DataRequest {
@@ -447,16 +372,63 @@ impl PluralRules {
         ))
     }
 
-    icu_provider::gen_any_buffer_constructors!(
+    icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: skip,
         error: PluralsError,
+        /// Constructs a new `PluralRules` for a given locale for ordinal numbers.
+        ///
+        /// Ordinal plural forms denote the order of items in a set and are always integers.
+        ///
+        /// For example, English has four forms for ordinals:
+        ///
+        /// * [`One`]: `1st floor`, `21st floor`, `101st floor`
+        /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
+        /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
+        /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locid::locale;
+        /// use icu::plurals::{PluralCategory, PluralRules};
+        ///
+        /// let rules = PluralRules::try_new_ordinal(
+        ///     &locale!("ru").into(),
+        /// )
+        /// .expect("locale should be present");
+        ///
+        /// assert_eq!(rules.category_for(2_usize), PluralCategory::Other);
+        /// ```
+        ///
+        /// [`One`]: PluralCategory::One
+        /// [`Two`]: PluralCategory::Two
+        /// [`Few`]: PluralCategory::Few
+        /// [`Other`]: PluralCategory::Other
         functions: [
-            Self::try_new_ordinal_unstable,
+            try_new_ordinal,
             try_new_ordinal_with_any_provider,
-            try_new_ordinal_with_buffer_provider
+            try_new_ordinal_with_buffer_provider,
+            try_new_ordinal_unstable,
+            Self,
         ]
     );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
+    pub fn try_new_ordinal_unstable(
+        data_provider: &(impl DataProvider<OrdinalV1Marker> + ?Sized),
+        locale: &DataLocale,
+    ) -> Result<Self, PluralsError> {
+        Ok(Self(
+            data_provider
+                .load(DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                })?
+                .take_payload()?
+                .cast(),
+        ))
+    }
 
     /// Returns the [`Plural Category`] appropriate for the given number.
     ///
@@ -466,12 +438,11 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
-    /// let pr = PluralRules::try_new_unstable(
-    ///     &icu_testdata::unstable(),
+    /// let pr = PluralRules::try_new(
     ///     &locale!("en").into(),
     ///     PluralRuleType::Cardinal,
     /// )
-    /// .expect("Failed to construct a PluralRules struct.");
+    /// .expect("locale should be present");
     ///
     /// match pr.category_for(1_usize) {
     ///     PluralCategory::One => "One item",
@@ -496,8 +467,8 @@ impl PluralRules {
     /// use icu::plurals::{PluralRuleType, PluralRules};
     /// use std::convert::TryFrom;
     /// #
-    /// # let pr = PluralRules::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), PluralRuleType::Cardinal)
-    /// #     .expect("Failed to construct a PluralRules struct.");
+    /// # let pr = PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+    /// #     .expect("locale should be present");
     ///
     /// let operands = PluralOperands::try_from(-5).expect("Failed to parse to operands.");
     /// let operands2: PluralOperands = "5.10".parse().expect("Failed to parse to operands.");
@@ -542,12 +513,11 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
-    /// let pr = PluralRules::try_new_unstable(
-    ///     &icu_testdata::unstable(),
+    /// let pr = PluralRules::try_new(
     ///     &locale!("fr").into(),
     ///     PluralRuleType::Cardinal,
     /// )
-    /// .expect("Failed to construct a PluralRules struct.");
+    /// .expect("locale should be present");
     ///
     /// let mut categories = pr.categories();
     /// assert_eq!(categories.next(), Some(PluralCategory::One));

@@ -3,7 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crlify::BufWriterWithLineEndingFix;
+use icu_datagen::baked_exporter::*;
+use icu_datagen::blob_exporter::*;
+use icu_datagen::fs_exporter::serializers::*;
+use icu_datagen::fs_exporter::*;
 use icu_datagen::prelude::*;
+use icu_provider::datagen::MultiExporter;
 use rust_format::*;
 use std::fs::File;
 use std::io::Write;
@@ -33,44 +38,57 @@ fn main() {
         .with_segmenter_lstm(repodata::paths::lstm())
         .unwrap();
 
-    let json_out = Out::Fs {
-        output_path: repodata::paths::json(),
-        serializer: Box::new(syntax::Json::pretty()),
-        overwrite: true,
-        fingerprint: true,
-    };
+    let json_out = Box::new(
+        FilesystemExporter::try_new(Box::new(Json::pretty()), {
+            let mut options = ExporterOptions::default();
+            options.root = repodata::paths::json();
+            options.overwrite = OverwriteOption::RemoveAndReplace;
+            options.fingerprint = true;
+            options
+        })
+        .unwrap(),
+    );
 
-    let postcard_out = Out::Fs {
-        output_path: out_dir.join("postcard"),
-        serializer: Box::<syntax::Postcard>::default(),
-        overwrite: true,
-        fingerprint: true,
-    };
+    let postcard_out = Box::new(
+        FilesystemExporter::try_new(Box::<Postcard>::default(), {
+            let mut options = ExporterOptions::default();
+            options.root = out_dir.join("postcard");
+            options.overwrite = OverwriteOption::RemoveAndReplace;
+            options.fingerprint = true;
+            options
+        })
+        .unwrap(),
+    );
 
-    let blob_out = Out::Blob(Box::new(
+    let blob_out = Box::new(BlobExporter::new_with_sink(Box::new(
         File::create(out_dir.join("testdata.postcard")).unwrap(),
-    ));
+    )));
 
-    let mut options = BakedOptions::default();
-    options.insert_feature_gates = true;
-    options.use_separate_crates = true;
-    options.overwrite = true;
-    options.pretty = true;
-    let mod_out = Out::Baked {
-        mod_directory: out_dir.join("baked"),
-        options,
-    };
+    let mod_out = Box::new(
+        BakedExporter::new(out_dir.join("baked"), {
+            let mut options = Options::default();
+            options.insert_feature_gates = true;
+            options.use_separate_crates = true;
+            options.overwrite = true;
+            options.pretty = true;
+            options
+        })
+        .unwrap(),
+    );
 
-    icu_datagen::datagen(
-        Some(LOCALES),
-        &icu_datagen::all_keys_with_experimental()
-            .into_iter()
-            .chain([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-            .collect::<Vec<_>>(),
-        &source,
-        vec![json_out, blob_out, mod_out, postcard_out],
-    )
-    .unwrap();
+    let mut options = options::Options::default();
+    options.locales = options::LocaleInclude::Explicit(LOCALES.iter().cloned().collect());
+
+    DatagenProvider::try_new(options, source)
+        .unwrap()
+        .export(
+            icu_datagen::all_keys_with_experimental()
+                .into_iter()
+                .chain([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+                .collect(),
+            MultiExporter::new(vec![json_out, blob_out, mod_out, postcard_out]),
+        )
+        .unwrap();
 
     let mut metadata =
         BufWriterWithLineEndingFix::new(File::create(out_dir.join("metadata.rs.data")).unwrap());

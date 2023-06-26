@@ -77,6 +77,11 @@ pub use source::SourceData;
 
 #[cfg(feature = "provider_baked")]
 pub mod baked_exporter;
+#[cfg(feature = "provider_blob")]
+pub use icu_provider_blob::export as blob_exporter;
+#[cfg(feature = "provider_fs")]
+pub use icu_provider_fs::export as fs_exporter;
+
 pub mod options;
 
 /// A prelude for using the datagen API
@@ -151,8 +156,15 @@ impl DatagenProvider {
                     .into_iter()
                     .collect(),
             ),
-            s => s,
+            options::LocaleInclude::Explicit(set) => options::LocaleInclude::Explicit(set),
+            options::LocaleInclude::All => options::LocaleInclude::All,
         };
+
+        if source.options.fallback == options::FallbackMode::Runtime {
+            if let options::LocaleInclude::Explicit(ref mut set) = source.options.locales {
+                set.insert(Default::default());
+            }
+        }
 
         Ok(Self { source })
     }
@@ -197,27 +209,92 @@ impl DatagenProvider {
             use rayon_prelude::*;
 
             keys.into_par_iter().try_for_each(|key| {
-                provider
-                    .supported_locales_for_key(key)
-                    .map_err(|e| e.with_key(key))?
-                    .into_par_iter()
-                    .try_for_each(|locale| {
-                        let req = DataRequest {
-                            locale: &locale,
-                            metadata: Default::default(),
-                        };
-                        let payload = provider
-                            .load_data(key, req)
-                            .and_then(DataResponse::take_payload)
-                            .map_err(|e| e.with_req(key, req))?;
-                        log::trace!("Writing payload: {key}/{locale}");
-                        exporter
-                            .put_payload(key, &locale, &payload)
-                            .map_err(|e| e.with_req(key, req))
-                    })?;
+                if key.metadata().singleton {
+                    let payload = provider
+                        .load_data(key, Default::default())
+                        .and_then(DataResponse::take_payload)
+                        .map_err(|e| e.with_req(key, Default::default()))?;
 
-                log::info!("Writing key: {key}");
-                exporter.flush(key).map_err(|e| e.with_key(key))
+                    return exporter.flush_singleton(key, &payload).map_err(|e| e.with_req(key, Default::default()));
+                }
+
+                let mut supported_locales: HashSet<DataLocale> = provider
+                    .supported_locales_for_key(key)
+                    .map_err(|e| e.with_key(key))?.into_iter().collect();
+
+                match provider.source.options.fallback {
+                    options::FallbackMode::Legacy => {
+                        supported_locales
+                            .into_par_iter()
+                            .try_for_each(|locale| {
+                                let req = DataRequest {
+                                    locale: &locale,
+                                    metadata: Default::default(),
+                                };
+                                let payload = provider
+                                    .load_data(key, req)
+                                    .and_then(DataResponse::take_payload)
+                                    .map_err(|e| e.with_req(key, req))?;
+                                exporter.put_payload(key, &locale, &payload)
+                            })
+                            .map_err(|e| e.with_key(key))?;
+
+                        exporter
+                            .flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
+                            .map_err(|e| e.with_key(key))
+                    }
+                    options::FallbackMode::Runtime => {
+                        let payloads = supported_locales.into_par_iter()
+                            .map(|locale| {
+                                let req = DataRequest {
+                                    locale: &locale,
+                                    metadata: Default::default(),
+                                };
+                                let payload = provider
+                                    .load_data(key, req)
+                                    .and_then(DataResponse::take_payload)
+                                    .map_err(|e| e.with_req(key, req))?;
+                                Ok::<_, DataError>((locale, payload))
+                            })
+                            .collect::<Result<std::collections::HashMap<_, _>, _>>().map_err(|e| e.with_key(key))?;
+
+                        // TODO(#2683): Figure out how to compare `DataPayload<ExportMarker>` for equality
+                        // to actually dedupe payloads
+
+                        payloads
+                            .into_par_iter()
+                            .try_for_each(|(locale, payload)| {
+                                exporter.put_payload(key, &locale, &payload).map_err(|e| e.with_key(key))
+                            })?;
+                        exporter
+                            .flush_with_fallback(key, icu_provider::datagen::FallbackMode::Full)
+                            .map_err(|e| e.with_key(key))
+                    }
+                    options::FallbackMode::Expand => match &provider.source.options.locales {
+                        options::LocaleInclude::Explicit(requested_locales) => {
+                            let provider = icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable(provider.clone())?;
+                            supported_locales.extend(requested_locales.iter().map(Into::into));
+                            supported_locales
+                                .into_par_iter()
+                                .try_for_each(|locale| {
+                                    let req = DataRequest {
+                                        locale: &locale,
+                                        metadata: Default::default(),
+                                    };
+                                    let payload = provider
+                                        .load_data(key, req)
+                                        .and_then(DataResponse::take_payload)
+                                        .map_err(|e| e.with_req(key, req))?;
+                                    exporter.put_payload(key, &locale, &payload).map_err(|e| e.with_key(key))
+                                })?;
+                                exporter.flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
+                                .map_err(|e| e.with_key(key))
+                        }
+                        _ => Err(DataError::custom(
+                            "FallbackMode::Expand requires LocaleInclude::Explicit or LocaleInclude::CldrSet",
+                        )),
+                    },
+                }
             })?;
 
             exporter.close()
@@ -477,32 +554,9 @@ pub fn datagen(
         },
     )?;
 
-    struct MultiExporter(Vec<Box<dyn DataExporter>>);
-
-    impl DataExporter for MultiExporter {
-        fn put_payload(
-            &self,
-            key: DataKey,
-            locale: &DataLocale,
-            payload: &DataPayload<ExportMarker>,
-        ) -> Result<(), DataError> {
-            self.0
-                .iter()
-                .try_for_each(|e| e.put_payload(key, locale, payload))
-        }
-
-        fn flush(&self, key: DataKey) -> Result<(), DataError> {
-            self.0.iter().try_for_each(|e| e.flush(key))
-        }
-
-        fn close(&mut self) -> Result<(), DataError> {
-            self.0.iter_mut().try_for_each(|e| e.close())
-        }
-    }
-
     provider.export(
         keys.iter().cloned().collect(),
-        MultiExporter(
+        MultiExporter::new(
             outs.into_iter()
                 .map(|out| -> Result<Box<dyn DataExporter>, DataError> {
                     use baked_exporter::*;
@@ -644,11 +698,7 @@ impl CldrLocaleSubset {
 
 #[cfg(feature = "legacy_api")]
 #[doc(hidden)]
-pub mod syntax {
-    pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
-    pub use icu_provider_fs::export::serializers::json::Serializer as Json;
-    pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
-}
+pub use icu_provider_fs::export::serializers as syntax;
 
 impl AnyProvider for DatagenProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {

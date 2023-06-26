@@ -16,6 +16,7 @@ impl DataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<VariantDisplayNamesV1Marker>, DataError> {
+        self.check_req::<VariantDisplayNamesV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::displaynames::variant::Resource = self

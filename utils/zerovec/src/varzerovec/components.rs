@@ -53,7 +53,7 @@ pub unsafe trait VarZeroVecFormat: 'static + Sized {
 /// Will have a smaller data size, but it's more likely for larger arrays
 /// to be unrepresentable (and error on construction)
 ///
-/// This is the default index size used by all [`VarZeroVec`](super::VarZeroVec) tyoes.
+/// This is the default index size used by all [`VarZeroVec`](super::VarZeroVec) types.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct Index16;

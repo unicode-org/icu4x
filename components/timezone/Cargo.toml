@@ -39,11 +39,14 @@ zerovec = { version = "0.9.4", path = "../../utils/zerovec", default-features = 
 databake = { version = "0.1.3", path = "../../utils/databake", optional = true, features = ["derive"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
+icu_timezone_data = { path = "data", optional = true }
+
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_timezone"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_timezone", "icu_locid_transform"] }
 
 [features]
 std = ["icu_calendar/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
+data = ["dep:icu_timezone_data"]

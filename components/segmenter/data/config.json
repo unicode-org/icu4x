@@ -1,0 +1,30 @@
+{
+    "keys": {
+        "Explicit": [
+            "segmenter/dictionary/w_auto@1",
+            "segmenter/dictionary/wl_ext@1",
+            "segmenter/grapheme@1",
+            "segmenter/line@1",
+            "segmenter/lstm/wl_auto@1",
+            "segmenter/sentence@1",
+            "segmenter/word@1"
+        ]
+    },
+    "locales": {
+        "CldrSet": [
+            "modern"
+        ]
+    },
+    "cldr": "Latest",
+    "icu_export": "Latest",
+    "segmenter_lstm": "Latest",
+    "export": {
+        "Baked": {
+            "output_path": "data",
+            "use_separate_crates": true,
+            "pretty": true
+        }
+    },
+    "fallback": "Legacy",
+    "overwrite": true
+}

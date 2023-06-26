@@ -103,9 +103,8 @@ impl Iterator for TestContentIterator {
     }
 }
 
-#[test]
-fn run_line_break_test() {
-    let test_iter = TestContentIterator::new("./tests/testdata/LineBreakTest.txt");
+fn line_break_test(filename: &str) {
+    let test_iter = TestContentIterator::new(filename);
     let segmenter =
         LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
     for mut test in test_iter {
@@ -138,6 +137,16 @@ fn run_line_break_test() {
             );
         }
     }
+}
+
+#[test]
+fn run_line_break_test() {
+    line_break_test("./tests/testdata/LineBreakTest.txt");
+}
+
+#[test]
+fn run_line_break_extra_test() {
+    line_break_test("./tests/testdata/LineBreakExtraTest.txt");
 }
 
 #[test]

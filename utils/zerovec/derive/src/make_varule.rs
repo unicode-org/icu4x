@@ -102,10 +102,13 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
     let vis = &input.vis;
 
-    let doc = format!("[`VarULE`](zerovec::ule::VarULE) type for {name}");
+    let doc = format!(
+        "[`VarULE`](zerovec::ule::VarULE) type for [`{name}`]. See [`{name}`] for documentation."
+    );
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[doc = #doc]
+        #[allow(missing_docs)]
         #vis struct #ule_name #field_inits #semi
     );
 

@@ -19,6 +19,16 @@ use crate::rules::runtime::ast::Rule;
 use icu_provider::prelude::*;
 use icu_provider::DataMarker;
 
+#[cfg(feature = "data")]
+pub(crate) struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_plurals;
+    icu_plurals_data::impl_plurals_ordinal_v1!(Baked);
+    icu_plurals_data::impl_plurals_cardinal_v1!(Baked);
+};
+
 #[cfg(doc)]
 use crate::PluralCategory;
 

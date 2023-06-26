@@ -37,6 +37,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::coptic::Coptic;
 use crate::iso::Iso;
 use crate::julian::Julian;
+use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use core::marker::PhantomData;
 use tinystr::tinystr;
@@ -102,6 +103,14 @@ impl CalendarArithmetic for Ethiopian {
 
     fn is_leap_year(year: i32) -> bool {
         year % 4 == 3
+    }
+
+    fn last_month_day_in_year(year: i32) -> (u8, u8) {
+        if Self::is_leap_year(year) {
+            (13, 6)
+        } else {
+            (13, 5)
+        }
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
@@ -219,17 +228,17 @@ impl Calendar for Ethiopian {
     }
 }
 
-const ETHIOPIC_TO_COPTIC_OFFSET: i32 =
-    super::coptic::COPTIC_EPOCH - Julian::fixed_from_julian_integers(8, 8, 29);
+const ETHIOPIC_TO_COPTIC_OFFSET: i64 =
+    super::coptic::COPTIC_EPOCH.const_diff(Julian::fixed_from_julian_integers(8, 8, 29));
 
 impl Ethiopian {
     /// Construct a new Ethiopian Calendar for the Amete Mihret era naming scheme
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self(false)
     }
     /// Construct a new Ethiopian Calendar with a value specifying whether or not it is Amete Alem
-    pub fn new_with_era_style(era_style: EthiopianEraStyle) -> Self {
-        Self(era_style == EthiopianEraStyle::AmeteAlem)
+    pub const fn new_with_era_style(era_style: EthiopianEraStyle) -> Self {
+        Self(matches!(era_style, EthiopianEraStyle::AmeteAlem))
     }
     /// Set whether or not this uses the Amete Alem era scheme
     pub fn set_era_style(&mut self, era_style: EthiopianEraStyle) {
@@ -250,13 +259,13 @@ impl Ethiopian {
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L2017
-    fn fixed_from_ethiopian(date: ArithmeticDate<Ethiopian>) -> i32 {
+    fn fixed_from_ethiopian(date: ArithmeticDate<Ethiopian>) -> RataDie {
         Coptic::fixed_from_coptic_integers(date.year, date.month, date.day)
             - ETHIOPIC_TO_COPTIC_OFFSET
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L2028
-    fn ethiopian_from_fixed(date: i32) -> EthiopianDateInner {
+    fn ethiopian_from_fixed(date: RataDie) -> EthiopianDateInner {
         let coptic_date = Coptic::coptic_from_fixed(date + ETHIOPIC_TO_COPTIC_OFFSET);
 
         #[allow(clippy::unwrap_used)] // Coptic and Ethiopic have the same allowed ranges for dates

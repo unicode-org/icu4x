@@ -8,7 +8,7 @@ use alloc::boxed::Box;
 use databake::{Bake, CrateEnv, TokenStream};
 use yoke::*;
 
-trait ExportableYoke {
+trait ExportableDataPayload {
     fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
     fn serialize_yoke(
         &self,
@@ -16,10 +16,9 @@ trait ExportableYoke {
     ) -> Result<(), DataError>;
 }
 
-impl<Y, C> ExportableYoke for Yoke<Y, C>
+impl<M: DataMarker> ExportableDataPayload for DataPayload<M>
 where
-    Y: for<'a> Yokeable<'a>,
-    for<'a> <Y as Yokeable<'a>>::Output: Bake + serde::Serialize,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
 {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
@@ -40,7 +39,7 @@ where
 #[doc(hidden)] // exposed for make_exportable_provider
 #[derive(yoke::Yokeable)]
 pub struct ExportBox {
-    payload: Box<dyn ExportableYoke + Sync>,
+    payload: Box<dyn ExportableDataPayload + Sync + Send>,
 }
 
 impl core::fmt::Debug for ExportBox {
@@ -54,12 +53,12 @@ impl core::fmt::Debug for ExportBox {
 impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DataMarker,
-    M::Yokeable: Sync,
+    M::Yokeable: Sync + Send,
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
-            payload: Box::new(other.yoke),
+            payload: Box::new(other),
         })
     }
 }

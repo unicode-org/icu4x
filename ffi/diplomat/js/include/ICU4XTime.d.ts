@@ -21,6 +21,15 @@ export class ICU4XTime {
 
   /**
 
+   * Creates a new {@link ICU4XTime `ICU4XTime`} representing midnight (00:00.000).
+
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html Rust documentation for `Time`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static create_midnight(): ICU4XTime | never;
+
+  /**
+
    * Returns the hour in this time
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour Rust documentation for `hour`} for more information.

@@ -37,6 +37,13 @@ pub mod ffi {
             Ok(Box::new(ICU4XTime(time)))
         }
 
+        /// Creates a new [`ICU4XTime`] representing midnight (00:00.000).
+        #[diplomat::rust_link(icu::calendar::types::Time, Struct)]
+        pub fn create_midnight() -> Result<Box<ICU4XTime>, ICU4XError> {
+            let time = Time::midnight();
+            Ok(Box::new(ICU4XTime(time)))
+        }
+
         /// Returns the hour in this time
         #[diplomat::rust_link(icu::calendar::types::Time::hour, StructField)]
         pub fn hour(&self) -> u8 {

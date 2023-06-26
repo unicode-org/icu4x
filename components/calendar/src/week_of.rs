@@ -42,12 +42,14 @@ impl From<&WeekDataV1> for WeekCalculator {
 }
 
 impl WeekCalculator {
-    /// Creates a new [`WeekCalculator`] from locale data.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: skip,
+        error: CalendarError,
+        /// Creates a new [`WeekCalculator`] from locale data.
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, CalendarError>
     where
         P: DataProvider<crate::provider::WeekDataV1Marker>,
@@ -62,12 +64,6 @@ impl WeekCalculator {
             .map_err(Into::into)
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: skip,
-        error: CalendarError
-    );
-
     /// Returns the week of month according to a calendar with min_week_days = 1.
     ///
     /// This is different from what the UTS35 spec describes [1] but the latter is
@@ -81,11 +77,10 @@ impl WeekCalculator {
     /// use icu_calendar::types::{DayOfMonth, IsoWeekday, WeekOfMonth};
     /// use icu_calendar::week::WeekCalculator;
     ///
-    /// let week_calculator = WeekCalculator::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &icu_locid::locale!("en-GB").into(),
+    /// let week_calculator = WeekCalculator::try_new(
+    ///     &icu_locid::locale!("und-GB").into(),
     /// )
-    /// .expect("Data exists");
+    /// .expect("locale should be present");
     ///
     /// // Wednesday the 10th is in week 2:
     /// assert_eq!(
@@ -108,11 +103,10 @@ impl WeekCalculator {
     /// use icu_calendar::week::{RelativeUnit, WeekCalculator, WeekOf};
     /// use icu_calendar::Date;
     ///
-    /// let week_calculator = WeekCalculator::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &icu_locid::locale!("en-GB").into(),
+    /// let week_calculator = WeekCalculator::try_new(
+    ///     &icu_locid::locale!("und-GB").into(),
     /// )
-    /// .expect("Data exists");
+    /// .expect("locale should be present");
     ///
     /// let iso_date = Date::try_new_iso_date(2022, 8, 26).unwrap();
     ///

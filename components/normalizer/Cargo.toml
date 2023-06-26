@@ -46,7 +46,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 arraystring = "0.3.0"
 arrayvec = "0.7.2"
 atoi = "1.0.0"
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_normalizer", "icu_properties"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_normalizer", "icu_properties", "icu_locid_transform"] }
 write16 = { version = "1.0", features = ["arrayvec"] }
 detone = "1.0.0"
 criterion = "0.4.0"

@@ -10,7 +10,9 @@ use icu_provider::prelude::*;
 use std::any::Any;
 use std::collections::{BTreeMap, HashSet};
 use std::fmt::Debug;
+#[cfg(feature = "networking")]
 use std::fs::File;
+#[cfg(feature = "networking")]
 use std::io::BufWriter;
 use std::io::Cursor;
 use std::io::Read;

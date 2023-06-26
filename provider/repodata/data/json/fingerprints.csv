@@ -867,6 +867,7 @@ locid_transform/likelysubtags@1, und, 23040B, 50a381e9e01d5c69
 locid_transform/likelysubtags_ext@1, und, 350578B, 18babff6ae40f3f4
 locid_transform/likelysubtags_l@1, und, 9479B, 37f0f4accdcf60d
 locid_transform/likelysubtags_sr@1, und, 13564B, 27ee855eb787318b
+locid_transform/script_dir@1, und, 2025B, c0f190b3a3bdb984
 normalizer/comp@1, und, 29836B, acf6b523f466044b
 normalizer/decomp@1, und, 13620B, f268fef343685b92
 normalizer/nfd@1, und, 85212B, 1694a185adfafd01
@@ -989,7 +990,7 @@ props/alnum@1, und, 11681B, bb64aee9e6e8f6af
 props/bc@1, und, 70233B, 869b1a7a357e4f29
 props/bidiauxiliaryprops@1, und, 149572B, 90b7640bdb3ff583
 props/blank@1, und, 116B, 7c220ed0c9c55597
-props/casemap@1, und, 1510203B, 4a91ca7a490de6f8
+props/casemap@1, und, 1482492B, d8a35ff539f2978c
 props/ccc@1, und, 37273B, 4a3deb475607f896
 props/ea@1, und, 34405B, bdb74c3748204020
 props/exemplarchars/auxiliary@1, ar, 239B, 6f90534d5eb1adbf
@@ -1558,7 +1559,7 @@ relativetime/short/year@1, und, 425B, 7a604578bc7e4265
 segmenter/dictionary/w_auto@1, ja, 10339429B, 9a826afb1bdef0f1
 segmenter/dictionary/wl_ext@1, th, 1078279B, d814552fc6a8dfcb
 segmenter/grapheme@1, und, 66905B, 445a7c30c1bbfd6d
-segmenter/line@1, und, 154400B, 36dc3e278178555e
+segmenter/line@1, und, 154390B, e82b791244d546e7
 segmenter/lstm/wl_auto@1, th, 361075B, c0c627d25a7d72bf
 segmenter/sentence@1, und, 109564B, 9b71678f3be4f07f
 segmenter/word@1, und, 113449B, 1103532d45a51419

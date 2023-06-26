@@ -207,15 +207,15 @@ mod tests {
 
     #[test]
     fn check_sizes() {
-        check_size_of!(5784 | 4576, DateFormatter);
-        check_size_of!(6784 | 5448, DateTimeFormatter);
-        check_size_of!(7896 | 6464, ZonedDateTimeFormatter);
+        check_size_of!(5800 | 4592, DateFormatter);
+        check_size_of!(6792 | 5456, DateTimeFormatter);
+        check_size_of!(7904 | 6480, ZonedDateTimeFormatter);
         check_size_of!(1496 | 1320, TimeFormatter);
-        check_size_of!(1112 | 1016, TimeZoneFormatter);
-        check_size_of!(5744 | 4536, TypedDateFormatter::<Gregorian>);
+        check_size_of!(1112 | 1024, TimeZoneFormatter);
+        check_size_of!(5752 | 4544, TypedDateFormatter::<Gregorian>);
         check_size_of!(6744 | 5408, TypedDateTimeFormatter::<Gregorian>);
 
-        check_size_of!(80, DateTimeError);
+        check_size_of!(88, DateTimeError);
         check_size_of!(176, FormattedDateTime);
         check_size_of!(16, FormattedTimeZone::<CustomTimeZone>);
         check_size_of!(160, FormattedZonedDateTime);
@@ -224,19 +224,19 @@ mod tests {
         type DP<M> = DataPayload<M>;
         check_size_of!(208, DP::<PatternPluralsFromPatternsV1Marker>);
         check_size_of!(1032 | 904, DP::<TimeSymbolsV1Marker>);
-        check_size_of!(32, DP::<GenericPatternV1Marker>);
+        check_size_of!(40, DP::<GenericPatternV1Marker>);
         check_size_of!(208, DP::<PatternPluralsFromPatternsV1Marker>);
         check_size_of!(5064 | 3904, DP::<ErasedDateSymbolsV1Marker>);
         check_size_of!(16, DP::<WeekDataV1Marker>);
-        check_size_of!(288 | 224, DP::<TimeZoneFormatsV1Marker>);
+        check_size_of!(288 | 232, DP::<TimeZoneFormatsV1Marker>);
         check_size_of!(64 | 56, DP::<ExemplarCitiesV1Marker>);
-        check_size_of!(120 | 104, DP::<MetazoneGenericNamesLongV1Marker>);
-        check_size_of!(120 | 104, DP::<MetazoneGenericNamesShortV1Marker>);
-        check_size_of!(216 | 200, DP::<MetazoneSpecificNamesLongV1Marker>);
-        check_size_of!(216 | 200, DP::<MetazoneSpecificNamesShortV1Marker>);
+        check_size_of!(120 | 112, DP::<MetazoneGenericNamesLongV1Marker>);
+        check_size_of!(120 | 112, DP::<MetazoneGenericNamesShortV1Marker>);
+        check_size_of!(216 | 208, DP::<MetazoneSpecificNamesLongV1Marker>);
+        check_size_of!(216 | 208, DP::<MetazoneSpecificNamesShortV1Marker>);
         check_size_of!(168, PluralRules);
         check_size_of!(256 | 208, FixedDecimalFormatter);
-        check_size_of!(1024 | 928, TimeZoneDataPayloads);
+        check_size_of!(1024 | 936, TimeZoneDataPayloads);
         check_size_of!(3, TimeZoneFormatterUnit);
     }
 }

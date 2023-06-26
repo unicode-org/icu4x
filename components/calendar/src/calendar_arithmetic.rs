@@ -23,6 +23,7 @@ pub trait CalendarArithmetic: Calendar {
     fn month_days(year: i32, month: u8) -> u8;
     fn months_for_every_year(year: i32) -> u8;
     fn is_leap_year(year: i32) -> bool;
+    fn last_month_day_in_year(year: i32) -> (u8, u8);
 
     /// Calculate the days in a given year
     /// Can be overridden with simpler implementations for solar calendars
@@ -45,6 +46,28 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     pub fn new(year: i32, month: u8, day: u8) -> Self {
         ArithmeticDate {
             year,
+            month,
+            day,
+            marker: PhantomData,
+        }
+    }
+
+    #[inline]
+    pub fn min_date() -> Self {
+        ArithmeticDate {
+            year: i32::MIN,
+            month: 1,
+            day: 1,
+            marker: PhantomData,
+        }
+    }
+
+    #[inline]
+    pub fn max_date() -> Self {
+        let year = i32::MAX;
+        let (month, day) = C::last_month_day_in_year(year);
+        ArithmeticDate {
+            year: i32::MAX,
             month,
             day,
             marker: PhantomData,

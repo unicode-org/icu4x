@@ -82,6 +82,10 @@ impl CalendarArithmetic for Indian {
         Iso::is_leap_year(year + 78)
     }
 
+    fn last_month_day_in_year(_year: i32) -> (u8, u8) {
+        (12, 30)
+    }
+
     fn days_in_provided_year(year: i32) -> u32 {
         if Self::is_leap_year(year) {
             366

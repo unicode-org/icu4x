@@ -45,6 +45,14 @@ enum CollationTable {
     SearchAll,
 }
 
+// Mirrors crate::options::FallbackMode
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+enum Fallback {
+    Legacy,
+    Runtime,
+    Expand,
+}
+
 impl CollationTable {
     fn to_datagen_value(self) -> &'static str {
         match self {
@@ -221,40 +229,52 @@ pub struct Cli {
 
     #[arg(long)]
     #[arg(help = "Load a TOML config")]
-    pub config: Option<PathBuf>,
+    config: Option<PathBuf>,
+
+    #[arg(short, long, value_enum, default_value_t = Fallback::Legacy)]
+    fallback: Fallback,
 }
 
 impl Cli {
     pub fn as_config(&self) -> eyre::Result<config::Config> {
-        Ok(config::Config {
-            keys: self.make_keys()?,
-            locales: self.make_locales()?,
-            cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
-            icu_export: self.make_path(
-                &self.icuexport_root,
-                &self.icuexport_tag,
-                "icuexport-root",
-            )?,
-            segmenter_lstm: self.make_path(
-                &self.segmenter_lstm_root,
-                &self.segmenter_lstm_tag,
-                "segmenter-lstm",
-            )?,
-            trie_type: match self.trie_type {
-                TrieType::Fast => config::TrieType::Fast,
-                TrieType::Small => config::TrieType::Small,
-            },
-            collation_han_database: match self.collation_han_database {
-                CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
-                CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
-            },
-            collations: self
-                .include_collations
-                .iter()
-                .map(|c| c.to_datagen_value().to_owned())
-                .collect(),
-            export: self.make_exporter()?,
-            overwrite: self.overwrite,
+        Ok(if let Some(ref path) = self.config {
+            serde_json::from_str(&std::fs::read_to_string(path)?)?
+        } else {
+            config::Config {
+                keys: self.make_keys()?,
+                locales: self.make_locales()?,
+                cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
+                icu_export: self.make_path(
+                    &self.icuexport_root,
+                    &self.icuexport_tag,
+                    "icuexport-root",
+                )?,
+                segmenter_lstm: self.make_path(
+                    &self.segmenter_lstm_root,
+                    &self.segmenter_lstm_tag,
+                    "segmenter-lstm",
+                )?,
+                trie_type: match self.trie_type {
+                    TrieType::Fast => config::TrieType::Fast,
+                    TrieType::Small => config::TrieType::Small,
+                },
+                collation_han_database: match self.collation_han_database {
+                    CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
+                    CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
+                },
+                collations: self
+                    .include_collations
+                    .iter()
+                    .map(|c| c.to_datagen_value().to_owned())
+                    .collect(),
+                export: self.make_exporter()?,
+                fallback: match self.fallback {
+                    Fallback::Legacy => config::FallbackMode::Legacy,
+                    Fallback::Runtime => config::FallbackMode::Runtime,
+                    Fallback::Expand => config::FallbackMode::Expand,
+                },
+                overwrite: self.overwrite,
+            }
         })
     }
 

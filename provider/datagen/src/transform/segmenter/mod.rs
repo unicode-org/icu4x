@@ -4,6 +4,9 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
+#![allow(dead_code)]
+#![allow(unused_imports)]
+
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::{
@@ -639,12 +642,14 @@ impl crate::DatagenProvider {
 macro_rules! implement {
     ($marker:ident, $rules:literal) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
-            fn load(&self, _req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
                 return Err(DataError::custom(
                     "icu_datagen must be built with use_icu4c or use_wasm to build segmentation rules",
                 )
-                .with_req($marker::KEY, _req));
+                .with_req($marker::KEY, req));
+                #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                self.check_req::<$marker>(req)?;
                 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
                 return Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),

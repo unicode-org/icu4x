@@ -14,14 +14,14 @@
 
 use alloc::boxed::Box;
 use core::cmp::Ordering;
-use core::fmt;
 
 use core::str;
 
 use icu_provider::prelude::*;
 
 use tinystr::TinyStr4;
-use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::ule::{UnvalidatedStr, VarULE};
+use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 
 /// This is a property name that can be "loose matched" as according to
 /// [PropertyValueAliases.txt](https://www.unicode.org/Public/UCD/latest/ucd/PropertyValueAliases.txt)
@@ -39,48 +39,62 @@ use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroMap, Z
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
+///
+/// # Examples
+///
+/// Using a [`NormalizedPropertyNameStr`] as the key of a [`ZeroMap`]:
+///
+/// ```
+/// use icu_properties::provider::names::NormalizedPropertyNameStr;
+/// use zerovec::ZeroMap;
+///
+/// let map: ZeroMap<NormalizedPropertyNameStr, usize> = [
+///     (NormalizedPropertyNameStr::from_str("A_BC"), 11),
+///     (NormalizedPropertyNameStr::from_str("dEf"), 22),
+///     (NormalizedPropertyNameStr::from_str("G_H-I"), 33),
+/// ]
+/// .into_iter()
+/// .collect();
+///
+/// let key_approx = NormalizedPropertyNameStr::from_str("AB-C");
+/// let key_exact = NormalizedPropertyNameStr::from_str("A_BC");
+///
+/// // Strict lookup:
+/// assert_eq!(None, map.get_copied(key_approx));
+/// assert_eq!(Some(11), map.get_copied(key_exact));
+///
+/// // Loose lookup:
+/// assert_eq!(Some(11), map.get_copied_by(|u| u.cmp_loose(key_approx)));
+/// assert_eq!(Some(11), map.get_copied_by(|u| u.cmp_loose(key_exact)));
+/// ```
 #[derive(PartialEq, Eq)] // VarULE wants these to be byte equality
-#[derive(VarULE)]
+#[derive(Debug, VarULE)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
-pub struct NormalizedPropertyNameStr([u8]);
+pub struct NormalizedPropertyNameStr(UnvalidatedStr);
 
-#[cfg(feature = "datagen")]
-impl serde::Serialize for NormalizedPropertyNameStr {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::Error;
-        if serializer.is_human_readable() {
-            let s = str::from_utf8(&self.0)
-                .map_err(|_| S::Error::custom("Attempted to datagen invalid string property"))?;
-            serializer.serialize_str(s)
-        } else {
-            serializer.serialize_bytes(&self.0)
-        }
-    }
-}
-
+/// This impl requires enabling the optional `serde` Cargo feature of the `icu_properties` crate
 #[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for Box<NormalizedPropertyNameStr> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
-        use alloc::borrow::Cow;
-        let s; // lifetime lengthening
-        let b;
-        // Can be improved with https://github.com/unicode-org/icu4x/issues/2310
-        // the allocations here are fine, in normal ICU4X code they'll only get hit
-        // during human-readable deserialization
-        let bytes = if deserializer.is_human_readable() {
-            s = <Cow<str>>::deserialize(deserializer)?;
-            s.as_bytes()
-        } else {
-            b = <Cow<[u8]>>::deserialize(deserializer)?;
-            &b
-        };
-        Ok(NormalizedPropertyNameStr::boxed_from_bytes(bytes))
+        <Box<UnvalidatedStr>>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_box)
+    }
+}
+
+/// This impl requires enabling the optional `serde` Cargo feature of the `icu_properties` crate
+#[cfg(feature = "serde")]
+impl<'de, 'a> serde::Deserialize<'de> for &'a NormalizedPropertyNameStr
+where
+    'de: 'a,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        <&UnvalidatedStr>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_ref)
     }
 }
 
@@ -134,30 +148,34 @@ impl Ord for NormalizedPropertyNameStr {
     }
 }
 
-impl fmt::Debug for NormalizedPropertyNameStr {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Ok(s) = str::from_utf8(&self.0) {
-            f.write_str(s)
-        } else {
-            f.write_str("(invalid utf8)")
-        }
-    }
-}
-
 impl NormalizedPropertyNameStr {
-    pub(crate) fn cmp_loose(&self, other: &Self) -> Ordering {
+    /// Perform the loose comparison as defined in [`NormalizedPropertyNameStr`].
+    pub fn cmp_loose(&self, other: &Self) -> Ordering {
         let self_iter = self.0.iter().copied().filter_map(normalize_char);
         let other_iter = other.0.iter().copied().filter_map(normalize_char);
         self_iter.cmp(other_iter)
     }
-    #[cfg(feature = "serde")]
-    /// Get a `Box<NormalizedPropertyName>` from a byte slice
-    pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
-        #[allow(clippy::expect_used)] // Self has no invariants
-        // can be cleaned up with https://github.com/unicode-org/icu4x/issues/2310
-        let this = Self::parse_byte_slice(b).expect("NormalizedPropertyName has no invariants");
 
-        zerovec::ule::encode_varule_to_box(&this)
+    /// Convert a string reference to a [`NormalizedPropertyNameStr`].
+    pub const fn from_str(s: &str) -> &Self {
+        Self::cast_ref(UnvalidatedStr::from_str(s))
+    }
+
+    /// Convert a [`UnvalidatedStr`] reference to a [`NormalizedPropertyNameStr`] reference.
+    pub const fn cast_ref(value: &UnvalidatedStr) -> &Self {
+        // Safety: repr(transparent)
+        unsafe { core::mem::transmute(value) }
+    }
+
+    /// Convert a [`UnvalidatedStr`] box to a [`NormalizedPropertyNameStr`] box.
+    pub const fn cast_box(value: Box<UnvalidatedStr>) -> Box<Self> {
+        // Safety: repr(transparent)
+        unsafe { core::mem::transmute(value) }
+    }
+
+    /// Get a [`NormalizedPropertyName`] box from a byte slice.
+    pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
+        Self::cast_box(UnvalidatedStr::from_boxed_bytes(b.into()))
     }
 }
 
@@ -171,7 +189,8 @@ impl NormalizedPropertyNameStr {
 #[derive(Debug, Clone)]
 #[icu_provider::data_struct(marker(
     GeneralCategoryMaskNameToValueV1Marker,
-    "propnames/from/gcm@1"
+    "propnames/from/gcm@1",
+    singleton,
 ))]
 #[cfg_attr(
     feature = "datagen", 

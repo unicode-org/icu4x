@@ -1,0 +1,47 @@
+{
+    "keys": {
+        "Explicit": [
+            "relativetime/long/day@1",
+            "relativetime/long/hour@1",
+            "relativetime/long/minute@1",
+            "relativetime/long/month@1",
+            "relativetime/long/quarter@1",
+            "relativetime/long/second@1",
+            "relativetime/long/week@1",
+            "relativetime/long/year@1",
+            "relativetime/narrow/day@1",
+            "relativetime/narrow/hour@1",
+            "relativetime/narrow/minute@1",
+            "relativetime/narrow/month@1",
+            "relativetime/narrow/quarter@1",
+            "relativetime/narrow/second@1",
+            "relativetime/narrow/week@1",
+            "relativetime/narrow/year@1",
+            "relativetime/short/day@1",
+            "relativetime/short/hour@1",
+            "relativetime/short/minute@1",
+            "relativetime/short/month@1",
+            "relativetime/short/quarter@1",
+            "relativetime/short/second@1",
+            "relativetime/short/week@1",
+            "relativetime/short/year@1"
+        ]
+    },
+    "locales": {
+        "CldrSet": [
+            "modern"
+        ]
+    },
+    "cldr": "Latest",
+    "icu_export": "Latest",
+    "segmenter_lstm": "Latest",
+    "export": {
+        "Baked": {
+            "output_path": "data",
+            "use_separate_crates": true,
+            "pretty": true
+        }
+    },
+    "fallback": "Runtime",
+    "overwrite": true
+}
