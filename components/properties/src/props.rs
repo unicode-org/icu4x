@@ -44,8 +44,8 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
 /// use icu::properties::GeneralCategory;
 ///
 /// let lookup =
-///     GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-///         .expect("The data should be valid");
+///     GeneralCategory::name_to_enum_mapper()
+///         .expect("locale should be present");
 /// let lookup = lookup.as_borrowed();
 /// // short name for value
 /// assert_eq!(
@@ -128,8 +128,8 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// use icu_properties::GeneralCategory;
     ///
     /// let lookup =
-    ///     GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
+    ///     GeneralCategory::name_to_enum_mapper()
+    ///         .expect("locale should be present");
     /// let lookup = lookup.as_borrowed();
     /// assert_eq!(
     ///     lookup.get_strict_u16("Lu"),
@@ -156,8 +156,8 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// use icu_properties::GeneralCategory;
     ///
     /// let lookup =
-    ///     GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
+    ///     GeneralCategory::name_to_enum_mapper()
+    ///         .expect("locale should be present");
     /// let lookup = lookup.as_borrowed();
     /// assert_eq!(
     ///     lookup.get_strict("Lu"),
@@ -185,8 +185,8 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// use icu_properties::GeneralCategory;
     ///
     /// let lookup =
-    ///     GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
+    ///     GeneralCategory::name_to_enum_mapper()
+    ///         .expect("locale should be present");
     /// let lookup = lookup.as_borrowed();
     /// assert_eq!(
     ///     lookup.get_loose_u16("Lu"),
@@ -217,8 +217,8 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// use icu_properties::GeneralCategory;
     ///
     /// let lookup =
-    ///     GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
+    ///     GeneralCategory::name_to_enum_mapper()
+    ///         .expect("locale should be present");
     /// let lookup = lookup.as_borrowed();
     /// assert_eq!(
     ///     lookup.get_loose("Lu"),
@@ -279,10 +279,9 @@ impl DataMarker for ErasedEnumToValueNameSparseMapV1Marker {
 /// ```
 /// use icu::properties::CanonicalCombiningClass;
 ///
-/// let lookup = CanonicalCombiningClass::get_enum_to_long_name_mapper(
-///     &icu_testdata::unstable(),
+/// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper(
 /// )
-/// .expect("The data should be valid");
+/// .expect("locale should be present");
 /// let lookup = lookup.as_borrowed();
 /// assert_eq!(
 ///     lookup.get(CanonicalCombiningClass::KanaVoicing),
@@ -343,10 +342,9 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
     /// ```rust
     /// use icu::properties::CanonicalCombiningClass;
     ///
-    /// let lookup = CanonicalCombiningClass::get_enum_to_long_name_mapper(
-    ///     &icu_testdata::unstable(),
+    /// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper(
     /// )
-    /// .expect("The data should be valid");
+    /// .expect("locale should be present");
     /// let lookup = lookup.as_borrowed();
     /// assert_eq!(
     ///     lookup.get(CanonicalCombiningClass::KanaVoicing),
@@ -387,10 +385,9 @@ impl DataMarker for ErasedEnumToValueNameLinearMapV1Marker {
 /// ```
 /// use icu::properties::GeneralCategory;
 ///
-/// let lookup = GeneralCategory::get_enum_to_long_name_mapper(
-///     &icu_testdata::unstable(),
+/// let lookup = GeneralCategory::enum_to_long_name_mapper(
 /// )
-/// .expect("The data should be valid");
+/// .expect("locale should be present");
 /// let lookup = lookup.as_borrowed();
 /// assert_eq!(
 ///     lookup.get(GeneralCategory::UppercaseLetter),
@@ -451,10 +448,9 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
     /// ```rust
     /// use icu::properties::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::get_enum_to_short_name_mapper(
-    ///     &icu_testdata::unstable(),
+    /// let lookup = GeneralCategory::enum_to_short_name_mapper(
     /// )
-    /// .expect("The data should be valid");
+    /// .expect("locale should be present");
     /// let lookup = lookup.as_borrowed();
     /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Lu"));
     /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Pd"));
@@ -489,8 +485,8 @@ impl DataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
 /// use tinystr::tinystr;
 ///
 /// let lookup =
-///     Script::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-///         .expect("The data should be valid");
+///     Script::enum_to_short_name_mapper()
+///         .expect("locale should be present");
 /// let lookup = lookup.as_borrowed();
 /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
 /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
@@ -547,8 +543,8 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
     /// use tinystr::tinystr;
     ///
     /// let lookup =
-    ///     Script::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
+    ///     Script::enum_to_short_name_mapper()
+    ///         .expect("locale should be present");
     /// let lookup = lookup.as_borrowed();
     /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
     /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
@@ -565,18 +561,24 @@ macro_rules! impl_value_getter {
         markers: $marker_n2e:ident$(, $marker_e2sn:ident, $marker_e2ln:ident)?;
         impl $ty:ident {
             $(#[$attr_n2e:meta])*
-            $vis_n2e:vis fn $name_n2e:ident();
+            $vis_n2e:vis fn $name_n2e:ident() / $cname_n2e:ident();
             $(
 
                 $(#[$attr_e2sn:meta])*
-                $vis_e2sn:vis fn $name_e2sn:ident() -> $mapper_e2sn:ident;
+                $vis_e2sn:vis fn $name_e2sn:ident() / $cname_e2sn:ident() -> $mapper_e2sn:ident;
                 $(#[$attr_e2ln:meta])*
-                $vis_e2ln:vis fn $name_e2ln:ident()-> $mapper_e2ln:ident;
+                $vis_e2ln:vis fn $name_e2ln:ident() / $cname_e2ln:ident() -> $mapper_e2ln:ident;
             )?
         }
     ) => {
         impl $ty {
             $(#[$attr_n2e])*
+            $vis_n2e fn $cname_n2e() -> Result<PropertyValueNameToEnumMapper<$ty>, DataError> {
+                DataProvider::<$marker_n2e>::load(&crate::provider::Baked, Default::default())
+                    .and_then(DataResponse::take_payload).map(PropertyValueNameToEnumMapper::from_data)
+            }
+
+            #[doc = concat!("[`", stringify!($cname_n2e), "()`] with a runtime data provider argument.")]
             $vis_n2e fn $name_n2e(
                 provider: &(impl DataProvider<$marker_n2e> + ?Sized)
             ) -> Result<PropertyValueNameToEnumMapper<$ty>, PropertiesError> {
@@ -585,6 +587,12 @@ macro_rules! impl_value_getter {
 
             $(
                 $(#[$attr_e2sn])*
+                $vis_e2sn fn $cname_e2sn() -> Result<$mapper_e2sn<$ty>, DataError> {
+                    DataProvider::<$marker_e2sn>::load(&crate::provider::Baked, Default::default())
+                        .and_then(DataResponse::take_payload).map($mapper_e2sn::from_data)
+                }
+
+                #[doc = concat!("[`", stringify!($cname_e2sn), "()`] with a runtime data provider argument.")]
                 $vis_e2sn fn $name_e2sn(
                     provider: &(impl DataProvider<$marker_e2sn> + ?Sized)
                 ) -> Result<$mapper_e2sn<$ty>, PropertiesError> {
@@ -592,6 +600,12 @@ macro_rules! impl_value_getter {
                 }
 
                 $(#[$attr_e2ln])*
+                $vis_e2ln fn $cname_e2ln() -> Result<$mapper_e2ln<$ty>, DataError> {
+                    DataProvider::<$marker_e2ln>::load(&crate::provider::Baked, Default::default())
+                    .and_then(DataResponse::take_payload).map($mapper_e2ln::from_data)
+                }
+
+                #[doc = concat!("[`", stringify!($cname_e2ln), "()`] with a runtime data provider argument.")]
                 $vis_e2ln fn $name_e2ln(
                     provider: &(impl DataProvider<$marker_e2ln> + ?Sized)
                 ) -> Result<$mapper_e2ln<$ty>, PropertiesError> {
@@ -677,8 +691,8 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::BidiClass;
         ///
-        /// let lookup = BidiClass::get_name_to_enum_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = BidiClass::name_to_enum_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("AN"), Some(BidiClass::ArabicNumber));
@@ -693,7 +707,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Upside_Down_Vertical_Backwards_Mirrored"), None);
         /// ```
-        pub fn get_name_to_enum_mapper();
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Bidi_Class` enumerated property
         ///
@@ -702,13 +716,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::BidiClass;
         ///
-        /// let lookup = BidiClass::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = BidiClass::enum_to_short_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(BidiClass::ArabicNumber), Some("AN"));
         /// assert_eq!(lookup.get(BidiClass::NonspacingMark), Some("NSM"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Bidi_Class` enumerated property
         ///
@@ -717,13 +731,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::BidiClass;
         ///
-        /// let lookup = BidiClass::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = BidiClass::enum_to_long_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(BidiClass::ArabicNumber), Some("Arabic_Number"));
         /// assert_eq!(lookup.get(BidiClass::NonspacingMark), Some("Nonspacing_Mark"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
     }
 }
 
@@ -823,8 +837,8 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::GeneralCategory;
         ///
-        /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = GeneralCategory::name_to_enum_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
@@ -839,7 +853,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_loose("Animated_Gif"), None);
         /// ```
-        pub fn get_name_to_enum_mapper();
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `General_Category` enumerated property
         ///
@@ -848,13 +862,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::GeneralCategory;
         ///
-        /// let lookup = GeneralCategory::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = GeneralCategory::enum_to_short_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Lu"));
         /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Pd"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `General_Category` enumerated property
         ///
@@ -863,13 +877,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::GeneralCategory;
         ///
-        /// let lookup = GeneralCategory::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = GeneralCategory::enum_to_long_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Uppercase_Letter"));
         /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Dash_Punctuation"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
     }
 }
 
@@ -1027,9 +1041,7 @@ impl GeneralCategoryGroup {
     /// use icu::properties::{maps, GeneralCategory, GeneralCategoryGroup};
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
-    /// let data = maps::load_general_category(&icu_testdata::unstable())
-    ///     .expect("The data should be valid");
-    /// let gc = data.as_borrowed();
+    /// let gc = maps::general_category();
     ///
     /// assert_eq!(gc.get('A'), GeneralCategory::UppercaseLetter);
     /// assert!(GeneralCategoryGroup::CasedLetter.contains(gc.get('A')));
@@ -1178,8 +1190,8 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::GeneralCategoryGroup;
         ///
-        /// let lookup = GeneralCategoryGroup::get_name_to_enum_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = GeneralCategoryGroup::name_to_enum_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("L"), Some(GeneralCategoryGroup::Letter));
@@ -1200,7 +1212,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("EverythingLol"), None);
         /// ```
-        pub fn get_name_to_enum_mapper();
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
     }
 }
 
@@ -1420,8 +1432,8 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::Script;
         ///
-        /// let lookup = Script::get_name_to_enum_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = Script::name_to_enum_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("Brah"), Some(Script::Brahmi));
@@ -1436,7 +1448,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Linear_Z"), None);
         /// ```
-        pub fn get_name_to_enum_mapper();
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Script` enumerated property
         ///
@@ -1446,13 +1458,13 @@ impl_value_getter! {
         /// use icu::properties::Script;
         /// use tinystr::tinystr;
         ///
-        /// let lookup = Script::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = Script::enum_to_short_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
         /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
         /// ```
-        pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearTiny4Mapper;
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearTiny4Mapper;
         /// Return a [`PropertyEnumToValueNameLinearTiny4Mapper`], capable of looking up long names
         /// for values of the `Script` enumerated property
         ///
@@ -1461,13 +1473,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::Script;
         ///
-        /// let lookup = Script::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = Script::enum_to_long_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(Script::Brahmi), Some("Brahmi"));
         /// assert_eq!(lookup.get(Script::Hangul), Some("Hangul"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
     }
 }
 
@@ -1508,8 +1520,8 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::EastAsianWidth;
         ///
-        /// let lookup = EastAsianWidth::get_name_to_enum_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = EastAsianWidth::name_to_enum_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("N"), Some(EastAsianWidth::Neutral));
@@ -1524,7 +1536,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("TwoPointFiveWidth"), None);
         /// ```
-        pub fn get_name_to_enum_mapper();
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `East_Asian_Width` enumerated property
         ///
@@ -1533,13 +1545,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::EastAsianWidth;
         ///
-        /// let lookup = EastAsianWidth::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = EastAsianWidth::enum_to_short_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(EastAsianWidth::Neutral), Some("N"));
         /// assert_eq!(lookup.get(EastAsianWidth::Halfwidth), Some("H"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `East_Asian_Width` enumerated property
         ///
@@ -1548,13 +1560,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::EastAsianWidth;
         ///
-        /// let lookup = EastAsianWidth::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = EastAsianWidth::enum_to_long_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(EastAsianWidth::Neutral), Some("Neutral"));
         /// assert_eq!(lookup.get(EastAsianWidth::Halfwidth), Some("Halfwidth"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
     }
 }
 
@@ -1632,8 +1644,8 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::LineBreak;
         ///
-        /// let lookup = LineBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = LineBreak::name_to_enum_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("BK"), Some(LineBreak::MandatoryBreak));
@@ -1648,7 +1660,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Stochastic_Break"), None);
         /// ```
-        pub fn get_name_to_enum_mapper();
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Line_Break` enumerated property
         ///
@@ -1657,13 +1669,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::LineBreak;
         ///
-        /// let lookup = LineBreak::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = LineBreak::enum_to_short_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(LineBreak::MandatoryBreak), Some("BK"));
         /// assert_eq!(lookup.get(LineBreak::Alphabetic), Some("AL"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Line_Break` enumerated property
         ///
@@ -1672,13 +1684,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::LineBreak;
         ///
-        /// let lookup = LineBreak::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = LineBreak::enum_to_long_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(LineBreak::MandatoryBreak), Some("Mandatory_Break"));
         /// assert_eq!(lookup.get(LineBreak::Alphabetic), Some("Alphabetic"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
     }
 }
 
@@ -1736,8 +1748,8 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::GraphemeClusterBreak;
         ///
-        /// let lookup = GraphemeClusterBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = GraphemeClusterBreak::name_to_enum_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("EX"), Some(GraphemeClusterBreak::Extend));
@@ -1752,7 +1764,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Regional_Indicator_Two_Point_Oh"), None);
         /// ```
-        pub fn get_name_to_enum_mapper();
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Grapheme_Cluster_Break` enumerated property
         ///
@@ -1761,13 +1773,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::GraphemeClusterBreak;
         ///
-        /// let lookup = GraphemeClusterBreak::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = GraphemeClusterBreak::enum_to_short_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(GraphemeClusterBreak::Extend), Some("EX"));
         /// assert_eq!(lookup.get(GraphemeClusterBreak::RegionalIndicator), Some("RI"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Grapheme_Cluster_Break` enumerated property
         ///
@@ -1776,13 +1788,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::GraphemeClusterBreak;
         ///
-        /// let lookup = GraphemeClusterBreak::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = GraphemeClusterBreak::enum_to_long_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(GraphemeClusterBreak::Extend), Some("Extend"));
         /// assert_eq!(lookup.get(GraphemeClusterBreak::RegionalIndicator), Some("Regional_Indicator"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
     }
 }
 
@@ -1845,8 +1857,8 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::WordBreak;
         ///
-        /// let lookup = WordBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = WordBreak::name_to_enum_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("KA"), Some(WordBreak::Katakana));
@@ -1861,7 +1873,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Quadruple_Quote"), None);
         /// ```
-        pub fn get_name_to_enum_mapper();
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Word_Break` enumerated property
         ///
@@ -1870,13 +1882,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::WordBreak;
         ///
-        /// let lookup = WordBreak::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = WordBreak::enum_to_short_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(WordBreak::Katakana), Some("KA"));
         /// assert_eq!(lookup.get(WordBreak::ALetter), Some("LE"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Word_Break` enumerated property
         ///
@@ -1885,13 +1897,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::WordBreak;
         ///
-        /// let lookup = WordBreak::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = WordBreak::enum_to_long_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(WordBreak::Katakana), Some("Katakana"));
         /// assert_eq!(lookup.get(WordBreak::ALetter), Some("ALetter"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
     }
 }
 
@@ -1941,8 +1953,8 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::SentenceBreak;
         ///
-        /// let lookup = SentenceBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = SentenceBreak::name_to_enum_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("FO"), Some(SentenceBreak::Format));
@@ -1957,7 +1969,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Fixer_Upper"), None);
         /// ```
-        pub fn get_name_to_enum_mapper();
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Sentence_Break` enumerated property
         ///
@@ -1966,13 +1978,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::SentenceBreak;
         ///
-        /// let lookup = SentenceBreak::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = SentenceBreak::enum_to_short_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(SentenceBreak::Format), Some("FO"));
         /// assert_eq!(lookup.get(SentenceBreak::Numeric), Some("NU"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Sentence_Break` enumerated property
         ///
@@ -1981,13 +1993,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::SentenceBreak;
         ///
-        /// let lookup = SentenceBreak::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = SentenceBreak::enum_to_long_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(SentenceBreak::Format), Some("Format"));
         /// assert_eq!(lookup.get(SentenceBreak::Numeric), Some("Numeric"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper;
     }
 }
 /// Property Canonical_Combining_Class.
@@ -2085,8 +2097,8 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::CanonicalCombiningClass;
         ///
-        /// let lookup = CanonicalCombiningClass::get_name_to_enum_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = CanonicalCombiningClass::name_to_enum_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("AL"), Some(CanonicalCombiningClass::AboveLeft));
@@ -2102,7 +2114,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Linear_Z"), None);
         /// ```
-        pub fn get_name_to_enum_mapper();
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
         /// Return a [`PropertyEnumToValueNameSparseMapper`], capable of looking up short names
         /// for values of the `Canonical_Combining_Class` enumerated property
         ///
@@ -2111,14 +2123,14 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::CanonicalCombiningClass;
         ///
-        /// let lookup = CanonicalCombiningClass::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = CanonicalCombiningClass::enum_to_short_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(CanonicalCombiningClass::AboveLeft), Some("AL"));
         /// assert_eq!(lookup.get(CanonicalCombiningClass::AttachedBelowLeft), Some("ATBL"));
         /// assert_eq!(lookup.get(CanonicalCombiningClass::CCC10), Some("CCC10"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameSparseMapper;
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameSparseMapper;
         /// Return a [`PropertyEnumToValueNameSparseMapper`], capable of looking up long names
         /// for values of the `Canonical_Combining_Class` enumerated property
         ///
@@ -2127,13 +2139,13 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::CanonicalCombiningClass;
         ///
-        /// let lookup = CanonicalCombiningClass::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-        ///                  .expect("The data should be valid");
+        /// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper()
+        ///                  .expect("locale should be present");
         /// let lookup = lookup.as_borrowed();
         /// assert_eq!(lookup.get(CanonicalCombiningClass::AboveLeft), Some("Above_Left"));
         /// assert_eq!(lookup.get(CanonicalCombiningClass::AttachedBelowLeft), Some("Attached_Below_Left"));
         /// assert_eq!(lookup.get(CanonicalCombiningClass::CCC10), Some("CCC10"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() -> PropertyEnumToValueNameSparseMapper;
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameSparseMapper;
     }
 }

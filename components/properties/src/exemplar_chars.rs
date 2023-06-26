@@ -20,7 +20,7 @@
 //! use icu::properties::exemplar_chars;
 //!
 //! let locale = locale!("en-001").into();
-//! let data = exemplar_chars::exemplars_main(&locale);
+//! let data = exemplar_chars::exemplars_main(&locale).expect("locale should be present");
 //! let exemplars_main = data.as_borrowed();
 //!
 //! assert!(exemplars_main.contains_char('a'));
@@ -46,9 +46,6 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         $vis2:vis fn $constname:ident();
     ) => {
         #[doc = concat!("[`", stringify!($constname), "()`] with a runtime data provider argument.")]
-        ///
-        /// Note that this will return an owned version of the data. Functionality is available on 
-        /// the borrowed version, accessible through `.as_borrowed()`.
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized),
             locale: &DataLocale,
@@ -96,7 +93,8 @@ make_exemplar_chars_unicode_set_property!(
     /// use icu::locid::locale;
     /// use icu::properties::exemplar_chars;
     ///
-    /// let data = exemplar_chars::exemplars_main(&locale!("en").into());
+    /// let data = exemplar_chars::exemplars_main(&locale!("en").into())
+    ///     .expect("locale should be present");
     /// let exemplars_main = data.as_borrowed();
     ///
     /// assert!(exemplars_main.contains_char('a'));
@@ -124,7 +122,8 @@ make_exemplar_chars_unicode_set_property!(
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
-    ///     exemplar_chars::exemplars_auxiliary(&locale!("en").into());
+    ///     exemplar_chars::exemplars_auxiliary(&locale!("en").into())
+    ///     .expect("locale should be present");
     /// let exemplars_auxiliary = data.as_borrowed();
     ///
     /// assert!(!exemplars_auxiliary.contains_char('a'));
@@ -152,7 +151,8 @@ make_exemplar_chars_unicode_set_property!(
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
-    ///     exemplar_chars::exemplars_punctuation(&locale!("en").into());
+    ///     exemplar_chars::exemplars_punctuation(&locale!("en").into())
+    ///     .expect("locale should be present");
     /// let exemplars_punctuation = data.as_borrowed();
     ///
     /// assert!(!exemplars_punctuation.contains_char('0'));
@@ -181,7 +181,8 @@ make_exemplar_chars_unicode_set_property!(
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
-    ///     exemplar_chars::exemplars_numbers(&locale!("en").into());
+    ///     exemplar_chars::exemplars_numbers(&locale!("en").into())
+    ///     .expect("locale should be present");
     /// let exemplars_numbers = data.as_borrowed();
     ///
     /// assert!(exemplars_numbers.contains_char('0'));
@@ -210,7 +211,8 @@ make_exemplar_chars_unicode_set_property!(
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
-    ///     exemplar_chars::exemplars_index(&locale!("en").into());
+    ///     exemplar_chars::exemplars_index(&locale!("en").into())
+    ///     .expect("locale should be present");
     /// let exemplars_index = data.as_borrowed();
     ///
     /// assert!(!exemplars_index.contains_char('a'));
