@@ -252,6 +252,8 @@ impl Chinese {
     // Returns true if the month of a given fixed date does not have a major solar term,
     // false otherwise.
     fn chinese_no_major_solar_term(date: RataDie) -> bool {
+        let lhs = Self::major_solar_term_from_fixed(date);
+        let rhs = Self::major_solar_term_from_fixed(Self::chinese_new_moon_on_or_after((date + 1).as_moment()));
         Self::major_solar_term_from_fixed(date)
             == Self::major_solar_term_from_fixed(Self::chinese_new_moon_on_or_after(
                 (date + 1).as_moment(),
@@ -400,7 +402,6 @@ impl Chinese {
     pub(crate) fn chinese_date_from_fixed(date: RataDie) -> Date<Chinese> {
         let solstices = Self::get_chinese_winter_solstices(date);
         let prior_solstice = solstices.0;
-        let following_solstice = solstices.1;
         let month_after_eleventh =
             Self::chinese_new_moon_on_or_after((prior_solstice + 1).as_moment());
         let start_of_month = Self::chinese_new_moon_before((date + 1).as_moment());
@@ -466,7 +467,7 @@ impl Chinese {
         let mut cur = Chinese::chinese_new_year_on_or_before_fixed_date(date);
         let mut result = 1;
         let max_iters = 13;
-        while result < max_iters && !Self::chinese_no_major_solar_term(date) {
+        while result < max_iters && !Self::chinese_no_major_solar_term(cur) {
             cur = Chinese::chinese_new_moon_on_or_after((cur + 1).as_moment());
             result += 1;
         }
@@ -496,5 +497,11 @@ mod test {
         assert_eq!(chinese_new_year.year().number, 2023);
         assert_eq!(chinese_new_year.month().ordinal, 1);
         assert_eq!(chinese_new_year.day_of_month().0, 22);
+    }
+
+    #[test]
+    fn test_chinese_from_fixed() {
+        let date = Chinese::chinese_date_from_fixed(RataDie::new(738694));
+        assert!(false);
     }
 }
