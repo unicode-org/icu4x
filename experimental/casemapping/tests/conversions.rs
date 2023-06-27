@@ -10,25 +10,25 @@ fn test_simple_mappings() {
     let case_mapping = CaseMapping::new();
 
     // Basic case mapping
-    assert_eq!(case_mapping.to_uppercase('a'), 'A');
-    assert_eq!(case_mapping.to_lowercase('a'), 'a');
-    assert_eq!(case_mapping.to_titlecase('a'), 'A');
+    assert_eq!(case_mapping.to_simple_uppercase('a'), 'A');
+    assert_eq!(case_mapping.to_simple_lowercase('a'), 'a');
+    assert_eq!(case_mapping.to_simple_titlecase('a'), 'A');
     assert_eq!(case_mapping.fold('a'), 'a');
-    assert_eq!(case_mapping.to_uppercase('A'), 'A');
-    assert_eq!(case_mapping.to_lowercase('A'), 'a');
-    assert_eq!(case_mapping.to_titlecase('A'), 'A');
+    assert_eq!(case_mapping.to_simple_uppercase('A'), 'A');
+    assert_eq!(case_mapping.to_simple_lowercase('A'), 'a');
+    assert_eq!(case_mapping.to_simple_titlecase('A'), 'A');
     assert_eq!(case_mapping.fold('A'), 'a');
 
     // Case mapping of titlecase character
-    assert_eq!(case_mapping.to_uppercase('\u{1c4}'), '\u{1c4}');
-    assert_eq!(case_mapping.to_titlecase('\u{1c4}'), '\u{1c5}');
-    assert_eq!(case_mapping.to_lowercase('\u{1c4}'), '\u{1c6}');
-    assert_eq!(case_mapping.to_uppercase('\u{1c5}'), '\u{1c4}');
-    assert_eq!(case_mapping.to_titlecase('\u{1c5}'), '\u{1c5}');
-    assert_eq!(case_mapping.to_lowercase('\u{1c5}'), '\u{1c6}');
-    assert_eq!(case_mapping.to_uppercase('\u{1c6}'), '\u{1c4}');
-    assert_eq!(case_mapping.to_titlecase('\u{1c6}'), '\u{1c5}');
-    assert_eq!(case_mapping.to_lowercase('\u{1c6}'), '\u{1c6}');
+    assert_eq!(case_mapping.to_simple_uppercase('\u{1c4}'), '\u{1c4}');
+    assert_eq!(case_mapping.to_simple_titlecase('\u{1c4}'), '\u{1c5}');
+    assert_eq!(case_mapping.to_simple_lowercase('\u{1c4}'), '\u{1c6}');
+    assert_eq!(case_mapping.to_simple_uppercase('\u{1c5}'), '\u{1c4}');
+    assert_eq!(case_mapping.to_simple_titlecase('\u{1c5}'), '\u{1c5}');
+    assert_eq!(case_mapping.to_simple_lowercase('\u{1c5}'), '\u{1c6}');
+    assert_eq!(case_mapping.to_simple_uppercase('\u{1c6}'), '\u{1c4}');
+    assert_eq!(case_mapping.to_simple_titlecase('\u{1c6}'), '\u{1c5}');
+    assert_eq!(case_mapping.to_simple_lowercase('\u{1c6}'), '\u{1c6}');
 
     // Turkic case folding
     assert_eq!(case_mapping.fold('I'), 'i');
@@ -37,13 +37,13 @@ fn test_simple_mappings() {
     assert_eq!(case_mapping.fold_turkic('İ'), 'i');
 
     // Supplementary code points (Deseret)
-    assert_eq!(case_mapping.to_uppercase('\u{1043c}'), '\u{10414}');
-    assert_eq!(case_mapping.to_lowercase('\u{1043c}'), '\u{1043c}');
-    assert_eq!(case_mapping.to_titlecase('\u{1043c}'), '\u{10414}');
+    assert_eq!(case_mapping.to_simple_uppercase('\u{1043c}'), '\u{10414}');
+    assert_eq!(case_mapping.to_simple_lowercase('\u{1043c}'), '\u{1043c}');
+    assert_eq!(case_mapping.to_simple_titlecase('\u{1043c}'), '\u{10414}');
     assert_eq!(case_mapping.fold('\u{1043c}'), '\u{1043c}');
-    assert_eq!(case_mapping.to_uppercase('\u{10414}'), '\u{10414}');
-    assert_eq!(case_mapping.to_lowercase('\u{10414}'), '\u{1043c}');
-    assert_eq!(case_mapping.to_titlecase('\u{10414}'), '\u{10414}');
+    assert_eq!(case_mapping.to_simple_uppercase('\u{10414}'), '\u{10414}');
+    assert_eq!(case_mapping.to_simple_lowercase('\u{10414}'), '\u{1043c}');
+    assert_eq!(case_mapping.to_simple_titlecase('\u{10414}'), '\u{10414}');
     assert_eq!(case_mapping.fold('\u{10414}'), '\u{1043c}');
 }
 

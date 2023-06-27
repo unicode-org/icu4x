@@ -140,12 +140,12 @@ impl CaseMapping {
     ///
     /// let cm = CaseMapping::new();
     ///
-    /// assert_eq!(cm.to_lowercase('C'), 'c');
-    /// assert_eq!(cm.to_lowercase('c'), 'c');
-    /// assert_eq!(cm.to_lowercase('Ć'), 'ć');
-    /// assert_eq!(cm.to_lowercase('Γ'), 'γ');
+    /// assert_eq!(cm.to_simple_lowercase('C'), 'c');
+    /// assert_eq!(cm.to_simple_lowercase('c'), 'c');
+    /// assert_eq!(cm.to_simple_lowercase('Ć'), 'ć');
+    /// assert_eq!(cm.to_simple_lowercase('Γ'), 'γ');
     /// ```
-    pub fn to_lowercase(&self, c: char) -> char {
+    pub fn to_simple_lowercase(&self, c: char) -> char {
         self.data.get().simple_lower(c)
     }
 
@@ -161,14 +161,14 @@ impl CaseMapping {
     ///
     /// let cm = CaseMapping::new();
     ///
-    /// assert_eq!(cm.to_uppercase('c'), 'C');
-    /// assert_eq!(cm.to_uppercase('C'), 'C');
-    /// assert_eq!(cm.to_uppercase('ć'), 'Ć');
-    /// assert_eq!(cm.to_uppercase('γ'), 'Γ');
+    /// assert_eq!(cm.to_simple_uppercase('c'), 'C');
+    /// assert_eq!(cm.to_simple_uppercase('C'), 'C');
+    /// assert_eq!(cm.to_simple_uppercase('ć'), 'Ć');
+    /// assert_eq!(cm.to_simple_uppercase('γ'), 'Γ');
     ///
-    /// assert_eq!(cm.to_uppercase('ǳ'), 'Ǳ');
+    /// assert_eq!(cm.to_simple_uppercase('ǳ'), 'Ǳ');
     /// ```
-    pub fn to_uppercase(&self, c: char) -> char {
+    pub fn to_simple_uppercase(&self, c: char) -> char {
         self.data.get().simple_upper(c)
     }
 
@@ -183,14 +183,14 @@ impl CaseMapping {
     ///
     /// let cm = CaseMapping::new();
     ///
-    /// assert_eq!(cm.to_titlecase('ǳ'), 'ǲ');
+    /// assert_eq!(cm.to_simple_titlecase('ǳ'), 'ǲ');
     ///
-    /// assert_eq!(cm.to_titlecase('c'), 'C');
-    /// assert_eq!(cm.to_titlecase('C'), 'C');
-    /// assert_eq!(cm.to_titlecase('ć'), 'Ć');
-    /// assert_eq!(cm.to_titlecase('γ'), 'Γ');
+    /// assert_eq!(cm.to_simple_titlecase('c'), 'C');
+    /// assert_eq!(cm.to_simple_titlecase('C'), 'C');
+    /// assert_eq!(cm.to_simple_titlecase('ć'), 'Ć');
+    /// assert_eq!(cm.to_simple_titlecase('γ'), 'Γ');
     /// ```
-    pub fn to_titlecase(&self, c: char) -> char {
+    pub fn to_simple_titlecase(&self, c: char) -> char {
         self.data.get().simple_title(c)
     }
 
