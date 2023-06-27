@@ -77,7 +77,7 @@ use writeable::Writeable;
 /// );
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash)]
+#[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
     /// The basic language/script/region components in the locale identifier along with any variants.
