@@ -21,7 +21,6 @@ category = "ICU4X Data"
 dependencies = [
     "testdata",
     "testdata-hello-world",
-    "testdata-segmenter",
     "download-repo-sources",
 ]
 script_runner = "@duckscript"
@@ -110,26 +109,6 @@ dependencies = [
     "testdata-hello-world-bincode",
     "testdata-hello-world-postcard",
     "testdata-hello-world-blob",
-]
-
-[tasks.testdata-segmenter]
-description = "Build JSON testdata for the segmenter crate."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys",
-    "segmenter/lstm/wl_auto@1",
-    "segmenter/dictionary/w_auto@1",
-    "segmenter/dictionary/wl_ext@1",
-    "--locales=full",
-    "--format=dir",
-    "--syntax=postcard",
-    "--icuexport-root=provider/repodata/data/icuexport",
-    "--out=components/segmenter/tests/testdata/provider",
-    "--overwrite",
 ]
 
 [tasks.bakeddata]

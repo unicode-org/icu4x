@@ -292,18 +292,21 @@ impl Ethiopian {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "mundi")),
                 number: year + AMETE_ALEM_OFFSET,
+                cyclic: None,
                 related_iso: None,
             }
         } else if year > 0 {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "incar")),
                 number: year,
+                cyclic: None,
                 related_iso: None,
             }
         } else {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "pre-incar")),
                 number: 1 - year,
+                cyclic: None,
                 related_iso: None,
             }
         }

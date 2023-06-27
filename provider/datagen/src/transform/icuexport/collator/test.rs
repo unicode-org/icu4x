@@ -209,7 +209,9 @@ fn test_nb_nn_no() {
 
 #[test]
 fn test_zh() {
-    let provider = crate::DatagenProvider::for_test();
+    let mut provider = crate::DatagenProvider::for_test();
+    // `zh-u-co-gb2312` needs to be manually enabled
+    provider.source.options.collations.insert("gb2312".into());
     let provider = LocaleFallbackProvider::try_new_unstable(provider).unwrap();
     let provider = ResolvedLocaleAdapter::new(provider);
 

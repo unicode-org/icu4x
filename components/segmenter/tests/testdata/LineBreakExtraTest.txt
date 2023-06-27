@@ -1,0 +1,7 @@
+# Additional line breaking tests, not in LineBreakTest.txt
+#
+# https://github.com/unicode-org/icu4x/pull/3548
+× 0031 × 003A × 0041 ÷ # × [NU] × [IS] × [AL] ÷
+× 0031 × 003A × 05D0 ÷ # × [NU] × [IS] × [HL] ÷
+× 0031 × 003A ÷ FFFC ÷ # × [NU] × [IS] ÷ [CB] ÷
+× 0031 × 003A ÷ 1F3CA ÷ # × [NU] × [IS] ÷ [EB] ÷

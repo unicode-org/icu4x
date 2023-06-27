@@ -23,12 +23,7 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvide
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
-        // We treat searching for `und` as a request for all data. Other requests
-        // are not currently supported.
-        if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.into_error());
-        }
-
+        self.check_req::<LocaleFallbackLikelySubtagsV1Marker>(req)?;
         let resources = LikelySubtagsResources::try_from_source_data(&self.source)?;
 
         let metadata = DataResponseMetadata::default();
@@ -44,12 +39,7 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
-        // We treat searching for `und` as a request for all data. Other requests
-        // are not currently supported.
-        if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.into_error());
-        }
-
+        self.check_req::<LocaleFallbackParentsV1Marker>(req)?;
         let parents_data: &cldr_serde::parent_locales::Resource = self
             .source
             .cldr()?
@@ -67,8 +57,9 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
 impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        _req: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
+        self.check_req::<CollationFallbackSupplementV1Marker>(req)?;
         // TODO(#1964): Load this data from its proper sources. For now, it is copied from:
         // https://github.com/unicode-org/icu/blob/main/tools/cldr/cldr-to-icu/build-icu-data.xml
         // as well as from CLDR XML.

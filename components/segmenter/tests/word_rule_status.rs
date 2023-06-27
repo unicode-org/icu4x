@@ -7,8 +7,7 @@ use icu_segmenter::WordType;
 
 #[test]
 fn rule_status() {
-    let segmenter =
-        WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter = WordSegmenter::new_auto();
     let mut iter = segmenter.segment_str("hello world 123");
 
     assert_eq!(iter.next(), Some(0), "SOT");
@@ -38,8 +37,7 @@ fn rule_status() {
 
 #[test]
 fn rule_status_letter_eof() {
-    let segmenter =
-        WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter = WordSegmenter::new_auto();
     let mut iter = segmenter.segment_str("one.");
 
     assert_eq!(iter.next(), Some(0), "SOT");
@@ -57,8 +55,7 @@ fn rule_status_letter_eof() {
 
 #[test]
 fn rule_status_numeric_eof() {
-    let segmenter =
-        WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter = WordSegmenter::new_auto();
     let mut iter = segmenter.segment_str("42.");
 
     assert_eq!(iter.next(), Some(0), "SOT");
@@ -76,8 +73,7 @@ fn rule_status_numeric_eof() {
 
 #[test]
 fn rule_status_th() {
-    let segmenter =
-        WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter = WordSegmenter::new_auto();
     let mut iter = segmenter.segment_str("ภาษาไทยภาษาไทย");
 
     assert_eq!(iter.next(), Some(0), "SOT");
@@ -97,7 +93,7 @@ fn rule_status_th() {
 #[test]
 fn rule_status_no_word() {
     let segmenter =
-        SentenceSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+        SentenceSegmenter::new();
     let mut iter = segmenter.segment_str("hello");
 
     assert_eq!(iter.next(), Some(0), "SOT");

@@ -18,12 +18,11 @@ use icu::decimal::FixedDecimalFormatter;
 use icu::locid::locale;
 use writeable::assert_writeable_eq;
 
-let fdf = FixedDecimalFormatter::try_new_unstable(
-    &icu_testdata::unstable(),
+let fdf = FixedDecimalFormatter::try_new(
     &locale!("bn").into(),
     Default::default(),
 )
-.expect("Data should load successfully");
+.expect("locale should be present");
 
 let fixed_decimal = FixedDecimal::from(1000007);
 
@@ -38,12 +37,11 @@ use icu::decimal::FixedDecimalFormatter;
 use icu::locid::Locale;
 use writeable::assert_writeable_eq;
 
-let fdf = FixedDecimalFormatter::try_new_unstable(
-    &icu_testdata::unstable(),
+let fdf = FixedDecimalFormatter::try_new(
     &Locale::UND.into(),
     Default::default(),
 )
-.expect("Data should load successfully");
+.expect("locale should be present");
 
 let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
 
@@ -61,12 +59,11 @@ use icu::decimal::FixedDecimalFormatter;
 use icu::locid::locale;
 use writeable::assert_writeable_eq;
 
-let fdf = FixedDecimalFormatter::try_new_unstable(
-    &icu_testdata::unstable(),
+let fdf = FixedDecimalFormatter::try_new(
     &locale!("th-u-nu-thai").into(),
     Default::default(),
 )
-.expect("Data should load successfully");
+.expect("locale should be present");
 
 let fixed_decimal = FixedDecimal::from(1000007);
 

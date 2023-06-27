@@ -14,16 +14,10 @@ macro_rules! __impl_props_bidiauxiliaryprops_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker>, icu_provider::DataError> {
-                let locale = req.locale;
-                match {
-                    if locale.is_empty() {
-                        Ok(Self::SINGLETON_PROPS_BIDIAUXILIARYPROPS_V1)
-                    } else {
-                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                    }
-                } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
-                    Err(e) => Err(e.with_req(<icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
+                if req.locale.is_empty() {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_PROPS_BIDIAUXILIARYPROPS_V1)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
                 }
             }
         }

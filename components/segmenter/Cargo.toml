@@ -16,7 +16,6 @@ license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
-    "data/*",
     "src/**/*",
     "examples/**/*",
     "benches/**/*",
@@ -42,9 +41,12 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 
 libm = { version = "0.2", default-features = false, optional = true }
 
+icu_segmenter_data = { path = "data", optional = true }
+icu_locid_transform = { path = "../../components/locid_transform", features = ["data"], optional = true }
+
 [dev-dependencies]
 criterion = "0.4"
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_segmenter", "icu_properties", "icu_locid_transform"] }
+icu_properties = { path = "../properties", features = ["data"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_json = "1.0"
 icu = { path = "../../components/icu" }
@@ -60,6 +62,7 @@ serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/se
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 lstm = ["dep:libm"]
 auto = ["lstm"] # Enabled try_new_auto_unstable constructors
+data = ["dep:icu_segmenter_data"]
 
 [lib]
 path = "src/lib.rs"

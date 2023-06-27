@@ -223,12 +223,14 @@ pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "ce")),
             number: year,
+            cyclic: None,
             related_iso: None,
         }
     } else {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "bce")),
             number: 1_i32.saturating_sub(year),
+            cyclic: None,
             related_iso: None,
         }
     }

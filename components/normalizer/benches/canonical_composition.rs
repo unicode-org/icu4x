@@ -23,8 +23,7 @@ fn strip_headers(content: &str) -> String {
 }
 
 fn normalizer_bench_data() -> [BenchDataContent; 16] {
-    let nfc_normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
+    let nfc_normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
 
     return [
         BenchDataContent {
@@ -160,7 +159,7 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "canonical_composition";
     let mut group = criterion.benchmark_group(group_name);
 
-    let composer = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let composer = CanonicalComposition::new();
 
     for bench_data_content in black_box(normalizer_bench_data()) {
         group.bench_function(
@@ -173,7 +172,7 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
 }
 
 fn decompose_data(nfc: &str) -> Vec<(char, char)> {
-    let decomposer = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let decomposer = CanonicalDecomposition::new();
     nfc.chars()
         .map(|c| decomposer.decompose(c))
         .filter_map(|decomposed| {

@@ -13,6 +13,7 @@ use tinystr::TinyAsciiStr;
 
 impl DataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
+        self.check_req::<DecimalSymbolsV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self

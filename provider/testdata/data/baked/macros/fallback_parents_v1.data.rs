@@ -19,16 +19,10 @@ macro_rules! __impl_fallback_parents_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_locid_transform::provider::LocaleFallbackParentsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::LocaleFallbackParentsV1Marker>, icu_provider::DataError> {
-                let locale = req.locale;
-                match {
-                    if locale.is_empty() {
-                        Ok(Self::SINGLETON_FALLBACK_PARENTS_V1)
-                    } else {
-                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                    }
-                } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
-                    Err(e) => Err(e.with_req(<icu_locid_transform::provider::LocaleFallbackParentsV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
+                if req.locale.is_empty() {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_FALLBACK_PARENTS_V1)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu_locid_transform::provider::LocaleFallbackParentsV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
                 }
             }
         }

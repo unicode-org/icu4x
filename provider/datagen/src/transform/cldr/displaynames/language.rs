@@ -16,6 +16,7 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LanguageDisplayNamesV1Marker>, DataError> {
+        self.check_req::<LanguageDisplayNamesV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::displaynames::language::Resource = self
@@ -39,6 +40,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LocaleDisplayNamesV1Marker>, DataError> {
+        self.check_req::<LocaleDisplayNamesV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::displaynames::language::Resource = self
