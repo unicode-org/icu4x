@@ -6,12 +6,12 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{
-    adjusted_rem_euclid, adjusted_rem_euclid64, adjusted_rem_euclid_f64, i64_to_i32, quotient,
-    quotient64, I32Result,
+    adjusted_rem_euclid, adjusted_rem_euclid64, adjusted_rem_euclid_f64, div_rem_euclid,
+    i64_to_i32, quotient, quotient64, I32Result,
 };
 use crate::iso::{self, Iso, IsoDateInner};
 use crate::rata_die::RataDie;
-use crate::types::Moment;
+use crate::types::{Era, Moment};
 use crate::{
     astronomy, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
@@ -142,17 +142,88 @@ impl Calendar for Chinese {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        todo!();
+        let era = Era(tinystr!(16, "era"));
+        let number = date.year;
+        let cyclic = Some(div_rem_euclid(number, 60).1 + 1);
+        let mid_year = Self::fixed_mid_year_from_year(number);
+        let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
+        let related_iso = Some(iso_formattable_year.number);
+        types::FormattableYear {
+            era,
+            number,
+            cyclic,
+            related_iso,
+        }
     }
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        todo!();
+        let ordinal = date.month;
+        let leap_month = date.leap_month;
+        let code_inner = if ordinal < leap_month {
+            match ordinal {
+                1 => tinystr!(4, "M01"),
+                2 => tinystr!(4, "M02"),
+                3 => tinystr!(4, "M03"),
+                4 => tinystr!(4, "M04"),
+                5 => tinystr!(4, "M05"),
+                6 => tinystr!(4, "M06"),
+                7 => tinystr!(4, "M07"),
+                8 => tinystr!(4, "M08"),
+                9 => tinystr!(4, "M09"),
+                10 => tinystr!(4, "M10"),
+                11 => tinystr!(4, "M11"),
+                12 => tinystr!(4, "M12"),
+                _ => tinystr!(4, "und"), // maximum num of months in a non-leap year is 12
+            }
+        } else {
+            if ordinal == leap_month {
+                match ordinal {
+                    1 => tinystr!(4, "und"), // cannot have a leap month before the actual month
+                    2 => tinystr!(4, "M01L"),
+                    3 => tinystr!(4, "M02L"),
+                    4 => tinystr!(4, "M03L"),
+                    5 => tinystr!(4, "M04L"),
+                    6 => tinystr!(4, "M05L"),
+                    7 => tinystr!(4, "M06L"),
+                    8 => tinystr!(4, "M07L"),
+                    9 => tinystr!(4, "M08L"),
+                    10 => tinystr!(4, "M09L"),
+                    11 => tinystr!(4, "M10L"),
+                    12 => tinystr!(4, "M11L"),
+                    13 => tinystr!(4, "M12L"),
+                    _ => tinystr!(4, "und"), // maximum num of months in a leap year is 13
+                }
+            } else {
+                // if ordinal > leap_month; this means the date is in a leap year
+                match ordinal {
+                    1 => tinystr!(4, "und"), // this implies the leap month is < 1, which is impossible
+                    2 => tinystr!(4, "und"), // this implies the leap month is = 1, which is impossible
+                    3 => tinystr!(4, "M02"),
+                    4 => tinystr!(4, "M03"),
+                    5 => tinystr!(4, "M04"),
+                    6 => tinystr!(4, "M05"),
+                    7 => tinystr!(4, "M06"),
+                    8 => tinystr!(4, "M07"),
+                    9 => tinystr!(4, "M08"),
+                    10 => tinystr!(4, "M09"),
+                    11 => tinystr!(4, "M10"),
+                    12 => tinystr!(4, "M11"),
+                    13 => tinystr!(4, "M12"),
+                    _ => tinystr!(4, "und"), // maximum number of months in a leap year is 13
+                }
+            }
+        };
+        let code = types::MonthCode(code_inner);
+        types::FormattableMonth {
+            ordinal: ordinal as u32,
+            code,
+        }
     }
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        todo!();
+        types::DayOfMonth(date.day as u32)
     }
 
     /// Information of the day of the year
@@ -255,7 +326,9 @@ impl Chinese {
     // false otherwise.
     fn chinese_no_major_solar_term(date: RataDie) -> bool {
         let lhs = Self::major_solar_term_from_fixed(date);
-        let rhs = Self::major_solar_term_from_fixed(Self::chinese_new_moon_on_or_after((date + 1).as_moment()));
+        let rhs = Self::major_solar_term_from_fixed(Self::chinese_new_moon_on_or_after(
+            (date + 1).as_moment(),
+        ));
         Self::major_solar_term_from_fixed(date)
             == Self::major_solar_term_from_fixed(Self::chinese_new_moon_on_or_after(
                 (date + 1).as_moment(),
@@ -352,8 +425,10 @@ impl Chinese {
 
     // Get the moment of the nearest winter solstice on or before a given fixed date
     fn chinese_winter_solstice_on_or_before(date: RataDie) -> RataDie {
-        let approx =
-            Astronomical::estimate_prior_solar_longitude(270.0, Self::midnight_in_china((date + 1).as_moment()));
+        let approx = Astronomical::estimate_prior_solar_longitude(
+            270.0,
+            Self::midnight_in_china((date + 1).as_moment()),
+        );
         let mut iters = 0;
         let max_iters = 367;
         let mut day = Moment::new(libm::floor(approx.inner() - 1.0));
@@ -418,7 +493,7 @@ impl Chinese {
         let leap_month = if leap_year {
             Self::get_leap_month_in_year(date)
         } else {
-            0
+            14
         };
         let elapsed_years =
             libm::floor(1.5 - month / 12.0 + ((date - CHINESE_EPOCH) as f64) / MEAN_TROPICAL_YEAR);
@@ -432,18 +507,17 @@ impl Chinese {
         Date::try_new_chinese_date(year, month_int, leap_month, day).unwrap()
     }
 
-    // TODO: Uncomment this after Date::year(), ::month(), and ::day_of_month() exist
-    // /// Get a RataDie from a Date<Chinese>
-    // pub(crate) fn fixed_from_chinese_date(date: Date<Chinese>) -> RataDie {
-    //     let year = date.year().number;
-    //     let month = date.month().ordinal as i64;
-    //     let day = date.day_of_month().0 as i64;
-    //     let mid_year = Self::fixed_mid_year_from_year(year);
-    //     let new_year = Self::chinese_new_year_on_or_before_fixed_date(mid_year);
-    //     let month_approx = new_year + (month - 1) * 29;
-    //     let prior_new_moon = Self::chinese_new_moon_on_or_after(month_approx.as_moment());
-    //     prior_new_moon + day - 1
-    // }
+    /// Get a RataDie from a Date<Chinese>
+    pub(crate) fn fixed_from_chinese_date(date: Date<Chinese>) -> RataDie {
+        let year = date.year().number;
+        let month = date.month().ordinal as i64;
+        let day = date.day_of_month().0 as i64;
+        let mid_year = Self::fixed_mid_year_from_year(year);
+        let new_year = Self::chinese_new_year_on_or_before_fixed_date(mid_year);
+        let month_approx = new_year + (month - 1) * 29;
+        let prior_new_moon = Self::chinese_new_moon_on_or_after(month_approx.as_moment());
+        prior_new_moon + day - 1
+    }
 
     /// Get the mid-year RataDie of a given year
     fn fixed_mid_year_from_year(elapsed_years: i32) -> RataDie {
@@ -514,11 +588,10 @@ mod test {
         assert_eq!(chinese_new_year.day_of_month().0, 22);
     }
 
-    // TODO: Uncomment this when Date::year(), ::month(), and ::day_of_month() are written
-    // #[test]
-    // fn test_fixed_from_chinese() {
-    //     let date = Date::try_new_chinese_date(2660, 6, 3, 6).unwrap();
-    //     let fixed = Chinese::fixed_from_chinese_date(date);
-    //     assert_eq!(fixed.to_i64_date(), 738694);
-    // }
+    #[test]
+    fn test_fixed_from_chinese() {
+        let date = Date::try_new_chinese_date(4660, 6, 3, 6).unwrap();
+        let fixed = Chinese::fixed_from_chinese_date(date);
+        assert_eq!(fixed.to_i64_date(), 738694);
+    }
 }
