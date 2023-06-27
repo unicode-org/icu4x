@@ -30,7 +30,7 @@ use zerovec::{VarZeroVec, VarZeroSlice};
 #[cfg_attr(feature = "serde", zerovec::derive(Serialize, Deserialize, Debug))]
 pub struct CodePointInversionListAndStringList<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    #[cfg_attr(feature = "serde", zerovec::varule(CodePointInversionListULE))]
+    #[zerovec::varule(CodePointInversionListULE)]
     cp_inv_list: CodePointInversionList<'data>,
     // Invariants (weakly held):
     //   - no input string is length 1 (a length 1 string should be a single code point)
