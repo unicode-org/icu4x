@@ -995,7 +995,7 @@ mod tests {
                             b"0\0\0\0:\0\0\0A\0\0\0G\0\0\0a\0\0\0g\0\0\0"
                         )
                     },
-                    22usize,
+                    22u32,
                 )
             },
             icu_collections,
