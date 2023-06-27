@@ -3602,6 +3602,7 @@ dependencies = [
  "icu_unicodeset_parser",
  "serde",
  "serde_json",
+ "zerovec",
 ]
 
 [[package]]
