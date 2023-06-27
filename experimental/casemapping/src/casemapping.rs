@@ -7,7 +7,7 @@ use crate::provider::data::MappingKind;
 use crate::provider::CaseMappingV1Marker;
 use crate::set::ClosureSet;
 use alloc::string::String;
-use icu_locid::Locale;
+use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -23,7 +23,6 @@ use writeable::Writeable;
 #[derive(Clone, Debug)]
 pub struct CaseMapping {
     data: DataPayload<CaseMappingV1Marker>,
-    locale: CaseMapLocale,
 }
 
 #[cfg(feature = "data")]
@@ -40,10 +39,11 @@ impl CaseMapping {
     ///
     /// ```rust
     /// use icu_casemapping::CaseMapping;
+    /// use icu_locid::langid;
     ///
     /// let cm = CaseMapping::new();
     ///
-    /// assert_eq!(cm.to_full_uppercase_string("hello world"), "HELLO WORLD");
+    /// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
     /// ```
     ///
     /// ✨ **Enabled with the `"data"` feature.**
@@ -53,37 +53,6 @@ impl CaseMapping {
     pub const fn new() -> Self {
         Self {
             data: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_PROPS_CASEMAP_V1),
-            locale: CaseMapLocale::Root,
-        }
-    }
-
-    /// A constructor which creates a [`CaseMapping`] for the given locale.
-    ///
-    /// This does not perform any complex fallback: the locale used must have an exact match
-    /// of a language with special casemapping for this to have any effect. Currently, this list
-    /// comprises of Turkish, Lithuanian, Greek, Dutch, and Armenian. All other languages
-    /// will have the behavior of the root locale. Regions and scripts are ignored.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    /// use icu_locid::locale;
-    ///
-    /// let cm = CaseMapping::new_with_locale(&locale!("tr"));
-    ///
-    /// assert_eq!(cm.to_full_uppercase_string("istanbul"), "İSTANBUL");
-    /// ```
-    ///
-    /// ✨ **Enabled with the `"data"` feature.**
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
-    pub const fn new_with_locale(locale: &Locale) -> Self {
-        let locale = CaseMapLocale::from_locale(locale);
-        Self {
-            data: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_PROPS_CASEMAP_V1),
-            locale,
         }
     }
 
@@ -102,189 +71,46 @@ impl CaseMapping {
     where
         P: DataProvider<CaseMappingV1Marker> + ?Sized,
     {
-        Self::try_new_with_locale_unstable(provider, &Locale::UND)
-    }
-
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: &Locale, error: DataError,
-    #[cfg(skip)]
-    functions: [
-        new_with_locale,
-        try_new_with_locale_with_any_provider,
-        try_new_with_locale_with_buffer_provider,
-        try_new_with_locale_unstable,
-        Self,
-    ]);
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_with_locale_unstable<P>(
-        provider: &P,
-        locale: &Locale,
-    ) -> Result<CaseMapping, DataError>
-    where
-        P: DataProvider<CaseMappingV1Marker> + ?Sized,
-    {
         let data = provider.load(Default::default())?.take_payload()?;
-        let locale = CaseMapLocale::from_locale(locale);
-        Ok(Self { data, locale })
-    }
-
-    /// Returns the lowercase mapping of the given `char`.
-    /// This function only implements simple and common mappings. Full mappings,
-    /// which can map one `char` to a string, are not included.
-    /// For full mappings, use [`CaseMapping::to_full_lowercase`].
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    ///
-    /// let cm = CaseMapping::new();
-    ///
-    /// assert_eq!(cm.to_lowercase('C'), 'c');
-    /// assert_eq!(cm.to_lowercase('c'), 'c');
-    /// assert_eq!(cm.to_lowercase('Ć'), 'ć');
-    /// assert_eq!(cm.to_lowercase('Γ'), 'γ');
-    /// ```
-    pub fn to_lowercase(&self, c: char) -> char {
-        self.data.get().simple_lower(c)
-    }
-
-    /// Returns the uppercase mapping of the given `char`.
-    /// This function only implements simple and common mappings. Full mappings,
-    /// which can map one `char` to a string, are not included.
-    /// For full mappings, use [`CaseMapping::to_full_uppercase`].
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    ///
-    /// let cm = CaseMapping::new();
-    ///
-    /// assert_eq!(cm.to_uppercase('c'), 'C');
-    /// assert_eq!(cm.to_uppercase('C'), 'C');
-    /// assert_eq!(cm.to_uppercase('ć'), 'Ć');
-    /// assert_eq!(cm.to_uppercase('γ'), 'Γ');
-    ///
-    /// assert_eq!(cm.to_uppercase('ǳ'), 'Ǳ');
-    /// ```
-    pub fn to_uppercase(&self, c: char) -> char {
-        self.data.get().simple_upper(c)
-    }
-
-    /// Returns the titlecase mapping of the given `char`.
-    /// This function only implements simple and common mappings. Full mappings,
-    /// which can map one `char` to a string, are not included.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    ///
-    /// let cm = CaseMapping::new();
-    ///
-    /// assert_eq!(cm.to_titlecase('ǳ'), 'ǲ');
-    ///
-    /// assert_eq!(cm.to_titlecase('c'), 'C');
-    /// assert_eq!(cm.to_titlecase('C'), 'C');
-    /// assert_eq!(cm.to_titlecase('ć'), 'Ć');
-    /// assert_eq!(cm.to_titlecase('γ'), 'Γ');
-    /// ```
-    pub fn to_titlecase(&self, c: char) -> char {
-        self.data.get().simple_title(c)
-    }
-
-    /// Returns the simple case folding of the given char.
-    /// For full mappings, use [`CaseMapping::full_fold`].
-    ///
-    /// This function can be used to perform caseless matches on
-    /// individual characters.
-    /// > *Note:* With Unicode 15.0 data, there are three
-    /// > pairs of characters for which equivalence under this
-    /// > function is inconsistent with equivalence of the
-    /// > one-character strings under [`CaseMapping::full_fold`].
-    /// > This is resolved in Unicode 15.1 and later.
-    ///
-    /// For compatibility applications where simple case folding
-    /// of strings is required, this function can be applied to
-    /// each character of a string.  Note that the resulting
-    /// equivalence relation is different from that obtained
-    /// by [`CaseMapping::full_fold`]:
-    /// The strings "Straße" and "STRASSE" are distinct
-    /// under simple case folding, but are equivalent under
-    /// default (full) case folding.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    ///
-    /// let cm = CaseMapping::new();
-    ///
-    /// // perform case insensitive checks
-    /// assert_eq!(cm.fold('σ'), cm.fold('ς'));
-    /// assert_eq!(cm.fold('Σ'), cm.fold('ς'));
-    ///
-    /// assert_eq!(cm.fold('c'), 'c');
-    /// assert_eq!(cm.fold('Ć'), 'ć');
-    /// assert_eq!(cm.fold('Γ'), 'γ');
-    /// assert_eq!(cm.fold('ς'), 'σ');
-    ///
-    /// assert_eq!(cm.fold('ß'), 'ß');
-    /// assert_eq!(cm.fold('I'), 'i');
-    /// assert_eq!(cm.fold('İ'), 'İ');
-    /// assert_eq!(cm.fold('ı'), 'ı');
-    /// ```
-    pub fn fold(&self, c: char) -> char {
-        self.data.get().simple_fold(c, FoldOptions::default())
-    }
-
-    /// Returns the simple case folding of the given char, using Turkic (T) mappings for
-    /// dotted/dotless i. This function does not fold `i` and `I` to the same character. Instead,
-    /// `I` will fold to `ı`, and `İ` will fold to `i`. Otherwise, this is the same as
-    /// [`CaseMapping::fold()`].
-    ///
-    /// You can use the case folding to perform Turkic caseless matches on characters
-    /// provided they don't full-casefold to strings. To avoid that situation,
-    /// convert to a string and use [`CaseMapping::full_fold_turkic`].
-    ///
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    ///
-    /// let cm = CaseMapping::new();
-    ///
-    /// assert_eq!(cm.fold_turkic('I'), 'ı');
-    /// assert_eq!(cm.fold_turkic('İ'), 'i');
-    /// ```
-    pub fn fold_turkic(&self, c: char) -> char {
-        self.data
-            .get()
-            .simple_fold(c, FoldOptions::with_turkic_mappings())
+        Ok(Self { data })
     }
 
     /// Returns the full lowercase mapping of the given string as a [`Writeable`].
-    /// This function is context and locale sensitive.
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::to_full_lowercase_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::lowercase_to_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
-    pub fn to_full_lowercase<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
-        self.data
-            .get()
-            .full_helper_writeable(src, self.locale, MappingKind::Lower)
+    pub fn lowercase<'a>(
+        &'a self,
+        src: &'a str,
+        langid: &LanguageIdentifier,
+    ) -> impl Writeable + 'a {
+        self.data.get().full_helper_writeable(
+            src,
+            CaseMapLocale::from_langid(langid),
+            MappingKind::Lower,
+        )
     }
 
     /// Returns the full uppercase mapping of the given string as a [`Writeable`].
-    /// This function is context and locale sensitive.
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::to_full_uppercase_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::uppercase_to_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
-    pub fn to_full_uppercase<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
-        self.data
-            .get()
-            .full_helper_writeable(src, self.locale, MappingKind::Upper)
+    pub fn uppercase<'a>(
+        &'a self,
+        src: &'a str,
+        langid: &LanguageIdentifier,
+    ) -> impl Writeable + 'a {
+        self.data.get().full_helper_writeable(
+            src,
+            CaseMapLocale::from_langid(langid),
+            MappingKind::Upper,
+        )
     }
 
     /// Case-folds the characters in the given string as a [`Writeable`].
@@ -292,9 +118,9 @@ impl CaseMapping {
     ///
     /// Can be used to test if two strings are case-insensitively equivalent.
     ///
-    /// See [`Self::full_fold_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::fold_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
-    pub fn full_fold<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
+    pub fn fold<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
         self.data
             .get()
             .full_helper_writeable(src, CaseMapLocale::Root, MappingKind::Fold)
@@ -306,60 +132,81 @@ impl CaseMapping {
     ///
     /// Can be used to test if two strings are case-insensitively equivalent.
     ///
-    /// See [`Self::full_fold_turkic_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::fold_turkic_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
-    pub fn full_fold_turkic<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
+    pub fn fold_turkic<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
         self.data
             .get()
             .full_helper_writeable(src, CaseMapLocale::Turkish, MappingKind::Fold)
     }
 
     /// Returns the full lowercase mapping of the given string as a String.
-    /// This function is context and locale sensitive.
     ///
-    /// See [`Self::to_full_lowercase()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
+    ///
+    /// See [`Self::lowercase()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
     /// # Example
     ///
     /// ```rust
     /// use icu_casemapping::CaseMapping;
+    /// use icu_locid::langid;
     ///
     /// let cm = CaseMapping::new();
+    /// let root = langid!("und");
     ///
-    /// assert_eq!(cm.to_full_lowercase_string("hEllO WorLd"), "hello world");
-    /// assert_eq!(cm.to_full_lowercase_string("Γειά σου Κόσμε"), "γειά σου κόσμε");
-    /// assert_eq!(cm.to_full_lowercase_string("नमस्ते दुनिया"), "नमस्ते दुनिया");
-    /// assert_eq!(cm.to_full_lowercase_string("Привет мир"), "привет мир");
+    /// assert_eq!(cm.lowercase_to_string("hEllO WorLd", &root), "hello world");
+    /// assert_eq!(cm.lowercase_to_string("Γειά σου Κόσμε", &root), "γειά σου κόσμε");
+    /// assert_eq!(cm.lowercase_to_string("नमस्ते दुनिया", &root), "नमस्ते दुनिया");
+    /// assert_eq!(cm.lowercase_to_string("Привет мир", &root), "привет мир");
+    ///
+    /// // Some behavior is language-sensitive
+    /// assert_eq!(cm.lowercase_to_string("CONSTANTINOPLE", &root), "constantinople");
+    /// assert_eq!(cm.lowercase_to_string("CONSTANTINOPLE", &langid!("tr")), "constantınople");
     /// ```
-    pub fn to_full_lowercase_string(&self, src: &str) -> String {
+    pub fn lowercase_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
         self.data
             .get()
-            .full_helper_writeable(src, self.locale, MappingKind::Lower)
+            .full_helper_writeable(src, CaseMapLocale::from_langid(langid), MappingKind::Lower)
             .write_to_string()
             .into_owned()
     }
 
     /// Returns the full uppercase mapping of the given string as a String.
-    /// This function is context and locale sensitive.
     ///
-    /// See [`Self::to_full_uppercase()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
+    ///
+    /// See [`Self::uppercase()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
     /// # Example
     ///
     /// ```rust
     /// use icu_casemapping::CaseMapping;
+    /// use icu_locid::langid;
     ///
     /// let cm = CaseMapping::new();
+    /// let root = langid!("und");
     ///
-    /// assert_eq!(cm.to_full_uppercase_string("hEllO WorLd"), "HELLO WORLD");
-    /// assert_eq!(cm.to_full_uppercase_string("Γειά σου Κόσμε"), "ΓΕΙΆ ΣΟΥ ΚΌΣΜΕ");
-    /// assert_eq!(cm.to_full_uppercase_string("नमस्ते दुनिया"), "नमस्ते दुनिया");
-    /// assert_eq!(cm.to_full_uppercase_string("Привет мир"), "ПРИВЕТ МИР");
+    /// assert_eq!(cm.uppercase_to_string("hEllO WorLd", &root), "HELLO WORLD");
+    /// assert_eq!(cm.uppercase_to_string("Γειά σου Κόσμε", &root), "ΓΕΙΆ ΣΟΥ ΚΌΣΜΕ");
+    /// assert_eq!(cm.uppercase_to_string("नमस्ते दुनिया", &root), "नमस्ते दुनिया");
+    /// assert_eq!(cm.uppercase_to_string("Привет мир", &root), "ПРИВЕТ МИР");
+    ///
+    /// // Some behavior is language-sensitive
+    /// assert_eq!(cm.uppercase_to_string("istanbul", &root), "ISTANBUL");
+    /// assert_eq!(cm.uppercase_to_string("istanbul", &langid!("tr")), "İSTANBUL"); // Turkish dotted i
+    ///
+    /// assert_eq!(cm.uppercase_to_string("և Երևանի", &root), "ԵՒ ԵՐԵՒԱՆԻ");
+    /// assert_eq!(cm.uppercase_to_string("և Երևանի", &langid!("hy")), "ԵՎ ԵՐԵՎԱՆԻ"); // Eastern Armenian ech-yiwn ligature
     /// ```
-    pub fn to_full_uppercase_string(&self, src: &str) -> String {
+    pub fn uppercase_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
         self.data
             .get()
-            .full_helper_writeable(src, self.locale, MappingKind::Upper)
+            .full_helper_writeable(src, CaseMapLocale::from_langid(langid), MappingKind::Upper)
             .write_to_string()
             .into_owned()
     }
@@ -369,7 +216,7 @@ impl CaseMapping {
     ///
     /// Can be used to test if two strings are case-insensitively equivalent.
     ///
-    /// See [`Self::full_fold()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`Self::fold()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
     /// # Example
     ///
@@ -379,14 +226,14 @@ impl CaseMapping {
     /// let cm = CaseMapping::new();
     ///
     /// // Check if two strings are equivalent case insensitively
-    /// assert_eq!(cm.full_fold_string("hEllO WorLd"), cm.full_fold_string("HELLO worlD"));
+    /// assert_eq!(cm.fold_string("hEllO WorLd"), cm.fold_string("HELLO worlD"));
     ///
-    /// assert_eq!(cm.full_fold_string("hEllO WorLd"), "hello world");
-    /// assert_eq!(cm.full_fold_string("Γειά σου Κόσμε"), "γειά σου κόσμε");
-    /// assert_eq!(cm.full_fold_string("नमस्ते दुनिया"), "नमस्ते दुनिया");
-    /// assert_eq!(cm.full_fold_string("Привет мир"), "привет мир");
+    /// assert_eq!(cm.fold_string("hEllO WorLd"), "hello world");
+    /// assert_eq!(cm.fold_string("Γειά σου Κόσμε"), "γειά σου κόσμε");
+    /// assert_eq!(cm.fold_string("नमस्ते दुनिया"), "नमस्ते दुनिया");
+    /// assert_eq!(cm.fold_string("Привет мир"), "привет мир");
     /// ```
-    pub fn full_fold_string(&self, src: &str) -> String {
+    pub fn fold_string(&self, src: &str) -> String {
         self.data
             .get()
             .full_helper_writeable(src, CaseMapLocale::Root, MappingKind::Fold)
@@ -400,7 +247,7 @@ impl CaseMapping {
     ///
     /// Can be used to test if two strings are case-insensitively equivalent.
     ///
-    /// See [`Self::full_fold_turkic()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`Self::fold_turkic()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
     /// # Example
     ///
@@ -410,17 +257,17 @@ impl CaseMapping {
     /// let cm = CaseMapping::new();
     ///
     /// // Check if two strings are equivalent case insensitively
-    /// assert_eq!(cm.full_fold_turkic_string("İstanbul"), cm.full_fold_turkic_string("iSTANBUL"));
+    /// assert_eq!(cm.fold_turkic_string("İstanbul"), cm.fold_turkic_string("iSTANBUL"));
     ///
-    /// assert_eq!(cm.full_fold_turkic_string("İstanbul not Constantinople"), "istanbul not constantinople");
-    /// assert_eq!(cm.full_fold_turkic_string("Istanbul not Constantınople"), "ıstanbul not constantınople");
+    /// assert_eq!(cm.fold_turkic_string("İstanbul not Constantinople"), "istanbul not constantinople");
+    /// assert_eq!(cm.fold_turkic_string("Istanbul not Constantınople"), "ıstanbul not constantınople");
     ///
-    /// assert_eq!(cm.full_fold_turkic_string("hEllO WorLd"), "hello world");
-    /// assert_eq!(cm.full_fold_turkic_string("Γειά σου Κόσμε"), "γειά σου κόσμε");
-    /// assert_eq!(cm.full_fold_turkic_string("नमस्ते दुनिया"), "नमस्ते दुनिया");
-    /// assert_eq!(cm.full_fold_turkic_string("Привет мир"), "привет мир");
+    /// assert_eq!(cm.fold_turkic_string("hEllO WorLd"), "hello world");
+    /// assert_eq!(cm.fold_turkic_string("Γειά σου Κόσμε"), "γειά σου κόσμε");
+    /// assert_eq!(cm.fold_turkic_string("नमस्ते दुनिया"), "नमस्ते दुनिया");
+    /// assert_eq!(cm.fold_turkic_string("Привет мир"), "привет мир");
     /// ```
-    pub fn full_fold_turkic_string(&self, src: &str) -> String {
+    pub fn fold_turkic_string(&self, src: &str) -> String {
         self.data
             .get()
             .full_helper_writeable(src, CaseMapLocale::Turkish, MappingKind::Fold)
@@ -497,21 +344,158 @@ impl CaseMapping {
     pub fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
         self.data.get().add_string_case_closure(s, set)
     }
+
+    /// Returns the lowercase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
+    /// For full mappings, use [`CaseMapping::lowercase`].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu_casemapping::CaseMapping;
+    ///
+    /// let cm = CaseMapping::new();
+    ///
+    /// assert_eq!(cm.simple_lowercase('C'), 'c');
+    /// assert_eq!(cm.simple_lowercase('c'), 'c');
+    /// assert_eq!(cm.simple_lowercase('Ć'), 'ć');
+    /// assert_eq!(cm.simple_lowercase('Γ'), 'γ');
+    /// ```
+    pub fn simple_lowercase(&self, c: char) -> char {
+        self.data.get().simple_lower(c)
+    }
+
+    /// Returns the uppercase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
+    /// For full mappings, use [`CaseMapping::uppercase`].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu_casemapping::CaseMapping;
+    ///
+    /// let cm = CaseMapping::new();
+    ///
+    /// assert_eq!(cm.simple_uppercase('c'), 'C');
+    /// assert_eq!(cm.simple_uppercase('C'), 'C');
+    /// assert_eq!(cm.simple_uppercase('ć'), 'Ć');
+    /// assert_eq!(cm.simple_uppercase('γ'), 'Γ');
+    ///
+    /// assert_eq!(cm.simple_uppercase('ǳ'), 'Ǳ');
+    /// ```
+    pub fn simple_uppercase(&self, c: char) -> char {
+        self.data.get().simple_upper(c)
+    }
+
+    /// Returns the titlecase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu_casemapping::CaseMapping;
+    ///
+    /// let cm = CaseMapping::new();
+    ///
+    /// assert_eq!(cm.simple_titlecase('ǳ'), 'ǲ');
+    ///
+    /// assert_eq!(cm.simple_titlecase('c'), 'C');
+    /// assert_eq!(cm.simple_titlecase('C'), 'C');
+    /// assert_eq!(cm.simple_titlecase('ć'), 'Ć');
+    /// assert_eq!(cm.simple_titlecase('γ'), 'Γ');
+    /// ```
+    pub fn simple_titlecase(&self, c: char) -> char {
+        self.data.get().simple_title(c)
+    }
+
+    /// Returns the simple case folding of the given char.
+    /// For full mappings, use [`CaseMapping::fold`].
+    ///
+    /// This function can be used to perform caseless matches on
+    /// individual characters.
+    /// > *Note:* With Unicode 15.0 data, there are three
+    /// > pairs of characters for which equivalence under this
+    /// > function is inconsistent with equivalence of the
+    /// > one-character strings under [`CaseMapping::fold`].
+    /// > This is resolved in Unicode 15.1 and later.
+    ///
+    /// For compatibility applications where simple case folding
+    /// of strings is required, this function can be applied to
+    /// each character of a string.  Note that the resulting
+    /// equivalence relation is different from that obtained
+    /// by [`CaseMapping::fold`]:
+    /// The strings "Straße" and "STRASSE" are distinct
+    /// under simple case folding, but are equivalent under
+    /// default (full) case folding.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu_casemapping::CaseMapping;
+    ///
+    /// let cm = CaseMapping::new();
+    ///
+    /// // perform case insensitive checks
+    /// assert_eq!(cm.simple_fold('σ'), cm.simple_fold('ς'));
+    /// assert_eq!(cm.simple_fold('Σ'), cm.simple_fold('ς'));
+    ///
+    /// assert_eq!(cm.simple_fold('c'), 'c');
+    /// assert_eq!(cm.simple_fold('Ć'), 'ć');
+    /// assert_eq!(cm.simple_fold('Γ'), 'γ');
+    /// assert_eq!(cm.simple_fold('ς'), 'σ');
+    ///
+    /// assert_eq!(cm.simple_fold('ß'), 'ß');
+    /// assert_eq!(cm.simple_fold('I'), 'i');
+    /// assert_eq!(cm.simple_fold('İ'), 'İ');
+    /// assert_eq!(cm.simple_fold('ı'), 'ı');
+    /// ```
+    pub fn simple_fold(&self, c: char) -> char {
+        self.data.get().simple_fold(c, FoldOptions::default())
+    }
+
+    /// Returns the simple case folding of the given char, using Turkic (T) mappings for
+    /// dotted/dotless i. This function does not fold `i` and `I` to the same character. Instead,
+    /// `I` will fold to `ı`, and `İ` will fold to `i`. Otherwise, this is the same as
+    /// [`CaseMapping::fold()`].
+    ///
+    /// You can use the case folding to perform Turkic caseless matches on characters
+    /// provided they don't full-casefold to strings. To avoid that situation,
+    /// convert to a string and use [`CaseMapping::fold_turkic`].
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu_casemapping::CaseMapping;
+    ///
+    /// let cm = CaseMapping::new();
+    ///
+    /// assert_eq!(cm.simple_fold_turkic('I'), 'ı');
+    /// assert_eq!(cm.simple_fold_turkic('İ'), 'i');
+    /// ```
+    pub fn simple_fold_turkic(&self, c: char) -> char {
+        self.data
+            .get()
+            .simple_fold(c, FoldOptions::with_turkic_mappings())
+    }
 }
 
 #[cfg(test)]
 #[cfg(feature = "data")]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locid::langid;
 
     impl CaseMapping {
         /// Only for testing titlecase special-cases, does NOT
         /// segment input string
-        fn to_full_titlecase_string_test(&self, src: &str) -> String {
+        fn titlecase_to_string_test(&self, src: &str, langid: &LanguageIdentifier) -> String {
             self.data
                 .get()
-                .full_helper_writeable(src, self.locale, MappingKind::Title)
+                .full_helper_writeable(src, CaseMapLocale::from_langid(langid), MappingKind::Title)
                 .write_to_string()
                 .into_owned()
         }
@@ -521,96 +505,89 @@ mod tests {
     /// Tests for SpecialCasing.txt. Some of the special cases are data-driven, some are code-driven
     fn test_special_cases() {
         let cm = CaseMapping::new();
+        let root = langid!("und");
 
         // Ligatures
 
         // U+FB00 LATIN SMALL LIGATURE FF
-        assert_eq!(cm.to_full_uppercase_string("ﬀ"), "FF");
+        assert_eq!(cm.uppercase_to_string("ﬀ", &root), "FF");
         // U+FB05 LATIN SMALL LIGATURE LONG S T
-        assert_eq!(cm.to_full_uppercase_string("ﬅ"), "ST");
+        assert_eq!(cm.uppercase_to_string("ﬅ", &root), "ST");
 
         // No corresponding uppercased character
 
         // U+0149 LATIN SMALL LETTER N PRECEDED BY APOSTROPHE
-        assert_eq!(cm.to_full_uppercase_string("ŉ"), "ʼN");
+        assert_eq!(cm.uppercase_to_string("ŉ", &root), "ʼN");
 
         // U+1F50 GREEK SMALL LETTER UPSILON WITH PSILI
-        assert_eq!(cm.to_full_uppercase_string("ὐ"), "Υ̓");
+        assert_eq!(cm.uppercase_to_string("ὐ", &root), "Υ̓");
         // U+1FF6 GREEK SMALL LETTER OMEGA WITH PERISPOMENI
-        assert_eq!(cm.to_full_uppercase_string("ῶ"), "Ω͂");
+        assert_eq!(cm.uppercase_to_string("ῶ", &root), "Ω͂");
 
         // YPOGEGRAMMENI / PROSGEGRAMMENI special cases
 
         // E.g. <alpha><iota_subscript><acute> is uppercased to <ALPHA><acute><IOTA>
         assert_eq!(
-            cm.to_full_uppercase_string("α\u{0313}\u{0345}"),
+            cm.uppercase_to_string("α\u{0313}\u{0345}", &root),
             "Α\u{0313}Ι"
         );
 
         // U+1F80 GREEK SMALL LETTER ALPHA WITH PSILI AND YPOGEGRAMMENI
-        assert_eq!(cm.to_full_titlecase_string_test("ᾀ"), "ᾈ");
-        assert_eq!(cm.to_full_uppercase_string("ᾀ"), "ἈΙ");
+        assert_eq!(cm.titlecase_to_string_test("ᾀ", &root), "ᾈ");
+        assert_eq!(cm.uppercase_to_string("ᾀ", &root), "ἈΙ");
 
         // U+1FFC GREEK CAPITAL LETTER OMEGA WITH PROSGEGRAMMENI
-        assert_eq!(cm.to_full_lowercase_string("ῼ"), "ῳ");
-        assert_eq!(cm.to_full_titlecase_string_test("ῼ"), "ῼ");
-        assert_eq!(cm.to_full_uppercase_string("ῼ"), "ΩΙ");
+        assert_eq!(cm.lowercase_to_string("ῼ", &root), "ῳ");
+        assert_eq!(cm.titlecase_to_string_test("ῼ", &root), "ῼ");
+        assert_eq!(cm.uppercase_to_string("ῼ", &root), "ΩΙ");
 
         // U+1F98 GREEK CAPITAL LETTER ETA WITH PSILI AND PROSGEGRAMMENI
-        assert_eq!(cm.to_full_lowercase_string("ᾘ"), "ᾐ");
-        assert_eq!(cm.to_full_titlecase_string_test("ᾘ"), "ᾘ");
-        assert_eq!(cm.to_full_uppercase_string("ᾘ"), "ἨΙ");
+        assert_eq!(cm.lowercase_to_string("ᾘ", &root), "ᾐ");
+        assert_eq!(cm.titlecase_to_string_test("ᾘ", &root), "ᾘ");
+        assert_eq!(cm.uppercase_to_string("ᾘ", &root), "ἨΙ");
 
         // U+1FB2 GREEK SMALL LETTER ALPHA WITH VARIA AND YPOGEGRAMMENI
-        assert_eq!(cm.to_full_lowercase_string("ᾲ"), "ᾲ");
-        assert_eq!(cm.to_full_titlecase_string_test("ᾲ"), "Ὰ\u{345}");
-        assert_eq!(cm.to_full_uppercase_string("ᾲ"), "ᾺΙ");
+        assert_eq!(cm.lowercase_to_string("ᾲ", &root), "ᾲ");
+        assert_eq!(cm.titlecase_to_string_test("ᾲ", &root), "Ὰ\u{345}");
+        assert_eq!(cm.uppercase_to_string("ᾲ", &root), "ᾺΙ");
 
         // Final sigma test
         // U+03A3 GREEK CAPITAL LETTER SIGMA in Final_Sigma context
-        assert_eq!(cm.to_full_lowercase_string("ΙΙΙΣ"), "ιιις");
+        assert_eq!(cm.lowercase_to_string("ΙΙΙΣ", &root), "ιιις");
 
         // Turkish / Azeri
-
-        let cm_tr = CaseMapping::new_with_locale(&locale!("tr"));
-        let cm_az = CaseMapping::new_with_locale(&locale!("az"));
-
+        let tr = langid!("tr");
+        let az = langid!("az");
         // U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE
-        assert_eq!(cm_tr.to_full_lowercase_string("İ"), "i");
-        assert_eq!(cm_az.to_full_lowercase_string("İ"), "i");
-        assert_eq!(cm_tr.to_full_titlecase_string_test("İ"), "İ");
-        assert_eq!(cm_az.to_full_titlecase_string_test("İ"), "İ");
-        assert_eq!(cm_tr.to_full_uppercase_string("İ"), "İ");
-        assert_eq!(cm_az.to_full_uppercase_string("İ"), "İ");
+        assert_eq!(cm.lowercase_to_string("İ", &tr), "i");
+        assert_eq!(cm.lowercase_to_string("İ", &az), "i");
+        assert_eq!(cm.titlecase_to_string_test("İ", &tr), "İ");
+        assert_eq!(cm.titlecase_to_string_test("İ", &az), "İ");
+        assert_eq!(cm.uppercase_to_string("İ", &tr), "İ");
+        assert_eq!(cm.uppercase_to_string("İ", &az), "İ");
 
         // U+0049 LATIN CAPITAL LETTER I and U+0307 COMBINING DOT ABOVE
-        assert_eq!(cm_tr.to_full_lowercase_string("I\u{0307}"), "i");
-        assert_eq!(cm_az.to_full_lowercase_string("I\u{0307}"), "i");
-        assert_eq!(
-            cm_tr.to_full_titlecase_string_test("I\u{0307}"),
-            "I\u{0307}"
-        );
-        assert_eq!(
-            cm_az.to_full_titlecase_string_test("I\u{0307}"),
-            "I\u{0307}"
-        );
-        assert_eq!(cm_tr.to_full_uppercase_string("I\u{0307}"), "I\u{0307}");
-        assert_eq!(cm_az.to_full_uppercase_string("I\u{0307}"), "I\u{0307}");
+        assert_eq!(cm.lowercase_to_string("I\u{0307}", &tr), "i");
+        assert_eq!(cm.lowercase_to_string("I\u{0307}", &az), "i");
+        assert_eq!(cm.titlecase_to_string_test("I\u{0307}", &tr), "I\u{0307}");
+        assert_eq!(cm.titlecase_to_string_test("I\u{0307}", &az), "I\u{0307}");
+        assert_eq!(cm.uppercase_to_string("I\u{0307}", &tr), "I\u{0307}");
+        assert_eq!(cm.uppercase_to_string("I\u{0307}", &az), "I\u{0307}");
 
         // U+0049 LATIN CAPITAL LETTER I
-        assert_eq!(cm_tr.to_full_lowercase_string("I"), "ı");
-        assert_eq!(cm_az.to_full_lowercase_string("I"), "ı");
-        assert_eq!(cm_tr.to_full_titlecase_string_test("I"), "I");
-        assert_eq!(cm_az.to_full_titlecase_string_test("I"), "I");
-        assert_eq!(cm_tr.to_full_uppercase_string("I"), "I");
-        assert_eq!(cm_az.to_full_uppercase_string("I"), "I");
+        assert_eq!(cm.lowercase_to_string("I", &tr), "ı");
+        assert_eq!(cm.lowercase_to_string("I", &az), "ı");
+        assert_eq!(cm.titlecase_to_string_test("I", &tr), "I");
+        assert_eq!(cm.titlecase_to_string_test("I", &az), "I");
+        assert_eq!(cm.uppercase_to_string("I", &tr), "I");
+        assert_eq!(cm.uppercase_to_string("I", &az), "I");
 
         // U+0069 LATIN SMALL LETTER I
-        assert_eq!(cm_tr.to_full_lowercase_string("i"), "i");
-        assert_eq!(cm_az.to_full_lowercase_string("i"), "i");
-        assert_eq!(cm_tr.to_full_titlecase_string_test("i"), "İ");
-        assert_eq!(cm_az.to_full_titlecase_string_test("i"), "İ");
-        assert_eq!(cm_tr.to_full_uppercase_string("i"), "İ");
-        assert_eq!(cm_az.to_full_uppercase_string("i"), "İ");
+        assert_eq!(cm.lowercase_to_string("i", &tr), "i");
+        assert_eq!(cm.lowercase_to_string("i", &az), "i");
+        assert_eq!(cm.titlecase_to_string_test("i", &tr), "İ");
+        assert_eq!(cm.titlecase_to_string_test("i", &az), "İ");
+        assert_eq!(cm.uppercase_to_string("i", &tr), "İ");
+        assert_eq!(cm.uppercase_to_string("i", &az), "İ");
     }
 }
