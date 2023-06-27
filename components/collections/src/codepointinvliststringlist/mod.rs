@@ -10,7 +10,7 @@
 //! It is an implementation of the the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
 use crate::codepointinvlist::{
-    CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError,
+    CodePointInversionList, CodePointInversionListULE, CodePointInversionListBuilder, CodePointInversionListError,
 };
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
@@ -22,11 +22,15 @@ use zerovec::{VarZeroVec, VarZeroSlice};
 /// A data structure providing a concrete implementation of a `UnicodeSet`
 /// (which represents a set of code points and strings) using an inversion list for the code points and a simple
 /// list-like structure to store and iterate over the strings.
+#[zerovec::make_varule(CodePointInversionListAndStringListULE)]
+#[zerovec::skip_derive(Ord)]
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 // Valid to auto-derive Deserialize because the invariants are weakly held
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(feature = "serde", zerovec::derive(Serialize, Deserialize, Debug))]
 pub struct CodePointInversionListAndStringList<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", zerovec::varule(CodePointInversionListULE))]
     cp_inv_list: CodePointInversionList<'data>,
     // Invariants (weakly held):
     //   - no input string is length 1 (a length 1 string should be a single code point)
