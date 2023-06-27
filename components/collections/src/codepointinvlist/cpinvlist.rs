@@ -8,7 +8,7 @@ use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive};
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
-use zerovec::{ule::{AsULE, EncodeAsVarULE}, zerovec, ZeroVec};
+use zerovec::{ule::AsULE, zerovec, ZeroVec};
 
 use super::CodePointInversionListError;
 use crate::codepointinvlist::utils::{deconstruct_range, is_valid_zv};
@@ -24,35 +24,12 @@ const BMP_INV_LIST_VEC: ZeroVec<u32> =
 const ALL_VEC: ZeroVec<u32> =
     zerovec![u32; <u32 as AsULE>::ULE::from_unsigned; 0x0, (char::MAX as u32) + 1];
 
-#[zerovec::make_varule(CodePointInversionListULE)]
-#[zerovec::skip_derive(Ord)]
-#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
-pub struct CodePointInversionListStandin<'data> {
-    inv_list: ZeroVec<'data, u32>,
-    size: u32,
-}
-
-unsafe impl<'a> EncodeAsVarULE<CodePointInversionListULE> for CodePointInversionList<'a> {
-    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        // TODO: don't clone?
-        <CodePointInversionListStandin as EncodeAsVarULE<CodePointInversionListULE>>::encode_var_ule_as_slices(&CodePointInversionListStandin { inv_list: self.inv_list.clone(), size: self.size as u32 }, cb)
-    }
-}
-
-impl<'zf> ZeroFrom<'zf, CodePointInversionListULE> for CodePointInversionList<'zf> {
-    fn zero_from(other: &'zf CodePointInversionListULE) -> Self {
-        let CodePointInversionListStandin { inv_list, size } = ZeroFrom::zero_from(other);
-        CodePointInversionList {
-            inv_list,
-            size: size as usize,
-        }
-    }
-}
-
 /// A membership wrapper for [`CodePointInversionList`].
 ///
 /// Provides exposure to membership functions and constructors from serialized `CodePointSet`s (sets of code points)
 /// and predefined ranges.
+#[zerovec::make_varule(CodePointInversionListULE)]
+#[zerovec::skip_derive(Ord)]
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 pub struct CodePointInversionList<'data> {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature

@@ -23,8 +23,6 @@ TODO: * zero-copify types
 
 type UnicodeSet<'a> = CodePointInversionListAndStringList<'a>;
 
-#[zerovec::make_varule(PatternElementULE)]
-#[zerovec::skip_derive(Ord)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum PatternElement<'a> {
     #[serde(borrow)]
