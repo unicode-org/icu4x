@@ -196,7 +196,10 @@ impl CaseMapping {
     ///
     /// // Some behavior is language-sensitive
     /// assert_eq!(cm.to_uppercase_string("istanbul", &root), "ISTANBUL");
-    /// assert_eq!(cm.to_uppercase_string("istanbul", &langid!("tr")), "İSTANBUL");
+    /// assert_eq!(cm.to_uppercase_string("istanbul", &langid!("tr")), "İSTANBUL"); // Turkish dotted i
+    ///
+    /// assert_eq!(cm.to_uppercase_string("և Երևանի", &root), "ԵՒ ԵՐԵՒԱՆԻ");
+    /// assert_eq!(cm.to_uppercase_string("և Երևանի", &langid!("hy")), "ԵՎ ԵՐԵՎԱՆԻ"); // Eastern Armenian ech-yiwn ligature
     /// ```
     pub fn to_uppercase_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
         self.data
