@@ -432,6 +432,19 @@ impl Chinese {
         Date::try_new_chinese_date(year, month_int, leap_month, day).unwrap()
     }
 
+    // TODO: Uncomment this after Date::year(), ::month(), and ::day_of_month() exist
+    // /// Get a RataDie from a Date<Chinese>
+    // pub(crate) fn fixed_from_chinese_date(date: Date<Chinese>) -> RataDie {
+    //     let year = date.year().number;
+    //     let month = date.month().ordinal as i64;
+    //     let day = date.day_of_month().0 as i64;
+    //     let mid_year = Self::fixed_mid_year_from_year(year);
+    //     let new_year = Self::chinese_new_year_on_or_before_fixed_date(mid_year);
+    //     let month_approx = new_year + (month - 1) * 29;
+    //     let prior_new_moon = Self::chinese_new_moon_on_or_after(month_approx.as_moment());
+    //     prior_new_moon + day - 1
+    // }
+
     /// Get the mid-year RataDie of a given year
     fn fixed_mid_year_from_year(elapsed_years: i32) -> RataDie {
         let cycle = quotient(elapsed_years - 1, 60) + 1;
@@ -500,4 +513,12 @@ mod test {
         assert_eq!(chinese_new_year.month().ordinal, 1);
         assert_eq!(chinese_new_year.day_of_month().0, 22);
     }
+
+    // TODO: Uncomment this when Date::year(), ::month(), and ::day_of_month() are written
+    // #[test]
+    // fn test_fixed_from_chinese() {
+    //     let date = Date::try_new_chinese_date(2660, 6, 3, 6).unwrap();
+    //     let fixed = Chinese::fixed_from_chinese_date(date);
+    //     assert_eq!(fixed.to_i64_date(), 738694);
+    // }
 }
