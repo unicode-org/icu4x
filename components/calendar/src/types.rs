@@ -48,7 +48,7 @@ pub struct FormattableYear {
 
     /// The year in the current cycle for cyclic calendars;
     /// can be ignored and set to any value for non-cyclic calendars.
-    pub cyclic: i32,
+    pub cyclic: Option<i32>,
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
@@ -63,7 +63,7 @@ impl FormattableYear {
     ///
     /// Other fields can be set mutably after construction
     /// as needed
-    pub fn new(era: Era, number: i32, cyclic: i32) -> Self {
+    pub fn new(era: Era, number: i32, cyclic: Option<i32>) -> Self {
         Self {
             era,
             number,

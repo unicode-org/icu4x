@@ -216,7 +216,7 @@ fn iso_year_as_buddhist(year: i32) -> types::FormattableYear {
     types::FormattableYear {
         era: types::Era(tinystr!(16, "be")),
         number: buddhist_year,
-        cyclic: 0,
+        cyclic: None,
         related_iso: None,
     }
 }
