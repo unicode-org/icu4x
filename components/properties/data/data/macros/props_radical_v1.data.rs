@@ -11,7 +11,7 @@ macro_rules! __impl_props_radical_v1 {
             #[doc(hidden)]
             pub const SINGLETON_PROPS_RADICAL_V1: &'static <icu_properties::provider::RadicalV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
-                icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80.\0\0\x9A.\0\0\x9B.\0\0\xF4.\0\0\0/\0\0\xD6/\0\0") }, 329usize)
+                icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80.\0\0\x9A.\0\0\x9B.\0\0\xF4.\0\0\0/\0\0\xD6/\0\0") }, 329u32)
             });
         }
         #[clippy::msrv = "1.61"]
