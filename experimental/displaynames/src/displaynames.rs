@@ -407,6 +407,9 @@ impl LocaleDisplayNamesFormatter {
     );
 
     /// Returns the display name of a locale.
+    /// This implementation is based on the algorithm described in
+    /// https://www.unicode.org/reports/tr35/tr35-general.html#locale_display_name_algorithm
+    /// 
     // TODO: Make this return a writeable instead of using alloc
     pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, locale: &'c Locale) -> Cow<'a, str> {
         // Step - 1: Construct the canonical locale from a given locale.
