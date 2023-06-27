@@ -17,7 +17,7 @@ use crate::PropertiesError;
 
 use icu_provider::prelude::*;
 
-/// A wrapper around certain Bidi properties data. Can be obtained via [`load_bidi_auxiliary_properties_unstable()`] and
+/// A wrapper around certain Bidi properties data. Can be obtained via [`bidi_auxiliary_properties()`] and
 /// related getters.
 ///
 /// Most useful methods are on [`BidiAuxiliaryPropertiesBorrowed`] obtained by calling [`BidiAuxiliaryProperties::as_borrowed()`]
@@ -40,7 +40,7 @@ impl BidiAuxiliaryProperties {
 
     /// Construct a new one from loaded data
     ///
-    /// Typically it is preferable to use getters like [`load_bidi_auxiliary_properties_unstable()`] instead
+    /// Typically it is preferable to use getters like [`bidi_auxiliary_properties()`] instead
     pub fn from_data(data: DataPayload<BidiAuxiliaryPropertiesV1Marker>) -> Self {
         Self { data }
     }
@@ -99,11 +99,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     /// ```
     /// use icu_properties::{bidi_data, bidi_data::BidiMirroringProperties};
     ///
-    /// let data = bidi_data::load_bidi_auxiliary_properties_unstable(
-    ///     &icu_testdata::unstable(),
-    /// )
-    /// .expect("The data should be valid");
-    /// let bidi_data = data.as_borrowed();
+    /// let bidi_data = bidi_data::bidi_auxiliary_properties();
     ///
     /// let open_paren = bidi_data.get32_mirroring_props('(' as u32);
     /// assert_eq!(open_paren.mirroring_glyph, Some(')'));
@@ -138,11 +134,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     /// ```
     /// use icu_properties::{bidi_data, bidi_data::BidiPairingProperties};
     ///
-    /// let data = bidi_data::load_bidi_auxiliary_properties_unstable(
-    ///     &icu_testdata::unstable(),
-    /// )
-    /// .expect("The data should be valid");
-    /// let bidi_data = data.as_borrowed();
+    /// let bidi_data = bidi_data::bidi_auxiliary_properties();
     ///
     /// let open_paren = bidi_data.get32_pairing_props('(' as u32);
     /// assert_eq!(open_paren, BidiPairingProperties::Open(')'));
@@ -170,25 +162,39 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 /// Returns a [`BidiAuxiliaryPropertiesV1`] struct that represents the data for certain
 /// Bidi properties.
 ///
-/// [📚 Help choosing a constructor](icu_provider::constructors)
-/// <div class="stab unstable">
-/// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-/// </div>
-///
 /// # Examples
 /// ```
 /// use icu_properties::{bidi_data, bidi_data::BidiMirroringProperties};
 ///
-/// let data = bidi_data::load_bidi_auxiliary_properties_unstable(
-///     &icu_testdata::unstable(),
-/// )
-/// .expect("The data should be valid");
-/// let bidi_data = data.as_borrowed();
+/// let bidi_data = bidi_data::bidi_auxiliary_properties();
 ///
 /// let open_paren = bidi_data.get32_mirroring_props('(' as u32);
 /// assert_eq!(open_paren.mirroring_glyph, Some(')'));
 /// assert_eq!(open_paren.mirrored, true);
 /// ```
+///
+/// ✨ **Enabled with the `"data"` feature.**
+#[cfg(feature = "data")]
+pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'static> {
+    BidiAuxiliaryPropertiesBorrowed {
+        data: crate::provider::Baked::SINGLETON_PROPS_BIDIAUXILIARYPROPS_V1,
+    }
+}
+
+icu_provider::gen_any_buffer_data_constructors!(
+    locale: skip,
+    options: skip,
+    result: Result<BidiAuxiliaryProperties, PropertiesError>,
+    #[cfg(skip)]
+    functions: [
+        bidi_auxiliary_properties,
+        load_bidi_auxiliary_properties_with_any_provider,
+        load_bidi_auxiliary_properties_with_buffer_provider,
+        load_bidi_auxiliary_properties_unstable,
+    ]
+);
+
+#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, bidi_auxiliary_properties)]
 pub fn load_bidi_auxiliary_properties_unstable(
     provider: &(impl DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized),
 ) -> Result<BidiAuxiliaryProperties, PropertiesError> {
@@ -197,14 +203,3 @@ pub fn load_bidi_auxiliary_properties_unstable(
         .and_then(DataResponse::take_payload)
         .map(BidiAuxiliaryProperties::from_data)?)
 }
-
-icu_provider::gen_any_buffer_constructors!(
-    locale: skip,
-    options: skip,
-    result: Result<BidiAuxiliaryProperties, PropertiesError>,
-    functions: [
-        load_bidi_auxiliary_properties_unstable,
-        load_bidi_auxiliary_properties_with_any_provider,
-        load_bidi_auxiliary_properties_with_buffer_provider
-    ]
-);

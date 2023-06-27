@@ -23,19 +23,12 @@
 //!
 //! // A binary property as a `CodePointSetData`
 //!
-//! let data = sets::load_emoji(&icu_testdata::unstable())
-//!     .expect("The data should be valid");
-//! let emoji = data.as_borrowed();
-//!
-//! assert!(emoji.contains('🎃')); // U+1F383 JACK-O-LANTERN
-//! assert!(!emoji.contains('木')); // U+6728
+//! assert!(sets::emoji().contains('🎃')); // U+1F383 JACK-O-LANTERN
+//! assert!(!sets::emoji().contains('木')); // U+6728
 //!
 //! // An individual enumerated property value as a `CodePointSetData`
 //!
-//! let data = maps::load_general_category(&icu_testdata::unstable())
-//!     .expect("The data should be valid");
-//! let gc = data.as_borrowed();
-//! let line_sep_data = gc.get_set_for_value(GeneralCategory::LineSeparator);
+//! let line_sep_data = maps::general_category().get_set_for_value(GeneralCategory::LineSeparator);
 //! let line_sep = line_sep_data.as_borrowed();
 //!
 //! assert!(line_sep.contains32(0x2028));
@@ -47,12 +40,8 @@
 //! ```
 //! use icu::properties::{maps, Script};
 //!
-//! let map = maps::load_script(&icu_testdata::unstable())
-//!     .expect("The data should be valid");
-//! let script = map.as_borrowed();
-//!
-//! assert_eq!(script.get('🎃'), Script::Common); // U+1F383 JACK-O-LANTERN
-//! assert_eq!(script.get('木'), Script::Han); // U+6728
+//! assert_eq!(maps::script().get('🎃'), Script::Common); // U+1F383 JACK-O-LANTERN
+//! assert_eq!(maps::script().get('木'), Script::Han); // U+6728
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
