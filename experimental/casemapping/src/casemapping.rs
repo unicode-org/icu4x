@@ -498,3 +498,119 @@ impl CaseMapping {
         self.data.get().add_string_case_closure(s, set)
     }
 }
+
+#[cfg(test)]
+#[cfg(feature = "data")]
+mod tests {
+    use super::*;
+    use icu_locid::locale;
+
+    impl CaseMapping {
+        /// Only for testing titlecase special-cases, does NOT
+        /// segment input string
+        fn to_full_titlecase_string_test(&self, src: &str) -> String {
+            self.data
+                .get()
+                .full_helper_writeable(src, self.locale, MappingKind::Title)
+                .write_to_string()
+                .into_owned()
+        }
+    }
+
+    #[test]
+    /// Tests for SpecialCasing.txt. Some of the special cases are data-driven, some are code-driven
+    fn test_special_cases() {
+        let cm = CaseMapping::new();
+
+        // Ligatures
+
+        // U+FB00 LATIN SMALL LIGATURE FF
+        assert_eq!(cm.to_full_uppercase_string("ﬀ"), "FF");
+        // U+FB05 LATIN SMALL LIGATURE LONG S T
+        assert_eq!(cm.to_full_uppercase_string("ﬅ"), "ST");
+
+        // No corresponding uppercased character
+
+        // U+0149 LATIN SMALL LETTER N PRECEDED BY APOSTROPHE
+        assert_eq!(cm.to_full_uppercase_string("ŉ"), "ʼN");
+
+        // U+1F50 GREEK SMALL LETTER UPSILON WITH PSILI
+        assert_eq!(cm.to_full_uppercase_string("ὐ"), "Υ̓");
+        // U+1FF6 GREEK SMALL LETTER OMEGA WITH PERISPOMENI
+        assert_eq!(cm.to_full_uppercase_string("ῶ"), "Ω͂");
+
+        // YPOGEGRAMMENI / PROSGEGRAMMENI special cases
+
+        // E.g. <alpha><iota_subscript><acute> is uppercased to <ALPHA><acute><IOTA>
+        assert_eq!(
+            cm.to_full_uppercase_string("α\u{0313}\u{0345}"),
+            "Α\u{0313}Ι"
+        );
+
+        // U+1F80 GREEK SMALL LETTER ALPHA WITH PSILI AND YPOGEGRAMMENI
+        assert_eq!(cm.to_full_titlecase_string_test("ᾀ"), "ᾈ");
+        assert_eq!(cm.to_full_uppercase_string("ᾀ"), "ἈΙ");
+
+        // U+1FFC GREEK CAPITAL LETTER OMEGA WITH PROSGEGRAMMENI
+        assert_eq!(cm.to_full_lowercase_string("ῼ"), "ῳ");
+        assert_eq!(cm.to_full_titlecase_string_test("ῼ"), "ῼ");
+        assert_eq!(cm.to_full_uppercase_string("ῼ"), "ΩΙ");
+
+        // U+1F98 GREEK CAPITAL LETTER ETA WITH PSILI AND PROSGEGRAMMENI
+        assert_eq!(cm.to_full_lowercase_string("ᾘ"), "ᾐ");
+        assert_eq!(cm.to_full_titlecase_string_test("ᾘ"), "ᾘ");
+        assert_eq!(cm.to_full_uppercase_string("ᾘ"), "ἨΙ");
+
+        // U+1FB2 GREEK SMALL LETTER ALPHA WITH VARIA AND YPOGEGRAMMENI
+        assert_eq!(cm.to_full_lowercase_string("ᾲ"), "ᾲ");
+        assert_eq!(cm.to_full_titlecase_string_test("ᾲ"), "Ὰ\u{345}");
+        assert_eq!(cm.to_full_uppercase_string("ᾲ"), "ᾺΙ");
+
+        // Final sigma test
+        // U+03A3 GREEK CAPITAL LETTER SIGMA in Final_Sigma context
+        assert_eq!(cm.to_full_lowercase_string("ΙΙΙΣ"), "ιιις");
+
+        // Turkish / Azeri
+
+        let cm_tr = CaseMapping::new_with_locale(&locale!("tr"));
+        let cm_az = CaseMapping::new_with_locale(&locale!("az"));
+
+        // U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE
+        assert_eq!(cm_tr.to_full_lowercase_string("İ"), "i");
+        assert_eq!(cm_az.to_full_lowercase_string("İ"), "i");
+        assert_eq!(cm_tr.to_full_titlecase_string_test("İ"), "İ");
+        assert_eq!(cm_az.to_full_titlecase_string_test("İ"), "İ");
+        assert_eq!(cm_tr.to_full_uppercase_string("İ"), "İ");
+        assert_eq!(cm_az.to_full_uppercase_string("İ"), "İ");
+
+        // U+0049 LATIN CAPITAL LETTER I and U+0307 COMBINING DOT ABOVE
+        assert_eq!(cm_tr.to_full_lowercase_string("I\u{0307}"), "i");
+        assert_eq!(cm_az.to_full_lowercase_string("I\u{0307}"), "i");
+        assert_eq!(
+            cm_tr.to_full_titlecase_string_test("I\u{0307}"),
+            "I\u{0307}"
+        );
+        assert_eq!(
+            cm_az.to_full_titlecase_string_test("I\u{0307}"),
+            "I\u{0307}"
+        );
+        assert_eq!(cm_tr.to_full_uppercase_string("I\u{0307}"), "I\u{0307}");
+        assert_eq!(cm_az.to_full_uppercase_string("I\u{0307}"), "I\u{0307}");
+
+        // U+0049 LATIN CAPITAL LETTER I
+        assert_eq!(cm_tr.to_full_lowercase_string("I"), "ı");
+        assert_eq!(cm_az.to_full_lowercase_string("I"), "ı");
+        assert_eq!(cm_tr.to_full_titlecase_string_test("I"), "I");
+        assert_eq!(cm_az.to_full_titlecase_string_test("I"), "I");
+        assert_eq!(cm_tr.to_full_uppercase_string("I"), "I");
+        assert_eq!(cm_az.to_full_uppercase_string("I"), "I");
+
+        // U+0069 LATIN SMALL LETTER I
+        assert_eq!(cm_tr.to_full_lowercase_string("i"), "i");
+        assert_eq!(cm_az.to_full_lowercase_string("i"), "i");
+        assert_eq!(cm_tr.to_full_titlecase_string_test("i"), "İ");
+        assert_eq!(cm_az.to_full_titlecase_string_test("i"), "İ");
+        assert_eq!(cm_tr.to_full_uppercase_string("i"), "İ");
+        assert_eq!(cm_az.to_full_uppercase_string("i"), "İ");
+    }
+}
