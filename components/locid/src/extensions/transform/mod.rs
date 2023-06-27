@@ -35,7 +35,8 @@ mod key;
 mod value;
 
 pub use fields::Fields;
-pub use key::Key;
+#[doc(inline)]
+pub use key::{key, Key};
 pub use value::Value;
 
 use crate::helpers::ShortSlice;

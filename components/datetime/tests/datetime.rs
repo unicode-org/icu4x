@@ -29,8 +29,8 @@ use icu_datetime::{
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
-    extensions_unicode_key as key, extensions_unicode_value as value, langid, locale,
-    LanguageIdentifier, Locale,
+    extensions::unicode::{key, value},
+    langid, locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;

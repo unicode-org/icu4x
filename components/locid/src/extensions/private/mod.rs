@@ -13,7 +13,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::extensions_private_subtag as subtag;
+//! use icu::locid::extensions::private::subtag;
 //! use icu::locid::{locale, Locale};
 //!
 //! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
@@ -32,7 +32,8 @@ mod other;
 use alloc::vec::Vec;
 use core::ops::Deref;
 
-pub use other::Subtag;
+#[doc(inline)]
+pub use other::{subtag, Subtag};
 
 use crate::helpers::ShortSlice;
 use crate::parser::ParserError;

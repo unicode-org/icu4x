@@ -24,8 +24,7 @@ use super::Value;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::transform::{Fields, Key, Value};
-/// use icu::locid::extensions_transform_key as key;
+/// use icu::locid::extensions::transform::{Fields, Key, Value, key};
 ///
 /// let value = "hybrid".parse::<Value>().expect("Failed to parse a Value.");
 /// let fields = vec![(key!("h0"), value)].into_iter().collect::<Fields>();
@@ -76,8 +75,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::transform::{Fields, Value};
-    /// use icu::locid::extensions_transform_key as key;
+    /// use icu::locid::extensions::transform::{Fields, Value, key};
     ///
     /// let value = "hybrid".parse::<Value>().expect("Failed to parse a Value.");
     /// let mut fields = vec![(key!("h0"), value)].into_iter().collect::<Fields>();
@@ -121,8 +119,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::transform::{Fields, Key, Value};
-    /// use icu::locid::extensions_transform_key as key;
+    /// use icu::locid::extensions::transform::{Fields, Key, Value, key};
     ///
     /// let value = "hybrid".parse::<Value>().unwrap();
     /// let fields = vec![(key!("h0"), value.clone())]
@@ -144,9 +141,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::transform::Key;
-    /// use icu::locid::extensions::transform::Value;
-    /// use icu::locid::extensions_transform_key as key;
+    /// use icu::locid::extensions::transform::{Key, Value, key};
     /// use icu::locid::Locale;
     ///
     /// let lower = "lower".parse::<Value>().expect("valid extension subtag");
@@ -169,7 +164,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions_transform_key as key;
+    /// use icu::locid::extensions::transform::key;
     /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "und-t-h0-hybrid-d0-hex-m0-xml".parse().unwrap();

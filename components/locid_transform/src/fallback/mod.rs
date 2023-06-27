@@ -134,7 +134,7 @@ pub struct LocaleFallbackConfig {
     ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
     ///         .expect("data");
     /// let mut config = LocaleFallbackConfig::default();
-    /// config.extension_key = Some(icu_locid::extensions_unicode_key!("nu"));
+    /// config.extension_key = Some(icu_locid::extensions::unicode::key!("nu"));
     /// let mut fallback_iterator = fallbacker
     ///     .fallback_for(config, locale!("ar-EG-u-nu-latn"));
     ///

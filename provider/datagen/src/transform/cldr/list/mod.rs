@@ -4,7 +4,7 @@
 
 use crate::transform::cldr::cldr_serde;
 use icu_list::provider::*;
-use icu_locid::subtags_language as language;
+use icu_locid::subtags::language;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use lazy_static::lazy_static;
