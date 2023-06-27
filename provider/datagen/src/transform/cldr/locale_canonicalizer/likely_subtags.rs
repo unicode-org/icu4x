@@ -260,18 +260,16 @@ fn transform<'x>(
             .map(|(k, v)| (k.to_unvalidated(), v))
             .collect(),
         und: und.unwrap_or((
-            icu_locid::subtags_language!("und"),
-            icu_locid::subtags_script!("Zzzz"),
-            icu_locid::subtags_region!("ZZ"),
+            icu_locid::subtags::language!("und"),
+            icu_locid::subtags::script!("Zzzz"),
+            icu_locid::subtags::region!("ZZ"),
         )),
     }
 }
 
 #[test]
 fn test_basic() {
-    use icu_locid::{
-        subtags_language as language, subtags_region as region, subtags_script as script,
-    };
+    use icu_locid::subtags::{language, region, script};
 
     let provider = crate::DatagenProvider::for_test();
     let result_common: DataPayload<LikelySubtagsV1Marker> = provider

@@ -36,7 +36,7 @@ use crate::fields;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use icu_locid::extensions_unicode_key as key;
+use icu_locid::extensions::unicode::key;
 use icu_provider::DataLocale;
 use tinystr::tinystr;
 use tinystr::TinyAsciiStr;

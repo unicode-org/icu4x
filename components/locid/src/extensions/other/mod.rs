@@ -25,7 +25,8 @@ use crate::helpers::ShortSlice;
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 use alloc::vec::Vec;
-pub use subtag::Subtag;
+#[doc(inline)]
+pub use subtag::{subtag, Subtag};
 
 /// A list of [`Other Use Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.

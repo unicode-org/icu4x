@@ -8,8 +8,7 @@ use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, japanese::Japanese,
     japanese::JapaneseExtended, Gregorian,
 };
-use icu_locid::extensions::unicode::Value;
-use icu_locid::extensions_unicode_value as value;
+use icu_locid::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 
 /// A calendar that can be found in CLDR
