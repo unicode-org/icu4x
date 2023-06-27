@@ -222,20 +222,20 @@ impl CaseMapping {
     /// let cm = CaseMapping::new();
     ///
     /// // perform case insensitive checks
-    /// assert_eq!(cm.fold('σ'), cm.fold('ς'));
-    /// assert_eq!(cm.fold('Σ'), cm.fold('ς'));
+    /// assert_eq!(cm.simple_fold('σ'), cm.simple_fold('ς'));
+    /// assert_eq!(cm.simple_fold('Σ'), cm.simple_fold('ς'));
     ///
-    /// assert_eq!(cm.fold('c'), 'c');
-    /// assert_eq!(cm.fold('Ć'), 'ć');
-    /// assert_eq!(cm.fold('Γ'), 'γ');
-    /// assert_eq!(cm.fold('ς'), 'σ');
+    /// assert_eq!(cm.simple_fold('c'), 'c');
+    /// assert_eq!(cm.simple_fold('Ć'), 'ć');
+    /// assert_eq!(cm.simple_fold('Γ'), 'γ');
+    /// assert_eq!(cm.simple_fold('ς'), 'σ');
     ///
-    /// assert_eq!(cm.fold('ß'), 'ß');
-    /// assert_eq!(cm.fold('I'), 'i');
-    /// assert_eq!(cm.fold('İ'), 'İ');
-    /// assert_eq!(cm.fold('ı'), 'ı');
+    /// assert_eq!(cm.simple_fold('ß'), 'ß');
+    /// assert_eq!(cm.simple_fold('I'), 'i');
+    /// assert_eq!(cm.simple_fold('İ'), 'İ');
+    /// assert_eq!(cm.simple_fold('ı'), 'ı');
     /// ```
-    pub fn fold(&self, c: char) -> char {
+    pub fn simple_fold(&self, c: char) -> char {
         self.data.get().simple_fold(c, FoldOptions::default())
     }
 
@@ -256,10 +256,10 @@ impl CaseMapping {
     ///
     /// let cm = CaseMapping::new();
     ///
-    /// assert_eq!(cm.fold_turkic('I'), 'ı');
-    /// assert_eq!(cm.fold_turkic('İ'), 'i');
+    /// assert_eq!(cm.simple_fold_turkic('I'), 'ı');
+    /// assert_eq!(cm.simple_fold_turkic('İ'), 'i');
     /// ```
-    pub fn fold_turkic(&self, c: char) -> char {
+    pub fn simple_fold_turkic(&self, c: char) -> char {
         self.data
             .get()
             .simple_fold(c, FoldOptions::with_turkic_mappings())
