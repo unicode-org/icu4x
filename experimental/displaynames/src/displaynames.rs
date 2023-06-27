@@ -4,11 +4,21 @@
 
 //! This module contains types and implementations for the Displaynames component.
 
+use crate::alloc::string::ToString;
 use crate::options::*;
 use crate::provider::*;
 use alloc::borrow::Cow;
+use alloc::string::String;
 use icu_locid::{subtags::Language, subtags::Region, subtags::Script, subtags::Variant, Locale};
 use icu_provider::prelude::*;
+
+use alloc::format;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::str::FromStr;
+use tinystr::TinyAsciiStr;
+use zerovec::ule::UnvalidatedStr;
+use zerovec::ZeroMap;
 
 /// Lookup of the locale-specific display names by region code.
 ///
@@ -330,11 +340,9 @@ impl LanguageDisplayNames {
 /// )
 /// .expect("Data should load successfully");
 ///
-/// assert_eq!(display_name.of(&locale!("de-CH")), "Swiss High German");
-/// assert_eq!(display_name.of(&locale!("de")), "German");
-/// assert_eq!(display_name.of(&locale!("de-MX")), "German (Mexico)");
-/// assert_eq!(display_name.of(&locale!("xx-YY")), "xx (YY)");
-/// assert_eq!(display_name.of(&locale!("xx")), "xx");
+/// assert_eq!(display_name.of(&locale!("en-GB")), "British English");
+/// assert_eq!(display_name.of(&locale!("en")), "English");
+/// assert_eq!(display_name.of(&locale!("en-MX")), "English (Mexico)");
 /// ```
 pub struct LocaleDisplayNamesFormatter {
     options: DisplayNamesOptions,
@@ -401,88 +409,204 @@ impl LocaleDisplayNamesFormatter {
     /// Returns the display name of a locale.
     // TODO: Make this return a writeable instead of using alloc
     pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, locale: &'c Locale) -> Cow<'a, str> {
-        // https://www.unicode.org/reports/tr35/tr35-general.html#Display_Name_Elements
+        // Step - 1: Construct the canonical locale from a given locale.
+        let cannonical_locale = Locale::canonicalize(locale.to_string()).unwrap();
 
-        // TODO: This binary search needs to return the longest matching found prefix
-        // instead of just perfect matches
-        if let Some(displayname) = match self.options.style {
-            Some(Style::Short) => self
-                .locale_data
-                .get()
-                .short_names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
-            Some(Style::Long) => self
-                .locale_data
-                .get()
-                .long_names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
-            Some(Style::Menu) => self
-                .locale_data
-                .get()
-                .menu_names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
-            _ => None,
-        }
-        .or_else(|| {
-            self.locale_data
-                .get()
-                .names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse())
-        }) {
-            return Cow::Borrowed(displayname);
-        }
+        let longest_prefix =
+            match find_longest_matching_prefix(&cannonical_locale, &self.locale_data.get().names) {
+                Some(prefix) => prefix,
+                None => cannonical_locale
+                    .split_once("-")
+                    .unwrap_or((&cannonical_locale, ""))
+                    .0
+                    .to_string(),
+            };
 
-        // TODO: This is a dummy implementation which does not adhere to UTS35. It only uses
-        // the language and region code, and uses a hardcoded pattern to combine them.
+        // Step - 2: Construct a locale display name string (LDN).
+        let ldn = get_locale_display_name(&longest_prefix, &self);
 
-        let langdisplay = match self.options.style {
-            Some(Style::Short) => self
-                .language_data
-                .get()
-                .short_names
-                .get(&locale.id.language.into_tinystr().to_unvalidated()),
-            Some(Style::Long) => self
-                .language_data
-                .get()
-                .long_names
-                .get(&locale.id.language.into_tinystr().to_unvalidated()),
-            Some(Style::Menu) => self
-                .language_data
-                .get()
-                .menu_names
-                .get(&locale.id.language.into_tinystr().to_unvalidated()),
-            _ => None,
-        }
-        .or_else(|| {
-            self.language_data
-                .get()
-                .names
-                .get(&locale.id.language.into_tinystr().to_unvalidated())
-        });
+        // Step - 3: Construct a vector of longest qualifying substrings (LQS).
+        let lqs = get_longest_qualifying_substrings(&cannonical_locale, &longest_prefix, &self);
 
-        if let Some(region) = locale.id.region {
-            let regiondisplay = match self.options.style {
-                Some(Style::Short) => self
-                    .region_data
-                    .get()
-                    .short_names
-                    .get(&region.into_tinystr().to_unvalidated()),
-                _ => None,
-            }
-            .or_else(|| {
-                self.region_data
-                    .get()
-                    .names
-                    .get(&region.into_tinystr().to_unvalidated())
-            });
-            // TODO: Use data patterns
-            Cow::Owned(alloc::format!(
-                "{} ({})",
-                langdisplay.unwrap_or(locale.id.language.as_str()),
-                regiondisplay.unwrap_or(region.as_str())
-            ))
+        // Step - 4: Return the displayname based on the size of LQS.
+        if lqs.len() == 0 {
+            return ldn.to_string().into();
         } else {
-            Cow::Borrowed(langdisplay.unwrap_or(locale.id.language.as_str()))
+            return Cow::Owned(alloc::format!("{} ({})", ldn, lqs.join(", ")));
         }
     }
+}
+
+/// For a given string and the local data, find the longest prefix of the string that exists as a key in the data.
+/// Note: this function implements a naive algorithm to find the longest matching prefix and this can be improved by either using
+/// Binary Search algorithm or by implementing an intermediate Trie structure if needed.
+/// The time complexity for this algorithm is o(n): where n is the number of words separated by "-" in "s".
+fn find_longest_matching_prefix<'data>(
+    s: &str,
+    data: &ZeroMap<'data, UnvalidatedStr, str>,
+) -> Option<String> {
+    let vector = s.split("-").collect::<Vec<&str>>();
+    let mut end = vector.len();
+
+    while end > 0 {
+        let current_prefix = vector[0..end].join("-");
+
+        if data
+            .get(UnvalidatedStr::from_str(current_prefix.as_str()))
+            .is_some()
+        {
+            return Some(current_prefix);
+        }
+        end -= 1;
+    }
+    return None;
+}
+
+fn get_locale_display_name<'a>(
+    longest_prefix: &'a str,
+    locale_dn_formatter: &'a LocaleDisplayNamesFormatter,
+) -> &'a str {
+    let LocaleDisplayNamesFormatter {
+        options,
+        locale_data,
+        language_data,
+        ..
+    } = locale_dn_formatter;
+
+    // Check if the key exists in the locale_data first.
+    // Example: "en_GB", "nl_BE".
+    let mut ldn = match options.style {
+        Some(Style::Short) => locale_data
+            .get()
+            .short_names
+            .get(UnvalidatedStr::from_str(longest_prefix)),
+        Some(Style::Long) => locale_data
+            .get()
+            .long_names
+            .get(UnvalidatedStr::from_str(longest_prefix)),
+        Some(Style::Menu) => locale_data
+            .get()
+            .menu_names
+            .get(UnvalidatedStr::from_str(longest_prefix)),
+        _ => None,
+    }
+    .or_else(|| {
+        locale_data
+            .get()
+            .names
+            .get(UnvalidatedStr::from_str(longest_prefix))
+    });
+
+    // At this point the key should exist in the language_data.
+    // Example: "en", "nl", "zh".
+    if ldn.is_none() {
+        let tinystr_prefix = TinyAsciiStr::from_str(&longest_prefix).unwrap();
+        ldn = match options.style {
+            // If the key is not found in locale, then search for the
+            Some(Style::Short) => language_data
+                .get()
+                .short_names
+                .get(&tinystr_prefix.to_unvalidated()),
+            Some(Style::Long) => language_data
+                .get()
+                .long_names
+                .get(&tinystr_prefix.to_unvalidated()),
+            Some(Style::Menu) => language_data
+                .get()
+                .menu_names
+                .get(&tinystr_prefix.to_unvalidated()),
+            _ => None,
+        }
+        .or_else(|| {
+            language_data
+                .get()
+                .names
+                .get(&tinystr_prefix.to_unvalidated())
+        });
+    }
+
+    // Throw an error if the LDN is none as it is not possible to have a locale string without language.
+    return ldn.expect("cannot parse locale displayname.");
+}
+
+fn get_longest_qualifying_substrings<'a>(
+    cannonical_locale: &'a str,
+    language_prefix: &'a str,
+    locale_dn_formatter: &'a LocaleDisplayNamesFormatter,
+) -> Vec<&'a str> {
+    let LocaleDisplayNamesFormatter {
+        options,
+        region_data,
+        script_data,
+        variant_data,
+        ..
+    } = locale_dn_formatter;
+    let mut lqs: Vec<&str> = vec![];
+
+    // Examples of the "language_prefix" are: "en-GB", "en", "nl-BE", "nl".
+    // Based on the algorithm, the computation of LQS should omit locale/language prefix from the key.
+    //
+    // This step is required because locale!("en-GB-Latn") would return locale { id { language: "en", region: "GB", Script: "Latn" }, .. }.
+    // However, because "en-GB" is a dialect and was included as part of LDN, it should ideally be locale { id { language: "en-GB", script: "Latn" }, .. }.
+    // To resolve this case, the "language_prefix" used to compute LDN is removed first from the locale string.    
+    let str = cannonical_locale.replace(language_prefix, "");
+
+    if str.len() == 0 {
+        return lqs;
+    }
+
+    // Add "und" to the beginning to ensure that the locale string can be parsed correctly.
+    let locale_str_with_unknown_language = format!("und{}", &str);
+    let locale: Locale = Locale::from_str(&locale_str_with_unknown_language).expect("parsing locale failed");
+
+    if let Some(script) = locale.id.script {
+        let scriptdisplay = match options.style {
+            Some(Style::Short) => script_data
+                .get()
+                .short_names
+                .get(&script.into_tinystr().to_unvalidated()),
+            _ => None,
+        }
+        .or_else(|| {
+            script_data
+                .get()
+                .names
+                .get(&script.into_tinystr().to_unvalidated())
+        });
+        if let Some(scriptdn) = scriptdisplay {
+            lqs.push(scriptdn);
+        }
+    }
+
+    if let Some(region) = locale.id.region {
+        let regiondisplay = match options.style {
+            Some(Style::Short) => region_data
+                .get()
+                .short_names
+                .get(&region.into_tinystr().to_unvalidated()),
+            _ => None,
+        }
+        .or_else(|| {
+            region_data
+                .get()
+                .names
+                .get(&region.into_tinystr().to_unvalidated())
+        });
+
+        if let Some(regiondn) = regiondisplay {
+            lqs.push(regiondn);
+        }
+    }
+
+    for &variant_key in locale.id.variants.iter() {
+        if let Some(variant_dn) = variant_data
+            .get()
+            .names
+            .get(&variant_key.into_tinystr().to_unvalidated())
+        {
+            lqs.push(variant_dn);
+        }
+    }
+
+    return lqs;
 }
