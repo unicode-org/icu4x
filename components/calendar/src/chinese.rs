@@ -15,7 +15,6 @@ use crate::types::{Era, Moment};
 use crate::{
     astronomy, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
@@ -36,7 +35,7 @@ pub struct Chinese;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct ChineseDateInner {
-    // TODO: Reconcile differences between this and the design plan
+    // TODO: Reconcile differences between this and the design plan regarding ArithmeticDate
     year: i32,      // The number of elapsed Chinese years since inception of the calendar
     month: u8,      // The number of the current month (could be a leap month)
     leap_month: u8, // The month in the current year which is a leap month (0 if none)
@@ -75,7 +74,7 @@ impl CalendarArithmetic for Chinese {
     }
 
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        todo!()
+        todo!() // TODO: this fn
     }
 }
 
@@ -90,33 +89,34 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        // Figure out whether this should be implemented through ArithmeticDate or not
-        todo!();
+        todo!(); // TODO: Figure out how to do this considering leap months
     }
 
     // Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        todo!();
+        let fixed = Iso::fixed_from_iso(iso.inner);
+        Chinese::chinese_date_from_fixed(fixed).inner
     }
 
     // Obtain an ISO date from a Chinese date
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        todo!();
+        let fixed = Chinese::fixed_from_chinese_date_inner(*date);
+        Iso::iso_from_fixed(fixed)
     }
 
     //Count the number of months in a given year, specified by providing a date
     // from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u32 {
-        todo!();
+        Self::days_in_provided_year(date.year)
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        todo!();
+        todo!(); // TODO: Write this fn
     }
 
     #[doc(hidden)] // unstable
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        todo!();
+        todo!(); // TODO: Write this fn
     }
 
     #[doc(hidden)] // unstable
@@ -132,12 +132,12 @@ impl Calendar for Chinese {
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        todo!();
+        todo!();// TODO: Write this fn
     }
 
     /// Obtain a name for the calendar for debug printing
     fn debug_name(&self) -> &'static str {
-        todo!();
+        "Chinese"
     }
 
     /// The calendar-specific year represented by `date`
@@ -228,16 +228,16 @@ impl Calendar for Chinese {
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        todo!();
+        todo!(); // TODO: Do after deciding whether/how to use ArithmeticDate
     }
 
     /// The [`AnyCalendarKind`] corresponding to this calendar
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        todo!();
+        Some(AnyCalendarKind::Chinese)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        todo!()
+        Self::months_for_every_year(date.year)
     }
 }
 
@@ -286,12 +286,16 @@ impl DateTime<Chinese> {
     pub fn try_new_chinese_datetime(
         year: i32,
         month: u8,
+        leap_month: u8,
         day: u8,
         hour: u8,
         minute: u8,
         second: u8,
     ) -> Result<DateTime<Chinese>, CalendarError> {
-        todo!();
+        Ok(DateTime {
+            date: Date::try_new_chinese_date(year, month, leap_month, day)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
+        })
     }
 }
 
@@ -509,9 +513,14 @@ impl Chinese {
 
     /// Get a RataDie from a Date<Chinese>
     pub(crate) fn fixed_from_chinese_date(date: Date<Chinese>) -> RataDie {
-        let year = date.year().number;
-        let month = date.month().ordinal as i64;
-        let day = date.day_of_month().0 as i64;
+        Self::fixed_from_chinese_date_inner(date.inner)
+    }
+
+    /// Get a RataDie from a ChineseDateInner
+    pub(crate) fn fixed_from_chinese_date_inner(date: ChineseDateInner) -> RataDie {
+        let year = date.year;
+        let month = date.month as i64;
+        let day = date.day as i64;
         let mid_year = Self::fixed_mid_year_from_year(year);
         let new_year = Self::chinese_new_year_on_or_before_fixed_date(mid_year);
         let month_approx = new_year + (month - 1) * 29;
