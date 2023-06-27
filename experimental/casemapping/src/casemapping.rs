@@ -128,143 +128,6 @@ impl CaseMapping {
         Ok(Self { data, locale })
     }
 
-    /// Returns the lowercase mapping of the given `char`.
-    /// This function only implements simple and common mappings. Full mappings,
-    /// which can map one `char` to a string, are not included.
-    /// For full mappings, use [`CaseMapping::to_full_lowercase`].
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    ///
-    /// let cm = CaseMapping::new();
-    ///
-    /// assert_eq!(cm.to_simple_lowercase('C'), 'c');
-    /// assert_eq!(cm.to_simple_lowercase('c'), 'c');
-    /// assert_eq!(cm.to_simple_lowercase('Ć'), 'ć');
-    /// assert_eq!(cm.to_simple_lowercase('Γ'), 'γ');
-    /// ```
-    pub fn to_simple_lowercase(&self, c: char) -> char {
-        self.data.get().simple_lower(c)
-    }
-
-    /// Returns the uppercase mapping of the given `char`.
-    /// This function only implements simple and common mappings. Full mappings,
-    /// which can map one `char` to a string, are not included.
-    /// For full mappings, use [`CaseMapping::to_full_uppercase`].
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    ///
-    /// let cm = CaseMapping::new();
-    ///
-    /// assert_eq!(cm.to_simple_uppercase('c'), 'C');
-    /// assert_eq!(cm.to_simple_uppercase('C'), 'C');
-    /// assert_eq!(cm.to_simple_uppercase('ć'), 'Ć');
-    /// assert_eq!(cm.to_simple_uppercase('γ'), 'Γ');
-    ///
-    /// assert_eq!(cm.to_simple_uppercase('ǳ'), 'Ǳ');
-    /// ```
-    pub fn to_simple_uppercase(&self, c: char) -> char {
-        self.data.get().simple_upper(c)
-    }
-
-    /// Returns the titlecase mapping of the given `char`.
-    /// This function only implements simple and common mappings. Full mappings,
-    /// which can map one `char` to a string, are not included.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    ///
-    /// let cm = CaseMapping::new();
-    ///
-    /// assert_eq!(cm.to_simple_titlecase('ǳ'), 'ǲ');
-    ///
-    /// assert_eq!(cm.to_simple_titlecase('c'), 'C');
-    /// assert_eq!(cm.to_simple_titlecase('C'), 'C');
-    /// assert_eq!(cm.to_simple_titlecase('ć'), 'Ć');
-    /// assert_eq!(cm.to_simple_titlecase('γ'), 'Γ');
-    /// ```
-    pub fn to_simple_titlecase(&self, c: char) -> char {
-        self.data.get().simple_title(c)
-    }
-
-    /// Returns the simple case folding of the given char.
-    /// For full mappings, use [`CaseMapping::full_fold`].
-    ///
-    /// This function can be used to perform caseless matches on
-    /// individual characters.
-    /// > *Note:* With Unicode 15.0 data, there are three
-    /// > pairs of characters for which equivalence under this
-    /// > function is inconsistent with equivalence of the
-    /// > one-character strings under [`CaseMapping::full_fold`].
-    /// > This is resolved in Unicode 15.1 and later.
-    ///
-    /// For compatibility applications where simple case folding
-    /// of strings is required, this function can be applied to
-    /// each character of a string.  Note that the resulting
-    /// equivalence relation is different from that obtained
-    /// by [`CaseMapping::full_fold`]:
-    /// The strings "Straße" and "STRASSE" are distinct
-    /// under simple case folding, but are equivalent under
-    /// default (full) case folding.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    ///
-    /// let cm = CaseMapping::new();
-    ///
-    /// // perform case insensitive checks
-    /// assert_eq!(cm.simple_fold('σ'), cm.simple_fold('ς'));
-    /// assert_eq!(cm.simple_fold('Σ'), cm.simple_fold('ς'));
-    ///
-    /// assert_eq!(cm.simple_fold('c'), 'c');
-    /// assert_eq!(cm.simple_fold('Ć'), 'ć');
-    /// assert_eq!(cm.simple_fold('Γ'), 'γ');
-    /// assert_eq!(cm.simple_fold('ς'), 'σ');
-    ///
-    /// assert_eq!(cm.simple_fold('ß'), 'ß');
-    /// assert_eq!(cm.simple_fold('I'), 'i');
-    /// assert_eq!(cm.simple_fold('İ'), 'İ');
-    /// assert_eq!(cm.simple_fold('ı'), 'ı');
-    /// ```
-    pub fn simple_fold(&self, c: char) -> char {
-        self.data.get().simple_fold(c, FoldOptions::default())
-    }
-
-    /// Returns the simple case folding of the given char, using Turkic (T) mappings for
-    /// dotted/dotless i. This function does not fold `i` and `I` to the same character. Instead,
-    /// `I` will fold to `ı`, and `İ` will fold to `i`. Otherwise, this is the same as
-    /// [`CaseMapping::fold()`].
-    ///
-    /// You can use the case folding to perform Turkic caseless matches on characters
-    /// provided they don't full-casefold to strings. To avoid that situation,
-    /// convert to a string and use [`CaseMapping::full_fold_turkic`].
-    ///
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu_casemapping::CaseMapping;
-    ///
-    /// let cm = CaseMapping::new();
-    ///
-    /// assert_eq!(cm.simple_fold_turkic('I'), 'ı');
-    /// assert_eq!(cm.simple_fold_turkic('İ'), 'i');
-    /// ```
-    pub fn simple_fold_turkic(&self, c: char) -> char {
-        self.data
-            .get()
-            .simple_fold(c, FoldOptions::with_turkic_mappings())
-    }
-
     /// Returns the full lowercase mapping of the given string as a [`Writeable`].
     /// This function is context and locale sensitive.
     ///
@@ -496,6 +359,144 @@ impl CaseMapping {
     /// ```
     pub fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
         self.data.get().add_string_case_closure(s, set)
+    }
+
+
+    /// Returns the lowercase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
+    /// For full mappings, use [`CaseMapping::to_full_lowercase`].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu_casemapping::CaseMapping;
+    ///
+    /// let cm = CaseMapping::new();
+    ///
+    /// assert_eq!(cm.to_simple_lowercase('C'), 'c');
+    /// assert_eq!(cm.to_simple_lowercase('c'), 'c');
+    /// assert_eq!(cm.to_simple_lowercase('Ć'), 'ć');
+    /// assert_eq!(cm.to_simple_lowercase('Γ'), 'γ');
+    /// ```
+    pub fn to_simple_lowercase(&self, c: char) -> char {
+        self.data.get().simple_lower(c)
+    }
+
+    /// Returns the uppercase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
+    /// For full mappings, use [`CaseMapping::to_full_uppercase`].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu_casemapping::CaseMapping;
+    ///
+    /// let cm = CaseMapping::new();
+    ///
+    /// assert_eq!(cm.to_simple_uppercase('c'), 'C');
+    /// assert_eq!(cm.to_simple_uppercase('C'), 'C');
+    /// assert_eq!(cm.to_simple_uppercase('ć'), 'Ć');
+    /// assert_eq!(cm.to_simple_uppercase('γ'), 'Γ');
+    ///
+    /// assert_eq!(cm.to_simple_uppercase('ǳ'), 'Ǳ');
+    /// ```
+    pub fn to_simple_uppercase(&self, c: char) -> char {
+        self.data.get().simple_upper(c)
+    }
+
+    /// Returns the titlecase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu_casemapping::CaseMapping;
+    ///
+    /// let cm = CaseMapping::new();
+    ///
+    /// assert_eq!(cm.to_simple_titlecase('ǳ'), 'ǲ');
+    ///
+    /// assert_eq!(cm.to_simple_titlecase('c'), 'C');
+    /// assert_eq!(cm.to_simple_titlecase('C'), 'C');
+    /// assert_eq!(cm.to_simple_titlecase('ć'), 'Ć');
+    /// assert_eq!(cm.to_simple_titlecase('γ'), 'Γ');
+    /// ```
+    pub fn to_simple_titlecase(&self, c: char) -> char {
+        self.data.get().simple_title(c)
+    }
+
+    /// Returns the simple case folding of the given char.
+    /// For full mappings, use [`CaseMapping::full_fold`].
+    ///
+    /// This function can be used to perform caseless matches on
+    /// individual characters.
+    /// > *Note:* With Unicode 15.0 data, there are three
+    /// > pairs of characters for which equivalence under this
+    /// > function is inconsistent with equivalence of the
+    /// > one-character strings under [`CaseMapping::full_fold`].
+    /// > This is resolved in Unicode 15.1 and later.
+    ///
+    /// For compatibility applications where simple case folding
+    /// of strings is required, this function can be applied to
+    /// each character of a string.  Note that the resulting
+    /// equivalence relation is different from that obtained
+    /// by [`CaseMapping::full_fold`]:
+    /// The strings "Straße" and "STRASSE" are distinct
+    /// under simple case folding, but are equivalent under
+    /// default (full) case folding.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu_casemapping::CaseMapping;
+    ///
+    /// let cm = CaseMapping::new();
+    ///
+    /// // perform case insensitive checks
+    /// assert_eq!(cm.simple_fold('σ'), cm.simple_fold('ς'));
+    /// assert_eq!(cm.simple_fold('Σ'), cm.simple_fold('ς'));
+    ///
+    /// assert_eq!(cm.simple_fold('c'), 'c');
+    /// assert_eq!(cm.simple_fold('Ć'), 'ć');
+    /// assert_eq!(cm.simple_fold('Γ'), 'γ');
+    /// assert_eq!(cm.simple_fold('ς'), 'σ');
+    ///
+    /// assert_eq!(cm.simple_fold('ß'), 'ß');
+    /// assert_eq!(cm.simple_fold('I'), 'i');
+    /// assert_eq!(cm.simple_fold('İ'), 'İ');
+    /// assert_eq!(cm.simple_fold('ı'), 'ı');
+    /// ```
+    pub fn simple_fold(&self, c: char) -> char {
+        self.data.get().simple_fold(c, FoldOptions::default())
+    }
+
+    /// Returns the simple case folding of the given char, using Turkic (T) mappings for
+    /// dotted/dotless i. This function does not fold `i` and `I` to the same character. Instead,
+    /// `I` will fold to `ı`, and `İ` will fold to `i`. Otherwise, this is the same as
+    /// [`CaseMapping::fold()`].
+    ///
+    /// You can use the case folding to perform Turkic caseless matches on characters
+    /// provided they don't full-casefold to strings. To avoid that situation,
+    /// convert to a string and use [`CaseMapping::full_fold_turkic`].
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu_casemapping::CaseMapping;
+    ///
+    /// let cm = CaseMapping::new();
+    ///
+    /// assert_eq!(cm.simple_fold_turkic('I'), 'ı');
+    /// assert_eq!(cm.simple_fold_turkic('İ'), 'i');
+    /// ```
+    pub fn simple_fold_turkic(&self, c: char) -> char {
+        self.data
+            .get()
+            .simple_fold(c, FoldOptions::with_turkic_mappings())
     }
 }
 
