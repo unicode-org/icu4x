@@ -210,16 +210,14 @@ pub fn extract_field_attributes(attrs: &mut Vec<Attribute>) -> Result<Option<Ide
     if varule.len() > 1 {
         return Err(Error::new(
             varule[1].span(),
-            format!("Found multiple #[zerovec::varule()] on one field"),
+            "Found multiple #[zerovec::varule()] on one field",
         ));
     }
 
     if !zerovec_attrs.is_empty() {
         return Err(Error::new(
             zerovec_attrs[1].span(),
-            format!(
-                "Found unusable #[zerovec::] attrs on field, only #[zerovec::varule()] supported"
-            ),
+            "Found unusable #[zerovec::] attrs on field, only #[zerovec::varule()] supported",
         ));
     }
 
