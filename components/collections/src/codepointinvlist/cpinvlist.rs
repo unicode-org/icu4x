@@ -326,7 +326,7 @@ impl<'data> CodePointInversionList<'data> {
     pub fn bmp() -> Self {
         Self {
             inv_list: BMP_INV_LIST_VEC,
-            size: (BMP_MAX as u32) + 1,
+            size: BMP_MAX + 1,
         }
     }
 
@@ -997,7 +997,7 @@ mod tests {
                             b"0\0\0\0:\0\0\0A\0\0\0G\0\0\0a\0\0\0g\0\0\0"
                         )
                     },
-                    22usize,
+                    22u32,
                 )
             },
             icu_collections,
