@@ -76,9 +76,9 @@ impl CaseMapping {
     }
 
     /// Returns the full lowercase mapping of the given string as a [`Writeable`].
-    /// This function is context and language sensitive. One should pass in the `LanguageIdentifier`
-    /// (or the `id` field of the `Locale`) for the current text if it is available. If not, use
-    /// the root locale via `langid!("und")` or `Default::default()`.
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or 
+    /// `Default::default()` for the root locale.
     ///
     /// See [`Self::lowercase_to_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
