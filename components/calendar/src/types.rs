@@ -37,6 +37,8 @@ impl FromStr for Era {
 }
 
 /// Representation of a formattable year.
+///
+/// More fields may be added in the future for things like extended year
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct FormattableYear {
@@ -47,7 +49,7 @@ pub struct FormattableYear {
     pub number: i32,
 
     /// The year in the current cycle for cyclic calendars;
-    /// can be ignored and set to any value for non-cyclic calendars.
+    /// can be set to None for non-cyclic calendars
     pub cyclic: Option<i32>,
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
