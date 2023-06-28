@@ -3,26 +3,26 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! This module contains types and implementations for the Chinese calendar.
-//! 
+//!
 //! ```rust
 //! use icu::calendar::{Date, DateTime};
 //! use tinystr::tinystr;
-//! 
+//!
 //! // `Date` type
 //! let chinese_date = Date::try_new_chinese_date(4660, 6, 6)
 //!     .expect("Failed to initialize Chinese Date instance.");
-//! 
+//!
 //! // `DateTime` type
 //! let chinese_datetime = DateTime::try_new_chinese_datetime(4660, 6, 6, 13, 1, 0)
 //!     .expect("Failed to initialize Chinese DateTime instance");
-//! 
+//!
 //! // `Date` checks
 //! assert_eq!(chinese_date.year().number, 4660);
 //! assert_eq!(chinese_date.year().related_iso, Some(2023));
 //! assert_eq!(chinese_date.year().cyclic, Some(40));
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
-//! 
+//!
 //! // `DateTime` checks
 //! assert_eq!(chinese_datetime.date.year().number, 4660);
 //! assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
@@ -61,9 +61,50 @@ const CHINESE_EPOCH: RataDie = RataDie::new(-963099); // Feb. 15, 2637 BCE (-263
 const UTC_OFFSET_PRE_1929: f64 = (1397.0 / 180.0) / 24.0;
 const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
 
+/// The Chinese Calendar
+///
+/// The [Chinese Calendar] is a lunisolar calendar used traditionally in China as well as in other
+/// countries particularly in, but not limited to, East Asia. It is often used today to track important
+/// cultural events and holidays like the Chinese Lunar New Year.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in the Chinese calendar.
+///
+/// # Months
+///
+/// The Chinese calendar is an astronomical calendar which uses the phases of the moon to track months.
+/// Each month starts on the date of the new moon as observed from China, meaning that months last 29
+/// or 30 days.
+///
+/// One year in the Chinese calendar is typically 12 lunar months; however, because 12 lunar months does
+/// not line up to one solar year, the Chinese calendar will add an intercalary leap month approximately
+/// every three years to keep Chinese calendar months in line with the solar year.
+///
+/// Leap months can happen after any month; the month in which a leap month occurs is based on the alignment
+/// of months with 24 solar terms into which the solar year is divided.
+///
+/// # Year and Era codes
+///
+/// Unlike the Gregorian calendar, the Chinese calendar does not traditionally count years in an infinitely
+/// increasing sequence. Instead, 10 "celestial stems" and 12 "terrestrial branches" are combined to form a
+/// cycle of year names which repeats every 60 years. However, for the purposes of calendar calculations and
+/// conversions, this module counts Chinese years in an infinite system similar to ISO, with year 1 in the
+/// calendar corresponding to the inception of the calendar, marked as 2637 BCE (ISO: -2636), and negative
+/// years marking Chinese years before February 15, 2637 BCE.
+///
+/// Because the Chinese calendar does not traditionally count years, era codes are not used in this calendar;
+/// internally, a single era code "era" is used, but this is never checked, so era code input can be anything.
+/// This Chinese calendar implementation does support a related ISO year, which marks the ISO year in which a
+/// Chinese year begins, and a cyclic year corresponding to the year in the 60 year cycle as described above.
+///
+/// For more information, suggested reading materials include:
+/// * _Calendrical Calculations_ by Reingold & Dershowitz
+/// * _The Mathematics of the Chinese Calendar_ by Helmer Aslaksen (https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.139.9311&rep=rep1&type=pdf)
+/// * Wikipedia: https://en.wikipedia.org/wiki/Chinese_calendar
+///
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Chinese;
 
+/// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct ChineseDateInner(ArithmeticDate<Chinese>);
 
@@ -118,7 +159,7 @@ impl Calendar for Chinese {
     // Construct a date from era/month codes and fields
     fn date_from_codes(
         &self,
-        era: types::Era,
+        _era: types::Era,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -346,25 +387,10 @@ impl Chinese {
     // Returns true if the month of a given fixed date does not have a major solar term,
     // false otherwise.
     fn chinese_no_major_solar_term(date: RataDie) -> bool {
-        let lhs = Self::major_solar_term_from_fixed(date);
-        let rhs = Self::major_solar_term_from_fixed(Self::chinese_new_moon_on_or_after(
-            (date + 1).as_moment(),
-        ));
         Self::major_solar_term_from_fixed(date)
             == Self::major_solar_term_from_fixed(Self::chinese_new_moon_on_or_after(
                 (date + 1).as_moment(),
             ))
-    }
-
-    // Returns true if there is a Chinese leap month on or after the lunar month starting on fixed day first
-    // and at or before the lunar month starting at fixed date after.
-    fn chinese_prior_leap_month(before: RataDie, after: RataDie) -> bool {
-        after >= before
-            && (Self::chinese_no_major_solar_term(after)
-                || Self::chinese_prior_leap_month(
-                    before,
-                    Self::chinese_new_moon_before(after.as_moment()),
-                ))
     }
 
     /// Get the current major solar term of an ISO date
@@ -505,17 +531,11 @@ impl Chinese {
         let start_of_month = Self::chinese_new_moon_before((date + 1).as_moment());
         let m_float = start_of_month.as_moment().inner();
         let m12_float = month_after_eleventh.as_moment().inner();
-        let leap_year = Self::fixed_date_is_in_leap_year(date);
         let month = adjusted_rem_euclid_f64(
             libm::round((m_float - m12_float) / MEAN_SYNODIC_MONTH),
             12.0,
         );
         let month_int = month as u8; // TODO: Add saturating functions to avoid overflow
-        let leap_month = if leap_year {
-            Self::get_leap_month_in_year(date)
-        } else {
-            14
-        };
         let elapsed_years =
             libm::floor(1.5 - month / 12.0 + ((date - CHINESE_EPOCH) as f64) / MEAN_TROPICAL_YEAR);
         let elapsed_years_int = i64_to_i32(elapsed_years as i64);

@@ -94,16 +94,6 @@ pub fn adjusted_rem_euclid(x: i32, y: i32) -> i32 {
     }
 }
 
-/// [`adjusted_rem_euclid`] for i64
-pub fn adjusted_rem_euclid64(x: i64, y: i64) -> i64 {
-    let remainder = div_rem_euclid64(x, y).1;
-    if remainder == 0 {
-        y
-    } else {
-        remainder
-    }
-}
-
 /// [`adjusted_rem_euclid`] for f64
 pub fn adjusted_rem_euclid_f64(x: f64, y: f64) -> f64 {
     let remainder = div_rem_euclid_f64(x, y).1;
