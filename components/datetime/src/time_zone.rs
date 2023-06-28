@@ -463,7 +463,7 @@ impl TimeZoneFormatter {
         })
     }
 
-    /// Load generic non location long format for timezone. For example, Pacific Time.
+    /// Load generic non location long format for timezone from compiled data. For example, Pacific Time.
     #[cfg(feature = "data")]
     pub fn with_generic_non_location_long(
         &mut self,
@@ -471,7 +471,7 @@ impl TimeZoneFormatter {
         self.load_generic_non_location_long(&crate::provider::Baked)
     }
 
-    /// Load generic non location short format for timezone. For example, PT.
+    /// Load generic non location short format for timezone from compiled data. For example, PT.
     #[cfg(feature = "data")]
     pub fn with_generic_non_location_short(
         &mut self,
@@ -479,7 +479,7 @@ impl TimeZoneFormatter {
         self.load_generic_non_location_short(&crate::provider::Baked)
     }
 
-    /// Load specific non location long format for timezone. For example, Pacific Standard Time.
+    /// Load specific non location long format for timezone from compiled data. For example, Pacific Standard Time.
     #[cfg(feature = "data")]
     pub fn with_specific_non_location_long(
         &mut self,
@@ -487,7 +487,7 @@ impl TimeZoneFormatter {
         self.load_specific_non_location_long(&crate::provider::Baked)
     }
 
-    /// Load specific non location short format for timezone. For example, PDT.
+    /// Load specific non location short format for timezone from compiled data. For example, PDT.
     #[cfg(feature = "data")]
     pub fn with_specific_non_location_short(
         &mut self,
