@@ -20,7 +20,7 @@ components/plurals/               @zbraniecki @sffc
 components/segmenter/             @aethanyc @makotokato @sffc
 components/timezone/              @nordzilla
 experimental/bies/                @sffc
-experimental/casemapping/          @Manishearth
+experimental/casemapping/         @Manishearth
 experimental/compactdecimal/      @eggrobin
 experimental/displaynames/        @sffc @snktd
 experimental/harfbuzz/            @hsivonen
