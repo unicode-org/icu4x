@@ -327,13 +327,13 @@ impl Date<Chinese> {
     /// `year` represents the Chinese year counted infinitely with -2636 (2637 BCE) as year Chinese year 1;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
     /// `day` indicates the day of month
-    /// 
+    ///
     /// ```rust
     /// use icu::calendar::Date;
-    /// 
+    ///
     /// let date_chinese = Date::try_new_chinese_date(4660, 6, 11)
     ///     .expect("Failed to initialize Chinese Date instance.");
-    /// 
+    ///
     /// assert_eq!(date_chinese.year().number, 4660);
     /// assert_eq!(date_chinese.year().cyclic, Some(40));
     /// assert_eq!(date_chinese.year().related_iso, Some(2023));
@@ -354,13 +354,13 @@ impl Date<Chinese> {
 impl DateTime<Chinese> {
     /// Construct a new Chinese datetime from integers using the
     /// -2636-based year system
-    /// 
+    ///
     /// ```rust
     /// use icu::calendar::DateTime;
-    /// 
+    ///
     /// let chinese_datetime = DateTime::try_new_chinese_datetime(4660, 6, 11, 13, 1, 0)
     ///     .expect("Failed to initialize Chinese DateTime instance.");
-    /// 
+    ///
     /// assert_eq!(chinese_datetime.date.year().number, 4660);
     /// assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
     /// assert_eq!(chinese_datetime.date.year().cyclic, Some(40));
@@ -393,11 +393,11 @@ impl Chinese {
     // decrease the amount of times as_rata_die() and as_moment() need to be called.
 
     /// Get the current major solar term of an ISO date
-    /// 
+    ///
     /// ```rust
     /// use icu::calendar::Date;
     /// use icu::calendar::chinese::Chinese;
-    /// 
+    ///
     /// let iso_date = Date::try_new_iso_date(2023, 6, 28)
     ///     .expect("Failed to initialize ISO Date instance.");
     /// let major_solar_term = Chinese::major_solar_term_from_iso(*iso_date.inner());
@@ -432,11 +432,11 @@ impl Chinese {
     }
 
     /// Get the current major solar term of an ISO date
-    /// 
+    ///
     /// ```rust
     /// use icu::calendar::Date;
     /// use icu::calendar::chinese::Chinese;
-    /// 
+    ///
     /// let iso_date = Date::try_new_iso_date(2023, 6, 28)
     ///     .expect("Failed to initialize ISO Date instance.");
     /// let minor_solar_term = Chinese::minor_solar_term_from_iso(*iso_date.inner());
