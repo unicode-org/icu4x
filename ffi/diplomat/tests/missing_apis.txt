@@ -22,6 +22,7 @@ icu::calendar::persian::Persian#Struct
 icu::calendar::persian::Persian::new#FnInStruct
 icu::calendar::persian::PersianDateInner#Struct
 icu::calendar::week::WeekCalculator::try_new#FnInStruct
+icu::collator::Collator::try_new#FnInStruct
 icu::decimal::FixedDecimalFormatter::try_new#FnInStruct
 icu::locid_transform::Direction#Enum
 icu::locid_transform::LocaleCanonicalizer::new#FnInStruct
