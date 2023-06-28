@@ -34,7 +34,7 @@ All ICU4X code must conform to the [style guide](../process/style_guide.md), inc
 
 *Why:* One of the big problems for existing ICU users is that ICU data cannot be shared among different versions of code, forcing clients to carry hefty duplicates with small deltas.
 
-## Customizability of Locale Data
+## Runtime Customizability of Locale Data
 
 *What:* Locale data should be customizable at a fine-grained level at runtime by individual applications.
 
@@ -55,6 +55,8 @@ ICU4C/ICU4J exposes certain pieces of data through user-facing APIs such as Date
 1. User-facing APIs do not cover all data that users may need to mutate; those APIs must be perpetually maintained and updated
 2. Mutating data is a power-user feature; putting it front and center temps users to mutate it in ways they shouldn't
 3. Mutable symbols objects does not lend itself well to internal immutability of formatters (this has been a problem in the past)
+
+Runtime customizability of locale data can sometimes come at a performance or memory cost.
 
 ## Modular Code and Data with static analysis
 
