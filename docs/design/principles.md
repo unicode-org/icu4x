@@ -34,7 +34,7 @@ All ICU4X code must conform to the [style guide](../process/style_guide.md), inc
 
 *Why:* One of the big problems for existing ICU users is that ICU data cannot be shared among different versions of code, forcing clients to carry hefty duplicates with small deltas.
 
-## Mutability of Locale Data
+## Customizability of Locale Data
 
 *What:* Locale data should be customizable at a fine-grained level at runtime by individual applications.
 
