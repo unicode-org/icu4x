@@ -126,7 +126,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         &self,
         date2: ArithmeticDate<C>,
         _largest_unit: DateDurationUnit,
-        _smaller_unti: DateDurationUnit,
+        _smaller_unit: DateDurationUnit,
     ) -> DateDuration<C> {
         DateDuration::new(
             self.year - date2.year,

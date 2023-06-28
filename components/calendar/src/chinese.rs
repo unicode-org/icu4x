@@ -4,16 +4,13 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
-use crate::calendar_arithmetic::{
-    ordinal_lunar_month_from_code, ArithmeticDate, CalendarArithmetic,
-};
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{
-    adjusted_rem_euclid, adjusted_rem_euclid64, adjusted_rem_euclid_f64, div_rem_euclid,
-    i64_to_i32, quotient, quotient64, I32Result,
+    adjusted_rem_euclid, adjusted_rem_euclid_f64, div_rem_euclid, i64_to_i32, quotient, I32Result,
 };
-use crate::iso::{self, Iso, IsoDateInner};
+use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
-use crate::types::{Era, Moment};
+use crate::types::{Era, FormattableYear, Moment};
 use crate::{
     astronomy, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
@@ -116,15 +113,16 @@ impl Calendar for Chinese {
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        todo!(); // TODO: Write this fn
+        Self::month_days(date.0.year, date.0.month)
     }
 
     #[doc(hidden)] // unstable
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        todo!(); // TODO: Write this fn
+        date.0.offset_date(offset)
     }
 
     #[doc(hidden)] // unstable
+    #[allow(clippy::field_reassign_with_default)]
     /// Calculate `date2 - date` as a duration
     ///
     /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
@@ -133,11 +131,11 @@ impl Calendar for Chinese {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        calendar2: &Self,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
+        _calendar2: &Self,
+        _largest_unit: DateDurationUnit,
+        _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        todo!(); // TODO: Write this fn
+        date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
     /// Obtain a name for the calendar for debug printing
@@ -147,18 +145,7 @@ impl Calendar for Chinese {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        let era = Era(tinystr!(16, "era"));
-        let number = date.0.year;
-        let cyclic = Some(div_rem_euclid(number, 60).1 + 1);
-        let mid_year = Self::fixed_mid_year_from_year(number);
-        let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
-        let related_iso = Some(iso_formattable_year.number);
-        types::FormattableYear {
-            era,
-            number,
-            cyclic,
-            related_iso,
-        }
+        Self::format_chinese_year(date.0.year)
     }
 
     /// The calendar-specific month code represented by `date`
@@ -242,7 +229,15 @@ impl Calendar for Chinese {
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        todo!(); // TODO: Do after deciding whether/how to use ArithmeticDate
+        let prev_year = date.0.year.saturating_sub(1);
+        let next_year = date.0.year.saturating_add(1);
+        types::DayOfYearInfo {
+            day_of_year: date.0.day_of_year(),
+            days_in_year: date.0.days_in_year(),
+            prev_year: Self::format_chinese_year(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            next_year: Self::format_chinese_year(next_year),
+        }
     }
 
     /// The [`AnyCalendarKind`] corresponding to this calendar
@@ -259,12 +254,10 @@ impl Date<Chinese> {
     /// Construct a new Chinese date from a `year`, `month`, `leap_month`, and `day`.
     /// `year` represents the Chinese year counted infinitely with -2636 (2637 BCE) as year Chinese year 1;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
-    /// `leap_month` indicates which month in a given year is a leap month;
     /// `day` indicates the day of month
     pub fn try_new_chinese_date(
         year: i32,
         month: u8,
-        leap_month: u8,
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
         ArithmeticDate::new_from_lunar_ordinals(year, month, day)
@@ -286,7 +279,7 @@ impl DateTime<Chinese> {
         second: u8,
     ) -> Result<DateTime<Chinese>, CalendarError> {
         Ok(DateTime {
-            date: Date::try_new_chinese_date(year, month, leap_month, day)?,
+            date: Date::try_new_chinese_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -501,7 +494,7 @@ impl Chinese {
         );
         let year = elapsed_years_int.saturate();
         let day = (date - start_of_month + 1) as u8;
-        Date::try_new_chinese_date(year, month_int, leap_month, day).unwrap()
+        Date::try_new_chinese_date(year, month_int, day).unwrap()
     }
 
     /// Get a RataDie from a Date<Chinese>
@@ -565,6 +558,22 @@ impl Chinese {
         debug_assert!(result < max_iters, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
         result
     }
+
+    /// Get a FormattableYear from an integer Chinese year
+    fn format_chinese_year(year: i32) -> FormattableYear {
+        let era = Era(tinystr!(16, "era"));
+        let number = year;
+        let cyclic = Some(div_rem_euclid(number, 60).1 + 1);
+        let mid_year = Self::fixed_mid_year_from_year(number);
+        let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
+        let related_iso = Some(iso_formattable_year.number);
+        types::FormattableYear {
+            era,
+            number,
+            cyclic,
+            related_iso,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -592,7 +601,7 @@ mod test {
 
     #[test]
     fn test_fixed_from_chinese() {
-        let date = Date::try_new_chinese_date(4660, 6, 3, 6).unwrap();
+        let date = Date::try_new_chinese_date(4660, 6, 6).unwrap();
         let fixed = Chinese::fixed_from_chinese_date(date);
         assert_eq!(fixed.to_i64_date(), 738694);
     }
