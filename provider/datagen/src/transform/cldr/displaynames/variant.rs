@@ -88,7 +88,7 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags_variant as variant};
+    use icu_locid::{locale, subtags::variant};
 
     #[test]
     fn test_basic_variant_display_names() {

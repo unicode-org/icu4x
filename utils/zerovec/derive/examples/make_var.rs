@@ -59,6 +59,16 @@ struct MultiFieldStruct<'a> {
     f: char,
 }
 
+#[make_varule(CustomVarFieldULE)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
+#[zerovec::derive(Serialize, Deserialize, Debug)]
+struct CustomVarField<'a> {
+    #[zerovec::varule(MultiFieldStructULE)]
+    #[serde(borrow)]
+    a: MultiFieldStruct<'a>,
+    b: u32,
+}
+
 #[make_varule(MultiFieldTupleULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
 #[zerovec::derive(Serialize, Deserialize, Debug)]

@@ -69,11 +69,35 @@ pub struct Collator {
 
 impl Collator {
     /// Instantiates a collator for a given locale with the given options
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[cfg(feature = "data")]
+    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, CollatorError> {
+        Self::try_new_unstable_internal(
+            &crate::provider::Baked,
+            DataPayload::from_static_ref(
+                icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            DataPayload::from_static_ref(
+                icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_COLLATOR_JAMO_V1),
+            || {
+                Ok(DataPayload::from_static_ref(
+                    crate::provider::Baked::SINGLETON_COLLATOR_PRIM_V1,
+                ))
+            },
+            locale,
+            options,
+        )
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: CollatorOptions,
+        error: CollatorError,
+        #[cfg(skip)]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
@@ -88,6 +112,36 @@ impl Collator {
             + DataProvider<CollationReorderingV1Marker>
             + DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + ?Sized,
+    {
+        Self::try_new_unstable_internal(
+            data_provider,
+            data_provider.load(Default::default())?.take_payload()?,
+            data_provider.load(Default::default())?.take_payload()?,
+            data_provider.load(Default::default())?.take_payload()?,
+            || data_provider.load(Default::default())?.take_payload(),
+            locale,
+            options,
+        )
+    }
+
+    fn try_new_unstable_internal<D>(
+        data_provider: &D,
+        decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+        tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
+        jamo: DataPayload<CollationJamoV1Marker>,
+        special_primaries: impl FnOnce() -> Result<
+            DataPayload<CollationSpecialPrimariesV1Marker>,
+            DataError,
+        >,
+        locale: &DataLocale,
+        options: CollatorOptions,
+    ) -> Result<Self, CollatorError>
+    where
+        D: DataProvider<CollationDataV1Marker>
+            + DataProvider<CollationDiacriticsV1Marker>
+            + DataProvider<CollationMetadataV1Marker>
+            + DataProvider<CollationReorderingV1Marker>
             + ?Sized,
     {
         let req = DataRequest {
@@ -145,19 +199,10 @@ impl Collator {
             return Err(CollatorError::MalformedData);
         }
 
-        let jamo: DataPayload<CollationJamoV1Marker> = data_provider
-            .load(Default::default())? // TODO: redesign Korean search collation handling
-            .take_payload()?;
-
+        // TODO: redesign Korean search collation handling
         if jamo.get().ce32s.len() != JAMO_COUNT {
             return Err(CollatorError::MalformedData);
         }
-
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
-
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
 
         let mut altered_defaults = CollatorOptionsBitField::new();
 
@@ -177,8 +222,7 @@ impl Collator {
         let special_primaries = if merged_options.alternate_handling() == AlternateHandling::Shifted
             || merged_options.numeric()
         {
-            let special_primaries: DataPayload<CollationSpecialPrimariesV1Marker> =
-                data_provider.load(Default::default())?.take_payload()?;
+            let special_primaries = special_primaries()?;
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
@@ -202,12 +246,6 @@ impl Collator {
             lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: CollatorOptions,
-        error: CollatorError
-    );
 
     /// Compare potentially ill-formed UTF-16 slices. Unpaired surrogates
     /// are compared as if each one was a REPLACEMENT CHARACTER.

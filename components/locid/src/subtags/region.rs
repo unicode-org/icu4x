@@ -19,7 +19,8 @@ impl_tinystr_subtag!(
     ///
     /// [`unicode_region_id`]: https://unicode.org/reports/tr35/#unicode_region_id
     Region,
-    subtags::Region,
+    subtags,
+    region,
     subtags_region,
     2..=3,
     s,

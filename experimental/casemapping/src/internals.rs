@@ -11,7 +11,7 @@ use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::CaseMappingV1;
 use crate::set::ClosureSet;
 use core::fmt;
-use icu_locid::Locale;
+use icu_locid::LanguageIdentifier;
 use writeable::Writeable;
 
 // Used to control the behavior of CaseMapping::fold.
@@ -497,15 +497,15 @@ pub enum CaseMapLocale {
 }
 
 impl CaseMapLocale {
-    pub const fn from_locale(loc: &Locale) -> Self {
-        use icu_locid::{subtags::Language, subtags_language as language};
+    pub const fn from_langid(langid: &LanguageIdentifier) -> Self {
+        use icu_locid::subtags::{language, Language};
         const TR: Language = language!("tr");
         const AZ: Language = language!("az");
         const LT: Language = language!("lt");
         const EL: Language = language!("el");
         const NL: Language = language!("nl");
         const HY: Language = language!("hy");
-        match loc.id.language {
+        match langid.language {
             TR | AZ => Self::Turkish,
             LT => Self::Lithuanian,
             EL => Self::Greek,

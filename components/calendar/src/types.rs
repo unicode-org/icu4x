@@ -38,8 +38,7 @@ impl FromStr for Era {
 
 /// Representation of a formattable year.
 ///
-/// More fields may be added in the future, for things like
-/// the cyclic or extended year
+/// More fields may be added in the future for things like extended year
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct FormattableYear {
@@ -48,6 +47,10 @@ pub struct FormattableYear {
 
     /// The year number in the current era (usually 1-based).
     pub number: i32,
+
+    /// The year in the current cycle for cyclic calendars;
+    /// can be set to None for non-cyclic calendars
+    pub cyclic: Option<i32>,
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
@@ -62,10 +65,11 @@ impl FormattableYear {
     ///
     /// Other fields can be set mutably after construction
     /// as needed
-    pub fn new(era: Era, number: i32) -> Self {
+    pub fn new(era: Era, number: i32, cyclic: Option<i32>) -> Self {
         Self {
             era,
             number,
+            cyclic,
             related_iso: None,
         }
     }
