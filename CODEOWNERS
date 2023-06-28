@@ -48,3 +48,19 @@ utils/writeable/                  @sffc @robertbastian
 utils/yoke/                       @Manishearth @sffc
 utils/zerofrom                    @Manishearth @sffc
 utils/zerovec/                    @Manishearth @sffc
+
+components/calendar/data             @robertbastian
+components/collator/data             @robertbastian
+components/collections/data          @robertbastian
+components/datetime/data             @robertbastian
+components/decimal/data              @robertbastian
+components/list/data                 @robertbastian
+components/locid/data                @robertbastian
+components/locid_transform/data      @robertbastian
+components/normalizer/data           @robertbastian
+components/plurals/data              @robertbastian
+components/segmenter/data            @robertbastian
+components/timezone/data             @robertbastian
+experimental/compactdecimal/data     @robertbastian
+experimental/displaynames/data       @robertbastian
+experimental/relativetime/data       @robertbastian
