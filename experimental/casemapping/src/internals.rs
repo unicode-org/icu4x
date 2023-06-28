@@ -14,6 +14,8 @@ use core::fmt;
 use icu_locid::LanguageIdentifier;
 use writeable::Writeable;
 
+const ACUTE: char = '\u{301}';
+
 // Used to control the behavior of CaseMapping::fold.
 // Currently only used to decide whether to use Turkic (T) mappings for dotted/dotless i.
 #[derive(Default)]
@@ -142,6 +144,18 @@ impl<'data> CaseMappingV1<'data> {
         debug_assert!(
             !IS_TITLE_CONTEXT || kind == MappingKind::Title || kind == MappingKind::Lower
         );
+
+        // ICU4C's non-standard extension for Dutch IJ titlecasing
+        // handled here instead of in full_lower_special_case because J does not have conditional
+        // special casemapping.
+        if IS_TITLE_CONTEXT && locale == CaseMapLocale::Dutch && kind == MappingKind::Lower {
+            // When titlecasing, a J found immediately after an I at the beginning of the segment
+            // should also uppercase. They are both allowed to have an acute accent but it must
+            // be present on both letters or neither. They may not have any other combining marks.
+            if (c == 'j' || c == 'J') && context.is_dutch_ij_pair_at_beginning(self) {
+                return FullMappingResult::CodePoint('J');
+            }
+        }
 
         let data = self.lookup_data(c);
         if !data.has_exception() {
@@ -647,5 +661,57 @@ impl<'a> ContextIterator<'a> {
             }
         }
         false
+    }
+
+    /// Checks the preceding and surrounding context of a j or J
+    /// and returns true if it is preceded by an i or I at the start of the string.
+    /// If one has an acute accent,
+    /// both must have the accent for this to return true. No other accents are handled.
+    fn is_dutch_ij_pair_at_beginning(&self, mapping: &CaseMappingV1) -> bool {
+        let mut before = self.before.chars().rev();
+        let mut i_has_acute = false;
+        loop {
+            match before.next() {
+                Some('i') | Some('I') => break,
+                Some('í') | Some('Í') => {
+                    i_has_acute = true;
+                    break;
+                }
+                Some(ACUTE) => i_has_acute = true,
+                _ => return false,
+            }
+        }
+
+        if before.next().is_some() {
+            // not at the beginning of a string, doesn't matter
+            return false;
+        }
+        let mut j_has_acute = false;
+        for c in self.after.chars() {
+            if c == ACUTE {
+                j_has_acute = true;
+                continue;
+            }
+            // We are supposed to check that `j` has no other combining marks aside
+            // from potentially an acute accent. Once we hit the first non-combining mark
+            // we are done.
+            //
+            // ICU4C checks for `gc=Mn` to determine if something is a combining mark,
+            // however this requires extra data (and is the *only* point in the casemapping algorithm
+            // where there is a direct dependency on properties data not mediated by the casemapping data trie).
+            //
+            // Instead, we can check for ccc via dot_type, the same way the rest of the algorithm does.
+            //
+            // See https://unicode-org.atlassian.net/browse/ICU-22429
+            match mapping.dot_type(c) {
+                // Not a combining character; ccc = 0
+                DotType::NoDot | DotType::SoftDotted => break,
+                // found combining character, bail
+                _ => return false,
+            }
+        }
+
+        // either both should have an acute accent, or none. this is an XNOR operation
+        !(j_has_acute ^ i_has_acute)
     }
 }

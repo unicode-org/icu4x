@@ -281,6 +281,9 @@ impl CaseMapping {
     ///
     /// assert_eq!(cm.titlecase_segment_to_string("և Երևանի", &root), "Եւ երևանի");
     /// assert_eq!(cm.titlecase_segment_to_string("և Երևանի", &langid!("hy")), "Եվ երևանի"); // Eastern Armenian ech-yiwn ligature
+    ///
+    /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &root), "Ijkdijk");
+    /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &langid!("nl")), "IJkdijk"); // Dutch IJ digraph
     /// ```
     pub fn titlecase_segment_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
         self.data
