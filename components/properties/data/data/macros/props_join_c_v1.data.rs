@@ -11,7 +11,7 @@ macro_rules! __impl_props_join_c_v1 {
             #[doc(hidden)]
             pub const SINGLETON_PROPS_JOIN_C_V1: &'static <icu_properties::provider::JoinControlV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
-                icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x0C \0\0\x0E \0\0") }, 2usize)
+                icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x0C \0\0\x0E \0\0") }, 2u32)
             });
         }
         #[clippy::msrv = "1.61"]

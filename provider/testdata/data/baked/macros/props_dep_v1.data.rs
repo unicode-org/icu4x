@@ -11,7 +11,7 @@ macro_rules! __impl_props_dep_v1 {
             #[doc(hidden)]
             pub const SINGLETON_PROPS_DEP_V1: &'static <icu_properties::provider::DeprecatedV1Marker as icu_provider::DataMarker>::Yokeable = &icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
-                icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"I\x01\0\0J\x01\0\0s\x06\0\0t\x06\0\0w\x0F\0\0x\x0F\0\0y\x0F\0\0z\x0F\0\0\xA3\x17\0\0\xA5\x17\0\0j \0\0p \0\0)#\0\0+#\0\0\x01\0\x0E\0\x02\0\x0E\0") }, 15usize)
+                icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"I\x01\0\0J\x01\0\0s\x06\0\0t\x06\0\0w\x0F\0\0x\x0F\0\0y\x0F\0\0z\x0F\0\0\xA3\x17\0\0\xA5\x17\0\0j \0\0p \0\0)#\0\0+#\0\0\x01\0\x0E\0\x02\0\x0E\0") }, 15u32)
             });
         }
         #[clippy::msrv = "1.61"]
