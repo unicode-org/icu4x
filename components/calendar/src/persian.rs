@@ -709,7 +709,7 @@ mod tests {
 
         for case in test_cases {
             let date = Date::try_new_persian_date(case.input, 1, 1).unwrap();
-            let info = Persian::day_of_year_info(&Persian, &date.inner());
+            let info = Persian::day_of_year_info(&Persian, date.inner());
 
             assert_eq!(info.prev_year.number, case.expected_prev, "{:?}", case);
             assert_eq!(info.next_year.number, case.expected_next, "{:?}", case);
