@@ -142,6 +142,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         // 7. Remove region
         if locale.region().is_some() {
             locale.set_region(None);
+            self.restore_extensions_variants(locale);
             return;
         }
         // 8. Remove language+script

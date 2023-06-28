@@ -46,16 +46,14 @@ let options =
 
 // You can work with a formatter that can select the calendar at runtime:
 let locale = Locale::from_str("en-u-ca-gregory").unwrap();
-let dtf = DateTimeFormatter::try_new_unstable(
-    &icu_testdata::unstable(),
+let dtf = DateTimeFormatter::try_new(
     &locale.into(),
     options.clone(),
 )
 .expect("Failed to create DateTimeFormatter instance.");
 
 // Or one that selects a calendar at compile time:
-let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-    &icu_testdata::unstable(),
+let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
     &locale!("en").into(),
     options,
 )
@@ -95,8 +93,7 @@ let options = length::Bag::from_date_time_style(
 )
 .into();
 
-let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-    &icu_testdata::unstable(),
+let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
     &locale!("en").into(),
     options,
 );
