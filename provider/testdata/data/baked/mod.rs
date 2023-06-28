@@ -34,6 +34,8 @@ macro_rules! __impl_data_provider {
         #[cfg(feature = "icu_compactdecimal")]
         impl_compactdecimal_short_v1!($provider);
         impl_core_helloworld_v1!($provider);
+        #[cfg(feature = "icu_singlenumberformatter")]
+        impl_currency_usd_essential_v1!($provider);
         #[cfg(feature = "icu_datetime")]
         impl_datetime_buddhist_datelengths_v1!($provider);
         #[cfg(feature = "icu_datetime")]
@@ -463,6 +465,8 @@ macro_rules! __impl_any_provider {
                 #[cfg(feature = "icu_compactdecimal")]
                 const COMPACTDECIMAL_SHORT_V1: icu_provider::DataKeyHash = <icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const CORE_HELLOWORLD_V1: icu_provider::DataKeyHash = <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                #[cfg(feature = "icu_singlenumberformatter")]
+                const CURRENCY_USD_ESSENTIAL_V1: icu_provider::DataKeyHash = <icu_singlenumberformatter::provider::CurrencyEssentialUsdV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
                 const DATETIME_BUDDHIST_DATELENGTHS_V1: icu_provider::DataKeyHash = <icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_datetime")]
@@ -873,6 +877,8 @@ macro_rules! __impl_any_provider {
                     #[cfg(feature = "icu_compactdecimal")]
                     COMPACTDECIMAL_SHORT_V1 => icu_provider::DataProvider::<icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     CORE_HELLOWORLD_V1 => icu_provider::DataProvider::<icu_provider::hello_world::HelloWorldV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    #[cfg(feature = "icu_singlenumberformatter")]
+                    CURRENCY_USD_ESSENTIAL_V1 => icu_provider::DataProvider::<icu_singlenumberformatter::provider::CurrencyEssentialUsdV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_datetime")]
                     DATETIME_BUDDHIST_DATELENGTHS_V1 => icu_provider::DataProvider::<icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_datetime")]

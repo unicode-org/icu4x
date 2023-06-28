@@ -13,7 +13,6 @@ pub mod displaynames;
 pub mod fallback;
 pub mod list;
 pub mod locale_canonicalizer;
-#[cfg(feature = "experimental")]
 pub mod number_formatter;
 pub mod plurals;
 pub mod relativetime;

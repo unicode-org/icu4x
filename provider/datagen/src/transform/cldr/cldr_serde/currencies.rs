@@ -19,7 +19,7 @@ pub struct CurrencyPatterns {
     // /// Map from plural category to the corresponding long pattern
     // pub symbols: HashMap<TinyStr8, String>,
 
-    pub symbol: String,
+    pub symbol: Option<String>,
 
     #[serde(rename = "symbol-alt-narrow")]
     pub symbol_narrow: Option<String>,

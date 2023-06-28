@@ -55,6 +55,11 @@ mod core_helloworld_v1;
 #[doc(inline)]
 pub use __impl_core_helloworld_v1 as impl_core_helloworld_v1;
 #[macro_use]
+#[path = "macros/currency_usd_essential_v1.data.rs"]
+mod currency_usd_essential_v1;
+#[doc(inline)]
+pub use __impl_currency_usd_essential_v1 as impl_currency_usd_essential_v1;
+#[macro_use]
 #[path = "macros/datetime_buddhist_datelengths_v1.data.rs"]
 mod datetime_buddhist_datelengths_v1;
 #[doc(inline)]

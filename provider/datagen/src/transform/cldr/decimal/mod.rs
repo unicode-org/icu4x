@@ -11,9 +11,8 @@ use tinystr::TinyAsciiStr;
 
 mod compact;
 mod compact_decimal_pattern;
-mod decimal_pattern;
+pub(crate) mod decimal_pattern;
 mod symbols;
-pub mod decimal_pattern;
 
 impl crate::DatagenProvider {
     /// Returns the digits for the given numbering system name.

@@ -1,0 +1,7 @@
+{
+  "symbol": "$US",
+  "pattern": {
+    "index": 0,
+    "pattern": "#,##0.00 ¤"
+  }
+}

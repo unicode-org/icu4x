@@ -72,7 +72,7 @@ fn extract_currency_essential<'data>(
         .currencies
         .get(&tinystr!(3, "USD"))
         .ok_or_else(|| DataError::custom("Could not find the USD data"))?;
-    let symbol = usd.symbol.clone().into();
+    let symbol = usd.symbol.clone().unwrap_or(String::from("")).into();
 
     let currency_formats = &&numbers_resource
         .main
