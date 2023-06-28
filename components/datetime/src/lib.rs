@@ -216,9 +216,9 @@ mod tests {
         check_size_of!(6744 | 5408, TypedDateTimeFormatter::<Gregorian>);
 
         check_size_of!(88, DateTimeError);
-        check_size_of!(176, FormattedDateTime);
+        check_size_of!(200, FormattedDateTime);
         check_size_of!(16, FormattedTimeZone::<CustomTimeZone>);
-        check_size_of!(160, FormattedZonedDateTime);
+        check_size_of!(184, FormattedZonedDateTime);
         check_size_of!(13, DateTimeFormatterOptions);
 
         type DP<M> = DataPayload<M>;

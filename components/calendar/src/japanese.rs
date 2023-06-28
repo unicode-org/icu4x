@@ -272,6 +272,7 @@ impl Calendar for Japanese {
         types::FormattableYear {
             era: types::Era(date.era),
             number: date.adjusted_year,
+            cyclic: None,
             related_iso: None,
         }
     }
