@@ -20,6 +20,7 @@ components/plurals/               @zbraniecki @sffc
 components/segmenter/             @aethanyc @makotokato @sffc
 components/timezone/              @nordzilla
 experimental/bies/                @sffc
+experimenta/casemapping/          @Manishearth
 experimental/compactdecimal/      @eggrobin
 experimental/displaynames/        @sffc @snktd
 experimental/harfbuzz/            @hsivonen
@@ -55,12 +56,12 @@ components/collections/data          @robertbastian
 components/datetime/data             @robertbastian
 components/decimal/data              @robertbastian
 components/list/data                 @robertbastian
-components/locid/data                @robertbastian
 components/locid_transform/data      @robertbastian
 components/normalizer/data           @robertbastian
 components/plurals/data              @robertbastian
 components/segmenter/data            @robertbastian
 components/timezone/data             @robertbastian
+experimental/casemapping/data        @robertbastian
 experimental/compactdecimal/data     @robertbastian
 experimental/displaynames/data       @robertbastian
 experimental/relativetime/data       @robertbastian
