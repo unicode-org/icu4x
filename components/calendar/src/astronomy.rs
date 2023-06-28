@@ -25,7 +25,7 @@ pub(crate) struct Location {
     elevation: f64, // elevation in meters
 }
 
-pub(crate) const PI: f64 = 3.14159;
+pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
 /// The mean synodic month in days of 86400 atomic seconds
 /// (86400 seconds = 24 hours * 60 minutes/hour * 60 seconds/minute)
@@ -687,16 +687,6 @@ impl Astronomical {
         let c = -alpha + theta0 + psi;
         let cap_h: f64 = div_rem_euclid_f64(theta0 + psi - alpha, 360.0).1;
 
-        let sin_phi = sin_degrees(phi);
-        let sin_delta = sin_degrees(delta);
-        let cos_phi = cos_degrees(phi);
-        let cos_delta = cos_degrees(delta);
-        let cos_h = cos_degrees(cap_h);
-
-        let add_1 = sin_phi * sin_delta;
-        let add_2 = cos_phi * cos_delta * cos_h;
-        let r = add_1 + add_2;
-
         let altitude = arcsin_degrees(
             sin_degrees(phi) * sin_degrees(delta)
                 + cos_degrees(phi) * cos_degrees(delta) * cos_degrees(cap_h),
@@ -944,8 +934,8 @@ mod tests {
     use alloc::vec;
 
     // Constants applied to provide a margin of error when comparing floating-point values in tests.
-    const TEST_LOWER_BOUND_FACTOR: f64 = 0.99999;
-    const TEST_UPPER_BOUND_FACTOR: f64 = 1.00001;
+    const TEST_LOWER_BOUND_FACTOR: f64 = 0.9999999;
+    const TEST_UPPER_BOUND_FACTOR: f64 = 1.0000001;
 
     fn assert_eq_f64(expected_value: f64, value: f64, moment: Moment) {
         if expected_value > 0.0 {
