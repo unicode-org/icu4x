@@ -274,7 +274,7 @@ macro_rules! impl_data_provider {
                     r.retain(|l| l.get_langid() != icu_locid::langid!("byn") && l.get_langid() != icu_locid::langid!("ssy"));
                 }
 
-                Ok(self.source.options.locales.filter_by_langid_equality(r))
+                Ok(self.filter_data_locales(r))
             }
         }
     };

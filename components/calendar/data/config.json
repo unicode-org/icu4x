@@ -6,11 +6,7 @@
             "datetime/week_data@1"
         ]
     },
-    "locales": {
-        "CldrSet": [
-            "modern"
-        ]
-    },
+    "locales": "Recommended",
     "cldr": "Latest",
     "icu_export": "Latest",
     "segmenter_lstm": "Latest",
