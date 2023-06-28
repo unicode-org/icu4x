@@ -73,10 +73,9 @@ use writeable::Writeable;
 /// # use std::rc::Rc;
 /// # use std::convert::TryInto;
 ///
-/// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
+/// let locale = locale!("en-u-ca-japanese").into(); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::try_new_for_locale(&(&locale).into())
-///                    .expect("constructing AnyCalendar failed");
+/// let calendar = AnyCalendar::new_for_locale(&locale);
 /// let calendar = Rc::new(calendar); // Avoid cloning it
 ///
 ///
@@ -97,7 +96,7 @@ use writeable::Writeable;
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let dtf = DateTimeFormatter::try_new(&locale.into(), options.into())
+/// let dtf = DateTimeFormatter::try_new(&locale, options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let manual_value = dtf.format(&manual_datetime).expect("Calendars should match");

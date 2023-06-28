@@ -98,7 +98,7 @@ datagen = [
     ]
 experimental = ["dep:litemap"]
 bench = ["serde"]
-data = ["dep:icu_datetime_data", "dep:icu_locid_transform", "icu_calendar/data", "icu_decimal/data", "icu_plurals/data"]
+data = ["dep:icu_datetime_data", "dep:icu_locid_transform", "icu_calendar/data", "icu_decimal/data", "icu_plurals/data", "icu_timezone/data"]
 
 [lib]
 path = "src/lib.rs"
