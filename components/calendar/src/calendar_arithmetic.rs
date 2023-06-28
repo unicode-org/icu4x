@@ -16,7 +16,7 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub month: u8,
     /// 1-based day of month
     pub day: u8,
-    pub marker: PhantomData<C>,
+    marker: PhantomData<C>,
 }
 
 pub trait CalendarArithmetic: Calendar {
@@ -42,8 +42,9 @@ pub trait CalendarArithmetic: Calendar {
 }
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
+    /// Create a new `ArithmeticDate` without checking that `month` and `day` are in bounds.
     #[inline]
-    pub fn new(year: i32, month: u8, day: u8) -> Self {
+    pub const fn new_unchecked(year: i32, month: u8, day: u8) -> Self {
         ArithmeticDate {
             year,
             month,
@@ -221,8 +222,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     /// Construct a new arithmetic date from a year, month code, and day, bounds checking
-    /// the month
-    pub fn new_from_solar<C2: Calendar>(
+    /// the month and day
+    pub fn new_from_solar_codes<C2: Calendar>(
         // Separate type since the debug_name() impl may differ when DateInner types
         // are nested (e.g. in GregorianDateInner)
         cal: &C2,
@@ -246,11 +247,37 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             ));
         }
 
-        if day > C::month_days(year, month) {
-            return Err(CalendarError::OutOfRange);
+        let max_day = C::month_days(year, month);
+        if day > max_day {
+            return Err(CalendarError::Overflow {
+                field: "day",
+                max: max_day as usize,
+            });
         }
 
-        Ok(Self::new(year, month, day))
+        Ok(Self::new_unchecked(year, month, day))
+    }
+
+    /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
+    /// the month and day
+    pub fn new_from_solar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
+        let max_month = C::months_for_every_year(year);
+        if month > max_month {
+            return Err(CalendarError::Overflow {
+                field: "month",
+                max: max_month as usize,
+            });
+        }
+
+        let max_day = C::month_days(year, month);
+        if day > max_day {
+            return Err(CalendarError::Overflow {
+                field: "day",
+                max: max_day as usize,
+            });
+        }
+
+        Ok(Self::new_unchecked(year, month, day))
     }
 }
 
@@ -283,21 +310,21 @@ mod tests {
     #[test]
     fn test_ord() {
         let dates_in_order = [
-            ArithmeticDate::<Iso>::new(-10, 1, 1),
-            ArithmeticDate::<Iso>::new(-10, 1, 2),
-            ArithmeticDate::<Iso>::new(-10, 2, 1),
-            ArithmeticDate::<Iso>::new(-1, 1, 1),
-            ArithmeticDate::<Iso>::new(-1, 1, 2),
-            ArithmeticDate::<Iso>::new(-1, 2, 1),
-            ArithmeticDate::<Iso>::new(0, 1, 1),
-            ArithmeticDate::<Iso>::new(0, 1, 2),
-            ArithmeticDate::<Iso>::new(0, 2, 1),
-            ArithmeticDate::<Iso>::new(1, 1, 1),
-            ArithmeticDate::<Iso>::new(1, 1, 2),
-            ArithmeticDate::<Iso>::new(1, 2, 1),
-            ArithmeticDate::<Iso>::new(10, 1, 1),
-            ArithmeticDate::<Iso>::new(10, 1, 2),
-            ArithmeticDate::<Iso>::new(10, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-10, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-10, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(-10, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-1, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-1, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(-1, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(0, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(0, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(0, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(1, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(1, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(1, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(10, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(10, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(10, 2, 1),
         ];
         for (i, i_date) in dates_in_order.iter().enumerate() {
             for (j, j_date) in dates_in_order.iter().enumerate() {

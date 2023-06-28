@@ -37,7 +37,6 @@ use crate::helpers::{i64_to_i32, quotient64, I32Result};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
@@ -119,7 +118,7 @@ impl Calendar for Julian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(JulianDateInner)
+        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(JulianDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> JulianDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
@@ -238,12 +237,8 @@ impl Julian {
     }
 
     pub(crate) const fn fixed_from_julian_integers(year: i32, month: u8, day: u8) -> RataDie {
-        Self::fixed_from_julian(ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        })
+        // TODO: Should we check bounds here?
+        Self::fixed_from_julian(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     /// Convenience function so we can call days_in_year without
@@ -301,21 +296,9 @@ impl Date<Julian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Julian>, CalendarError> {
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        if day > 28 {
-            let bound = inner.days_in_month();
-            if day > bound {
-                return Err(CalendarError::OutOfRange);
-            }
-        }
-
-        Ok(Date::from_raw(JulianDateInner(inner), Julian))
+        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+            .map(JulianDateInner)
+            .map(|inner| Date::from_raw(inner, Julian))
     }
 }
 
