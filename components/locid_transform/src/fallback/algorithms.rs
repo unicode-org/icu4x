@@ -142,6 +142,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         // 7. Remove region
         if locale.region().is_some() {
             locale.set_region(None);
+            self.restore_extensions_variants(locale);
             return;
         }
         // 8. Remove language+script
@@ -243,7 +244,7 @@ mod tests {
             requires_data: false,
             extension_key: None,
             fallback_supplement: None,
-            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
@@ -256,6 +257,9 @@ mod tests {
                 "en-US-fonipa-u-sd-usca",
                 "en-US-fonipa",
                 "en-US",
+                "en-fonipa-u-hc-h12-sd-usca",
+                "en-fonipa-u-sd-usca",
+                "en-fonipa",
                 "en",
             ],
             expected_region_chain: &[
@@ -290,7 +294,7 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
@@ -320,6 +324,7 @@ mod tests {
                 "sr-ME",
                 "sr-Latn-ME-fonipa",
                 "sr-Latn-ME",
+                "sr-Latn-fonipa",
                 "sr-Latn",
             ],
             expected_region_chain: &["sr-ME-fonipa", "sr-ME", "und-ME-fonipa", "und-ME"],
@@ -337,7 +342,7 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca"],
+            expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca-valencia", "ca"],
             expected_region_chain: &["ca-ES-valencia", "ca-ES", "und-ES-valencia", "und-ES"],
         },
         TestCase {
