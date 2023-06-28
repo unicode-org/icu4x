@@ -1573,6 +1573,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_relativetime",
  "icu_segmenter",
+ "icu_singlenumberformatter",
  "icu_testdata",
  "icu_timezone",
  "itertools",
@@ -2008,6 +2009,19 @@ dependencies = [
 [[package]]
 name = "icu_segmenter_data"
 version = "0.0.0"
+
+[[package]]
+name = "icu_singlenumberformatter"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "fixed_decimal",
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "zerovec",
+]
 
 [[package]]
 name = "icu_testdata"

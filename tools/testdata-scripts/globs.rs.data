@@ -18,6 +18,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-core/supplemental/weekData.json",
     "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
     "cldr-dates-full/main/$LOCALES/dateFields.json",
+    "cldr-numbers-full/main/$LOCALES/currencies.json",
     "cldr-numbers-full/main/$LOCALES/numbers.json",
     "cldr-dates-full/main/$LOCALES/timeZoneNames.json",
     "cldr-misc-full/main/$LOCALES/characters.json",
