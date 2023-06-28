@@ -11,11 +11,7 @@
             "locid_transform/script_dir@1"
         ]
     },
-    "locales": {
-        "CldrSet": [
-            "modern"
-        ]
-    },
+    "locales": "Recommended",
     "cldr": "Latest",
     "icu_export": "Latest",
     "segmenter_lstm": "Latest",

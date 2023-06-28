@@ -85,7 +85,7 @@ macro_rules! impl_data_provider {
                         Ok(vec![Default::default()])
                     } else {
 
-                    Ok(self.source.options.locales.filter_by_langid_equality(self
+                    Ok(self.filter_data_locales(self
                         .source
                         .cldr()?
                         .dates("gregorian")

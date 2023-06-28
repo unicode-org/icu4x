@@ -52,7 +52,7 @@ macro_rules! implement {
 
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self.source.options.locales.filter_by_langid_equality(
+                Ok(self.filter_data_locales(
                     self.get_rules_for(<$marker>::KEY)?
                         .0
                         .keys()
