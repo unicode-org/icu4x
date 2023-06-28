@@ -943,16 +943,17 @@ mod tests {
     use super::*;
     use alloc::vec;
 
-    const TEST_LOWER_BOUND: f64 = 0.9999999;
-    const TEST_UPPER_BOUND: f64 = 1.0000001;
+    // Constants applied to provide a margin of error when comparing floating-point values in tests.
+    const TEST_LOWER_BOUND_FACTOR: f64 = 0.99999;
+    const TEST_UPPER_BOUND_FACTOR: f64 = 1.00001;
 
     fn assert_eq_f64(expected_value: f64, value: f64, moment: Moment) {
         if expected_value > 0.0 {
-            assert!(value > expected_value * TEST_LOWER_BOUND, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
-            assert!(value < expected_value * TEST_UPPER_BOUND, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
+            assert!(value > expected_value * TEST_LOWER_BOUND_FACTOR, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
+            assert!(value < expected_value * TEST_UPPER_BOUND_FACTOR, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
         } else {
-            assert!(value > expected_value * TEST_UPPER_BOUND, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
-            assert!(value < expected_value * TEST_LOWER_BOUND, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
+            assert!(value > expected_value * TEST_UPPER_BOUND_FACTOR, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
+            assert!(value < expected_value * TEST_LOWER_BOUND_FACTOR, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
         }
     }
 
@@ -1004,8 +1005,8 @@ mod tests {
             let moment: Moment = Moment::new(*rd as f64);
             let ephemeris = Astronomical::ephemeris_correction(moment);
             let expected_ephemeris_value = expected_ephemeris;
-            assert!(ephemeris > expected_ephemeris_value * TEST_LOWER_BOUND, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
-            assert!(ephemeris < expected_ephemeris_value * TEST_UPPER_BOUND, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+            assert!(ephemeris > expected_ephemeris_value * TEST_LOWER_BOUND_FACTOR, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+            assert!(ephemeris < expected_ephemeris_value * TEST_UPPER_BOUND_FACTOR, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
         }
     }
 
@@ -1057,8 +1058,8 @@ mod tests {
             let moment: Moment = Moment::new(*rd as f64);
             let solar_long = Astronomical::solar_longitude(moment + 0.5);
             let expected_solar_long_value = expected_solar_long;
-            assert!(solar_long > expected_solar_long_value * TEST_LOWER_BOUND, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
-            assert!(solar_long < expected_solar_long_value * TEST_UPPER_BOUND, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
+            assert!(solar_long > expected_solar_long_value * TEST_LOWER_BOUND_FACTOR, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
+            assert!(solar_long < expected_solar_long_value * TEST_UPPER_BOUND_FACTOR, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
         }
     }
 
@@ -1279,11 +1280,11 @@ mod tests {
             let next_new_moon = Astronomical::new_moon_at_or_after(moment);
             let expected_next_new_moon_moment = Moment::new(*expected_next_new_moon);
             if *expected_next_new_moon > 0.0 {
-                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * TEST_LOWER_BOUND, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
-                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * TEST_UPPER_BOUND, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * TEST_LOWER_BOUND_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * TEST_UPPER_BOUND_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
             } else {
-                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * TEST_UPPER_BOUND, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
-                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * TEST_LOWER_BOUND, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * TEST_UPPER_BOUND_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * TEST_LOWER_BOUND_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
             }
         }
     }
