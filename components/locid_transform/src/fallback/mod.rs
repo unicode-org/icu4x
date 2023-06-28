@@ -78,6 +78,8 @@ pub struct LocaleFallbackConfig {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES").into());
     /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get(), &locale!("ca-valencia").into());
+    /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("ca").into());
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
@@ -145,6 +147,8 @@ pub struct LocaleFallbackConfig {
     /// );
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("ar-EG").into());
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get(), &locale!("ar-u-nu-latn").into());
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("ar").into());
     /// fallback_iterator.step();
