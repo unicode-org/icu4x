@@ -602,6 +602,11 @@ mod tests {
             cm.uppercase_to_string("α\u{0313}\u{0345}", &root),
             "Α\u{0313}Ι"
         );
+        // but the YPOGEGRAMMENI should not titlecase
+        assert_eq!(
+            cm.titlecase_segment_to_string("α\u{0313}\u{0345}", &root),
+            "Α\u{0313}\u{0345}"
+        );
 
         // U+1F80 GREEK SMALL LETTER ALPHA WITH PSILI AND YPOGEGRAMMENI
         assert_eq!(cm.titlecase_segment_to_string("ᾀ", &root), "ᾈ");
