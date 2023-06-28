@@ -19,7 +19,8 @@ impl_tinystr_subtag!(
     ///
     /// [`unicode_variant_id`]: https://unicode.org/reports/tr35/#unicode_variant_id
     Variant,
-    subtags::Variant,
+    subtags,
+    variant,
     subtags_variant,
     4..=8,
     s,

@@ -43,17 +43,20 @@ zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
 databake = { version = "0.1.3", path = "../../utils/databake", optional = true, features = ["derive"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
+icu_collator_data = { path = "data", optional = true }
+icu_locid_transform = { path = "../../components/locid_transform", features = ["data"], optional = true }
+
 [dev-dependencies]
 arraystring = "0.3.0"
 atoi = "1.0.0"
 icu = { path = "../icu" }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_collator", "icu_normalizer", "icu_locid_transform"] }
 criterion = "0.4"
 
 [features]
 std = ["icu_collections/std", "icu_locid/std", "icu_normalizer/std", "icu_properties/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_properties/serde", "icu_normalizer/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_properties/datagen", "icu_normalizer/datagen", "icu_collections/databake"]
+data = ["dep:icu_collator_data", "icu_normalizer/data", "dep:icu_locid_transform"]
 
 [[test]]
 name = "tests"

@@ -87,20 +87,18 @@ where
 /// //   4. Note: we do not need the zone variant because of `load_generic_*()`
 ///
 /// // Set up the Metazone calculator and the DateTime to use in calculation
-/// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
-///     .unwrap();
+/// let mzc = MetazoneCalculator::new();
 /// let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 ///     .unwrap();
 ///
 /// // Set up the formatter
-/// let mut tzf = TimeZoneFormatter::try_new_unstable(
-///     &icu_testdata::unstable(),
+/// let mut tzf = TimeZoneFormatter::try_new(
 ///     &locale!("en").into(),
 ///     Default::default(),
 /// )
 /// .unwrap();
-/// tzf.load_generic_non_location_short(&icu_testdata::unstable())?
-///     .load_generic_non_location_long(&icu_testdata::unstable())?;
+/// tzf.with_generic_non_location_short()?
+///     .with_generic_non_location_long()?;
 ///
 /// // "uschi" - has metazone symbol data for generic_non_location_short
 /// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
@@ -401,38 +399,40 @@ impl TimeZoneFormatter {
         Ok(tz_format)
     }
 
-    /// Creates a new [`TimeZoneFormatter`] with a GMT or ISO format.
-    ///
-    /// To enable other time zone styles, use one of the `load` methods.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
-    ///
-    /// # Examples
-    ///
-    /// Default format is Localized GMT:
-    ///
-    /// ```
-    /// use icu::datetime::time_zone::{
-    ///     TimeZoneFormatter, TimeZoneFormatterOptions,
-    /// };
-    /// use icu::locid::locale;
-    /// use icu::timezone::CustomTimeZone;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let tzf = TimeZoneFormatter::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale!("es").into(),
-    ///     TimeZoneFormatterOptions::default(),
-    /// )
-    /// .unwrap();
-    ///
-    /// let time_zone = "-0700".parse::<CustomTimeZone>().unwrap();
-    ///
-    /// assert_writeable_eq!(tzf.format(&time_zone), "GMT-07:00");
-    /// ```
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: TimeZoneFormatterOptions,
+        error: DateTimeError,
+        /// Creates a new [`TimeZoneFormatter`] with a GMT or ISO format using compiled data.
+        ///
+        /// To enable other time zone styles, use one of the `with` (compiled data) or `load` (runtime
+        /// data provider) methods.
+        ///
+        /// # Examples
+        ///
+        /// Default format is Localized GMT:
+        ///
+        /// ```
+        /// use icu::datetime::time_zone::{
+        ///     TimeZoneFormatter, TimeZoneFormatterOptions,
+        /// };
+        /// use icu::locid::locale;
+        /// use icu::timezone::CustomTimeZone;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let tzf = TimeZoneFormatter::try_new(
+        ///     &locale!("es").into(),
+        ///     TimeZoneFormatterOptions::default(),
+        /// )
+        /// .unwrap();
+        ///
+        /// let time_zone = "-0700".parse::<CustomTimeZone>().unwrap();
+        ///
+        /// assert_writeable_eq!(tzf.format(&time_zone), "GMT-07:00");
+        /// ```
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         locale: &DataLocale,
@@ -463,11 +463,45 @@ impl TimeZoneFormatter {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: TimeZoneFormatterOptions,
-        error: DateTimeError
-    );
+    /// Load generic non location long format for timezone from compiled data. For example, Pacific Time.
+    #[cfg(feature = "data")]
+    pub fn with_generic_non_location_long(
+        &mut self,
+    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
+        self.load_generic_non_location_long(&crate::provider::Baked)
+    }
+
+    /// Load generic non location short format for timezone from compiled data. For example, PT.
+    #[cfg(feature = "data")]
+    pub fn with_generic_non_location_short(
+        &mut self,
+    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
+        self.load_generic_non_location_short(&crate::provider::Baked)
+    }
+
+    /// Load specific non location long format for timezone from compiled data. For example, Pacific Standard Time.
+    #[cfg(feature = "data")]
+    pub fn with_specific_non_location_long(
+        &mut self,
+    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
+        self.load_specific_non_location_long(&crate::provider::Baked)
+    }
+
+    /// Load specific non location short format for timezone from compiled data. For example, PDT.
+    #[cfg(feature = "data")]
+    pub fn with_specific_non_location_short(
+        &mut self,
+    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
+        self.load_specific_non_location_short(&crate::provider::Baked)
+    }
+
+    /// Load generic location format for timezone. For example, Los Angeles Time.
+    #[cfg(feature = "data")]
+    pub fn with_generic_location_format(
+        &mut self,
+    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
+        self.load_generic_location_format(&crate::provider::Baked)
+    }
 
     /// Load generic non location long format for timezone. For example, Pacific Time.
     pub fn load_generic_non_location_long<ZP>(
@@ -652,8 +686,7 @@ impl TimeZoneFormatter {
     /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let tzf = TimeZoneFormatter::try_new_unstable(
-    ///     &icu_testdata::unstable(),
+    /// let tzf = TimeZoneFormatter::try_new(
     ///     &locale!("en").into(),
     ///     TimeZoneFormatterOptions::default(),
     /// )

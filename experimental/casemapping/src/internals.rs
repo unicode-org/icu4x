@@ -11,8 +11,10 @@ use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::CaseMappingV1;
 use crate::set::ClosureSet;
 use core::fmt;
-use icu_locid::Locale;
+use icu_locid::LanguageIdentifier;
 use writeable::Writeable;
+
+const ACUTE: char = '\u{301}';
 
 // Used to control the behavior of CaseMapping::fold.
 // Currently only used to decide whether to use Turkic (T) mappings for dotted/dotless i.
@@ -126,13 +128,35 @@ impl<'data> CaseMappingV1<'data> {
     }
 
     #[inline(always)]
-    fn full_helper(
+    // IS_TITLE_CONTEXT must be true if kind is MappingKind::Title
+    // The kind may be a different kind with IS_TITLE_CONTEXT still true because
+    // titlecasing a segment involves switching to lowercase later
+    fn full_helper<const IS_TITLE_CONTEXT: bool>(
         &self,
         c: char,
         context: ContextIterator,
         locale: CaseMapLocale,
         kind: MappingKind,
     ) -> FullMappingResult {
+        // If using a title mapping IS_TITLE_CONTEXT must be true
+        debug_assert!(kind != MappingKind::Title || IS_TITLE_CONTEXT);
+        // In a title context, kind MUST be Title or Lower
+        debug_assert!(
+            !IS_TITLE_CONTEXT || kind == MappingKind::Title || kind == MappingKind::Lower
+        );
+
+        // ICU4C's non-standard extension for Dutch IJ titlecasing
+        // handled here instead of in full_lower_special_case because J does not have conditional
+        // special casemapping.
+        if IS_TITLE_CONTEXT && locale == CaseMapLocale::Dutch && kind == MappingKind::Lower {
+            // When titlecasing, a J found immediately after an I at the beginning of the segment
+            // should also uppercase. They are both allowed to have an acute accent but it must
+            // be present on both letters or neither. They may not have any other combining marks.
+            if (c == 'j' || c == 'J') && context.is_dutch_ij_pair_at_beginning(self) {
+                return FullMappingResult::CodePoint('J');
+            }
+        }
+
         let data = self.lookup_data(c);
         if !data.has_exception() {
             if data.is_relevant_to(kind) {
@@ -148,15 +172,12 @@ impl<'data> CaseMappingV1<'data> {
             let exception = self.exceptions.get(idx);
             if exception.bits.has_conditional_special() {
                 if let Some(special) = match kind {
-                    MappingKind::Lower => self.full_lower_special_case(c, context, locale),
+                    MappingKind::Lower => {
+                        self.full_lower_special_case::<IS_TITLE_CONTEXT>(c, context, locale)
+                    }
                     MappingKind::Fold => self.full_fold_special_case(c, context, locale),
                     MappingKind::Upper | MappingKind::Title => self
-                        .full_upper_or_title_special_case(
-                            c,
-                            context,
-                            locale,
-                            kind == MappingKind::Title,
-                        ),
+                        .full_upper_or_title_special_case::<IS_TITLE_CONTEXT>(c, context, locale),
                 } {
                     return special;
                 }
@@ -211,7 +232,7 @@ impl<'data> CaseMappingV1<'data> {
         }
     }
 
-    fn full_lower_special_case(
+    fn full_lower_special_case<const IS_TITLE_CONTEXT: bool>(
         &self,
         c: char,
         context: ContextIterator,
@@ -247,10 +268,15 @@ impl<'data> CaseMappingV1<'data> {
             if c == '\u{130}' {
                 // I and i-dotless; I-dot and i are case pairs in Turkish and Azeri
                 return Some(FullMappingResult::CodePoint('i'));
-            } else if c == '\u{307}' && context.preceded_by_capital_i(self) {
+            } else if c == '\u{307}' && context.preceded_by_capital_i::<IS_TITLE_CONTEXT>(self) {
                 // When lowercasing, remove dot_above in the sequence I + dot_above,
                 // which will turn into i. This matches the behaviour of the
                 // canonically equivalent I-dot_above.
+                //
+                // In a titlecase context, we do not want to apply this behavior to cases where the I
+                // was at the beginning of the string, as that I and its marks should be handled by the
+                // uppercasing rules (which ignore it, see below)
+
                 return Some(FullMappingResult::Remove);
             } else if c == 'I' && !context.followed_by_dot_above(self) {
                 // When lowercasing, unless an I is before a dot_above, it turns
@@ -276,12 +302,11 @@ impl<'data> CaseMappingV1<'data> {
         None
     }
 
-    fn full_upper_or_title_special_case(
+    fn full_upper_or_title_special_case<const IS_TITLE_CONTEXT: bool>(
         &self,
         c: char,
         context: ContextIterator,
         locale: CaseMapLocale,
-        is_title: bool,
     ) -> Option<FullMappingResult> {
         if locale == CaseMapLocale::Turkish && c == 'i' {
             // In Turkic languages, i turns into a dotted capital I.
@@ -297,7 +322,7 @@ impl<'data> CaseMappingV1<'data> {
         }
         // ICU4C's non-standard extension for Armenian ligature ech-yiwn.
         if c == '\u{587}' {
-            return match (locale, is_title) {
+            return match (locale, IS_TITLE_CONTEXT) {
                 (CaseMapLocale::Armenian, false) => Some(FullMappingResult::String("ԵՎ")),
                 (CaseMapLocale::Armenian, true) => Some(FullMappingResult::String("Եվ")),
                 (_, false) => Some(FullMappingResult::String("ԵՒ")),
@@ -325,20 +350,25 @@ impl<'data> CaseMappingV1<'data> {
             (_, _) => None,
         }
     }
-    pub(crate) fn full_helper_writeable<'a: 'data>(
+    /// IS_TITLE_CONTEXT is true iff the mapping is MappingKind::Title, primarily exists
+    /// to avoid perf impacts on other more common modes of operation
+    pub(crate) fn full_helper_writeable<'a: 'data, const IS_TITLE_CONTEXT: bool>(
         &'a self,
         src: &'a str,
         locale: CaseMapLocale,
         mapping: MappingKind,
     ) -> impl Writeable + 'a {
-        struct FullCaseWriteable<'a> {
+        // Ensure that they are either both true or both false, i.e. an XNOR operation
+        debug_assert!(!(IS_TITLE_CONTEXT ^ (mapping == MappingKind::Title)));
+
+        struct FullCaseWriteable<'a, const IS_TITLE_CONTEXT: bool> {
             data: &'a CaseMappingV1<'a>,
             src: &'a str,
             locale: CaseMapLocale,
             mapping: MappingKind,
         }
 
-        impl<'a> Writeable for FullCaseWriteable<'a> {
+        impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
             #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
             fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
                 // To speed up the copying of long runs where nothing changes, we keep track
@@ -346,11 +376,20 @@ impl<'data> CaseMappingV1<'data> {
                 let mut last_uncopied_idx = 0;
 
                 let src = self.src;
+                let mut mapping = self.mapping;
                 for (i, c) in src.char_indices() {
                     let context = ContextIterator::new(&src[..i], &src[i..]);
-                    match self.data.full_helper(c, context, self.locale, self.mapping) {
+                    match self.data.full_helper::<IS_TITLE_CONTEXT>(
+                        c,
+                        context,
+                        self.locale,
+                        mapping,
+                    ) {
                         FullMappingResult::CodePoint(c2) => {
                             if c == c2 {
+                                if IS_TITLE_CONTEXT {
+                                    mapping = MappingKind::Lower;
+                                }
                                 continue;
                             }
                             sink.write_str(&src[last_uncopied_idx..i])?;
@@ -367,6 +406,9 @@ impl<'data> CaseMappingV1<'data> {
                             last_uncopied_idx = i + c.len_utf8();
                         }
                     }
+                    if IS_TITLE_CONTEXT {
+                        mapping = MappingKind::Lower;
+                    }
                 }
                 if last_uncopied_idx < src.len() {
                     sink.write_str(&src[last_uncopied_idx..])?;
@@ -378,7 +420,7 @@ impl<'data> CaseMappingV1<'data> {
             }
         }
 
-        FullCaseWriteable {
+        FullCaseWriteable::<IS_TITLE_CONTEXT> {
             data: self,
             src,
             locale,
@@ -497,15 +539,15 @@ pub enum CaseMapLocale {
 }
 
 impl CaseMapLocale {
-    pub const fn from_locale(loc: &Locale) -> Self {
-        use icu_locid::{subtags::Language, subtags_language as language};
+    pub const fn from_langid(langid: &LanguageIdentifier) -> Self {
+        use icu_locid::subtags::{language, Language};
         const TR: Language = language!("tr");
         const AZ: Language = language!("az");
         const LT: Language = language!("lt");
         const EL: Language = language!("el");
         const NL: Language = language!("nl");
         const HY: Language = language!("hy");
-        match loc.id.language {
+        match langid.language {
             TR | AZ => Self::Turkish,
             LT => Self::Lithuanian,
             EL => Self::Greek,
@@ -559,10 +601,21 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn preceded_by_capital_i(&self, mapping: &CaseMappingV1) -> bool {
-        for c in self.before.chars().rev() {
+    /// Checks if the preceding character is a capital I, allowing for non-Above combining characters in between.
+    ///
+    /// If I_MUST_NOT_START_STRING is true, additionally will require that the capital I does not start the string
+    fn preceded_by_capital_i<const I_MUST_NOT_START_STRING: bool>(
+        &self,
+        mapping: &CaseMappingV1,
+    ) -> bool {
+        let mut iter = self.before.chars().rev();
+        while let Some(c) = iter.next() {
             if c == 'I' {
-                return true;
+                if I_MUST_NOT_START_STRING {
+                    return iter.next().is_some();
+                } else {
+                    return true;
+                }
             }
             if mapping.dot_type(c) != DotType::OtherAccent {
                 break;
@@ -608,5 +661,57 @@ impl<'a> ContextIterator<'a> {
             }
         }
         false
+    }
+
+    /// Checks the preceding and surrounding context of a j or J
+    /// and returns true if it is preceded by an i or I at the start of the string.
+    /// If one has an acute accent,
+    /// both must have the accent for this to return true. No other accents are handled.
+    fn is_dutch_ij_pair_at_beginning(&self, mapping: &CaseMappingV1) -> bool {
+        let mut before = self.before.chars().rev();
+        let mut i_has_acute = false;
+        loop {
+            match before.next() {
+                Some('i') | Some('I') => break,
+                Some('í') | Some('Í') => {
+                    i_has_acute = true;
+                    break;
+                }
+                Some(ACUTE) => i_has_acute = true,
+                _ => return false,
+            }
+        }
+
+        if before.next().is_some() {
+            // not at the beginning of a string, doesn't matter
+            return false;
+        }
+        let mut j_has_acute = false;
+        for c in self.after.chars() {
+            if c == ACUTE {
+                j_has_acute = true;
+                continue;
+            }
+            // We are supposed to check that `j` has no other combining marks aside
+            // from potentially an acute accent. Once we hit the first non-combining mark
+            // we are done.
+            //
+            // ICU4C checks for `gc=Mn` to determine if something is a combining mark,
+            // however this requires extra data (and is the *only* point in the casemapping algorithm
+            // where there is a direct dependency on properties data not mediated by the casemapping data trie).
+            //
+            // Instead, we can check for ccc via dot_type, the same way the rest of the algorithm does.
+            //
+            // See https://unicode-org.atlassian.net/browse/ICU-22429
+            match mapping.dot_type(c) {
+                // Not a combining character; ccc = 0
+                DotType::NoDot | DotType::SoftDotted => break,
+                // found combining character, bail
+                _ => return false,
+            }
+        }
+
+        // either both should have an acute accent, or none. this is an XNOR operation
+        !(j_has_acute ^ i_has_acute)
     }
 }

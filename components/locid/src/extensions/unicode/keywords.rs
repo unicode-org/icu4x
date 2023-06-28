@@ -30,8 +30,7 @@ use crate::ordering::SubtagOrderingResult;
 ///
 /// ```
 /// use icu::locid::{
-///     extensions::unicode::Keywords, extensions_unicode_key as key,
-///     extensions_unicode_value as value, locale,
+///     extensions::unicode::{Keywords, key, value}, locale,
 /// };
 ///
 /// let keywords = vec![(key!("hc"), value!("h23"))]
@@ -45,7 +44,7 @@ use crate::ordering::SubtagOrderingResult;
 ///
 /// ```
 /// use icu::locid::{
-///     extensions_unicode_key as key, extensions_unicode_value as value,
+///     extensions::unicode::{key, value},
 ///     Locale,
 /// };
 ///
@@ -116,10 +115,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{
-    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
-    ///     extensions_unicode_value as value,
-    /// };
+    /// use icu::locid::extensions::unicode::{Keywords, key, value};
     ///
     /// let keywords = vec![(key!("ca"), value!("gregory"))]
     ///     .into_iter()
@@ -141,10 +137,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{
-    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
-    ///     extensions_unicode_value as value,
-    /// };
+    /// use icu::locid::extensions::unicode::{Keywords, key, value};
     ///
     /// let keywords = vec![(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
@@ -167,10 +160,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{
-    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
-    ///     extensions_unicode_value as value,
-    /// };
+    /// use icu::locid::extensions::unicode::{Keywords, key, value};
     ///
     /// let mut keywords = vec![(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
@@ -198,7 +188,7 @@ impl Keywords {
     /// use icu::locid::extensions::unicode::Value;
     /// use icu::locid::Locale;
     /// use icu::locid::{
-    ///     extensions_unicode_key as key, extensions_unicode_value as value,
+    ///     extensions::unicode::{key, value},
     /// };
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
@@ -222,8 +212,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Key;
-    /// use icu::locid::extensions_unicode_key as key;
+    /// use icu::locid::extensions::unicode::{Key, key};
     /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
@@ -258,7 +247,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions_unicode_key as key;
+    /// use icu::locid::extensions::unicode::key;
     /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "und-u-ca-buddhist-hc-h12-ms-metric".parse().unwrap();

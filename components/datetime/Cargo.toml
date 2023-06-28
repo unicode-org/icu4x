@@ -17,6 +17,7 @@ categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
+    "data/*",
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
@@ -45,6 +46,9 @@ zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"]
 
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
+
+icu_datetime_data = { path = "data", optional = true }
+icu_locid_transform = { path = "../../components/locid_transform", features = ["data"], optional = true }
 
 # Experimental
 litemap = { version = "0.7.0", path = "../../utils/litemap", optional = true }
@@ -94,6 +98,7 @@ datagen = [
     ]
 experimental = ["dep:litemap"]
 bench = ["serde"]
+data = ["dep:icu_datetime_data", "dep:icu_locid_transform", "icu_calendar/data", "icu_decimal/data", "icu_plurals/data", "icu_timezone/data"]
 
 [lib]
 path = "src/lib.rs"

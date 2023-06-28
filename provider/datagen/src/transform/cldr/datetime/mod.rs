@@ -5,7 +5,10 @@
 use crate::transform::cldr::cldr_serde;
 use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
+use icu_locid::{
+    extensions::unicode::{key, value},
+    Locale,
+};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use lazy_static::lazy_static;
