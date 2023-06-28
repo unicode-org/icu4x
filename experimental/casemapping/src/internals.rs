@@ -126,13 +126,18 @@ impl<'data> CaseMappingV1<'data> {
     }
 
     #[inline(always)]
-    fn full_helper(
+    // IS_TITLE_CONTEXT must be true if kind is MappingKind::Title
+    fn full_helper<const IS_TITLE_CONTEXT: bool>(
         &self,
         c: char,
         context: ContextIterator,
         locale: CaseMapLocale,
         kind: MappingKind,
     ) -> FullMappingResult {
+        // IS_TITLE_CONTEXT exists to avoid perf impacts on the other, more common modes
+        // Ensure that they are either both true or both false, i.e. an XNOR operation
+        debug_assert!(!(IS_TITLE_CONTEXT ^ (kind == MappingKind::Title)));
+
         let data = self.lookup_data(c);
         if !data.has_exception() {
             if data.is_relevant_to(kind) {
@@ -151,12 +156,7 @@ impl<'data> CaseMappingV1<'data> {
                     MappingKind::Lower => self.full_lower_special_case(c, context, locale),
                     MappingKind::Fold => self.full_fold_special_case(c, context, locale),
                     MappingKind::Upper | MappingKind::Title => self
-                        .full_upper_or_title_special_case(
-                            c,
-                            context,
-                            locale,
-                            kind == MappingKind::Title,
-                        ),
+                        .full_upper_or_title_special_case::<IS_TITLE_CONTEXT>(c, context, locale),
                 } {
                     return special;
                 }
@@ -276,12 +276,11 @@ impl<'data> CaseMappingV1<'data> {
         None
     }
 
-    fn full_upper_or_title_special_case(
+    fn full_upper_or_title_special_case<const IS_TITLE_CONTEXT: bool>(
         &self,
         c: char,
         context: ContextIterator,
         locale: CaseMapLocale,
-        is_title: bool,
     ) -> Option<FullMappingResult> {
         if locale == CaseMapLocale::Turkish && c == 'i' {
             // In Turkic languages, i turns into a dotted capital I.
@@ -297,7 +296,7 @@ impl<'data> CaseMappingV1<'data> {
         }
         // ICU4C's non-standard extension for Armenian ligature ech-yiwn.
         if c == '\u{587}' {
-            return match (locale, is_title) {
+            return match (locale, IS_TITLE_CONTEXT) {
                 (CaseMapLocale::Armenian, false) => Some(FullMappingResult::String("ԵՎ")),
                 (CaseMapLocale::Armenian, true) => Some(FullMappingResult::String("Եվ")),
                 (_, false) => Some(FullMappingResult::String("ԵՒ")),
@@ -325,20 +324,20 @@ impl<'data> CaseMappingV1<'data> {
             (_, _) => None,
         }
     }
-    pub(crate) fn full_helper_writeable<'a: 'data>(
+    pub(crate) fn full_helper_writeable<'a: 'data, const IS_TITLE_CONTEXT: bool>(
         &'a self,
         src: &'a str,
         locale: CaseMapLocale,
         mapping: MappingKind,
     ) -> impl Writeable + 'a {
-        struct FullCaseWriteable<'a> {
+        struct FullCaseWriteable<'a, const IS_TITLE_CONTEXT: bool> {
             data: &'a CaseMappingV1<'a>,
             src: &'a str,
             locale: CaseMapLocale,
             mapping: MappingKind,
         }
 
-        impl<'a> Writeable for FullCaseWriteable<'a> {
+        impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
             #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
             fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
                 // To speed up the copying of long runs where nothing changes, we keep track
@@ -348,7 +347,12 @@ impl<'data> CaseMappingV1<'data> {
                 let src = self.src;
                 for (i, c) in src.char_indices() {
                     let context = ContextIterator::new(&src[..i], &src[i..]);
-                    match self.data.full_helper(c, context, self.locale, self.mapping) {
+                    match self.data.full_helper::<IS_TITLE_CONTEXT>(
+                        c,
+                        context,
+                        self.locale,
+                        self.mapping,
+                    ) {
                         FullMappingResult::CodePoint(c2) => {
                             if c == c2 {
                                 continue;
@@ -378,7 +382,7 @@ impl<'data> CaseMappingV1<'data> {
             }
         }
 
-        FullCaseWriteable {
+        FullCaseWriteable::<IS_TITLE_CONTEXT> {
             data: self,
             src,
             locale,

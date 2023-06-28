@@ -87,7 +87,7 @@ impl CaseMapping {
         src: &'a str,
         langid: &LanguageIdentifier,
     ) -> impl Writeable + 'a {
-        self.data.get().full_helper_writeable(
+        self.data.get().full_helper_writeable::<false>(
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Lower,
@@ -106,7 +106,7 @@ impl CaseMapping {
         src: &'a str,
         langid: &LanguageIdentifier,
     ) -> impl Writeable + 'a {
-        self.data.get().full_helper_writeable(
+        self.data.get().full_helper_writeable::<false>(
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Upper,
@@ -123,7 +123,7 @@ impl CaseMapping {
     pub fn fold<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
         self.data
             .get()
-            .full_helper_writeable(src, CaseMapLocale::Root, MappingKind::Fold)
+            .full_helper_writeable::<false>(src, CaseMapLocale::Root, MappingKind::Fold)
     }
 
     /// Case-folds the characters in the given string as a [`Writeable`],
@@ -135,9 +135,11 @@ impl CaseMapping {
     /// See [`Self::fold_turkic_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
     pub fn fold_turkic<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
-        self.data
-            .get()
-            .full_helper_writeable(src, CaseMapLocale::Turkish, MappingKind::Fold)
+        self.data.get().full_helper_writeable::<false>(
+            src,
+            CaseMapLocale::Turkish,
+            MappingKind::Fold,
+        )
     }
 
     /// Returns the full lowercase mapping of the given string as a String.
@@ -169,7 +171,11 @@ impl CaseMapping {
     pub fn lowercase_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
         self.data
             .get()
-            .full_helper_writeable(src, CaseMapLocale::from_langid(langid), MappingKind::Lower)
+            .full_helper_writeable::<false>(
+                src,
+                CaseMapLocale::from_langid(langid),
+                MappingKind::Lower,
+            )
             .write_to_string()
             .into_owned()
     }
@@ -206,7 +212,11 @@ impl CaseMapping {
     pub fn uppercase_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
         self.data
             .get()
-            .full_helper_writeable(src, CaseMapLocale::from_langid(langid), MappingKind::Upper)
+            .full_helper_writeable::<false>(
+                src,
+                CaseMapLocale::from_langid(langid),
+                MappingKind::Upper,
+            )
             .write_to_string()
             .into_owned()
     }
@@ -236,7 +246,7 @@ impl CaseMapping {
     pub fn fold_string(&self, src: &str) -> String {
         self.data
             .get()
-            .full_helper_writeable(src, CaseMapLocale::Root, MappingKind::Fold)
+            .full_helper_writeable::<false>(src, CaseMapLocale::Root, MappingKind::Fold)
             .write_to_string()
             .into_owned()
     }
@@ -270,7 +280,7 @@ impl CaseMapping {
     pub fn fold_turkic_string(&self, src: &str) -> String {
         self.data
             .get()
-            .full_helper_writeable(src, CaseMapLocale::Turkish, MappingKind::Fold)
+            .full_helper_writeable::<false>(src, CaseMapLocale::Turkish, MappingKind::Fold)
             .write_to_string()
             .into_owned()
     }
