@@ -638,19 +638,18 @@ mod tests {
         assert_eq!(cm.uppercase_to_string("İ", &az), "İ");
 
         // U+0049 LATIN CAPITAL LETTER I and U+0307 COMBINING DOT ABOVE
-        // TODO
-        // assert_eq!(cm.lowercase_to_string("I\u{0307}", &tr), "i");
-        // assert_eq!(cm.lowercase_to_string("I\u{0307}", &az), "i");
-        // assert_eq!(
-        //     cm.titlecase_segment_to_string("I\u{0307}", &tr),
-        //     "I\u{0307}"
-        // );
-        // assert_eq!(
-        //     cm.titlecase_segment_to_string("I\u{0307}", &az),
-        //     "I\u{0307}"
-        // );
-        // assert_eq!(cm.uppercase_to_string("I\u{0307}", &tr), "I\u{0307}");
-        // assert_eq!(cm.uppercase_to_string("I\u{0307}", &az), "I\u{0307}");
+        assert_eq!(cm.lowercase_to_string("I\u{0307}", &tr), "i");
+        assert_eq!(cm.lowercase_to_string("I\u{0307}", &az), "i");
+        assert_eq!(
+            cm.titlecase_segment_to_string("I\u{0307}", &tr),
+            "I\u{0307}"
+        );
+        assert_eq!(
+            cm.titlecase_segment_to_string("I\u{0307}", &az),
+            "I\u{0307}"
+        );
+        assert_eq!(cm.uppercase_to_string("I\u{0307}", &tr), "I\u{0307}");
+        assert_eq!(cm.uppercase_to_string("I\u{0307}", &az), "I\u{0307}");
 
         // U+0049 LATIN CAPITAL LETTER I
         assert_eq!(cm.lowercase_to_string("I", &tr), "ı");

@@ -158,7 +158,9 @@ impl<'data> CaseMappingV1<'data> {
             let exception = self.exceptions.get(idx);
             if exception.bits.has_conditional_special() {
                 if let Some(special) = match kind {
-                    MappingKind::Lower => self.full_lower_special_case(c, context, locale),
+                    MappingKind::Lower => {
+                        self.full_lower_special_case::<IS_TITLE_CONTEXT>(c, context, locale)
+                    }
                     MappingKind::Fold => self.full_fold_special_case(c, context, locale),
                     MappingKind::Upper | MappingKind::Title => self
                         .full_upper_or_title_special_case::<IS_TITLE_CONTEXT>(c, context, locale),
@@ -216,7 +218,7 @@ impl<'data> CaseMappingV1<'data> {
         }
     }
 
-    fn full_lower_special_case(
+    fn full_lower_special_case<const IS_TITLE_CONTEXT: bool>(
         &self,
         c: char,
         context: ContextIterator,
@@ -252,10 +254,15 @@ impl<'data> CaseMappingV1<'data> {
             if c == '\u{130}' {
                 // I and i-dotless; I-dot and i are case pairs in Turkish and Azeri
                 return Some(FullMappingResult::CodePoint('i'));
-            } else if c == '\u{307}' && context.preceded_by_capital_i(self) {
+            } else if c == '\u{307}' && context.preceded_by_capital_i::<IS_TITLE_CONTEXT>(self) {
                 // When lowercasing, remove dot_above in the sequence I + dot_above,
                 // which will turn into i. This matches the behaviour of the
                 // canonically equivalent I-dot_above.
+                //
+                // In a titlecase context, we do not want to apply this behavior to cases where the I
+                // was at the beginning of the string, as that I and its marks should be handled by the
+                // uppercasing rules (which ignore it, see below)
+
                 return Some(FullMappingResult::Remove);
             } else if c == 'I' && !context.followed_by_dot_above(self) {
                 // When lowercasing, unless an I is before a dot_above, it turns
@@ -580,10 +587,21 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn preceded_by_capital_i(&self, mapping: &CaseMappingV1) -> bool {
-        for c in self.before.chars().rev() {
+    /// Checks if the preceding character is a capital I, allowing for non-Above combining characters in between.
+    ///
+    /// If I_MUST_NOT_START_STRING is true, additionally will require that the capital I does not start the string
+    fn preceded_by_capital_i<const I_MUST_NOT_START_STRING: bool>(
+        &self,
+        mapping: &CaseMappingV1,
+    ) -> bool {
+        let mut iter = self.before.chars().rev();
+        while let Some(c) = iter.next() {
             if c == 'I' {
-                return true;
+                if I_MUST_NOT_START_STRING {
+                    return iter.next().is_some();
+                } else {
+                    return true;
+                }
             }
             if mapping.dot_type(c) != DotType::OtherAccent {
                 break;
