@@ -4,7 +4,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, ordinal_lunar_month_from_code};
 use crate::helpers::{
     adjusted_rem_euclid, adjusted_rem_euclid64, adjusted_rem_euclid_f64, div_rem_euclid,
     i64_to_i32, quotient, quotient64, I32Result,
@@ -35,7 +35,7 @@ pub struct Chinese;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct ChineseDateInner {
-    // TODO: Reconcile differences between this and the design plan regarding ArithmeticDate
+    // TODO: Add ArithmeticDate field and adjust accordingly
     year: i32,      // The number of elapsed Chinese years since inception of the calendar
     month: u8,      // The number of the current month (could be a leap month)
     leap_month: u8, // The month in the current year which is a leap month (0 if none)
@@ -74,7 +74,12 @@ impl CalendarArithmetic for Chinese {
     }
 
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        todo!() // TODO: this fn
+        let mid_year = Chinese::fixed_mid_year_from_year(year);
+        let next_new_year = Chinese::chinese_new_year_on_or_before_fixed_date(mid_year + 370);
+        let last_day = next_new_year - 1;
+        let month = if Chinese::fixed_date_is_in_leap_year(last_day) { 13 } else { 12 };
+        let day = last_day - Chinese::chinese_new_moon_before(last_day.as_moment()) + 1;
+        (month, day as u8) // TODO: Add saturating functions to avoid overflow
     }
 }
 
@@ -89,7 +94,7 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        todo!(); // TODO: Figure out how to do this considering leap months
+        todo!(); // TODO: This fn, figure out with ArithmeticDate
     }
 
     // Construct the date from an ISO date
@@ -156,7 +161,12 @@ impl Calendar for Chinese {
         }
     }
 
-    /// The calendar-specific month represented by `date`
+    /// The calendar-specific month code represented by `date`
+    /// since the Chinese calendar has leap months, it is necessary to track
+    /// whether a month is a leap month, as well as whether it comes after a
+    /// leap month in the current calendar year. To accomplish this, the Chinese
+    /// calendar month codes appends "L" (for "Leap") to a month code if it is a leap month,
+    /// and appends "I" (for "Increment") to a month code if it occurs after a leap month.
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.month;
         let leap_month = date.leap_month;
@@ -199,17 +209,17 @@ impl Calendar for Chinese {
                 match ordinal {
                     1 => tinystr!(4, "und"), // this implies the leap month is < 1, which is impossible
                     2 => tinystr!(4, "und"), // this implies the leap month is = 1, which is impossible
-                    3 => tinystr!(4, "M02"),
-                    4 => tinystr!(4, "M03"),
-                    5 => tinystr!(4, "M04"),
-                    6 => tinystr!(4, "M05"),
-                    7 => tinystr!(4, "M06"),
-                    8 => tinystr!(4, "M07"),
-                    9 => tinystr!(4, "M08"),
-                    10 => tinystr!(4, "M09"),
-                    11 => tinystr!(4, "M10"),
-                    12 => tinystr!(4, "M11"),
-                    13 => tinystr!(4, "M12"),
+                    3 => tinystr!(4, "M02I"),
+                    4 => tinystr!(4, "M03I"),
+                    5 => tinystr!(4, "M04I"),
+                    6 => tinystr!(4, "M05I"),
+                    7 => tinystr!(4, "M06I"),
+                    8 => tinystr!(4, "M07I"),
+                    9 => tinystr!(4, "M08I"),
+                    10 => tinystr!(4, "M09I"),
+                    11 => tinystr!(4, "M10I"),
+                    12 => tinystr!(4, "M11I"),
+                    13 => tinystr!(4, "M12I"),
                     _ => tinystr!(4, "und"), // maximum number of months in a leap year is 13
                 }
             }

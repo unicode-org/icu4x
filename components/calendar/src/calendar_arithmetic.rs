@@ -252,6 +252,37 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
         Ok(Self::new(year, month, day))
     }
+
+    /// Construct a new arithmetic date from a year, month code, and day, for a lunar calendar
+    /// with intercalary months
+    pub fn new_from_lunar<C2: Calendar>(
+        cal: &C2,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self, CalendarError> {
+        let month = if let Some(ordinal) = ordinal_lunar_month_from_code(month_code) {
+            ordinal
+        } else {
+            return Err(CalendarError::UnknownMonthCode(
+                month_code.0,
+                cal.debug_name(),
+            ));
+        };
+
+        if month > C::months_for_every_year(year) {
+            return Err(CalendarError::UnknownMonthCode(
+                month_code.0,
+                cal.debug_name(),
+            ));
+        }
+
+        if day > C::month_days(year, month) {
+            return Err(CalendarError::OutOfRange);
+        }
+
+        Ok(Self::new(year, month, day))
+    }
 }
 
 /// For solar calendars, get the month number from the month code
@@ -271,6 +302,30 @@ pub fn ordinal_solar_month_from_code(code: types::MonthCode) -> Option<u8> {
         }
     } else if bytes[1] == b'1' && bytes[2] >= b'1' && bytes[2] <= b'3' {
         return Some(10 + bytes[2] - b'0');
+    }
+    None
+}
+
+/// For lunar calendars, get the month number from the month code
+/// 
+/// Similar to [`ordinal_solar_month_from_code`], but adds 1 if the month code
+/// is four characters long (indicating 'L' for leap or 'I' for increment were appended)
+pub fn ordinal_lunar_month_from_code(code: types::MonthCode) -> Option<u8> {
+    let bytes = code.0.all_bytes();
+    if bytes[0] != b'M' {
+        return None;
+    }
+    if code.0.len() == 3 {
+        return ordinal_solar_month_from_code(code);
+    }
+    if code.0.len() == 4 {
+        if bytes[1] == b'0' {
+            if bytes[2] >= b'1' && bytes[2] <= b'9' {
+                return Some(bytes[2] - b'0' + 1);
+            }
+        } else if bytes[1] == b'1' && bytes[2] >= b'1' && bytes[2] <= b'3' {
+            return Some(bytes[2] - b'0' + 11);
+        }
     }
     None
 }
