@@ -694,6 +694,120 @@ impl Astronomical {
 
         mod3(altitude, -180.0, 180.0)
     }
+
+    pub(crate) fn lunar_distance(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let cap_D = Self::lunar_elongation(c);
+        let cap_M = Self::solar_anomaly(c);
+        let cap_M_prime = Self::lunar_anomaly(c);
+        let cap_F = Self::moon_node(c);
+        let cap_E = 1.0 - (0.002516 * c) - (0.0000074 * libm::pow(c, 2.0));
+
+        let args_lunar_elongation = [
+            0.0, 2.0, 2.0, 0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 4.0,
+            0.0, 4.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 4.0, 2.0, 0.0, 2.0, 2.0, 1.0, 2.0, 0.0, 0.0,
+            2.0, 2.0, 2.0, 4.0, 0.0, 3.0, 2.0, 4.0, 0.0, 2.0, 2.0, 2.0, 4.0, 0.0, 4.0, 1.0, 2.0,
+            0.0, 1.0, 3.0, 4.0, 2.0, 0.0, 1.0, 2.0, 2.0,
+        ];
+
+        let args_solar_anomaly = [
+            0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 1.0, 0.0, 1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, -2.0, 1.0, 2.0,
+            -2.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, -1.0, 2.0, 2.0, 1.0, -1.0, 0.0, 0.0, -1.0, 0.0,
+            1.0, 0.0, 1.0, 0.0, 0.0, -1.0, 2.0, 1.0, 0.0, 0.0,
+        ];
+
+        let args_lunar_anomaly = [
+            1.0, -1.0, 0.0, 2.0, 0.0, 0.0, -2.0, -1.0, 1.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 1.0,
+            -1.0, 3.0, -2.0, -1.0, 0.0, -1.0, 0.0, 1.0, 2.0, 0.0, -3.0, -2.0, -1.0, -2.0, 1.0, 0.0,
+            2.0, 0.0, -1.0, 1.0, 0.0, -1.0, 2.0, -1.0, 1.0, -2.0, -1.0, -1.0, -2.0, 0.0, 1.0, 4.0,
+            0.0, -2.0, 0.0, 2.0, 1.0, -2.0, -3.0, 2.0, 1.0, -1.0, 3.0, -1.0,
+        ];
+
+        let args_moon_node = [
+            0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 2.0, -2.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, -2.0, 2.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0,
+            -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0,
+        ];
+
+        let cosine_coeff = [
+            -20905355.0,
+            -3699111.0,
+            -2955968.0,
+            -569925.0,
+            48888.0,
+            -3149.0,
+            246158.0,
+            -152138.0,
+            -170733.0,
+            -204586.0,
+            -129620.0,
+            108743.0,
+            104755.0,
+            10321.0,
+            0.0,
+            79661.0,
+            -34782.0,
+            -23210.0,
+            -21636.0,
+            24208.0,
+            30824.0,
+            -8379.0,
+            -16675.0,
+            -12831.0,
+            -10445.0,
+            -11650.0,
+            14403.0,
+            -7003.0,
+            0.0,
+            10056.0,
+            6322.0,
+            -9884.0,
+            5751.0,
+            0.0,
+            -4950.0,
+            4130.0,
+            0.0,
+            -3958.0,
+            0.0,
+            3258.0,
+            2616.0,
+            -1897.0,
+            -2117.0,
+            2354.0,
+            0.0,
+            0.0,
+            -1423.0,
+            -1117.0,
+            -1571.0,
+            -1739.0,
+            0.0,
+            -4421.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1165.0,
+            0.0,
+            0.0,
+            8752.0,
+        ];
+
+        let correction: f64 = cosine_coeff
+            .iter()
+            .zip(args_lunar_elongation.iter())
+            .zip(args_solar_anomaly.iter())
+            .zip(args_lunar_anomaly.iter())
+            .zip(args_moon_node.iter())
+            .map(|((((&v, &w), &x), &y), &z)| {
+                v * libm::pow(cap_E, (x as f64).abs())
+                    * libm::cos((w * cap_D + x * cap_M + y * cap_M_prime + z * cap_F).to_radians())
+            })
+            .sum();
+
+        385000560.0 + correction
+    }
     // Average anomaly of the sun (in degrees) at a given Moment in Julian centuries
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4172-L4182
@@ -936,6 +1050,13 @@ mod tests {
     // Constants applied to provide a margin of error when comparing floating-point values in tests.
     const TEST_LOWER_BOUND_FACTOR: f64 = 0.9999999;
     const TEST_UPPER_BOUND_FACTOR: f64 = 1.0000001;
+
+    // Location of mecca from the lisp code
+    const MECCA: Location = Location {
+        latitude: 6427.0 / 300.0,
+        longitude: 11947.0 / 300.0,
+        elevation: 298.0,
+    };
 
     fn assert_eq_f64(expected_value: f64, value: f64, moment: Moment) {
         if expected_value > 0.0 {
@@ -1206,18 +1327,65 @@ mod tests {
             -54.85468160086816,
         ];
 
-        let mecca = Location {
-            latitude: 6427.0 / 300.0,
-            longitude: 11947.0 / 300.0,
-            elevation: 298.0,
-        };
-
         for (rd, expected_alt) in rd_vals.iter().zip(expected_altitude_deg.iter()) {
             let moment: Moment = Moment::new(*rd as f64);
-            let lunar_alt = Astronomical::lunar_altitude(moment, mecca);
+            let lunar_alt = Astronomical::lunar_altitude(moment, MECCA);
             let expected_alt_value = *expected_alt;
 
             assert_eq_f64(expected_alt_value, lunar_alt, moment)
+        }
+    }
+
+    #[test]
+    fn check_lunar_distance() {
+        let rd_vals = [
+            -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+            470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
+            664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
+        ];
+
+        let expected_distances = [
+            387624532.22874624,
+            393677431.9167689,
+            402232943.80299366,
+            392558548.8426357,
+            366799795.8707107,
+            365107305.3822873,
+            401995197.0122423,
+            404025417.6150537,
+            377671971.8515077,
+            403160628.6150732,
+            375160036.9057225,
+            369934038.34809774,
+            402543074.28064245,
+            374847147.6967837,
+            403469151.42100906,
+            386211365.4436033,
+            385336015.6086019,
+            400371744.7464432,
+            395970218.00750065,
+            383858113.5538787,
+            389634540.7722341,
+            390868707.6609328,
+            368015493.693663,
+            399800095.77937233,
+            404273360.3039046,
+            382777325.7053601,
+            378047375.3350678,
+            385774023.9948239,
+            371763698.0990588,
+            362461692.8996066,
+            394214466.3812425,
+            405787977.04490376,
+            404202826.42484397,
+        ];
+
+        for (rd, expected_distance) in rd_vals.iter().zip(expected_distances.iter()) {
+            let moment: Moment = Moment::new(*rd as f64);
+            let distance = Astronomical::lunar_distance(moment);
+            let expected_distance_val = *expected_distance;
+
+            assert_eq_f64(expected_distance_val, distance, moment)
         }
     }
 
