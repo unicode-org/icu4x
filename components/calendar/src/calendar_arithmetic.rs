@@ -281,8 +281,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     /// Construct a new arithmetic date from a year, month code, and day, for a lunar calendar
-    /// with intercalary months
-    pub fn new_from_lunar<C2: Calendar>(
+    /// with intercalary months; see [`new_from_solar_codes`]
+    pub fn new_from_lunar_codes<C2: Calendar>(
         cal: &C2,
         year: i32,
         month_code: types::MonthCode,
@@ -308,7 +308,13 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             return Err(CalendarError::OutOfRange);
         }
 
-        Ok(Self::new(year, month, day))
+        Ok(Self::new_unchecked(year, month, day))
+    }
+
+    /// This fn currently just calls [`new_from_solar_ordinals`], but exists separately for
+    /// lunar calendars in case different logic needs to be implemented later.
+    pub fn new_from_lunar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
+        Self::new_from_solar_ordinals(year, month, day)
     }
 }
 
@@ -334,7 +340,7 @@ pub fn ordinal_solar_month_from_code(code: types::MonthCode) -> Option<u8> {
 }
 
 /// For lunar calendars, get the month number from the month code
-/// 
+///
 /// Similar to [`ordinal_solar_month_from_code`], but adds 1 if the month code
 /// is four characters long (indicating 'L' for leap or 'I' for increment were appended)
 pub fn ordinal_lunar_month_from_code(code: types::MonthCode) -> Option<u8> {

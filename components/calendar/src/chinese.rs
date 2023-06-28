@@ -4,7 +4,9 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, ordinal_lunar_month_from_code};
+use crate::calendar_arithmetic::{
+    ordinal_lunar_month_from_code, ArithmeticDate, CalendarArithmetic,
+};
 use crate::helpers::{
     adjusted_rem_euclid, adjusted_rem_euclid64, adjusted_rem_euclid_f64, div_rem_euclid,
     i64_to_i32, quotient, quotient64, I32Result,
@@ -34,13 +36,7 @@ const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
 pub struct Chinese;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub struct ChineseDateInner {
-    // TODO: Add ArithmeticDate field and adjust accordingly
-    year: i32,      // The number of elapsed Chinese years since inception of the calendar
-    month: u8,      // The number of the current month (could be a leap month)
-    leap_month: u8, // The month in the current year which is a leap month (0 if none)
-    day: u8,        // The day of the current month
-}
+pub struct ChineseDateInner(ArithmeticDate<Chinese>);
 
 impl CalendarArithmetic for Chinese {
     fn month_days(year: i32, month: u8) -> u8 {
@@ -77,7 +73,11 @@ impl CalendarArithmetic for Chinese {
         let mid_year = Chinese::fixed_mid_year_from_year(year);
         let next_new_year = Chinese::chinese_new_year_on_or_before_fixed_date(mid_year + 370);
         let last_day = next_new_year - 1;
-        let month = if Chinese::fixed_date_is_in_leap_year(last_day) { 13 } else { 12 };
+        let month = if Chinese::fixed_date_is_in_leap_year(last_day) {
+            13
+        } else {
+            12
+        };
         let day = last_day - Chinese::chinese_new_moon_before(last_day.as_moment()) + 1;
         (month, day as u8) // TODO: Add saturating functions to avoid overflow
     }
@@ -94,7 +94,7 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        todo!(); // TODO: This fn, figure out with ArithmeticDate
+        ArithmeticDate::new_from_lunar_codes(self, year, month_code, day).map(ChineseDateInner)
     }
 
     // Construct the date from an ISO date
@@ -112,7 +112,7 @@ impl Calendar for Chinese {
     //Count the number of months in a given year, specified by providing a date
     // from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u32 {
-        Self::days_in_provided_year(date.year)
+        Self::days_in_provided_year(date.0.year)
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
@@ -137,7 +137,7 @@ impl Calendar for Chinese {
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        todo!();// TODO: Write this fn
+        todo!(); // TODO: Write this fn
     }
 
     /// Obtain a name for the calendar for debug printing
@@ -148,7 +148,7 @@ impl Calendar for Chinese {
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         let era = Era(tinystr!(16, "era"));
-        let number = date.year;
+        let number = date.0.year;
         let cyclic = Some(div_rem_euclid(number, 60).1 + 1);
         let mid_year = Self::fixed_mid_year_from_year(number);
         let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
@@ -168,8 +168,12 @@ impl Calendar for Chinese {
     /// calendar month codes appends "L" (for "Leap") to a month code if it is a leap month,
     /// and appends "I" (for "Increment") to a month code if it occurs after a leap month.
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        let ordinal = date.month;
-        let leap_month = date.leap_month;
+        let ordinal = date.0.month;
+        let leap_month = if Self::is_leap_year(date.0.year) {
+            Self::get_leap_month_in_year(Self::fixed_mid_year_from_year(date.0.year))
+        } else {
+            14
+        };
         let code_inner = if ordinal < leap_month {
             match ordinal {
                 1 => tinystr!(4, "M01"),
@@ -233,7 +237,7 @@ impl Calendar for Chinese {
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.day as u32)
+        types::DayOfMonth(date.0.day as u32)
     }
 
     /// Information of the day of the year
@@ -247,7 +251,7 @@ impl Calendar for Chinese {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_for_every_year(date.year)
+        Self::months_for_every_year(date.0.year)
     }
 }
 
@@ -263,30 +267,9 @@ impl Date<Chinese> {
         leap_month: u8,
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
-        let inner = ChineseDateInner {
-            year,
-            month,
-            leap_month,
-            day,
-        };
-
-        let max_month = Chinese::months_for_every_year(year);
-        if month > max_month {
-            return Err(CalendarError::Overflow {
-                field: "month",
-                max: max_month as usize,
-            });
-        }
-
-        let max_day = Chinese::month_days(year, month);
-        if day > max_day {
-            return Err(CalendarError::Overflow {
-                field: "day",
-                max: max_day as usize,
-            });
-        }
-
-        Ok(Date::from_raw(inner, Chinese))
+        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+            .map(ChineseDateInner)
+            .map(|inner| Date::from_raw(inner, Chinese))
     }
 }
 
@@ -528,9 +511,9 @@ impl Chinese {
 
     /// Get a RataDie from a ChineseDateInner
     pub(crate) fn fixed_from_chinese_date_inner(date: ChineseDateInner) -> RataDie {
-        let year = date.year;
-        let month = date.month as i64;
-        let day = date.day as i64;
+        let year = date.0.year;
+        let month = date.0.month as i64;
+        let day = date.0.day as i64;
         let mid_year = Self::fixed_mid_year_from_year(year);
         let new_year = Self::chinese_new_year_on_or_before_fixed_date(mid_year);
         let month_approx = new_year + (month - 1) * 29;

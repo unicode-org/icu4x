@@ -5,6 +5,7 @@
 //! Module for working with multiple calendars at once
 
 use crate::buddhist::Buddhist;
+use crate::chinese::Chinese;
 use crate::coptic::Coptic;
 use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
 use crate::gregorian::Gregorian;
@@ -12,7 +13,6 @@ use crate::indian::Indian;
 use crate::iso::Iso;
 use crate::japanese::{Japanese, JapaneseExtended};
 use crate::persian::Persian;
-use crate::chinese::Chinese;
 use crate::{
     types, AsCalendar, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Ref,
 };
