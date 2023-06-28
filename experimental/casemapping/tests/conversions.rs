@@ -205,8 +205,12 @@ fn test_armenian() {
     assert_eq!(cm.uppercase_to_string(s, &east), "ԵՎ ԵՐԵՎԱՆԻ");
     assert_eq!(cm.uppercase_to_string(s, &west), "ԵՒ ԵՐԵՒԱՆԻ");
 
-    // Titlecase doesn't work yet
-    // assert_eq!(cm.titlecase_to_string(s, &root), "Եւ Երևանի");
-    // assert_eq!(cm.uppercase_to_string(s, &east), "Եվ Երևանի");
-    // assert_eq!(cm.uppercase_to_string(s, &west), "Եւ Երևանի");
+    let ew = "և";
+    let yerevan = "Երևանի";
+    assert_eq!(cm.titlecase_segment_to_string(ew, &root), "Եւ");
+    assert_eq!(cm.titlecase_segment_to_string(yerevan, &root), "Երևանի");
+    assert_eq!(cm.titlecase_segment_to_string(ew, &east), "Եվ");
+    assert_eq!(cm.titlecase_segment_to_string(yerevan, &east), "Երևանի");
+    assert_eq!(cm.titlecase_segment_to_string(ew, &west), "Եւ");
+    assert_eq!(cm.titlecase_segment_to_string(yerevan, &west), "Երևանի");
 }

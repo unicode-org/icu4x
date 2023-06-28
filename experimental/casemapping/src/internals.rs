@@ -127,6 +127,8 @@ impl<'data> CaseMappingV1<'data> {
 
     #[inline(always)]
     // IS_TITLE_CONTEXT must be true if kind is MappingKind::Title
+    // The kind may be a different kind with IS_TITLE_CONTEXT still true because
+    // titlecasing a segment involves switching to lowercase later
     fn full_helper<const IS_TITLE_CONTEXT: bool>(
         &self,
         c: char,
@@ -134,9 +136,12 @@ impl<'data> CaseMappingV1<'data> {
         locale: CaseMapLocale,
         kind: MappingKind,
     ) -> FullMappingResult {
-        // IS_TITLE_CONTEXT exists to avoid perf impacts on the other, more common modes
-        // Ensure that they are either both true or both false, i.e. an XNOR operation
-        debug_assert!(!(IS_TITLE_CONTEXT ^ (kind == MappingKind::Title)));
+        // If using a title mapping IS_TITLE_CONTEXT must be true
+        debug_assert!(kind != MappingKind::Title || IS_TITLE_CONTEXT);
+        // In a title context, kind MUST be Title or Lower
+        debug_assert!(
+            !IS_TITLE_CONTEXT || kind == MappingKind::Title || kind == MappingKind::Lower
+        );
 
         let data = self.lookup_data(c);
         if !data.has_exception() {
@@ -324,12 +329,17 @@ impl<'data> CaseMappingV1<'data> {
             (_, _) => None,
         }
     }
+    /// IS_TITLE_CONTEXT is true iff the mapping is MappingKind::Title, primarily exists
+    /// to avoid perf impacts on other more common modes of operation
     pub(crate) fn full_helper_writeable<'a: 'data, const IS_TITLE_CONTEXT: bool>(
         &'a self,
         src: &'a str,
         locale: CaseMapLocale,
         mapping: MappingKind,
     ) -> impl Writeable + 'a {
+        // Ensure that they are either both true or both false, i.e. an XNOR operation
+        debug_assert!(!(IS_TITLE_CONTEXT ^ (mapping == MappingKind::Title)));
+
         struct FullCaseWriteable<'a, const IS_TITLE_CONTEXT: bool> {
             data: &'a CaseMappingV1<'a>,
             src: &'a str,
@@ -345,16 +355,20 @@ impl<'data> CaseMappingV1<'data> {
                 let mut last_uncopied_idx = 0;
 
                 let src = self.src;
+                let mut mapping = self.mapping;
                 for (i, c) in src.char_indices() {
                     let context = ContextIterator::new(&src[..i], &src[i..]);
                     match self.data.full_helper::<IS_TITLE_CONTEXT>(
                         c,
                         context,
                         self.locale,
-                        self.mapping,
+                        mapping,
                     ) {
                         FullMappingResult::CodePoint(c2) => {
                             if c == c2 {
+                                if IS_TITLE_CONTEXT {
+                                    mapping = MappingKind::Lower;
+                                }
                                 continue;
                             }
                             sink.write_str(&src[last_uncopied_idx..i])?;
@@ -370,6 +384,9 @@ impl<'data> CaseMappingV1<'data> {
                             sink.write_str(s)?;
                             last_uncopied_idx = i + c.len_utf8();
                         }
+                    }
+                    if IS_TITLE_CONTEXT {
+                        mapping = MappingKind::Lower;
                     }
                 }
                 if last_uncopied_idx < src.len() {
