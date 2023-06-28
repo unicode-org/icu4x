@@ -123,7 +123,6 @@ impl CalendarArithmetic for Chinese {
         }
         debug_assert!(iters < max_iters, "Unexpectedly large number of iterations");
         (Chinese::chinese_new_moon_on_or_after((cur_rata_die + 1).as_moment()) - cur_rata_die) as u8
-        // TODO: Add saturating functions to prevent overflow to u8
     }
 
     fn months_for_every_year(year: i32) -> u8 {
@@ -149,7 +148,7 @@ impl CalendarArithmetic for Chinese {
             12
         };
         let day = last_day - Chinese::chinese_new_moon_before(last_day.as_moment()) + 1;
-        (month, day as u8) // TODO: Add saturating functions to avoid overflow
+        (month, day as u8)
     }
 }
 
@@ -328,6 +327,19 @@ impl Date<Chinese> {
     /// `year` represents the Chinese year counted infinitely with -2636 (2637 BCE) as year Chinese year 1;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
     /// `day` indicates the day of month
+    /// 
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// 
+    /// let date_chinese = Date::try_new_chinese_date(4660, 6, 11)
+    ///     .expect("Failed to initialize Chinese Date instance.");
+    /// 
+    /// assert_eq!(date_chinese.year().number, 4660);
+    /// assert_eq!(date_chinese.year().cyclic, Some(40));
+    /// assert_eq!(date_chinese.year().related_iso, Some(2023));
+    /// assert_eq!(date_chinese.month().ordinal, 6);
+    /// assert_eq!(date_chinese.day_of_month().0, 11);
+    /// ```
     pub fn try_new_chinese_date(
         year: i32,
         month: u8,
@@ -342,6 +354,22 @@ impl Date<Chinese> {
 impl DateTime<Chinese> {
     /// Construct a new Chinese datetime from integers using the
     /// -2636-based year system
+    /// 
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    /// 
+    /// let chinese_datetime = DateTime::try_new_chinese_datetime(4660, 6, 11, 13, 1, 0)
+    ///     .expect("Failed to initialize Chinese DateTime instance.");
+    /// 
+    /// assert_eq!(chinese_datetime.date.year().number, 4660);
+    /// assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
+    /// assert_eq!(chinese_datetime.date.year().cyclic, Some(40));
+    /// assert_eq!(chinese_datetime.date.month().ordinal, 6);
+    /// assert_eq!(chinese_datetime.date.day_of_month().0, 11);
+    /// assert_eq!(chinese_datetime.time.hour.number(), 13);
+    /// assert_eq!(chinese_datetime.time.minute.number(), 1);
+    /// assert_eq!(chinese_datetime.time.second.number(), 0);
+    /// ```
     pub fn try_new_chinese_datetime(
         year: i32,
         month: u8,
@@ -365,6 +393,16 @@ impl Chinese {
     // decrease the amount of times as_rata_die() and as_moment() need to be called.
 
     /// Get the current major solar term of an ISO date
+    /// 
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::chinese::Chinese;
+    /// 
+    /// let iso_date = Date::try_new_iso_date(2023, 6, 28)
+    ///     .expect("Failed to initialize ISO Date instance.");
+    /// let major_solar_term = Chinese::major_solar_term_from_iso(*iso_date.inner());
+    /// assert_eq!(major_solar_term, 5);
+    /// ```
     pub fn major_solar_term_from_iso(iso: IsoDateInner) -> i32 {
         let fixed: RataDie = Iso::fixed_from_iso(iso);
         Self::major_solar_term_from_fixed(fixed)
@@ -394,6 +432,16 @@ impl Chinese {
     }
 
     /// Get the current major solar term of an ISO date
+    /// 
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::chinese::Chinese;
+    /// 
+    /// let iso_date = Date::try_new_iso_date(2023, 6, 28)
+    ///     .expect("Failed to initialize ISO Date instance.");
+    /// let minor_solar_term = Chinese::minor_solar_term_from_iso(*iso_date.inner());
+    /// assert_eq!(minor_solar_term, 5);
+    /// ```
     pub fn minor_solar_term_from_iso(iso: IsoDateInner) -> i32 {
         let fixed: RataDie = Iso::fixed_from_iso(iso);
         Self::minor_solar_term_from_fixed(fixed)
@@ -535,7 +583,7 @@ impl Chinese {
             libm::round((m_float - m12_float) / MEAN_SYNODIC_MONTH),
             12.0,
         );
-        let month_int = month as u8; // TODO: Add saturating functions to avoid overflow
+        let month_int = month as u8;
         let elapsed_years =
             libm::floor(1.5 - month / 12.0 + ((date - CHINESE_EPOCH) as f64) / MEAN_TROPICAL_YEAR);
         let elapsed_years_int = i64_to_i32(elapsed_years as i64);
