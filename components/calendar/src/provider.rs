@@ -2,7 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data provider struct definitions for this ICU4X component.
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
 
@@ -11,13 +17,32 @@
 
 use crate::types::IsoWeekday;
 use core::str::FromStr;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
+
+#[cfg(feature = "data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_calendar;
+    icu_calendar_data::impl_calendar_japanese_v1!(Baked);
+    icu_calendar_data::impl_calendar_japanext_v1!(Baked);
+    icu_calendar_data::impl_datetime_week_data_v1!(Baked);
+};
 
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[zerovec::make_ule(EraStartDateULE)]
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
@@ -39,9 +64,15 @@ pub struct EraStartDate {
 
 /// A data structure containing the necessary era data for constructing a
 /// [`Japanese`](crate::japanese::Japanese) calendar object
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
-    marker(JapaneseErasV1Marker, "calendar/japanese@1"),
-    marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1")
+    marker(JapaneseErasV1Marker, "calendar/japanese@1", singleton),
+    marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
@@ -77,6 +108,12 @@ impl FromStr for EraStartDate {
 
 /// An ICU4X mapping to a subset of CLDR weekData.
 /// See CLDR-JSON's weekData.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(marker(
     WeekDataV1Marker,
     "datetime/week_data@1",

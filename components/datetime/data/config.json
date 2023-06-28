@@ -1,0 +1,47 @@
+{
+    "keys": {
+        "Explicit": [
+            "datetime/buddhist/datelengths@1",
+            "datetime/buddhist/datesymbols@1",
+            "datetime/coptic/datelengths@1",
+            "datetime/coptic/datesymbols@1",
+            "datetime/ethiopic/datelengths@1",
+            "datetime/ethiopic/datesymbols@1",
+            "datetime/gregory/datelengths@1",
+            "datetime/gregory/datesymbols@1",
+            "datetime/indian/datelengths@1",
+            "datetime/indian/datesymbols@1",
+            "datetime/japanese/datelengths@1",
+            "datetime/japanese/datesymbols@1",
+            "datetime/japanext/datelengths@1",
+            "datetime/japanext/datesymbols@1",
+            "datetime/skeletons@1",
+            "datetime/timelengths@1",
+            "datetime/timesymbols@1",
+            "time_zone/exemplar_cities@1",
+            "time_zone/formats@1",
+            "time_zone/generic_long@1",
+            "time_zone/generic_short@1",
+            "time_zone/specific_long@1",
+            "time_zone/specific_short@1"
+
+        ]
+    },
+    "locales": {
+        "CldrSet": [
+            "modern"
+        ]
+    },
+    "cldr": "Latest",
+    "icu_export": "Latest",
+    "segmenter_lstm": "Latest",
+    "export": {
+        "Baked": {
+            "output_path": "data",
+            "use_separate_crates": true,
+            "pretty": true
+        }
+    },
+    "fallback": "Runtime",
+    "overwrite": true
+}

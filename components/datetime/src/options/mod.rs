@@ -26,13 +26,13 @@
 //! At the moment only the [`length::Bag`] works, and we plan to extend that to support
 //! `ECMA402`-like components bag later.
 
-#[cfg(feature = "experimental_skeleton_matching")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod components;
 pub mod length;
 
-#[cfg(feature = "experimental_skeleton_matching")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod preferences;
-#[cfg(not(feature = "experimental_skeleton_matching"))]
+#[cfg(not(any(feature = "datagen", feature = "experimental")))]
 pub(crate) mod preferences;
 
 /// A bag of options which, together with [`Locale`](icu_locid::Locale), defines how
@@ -64,7 +64,7 @@ pub enum DateTimeFormatterOptions {
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. It can be enabled with the "experimental" feature
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
     /// of the icu meta-crate. Use with caution.
     /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
     /// </div>

@@ -25,9 +25,17 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XLineSegmenter_ICU4XError ICU4XLineSegmenter_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XLineSegmenter_ICU4XError ICU4XLineSegmenter_create_auto(const ICU4XDataProvider* provider);
 
-diplomat_result_box_ICU4XLineSegmenter_ICU4XError ICU4XLineSegmenter_create_with_options_v1(const ICU4XDataProvider* provider, ICU4XLineBreakOptionsV1 options);
+diplomat_result_box_ICU4XLineSegmenter_ICU4XError ICU4XLineSegmenter_create_lstm(const ICU4XDataProvider* provider);
+
+diplomat_result_box_ICU4XLineSegmenter_ICU4XError ICU4XLineSegmenter_create_dictionary(const ICU4XDataProvider* provider);
+
+diplomat_result_box_ICU4XLineSegmenter_ICU4XError ICU4XLineSegmenter_create_auto_with_options_v1(const ICU4XDataProvider* provider, ICU4XLineBreakOptionsV1 options);
+
+diplomat_result_box_ICU4XLineSegmenter_ICU4XError ICU4XLineSegmenter_create_lstm_with_options_v1(const ICU4XDataProvider* provider, ICU4XLineBreakOptionsV1 options);
+
+diplomat_result_box_ICU4XLineSegmenter_ICU4XError ICU4XLineSegmenter_create_dictionary_with_options_v1(const ICU4XDataProvider* provider, ICU4XLineBreakOptionsV1 options);
 
 ICU4XLineBreakIteratorUtf8* ICU4XLineSegmenter_segment_utf8(const ICU4XLineSegmenter* self, const char* input_data, size_t input_len);
 

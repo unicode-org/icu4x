@@ -19,6 +19,7 @@ enum Segment {
     Literal { literal: String, quoted: bool },
 }
 
+#[derive(Debug)]
 pub struct Parser<'p> {
     source: &'p str,
     state: Segment,

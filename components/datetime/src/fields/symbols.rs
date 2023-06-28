@@ -5,7 +5,7 @@
 use crate::fields::FieldLength;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
 /// An error relating to the field symbol for a date pattern field.
@@ -138,7 +138,7 @@ impl FieldSymbol {
     }
 
     /// Returns the index associated with this FieldSymbol.
-    #[cfg(feature = "experimental_skeleton_matching")] // only referenced in experimental code
+    #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
     fn discriminant_idx(&self) -> u8 {
         match self {
             FieldSymbol::Era => 0,
@@ -157,7 +157,7 @@ impl FieldSymbol {
 
     /// Compares this enum with other solely based on the enum variant,
     /// ignoring the enum's data.
-    #[cfg(feature = "experimental_skeleton_matching")] // only referenced in experimental code
+    #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
     pub(crate) fn discriminant_cmp(&self, other: &Self) -> Ordering {
         self.discriminant_idx().cmp(&other.discriminant_idx())
     }
@@ -349,6 +349,7 @@ macro_rules! field_type {
         #[allow(clippy::enum_variant_names)]
         #[repr(u8)]
         #[zerovec::make_ule($ule_name)]
+        #[zerovec::derive(Debug)]
         #[allow(clippy::exhaustive_enums)] // used in data struct
         $(#[$enum_attr])*
         pub enum $i {

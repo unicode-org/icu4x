@@ -11,7 +11,7 @@ use std::fs::File;
 use std::io::BufReader;
 
 pub fn get_fixture(name: &str) -> std::io::Result<structs::Fixture> {
-    let file = File::open(format!("./tests/fixtures/tests/{}.json", name))?;
+    let file = File::open(format!("./tests/fixtures/tests/{name}.json"))?;
     let reader = BufReader::new(file);
 
     Ok(serde_json::from_reader(reader)?)

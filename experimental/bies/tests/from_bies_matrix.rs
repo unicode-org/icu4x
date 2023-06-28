@@ -372,8 +372,7 @@ fn test_to_bies_string() {
         assert_eq!(
             test_case.expected_bies,
             actual_bies.write_to_string(),
-            "{:?}",
-            test_case
+            "{test_case:?}"
         );
     }
 }
@@ -394,8 +393,7 @@ fn test_algorithms() {
             );
             assert_eq!(
                 test_case.expected_breakpoints, actual_breakpoints,
-                "{:?}: {:?}",
-                algorithm, test_case
+                "{algorithm:?}: {test_case:?}"
             );
         }
     }

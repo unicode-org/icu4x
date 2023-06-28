@@ -130,6 +130,11 @@ pub(crate) fn generic_pattern_for_date_length(
     })
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Clone)]
 pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
@@ -274,7 +279,7 @@ where
 
     #[cfg(feature = "experimental")]
     fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
-        use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
+        use icu_locid::extensions::unicode::{key, value};
         let mut locale = self.locale.clone();
         #[allow(clippy::expect_used)] // experimental
         let cal_val = self.cal_val.expect("should be present for components bag");
@@ -407,7 +412,9 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
             fields::FieldLength::Narrow => &self.eras.narrow,
             _ => &self.eras.abbr,
         };
-        symbols.get(&era_code.0).unwrap_or(&era_code.0)
+        symbols
+            .get(era_code.0.as_str().into())
+            .unwrap_or(&era_code.0)
     }
 }
 

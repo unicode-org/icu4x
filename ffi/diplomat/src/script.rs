@@ -9,11 +9,16 @@ pub mod ffi {
     use icu_properties::{script, Script};
 
     use crate::errors::ffi::ICU4XError;
-    use diplomat_runtime::DiplomatResult;
+    use crate::properties_iter::ffi::CodePointRangeIterator;
 
     #[diplomat::opaque]
     /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
     #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions, Struct)]
+    #[diplomat::rust_link(
+        icu::properties::script::ScriptWithExtensions::from_data,
+        FnInStruct,
+        hidden
+    )]
     pub struct ICU4XScriptWithExtensions(pub script::ScriptWithExtensions);
 
     #[diplomat::opaque]
@@ -29,11 +34,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::script::load_script_with_extensions_unstable, Fn)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XScriptWithExtensions>, ICU4XError> {
-            script::load_script_with_extensions_unstable(&provider.0)
-                .map(|data| Box::new(ICU4XScriptWithExtensions(data)))
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XScriptWithExtensions>, ICU4XError> {
+            Ok(Box::new(ICU4XScriptWithExtensions(
+                script::load_script_with_extensions_unstable(&provider.0)?,
+            )))
         }
 
         /// Get the Script property value for a code point
@@ -61,6 +65,22 @@ pub mod ffi {
         )]
         pub fn as_borrowed<'a>(&'a self) -> Box<ICU4XScriptWithExtensionsBorrowed<'a>> {
             Box::new(ICU4XScriptWithExtensionsBorrowed(self.0.as_borrowed()))
+        }
+
+        /// Get a list of ranges of code points that contain this script in their Script_Extensions values
+        #[diplomat::rust_link(
+            icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_script<'a>(
+            &'a self,
+            script: u16,
+        ) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0
+                    .as_borrowed()
+                    .get_script_extensions_ranges(Script(script)),
+            )))
         }
     }
 
@@ -110,8 +130,8 @@ pub mod ffi {
 
         /// Get script at index, returning an error if out of bounds
         #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet::iter, FnInStruct)]
-        pub fn script_at(&self, index: usize) -> DiplomatResult<u16, ()> {
-            self.0.array_get(index).map(|x| x.0).ok_or(()).into()
+        pub fn script_at(&self, index: usize) -> Result<u16, ()> {
+            self.0.array_get(index).map(|x| x.0).ok_or(())
         }
     }
 }

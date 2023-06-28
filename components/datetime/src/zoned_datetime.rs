@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use core::marker::PhantomData;
-use icu_calendar::provider::{JapaneseErasV1Marker, WeekDataV1Marker};
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
@@ -71,10 +71,11 @@ use crate::{
 ///
 /// let formatted_date = zdtf.format(&datetime, &time_zone);
 ///
-/// assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
+/// assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
 /// ```
 ///
 /// [`TimeZoneFormatter`]: crate::time_zone::TimeZoneFormatter
+#[derive(Debug)]
 pub struct TypedZonedDateTimeFormatter<C>(raw::ZonedDateTimeFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
@@ -84,7 +85,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. It can be enabled with the "experimental" feature
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
     /// of the icu meta-crate. Use with caution.
     /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
     /// </div>
@@ -118,7 +119,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&datetime, &CustomTimeZone::utc()),
-    ///     "August 2022 at 01:02 GMT",
+    ///     "August 2022, 01:02 GMT",
     /// );
     /// ```
     ///
@@ -146,7 +147,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
-            + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
         let patterns = PatternSelector::for_options_experimental(
@@ -205,7 +205,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&datetime, &CustomTimeZone::utc()),
-    ///     "Aug 31, 2022, 1:02:03 AM GMT",
+    ///     "Aug 31, 2022, 1:02:03 AM GMT",
     /// );
     /// ```
     ///
@@ -231,7 +231,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
-            + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
         let patterns = PatternSelector::for_options(
@@ -291,7 +290,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// let formatted_date = zdtf.format(&datetime, &time_zone);
     ///
-    /// assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
+    /// assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
     /// ```
     #[inline]
     pub fn format<'l>(
@@ -332,7 +331,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// let formatted_string = zdtf.format_to_string(&datetime, &time_zone);
     ///
-    /// assert_eq!(formatted_string, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
+    /// assert_eq!(formatted_string, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
     /// ```
     #[inline]
     pub fn format_to_string(

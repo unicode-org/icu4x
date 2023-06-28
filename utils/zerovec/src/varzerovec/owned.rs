@@ -96,7 +96,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
     pub fn as_slice(&self) -> &VarZeroSlice<T, F> {
-        let slice: &[u8] = &*self.entire_slice;
+        let slice: &[u8] = &self.entire_slice;
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV
             VarZeroSlice::from_byte_slice_unchecked(slice)
@@ -146,7 +146,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     unsafe fn element_range_unchecked(&self, idx: usize) -> core::ops::Range<usize> {
         let start = self.element_position_unchecked(idx);
         let end = self.element_position_unchecked(idx + 1);
-        debug_assert!(start <= end, "{} > {}", start, end);
+        debug_assert!(start <= end, "{start} > {end}");
         start..end
     }
 
@@ -279,7 +279,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
                     any::type_name::<F>()
                 );
             }
-            self.entire_slice.reserve(shift as usize);
+            self.entire_slice.resize(new_slice_len, 0);
         }
 
         // Now that we've ensured there's enough space, we can shift the data around.
@@ -287,6 +287,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             // Note: There are no references introduced between pointer creation and pointer use, and all
             //       raw pointers are derived from a single &mut. This preserves pointer provenance.
             let slice_range = self.entire_slice.as_mut_ptr_range();
+            let old_slice_end = slice_range.start.add(slice_len);
             let data_start = slice_range
                 .start
                 .add(LENGTH_WIDTH + METADATA_WIDTH + len * F::INDEX_WIDTH);
@@ -316,7 +317,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
             // Shift data after the element to its new position.
             shift_bytes(
-                prev_element_p.end..slice_range.end,
+                prev_element_p.end..old_slice_end,
                 prev_element_p
                     .start
                     .offset((new_size as i64 + index_shift) as isize),
@@ -353,7 +354,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             + METADATA_WIDTH
             + self.len() * F::INDEX_WIDTH
             + self.element_position_unchecked(index);
-        &mut self.entire_slice[element_pos..element_pos + new_size as usize]
+        &mut self.entire_slice[element_pos..element_pos + new_size]
     }
 
     /// Checks the internal invariants of the vec to ensure safe code will not cause UB.
@@ -423,10 +424,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     pub fn insert<A: EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
         if index > len {
-            panic!(
-                "Called out-of-bounds insert() on VarZeroVec, index {} len {}",
-                index, len
-            );
+            panic!("Called out-of-bounds insert() on VarZeroVec, index {index} len {len}");
         }
 
         let value_len = element.encode_var_ule_len();
@@ -451,10 +449,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     pub fn remove(&mut self, index: usize) {
         let len = self.len();
         if index >= len {
-            panic!(
-                "Called out-of-bounds remove() on VarZeroVec, index {} len {}",
-                index, len
-            );
+            panic!("Called out-of-bounds remove() on VarZeroVec, index {index} len {len}");
         }
         if len == 1 {
             // This is removing the last element. Set the slice to empty to ensure all empty vecs have empty data slices.
@@ -470,10 +465,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     pub fn replace<A: EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
         if index >= len {
-            panic!(
-                "Called out-of-bounds replace() on VarZeroVec, index {} len {}",
-                index, len
-            );
+            panic!("Called out-of-bounds replace() on VarZeroVec, index {index} len {len}");
         }
 
         let value_len = element.encode_var_ule_len();

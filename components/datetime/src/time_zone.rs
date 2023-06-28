@@ -142,6 +142,7 @@ where
 ///
 /// [data provider]: icu_provider
 /// [`CustomTimeZone`]: icu_timezone::CustomTimeZone
+#[derive(Debug)]
 pub struct TimeZoneFormatter {
     pub(super) locale: DataLocale,
     pub(super) data_payloads: TimeZoneDataPayloads,
@@ -150,6 +151,7 @@ pub struct TimeZoneFormatter {
 }
 
 /// A container contains all data payloads for CustomTimeZone.
+#[derive(Debug)]
 pub(super) struct TimeZoneDataPayloads {
     /// The data that contains meta information about how to display content.
     pub(super) zone_formats: DataPayload<provider::time_zones::TimeZoneFormatsV1Marker>,
@@ -475,7 +477,7 @@ impl TimeZoneFormatter {
     where
         ZP: DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker> + ?Sized,
     {
-        if self.data_payloads.mz_generic_long == None {
+        if self.data_payloads.mz_generic_long.is_none() {
             load(
                 &self.locale,
                 &mut self.data_payloads.mz_generic_long,
@@ -497,7 +499,7 @@ impl TimeZoneFormatter {
     where
         ZP: DataProvider<provider::time_zones::MetazoneGenericNamesShortV1Marker> + ?Sized,
     {
-        if self.data_payloads.mz_generic_short == None {
+        if self.data_payloads.mz_generic_short.is_none() {
             load(
                 &self.locale,
                 &mut self.data_payloads.mz_generic_short,
@@ -519,7 +521,7 @@ impl TimeZoneFormatter {
     where
         ZP: DataProvider<provider::time_zones::MetazoneSpecificNamesLongV1Marker> + ?Sized,
     {
-        if self.data_payloads.mz_specific_long == None {
+        if self.data_payloads.mz_specific_long.is_none() {
             load(
                 &self.locale,
                 &mut self.data_payloads.mz_specific_long,
@@ -541,7 +543,7 @@ impl TimeZoneFormatter {
     where
         ZP: DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker> + ?Sized,
     {
-        if self.data_payloads.mz_specific_short == None {
+        if self.data_payloads.mz_specific_short.is_none() {
             load(
                 &self.locale,
                 &mut self.data_payloads.mz_specific_short,
@@ -563,7 +565,7 @@ impl TimeZoneFormatter {
     where
         ZP: DataProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
     {
-        if self.data_payloads.exemplar_cities == None {
+        if self.data_payloads.exemplar_cities.is_none() {
             load(
                 &self.locale,
                 &mut self.data_payloads.exemplar_cities,
@@ -585,7 +587,7 @@ impl TimeZoneFormatter {
     where
         ZP: DataProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
     {
-        if self.data_payloads.exemplar_cities == None {
+        if self.data_payloads.exemplar_cities.is_none() {
             load(
                 &self.locale,
                 &mut self.data_payloads.exemplar_cities,
@@ -680,8 +682,8 @@ impl TimeZoneFormatter {
     fn format_time_segment(n: u8, padding: ZeroPadding) -> String {
         debug_assert!((0..60).contains(&n));
         match padding {
-            ZeroPadding::On => format!("{:>02}", n),
-            ZeroPadding::Off => format!("{}", n),
+            ZeroPadding::On => format!("{n:>02}"),
+            ZeroPadding::Off => format!("{n}"),
         }
     }
 
@@ -692,7 +694,7 @@ impl TimeZoneFormatter {
     ) -> Result<String, DateTimeError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
             Ok(TimeZoneFormatter::format_time_segment(
-                (gmt_offset.offset_seconds() / 3600).abs() as u8,
+                (gmt_offset.offset_seconds() / 3600).unsigned_abs() as u8,
                 padding,
             ))
         } else {
@@ -704,7 +706,7 @@ impl TimeZoneFormatter {
     fn format_offset_minutes(time_zone: &impl TimeZoneInput) -> Result<String, DateTimeError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
             Ok(TimeZoneFormatter::format_time_segment(
-                (gmt_offset.offset_seconds() % 3600 / 60).abs() as u8,
+                (gmt_offset.offset_seconds() % 3600 / 60).unsigned_abs() as u8,
                 ZeroPadding::On,
             ))
         } else {
@@ -719,7 +721,7 @@ impl TimeZoneFormatter {
     ) -> Result<fmt::Result, DateTimeError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
             Ok(sink.write_str(&TimeZoneFormatter::format_time_segment(
-                (gmt_offset.offset_seconds() % 3600 % 60).abs() as u8,
+                (gmt_offset.offset_seconds() % 3600 % 60).unsigned_abs() as u8,
                 ZeroPadding::On,
             )))
         } else {
@@ -1248,9 +1250,7 @@ impl FormatTimeZone for Iso8601Format {
                             return Ok(Err(e));
                         }
                     }
-                    if let Err(e) = TimeZoneFormatter::format_offset_seconds(sink, time_zone) {
-                        return Err(e);
-                    }
+                    return TimeZoneFormatter::format_offset_seconds(sink, time_zone);
                 }
             }
             return Ok(Ok(()));
@@ -1279,7 +1279,7 @@ impl FormatTimeZone for ExemplarCityFormat {
                 // Writes the unknown city "Etc/Unknown" for the current locale.
                 //
                 // If there is no localized form of "Etc/Unknown" for the current locale,
-                // returns the "Etc/Uknown" value of the `und` locale as a hard-coded string.
+                // returns the "Etc/Unknown" value of the `und` locale as a hard-coded string.
                 //
                 // This can be used as a fallback if [`exemplar_city()`](TimeZoneFormatter::exemplar_city())
                 // is unable to produce a localized form of the time zone's exemplar city in the current locale.

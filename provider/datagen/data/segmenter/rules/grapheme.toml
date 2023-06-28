@@ -1,0 +1,238 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# These grapheme boundary rules are based on UAX #29, Unicode Version 15.0.0.
+# https://www.unicode.org/reports/tr29/tr29-41.html
+
+segmenter_type = "grapheme"
+
+[[tables]]
+name = "CR"
+
+[[tables]]
+name = "LF"
+
+[[tables]]
+name = "Control"
+
+[[tables]]
+name = "Extend"
+
+[[tables]]
+name = "ZWJ"
+
+[[tables]]
+name = "Regional_Indicator"
+
+[[tables]]
+name = "Prepend"
+
+[[tables]]
+name = "SpacingMark"
+
+[[tables]]
+name = "L"
+
+[[tables]]
+name = "V"
+
+[[tables]]
+name = "T"
+
+[[tables]]
+name = "LV"
+
+[[tables]]
+name = "LVT"
+
+[[tables]]
+name = "Extended_Pictographic"
+
+[[tables]]
+name = "Extended_Pictographic_Extend"
+left = "Extended_Pictographic"
+right = "Extend"
+
+[[tables]]
+name = "Extended_Pictographic_Extend"
+left = "Extended_Pictographic_Extend"
+right = "Extend"
+
+[[tables]]
+name = "Extended_Pictographic_Extend_ZWJ"
+left = "Extended_Pictographic"
+right = "ZWJ"
+
+[[tables]]
+name = "Extended_Pictographic_Extend_ZWJ"
+left = "Extended_Pictographic_Extend"
+right = "ZWJ"
+
+[[tables]]
+name = "RI_RI"
+left = "Regional_Indicator"
+right = "Regional_Indicator"
+
+[[rules]]
+# GB1
+left = [ "sot" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# GB2
+left = [
+  "L",
+  "V",
+  "T",
+  "LV",
+  "LVT",
+  "Unknown",
+  "RI_RI",
+  "Extended_Pictographic_Extend",
+  "Extended_Pictographic_Extend_ZWJ"
+]
+right = [ "eot" ]
+break_state = true
+
+[[rules]]
+# GB3
+left = [ "CR" ]
+right = [ "LF" ]
+break_state = false
+
+[[rules]]
+# GB4/GB5
+left = [ "Control", "CR", "LF" ]
+right = [ "Control", "CR", "Extend", "L", "LV", "LVT", "V", "T" ]
+break_state = true
+
+[[rules]]
+# GB5
+left = [ "Control", "LF" ]
+right = [ "LF" ]
+break_state = true
+
+[[rules]]
+# GB6
+left = [ "L" ]
+right = [ "L", "V", "LV", "LVT" ]
+break_state = false
+
+[[rules]]
+# GB7
+left = [ "LV", "V" ]
+right = [ "V", "T" ]
+break_state = false
+
+[[rules]]
+# GB8
+left = [ "LVT", "T" ]
+right = [ "T" ]
+break_state = false
+
+[[rules]]
+# GB9
+left = [
+  "L",
+  "V",
+  "T",
+  "LV",
+  "LVT",
+  "Regional_Indicator",
+  "Unknown",
+  "Extend",
+  "SpacingMark",
+  "Extended_Pictographic",
+  "ZWJ",
+  "Extended_Pictographic_Extend_ZWJ",
+  "RI_RI"
+]
+right = [ "Extend", "ZWJ" ]
+break_state = false
+
+[[rules]]
+# GB9a
+left = [
+  "L",
+  "V",
+  "T",
+  "LV",
+  "LVT",
+  "Extend",
+  "Prepend",
+  "Unknown",
+  "SpacingMark",
+  "Extended_Pictographic",
+  "ZWJ",
+  "Regional_Indicator",
+  "Extended_Pictographic_Extend_ZWJ",
+  "Extended_Pictographic_Extend"
+]
+right = [ "SpacingMark" ]
+break_state = false
+
+[[rules]]
+# GB9b
+left = [ "Prepend" ]
+right = [
+  "Extend",
+  "Unknown",
+  "Regional_Indicator",
+  "Prepend",
+  "L",
+  "V",
+  "T",
+  "LV",
+  "LVT",
+  "Extended_Pictographic",
+  "ZWJ"
+]
+break_state = false
+
+[[rules]]
+# GB11
+left = [ "Extended_Pictographic_Extend_ZWJ" ]
+right = [ "Extended_Pictographic" ]
+break_state = false
+
+[[rules]]
+# GB12/13
+left = [ "RI_RI" ]
+right = [ "Regional_Indicator" ]
+break_state = true
+
+[[rules]]
+# GB12/13
+left = [ "RI_RI" ]
+right = [ "Unknown" ]
+break_state = true
+
+[[rules]]
+# GB999
+left = [ "Any" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# GB999
+left = [
+  "Extended_Pictographic_Extend",
+  "Extended_Pictographic_Extend_ZWJ"
+]
+right = [
+  "Control",
+  "CR",
+  "LF",
+  "L",
+  "V",
+  "T",
+  "LV",
+  "LVT",
+  "Prepend",
+  "Regional_Indicator",
+  "Extended_Pictographic",
+  "Unknown"
+]
+break_state = true

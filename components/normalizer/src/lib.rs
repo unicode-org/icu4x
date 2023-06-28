@@ -13,7 +13,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -27,8 +27,8 @@
 //!
 //! The normalizer operates on a lazy iterator over Unicode scalar values (Rust `char`) internally
 //! and iterating over guaranteed-valid UTF-8, potentially-invalid UTF-8, and potentially-invalid
-//! UTF-16 is a step that doesn’t leak into the normalizer internals. UTF errors are treated as
-//! U+FFFD.
+//! UTF-16 is a step that doesn’t leak into the normalizer internals. Ill-formed byte sequences are
+//! treated as U+FFFD.
 //!
 //! The normalizer data layout is not based on the ICU4C design at all. Instead, the normalization
 //! data layout is a clean-slate design optimized for the concept of fusing the NFD decomposition
@@ -40,7 +40,7 @@
 //! on the Basic Multilingual Plane. Notably, in this case, the collator makes use of the
 //! knowledge that the second character of such a decomposition is a non-starter. Therefore,
 //! decomposition into two starters is handled by generic fallback path that looks the
-//! decomposion from an array by offset and length instead of baking a BMP starter pair directly
+//! decomposition from an array by offset and length instead of baking a BMP starter pair directly
 //! into a trie value.
 //!
 //! The decompositions into non-starters are hard-coded. At present in Unicode, these appear
@@ -73,6 +73,9 @@ pub mod provider;
 
 pub use crate::error::NormalizerError;
 
+#[doc(no_inline)]
+pub use NormalizerError as Error;
+
 use crate::provider::CanonicalDecompositionDataV1Marker;
 use crate::provider::CompatibilityDecompositionSupplementV1Marker;
 use crate::provider::DecompositionDataV1;
@@ -98,9 +101,9 @@ use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use write16::Write16;
 use zerofrom::ZeroFrom;
-use zerovec::ule::AsULE;
-use zerovec::ZeroSlice;
+use zerovec::{zeroslice, ZeroSlice};
 
+#[derive(Debug)]
 enum SupplementPayloadHolder {
     Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
     #[cfg(feature = "experimental")]
@@ -135,7 +138,7 @@ const UTF16_FAST_PATH_FLUSH_THRESHOLD: usize = 4096;
 const BACKWARD_COMBINING_STARTER_MARKER: u32 = 1;
 
 /// Magic marker trie value for characters whose decomposition
-/// starts with a non-starter. The actual decompostion is
+/// starts with a non-starter. The actual decomposition is
 /// hard-coded.
 const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER: u32 = 2;
 
@@ -240,10 +243,9 @@ fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
 }
 
-const EMPTY_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
+const EMPTY_U16: &ZeroSlice<u16> = zeroslice![];
 
-const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
+const EMPTY_CHAR: &ZeroSlice<char> = zeroslice![];
 
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
@@ -498,6 +500,7 @@ fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &CodePointTrie<u32>)
 
 /// An iterator adaptor that turns an `Iterator` over `char` into
 /// a lazily-decomposed `char` sequence.
+#[derive(Debug)]
 pub struct Decomposition<'data, I>
 where
     I: Iterator<Item = char>,
@@ -957,6 +960,7 @@ where
 
 /// An iterator adaptor that turns an `Iterator` over `char` into
 /// a lazily-decomposed and then canonically composed `char` sequence.
+#[derive(Debug)]
 pub struct Composition<'data, I>
 where
     I: Iterator<Item = char>,
@@ -1485,8 +1489,8 @@ macro_rules! normalizer_methods {
 
         /// Normalize a slice of potentially-invalid UTF-8 into a `String`.
         ///
-        /// Errors are mapped to the REPLACEMENT CHARACTER according
-        /// to the WHATWG Encoding Standard.
+        /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
+        /// according to the WHATWG Encoding Standard.
         pub fn normalize_utf8(&self, text: &[u8]) -> String {
             let mut ret = String::new();
             ret.reserve(text.len());
@@ -1496,8 +1500,8 @@ macro_rules! normalizer_methods {
 
         /// Check if a slice of potentially-invalid UTF-8 is normalized.
         ///
-        /// Errors are mapped to the REPLACEMENT CHARACTER according
-        /// to the WHATWG Encoding Standard before checking.
+        /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
+        /// according to the WHATWG Encoding Standard before checking.
         pub fn is_normalized_utf8(&self, text: &[u8]) -> bool {
             let mut sink = IsNormalizedSinkUtf8::new(text);
             if self.normalize_utf8_to(text, &mut sink).is_err() {
@@ -1509,6 +1513,7 @@ macro_rules! normalizer_methods {
 }
 
 /// A normalizer for performing decomposing normalization.
+#[derive(Debug)]
 pub struct DecomposingNormalizer {
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
     supplementary_decompositions: Option<SupplementPayloadHolder>,
@@ -1521,10 +1526,51 @@ pub struct DecomposingNormalizer {
 impl DecomposingNormalizer {
     /// NFD constructor.
     ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[cfg(feature = "data")]
+    pub const fn new_nfd() -> Self {
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                .scalars16
+                .const_len()
+                + crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                    .scalars24
+                    .const_len()
+                <= 0xFFF,
+            "NormalizerError::FutureExtension"
+        );
+
+        DecomposingNormalizer {
+            decompositions: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            supplementary_decompositions: None,
+            tables: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            supplementary_tables: None,
+            decomposition_passthrough_bound: 0xC0,
+            composition_passthrough_bound: 0x0300,
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: skip,
+        options: skip,
+        error: NormalizerError,
+        #[cfg(skip)]
+        functions: [
+            new_nfd,
+            try_new_nfd_with_any_provider,
+            try_new_nfd_with_buffer_provider,
+            try_new_nfd_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfd)]
     pub fn try_new_nfd_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -1556,23 +1602,81 @@ impl DecomposingNormalizer {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
+    /// NFKD constructor.
+    ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new_nfkd() -> Self {
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                .scalars16
+                .const_len()
+                + crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                    .scalars24
+                    .const_len()
+                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1
+                    .scalars16
+                    .const_len()
+                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1
+                    .scalars24
+                    .const_len()
+                <= 0xFFF,
+            "NormalizerError::FutureExtension"
+        );
+
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap <= 0x0300,
+            "NormalizerError::ValidationError"
+        );
+
+        let decomposition_capped =
+            if crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap < 0xC0 {
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap
+            } else {
+                0xC0
+            };
+        let composition_capped =
+            if crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap < 0x0300 {
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap
+            } else {
+                0x0300
+            };
+
+        DecomposingNormalizer {
+            decompositions: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            supplementary_decompositions: Some(SupplementPayloadHolder::Compatibility(
+                DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1),
+            )),
+            tables: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            supplementary_tables: Some(DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1,
+            )),
+            decomposition_passthrough_bound: decomposition_capped as u8,
+            composition_passthrough_bound: composition_capped,
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
         error: NormalizerError,
+        #[cfg(skip)]
         functions: [
-            Self::try_new_nfd_unstable,
-            try_new_nfd_with_any_provider,
-            try_new_nfd_with_buffer_provider
+            new_nfkd,
+            try_new_nfkd_with_any_provider,
+            try_new_nfkd_with_buffer_provider,
+            try_new_nfkd_unstable,
+            Self,
         ]
     );
 
-    /// NFKD constructor.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkd)]
     pub fn try_new_nfkd_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -1621,20 +1725,67 @@ impl DecomposingNormalizer {
             tables,
             supplementary_tables: Some(supplementary_tables),
             decomposition_passthrough_bound: decomposition_capped as u8,
-            composition_passthrough_bound: composition_capped as u16,
+            composition_passthrough_bound: composition_capped,
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: NormalizerError,
-        functions: [
-            Self::try_new_nfkd_unstable,
-            try_new_nfkd_with_any_provider,
-            try_new_nfkd_with_buffer_provider
-        ]
-    );
+    #[doc(hidden)]
+    #[cfg(all(feature = "experimental", feature = "data"))]
+    pub const fn new_uts46_decomposed_without_ignored_and_disallowed() -> Self {
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                .scalars16
+                .const_len()
+                + crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                    .scalars24
+                    .const_len()
+                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1
+                    .scalars16
+                    .const_len()
+                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1
+                    .scalars24
+                    .const_len()
+                <= 0xFFF,
+            "NormalizerError::FutureExtension"
+        );
+
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap <= 0x0300,
+            "NormalizerError::ValidationError"
+        );
+
+        let decomposition_capped =
+            if crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap < 0xC0 {
+                crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap
+            } else {
+                0xC0
+            };
+        let composition_capped =
+            if crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap < 0x0300 {
+                crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap
+            } else {
+                0x0300
+            };
+
+        DecomposingNormalizer {
+            decompositions: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            supplementary_decompositions: Some(SupplementPayloadHolder::Uts46(
+                DataPayload::from_static_ref(
+                    crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1,
+                ),
+            )),
+            tables: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            supplementary_tables: Some(DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1,
+            )),
+            decomposition_passthrough_bound: decomposition_capped as u8,
+            composition_passthrough_bound: composition_capped,
+        }
+    }
 
     /// UTS 46 decomposed constructor (testing only)
     ///
@@ -1657,7 +1808,7 @@ impl DecomposingNormalizer {
     /// Public for testing only.
     #[doc(hidden)]
     #[cfg(feature = "experimental")]
-    pub fn try_new_uts46_decomposed_without_ignored_and_disallowed<D>(
+    pub fn try_new_uts46_decomposed_without_ignored_and_disallowed_unstable<D>(
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
     where
@@ -1707,7 +1858,7 @@ impl DecomposingNormalizer {
             tables,
             supplementary_tables: Some(supplementary_tables),
             decomposition_passthrough_bound: decomposition_capped as u8,
-            composition_passthrough_bound: composition_capped as u16,
+            composition_passthrough_bound: composition_capped,
         })
     }
 
@@ -1798,8 +1949,8 @@ impl DecomposingNormalizer {
     decomposing_normalize_to!(
         /// Normalize a slice of potentially-invalid UTF-8 into a `Write` sink.
         ///
-        /// Errors are mapped to the REPLACEMENT CHARACTER according
-        /// to the WHATWG Encoding Standard.
+        /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
+        /// according to the WHATWG Encoding Standard.
         ,
         normalize_utf8_to,
         core::fmt::Write,
@@ -1985,6 +2136,7 @@ impl DecomposingNormalizer {
 }
 
 /// A normalizer for performing composing normalization.
+#[derive(Debug)]
 pub struct ComposingNormalizer {
     decomposing_normalizer: DecomposingNormalizer,
     canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,
@@ -1993,10 +2145,34 @@ pub struct ComposingNormalizer {
 impl ComposingNormalizer {
     /// NFC constructor.
     ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[cfg(feature = "data")]
+    pub const fn new_nfc() -> Self {
+        ComposingNormalizer {
+            decomposing_normalizer: DecomposingNormalizer::new_nfd(),
+            canonical_compositions: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
+            ),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: skip,
+        options: skip,
+        error: NormalizerError,
+        #[cfg(skip)]
+        functions: [
+            new_nfc,
+            try_new_nfc_with_any_provider,
+            try_new_nfc_with_buffer_provider,
+            try_new_nfc_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfc)]
     pub fn try_new_nfc_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -2015,23 +2191,36 @@ impl ComposingNormalizer {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
+    /// NFKC constructor.
+    ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new_nfkc() -> Self {
+        ComposingNormalizer {
+            decomposing_normalizer: DecomposingNormalizer::new_nfkd(),
+            canonical_compositions: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
+            ),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
         error: NormalizerError,
+        #[cfg(skip)]
         functions: [
-            Self::try_new_nfc_unstable,
-            try_new_nfc_with_any_provider,
-            try_new_nfc_with_buffer_provider
+            new_nfkc,
+            try_new_nfkc_with_any_provider,
+            try_new_nfkc_with_buffer_provider,
+            try_new_nfkc_unstable,
+            Self,
         ]
     );
 
-    /// NFKC constructor.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkc)]
     pub fn try_new_nfkc_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -2052,16 +2241,17 @@ impl ComposingNormalizer {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: NormalizerError,
-        functions: [
-            Self::try_new_nfkc_unstable,
-            try_new_nfkc_with_any_provider,
-            try_new_nfkc_with_buffer_provider
-        ]
-    );
+    /// See [`try_new_uts46_without_ignored_and_disallowed_unstable`].
+    #[cfg(all(feature = "experimental", feature = "data"))]
+    pub const fn new_uts46_without_ignored_and_disallowed() -> Self {
+        ComposingNormalizer {
+            decomposing_normalizer:
+                DecomposingNormalizer::new_uts46_decomposed_without_ignored_and_disallowed(),
+            canonical_compositions: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
+            ),
+        }
+    }
 
     /// 🚧 \[Experimental\] UTS 46 constructor
     ///
@@ -2089,7 +2279,7 @@ impl ComposingNormalizer {
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. It can be enabled with the "experimental" feature
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
     /// of the icu meta-crate. Use with caution.
     /// <a href="https://github.com/unicode-org/icu4x/issues/2614">#2614</a>
     /// </div>
@@ -2107,7 +2297,7 @@ impl ComposingNormalizer {
             + ?Sized,
     {
         let decomposing_normalizer =
-            DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed(
+            DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed_unstable(
                 data_provider,
             )?;
 
@@ -2229,8 +2419,8 @@ impl ComposingNormalizer {
     composing_normalize_to!(
         /// Normalize a slice of potentially-invalid UTF-8 into a `Write` sink.
         ///
-        /// Errors are mapped to the REPLACEMENT CHARACTER according
-        /// to the WHATWG Encoding Standard.
+        /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
+        /// according to the WHATWG Encoding Standard.
         ,
         normalize_utf8_to,
         core::fmt::Write,

@@ -30,6 +30,7 @@ use crate::{
 
 /// This is the internal "raw" version of [crate::ZonedDateTimeFormatter], i.e. a version of ZonedDateTimeFormatter
 /// without the generic parameter. The actual implementation of [crate::ZonedDateTimeFormatter] should live here.
+#[derive(Debug)]
 pub(crate) struct ZonedDateTimeFormatter {
     pub datetime_format: raw::DateTimeFormatter,
     pub time_zone_format: TimeZoneFormatter,

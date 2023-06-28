@@ -35,7 +35,6 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 /// The Indian National Calendar (aka the Saka calendar)
@@ -49,12 +48,12 @@ use tinystr::tinystr;
 /// # Era codes
 ///
 /// This calendar has a single era: `"saka"`, with Saka 0 being 78 CE. Dates before this era use negative years.
-#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;
 
 /// The inner date type used for representing [`Date`]s of [`Indian`]. See [`Date`] and [`Indian`] for more details.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct IndianDateInner(ArithmeticDate<Indian>);
 
 impl CalendarArithmetic for Indian {
@@ -80,6 +79,10 @@ impl CalendarArithmetic for Indian {
 
     fn is_leap_year(year: i32) -> bool {
         Iso::is_leap_year(year + 78)
+    }
+
+    fn last_month_day_in_year(_year: i32) -> (u8, u8) {
+        (12, 30)
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
@@ -110,7 +113,7 @@ impl Calendar for Indian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IndianDateInner)
+        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(IndianDateInner)
     }
 
     //
@@ -184,6 +187,7 @@ impl Calendar for Indian {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year,
+            cyclic: None,
             related_iso: None,
         }
     }
@@ -200,11 +204,13 @@ impl Calendar for Indian {
         let prev_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year - 1,
+            cyclic: None,
             related_iso: None,
         };
         let next_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year + 1,
+            cyclic: None,
             related_iso: None,
         };
         types::DayOfYearInfo {
@@ -258,19 +264,9 @@ impl Date<Indian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Indian>, CalendarError> {
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        let bound = inner.days_in_month();
-        if day > bound {
-            return Err(CalendarError::OutOfRange);
-        }
-
-        Ok(Date::from_raw(IndianDateInner(inner), Indian))
+        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+            .map(IndianDateInner)
+            .map(|inner| Date::from_raw(inner, Indian))
     }
 }
 

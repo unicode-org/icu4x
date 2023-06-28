@@ -7,7 +7,8 @@ use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+// Note: The Ord/PartialOrd impls can be derived because the fields are in the correct order.
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub year: i32,
@@ -15,17 +16,18 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub month: u8,
     /// 1-based day of month
     pub day: u8,
-    pub marker: PhantomData<C>,
+    marker: PhantomData<C>,
 }
 
 pub trait CalendarArithmetic: Calendar {
     fn month_days(year: i32, month: u8) -> u8;
     fn months_for_every_year(year: i32) -> u8;
     fn is_leap_year(year: i32) -> bool;
+    fn last_month_day_in_year(year: i32) -> (u8, u8);
 
     /// Calculate the days in a given year
     /// Can be overridden with simpler implementations for solar calendars
-    /// (typically, 366 in leap, 365 otgerwuse) Leave this as the default
+    /// (typically, 366 in leap, 365 otherwise) Leave this as the default
     /// for lunar calendars
     ///
     /// The name has `provided` in it to avoid clashes with Calendar
@@ -40,10 +42,33 @@ pub trait CalendarArithmetic: Calendar {
 }
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
+    /// Create a new `ArithmeticDate` without checking that `month` and `day` are in bounds.
     #[inline]
-    pub fn new(year: i32, month: u8, day: u8) -> Self {
+    pub const fn new_unchecked(year: i32, month: u8, day: u8) -> Self {
         ArithmeticDate {
             year,
+            month,
+            day,
+            marker: PhantomData,
+        }
+    }
+
+    #[inline]
+    pub fn min_date() -> Self {
+        ArithmeticDate {
+            year: i32::MIN,
+            month: 1,
+            day: 1,
+            marker: PhantomData,
+        }
+    }
+
+    #[inline]
+    pub fn max_date() -> Self {
+        let year = i32::MAX;
+        let (month, day) = C::last_month_day_in_year(year);
+        ArithmeticDate {
+            year: i32::MAX,
             month,
             day,
             marker: PhantomData,
@@ -118,7 +143,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn months_in_year(&self) -> u8 {
-        C::months_for_every_year(self.year) as u8
+        C::months_for_every_year(self.year)
     }
 
     #[inline]
@@ -197,8 +222,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     /// Construct a new arithmetic date from a year, month code, and day, bounds checking
-    /// the month
-    pub fn new_from_solar<C2: Calendar>(
+    /// the month and day
+    pub fn new_from_solar_codes<C2: Calendar>(
         // Separate type since the debug_name() impl may differ when DateInner types
         // are nested (e.g. in GregorianDateInner)
         cal: &C2,
@@ -222,11 +247,37 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             ));
         }
 
-        if day > C::month_days(year, month) {
-            return Err(CalendarError::OutOfRange);
+        let max_day = C::month_days(year, month);
+        if day > max_day {
+            return Err(CalendarError::Overflow {
+                field: "day",
+                max: max_day as usize,
+            });
         }
 
-        Ok(Self::new(year, month, day))
+        Ok(Self::new_unchecked(year, month, day))
+    }
+
+    /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
+    /// the month and day
+    pub fn new_from_solar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
+        let max_month = C::months_for_every_year(year);
+        if month > max_month {
+            return Err(CalendarError::Overflow {
+                field: "month",
+                max: max_month as usize,
+            });
+        }
+
+        let max_day = C::month_days(year, month);
+        if day > max_day {
+            return Err(CalendarError::Overflow {
+                field: "day",
+                max: max_day as usize,
+            });
+        }
+
+        Ok(Self::new_unchecked(year, month, day))
     }
 }
 
@@ -249,4 +300,39 @@ pub fn ordinal_solar_month_from_code(code: types::MonthCode) -> Option<u8> {
         return Some(10 + bytes[2] - b'0');
     }
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Iso;
+
+    #[test]
+    fn test_ord() {
+        let dates_in_order = [
+            ArithmeticDate::<Iso>::new_unchecked(-10, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-10, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(-10, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-1, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-1, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(-1, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(0, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(0, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(0, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(1, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(1, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(1, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(10, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(10, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(10, 2, 1),
+        ];
+        for (i, i_date) in dates_in_order.iter().enumerate() {
+            for (j, j_date) in dates_in_order.iter().enumerate() {
+                let result1 = i_date.cmp(j_date);
+                let result2 = j_date.cmp(i_date);
+                assert_eq!(result1.reverse(), result2);
+                assert_eq!(i.cmp(&j), i_date.cmp(j_date));
+            }
+        }
+    }
 }

@@ -2,20 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::borrow::Cow;
-use alloc::borrow::ToOwned;
+#[cfg(feature = "icu_decimal")]
+use alloc::borrow::{Cow, ToOwned};
 
 #[diplomat::bridge]
 pub mod ffi {
-    use super::str_to_cow;
+
+    #[cfg(feature = "icu_decimal")]
     use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
-    use icu_decimal::provider::{
-        AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
-    };
-    use icu_provider::prelude::AnyPayload;
-    use icu_provider::prelude::DataPayload;
+    use icu_provider::{AnyPayload, DataPayload};
 
     #[diplomat::opaque]
     /// A generic data struct to be used by ICU4X
@@ -29,6 +25,7 @@ pub mod ffi {
         /// C++ users: All string arguments must be valid UTF8
         #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
         #[allow(clippy::too_many_arguments)]
+        #[cfg(feature = "icu_decimal")]
         pub fn create_decimal_symbols_v1(
             plus_sign_prefix: &str,
             plus_sign_suffix: &str,
@@ -40,13 +37,17 @@ pub mod ffi {
             secondary_group_size: u8,
             min_group_size: u8,
             digits: &[char],
-        ) -> DiplomatResult<Box<ICU4XDataStruct>, ICU4XError> {
+        ) -> Result<Box<ICU4XDataStruct>, ICU4XError> {
+            use super::str_to_cow;
+            use icu_decimal::provider::{
+                AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
+            };
             let digits = if digits.len() == 10 {
                 let mut new_digits = ['\0'; 10];
                 new_digits.copy_from_slice(digits);
                 new_digits
             } else {
-                return Err(ICU4XError::DataStructValidityError).into();
+                return Err(ICU4XError::DataStructValidityError);
             };
             let plus_sign_affixes = AffixesV1 {
                 prefix: str_to_cow(plus_sign_prefix),
@@ -72,11 +73,11 @@ pub mod ffi {
             };
 
             let payload: DataPayload<DecimalSymbolsV1Marker> = DataPayload::from_owned(symbols);
-            Ok(Box::new(ICU4XDataStruct(payload.wrap_into_any_payload()))).into()
+            Ok(Box::new(ICU4XDataStruct(payload.wrap_into_any_payload())))
         }
     }
 }
-
+#[cfg(feature = "icu_decimal")]
 fn str_to_cow(s: &str) -> Cow<'static, str> {
     if s.is_empty() {
         Cow::default()

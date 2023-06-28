@@ -11,7 +11,7 @@ use writeable::assert_writeable_eq;
 
 #[test]
 fn test_maximize() {
-    let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let lc = LocaleExpander::try_new_extended_unstable(&icu_testdata::unstable()).unwrap();
 
     let path = "./tests/fixtures/maximize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =
@@ -35,7 +35,7 @@ fn test_maximize() {
 
 #[test]
 fn test_minimize() {
-    let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let lc = LocaleExpander::try_new_extended_unstable(&icu_testdata::unstable()).unwrap();
 
     let path = "./tests/fixtures/minimize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =

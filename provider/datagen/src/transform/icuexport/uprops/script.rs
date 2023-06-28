@@ -17,14 +17,15 @@ use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        _: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
+        self.check_req::<ScriptWithExtensionsPropertyV1Marker>(req)?;
         let scx_data = self
             .source
             .icuexport()?
             .read_and_parse_toml::<super::uprops_serde::script_extensions::Main>(&format!(
                 "uprops/{}/scx.toml",
-                self.source.trie_type(),
+                self.source.options.trie_type,
             ))?
             .script_extensions
             .get(0)
@@ -317,12 +318,12 @@ mod tests {
 
         // inspired by https://github.com/unicode-org/unicodetools/issues/192
 
-        let bengali = swe.get_script_extensions_set(Script::Bengali);
-        assert!(bengali.contains32(0x09E7)); // BENGALI DIGIT ONE
-        assert!(!bengali.contains32(0x0963)); // DEVANAGARI VOWEL SIGN VOCALIC LL
-        assert!(bengali.contains32(0x0964)); // DEVANAGARI DANDA
-        assert!(bengali.contains32(0x0965)); // DEVANAGARI DOUBLE DANDA
-        assert!(!bengali.contains32(0x0966)); // DEVANAGARI DIGIT ZERO
+        let bangla = swe.get_script_extensions_set(Script::Bengali);
+        assert!(bangla.contains32(0x09E7)); // BENGALI DIGIT ONE
+        assert!(!bangla.contains32(0x0963)); // DEVANAGARI VOWEL SIGN VOCALIC LL
+        assert!(bangla.contains32(0x0964)); // DEVANAGARI DANDA
+        assert!(bangla.contains32(0x0965)); // DEVANAGARI DOUBLE DANDA
+        assert!(!bangla.contains32(0x0966)); // DEVANAGARI DIGIT ZERO
 
         let devanagari = swe.get_script_extensions_set(Script::Devanagari);
         assert!(!devanagari.contains32(0x09E7)); // BENGALI DIGIT ONE

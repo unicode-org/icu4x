@@ -5,11 +5,13 @@
 [package]
 name = "icu_locid"
 description = "API for managing Unicode Language and Locale Identifiers"
-version = "1.0.0"
+version = "1.2.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -23,44 +25,43 @@ include = [
     "README.md"
 ]
 
-[package.metadata.cargo-all-features]
-skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
-# "serde" is an intentional feature, enabling serialization of LanguageIdentifier and others:
-extra_features = ["serde"]
-
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc"], default-features = false }
-serde = { version = "1.0", optional = true, default-features = false, features = ["alloc", "derive"] }
-writeable = { version = "0.5", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
-zerovec = { version = "0.9", path = "../../utils/zerovec", optional = true }
-litemap = { version = "0.6", path = "../../utils/litemap" }
-databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
+litemap = { version = "0.7.0", path = "../../utils/litemap" }
+tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["alloc"], default-features = false }
+writeable = { version = "0.5.1", path = "../../utils/writeable" }
+
+databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
+serde = { version = "1.0", default-features = false, features = ["alloc", "derive"], optional = true }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec", optional = true }
 
 [dev-dependencies]
-criterion = "0.3.3"
+criterion = "0.4"
+iai = "0.1.1"
 icu = { path = "../icu", default-features = false }
-icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+litemap = { path = "../../utils/litemap", features = ["testing"]}
+postcard = { version = "1.0.0", default-features = false, features = ["use-std"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-postcard = { version = "1.0.0", default-features = false, features = ["use-std"] }
-iai = "0.1.1"
-litemap = { version = "0.6", path = "../../utils/litemap", features = ["testing"]}
+
+[features]
+std = []
+databake = ["dep:databake"]
+serde = ["dep:serde", "tinystr/serde"]
+zerovec = ["dep:zerovec"]
+bench = ["serde"]
 
 [lib]
 path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
 
-[features]
-default = []
-std = []
-bench = ["serde"]
-serde = ["dep:serde", "tinystr/serde"]
+[package.metadata.cargo-all-features]
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [[bench]]
 name = "subtags"

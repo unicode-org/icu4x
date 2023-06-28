@@ -29,7 +29,7 @@ struct ICU4XWeekCalculatorDeleter {
 /**
  * A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
  * 
- * See the [Rust documentation for `WeekCalculator`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html) for more information.
+ * See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
  */
 class ICU4XWeekCalculator {
  public:
@@ -37,21 +37,21 @@ class ICU4XWeekCalculator {
   /**
    * Creates a new [`ICU4XWeekCalculator`] from locale data.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XWeekCalculator, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * 
    * 
-   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
+   *  Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
    */
   static ICU4XWeekCalculator create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
 
   /**
    * Returns the weekday that starts the week for this object's locale
    * 
-   * See the [Rust documentation for `first_weekday`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
+   * See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
    */
   ICU4XIsoWeekday first_weekday() const;
 
@@ -59,7 +59,7 @@ class ICU4XWeekCalculator {
    * The minimum number of days overlapping a year required for a week to be
    * considered part of that year
    * 
-   * See the [Rust documentation for `min_week_days`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
+   * See the [Rust documentation for `min_week_days`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
    */
   uint8_t min_week_days() const;
   inline const capi::ICU4XWeekCalculator* AsFFI() const { return this->inner.get(); }

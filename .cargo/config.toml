@@ -20,7 +20,7 @@ wasm-build-release = "panic-abort-build --target wasm32-unknown-unknown --profil
 rustflags = [
   # 100 KiB, working around a bug in older rustc
   # https://github.com/unicode-org/icu4x/issues/2753
-  # keep in sync with wasm's build.sh
+  # keep in sync with wasm's and tinywasm's build.sh
   "-C", "link-args=-z stack-size=100000",
   "-C", "panic=abort",
   "-C", "opt-level=s"

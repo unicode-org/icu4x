@@ -15,14 +15,6 @@
 #include "ICU4XIsoTimeZoneMinuteDisplay.hpp"
 #include "ICU4XIsoTimeZoneSecondDisplay.hpp"
 
-/**
- * A destruction policy for using ICU4XIsoTimeZoneOptions with std::unique_ptr.
- */
-struct ICU4XIsoTimeZoneOptionsDeleter {
-  void operator()(capi::ICU4XIsoTimeZoneOptions* l) const noexcept {
-    capi::ICU4XIsoTimeZoneOptions_destroy(l);
-  }
-};
 struct ICU4XIsoTimeZoneOptions {
  public:
   ICU4XIsoTimeZoneFormat format;

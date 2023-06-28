@@ -97,8 +97,6 @@ fn main() {
 
 In this case, the parsing is performed at compilation time, so we don't need to handle an error case. Try passing an malformed identifier, like "foo-bar" and call `cargo check`.
 
-*Notice:* `locale!` does not support variants or extension tags (e.g. `u-nu-latn`), as storing these requires allocation. If you have such a tag you need to use runtime parsing.
-
 Next, let's add some more complex functionality.
 
 # 4. Basic Data Management
@@ -114,7 +112,7 @@ Users are also free to design their own providers that best fit into their ecosy
 
 # 5. Using an ICU4X component
 
-We're going to extend our app to use the `icu::datetime` component to format a date and time. This component requires data, but as we don't want to jump into data management just yet, we will use `ICU4X`'s `icu_testdata` crate. This contains test providers that support all ICU4X keys for a small representative set of locales. It contains both a `BufferProvider` (`icu_testdata::buffer()`), and an `AnyProvider` (`icu_testdata::any()`). The latter requires fewer features, so we will be using that.
+We're going to extend our app to use the `icu::datetime` component to format a date and time. This component requires data, but as we don't want to jump into data management just yet, we will use `ICU4X`'s `icu_testdata` crate. This contains test providers that support all ICU4X keys for a small representative set of locales. It contains a `BufferProvider` (`icu_testdata::buffer()`), an `AnyProvider` (`icu_testdata::any()`), and an unstable data provider (`icu_testdata::unstable()`). The latter two require fewer Cargo features, so we will be using those.
 
 First, we need to add the crate to our `Cargo.toml`:
 
@@ -142,7 +140,7 @@ fn main() {
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
         .expect("Failed to create a datetime.");
 
-    // DateTimeFormatter works with data from any calendar, we need to cast to DateTime<AnyCalendar>
+    // DateTimeFormatter supports the ISO and native calendars as input via DateTime<AnyCalendar>.
     // For smaller codesize you can use TypedDateTimeFormatter<Gregorian> with a DateTime<Gregorian>
     let date = date.to_any();
 
@@ -167,4 +165,4 @@ Here's an internationalized date!
 This concludes this introduction tutorial. With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to Japanese, but that's just the start. 
 Internationalization is a broad domain and there are many more components in `ICU4X`.
 
-Next, learn how to [generate optimized data for your binary](data_management.md), or continue exploring by reading [the docs](https://icu4x.unicode.org/doc/icu/).
+Next, learn how to [generate optimized data for your binary](data_management.md) or [configure your Cargo.toml file](cargo.md), or continue exploring by reading [the docs](https://docs.rs/icu/latest/).

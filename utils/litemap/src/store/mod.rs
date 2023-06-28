@@ -18,7 +18,7 @@
 //! - [`StoreIterable`] for methods that return iterators
 //! - [`StoreFromIterator`] to enable `FromIterator` for LiteMap
 //!
-//! To test your implementation, enable the `"testing"` feature and use [`check_store()`].
+//! To test your implementation, enable the `"testing"` Cargo feature and use [`check_store()`].
 //!
 //! [`check_store()`]: crate::testing::check_store
 
@@ -71,6 +71,11 @@ pub trait Store<K: ?Sized, V: ?Sized>: Sized {
         F: FnMut(&K) -> Ordering;
 }
 
+pub trait StoreFromIterable<K, V>: Store<K, V> {
+    /// Create a sorted store from `iter`.
+    fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self;
+}
+
 pub trait StoreMut<K, V>: Store<K, V> {
     /// Creates a new store with the specified capacity hint.
     ///
@@ -84,6 +89,7 @@ pub trait StoreMut<K, V>: Store<K, V> {
 
     /// Gets a key/value pair at the specified index, with a mutable value.
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)>;
+
     /// Pushes one additional item onto the store.
     fn lm_push(&mut self, key: K, value: V);
 

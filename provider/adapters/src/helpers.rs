@@ -4,7 +4,7 @@
 
 use icu_provider::prelude::*;
 
-pub(crate) fn result_is_err_missing_data_options<T>(result: &Result<T, DataError>) -> bool {
+pub(crate) fn result_is_err_missing_locale<T>(result: &Result<T, DataError>) -> bool {
     matches!(
         result,
         Err(DataError {

@@ -10,7 +10,7 @@ use super::{AsULE, ULE};
 /// can never occur as a valid byte representation of the type.
 ///
 /// Guarantees for a valid implementation.
-/// 1. N must be equal to core::mem::sizeo_of::<Self>() or else it will
+/// 1. N must be equal to `core::mem::sizeo_of::<Self>()` or else it will
 ///    cause panics.
 /// 2. The bit pattern [`NicheBytes::NICHE_BIT_PATTERN`] must not be incorrect as it would lead to
 ///    weird behaviour.
@@ -54,8 +54,16 @@ pub union NichedOptionULE<U: NicheBytes<N> + ULE, const N: usize> {
     valid: U,
 }
 
+impl<U: NicheBytes<N> + ULE + core::fmt::Debug, const N: usize> core::fmt::Debug
+    for NichedOptionULE<U, N>
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.get().fmt(f)
+    }
+}
+
 impl<U: NicheBytes<N> + ULE, const N: usize> NichedOptionULE<U, N> {
-    /// New NichedOptionULE<U, N> from Option<U>
+    /// New `NichedOptionULE<U, N>` from `Option<U>`
     pub fn new(opt: Option<U>) -> Self {
         assert!(N == core::mem::size_of::<U>());
         match opt {
@@ -66,7 +74,7 @@ impl<U: NicheBytes<N> + ULE, const N: usize> NichedOptionULE<U, N> {
         }
     }
 
-    /// Convert to an Option<U>
+    /// Convert to an `Option<U>`
     pub fn get(self) -> Option<U> {
         // Safety: The union stores NICHE_BIT_PATTERN when None otherwise a valid U
         unsafe {
@@ -131,7 +139,7 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
 }
 
 /// Optional type which uses [`NichedOptionULE<U,N>`] as ULE type.
-/// The implementors guarantee that N == core::mem::sizeo_of::<Self>()
+/// The implementors guarantee that `N == core::mem::sizeo_of::<Self>()`
 /// [`repr(transparent)`] guarantees that the layout is same as [`Option<U>`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[repr(transparent)]

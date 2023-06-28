@@ -133,6 +133,7 @@ pub(crate) mod internal {
     mod testing {
         use super::*;
         use ecma402_traits::pluralrules::options::Type;
+        use icu::plurals::rules::RawPluralOperands;
 
         fn opt(
             minimum_integer_digits: u8,
@@ -210,14 +211,15 @@ pub(crate) mod internal {
                     minimum_significant_digits: 3,
                     maximum_significant_digits: 4,
                 },
-                expected: PluralOperands {
+                expected: RawPluralOperands {
                     i: 1,
                     v: 2,
                     w: 1,
                     f: 50,
                     t: 5,
                     c: 0,
-                },
+                }
+                .into(),
             }];
             for test in tests {
                 let actual = to_icu4x_operands(test.n, test.opts.clone());
@@ -227,6 +229,7 @@ pub(crate) mod internal {
     }
 }
 
+#[derive(Debug)]
 pub struct PluralRules {
     opts: ecma402_traits::pluralrules::Options,
     rep: ipr::PluralRules,
@@ -240,7 +243,10 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         L: ecma402_traits::Locale,
         Self: Sized,
     {
-        Self::try_new_with_provider(l, opts, &crate::BakedDataProvider)
+        let rule_type = internal::to_icu4x_type(&opts.in_type);
+
+        let rep = ipr::PluralRules::try_new(&crate::DataLocale::from_ecma_locale(l), rule_type)?;
+        Ok(Self { opts, rep })
     }
 
     fn select<W>(&self, number: f64, writer: &mut W) -> std::fmt::Result
@@ -250,30 +256,6 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         let op = internal::to_icu4x_operands(number, self.opts.clone());
         let result = self.rep.category_for(op);
         write!(writer, "{}", internal::as_str(result))
-    }
-}
-
-impl PluralRules {
-    /// Creates a new [`PluralRules`], using the specified data provider.
-    pub fn try_new_with_provider<L, P>(
-        l: L,
-        opts: ecma402_traits::pluralrules::Options,
-        provider: &P,
-    ) -> Result<Self, Error>
-    where
-        L: ecma402_traits::Locale,
-        P: icu_provider::DataProvider<ipr::provider::OrdinalV1Marker>
-            + icu_provider::DataProvider<ipr::provider::CardinalV1Marker>,
-        Self: Sized,
-    {
-        let rule_type = internal::to_icu4x_type(&opts.in_type);
-
-        let rep = ipr::PluralRules::try_new_unstable(
-            provider,
-            &crate::DataLocale::from_ecma_locale(l),
-            rule_type,
-        )?;
-        Ok(Self { opts, rep })
     }
 }
 

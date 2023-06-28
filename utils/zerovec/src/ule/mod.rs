@@ -14,6 +14,7 @@ mod chars;
 #[cfg(doc)]
 pub mod custom;
 mod encode;
+mod macros;
 mod multi;
 mod niche;
 mod option;
@@ -29,7 +30,7 @@ pub use multi::MultiFieldsULE;
 pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};
 pub use plain::RawBytesULE;
-pub use unvalidated::UnvalidatedStr;
+pub use unvalidated::{UnvalidatedChar, UnvalidatedStr};
 
 use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;
@@ -156,7 +157,7 @@ where
 
 /// A trait for any type that has a 1:1 mapping with an unaligned little-endian (ULE) type.
 ///
-/// If you need to implement this trait, consider using [`#[make_varule]`](crate::make_ule) instead.
+/// If you need to implement this trait, consider using [`#[make_ule]`](crate::make_ule) instead.
 pub trait AsULE: Copy {
     /// The ULE type corresponding to `Self`.
     ///
@@ -283,6 +284,12 @@ where
 /// "12.3e3" are logically equal, but not byte-for-byte equal, so we could define a canonical form
 /// where only a single digit is allowed before `.`.
 ///
+/// There may also be cases where a `VarULE` has muiltiple canonical forms, such as a faster
+/// version and a smaller version. The cleanest way to handle this case would be separate types.
+/// However, if this is not feasible, then the application should ensure that the data it is
+/// deserializing is in the expected form. For example, if the data is being loaded from an
+/// external source, then requests could carry information about the expected form of the data.
+///
 /// Failure to follow this invariant will cause surprising behavior in `PartialEq`, which may
 /// result in unpredictable operations on `ZeroVec`, `VarZeroVec`, and `ZeroMap`.
 pub unsafe trait VarULE: 'static {
@@ -350,13 +357,12 @@ pub unsafe trait VarULE: 'static {
     #[inline]
     fn to_boxed(&self) -> Box<Self> {
         let bytesvec = self.as_byte_slice().to_owned().into_boxed_slice();
+        let bytesvec = mem::ManuallyDrop::new(bytesvec);
         unsafe {
             // Get the pointer representation
             let ptr: *mut Self =
                 Self::from_byte_slice_unchecked(&bytesvec) as *const Self as *mut Self;
-            assert_eq!(Layout::for_value(&*ptr), Layout::for_value(&*bytesvec));
-            // Forget the allocation
-            mem::forget(bytesvec);
+            assert_eq!(Layout::for_value(&*ptr), Layout::for_value(&**bytesvec));
             // Transmute the pointer to an owned pointer
             Box::from_raw(ptr)
         }

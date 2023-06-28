@@ -3,28 +3,28 @@
 
 .. cpp:class:: ICU4XCustomTimeZone
 
-    See the `Rust documentation for CustomTimeZone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html>`__ for more information.
+    See the `Rust documentation for CustomTimeZone <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_string(const std::string_view s)
 
         Creates a time zone from an offset string.
 
-        See the `Rust documentation for from_str <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.from_str>`__ for more information.
+        See the `Rust documentation for from_str <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str>`__ for more information.
 
 
     .. cpp:function:: static ICU4XCustomTimeZone create_empty()
 
         Creates a time zone with no information.
 
-        See the `Rust documentation for new_empty <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.new_empty>`__ for more information.
+        See the `Rust documentation for new_empty <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.new_empty>`__ for more information.
 
 
     .. cpp:function:: static ICU4XCustomTimeZone create_utc()
 
         Creates a time zone for UTC.
 
-        See the `Rust documentation for utc <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.utc>`__ for more information.
+        See the `Rust documentation for utc <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.utc>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> try_set_gmt_offset_seconds(int32_t offset_seconds)
@@ -33,18 +33,18 @@
 
         Errors if the offset seconds are out of range.
 
-        See the `Rust documentation for try_from_offset_seconds <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.try_from_offset_seconds>`__ for more information.
+        See the `Rust documentation for try_from_offset_seconds <https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.try_from_offset_seconds>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html>`__
 
 
     .. cpp:function:: void clear_gmt_offset()
 
         Clears the ``gmt_offset`` field.
 
-        See the `Rust documentation for offset_seconds <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds>`__ for more information.
+        See the `Rust documentation for offset_seconds <https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.offset_seconds>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html>`__
 
 
     .. cpp:function:: diplomat::result<int32_t, ICU4XError> gmt_offset_seconds() const
@@ -53,9 +53,9 @@
 
         Errors if the ``gmt_offset`` field is empty.
 
-        See the `Rust documentation for offset_seconds <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds>`__ for more information.
+        See the `Rust documentation for offset_seconds <https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.offset_seconds>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html>`__
 
 
     .. cpp:function:: diplomat::result<bool, ICU4XError> is_gmt_offset_positive() const
@@ -64,7 +64,7 @@
 
         Errors if the ``gmt_offset`` field is empty.
 
-        See the `Rust documentation for is_positive <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_positive>`__ for more information.
+        See the `Rust documentation for is_positive <https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_positive>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<bool, ICU4XError> is_gmt_offset_zero() const
@@ -73,7 +73,7 @@
 
         Errors if the ``gmt_offset`` field is empty (which is not the same as zero).
 
-        See the `Rust documentation for is_zero <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_zero>`__ for more information.
+        See the `Rust documentation for is_zero <https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_zero>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<bool, ICU4XError> gmt_offset_has_minutes() const
@@ -82,7 +82,7 @@
 
         Errors if the ``gmt_offset`` field is empty.
 
-        See the `Rust documentation for has_minutes <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_minutes>`__ for more information.
+        See the `Rust documentation for has_minutes <https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_minutes>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<bool, ICU4XError> gmt_offset_has_seconds() const
@@ -91,7 +91,7 @@
 
         Errors if the ``gmt_offset`` field is empty.
 
-        See the `Rust documentation for has_seconds <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_seconds>`__ for more information.
+        See the `Rust documentation for has_seconds <https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_seconds>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> try_set_time_zone_id(const std::string_view id)
@@ -100,18 +100,18 @@
 
         Errors if the string is not a valid BCP-47 time zone ID.
 
-        See the `Rust documentation for time_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
+        See the `Rust documentation for time_zone_id <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
     .. cpp:function:: void clear_time_zone_id()
 
         Clears the ``time_zone_id`` field.
 
-        See the `Rust documentation for time_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
+        See the `Rust documentation for time_zone_id <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> time_zone_id_to_writeable(W& write) const
@@ -120,9 +120,9 @@
 
         Errors if the ``time_zone_id`` field is empty.
 
-        See the `Rust documentation for time_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
+        See the `Rust documentation for time_zone_id <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
     .. cpp:function:: diplomat::result<std::string, ICU4XError> time_zone_id() const
@@ -131,9 +131,9 @@
 
         Errors if the ``time_zone_id`` field is empty.
 
-        See the `Rust documentation for time_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
+        See the `Rust documentation for time_zone_id <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> try_set_metazone_id(const std::string_view id)
@@ -142,18 +142,18 @@
 
         Errors if the string is not a valid BCP-47 metazone ID.
 
-        See the `Rust documentation for metazone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
+        See the `Rust documentation for metazone_id <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html>`__
 
 
     .. cpp:function:: void clear_metazone_id()
 
         Clears the ``metazone_id`` field.
 
-        See the `Rust documentation for metazone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
+        See the `Rust documentation for metazone_id <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html>`__
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> metazone_id_to_writeable(W& write) const
@@ -162,9 +162,9 @@
 
         Errors if the ``metazone_id`` field is empty.
 
-        See the `Rust documentation for metazone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
+        See the `Rust documentation for metazone_id <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html>`__
 
 
     .. cpp:function:: diplomat::result<std::string, ICU4XError> metazone_id() const
@@ -173,9 +173,9 @@
 
         Errors if the ``metazone_id`` field is empty.
 
-        See the `Rust documentation for metazone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
+        See the `Rust documentation for metazone_id <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html>`__
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> try_set_zone_variant(const std::string_view id)
@@ -184,18 +184,18 @@
 
         Errors if the string is not a valid zone variant.
 
-        See the `Rust documentation for zone_variant <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
+        See the `Rust documentation for zone_variant <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html>`__
 
 
     .. cpp:function:: void clear_zone_variant()
 
         Clears the ``zone_variant`` field.
 
-        See the `Rust documentation for zone_variant <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
+        See the `Rust documentation for zone_variant <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html>`__
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> zone_variant_to_writeable(W& write) const
@@ -204,9 +204,9 @@
 
         Errors if the ``zone_variant`` field is empty.
 
-        See the `Rust documentation for zone_variant <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
+        See the `Rust documentation for zone_variant <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html>`__
 
 
     .. cpp:function:: diplomat::result<std::string, ICU4XError> zone_variant() const
@@ -215,27 +215,27 @@
 
         Errors if the ``zone_variant`` field is empty.
 
-        See the `Rust documentation for zone_variant <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
+        See the `Rust documentation for zone_variant <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html>`__
 
 
     .. cpp:function:: void set_standard_time()
 
         Sets the ``zone_variant`` field to standard time.
 
-        See the `Rust documentation for standard <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.standard>`__ for more information.
+        See the `Rust documentation for standard <https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
     .. cpp:function:: void set_daylight_time()
 
         Sets the ``zone_variant`` field to daylight time.
 
-        See the `Rust documentation for daylight <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.daylight>`__ for more information.
+        See the `Rust documentation for daylight <https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
     .. cpp:function:: diplomat::result<bool, ICU4XError> is_standard_time() const
@@ -244,9 +244,9 @@
 
         Errors if the ``zone_variant`` field is empty.
 
-        See the `Rust documentation for standard <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.standard>`__ for more information.
+        See the `Rust documentation for standard <https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
     .. cpp:function:: diplomat::result<bool, ICU4XError> is_daylight_time() const
@@ -255,26 +255,16 @@
 
         Errors if the ``zone_variant`` field is empty.
 
-        See the `Rust documentation for daylight <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.daylight>`__ for more information.
+        See the `Rust documentation for daylight <https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
     .. cpp:function:: void maybe_calculate_metazone(const ICU4XMetazoneCalculator& metazone_calculator, const ICU4XIsoDateTime& local_datetime)
 
         Sets the metazone based on the time zone and the local timestamp.
 
-        See the `Rust documentation for maybe_calculate_metazone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_metazone>`__ for more information.
+        See the `Rust documentation for maybe_calculate_metazone <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_metazone>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone>`__
-
-
-.. cpp:class:: ICU4XMetazoneCalculator
-
-    See the `Rust documentation for MetazoneCalculator <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html>`__ for more information.
-
-
-    .. cpp:function:: static diplomat::result<ICU4XMetazoneCalculator, ICU4XError> create(const ICU4XDataProvider& provider)
-
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.try_new_unstable>`__ for more information.
+        Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone>`__
 

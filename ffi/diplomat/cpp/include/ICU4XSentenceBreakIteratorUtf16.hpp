@@ -20,12 +20,20 @@ struct ICU4XSentenceBreakIteratorUtf16Deleter {
     capi::ICU4XSentenceBreakIteratorUtf16_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
+ */
 class ICU4XSentenceBreakIteratorUtf16 {
  public:
 
   /**
    * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
    * out of range of a 32-bit signed integer.
+   * 
+   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html#method.next) for more information.
    */
   int32_t next();
   inline const capi::ICU4XSentenceBreakIteratorUtf16* AsFFI() const { return this->inner.get(); }

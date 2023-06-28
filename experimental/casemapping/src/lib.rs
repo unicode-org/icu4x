@@ -9,25 +9,36 @@
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. It can be enabled with the "experimental" feature
+//! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 //! of the icu meta-crate. Use with caution.
 //! <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
 //! </div>
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations_
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums,
+        missing_debug_implementations,
+    )
+)]
 #![warn(missing_docs)]
+
+extern crate alloc;
 
 mod casemapping;
 pub mod provider;
+mod set;
 
-mod error;
-mod exceptions;
-#[cfg(feature = "datagen")]
-mod exceptions_builder;
 mod internals;
 
 pub use casemapping::CaseMapping;
-pub use error::Error as CaseMappingError;
-#[cfg(feature = "datagen")]
-pub use internals::CaseMappingInternals;
+pub use set::ClosureSet;

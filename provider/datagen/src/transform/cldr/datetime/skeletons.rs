@@ -37,8 +37,7 @@ impl From<&cldr_serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
                     Err(SkeletonError::SymbolUnimplemented(_)) => return None,
                     Err(SkeletonError::SkeletonHasVariant) => return None,
                     Err(err) => panic!(
-                        "Unexpected skeleton error while parsing skeleton {:?} {}",
-                        skeleton_str, err
+                        "Unexpected skeleton error while parsing skeleton {skeleton_str:?} {err}"
                     ),
                 };
                 let pattern_str = patterns.get("other").expect("Other variant must exist");

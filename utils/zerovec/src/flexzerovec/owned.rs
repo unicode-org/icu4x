@@ -30,7 +30,7 @@ impl FlexZeroVecOwned {
 
     /// Obtains this [`FlexZeroVecOwned`] as a [`FlexZeroSlice`].
     pub fn as_slice(&self) -> &FlexZeroSlice {
-        let slice: &[u8] = &*self.0;
+        let slice: &[u8] = &self.0;
         unsafe {
             // safety: the slice is known to come from a valid parsed FlexZeroSlice
             FlexZeroSlice::from_byte_slice_unchecked(slice)
@@ -39,7 +39,7 @@ impl FlexZeroVecOwned {
 
     /// Mutably obtains this `FlexZeroVecOwned` as a [`FlexZeroSlice`].
     pub(crate) fn as_mut_slice(&mut self) -> &mut FlexZeroSlice {
-        let slice: &mut [u8] = &mut *self.0;
+        let slice: &mut [u8] = &mut self.0;
         unsafe {
             // safety: the slice is known to come from a valid parsed FlexZeroSlice
             FlexZeroSlice::from_byte_slice_mut_unchecked(slice)
@@ -255,42 +255,27 @@ mod test {
     use super::*;
 
     fn check_contents(fzv: &FlexZeroSlice, expected: &[usize]) {
-        assert_eq!(
-            fzv.len(),
-            expected.len(),
-            "len: {:?} != {:?}",
-            fzv,
-            expected
-        );
+        assert_eq!(fzv.len(), expected.len(), "len: {fzv:?} != {expected:?}");
         assert_eq!(
             fzv.is_empty(),
             expected.is_empty(),
-            "is_empty: {:?} != {:?}",
-            fzv,
-            expected
+            "is_empty: {fzv:?} != {expected:?}"
         );
         assert_eq!(
             fzv.first(),
             expected.first().copied(),
-            "first: {:?} != {:?}",
-            fzv,
-            expected
+            "first: {fzv:?} != {expected:?}"
         );
         assert_eq!(
             fzv.last(),
             expected.last().copied(),
-            "last:  {:?} != {:?}",
-            fzv,
-            expected
+            "last:  {fzv:?} != {expected:?}"
         );
         for i in 0..(expected.len() + 1) {
             assert_eq!(
                 fzv.get(i),
                 expected.get(i).copied(),
-                "@{}: {:?} != {:?}",
-                i,
-                fzv,
-                expected
+                "@{i}: {fzv:?} != {expected:?}"
             );
         }
     }

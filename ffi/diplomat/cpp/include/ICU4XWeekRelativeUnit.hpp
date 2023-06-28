@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `RelativeUnit`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/enum.RelativeUnit.html) for more information.
+ * See the [Rust documentation for `RelativeUnit`](https://docs.rs/icu/latest/icu/calendar/week/enum.RelativeUnit.html) for more information.
  */
 enum struct ICU4XWeekRelativeUnit {
   Previous = 0,

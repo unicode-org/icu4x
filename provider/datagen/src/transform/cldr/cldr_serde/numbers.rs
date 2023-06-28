@@ -28,6 +28,63 @@ pub struct Symbols {
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct DecimalFormats {
     pub standard: String,
+    pub long: DecimalFormatLength,
+    pub short: DecimalFormatLength,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct DecimalFormatLength {
+    #[serde(rename = "decimalFormat")]
+    pub decimal_format: DecimalFormat,
+}
+
+#[derive(PartialEq, Debug, Default)]
+pub struct DecimalFormat {
+    pub patterns: Vec<CompactDecimalPattern>,
+}
+
+#[derive(PartialEq, Debug, Default)]
+pub struct CompactDecimalPattern {
+    pub compact_decimal_type: String,
+    pub compact_decimal_count: String,
+    pub pattern: String,
+}
+
+impl<'de> Deserialize<'de> for DecimalFormat {
+    fn deserialize<D>(deserializer: D) -> Result<DecimalFormat, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_map(DecimalFormatVisitor)
+    }
+}
+
+struct DecimalFormatVisitor;
+impl<'de> Visitor<'de> for DecimalFormatVisitor {
+    type Value = DecimalFormat;
+
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        formatter.write_str("a map from keys of the form 10*-count-(zero|one|few|many|other) to compact decimal patterns")
+    }
+
+    fn visit_map<M>(self, mut access: M) -> Result<Self::Value, M::Error>
+    where
+        M: MapAccess<'de>,
+    {
+        let mut result = DecimalFormat::default();
+        while let Some(key) = access.next_key::<String>()? {
+            let (compact_decimal_type, compact_decimal_count) =
+                key.split("-count-").next_tuple().ok_or_else(|| {
+                    M::Error::invalid_value(Unexpected::Str(&key), &"key to contain -count-")
+                })?;
+            result.patterns.push(CompactDecimalPattern {
+                compact_decimal_type: compact_decimal_type.to_string(),
+                compact_decimal_count: compact_decimal_count.to_string(),
+                pattern: access.next_value()?,
+            })
+        }
+        Ok(result)
+    }
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

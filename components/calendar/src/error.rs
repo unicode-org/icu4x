@@ -10,7 +10,7 @@ use writeable::Writeable;
 #[cfg(feature = "std")]
 impl std::error::Error for CalendarError {}
 
-/// A list of error outcomes for various operations in the `icu_calendar` crate.
+/// A list of error outcomes for various operations in this module.
 ///
 /// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
@@ -56,6 +56,18 @@ pub enum CalendarError {
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
     Data(DataError),
+}
+
+/// A list of error outcomes for exceeding location bounds
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
+pub enum LocationError {
+    /// Latitude value was out of bounds
+    #[displaydoc("Latitude {0} outside bounds of -90 to 90")]
+    LatitudeOutOfBounds(f64),
+
+    /// Longitude value was out of bounds
+    #[displaydoc("Longitude {0} outside bounds of -180 to 180")]
+    LongitudeOutOfBounds(f64),
 }
 
 impl From<core::num::ParseIntError> for CalendarError {

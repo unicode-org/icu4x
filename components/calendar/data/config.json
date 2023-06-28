@@ -1,0 +1,26 @@
+{
+    "keys": {
+        "Explicit": [
+            "calendar/japanese@1",
+            "calendar/japanext@1",
+            "datetime/week_data@1"
+        ]
+    },
+    "locales": {
+        "CldrSet": [
+            "modern"
+        ]
+    },
+    "cldr": "Latest",
+    "icu_export": "Latest",
+    "segmenter_lstm": "Latest",
+    "export": {
+        "Baked": {
+            "output_path": "data",
+            "use_separate_crates": true,
+            "pretty": true
+        }
+    },
+    "fallback": "Runtime",
+    "overwrite": true
+}

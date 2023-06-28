@@ -23,10 +23,7 @@
 //!                     ]; //
 //!
 //!
-//! let data = maps::load_bidi_class(&icu_testdata::unstable()).expect("The data should be valid");
-//! let bc = data.as_borrowed();
-//!
-//! let adapter = BidiClassAdapter::new(bc);
+//! let adapter = BidiClassAdapter::new(maps::bidi_class());
 //! // Resolve embedding levels within the text.  Pass `None` to detect the
 //! // paragraph level automatically.
 //!
@@ -69,13 +66,11 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// use unicode_bidi::BidiDataSource;
 ///
-/// let data = maps::load_bidi_class(&icu_testdata::unstable())
-///     .expect("The data should be valid");
-///
-/// let adapter = BidiClassAdapter::new(data.as_borrowed());
+/// let adapter = BidiClassAdapter::new(maps::bidi_class());
 /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
 /// assert_eq!(adapter.bidi_class('ع'), DataSourceBidiClass::AL);
 /// ```
+#[derive(Debug)]
 pub struct BidiClassAdapter<'a> {
     data: CodePointMapDataBorrowed<'a, BidiClass>,
 }
@@ -99,10 +94,7 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     /// use unicode_bidi::BidiClass as DataSourceBidiClass;
     /// use unicode_bidi::BidiDataSource;
     ///
-    /// let data = maps::load_bidi_class(&icu_testdata::unstable())
-    ///     .expect("The data should be valid");
-    ///
-    /// let adapter = BidiClassAdapter::new(data.as_borrowed());
+    /// let adapter = BidiClassAdapter::new(maps::bidi_class());
     /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
     /// ```
     ///

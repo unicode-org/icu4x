@@ -91,6 +91,40 @@ where
     pub fn get_indexed(&self, index: usize) -> Option<(&K, &V)> {
         self.values.lm_get(index)
     }
+
+    /// Get the lowest-rank key/value pair from the `LiteMap`, if it exists.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map: LiteMap<i32, &str, Vec<_>> =
+    ///     LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
+    ///
+    /// assert_eq!(map.first(), Some((&1, &"uno")));
+    /// ```
+    #[inline]
+    pub fn first(&self) -> Option<(&K, &V)> {
+        self.values.lm_get(0).map(|(k, v)| (k, v))
+    }
+
+    /// Get the highest-rank key/value pair from the `LiteMap`, if it exists.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map: LiteMap<i32, &str, Vec<_>> =
+    ///     LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
+    ///
+    /// assert_eq!(map.last(), Some((&3, &"tres")));
+    /// ```
+    #[inline]
+    pub fn last(&self) -> Option<(&K, &V)> {
+        self.values.lm_get(self.len() - 1).map(|(k, v)| (k, v))
+    }
 }
 
 impl<K: ?Sized, V: ?Sized, S> LiteMap<K, V, S>
@@ -144,42 +178,6 @@ where
         Q: Ord,
     {
         self.find_index(key).is_ok()
-    }
-
-    /// Get the lowest-rank key/value pair from the `LiteMap`, if it exists.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use litemap::LiteMap;
-    ///
-    /// let mut map = LiteMap::new_vec();
-    /// assert!(map.try_append(1, "uno").is_none());
-    /// assert!(map.try_append(3, "tres").is_none());
-    ///
-    /// assert_eq!(map.first(), Some((&1, &"uno")));
-    /// ```
-    #[inline]
-    pub fn first(&self) -> Option<(&K, &V)> {
-        self.values.lm_get(0).map(|(k, v)| (k, v))
-    }
-
-    /// Get the highest-rank key/value pair from the `LiteMap`, if it exists.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use litemap::LiteMap;
-    ///
-    /// let mut map = LiteMap::new_vec();
-    /// assert!(map.try_append(1, "uno").is_none());
-    /// assert!(map.try_append(3, "tres").is_none());
-    ///
-    /// assert_eq!(map.last(), Some((&3, &"tres")));
-    /// ```
-    #[inline]
-    pub fn last(&self) -> Option<(&K, &V)> {
-        self.values.lm_get(self.len() - 1).map(|(k, v)| (k, v))
     }
 
     /// Obtain the index for a given key, or if the key is not found, the index
@@ -500,22 +498,11 @@ where
 impl<K, V, S> FromIterator<(K, V)> for LiteMap<K, V, S>
 where
     K: Ord,
-    S: StoreMut<K, V>,
+    S: StoreFromIterable<K, V>,
 {
     fn from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
-        let iter = iter.into_iter();
-        let mut map = match iter.size_hint() {
-            (_, Some(upper)) => Self::with_capacity(upper),
-            (lower, None) => Self::with_capacity(lower),
-        };
-
-        for (key, value) in iter {
-            if let Some((key, value)) = map.try_append(key, value) {
-                map.insert(key, value);
-            }
-        }
-
-        map
+        let values = S::lm_sort_from_iter(iter);
+        Self::from_sorted_store_unchecked(values)
     }
 }
 
@@ -584,9 +571,228 @@ where
     }
 }
 
+impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
+    /// Const version of [`LiteMap::len()`] for a slice store.
+    ///
+    /// Note: This function will no longer be needed if const trait behavior is stabilized.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    ///     ("a", 11),
+    ///     ("b", 22),
+    /// ]);
+    /// static len: usize = map.const_len();
+    /// assert_eq!(len, 2);
+    /// ```
+    #[inline]
+    pub const fn const_len(&self) -> usize {
+        self.values.len()
+    }
+
+    /// Const version of [`LiteMap::is_empty()`] for a slice store.
+    ///
+    /// Note: This function will no longer be needed if const trait behavior is stabilized.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[]);
+    /// static is_empty: bool = map.const_is_empty();
+    /// assert!(is_empty);
+    /// ```
+    #[inline]
+    pub const fn const_is_empty(&self) -> bool {
+        self.values.is_empty()
+    }
+
+    /// Const version of [`LiteMap::get_indexed()`] for a slice store.
+    ///
+    /// Note: This function will no longer be needed if const trait behavior is stabilized.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the index is out of bounds.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    ///     ("a", 11),
+    ///     ("b", 22),
+    /// ]);
+    /// static t: &(&str, usize) = map.const_get_indexed_or_panic(0);
+    /// assert_eq!(t.0, "a");
+    /// assert_eq!(t.1, 11);
+    /// ```
+    #[inline]
+    #[allow(clippy::indexing_slicing)] // documented
+    pub const fn const_get_indexed_or_panic(&self, index: usize) -> &'a (K, V) {
+        &self.values[index]
+    }
+}
+
+const fn const_cmp_bytes(a: &[u8], b: &[u8]) -> Ordering {
+    let (max, default) = if a.len() == b.len() {
+        (a.len(), Ordering::Equal)
+    } else if a.len() < b.len() {
+        (a.len(), Ordering::Less)
+    } else {
+        (b.len(), Ordering::Greater)
+    };
+    let mut i = 0;
+    #[allow(clippy::indexing_slicing)] // indexes in range by above checks
+    while i < max {
+        if a[i] == b[i] {
+            i += 1;
+            continue;
+        } else if a[i] < b[i] {
+            return Ordering::Less;
+        } else {
+            return Ordering::Greater;
+        }
+    }
+    default
+}
+
+impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
+    /// Const function to get the value associated with a `&str` key, if it exists.
+    ///
+    /// Also returns the index of the value.
+    ///
+    /// Note: This function will no longer be needed if const trait behavior is stabilized.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    ///     ("abc", 11),
+    ///     ("bcd", 22),
+    ///     ("cde", 33),
+    ///     ("def", 44),
+    ///     ("efg", 55),
+    /// ]);
+    ///
+    /// static d: Option<(usize, &usize)> = map.const_get_with_index("def");
+    /// assert_eq!(d, Some((3, &44)));
+    ///
+    /// static n: Option<(usize, &usize)> = map.const_get_with_index("dng");
+    /// assert_eq!(n, None);
+    /// ```
+    pub const fn const_get_with_index(&self, key: &str) -> Option<(usize, &'a V)> {
+        let mut i = 0;
+        let mut j = self.const_len();
+        while i < j {
+            let mid = (i + j) / 2;
+            #[allow(clippy::indexing_slicing)] // in range
+            let x = &self.values[mid];
+            match const_cmp_bytes(key.as_bytes(), x.0.as_bytes()) {
+                Ordering::Equal => return Some((mid, &x.1)),
+                Ordering::Greater => i = mid + 1,
+                Ordering::Less => j = mid,
+            };
+        }
+        None
+    }
+}
+
+impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
+    /// Const function to get the value associated with a `&[u8]` key, if it exists.
+    ///
+    /// Also returns the index of the value.
+    ///
+    /// Note: This function will no longer be needed if const trait behavior is stabilized.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// static map: LiteMap<&[u8], usize, &[(&[u8], usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    ///     (b"abc", 11),
+    ///     (b"bcd", 22),
+    ///     (b"cde", 33),
+    ///     (b"def", 44),
+    ///     (b"efg", 55),
+    /// ]);
+    ///
+    /// static d: Option<(usize, &usize)> = map.const_get_with_index(b"def");
+    /// assert_eq!(d, Some((3, &44)));
+    ///
+    /// static n: Option<(usize, &usize)> = map.const_get_with_index(b"dng");
+    /// assert_eq!(n, None);
+    /// ```
+    pub const fn const_get_with_index(&self, key: &[u8]) -> Option<(usize, &'a V)> {
+        let mut i = 0;
+        let mut j = self.const_len();
+        while i < j {
+            let mid = (i + j) / 2;
+            #[allow(clippy::indexing_slicing)] // in range
+            let x = &self.values[mid];
+            match const_cmp_bytes(key, x.0) {
+                Ordering::Equal => return Some((mid, &x.1)),
+                Ordering::Greater => i = mid + 1,
+                Ordering::Less => j = mid,
+            };
+        }
+        None
+    }
+}
+
+macro_rules! impl_const_get_with_index_for_integer {
+    ($integer:ty) => {
+        impl<'a, V> LiteMap<$integer, V, &'a [($integer, V)]> {
+            /// Const function to get the value associated with an integer key, if it exists.
+            ///
+            /// Note: This function will no longer be needed if const trait behavior is stabilized.
+            ///
+            /// Also returns the index of the value.
+            pub const fn const_get_with_index(&self, key: $integer) -> Option<(usize, &'a V)> {
+                let mut i = 0;
+                let mut j = self.const_len();
+                while i < j {
+                    let mid = (i + j) / 2;
+                    #[allow(clippy::indexing_slicing)] // in range
+                    let x = &self.values[mid];
+                    if key == x.0 {
+                        return Some((mid, &x.1));
+                    } else if key > x.0 {
+                        i = mid + 1;
+                    } else {
+                        j = mid;
+                    }
+                }
+                return None;
+            }
+        }
+    };
+}
+
+impl_const_get_with_index_for_integer!(u8);
+impl_const_get_with_index_for_integer!(u16);
+impl_const_get_with_index_for_integer!(u32);
+impl_const_get_with_index_for_integer!(u64);
+impl_const_get_with_index_for_integer!(u128);
+impl_const_get_with_index_for_integer!(usize);
+impl_const_get_with_index_for_integer!(i8);
+impl_const_get_with_index_for_integer!(i16);
+impl_const_get_with_index_for_integer!(i32);
+impl_const_get_with_index_for_integer!(i64);
+impl_const_get_with_index_for_integer!(i128);
+impl_const_get_with_index_for_integer!(isize);
+
 #[cfg(test)]
 mod test {
-    use crate::LiteMap;
+    use super::*;
 
     #[test]
     fn from_iterator() {
@@ -609,7 +815,6 @@ mod test {
 
         assert_eq!(expected, actual);
     }
-
     fn make_13() -> LiteMap<usize, &'static str> {
         let mut result = LiteMap::new();
         result.insert(1, "one");
@@ -668,5 +873,17 @@ mod test {
             .ok_or(())
             .expect("Insert with conflict");
         assert_eq!(map.len(), 5);
+    }
+
+    #[test]
+    fn test_const_cmp_bytes() {
+        let strs = &["a", "aa", "abc", "abde", "bcd", "bcde"];
+        for i in 0..strs.len() {
+            for j in 0..strs.len() {
+                let a = strs[i].as_bytes();
+                let b = strs[j].as_bytes();
+                assert_eq!(a.cmp(b), const_cmp_bytes(a, b));
+            }
+        }
     }
 }

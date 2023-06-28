@@ -115,6 +115,25 @@ where
         })
     }
 
+    /// Transform this cursor into an ordered iterator over keys1 for a particular key0.
+    pub fn into_iter1(
+        self,
+    ) -> impl Iterator<
+        Item = (
+            &'l <K1 as ZeroMapKV<'a>>::GetType,
+            &'l <V as ZeroMapKV<'a>>::GetType,
+        ),
+    > {
+        let range = self.get_range();
+        #[allow(clippy::unwrap_used)] // `self.get_range()` returns a valid range
+        range.map(move |idx| {
+            (
+                self.keys1.zvl_get(idx).unwrap(),
+                self.values.zvl_get(idx).unwrap(),
+            )
+        })
+    }
+
     /// Given key0_index, returns the corresponding range of keys1, which will be valid
     pub(super) fn get_range(&self) -> Range<usize> {
         debug_assert!(self.key0_index < self.joiner.len());
@@ -155,7 +174,9 @@ where
     ///     ("a", 0u8, 1usize),
     ///     ("b", 1u8, 1000usize),
     ///     ("b", 2u8, 2000usize),
-    /// ].into_iter().collect();
+    /// ]
+    /// .into_iter()
+    /// .collect();
     ///
     /// let mut total_value = 0;
     ///

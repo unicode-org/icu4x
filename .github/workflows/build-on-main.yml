@@ -1,0 +1,61 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+##### README #####
+#
+# This CI action runs the release crates as downloaded from crates.io. It does not block PRs
+# and it is okay if it is flaky from time to time.
+
+name: Build Daily on Main
+
+on:
+  schedule:
+    # Run this CI every day at 12 UTC / 4AM PST / 1PM CET
+    - cron:  '0 12 * * *'
+
+jobs:
+  test-cargo-tutorial-cratesio:
+    name: "Test crates.io versions of ICU4X via the Cargo tutorials"
+    strategy:
+      matrix:
+        # TODO(#3109): Enable windows-latest.
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Attempt to load download cache
+      uses: actions/cache@v3
+      with:
+        key: download-cache
+        path: /tmp/icu4x
+
+    # Actual job
+    - name: Run `cargo make test-cargo-tutorial`
+      run: cargo make test-cargo-tutorial-cratesio

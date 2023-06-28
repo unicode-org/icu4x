@@ -39,6 +39,7 @@ pub enum StyleOption {
 /// .unwrap();
 /// std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
 /// ```
+#[derive(Debug)]
 pub struct Serializer {
     style: StyleOption,
 }

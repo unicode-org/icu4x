@@ -11,6 +11,7 @@ use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec};
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Deserialize)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
+#[derive(Debug)]
 pub(crate) enum BlobSchema<'data> {
     #[serde(borrow)]
     V001(BlobSchemaV1<'data>),
@@ -28,7 +29,7 @@ impl<'data> BlobSchema<'data> {
 }
 
 /// Version 1 of the ICU4X data blob schema.
-#[derive(Clone, Copy, serde::Deserialize, yoke::Yokeable)]
+#[derive(Clone, Copy, Debug, serde::Deserialize, yoke::Yokeable)]
 #[yoke(prove_covariance_manually)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
 pub(crate) struct BlobSchemaV1<'data> {
@@ -58,6 +59,9 @@ impl<'data> BlobSchemaV1<'data> {
             .get0(&key.hashed())
             .ok_or(DataErrorKind::MissingDataKey)
             .and_then(|cursor| {
+                if key.metadata().singleton && !req.locale.is_empty() {
+                    return Err(DataErrorKind::ExtraneousLocale);
+                }
                 cursor
                     .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
                     .ok_or(DataErrorKind::MissingLocale)
@@ -79,8 +83,8 @@ impl<'data> BlobSchemaV1<'data> {
         let mut seen_min = false;
         let mut seen_max = false;
         for cursor in self.keys.iter0() {
-            for (_, idx) in cursor.iter1_copied() {
-                debug_assert!(idx < self.buffers.len());
+            for (locale, idx) in cursor.iter1_copied() {
+                debug_assert!(idx < self.buffers.len() || locale == Index32U8::SENTINEL);
                 if idx == 0 {
                     seen_min = true;
                 }
@@ -104,8 +108,9 @@ impl<'data> BlobSchemaV1<'data> {
 /// define a Serialize implementation, and that would be gnarly)
 /// https://github.com/unicode-org/icu4x/issues/2310 tracks being able to do this with derive(ULE)
 #[zerovec::make_varule(Index32U8)]
+#[zerovec::derive(Debug)]
 #[zerovec::skip_derive(ZeroMapKV)]
-#[derive(Eq, PartialEq, Ord, PartialOrd, serde::Deserialize)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Debug, serde::Deserialize)]
 #[zerovec::derive(Deserialize)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
 #[cfg_attr(feature = "export", zerovec::derive(Serialize))]
@@ -118,4 +123,8 @@ impl<'a> ZeroMapKV<'a> for Index32U8 {
     type Slice = VarZeroSlice<Index32U8, Index32>;
     type GetType = Index32U8;
     type OwnedType = Box<Index32U8>;
+}
+
+impl Index32U8 {
+    pub(crate) const SENTINEL: &'static Self = unsafe { core::mem::transmute::<&[u8], _>(&[]) };
 }

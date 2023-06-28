@@ -11,8 +11,10 @@ use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
 use icu_locid::Locale;
-use icu_provider::AsDeserializingBufferProvider;
 use icu_timezone::CustomTimeZone;
+
+#[cfg(feature = "experimental")]
+use icu_provider::AsDeserializingBufferProvider;
 
 #[path = "../tests/mock.rs"]
 mod mock;
@@ -22,7 +24,7 @@ fn datetime_benches(c: &mut Criterion) {
 
     let mut bench_datetime_with_fixture = |name| {
         let fxs = fixtures::get_fixture(name).expect("Failed to get fixture.");
-        group.bench_function(&format!("datetime_{}", name), |b| {
+        group.bench_function(&format!("datetime_{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
                     let datetimes: Vec<DateTime<Gregorian>> = fx
@@ -58,8 +60,7 @@ fn datetime_benches(c: &mut Criterion) {
 
                         for dt in &datetimes {
                             let fdt = dtf.format(dt);
-                            write!(result, "{}", fdt)
-                                .expect("Failed to write to date time format.");
+                            write!(result, "{fdt}").expect("Failed to write to date time format.");
                             result.clear();
                         }
                     }
@@ -97,7 +98,7 @@ fn datetime_benches(c: &mut Criterion) {
 
                     for dt in &datetimes {
                         let fdt = dtf.format(&dt.0, &dt.1);
-                        write!(result, "{}", fdt).unwrap();
+                        write!(result, "{fdt}").unwrap();
                         result.clear();
                     }
                 }
@@ -194,7 +195,7 @@ fn datetime_benches(c: &mut Criterion) {
 
                         for dt in &datetimes {
                             let fdt = dtf.format(dt);
-                            write!(result, "{}", fdt).unwrap();
+                            write!(result, "{fdt}").unwrap();
                             result.clear();
                         }
                     }
@@ -342,7 +343,7 @@ fn datetime_benches(c: &mut Criterion) {
 
                         for dt in &datetimes {
                             let fdt = dtf.format(&dt.0, &dt.1);
-                            write!(result, "{}", fdt).unwrap();
+                            write!(result, "{fdt}").unwrap();
                             result.clear();
                         }
                     }

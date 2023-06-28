@@ -12,7 +12,6 @@ pub mod ffi {
     use writeable::Writeable;
 
     use crate::errors::ffi::ICU4XError;
-    use diplomat_runtime::DiplomatResult;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
@@ -37,10 +36,6 @@ pub mod ffi {
         Always,
         ExceptZero,
         Negative,
-    }
-
-    fn convert(dec: FixedDecimal) -> Box<ICU4XFixedDecimal> {
-        Box::new(ICU4XFixedDecimal(dec))
     }
 
     impl ICU4XFixedDecimal {
@@ -73,12 +68,11 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum)]
         pub fn create_from_f64_with_integer_precision(
             f: f64,
-        ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
             let precision = DoublePrecision::Integer;
-            FixedDecimal::try_from_f64(f, precision)
-                .map(convert)
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
+                f, precision,
+            )?)))
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
@@ -87,12 +81,11 @@ pub mod ffi {
         pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             magnitude: i16,
-        ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
             let precision = DoublePrecision::Magnitude(magnitude);
-            FixedDecimal::try_from_f64(f, precision)
-                .map(convert)
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
+                f, precision,
+            )?)))
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
@@ -101,12 +94,11 @@ pub mod ffi {
         pub fn create_from_f64_with_significant_digits(
             f: f64,
             digits: u8,
-        ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
             let precision = DoublePrecision::SignificantDigits(digits);
-            FixedDecimal::try_from_f64(f, precision)
-                .map(convert)
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
+                f, precision,
+            )?)))
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
@@ -115,22 +107,18 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum)]
         pub fn create_from_f64_with_floating_precision(
             f: f64,
-        ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
             let precision = DoublePrecision::Floating;
-            FixedDecimal::try_from_f64(f, precision)
-                .map(convert)
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
+                f, precision,
+            )?)))
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from a string.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::from_str, FnInStruct)]
-        pub fn create_from_string(v: &str) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
+        pub fn create_from_string(v: &str) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
             let v = v.as_bytes(); // #2520
-            FixedDecimal::try_from(v)
-                .map(convert)
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from(v)?)))
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::digit_at, FnInStruct)]
@@ -283,16 +271,11 @@ pub mod ffi {
         /// If not successful, `other` will be unchanged and an error is returned.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::concatenate_end, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::concatenated_end, FnInStruct, hidden)]
-        pub fn concatenate_end(&mut self, other: &mut ICU4XFixedDecimal) -> DiplomatResult<(), ()> {
+        pub fn concatenate_end(&mut self, other: &mut ICU4XFixedDecimal) -> Result<(), ()> {
             let x = core::mem::take(&mut other.0);
-            match self.0.concatenate_end(x) {
-                Ok(()) => Ok(()),
-                Err(y) => {
-                    other.0 = y;
-                    Err(())
-                }
-            }
-            .into()
+            self.0.concatenate_end(x).map_err(|y| {
+                other.0 = y;
+            })
         }
 
         /// Format the [`ICU4XFixedDecimal`] as a string.

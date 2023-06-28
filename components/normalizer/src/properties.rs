@@ -42,8 +42,16 @@ use icu_provider::prelude::*;
 /// However, this API is provided for callers such as HarfBuzz that specifically
 /// want access to the raw canonical composition operation e.g. for use in a
 /// glyph-availability-guided custom normalizer.
+#[derive(Debug)]
 pub struct CanonicalComposition {
     canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,
+}
+
+#[cfg(feature = "data")]
+impl Default for CanonicalComposition {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl CanonicalComposition {
@@ -51,19 +59,10 @@ impl CanonicalComposition {
     /// characters or returns `None` if these characters don't compose.
     /// Composition exclusions are taken into account.
     ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
-    ///
     /// # Examples
     ///
     /// ```
-    /// let comp =
-    ///     icu_normalizer::properties::CanonicalComposition::try_new_unstable(
-    ///         &icu_testdata::unstable(),
-    ///     )
-    ///     .unwrap();
+    /// let comp = icu_normalizer::properties::CanonicalComposition::new();
     ///
     /// assert_eq!(comp.compose('a', 'b'), None); // Just two non-composing starters
     /// assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
@@ -85,7 +84,28 @@ impl CanonicalComposition {
         )
     }
 
-    /// Construct from data provider.
+    /// Constructs a new `CanonicalComposition`.
+    #[cfg(feature = "data")]
+    pub fn new() -> Self {
+        Self {
+            canonical_compositions: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
+            ),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: NormalizerError,
+        #[cfg(skip)]
+        functions: [
+            new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
@@ -96,8 +116,6 @@ impl CanonicalComposition {
             canonical_compositions,
         })
     }
-
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);
 }
 
 /// The outcome of non-recursive canonical decomposition of a character.
@@ -118,6 +136,7 @@ pub enum Decomposed {
 /// However, this API is provided for callers such as HarfBuzz that specifically
 /// want access to non-recursive canonical decomposition e.g. for use in a
 /// glyph-availability-guided custom normalizer.
+#[derive(Debug)]
 pub struct CanonicalDecomposition {
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
@@ -129,7 +148,7 @@ impl CanonicalDecomposition {
     ///
     /// ```
     ///     use icu_normalizer::properties::Decomposed;
-    ///     let decomp = icu_normalizer::properties::CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    ///     let decomp = icu_normalizer::properties::CanonicalDecomposition::new();
     ///
     ///     assert_eq!(decomp.decompose('e'), Decomposed::Default);
     ///     assert_eq!(
@@ -319,12 +338,45 @@ impl CanonicalDecomposition {
         Decomposed::Default
     }
 
-    /// Construct from data provider.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    /// Construct from built-in data.
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                .scalars16
+                .const_len()
+                + crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                    .scalars24
+                    .const_len()
+                <= 0xFFF,
+            "NormalizerError::FutureExtension"
+        );
+
+        Self {
+            decompositions: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            tables: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            non_recursive: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_DECOMP_V1,
+            ),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: NormalizerError,
+        #[cfg(skip)]
+        functions: [
+            new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -356,8 +408,6 @@ impl CanonicalDecomposition {
             non_recursive,
         })
     }
-
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);
 }
 
 /// Lookup of the Canonical_Combining_Class Unicode property.
@@ -368,10 +418,11 @@ impl CanonicalDecomposition {
 /// use icu_properties::CanonicalCombiningClass;
 /// use icu_normalizer::properties::CanonicalCombiningClassMap;
 ///
-/// let map = CanonicalCombiningClassMap::try_new_unstable(&icu_testdata::unstable()).unwrap();
+/// let map = CanonicalCombiningClassMap::new();
 /// assert_eq!(map.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
 /// assert_eq!(map.get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
 /// ```
+#[derive(Debug)]
 pub struct CanonicalCombiningClassMap {
     /// The data trie
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
@@ -401,12 +452,27 @@ impl CanonicalCombiningClassMap {
         }
     }
 
-    /// Construct from data provider.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    /// Construct from built-in data.
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        CanonicalCombiningClassMap {
+            decompositions: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: NormalizerError,
+        #[cfg(skip)]
+        functions: [
+            new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+    ]);
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,
@@ -415,6 +481,4 @@ impl CanonicalCombiningClassMap {
             data_provider.load(Default::default())?.take_payload()?;
         Ok(CanonicalCombiningClassMap { decompositions })
     }
-
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);
 }

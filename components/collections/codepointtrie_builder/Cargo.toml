@@ -5,11 +5,13 @@
 [package]
 name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
-version = "0.3.3"
+version = "0.3.5"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -24,14 +26,29 @@ include = [
     "list_to_ucptrie.wasm"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
+[features]
+# Use the wasm builder
+default = ["wasm"]
+wasm = ["wasmer", "wasmer-wasi"]
+# Use the ICU4C builder
+# needs the ICU4C_LIB_PATH variable set and pointing to an ICU4C lib folder
+# containing dylibs. If you want to use staticlibs, set ICU4C_LINK_STATICALLY.
+# Will be silently disabled if the wasm feature is enabled
+icu4c = ["zerovec"]
+
 [dependencies]
-icu_collections = { version = "1.0.0", path = "..", features = ["serde"] }
-lazy_static = { version = "1.4.0" }
+icu_collections = { version = "1.2.0", path = "..", features = ["serde"] }
+zerovec = { version = "0.9.4", path = "../../../utils/zerovec", optional = true }
+lazy_static = "1.4.0"
 toml = "0.5"
 
 [dependencies.wasmer]
 version = "2.2.1"
 default-features = false
+optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
@@ -44,6 +61,7 @@ features = [
 [dependencies.wasmer-wasi]
 version = "2.2.1"
 default-features = false
+optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
@@ -53,3 +71,8 @@ features = [
 
 [dev-dependencies]
 icu = { path = "../../icu" }
+
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+# these need env vars. They still get `cargo check'd` when doing `--all-features`
+denylist = ["icu4c"]

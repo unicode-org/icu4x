@@ -37,6 +37,7 @@ macro_rules! implement {
     ($marker:ident) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: Some(DataPayload::from_owned(PluralRulesV1::from(
@@ -51,14 +52,15 @@ macro_rules! implement {
 
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self
-                    .get_rules_for(<$marker>::KEY)?
-                    .0
-                    .keys()
-                    // TODO(#568): Avoid the clone
-                    .cloned()
-                    .map(DataLocale::from)
-                    .collect())
+                Ok(self.source.options.locales.filter_by_langid_equality(
+                    self.get_rules_for(<$marker>::KEY)?
+                        .0
+                        .keys()
+                        // TODO(#568): Avoid the clone
+                        .cloned()
+                        .map(DataLocale::from)
+                        .collect(),
+                ))
             }
         }
     };

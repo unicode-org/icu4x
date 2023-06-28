@@ -29,7 +29,7 @@
 //! ```
 //!
 //! When the user provides a number for which the [`PluralCategory`] is to be selected,
-//! the system will examin a rule for each category in order, and stop on the first
+//! the system will examine a rule for each category in order, and stop on the first
 //! category which matches.
 //!
 //! In our example, the user provided an input value `1`.

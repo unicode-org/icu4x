@@ -42,7 +42,7 @@ const MAX_SKELETON_FIELDS: u32 = 10;
 
 // > 2. For fields with symbols representing the same type (year, month, day, etc):
 // >   A. Most symbols have a small distance from each other.
-// >     - Months: M ≅ L           (9 ≅ 9)  conjuction, vs stand-alone
+// >     - Months: M ≅ L           (9 ≅ 9)  conjunction, vs stand-alone
 // >       Week:   E ≅ c           (Tue ≅ 2)
 // >       Period: a ≅ b ≅ B       (am. ≅ mid. ≅ at night)
 // >       Hour:   H ≅ k ≅ h ≅ K   (23, 24, 12, 11)
@@ -93,7 +93,7 @@ fn naively_apply_time_zone_name(
     pattern: &mut runtime::Pattern,
     time_zone_name: &Option<components::TimeZoneName>,
 ) {
-    // If there is a preference overiding the hour cycle, apply it now.
+    // If there is a preference overriding the hour cycle, apply it now.
     if let Some(time_zone_name) = time_zone_name {
         runtime::helpers::maybe_replace_first(pattern, |item| {
             if let PatternItem::Field(fields::Field {
@@ -326,7 +326,7 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
 /// skeleton included seconds but not fractional seconds, then the seconds field of the corresponding
 /// pattern should be adjusted by appending the locale’s decimal separator, followed by the sequence
 /// of ‘S’ characters from the requested skeleton.
-/// (see https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons)
+/// (see <https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons>)
 fn append_fractional_seconds(pattern: &mut runtime::Pattern, fields: &[Field]) {
     if let Some(requested_field) = fields
         .iter()

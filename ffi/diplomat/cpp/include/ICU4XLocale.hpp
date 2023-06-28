@@ -27,7 +27,7 @@ struct ICU4XLocaleDeleter {
 /**
  * An ICU4X Locale, capable of representing strings like `"en-US"`.
  * 
- * See the [Rust documentation for `Locale`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+ * See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
  */
 class ICU4XLocale {
  public:
@@ -35,31 +35,25 @@ class ICU4XLocale {
   /**
    * Construct an [`ICU4XLocale`] from an locale identifier.
    * 
-   * See the [Rust documentation for `try_from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+   * This will run the complete locale parsing algorithm. If code size and
+   * performance are critical and the locale is of a known shape (such as
+   * `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
+   * 
+   * See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
    */
   static diplomat::result<ICU4XLocale, ICU4XError> create_from_string(const std::string_view name);
 
   /**
-   * Construct an [`ICU4XLocale`] for the English language.
-   */
-  static ICU4XLocale create_en();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the Bangla language.
-   */
-  static ICU4XLocale create_bn();
-
-  /**
    * Construct a default undefined [`ICU4XLocale`] "und".
    * 
-   * See the [Rust documentation for `UND`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
+   * See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
    */
   static ICU4XLocale create_und();
 
   /**
    * Clones the [`ICU4XLocale`].
    * 
-   * See the [Rust documentation for `Locale`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+   * See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
    */
   ICU4XLocale clone() const;
 
@@ -67,7 +61,7 @@ class ICU4XLocale {
    * Write a string representation of the `LanguageIdentifier` part of
    * [`ICU4XLocale`] to `write`.
    * 
-   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> basename_to_writeable(W& write) const;
 
@@ -75,84 +69,84 @@ class ICU4XLocale {
    * Write a string representation of the `LanguageIdentifier` part of
    * [`ICU4XLocale`] to `write`.
    * 
-   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XError> basename() const;
 
   /**
    * Write a string representation of the unicode extension to `write`
    * 
-   * See the [Rust documentation for `extensions`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
+   * See the [Rust documentation for `extensions`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.extensions) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> get_unicode_extension_to_writeable(const std::string_view bytes, W& write) const;
 
   /**
    * Write a string representation of the unicode extension to `write`
    * 
-   * See the [Rust documentation for `extensions`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
+   * See the [Rust documentation for `extensions`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.extensions) for more information.
    */
   diplomat::result<std::string, ICU4XError> get_unicode_extension(const std::string_view bytes) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] language to `write`
    * 
-   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> language_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] language to `write`
    * 
-   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XError> language() const;
 
   /**
    * Set the language part of the [`ICU4XLocale`].
    * 
-   * See the [Rust documentation for `try_from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+   * See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XError> set_language(const std::string_view bytes);
 
   /**
    * Write a string representation of [`ICU4XLocale`] region to `write`
    * 
-   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> region_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] region to `write`
    * 
-   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XError> region() const;
 
   /**
    * Set the region part of the [`ICU4XLocale`].
    * 
-   * See the [Rust documentation for `try_from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+   * See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XError> set_region(const std::string_view bytes);
 
   /**
    * Write a string representation of [`ICU4XLocale`] script to `write`
    * 
-   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> script_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] script to `write`
    * 
-   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XError> script() const;
 
   /**
    * Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
    * 
-   * See the [Rust documentation for `try_from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+   * See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XError> set_script(const std::string_view bytes);
 
@@ -161,7 +155,7 @@ class ICU4XLocale {
    * 
    * Use ICU4XLocaleCanonicalizer for better control and functionality
    * 
-   * See the [Rust documentation for `canonicalize`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.canonicalize) for more information.
+   * See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.canonicalize) for more information.
    */
   template<typename W> static diplomat::result<std::monostate, ICU4XError> canonicalize_to_writeable(const std::string_view bytes, W& write);
 
@@ -170,37 +164,53 @@ class ICU4XLocale {
    * 
    * Use ICU4XLocaleCanonicalizer for better control and functionality
    * 
-   * See the [Rust documentation for `canonicalize`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.canonicalize) for more information.
+   * See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.canonicalize) for more information.
    */
   static diplomat::result<std::string, ICU4XError> canonicalize(const std::string_view bytes);
 
   /**
    * Write a string representation of [`ICU4XLocale`] to `write`
    * 
-   * See the [Rust documentation for `write_to`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to) for more information.
+   * See the [Rust documentation for `write_to`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.write_to) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> to_string_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] to `write`
    * 
-   * See the [Rust documentation for `write_to`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to) for more information.
+   * See the [Rust documentation for `write_to`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.write_to) for more information.
    */
   diplomat::result<std::string, ICU4XError> to_string() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `normalizing_eq`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.normalizing_eq) for more information.
+   * See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.normalizing_eq) for more information.
    */
   bool normalizing_eq(const std::string_view other) const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `strict_cmp`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
+   * See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
    */
   ICU4XOrdering strict_cmp(const std::string_view other) const;
+
+  /**
+   * Construct an [`ICU4XLocale`] for the English language.
+   * 
+   * This convenience constructor is intended for testing only
+   * and requires the `provider_test` feature.
+   */
+  static ICU4XLocale create_en();
+
+  /**
+   * Construct an [`ICU4XLocale`] for the Bangla language.
+   * 
+   * This convenience constructor is intended for testing only
+   * and requires the `provider_test` feature.
+   */
+  static ICU4XLocale create_bn();
   inline const capi::ICU4XLocale* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocale* AsFFIMut() { return this->inner.get(); }
   inline ICU4XLocale(capi::ICU4XLocale* i) : inner(i) {}
@@ -221,12 +231,6 @@ inline diplomat::result<ICU4XLocale, ICU4XError> ICU4XLocale::create_from_string
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
-}
-inline ICU4XLocale ICU4XLocale::create_en() {
-  return ICU4XLocale(capi::ICU4XLocale_create_en());
-}
-inline ICU4XLocale ICU4XLocale::create_bn() {
-  return ICU4XLocale(capi::ICU4XLocale_create_bn());
 }
 inline ICU4XLocale ICU4XLocale::create_und() {
   return ICU4XLocale(capi::ICU4XLocale_create_und());
@@ -430,5 +434,11 @@ inline bool ICU4XLocale::normalizing_eq(const std::string_view other) const {
 }
 inline ICU4XOrdering ICU4XLocale::strict_cmp(const std::string_view other) const {
   return static_cast<ICU4XOrdering>(capi::ICU4XLocale_strict_cmp(this->inner.get(), other.data(), other.size()));
+}
+inline ICU4XLocale ICU4XLocale::create_en() {
+  return ICU4XLocale(capi::ICU4XLocale_create_en());
+}
+inline ICU4XLocale ICU4XLocale::create_bn() {
+  return ICU4XLocale(capi::ICU4XLocale_create_bn());
 }
 #endif

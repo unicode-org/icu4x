@@ -1,7 +1,7 @@
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/list/enum.ListLength.html Rust documentation for `ListLength`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/list/enum.ListLength.html Rust documentation for `ListLength`} for more information.
  */
 export enum ICU4XListLength {
   /**

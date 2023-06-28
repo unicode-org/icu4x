@@ -5,20 +5,41 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-//! Data provider struct definitions for this ICU4X component.
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
 
 use core::str::FromStr;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
+#[cfg(feature = "data")]
+pub(crate) struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_timezone;
+    icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
+};
+
 /// TimeZone ID in BCP47 format
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
 
@@ -63,9 +84,15 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 }
 
 /// Metazone ID in a compact format
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MetazoneId(pub TinyAsciiStr<4>);
 
@@ -111,7 +138,17 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
 
 /// An ICU4X mapping to the metazones at a given period.
 /// See CLDR-JSON metaZones.json for more context.
-#[icu_provider::data_struct(MetazonePeriodV1Marker = "time_zone/metazone_period@1")]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(
+    MetazonePeriodV1Marker,
+    "time_zone/metazone_period@1",
+    singleton
+))]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",

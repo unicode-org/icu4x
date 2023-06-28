@@ -161,8 +161,8 @@ impl FromStr for PluralOperands {
 
             let dec_str_no_zeros = dec_str.trim_end_matches('0');
 
-            let num_fraction_digits0 = dec_str.len() as usize;
-            let num_fraction_digits = dec_str_no_zeros.len() as usize;
+            let num_fraction_digits0 = dec_str.len();
+            let num_fraction_digits = dec_str_no_zeros.len();
 
             let fraction_digits0 = u64::from_str(dec_str)?;
             let fraction_digits =

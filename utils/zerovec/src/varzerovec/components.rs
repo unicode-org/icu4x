@@ -53,7 +53,7 @@ pub unsafe trait VarZeroVecFormat: 'static + Sized {
 /// Will have a smaller data size, but it's more likely for larger arrays
 /// to be unrepresentable (and error on construction)
 ///
-/// This is the default index size used by all [`VarZeroVec`](super::VarZeroVec) tyoes.
+/// This is the default index size used by all [`VarZeroVec`](super::VarZeroVec) types.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct Index16;
@@ -85,7 +85,7 @@ unsafe impl VarZeroVecFormat for Index16 {
 
 unsafe impl VarZeroVecFormat for Index32 {
     const INDEX_WIDTH: usize = 4;
-    const MAX_VALUE: u32 = u32::MAX as u32;
+    const MAX_VALUE: u32 = u32::MAX;
     type RawBytes = RawBytesULE<4>;
     #[inline]
     fn rawbytes_to_usize(raw: Self::RawBytes) -> usize {
@@ -110,6 +110,7 @@ unsafe impl VarZeroVecFormat for Index32 {
 /// exist.
 ///
 /// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
+#[derive(Debug)]
 pub struct VarZeroVecComponents<'a, T: ?Sized, F> {
     /// The number of elements
     len: u32,
@@ -197,7 +198,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecComponents {
-            len: len as u32,
+            len,
             indices: indices_bytes,
             things,
             entire_slice: slice,
@@ -368,7 +369,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                     .copied()
                     .map(F::rawbytes_to_usize)
                     .skip(1)
-                    .chain(core::iter::once(self.things.len())),
+                    .chain([self.things.len()]),
             )
             .map(move |(start, end)| unsafe { self.things.get_unchecked(start..end) })
             .map(|bytes| unsafe { T::from_byte_slice_unchecked(bytes) })
@@ -392,7 +393,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .copied()
             .map(F::rawbytes_to_usize)
             .collect::<Vec<_>>();
-        format!("VarZeroVecComponents {{ indices: {:?} }}", indices)
+        format!("VarZeroVecComponents {{ indices: {indices:?} }}")
     }
 }
 

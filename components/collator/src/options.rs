@@ -29,8 +29,7 @@ pub enum Strength {
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Primary);
-    /// let collator = Collator::try_new_unstable(
-    ///     &icu_testdata::unstable(),
+    /// let collator = Collator::try_new(
     ///     &Default::default(),
     ///     options,
     /// )
@@ -48,8 +47,7 @@ pub enum Strength {
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Secondary);
-    /// let collator = Collator::try_new_unstable(
-    ///     &icu_testdata::unstable(),
+    /// let collator = Collator::try_new(
     ///     &Default::default(),
     ///     options,
     /// )
@@ -78,8 +76,7 @@ pub enum Strength {
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Tertiary);
     /// let collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &Default::default(),
+    ///   Collator::try_new(&Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("E", "e"),
     ///            core::cmp::Ordering::Greater);
@@ -96,8 +93,7 @@ pub enum Strength {
     ///
     /// let locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &locale.into(),
+    ///   Collator::try_new(&locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("E", "e"),
     ///            core::cmp::Ordering::Greater);
@@ -128,8 +124,7 @@ pub enum Strength {
     ///
     /// let ja_locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &ja_locale.into(),
+    ///   Collator::try_new(&ja_locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("あ", "ア"),
     ///            core::cmp::Ordering::Less);
@@ -141,8 +136,7 @@ pub enum Strength {
     /// // Even this level doesn't distinguish everything,
     /// // e.g. Hebrew cantillation marks are still ignored.
     /// let collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &Default::default(),
+    ///   Collator::try_new(&Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Equal);
@@ -167,8 +161,7 @@ pub enum Strength {
     ///
     /// let ja_locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &ja_locale.into(),
+    ///   Collator::try_new(&ja_locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("ア", "ｱ"),
     ///            core::cmp::Ordering::Less);
@@ -176,8 +169,7 @@ pub enum Strength {
     ///            core::cmp::Ordering::Less);
     ///
     /// let collator =
-    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
-    ///                     &Default::default(),
+    ///   Collator::try_new(&Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Less);
@@ -247,7 +239,7 @@ pub enum CaseLevel {
     On = 1,
 }
 
-/// When set to `On`, any sequence of decimal digits is sorted at a primary level accoding to the numeric value.
+/// When set to `On`, any sequence of decimal digits is sorted at a primary level according to the numeric value.
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
 #[repr(u8)]
 #[non_exhaustive]
@@ -316,13 +308,13 @@ pub enum BackwardSecondLevel {
 /// ## Numeric
 ///
 /// This is the BCP47 key `kn`. When set to `true` (on), any sequence of decimal
-/// digits (General_Category = Nd) is sorted at a primary level accoding to the
+/// digits (General_Category = Nd) is sorted at a primary level according to the
 /// numeric value. The default is `false` (off).
 ///
 /// # Unsupported BCP47 options
 ///
 /// Reordering (BCP47 `kr`) currently cannot be set via the API and is implied
-/// by the locale of the collation. `kr` is probihibited by ECMA 402.
+/// by the locale of the collation. `kr` is prohibited by ECMA 402.
 ///
 /// Normalization is always enabled and cannot be turned off. Therefore, there
 /// is no option corresponding to BCP47 `kk`. `kk` is prohibited by ECMA 402.
@@ -510,7 +502,7 @@ impl CollatorOptionsBitField {
         if let Some(case_level) = case_level {
             self.0 |= CollatorOptionsBitField::EXPLICIT_CASE_LEVEL_MASK;
             if case_level {
-                self.0 |= CollatorOptionsBitField::ALTERNATE_HANDLING_MASK;
+                self.0 |= CollatorOptionsBitField::CASE_LEVEL_MASK;
             }
         } else {
             self.0 &= !CollatorOptionsBitField::EXPLICIT_CASE_LEVEL_MASK;

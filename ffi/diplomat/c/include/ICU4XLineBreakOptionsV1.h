@@ -6,22 +6,22 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "ICU4XLineBreakRule.h"
-#include "ICU4XWordBreakRule.h"
+#include "ICU4XLineBreakStrictness.h"
+#include "ICU4XLineBreakWordOption.h"
 #ifdef __cplusplus
 namespace capi {
 #endif
 
 typedef struct ICU4XLineBreakOptionsV1 {
-    ICU4XLineBreakRule line_break_rule;
-    ICU4XWordBreakRule word_break_rule;
+    ICU4XLineBreakStrictness strictness;
+    ICU4XLineBreakWordOption word_option;
     bool ja_zh;
 } ICU4XLineBreakOptionsV1;
 #ifdef __cplusplus
 } // namespace capi
 #endif
-#include "ICU4XLineBreakRule.h"
-#include "ICU4XWordBreakRule.h"
+#include "ICU4XLineBreakStrictness.h"
+#include "ICU4XLineBreakWordOption.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {

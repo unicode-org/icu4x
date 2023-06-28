@@ -37,14 +37,6 @@ export class ICU4XLocale {
     return diplomat_out;
   }
 
-  static create_en() {
-    return new ICU4XLocale(wasm.ICU4XLocale_create_en(), true, []);
-  }
-
-  static create_bn() {
-    return new ICU4XLocale(wasm.ICU4XLocale_create_bn(), true, []);
-  }
-
   static create_und() {
     return new ICU4XLocale(wasm.ICU4XLocale_create_und(), true, []);
   }
@@ -264,5 +256,13 @@ export class ICU4XLocale {
     const diplomat_out = ICU4XOrdering_rust_to_js[wasm.ICU4XLocale_strict_cmp(this.underlying, buf_arg_other.ptr, buf_arg_other.size)];
     buf_arg_other.free();
     return diplomat_out;
+  }
+
+  static create_en() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_en(), true, []);
+  }
+
+  static create_bn() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_bn(), true, []);
   }
 }

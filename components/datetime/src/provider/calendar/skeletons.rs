@@ -7,7 +7,7 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::{yoke, zerofrom, DataKeyMetadata};
+use icu_provider::prelude::*;
 use litemap::LiteMap;
 
 // Manually implement DataMarker so that we can keep it in the proper experimental feature
@@ -19,7 +19,19 @@ use litemap::LiteMap;
 //
 /// Skeleton data for dates and times, along with the corresponding plural pattern
 /// information.
-#[derive(yoke::Yokeable, zerofrom::ZeroFrom, Debug, PartialEq, Clone, Default)]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(
+    DateSkeletonPatternsV1Marker,
+    "datetime/skeletons@1",
+    fallback_by = "language",
+    extension_key = "ca",
+))]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DateSkeletonPatternsV1<'data>(
@@ -28,31 +40,18 @@ pub struct DateSkeletonPatternsV1<'data>(
     pub LiteMap<SkeletonV1, PatternPlurals<'data>>,
 );
 
-/// Marker type for [`DateSkeletonPatternsV1`].
-#[cfg(feature = "experimental")]
-pub struct DateSkeletonPatternsV1Marker;
-#[cfg(feature = "experimental")]
-impl icu_provider::DataMarker for DateSkeletonPatternsV1Marker {
-    type Yokeable = DateSkeletonPatternsV1<'static>;
-}
-#[cfg(feature = "experimental")]
-impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
-    const KEY: icu_provider::DataKey = icu_provider::data_key!(
-        "datetime/skeletons@1",
-        DataKeyMetadata::construct_internal(
-            icu_provider::FallbackPriority::Language,
-            Some(icu_locid::extensions_unicode_key!("ca")),
-            None
-        )
-    );
-}
-
 /// This struct is a public wrapper around the internal `Skeleton` struct. This allows
 /// access to the serialization and deserialization capabilities, without exposing the
 /// internals of the skeleton machinery.
 ///
 /// The `Skeleton` is an "exotic type" in the serialization process, and handles its own
 /// custom serialization practices.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -79,51 +78,35 @@ impl TryFrom<&str> for SkeletonV1 {
 #[cfg(feature = "datagen")]
 impl databake::Bake for DateSkeletonPatternsV1<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        use zerofrom::ZeroFrom;
         env.insert("icu_datetime");
-        let vals = self.0.iter().map(|(skeleton, pattern)| {
-            let fields = skeleton.0 .0.iter().map(|f| f.bake(env));
-            let pattern = pattern.bake(env);
-            databake::quote! {
-                (&[#(#fields),*], #pattern)
-            }
-        });
-        databake::quote! {
-            [#(#vals),*]
-        }
+        databake::Bake::bake(
+            &self
+                .0
+                .iter()
+                .map(|(skeleton, pattern)| {
+                    (skeleton.0 .0.as_slice(), PatternPlurals::zero_from(pattern))
+                })
+                .collect::<Vec<_>>()
+                .as_slice(),
+            env,
+        )
     }
 }
 
-#[cfg(all(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 impl Default for DateSkeletonPatternsV1Marker {
     fn default() -> Self {
         Self
     }
 }
 
-#[cfg(all(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 impl databake::Bake for DateSkeletonPatternsV1Marker {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_datetime");
         databake::quote! {
-            ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
+            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
         }
-    }
-}
-
-type BakedDateSkeletonPatternsV1 = [(&'static [crate::fields::Field], PatternPlurals<'static>)];
-
-impl zerofrom::ZeroFrom<'static, BakedDateSkeletonPatternsV1> for DateSkeletonPatternsV1<'static> {
-    fn zero_from(other: &'static BakedDateSkeletonPatternsV1) -> Self {
-        Self(
-            other
-                .iter()
-                .map(|(fields, pattern)| {
-                    (
-                        SkeletonV1(Skeleton(fields.iter().cloned().collect())),
-                        zerofrom::ZeroFrom::zero_from(pattern),
-                    )
-                })
-                .collect(),
-        )
     }
 }

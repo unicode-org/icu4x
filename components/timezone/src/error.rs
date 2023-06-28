@@ -3,19 +3,19 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
-use icu_provider::prelude::DataError;
+use icu_provider::DataError;
 
 #[cfg(feature = "std")]
 impl std::error::Error for TimeZoneError {}
 
-/// A list of error outcomes for various operations in the `icu_timezone` crate.
+/// A list of error outcomes for various operations in this module.
 ///
 /// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum TimeZoneError {
     /// An input overflowed its range.
-    #[displaydoc("GmtOffset must be between (-12 × 60 × 60) - (14 × 60 × 60)")]
+    #[displaydoc("GmtOffset must be within ±18:00:00")]
     OffsetOutOfBounds,
     /// The time zone offset was invalid.
     #[displaydoc("Failed to parse time-zone offset")]

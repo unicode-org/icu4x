@@ -5,11 +5,13 @@
 [package]
 name = "icu_list"
 description = "ECMA-402 ListFormatter"
-version = "1.0.0"
+version = "1.2.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -20,37 +22,42 @@ include = [
     "tests/**/*",
     "Cargo.toml",
     "LICENSE",
-    "README.md"
+    "README.md",
 ]
+
+[package.metadata.docs.rs]
+all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_locid = { version = "1.0.0", path = "../../components/locid" }
-icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
-deduplicating_array = { version = "0.1", path = "../../utils/deduplicating_array", optional = true }
+icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
 regex-automata = { version = "0.2", default-features = false }
-writeable = { version = "0.5", path = "../../utils/writeable" }
-databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
+writeable = { version = "0.5.1", path = "../../utils/writeable" }
+
+databake = { version = "0.1.3", path = "../../utils/databake", optional = true, features = ["derive"]}
+deduplicating_array = { version = "0.1.3", path = "../../utils/deduplicating_array", optional = true }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+
+icu_list_data = { path = "data", optional = true }
+icu_locid_transform = { path = "../../components/locid_transform", features = ["data"], optional = true }
 
 [dev-dependencies]
-criterion = "0.3.3"
 serde_json = "1"
-postcard = { version = "1.0.0", features = ["use-std"] }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_list"] }
-icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
+postcard = { version = "1.0.0", features = ["use-std"], default-features = false }
 icu = { path = "../icu" }
-
-[lib]
-path = "src/lib.rs"
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 
 [features]
-std = ["icu_provider/std", "icu_locid/std", "regex-automata/std", "regex-automata/alloc"]
-serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "deduplicating_array"]
+std = ["icu_provider/std"]
+serde = ["dep:deduplicating_array", "dep:serde", "icu_provider/serde"]
 serde_human = ["serde", "regex-automata/alloc"]
-datagen = ["serde", "std", "databake"]
+datagen = ["serde", "std", "dep:databake", "regex-automata/alloc"]
 bench = []
+data = ["dep:icu_list_data", "dep:icu_locid_transform"]
+
+[package.metadata.cargo-all-features]
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [[example]]
 name = "and_list"

@@ -3,7 +3,7 @@ import { ICU4XWeekRelativeUnit } from "./ICU4XWeekRelativeUnit";
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekOf.html Rust documentation for `WeekOf`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html Rust documentation for `WeekOf`} for more information.
  */
 export class ICU4XWeekOf {
   week: u16;

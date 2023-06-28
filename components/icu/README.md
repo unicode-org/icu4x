@@ -71,31 +71,39 @@ assert_eq!(formatted_date_string, "12 de septiembre de 2020, 12:35:00");
 
 ## Features
 
-ICU4X components share a set of common features that control whether core pieces of
+ICU4X components share a set of common Cargo features that control whether core pieces of
 functionality are compiled. These features are:
 
-- `std`: Whether to include `std` support. Without this feature, `icu` is `#[no_std]`-compatible
+- `std`: Whether to include `std` support. Without this Cargo feature, `icu` is `#[no_std]`-compatible
 - `serde`: Whether to include `serde::Deserialize` implementations for data structs, such as [`SymbolsV1`],
-  and `serde::{Serialize, Deserialize}` implementations for core libary types, such as [`Locale`]. These are
+  and `serde::{Serialize, Deserialize}` implementations for core library types, such as [`Locale`]. These are
   required with `serde`-backed providers like [`BlobDataProvider`][^1].
 - `experimental`: Whether to enable experimental preview features. Modules enabled with
   this feature may not be production-ready and could change at any time.
 
-The following features are only available on the individual crates, but not on this meta-crate:
+The following Cargo features are only available on the individual crates, but not on this meta-crate:
+
 - `datagen`: Whether to implement `serde::Serialize` and functionality that is only required during data generation.
 - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
   when running `cargo bench`.
 
-[^1]: [`FsDataProvider`] also requires the `serde_human` feature if JSON is used, as that data is less
-      preprocessed.
+There are additional features that, when enabled on specific crates, enable functionality across ICU4X:
+
+- `icu_provider/sync`: makes [`DataPayload`] implement `Send + Sync`, which in turn
+  makes most ICU4X objects also implement `Send + Sync`.
+- `icu_provider/deserialize_*`: enables ICU4X buffer providers to read various different
+  serialization formats. See [`BufferProvider`](icu_provider::BufferProvider) for details.
+
+[^1]: If using blob data, you need to enable one of the deserialization Cargo features on the `icu_provider` crate, as noted above.
 
 
-[`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
-[`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
-[`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
-[`icu_testdata`]: ../icu_testdata/index.html
-[`icu_provider_adapters`]: ../icu_provider_adapters/index.html
-[`icu_datagen`]: ../icu_datagen/index.html
+[`DataProvider`]: icu_provider::DataProvider
+[`DataPayload`]: icu_provider::DataPayload
+[`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
+[`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
+[`icu_testdata`]: https://docs.rs/icu_testdata/latest/icu_testdata/
+[`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
+[`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 [`Locale`]: crate::locid::Locale
 [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 

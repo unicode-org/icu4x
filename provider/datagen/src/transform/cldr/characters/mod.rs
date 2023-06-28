@@ -12,6 +12,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 
+#[derive(Debug)]
 struct AnnotatedResource<'a, M: DataMarker>(
     &'a cldr_serde::exemplar_chars::Resource,
     PhantomData<M>,
@@ -21,6 +22,7 @@ macro_rules! exemplar_chars_impls {
     ($data_marker_name:ident, $cldr_serde_field_name:ident) => {
         impl DataProvider<$data_marker_name> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$data_marker_name>, DataError> {
+                self.check_req::<$data_marker_name>(req)?;
                 let langid = req.locale.get_langid();
 
                 let data: &cldr_serde::exemplar_chars::Resource = self
@@ -47,13 +49,14 @@ macro_rules! exemplar_chars_impls {
 
         impl IterableDataProvider<$data_marker_name> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self
-                    .source
-                    .cldr()?
-                    .misc()
-                    .list_langs()?
-                    .map(DataLocale::from)
-                    .collect())
+                Ok(self.source.options.locales.filter_by_langid_equality(
+                    self.source
+                        .cldr()?
+                        .misc()
+                        .list_langs()?
+                        .map(DataLocale::from)
+                        .collect(),
+                ))
             }
         }
 
@@ -180,7 +183,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
     // Also, workaround errant extra backslash escaping.
     // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser.
-    let ch_for_json = format!("x=\"{}\"", char_block);
+    let ch_for_json = format!("x=\"{char_block}\"");
 
     // Workaround for literal values like "\\-"" that cause problems for the TOML parser.
     // In such cases, remove the '\\' character preceding the non-Unicode-escape-sequence character.
@@ -200,7 +203,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     let ch_for_json = ch_vec.iter().collect::<String>();
 
     let ch_lite_t_val: toml::Value =
-        toml::from_str(&ch_for_json).unwrap_or_else(|_| panic!("{:?}", char_block));
+        toml::from_str(&ch_for_json).unwrap_or_else(|_| panic!("{char_block:?}"));
     let ch_lite = if let toml::Value::Table(t) = ch_lite_t_val {
         if let Some(toml::Value::String(s)) = t.get("x") {
             s.to_owned()

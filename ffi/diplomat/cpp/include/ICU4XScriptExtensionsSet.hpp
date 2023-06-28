@@ -24,7 +24,7 @@ struct ICU4XScriptExtensionsSetDeleter {
 /**
  * An object that represents the Script_Extensions property for a single character
  * 
- * See the [Rust documentation for `ScriptExtensionsSet`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
+ * See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
  */
 class ICU4XScriptExtensionsSet {
  public:
@@ -32,21 +32,21 @@ class ICU4XScriptExtensionsSet {
   /**
    * Check if the Script_Extensions property of the given code point covers the given script
    * 
-   * See the [Rust documentation for `contains`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
+   * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
    */
   bool contains(uint16_t script) const;
 
   /**
    * Get the number of scripts contained in here
    * 
-   * See the [Rust documentation for `iter`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
+   * See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
    */
   size_t count() const;
 
   /**
    * Get script at index, returning an error if out of bounds
    * 
-   * See the [Rust documentation for `iter`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
+   * See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
    */
   diplomat::result<uint16_t, std::monostate> script_at(size_t index) const;
   inline const capi::ICU4XScriptExtensionsSet* AsFFI() const { return this->inner.get(); }

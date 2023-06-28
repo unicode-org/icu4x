@@ -1669,30 +1669,25 @@ impl FixedDecimal {
         // magnitude invariants:
         debug_assert!(
             self.upper_magnitude >= self.magnitude,
-            "Upper magnitude too small {:?}",
-            self
+            "Upper magnitude too small {self:?}"
         );
         debug_assert!(
             self.lower_magnitude <= self.magnitude,
-            "Lower magnitude too large {:?}",
-            self
+            "Lower magnitude too large {self:?}"
         );
         debug_assert!(
             self.upper_magnitude >= 0,
-            "Upper magnitude below zero {:?}",
-            self
+            "Upper magnitude below zero {self:?}"
         );
         debug_assert!(
             self.lower_magnitude <= 0,
-            "Lower magnitude above zero {:?}",
-            self
+            "Lower magnitude above zero {self:?}",
         );
 
         // digits invariants:
         debug_assert!(
             self.digits.len() <= (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize,
-            "{:?}",
-            self
+            "{self:?}"
         );
         if !self.digits.is_empty() {
             debug_assert_ne!(self.digits[0], 0, "Starts with a zero {self:?}");
@@ -1737,8 +1732,8 @@ impl writeable::Writeable for FixedDecimal {
     fn writeable_length_hint(&self) -> writeable::LengthHint {
         writeable::LengthHint::exact(1)
             + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
-            + (if self.sign == Sign::None { 0 } else { 1 })
-            + (if self.lower_magnitude < 0 { 1 } else { 0 })
+            + (self.sign != Sign::None) as usize
+            + (self.lower_magnitude < 0) as usize
     }
 }
 
@@ -1798,7 +1793,9 @@ impl TryFrom<&[u8]> for FixedDecimal {
                 }
                 dot_index = i;
                 has_dot = true;
-                if i == 0 || i == no_sign_str.len() - 1 {
+                // We do support omitting the leading zero,
+                // but not trailing decimal points
+                if i == no_sign_str.len() - 1 {
                     return Err(Error::Syntax);
                 }
             } else if *c == b'e' || *c == b'E' {
@@ -1847,7 +1844,11 @@ impl TryFrom<&[u8]> for FixedDecimal {
         }
 
         // Computing DecimalFixed.upper_magnitude
-        let temp_upper_magnitude = dot_index - 1;
+        // We support strings like `0.x` and `.x`. The upper magnitude
+        // is always one less than the position of the dot, except in the case where
+        // the 0 is omitted; when dot_index = 0. We use saturating_sub to set
+        // magnitude to 0 in that case.
+        let temp_upper_magnitude = dot_index.saturating_sub(1);
         if temp_upper_magnitude > i16::MAX as usize {
             return Err(Error::Limit);
         }
@@ -1991,7 +1992,7 @@ impl FixedDecimal {
     /// implementations may yield higher performance; for more details, see
     /// [icu4x#166](https://github.com/unicode-org/icu4x/issues/166).
     ///
-    /// This function can be made available with the `"ryu"` feature.
+    /// This function can be made available with the `"ryu"` Cargo feature.
     ///
     /// ```rust
     /// use fixed_decimal::{DoublePrecision, FixedDecimal};
@@ -2370,89 +2371,127 @@ fn test_from_str() {
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
+        /// The output str, None for roundtrip
+        pub output_str: Option<&'static str>,
         /// [upper magnitude, upper nonzero magnitude, lower nonzero magnitude, lower magnitude]
         pub magnitudes: [i16; 4],
     }
     let cases = [
         TestCase {
             input_str: "-00123400",
+            output_str: None,
             magnitudes: [7, 5, 2, 0],
         },
         TestCase {
             input_str: "+00123400",
+            output_str: None,
             magnitudes: [7, 5, 2, 0],
         },
         TestCase {
             input_str: "0.0123400",
+            output_str: None,
             magnitudes: [0, -2, -5, -7],
         },
         TestCase {
             input_str: "-00.123400",
+            output_str: None,
             magnitudes: [1, -1, -4, -6],
         },
         TestCase {
             input_str: "0012.3400",
+            output_str: None,
             magnitudes: [3, 1, -2, -4],
         },
         TestCase {
             input_str: "-0012340.0",
+            output_str: None,
             magnitudes: [6, 4, 1, -1],
         },
         TestCase {
             input_str: "1234",
+            output_str: None,
             magnitudes: [3, 3, 0, 0],
         },
         TestCase {
             input_str: "0.000000001",
+            output_str: None,
             magnitudes: [0, -9, -9, -9],
         },
         TestCase {
             input_str: "0.0000000010",
+            output_str: None,
             magnitudes: [0, -9, -9, -10],
         },
         TestCase {
             input_str: "1000000",
+            output_str: None,
             magnitudes: [6, 6, 6, 0],
         },
         TestCase {
             input_str: "10000001",
+            output_str: None,
             magnitudes: [7, 7, 0, 0],
         },
         TestCase {
             input_str: "123",
+            output_str: None,
             magnitudes: [2, 2, 0, 0],
         },
         TestCase {
             input_str: "922337203685477580898230948203840239384.9823094820384023938423424",
+            output_str: None,
             magnitudes: [38, 38, -25, -25],
         },
         TestCase {
             input_str: "009223372000.003685477580898230948203840239384000",
+            output_str: None,
             magnitudes: [11, 9, -33, -36],
         },
         TestCase {
             input_str: "-009223372000.003685477580898230948203840239384000",
+            output_str: None,
             magnitudes: [11, 9, -33, -36],
         },
         TestCase {
             input_str: "0",
+            output_str: None,
             magnitudes: [0, 0, 0, 0],
         },
         TestCase {
             input_str: "-0",
+            output_str: None,
             magnitudes: [0, 0, 0, 0],
         },
         TestCase {
             input_str: "+0",
+            output_str: None,
             magnitudes: [0, 0, 0, 0],
         },
         TestCase {
             input_str: "000",
+            output_str: None,
             magnitudes: [2, 0, 0, 0],
         },
         TestCase {
             input_str: "-00.0",
+            output_str: None,
             magnitudes: [1, 0, 0, -1],
+        },
+        // no leading 0 parsing
+        TestCase {
+            input_str: ".0123400",
+            output_str: Some("0.0123400"),
+            magnitudes: [0, -2, -5, -7],
+        },
+        TestCase {
+            input_str: ".000000001",
+            output_str: Some("0.000000001"),
+            magnitudes: [0, -9, -9, -9],
+        },
+        TestCase {
+            input_str: "-.123400",
+            output_str: Some("-0.123400"),
+            magnitudes: [0, -1, -4, -6],
         },
     ];
     for cas in &cases {
@@ -2460,13 +2499,13 @@ fn test_from_str() {
         assert_eq!(
             fd.magnitude_range(),
             cas.magnitudes[3]..=cas.magnitudes[0],
-            "{:?}",
-            cas
+            "{cas:?}"
         );
-        assert_eq!(fd.nonzero_magnitude_start(), cas.magnitudes[1], "{:?}", cas);
-        assert_eq!(fd.nonzero_magnitude_end(), cas.magnitudes[2], "{:?}", cas);
+        assert_eq!(fd.nonzero_magnitude_start(), cas.magnitudes[1], "{cas:?}");
+        assert_eq!(fd.nonzero_magnitude_end(), cas.magnitudes[2], "{cas:?}");
         let input_str_roundtrip = fd.to_string();
-        assert_eq!(cas.input_str, input_str_roundtrip, "{:?}", cas);
+        let output_str = cas.output_str.unwrap_or(cas.input_str);
+        assert_eq!(output_str, input_str_roundtrip, "{cas:?}");
     }
 }
 
@@ -2641,11 +2680,11 @@ fn test_zero_str_bounds() {
         }
         match FixedDecimal::from_str(&input_str) {
             Ok(dec) => {
-                assert_eq!(cas.expected_err, None, "{:?}", cas);
-                assert_eq!(input_str, dec.to_string(), "{:?}", cas);
+                assert_eq!(cas.expected_err, None, "{cas:?}");
+                assert_eq!(input_str, dec.to_string(), "{cas:?}");
             }
             Err(err) => {
-                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+                assert_eq!(cas.expected_err, Some(err), "{cas:?}");
             }
         }
     }
@@ -2680,16 +2719,8 @@ fn test_syntax_error() {
             expected_err: Some(Error::Syntax),
         },
         TestCase {
-            input_str: "-.00123400",
-            expected_err: Some(Error::Syntax),
-        },
-        TestCase {
             input_str: "-0.00123400",
             expected_err: None,
-        },
-        TestCase {
-            input_str: ".00123400",
-            expected_err: Some(Error::Syntax),
         },
         TestCase {
             input_str: "00123400.",
@@ -2723,11 +2754,11 @@ fn test_syntax_error() {
     for cas in &cases {
         match FixedDecimal::from_str(cas.input_str) {
             Ok(dec) => {
-                assert_eq!(cas.expected_err, None, "{:?}", cas);
-                assert_eq!(cas.input_str, dec.to_string(), "{:?}", cas);
+                assert_eq!(cas.expected_err, None, "{cas:?}");
+                assert_eq!(cas.input_str, dec.to_string(), "{cas:?}");
             }
             Err(err) => {
-                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+                assert_eq!(cas.expected_err, Some(err), "{cas:?}");
             }
         }
     }
@@ -3414,10 +3445,10 @@ fn test_concatenate() {
         let fd2 = FixedDecimal::from_str(cas.input_2).unwrap();
         match fd1.concatenated_end(fd2) {
             Ok(fd) => {
-                assert_eq!(cas.expected, Some(fd.to_string().as_str()), "{:?}", cas);
+                assert_eq!(cas.expected, Some(fd.to_string().as_str()), "{cas:?}");
             }
             Err(_) => {
-                assert!(cas.expected.is_none(), "{:?}", cas);
+                assert!(cas.expected.is_none(), "{cas:?}");
             }
         }
     }

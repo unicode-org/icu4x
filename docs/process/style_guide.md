@@ -133,7 +133,7 @@ their type.
 | datetime | `icu_datetime` | `use icu_datetime::DateTimeFormat` | `use icu::DateTimeFormat` |
 | datetime | `icu_datetime` | `use icu_datetime::skeleton::SkeletonField` | `use icu::datetime::skeleton::SkeletonField` |
 
-While the scheme may feel repetitive when looking at the import lines, it pays off in being unambigous without aliasing when multiple structs from different components get used together:
+While the scheme may feel repetitive when looking at the import lines, it pays off in being unambiguous without aliasing when multiple structs from different components get used together:
 
 ```rust
 use icu_locid::Locale;
@@ -183,9 +183,21 @@ Hopefully self explanatory. The less time we spend worrying about formatting and
 
 There are bound to be some cases where the linter makes suggestion we don't want to follow, but these should be rare. Any such false-positives should be [suppressed](https://github.com/rust-lang/rust-clippy#allowingdenying-lints) and commented for future maintainers.
 
-**Open Question**: Should we prohibit un-suppressed warnings as a github check?
+GitHub CI enforces ICU4X's clippy standards.
 
-**Open Question**: Is this including all the pedantic warnings?
+### Render visible characters in docs and code :: suggested
+
+Often in internationalization, we deal with code points from other scripts. It is suggested to put those code points directly into the file, _instead of_ using escape syntax such as `\u{1234}`. Exceptions may include:
+
+- If directly rendering the characters could cause confusion due to the bidi algorithm
+- If the test cares more about the code point values than the characters they represent
+
+### Render invisible characters in docs but escape them in code :: suggested
+
+There are several types of invisible code points in Unicode, including whitespace, zero-width characters, and bidi marks. The policy surrounding these characters is:
+
+- In docs tests: users are more interested in the end result, so favor rendering the invisible characters. When invisible characters could cause confusion, it is suggested to leave an unrendered docs comment, such as `# // The following line contains an invisible code point.`
+- In source code and unit tests: being explicit about invisible characters makes reading and modifying code more explicit for ICU4X developers, so favor using escape sequences.
 
 # Structs and Traits
 
@@ -541,7 +553,7 @@ Obviously where an if-statement is simply there to do optional work, and not cov
 
 ### Constructor conventions :: suggested
 
-If the struct doesn't require any arguments to be initialied, it should implement or derive the `Default` trait.
+If the struct doesn't require any arguments to be initialized, it should implement or derive the `Default` trait.
 For structs with argumented constructors, `new` or `try_new` methods should be used for canonical construction, `From` and `TryFrom` traits should be implemented for generic conversions and `from_*` and `try_from_*` for non-trait based specific conversions.
 
 | Type | Fallible | Trait | Use |
@@ -717,7 +729,7 @@ Note that in cases where the Rust compiler can statically determine that a check
 
 ### Where Result is needed, use IcuResult<T> :: required
 
-While it's still an open question in the Rust community as to what the best way to handle error is, the current ICU4X concensus is that we should start simple and expect to revisit this topic again at some point. The simplest reasonable starting point would be to have a `IcuResult<T>`, which is type as `Result<T, IcuError>`, where:
+While it's still an open question in the Rust community as to what the best way to handle error is, the current ICU4X consensus is that we should start simple and expect to revisit this topic again at some point. The simplest reasonable starting point would be to have a `IcuResult<T>`, which is type as `Result<T, IcuError>`, where:
 
 ```rust
 // Nesting semantically interesting error information inside the generic error type.
@@ -1054,9 +1066,9 @@ Thus we could provide one or more ICU4X traits bound to things like `str` to pro
 * [Introduction - Learning Rust With Entirely Too Many Linked Lists](https://rust-unofficial.github.io/too-many-lists/)
   * This is brilliantly written and very educational about how you get into a Rust mindset.
 * [Elegant Library APIs in Rust](https://deterministic.space/elegant-apis-in-rust.html)
-  * This has a lot of good points and is well worth a read, but be warned that some of the details about implementation are somehwat out of date (2017). It has a video too.
+  * This has a lot of good points and is well worth a read, but be warned that some of the details about implementation are somewhat out of date (2017). It has a video too.
 * [Good Practices for Writing Rust Libraries](https://pascalhertleif.de/artikel/good-practices-for-writing-rust-libraries/)
-  * Shorter and more focussed on the act of coding the libraries, and less about API design. Also potentially out of date in places.
+  * Shorter and more focused on the act of coding the libraries, and less about API design. Also potentially out of date in places.
 * [Strategies for Returning References in Rust](http://bryce.fisher-fleig.org/blog/strategies-for-returning-references-in-rust/index.html)
   * Though I don't believe we should be doing this, it's still an interesting read.
 

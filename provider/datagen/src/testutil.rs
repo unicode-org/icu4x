@@ -52,8 +52,7 @@ where
         let inserted_value = self.resolved.insert(key.clone(), Box::from(value.clone()));
         if &value != inserted_value {
             panic!(
-                "Identical data requests returned different results: {:?} {:?} {:?}",
-                key, value, inserted_value
+                "Identical data requests returned different results: {key:?} {value:?} {inserted_value:?}"
             );
         }
         result

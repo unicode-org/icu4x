@@ -29,8 +29,8 @@ use icu_datetime::{
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
-    extensions_unicode_key as key, extensions_unicode_value as value, langid, locale,
-    LanguageIdentifier, Locale,
+    extensions::unicode::{key, value},
+    langid, locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
@@ -78,12 +78,9 @@ fn test_fixture(fixture_name: &str) {
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
         let description = match fx.description {
             Some(description) => {
-                format!(
-                    "\n  test: {:?}\n  file: {}.json\n",
-                    description, fixture_name
-                )
+                format!("\n  test: {description:?}\n  file: {fixture_name}.json\n")
             }
-            None => format!("\n  file: {}.json\n", fixture_name),
+            None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values.into_iter() {
             let options = options_base.clone();
@@ -146,7 +143,7 @@ fn test_fixture(fixture_name: &str) {
                         options,
                         &description,
                     ),
-                    _ => panic!("datetime test does not support locale {:?}", locale),
+                    _ => panic!("datetime test does not support locale {locale:?}"),
                 }
             } else {
                 assert_fixture_element(
@@ -292,12 +289,9 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
 
         let description = match fx.description {
             Some(description) => {
-                format!(
-                    "\n  test: {:?}\n  file: {}.json\n",
-                    description, fixture_name
-                )
+                format!("\n  test: {description:?}\n  file: {fixture_name}.json\n")
             }
-            None => format!("\n  file: {}.json\n", fixture_name),
+            None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
@@ -826,6 +820,6 @@ fn test_vertical_fallback_disabled() {
     // This should work for length bag. It doesn't currently work for components bag.
     assert_writeable_eq!(
         dtf.format(&DateTime::try_new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap()),
-        "mardi 5 avril 2022 à 12:33",
+        "mardi 5 avril 2022, 12:33",
     );
 }

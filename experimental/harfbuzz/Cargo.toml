@@ -1,0 +1,59 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_harfbuzz"
+description = "HarfBuzz glue code for ICU4X"
+version = "0.1.0"
+rust-version = "1.61.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2021"
+resolver = "2"
+repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
+license = "Unicode-DFS-2016"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "**/include/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[package.metadata.workspaces]
+independent = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[package.metadata.cargo-all-features]
+# Omit most optional dependency features from permutation testing
+skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI.
+# logging enables a feature of a dependency that has no externally visible API changes
+# serde enables dependency features but buffer_provider affects the actual code
+denylist = ["bench", "serde", "logging"]
+
+[dependencies]
+harfbuzz-sys = { version = "0.5.0" }
+icu_normalizer = { version = "1.0.0", path = "../../components/normalizer/" }
+icu_properties = { version = "1.0.0", path = "../../components/properties" }
+icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
+displaydoc = { version = "0.2.3", default-features = false }
+tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false }
+
+[dev-dependencies]
+icu_testdata = { path = "../../provider/testdata" }
+harfbuzz = { version = "0.4.0" }
+
+[features]
+default = []
+# TODO(#3275) Make this no_std again
+# std = []
+serde = ["icu_properties/serde", "icu_normalizer/serde", "icu_provider/serde"]

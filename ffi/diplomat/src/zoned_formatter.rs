@@ -5,7 +5,6 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
     use icu_calendar::{DateTime, Gregorian};
     use icu_datetime::{options::length, TypedZonedDateTimeFormatter, ZonedDateTimeFormatter};
     use writeable::Writeable;
@@ -44,18 +43,18 @@ pub mod ffi {
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
-        ) -> DiplomatResult<Box<ICU4XGregorianZonedDateTimeFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XGregorianZonedDateTimeFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                &provider.0,
-                &locale,
-                length::Bag::from_date_time_style(date_length.into(), time_length.into()).into(),
-                Default::default(),
-            )
-            .map(|tf| Box::new(ICU4XGregorianZonedDateTimeFormatter(tf)))
-            .map_err(Into::into)
-            .into()
+            Ok(Box::new(ICU4XGregorianZonedDateTimeFormatter(
+                TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+                    &provider.0,
+                    &locale,
+                    length::Bag::from_date_time_style(date_length.into(), time_length.into())
+                        .into(),
+                    Default::default(),
+                )?,
+            )))
         }
 
         /// Creates a new [`ICU4XGregorianZonedDateTimeFormatter`] from locale data.
@@ -72,18 +71,18 @@ pub mod ffi {
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
             zone_options: ICU4XIsoTimeZoneOptions,
-        ) -> DiplomatResult<Box<ICU4XGregorianZonedDateTimeFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XGregorianZonedDateTimeFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                &provider.0,
-                &locale,
-                length::Bag::from_date_time_style(date_length.into(), time_length.into()).into(),
-                zone_options.into(),
-            )
-            .map(|tf| Box::new(ICU4XGregorianZonedDateTimeFormatter(tf)))
-            .map_err(Into::into)
-            .into()
+            Ok(Box::new(ICU4XGregorianZonedDateTimeFormatter(
+                TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+                    &provider.0,
+                    &locale,
+                    length::Bag::from_date_time_style(date_length.into(), time_length.into())
+                        .into(),
+                    zone_options.into(),
+                )?,
+            )))
         }
 
         /// Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
@@ -98,16 +97,10 @@ pub mod ffi {
             datetime: &ICU4XIsoDateTime,
             time_zone: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
+        ) -> Result<(), ICU4XError> {
             let greg = DateTime::new_from_iso(datetime.0, Gregorian);
-            let result = self
-                .0
-                .format(&greg, &time_zone.0)
-                .write_to(write)
-                .map_err(Into::into)
-                .into();
-            write.flush();
-            result
+            self.0.format(&greg, &time_zone.0).write_to(write)?;
+            Ok(())
         }
     }
 
@@ -127,18 +120,18 @@ pub mod ffi {
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
-        ) -> DiplomatResult<Box<ICU4XZonedDateTimeFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XZonedDateTimeFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            ZonedDateTimeFormatter::try_new_unstable(
-                &provider.0,
-                &locale,
-                length::Bag::from_date_time_style(date_length.into(), time_length.into()).into(),
-                Default::default(),
-            )
-            .map(|tf| Box::new(ICU4XZonedDateTimeFormatter(tf)))
-            .map_err(Into::into)
-            .into()
+            Ok(Box::new(ICU4XZonedDateTimeFormatter(
+                ZonedDateTimeFormatter::try_new_unstable(
+                    &provider.0,
+                    &locale,
+                    length::Bag::from_date_time_style(date_length.into(), time_length.into())
+                        .into(),
+                    Default::default(),
+                )?,
+            )))
         }
 
         /// Creates a new [`ICU4XZonedDateTimeFormatter`] from locale data.
@@ -152,18 +145,18 @@ pub mod ffi {
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
             zone_options: ICU4XIsoTimeZoneOptions,
-        ) -> DiplomatResult<Box<ICU4XZonedDateTimeFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XZonedDateTimeFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            ZonedDateTimeFormatter::try_new_unstable(
-                &provider.0,
-                &locale,
-                length::Bag::from_date_time_style(date_length.into(), time_length.into()).into(),
-                zone_options.into(),
-            )
-            .map(|tf| Box::new(ICU4XZonedDateTimeFormatter(tf)))
-            .map_err(Into::into)
-            .into()
+            Ok(Box::new(ICU4XZonedDateTimeFormatter(
+                ZonedDateTimeFormatter::try_new_unstable(
+                    &provider.0,
+                    &locale,
+                    length::Bag::from_date_time_style(date_length.into(), time_length.into())
+                        .into(),
+                    zone_options.into(),
+                )?,
+            )))
         }
 
         /// Formats a [`ICU4XDateTime`] and [`ICU4XCustomTimeZone`] to a string.
@@ -178,15 +171,9 @@ pub mod ffi {
             datetime: &ICU4XDateTime,
             time_zone: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
-            let result = self
-                .0
-                .format(&datetime.0, &time_zone.0)
-                .map_err(Into::into)
-                .and_then(|f| f.write_to(write).map_err(Into::into))
-                .into();
-            write.flush();
-            result
+        ) -> Result<(), ICU4XError> {
+            self.0.format(&datetime.0, &time_zone.0)?.write_to(write)?;
+            Ok(())
         }
 
         /// Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
@@ -201,15 +188,11 @@ pub mod ffi {
             datetime: &ICU4XIsoDateTime,
             time_zone: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
-            let result = self
-                .0
-                .format(&datetime.0.to_any(), &time_zone.0)
-                .map_err(Into::into)
-                .and_then(|f| f.write_to(write).map_err(Into::into))
-                .into();
-            write.flush();
-            result
+        ) -> Result<(), ICU4XError> {
+            self.0
+                .format(&datetime.0.to_any(), &time_zone.0)?
+                .write_to(write)?;
+            Ok(())
         }
     }
 }

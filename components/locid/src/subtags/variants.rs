@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::Variant;
-use crate::helpers::ShortVec;
+use crate::helpers::ShortSlice;
 
 use alloc::vec::Vec;
 use core::ops::Deref;
@@ -16,7 +16,7 @@ use core::ops::Deref;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{subtags::Variants, subtags_variant as variant};
+/// use icu::locid::subtags::{Variants, variant};
 ///
 /// let mut v = vec![variant!("posix"), variant!("macos")];
 /// v.sort();
@@ -26,7 +26,7 @@ use core::ops::Deref;
 /// assert_eq!(variants.to_string(), "macos-posix");
 /// ```
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-pub struct Variants(ShortVec<Variant>);
+pub struct Variants(ShortSlice<Variant>);
 
 impl Variants {
     /// Returns a new empty list of variants. Same as [`default()`](Default::default()), but is `const`.
@@ -40,7 +40,7 @@ impl Variants {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(ShortVec::new())
+        Self(ShortSlice::new())
     }
 
     /// Creates a new [`Variants`] set from a single [`Variant`].
@@ -48,13 +48,13 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{subtags::Variants, subtags_variant as variant};
+    /// use icu::locid::subtags::{Variants, variant};
     ///
     /// let variants = Variants::from_variant(variant!("posix"));
     /// ```
     #[inline]
     pub const fn from_variant(variant: Variant) -> Self {
-        Self(ShortVec::new_single(variant))
+        Self(ShortSlice::new_single(variant))
     }
 
     /// Creates a new [`Variants`] set from a [`Vec`].
@@ -64,7 +64,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{subtags::Variants, subtags_variant as variant};
+    /// use icu::locid::subtags::{Variants, variant};
     ///
     /// let mut v = vec![variant!("posix"), variant!("macos")];
     /// v.sort();
@@ -77,7 +77,11 @@ impl Variants {
     /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
     /// and [`dedup`](Vec::dedup()).
     pub fn from_vec_unchecked(input: Vec<Variant>) -> Self {
-        Self(ShortVec::from(input))
+        Self(input.into())
+    }
+
+    pub(crate) fn from_short_slice_unchecked(input: ShortSlice<Variant>) -> Self {
+        Self(input)
     }
 
     /// Empties the [`Variants`] list.
@@ -87,7 +91,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{subtags::Variants, subtags_variant as variant};
+    /// use icu::locid::subtags::{Variants, variant};
     ///
     /// let mut v = vec![variant!("posix"), variant!("macos")];
     /// v.sort();
@@ -119,6 +123,6 @@ impl Deref for Variants {
     type Target = [Variant];
 
     fn deref(&self) -> &[Variant] {
-        self.0.as_slice()
+        self.0.deref()
     }
 }

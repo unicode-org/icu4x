@@ -4,7 +4,7 @@
 
 mod helpers;
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_locid::Locale;
 use icu_locid_transform::LocaleCanonicalizer;
 use icu_locid_transform::LocaleExpander;
@@ -12,22 +12,25 @@ use icu_locid_transform::LocaleExpander;
 fn canonicalize_bench(c: &mut Criterion) {
     let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
-    let mut group = c.benchmark_group("canonicalize");
+    let mut group = c.benchmark_group("uncanonicalized");
 
     let path = "./benches/fixtures/uncanonicalized-locales.json";
     let data: Vec<String> = helpers::read_fixture(path).expect("Failed to read a fixture");
+    let locales: Vec<Locale> = data.iter().map(|s| s.parse().unwrap()).collect();
 
-    group.bench_function("create", |b| {
+    group.bench_function("clone", |b| {
         b.iter(|| {
-            let _: Vec<Locale> = data.iter().map(|s| s.parse().unwrap()).collect();
+            for locale in &locales {
+                let _ = black_box(locale).clone();
+            }
         })
     });
 
-    group.bench_function("create+canonicalize", |b| {
+    group.bench_function("canonicalize", |b| {
         b.iter(|| {
-            let locales: Vec<Locale> = data.iter().map(|s| s.parse().unwrap()).collect();
-            for locale in locales.iter() {
-                lc.canonicalize(&mut locale.clone());
+            for locale in &locales {
+                let mut locale = black_box(locale).clone();
+                lc.canonicalize(&mut locale);
             }
         })
     });
@@ -38,24 +41,27 @@ fn canonicalize_bench(c: &mut Criterion) {
 fn canonicalize_noop_bench(c: &mut Criterion) {
     let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
-    let mut group = c.benchmark_group("canonicalize-noop");
+    let mut group = c.benchmark_group("canonicalized");
 
     // None of these locales require canonicalization, so this measures the cost of calling
     // the canonicalizer on locales that will not be modified.
     let path = "./benches/fixtures/locales.json";
     let data: Vec<String> = helpers::read_fixture(path).expect("Failed to read a fixture");
+    let locales: Vec<Locale> = data.iter().map(|s| s.parse().unwrap()).collect();
 
-    group.bench_function("create", |b| {
+    group.bench_function("clone", |b| {
         b.iter(|| {
-            let _: Vec<Locale> = data.iter().map(|s| s.parse().unwrap()).collect();
+            for locale in &locales {
+                let _ = black_box(locale).clone();
+            }
         })
     });
 
-    group.bench_function("create+canonicalize", |b| {
+    group.bench_function("canonicalize", |b| {
         b.iter(|| {
-            let locales: Vec<Locale> = data.iter().map(|s| s.parse().unwrap()).collect();
-            for locale in locales.iter() {
-                lc.canonicalize(&mut locale.clone());
+            for locale in &locales {
+                let mut locale = black_box(locale).clone();
+                lc.canonicalize(&mut locale);
             }
         })
     });
@@ -70,13 +76,13 @@ fn maximize_bench(c: &mut Criterion) {
 
     let path = "./benches/fixtures/locales.json";
     let data: Vec<String> = helpers::read_fixture(path).expect("Failed to read a fixture");
-
     let locales: Vec<Locale> = data.iter().map(|s| s.parse().unwrap()).collect();
 
     group.bench_function("maximize", |b| {
         b.iter(|| {
-            for locale in locales.iter() {
-                lc.maximize(&mut locale.clone());
+            for locale in &locales {
+                let mut locale = locale.clone();
+                lc.maximize(black_box(&mut locale));
             }
         })
     });

@@ -15,7 +15,7 @@ use core::mem;
 /// where `V1` etc are potentially different [`VarULE`] types.
 ///
 /// Internally, it is represented by a VarZeroSlice.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 #[repr(transparent)]
 pub struct MultiFieldsULE(VarZeroSlice<[u8], Index32>);
 

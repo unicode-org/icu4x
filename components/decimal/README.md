@@ -10,21 +10,21 @@ follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 
 ## Examples
 
-### Format a number with Bengali digits
+### Format a number with Bangla digits
 
 ```rust
+use fixed_decimal::FixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
 use icu::locid::locale;
 use writeable::assert_writeable_eq;
 
-let fdf = FixedDecimalFormatter::try_new_unstable(
-    &icu_testdata::unstable(),
+let fdf = FixedDecimalFormatter::try_new(
     &locale!("bn").into(),
     Default::default(),
 )
-.expect("Data should load successfully");
+.expect("locale should be present");
 
-let fixed_decimal = 1000007.into();
+let fixed_decimal = FixedDecimal::from(1000007);
 
 assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
 ```
@@ -37,12 +37,11 @@ use icu::decimal::FixedDecimalFormatter;
 use icu::locid::Locale;
 use writeable::assert_writeable_eq;
 
-let fdf = FixedDecimalFormatter::try_new_unstable(
-    &icu_testdata::unstable(),
+let fdf = FixedDecimalFormatter::try_new(
     &Locale::UND.into(),
     Default::default(),
 )
-.expect("Data should load successfully");
+.expect("locale should be present");
 
 let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
 
@@ -55,18 +54,18 @@ Numbering systems specified in the `-u-nu` subtag will be followed as long as th
 symbols for that numbering system.
 
 ```rust
+use fixed_decimal::FixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
 use icu::locid::locale;
 use writeable::assert_writeable_eq;
 
-let fdf = FixedDecimalFormatter::try_new_unstable(
-    &icu_testdata::unstable(),
+let fdf = FixedDecimalFormatter::try_new(
     &locale!("th-u-nu-thai").into(),
     Default::default(),
 )
-.expect("Data should load successfully");
+.expect("locale should be present");
 
-let fixed_decimal = 1000007.into();
+let fixed_decimal = FixedDecimal::from(1000007);
 
 assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 ```

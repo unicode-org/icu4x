@@ -4,9 +4,8 @@
 
 use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
-    get_subtag_iterator, parse_locale,
-    parse_locale_with_single_variant_single_keyword_unicode_keyword_extension, ParserError,
-    ParserMode,
+    parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
+    ParserError, ParserMode, SubtagIterator,
 };
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
@@ -29,8 +28,9 @@ use writeable::Writeable;
 ///
 /// ```
 /// use icu_locid::{
-///     extensions_unicode_key as key, extensions_unicode_value as value,
-///     locale, subtags_language as language, subtags_region as region,
+///     extensions::unicode::{key, value},
+///     locale,
+///     subtags::{region, language}
 /// };
 ///
 /// let loc = locale!("en-US-u-ca-buddhist");
@@ -88,35 +88,24 @@ pub struct Locale {
 
 #[test]
 fn test_sizes() {
-    // Remove when we upgrade to a compiler where the new sizes are default
-    let forced_nightly = std::env::var("ICU4X_BUILDING_WITH_FORCED_NIGHTLY").is_ok();
     assert_eq!(core::mem::size_of::<subtags::Language>(), 3);
     assert_eq!(core::mem::size_of::<subtags::Script>(), 4);
     assert_eq!(core::mem::size_of::<subtags::Region>(), 3);
     assert_eq!(core::mem::size_of::<subtags::Variant>(), 8);
-    assert_eq!(core::mem::size_of::<subtags::Variants>(), 32);
-    assert_eq!(core::mem::size_of::<LanguageIdentifier>(), 48);
+    assert_eq!(core::mem::size_of::<subtags::Variants>(), 16);
+    assert_eq!(core::mem::size_of::<LanguageIdentifier>(), 32);
 
-    assert_eq!(core::mem::size_of::<extensions::transform::Transform>(), 72);
-    assert_eq!(core::mem::size_of::<Option<LanguageIdentifier>>(), 48);
+    assert_eq!(core::mem::size_of::<extensions::transform::Transform>(), 56);
+    assert_eq!(core::mem::size_of::<Option<LanguageIdentifier>>(), 32);
     assert_eq!(core::mem::size_of::<extensions::transform::Fields>(), 24);
 
-    assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 24);
-    assert_eq!(
-        core::mem::size_of::<extensions::unicode::Keywords>(),
-        if forced_nightly { 40 } else { 48 }
-    );
+    assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 16);
+    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 24);
     assert_eq!(core::mem::size_of::<Vec<extensions::other::Other>>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::private::Private>(), 24);
-    assert_eq!(
-        core::mem::size_of::<extensions::Extensions>(),
-        if forced_nightly { 184 } else { 192 }
-    );
+    assert_eq!(core::mem::size_of::<extensions::private::Private>(), 16);
+    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 136);
 
-    assert_eq!(
-        core::mem::size_of::<Locale>(),
-        if forced_nightly { 232 } else { 240 }
-    );
+    assert_eq!(core::mem::size_of::<Locale>(), 168);
 }
 
 impl Locale {
@@ -293,7 +282,7 @@ impl Locale {
             };
         }
 
-        let mut iter = get_subtag_iterator(other.as_bytes());
+        let mut iter = SubtagIterator::new(other.as_bytes());
         if !subtag_matches!(subtags::Language, iter, self.id.language) {
             return false;
         }
@@ -324,7 +313,7 @@ impl Locale {
                 }
             }
         }
-        iter.next() == None
+        iter.next().is_none()
     }
 
     #[doc(hidden)]
@@ -434,7 +423,7 @@ fn test_writeable() {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{locale, subtags_language as language};
+/// use icu::locid::{locale, subtags::language};
 ///
 /// assert_eq!(Locale::from(language!("en")), locale!("en"));
 /// ```
@@ -451,7 +440,7 @@ impl From<subtags::Language> for Locale {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{locale, subtags_script as script};
+/// use icu::locid::{locale, subtags::script};
 ///
 /// assert_eq!(Locale::from(Some(script!("latn"))), locale!("und-Latn"));
 /// ```
@@ -468,7 +457,7 @@ impl From<Option<subtags::Script>> for Locale {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{locale, subtags_region as region};
+/// use icu::locid::{locale, subtags::region};
 ///
 /// assert_eq!(Locale::from(Some(region!("US"))), locale!("und-US"));
 /// ```
@@ -486,8 +475,7 @@ impl From<Option<subtags::Region>> for Locale {
 /// ```
 /// use icu::locid::Locale;
 /// use icu::locid::{
-///     locale, subtags_language as language, subtags_region as region,
-///     subtags_script as script,
+///     locale, subtags::{language, region, script}
 /// };
 ///
 /// assert_eq!(

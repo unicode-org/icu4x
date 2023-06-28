@@ -136,6 +136,28 @@ impl LengthHint {
     }
 }
 
+/// [`Part`]s are used as annotations for formatted strings. For example, a string like
+/// `Alice, Bob` could assign a `NAME` part to the substrings `Alice` and `Bob`, and a
+/// `PUNCTUATION` part to `, `. This allows for example to apply styling only to names.
+///
+/// `Part` contains two fields, whose usage is left up to the producer of the [`Writeable`].
+/// Conventionally, the `category` field will identify the formatting logic that produces
+/// the string/parts, whereas the `value` field will have semantic meaning. `NAME` and
+/// `PUNCTUATION` could thus be defined as
+/// ```
+/// # use writeable::Part;
+/// const NAME: Part = Part {
+///     category: "userlist",
+///     value: "name",
+/// };
+/// const PUNCTUATION: Part = Part {
+///     category: "userlist",
+///     value: "punctuation",
+/// };
+/// ```
+///
+/// That said, consumers should not usually have to inspect `Part` internals. Instead,
+/// formatters should expose the `Part`s they produces as constants.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // stable
 pub struct Part {
@@ -394,7 +416,10 @@ pub fn writeable_to_parts_for_test<W: Writeable>(
         ) -> fmt::Result {
             let start = self.string.len();
             f(self)?;
-            self.parts.push((start, self.string.len(), part));
+            let end = self.string.len();
+            if start < end {
+                self.parts.push((start, end, part));
+            }
             Ok(())
         }
     }

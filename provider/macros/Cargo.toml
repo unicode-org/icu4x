@@ -5,11 +5,13 @@
 [package]
 name = "icu_provider_macros"
 description = "Proc macros for ICU data providers"
-version = "1.0.0"
+version = "1.2.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -30,7 +32,7 @@ proc-macro = true
 [dependencies]
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
-syn = { version = "1.0.73", features = ["full"]}
+syn = { version = "2", features = ["full", "parsing"]}
 
 [dev-dependencies]
 icu_provider = { path = "../core", features = ["macros"] }

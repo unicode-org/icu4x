@@ -5,7 +5,7 @@
 //! Data provider structs for time zones.
 
 use alloc::borrow::Cow;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 
@@ -14,6 +14,12 @@ use icu_timezone::ZoneVariant;
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(TimeZoneFormatsV1Marker = "time_zone/formats@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
@@ -54,6 +60,12 @@ pub struct TimeZoneFormatsV1<'data> {
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
 /// See CLDR-JSON timeZoneNames.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(ExemplarCitiesV1Marker = "time_zone/exemplar_cities@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
@@ -69,6 +81,12 @@ pub struct ExemplarCitiesV1<'data>(
 
 /// An ICU4X mapping to the long-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(MetazoneGenericNamesLongV1Marker = "time_zone/generic_long@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
@@ -89,6 +107,12 @@ pub struct MetazoneGenericNamesLongV1<'data> {
 
 /// An ICU4X mapping to the short-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(MetazoneGenericNamesShortV1Marker = "time_zone/generic_short@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
@@ -110,6 +134,12 @@ pub struct MetazoneGenericNamesShortV1<'data> {
 /// An ICU4X mapping to the long-form specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(MetazoneSpecificNamesLongV1Marker = "time_zone/specific_long@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
@@ -131,6 +161,12 @@ pub struct MetazoneSpecificNamesLongV1<'data> {
 /// An ICU4X mapping to the short-form specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(MetazoneSpecificNamesShortV1Marker = "time_zone/specific_short@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(

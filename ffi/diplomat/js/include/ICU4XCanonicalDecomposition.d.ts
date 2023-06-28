@@ -10,7 +10,7 @@ import { ICU4XError } from "./ICU4XError";
 
  * Callers should generally use ICU4XDecomposingNormalizer unless they specifically need raw composition operations
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html Rust documentation for `CanonicalDecomposition`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html Rust documentation for `CanonicalDecomposition`} for more information.
  */
 export class ICU4XCanonicalDecomposition {
 
@@ -18,7 +18,7 @@ export class ICU4XCanonicalDecomposition {
 
    * Construct a new ICU4XCanonicalDecomposition instance for NFC
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XCanonicalDecomposition | never;
@@ -27,7 +27,7 @@ export class ICU4XCanonicalDecomposition {
 
    * Performs non-recursive canonical decomposition (including for Hangul).
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.decompose Rust documentation for `decompose`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.decompose Rust documentation for `decompose`} for more information.
    */
   decompose(c: char): ICU4XDecomposed;
 }

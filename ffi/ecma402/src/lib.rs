@@ -14,7 +14,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 
@@ -63,9 +63,3 @@ impl std::fmt::Display for crate::DataLocale {
         self.0.fmt(f)
     }
 }
-
-mod provider {
-    include!(concat!(env!("OUT_DIR"), "/baked/mod.rs"));
-}
-
-pub(crate) use provider::BakedDataProvider;

@@ -7,8 +7,11 @@ use crate::manifest::Manifest;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
 use std::fs;
+#[allow(deprecated)]
+// We're using SipHash, which is deprecated, but we want a stable hasher
+// (we're fine with it not being cryptographically secure since we're just using it to track diffs)
+use std::hash::{Hasher, SipHasher};
 use std::path::PathBuf;
 use std::sync::Mutex;
 use writeable::Writeable;
@@ -64,6 +67,7 @@ impl From<PathBuf> for ExporterOptions {
 
 /// A data exporter that writes data to a filesystem hierarchy.
 /// See the module-level docs for an example.
+#[derive(Debug)]
 pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
@@ -115,15 +119,13 @@ impl DataExporter for FilesystemExporter {
         locale: &DataLocale,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        log::trace!("Writing: {}/{}", key, locale);
-
         let mut path_buf = self.root.clone();
         path_buf.push(&*key.write_to_string());
         path_buf.push(&*locale.write_to_string());
         path_buf.set_extension(self.manifest.file_extension);
 
         if let Some(parent_dir) = path_buf.parent() {
-            fs::create_dir_all(&parent_dir)
+            fs::create_dir_all(parent_dir)
                 .map_err(|e| DataError::from(e).with_path_context(&parent_dir))?;
         }
 
@@ -140,7 +142,8 @@ impl DataExporter for FilesystemExporter {
                 ))
             },
             hash_size: if self.fingerprints.is_some() {
-                Some((Sha256::new(), 0))
+                #[allow(deprecated)]
+                Some((SipHasher::new(), 0))
             } else {
                 None
             },
@@ -155,7 +158,7 @@ impl DataExporter for FilesystemExporter {
                 .expect("present iff file.1 is present")
                 .lock()
                 .expect("poison")
-                .push(format!("{key}, {locale}, {size}B, {:x}", hash.finalize()));
+                .push(format!("{key}, {locale}, {size}B, {:x}", hash.finish()));
         }
         Ok(())
     }
@@ -171,7 +174,7 @@ impl DataExporter for FilesystemExporter {
             );
             for line in fingerprints {
                 use std::io::Write;
-                writeln!(file, "{}", line)?;
+                writeln!(file, "{line}")?;
             }
         }
         Ok(())
@@ -180,22 +183,20 @@ impl DataExporter for FilesystemExporter {
 
 struct HashingFile {
     file: Box<dyn std::io::Write>,
-    hash_size: Option<(Sha256, usize)>,
+    #[allow(deprecated)]
+    hash_size: Option<(SipHasher, usize)>,
 }
 
 impl std::io::Write for HashingFile {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         if let Some((hash, size)) = self.hash_size.as_mut() {
-            hash.write_all(buf)?;
+            hash.write(buf);
             *size += buf.len();
         }
         self.file.write(buf)
     }
 
     fn flush(&mut self) -> std::io::Result<()> {
-        if let Some((hash, _)) = self.hash_size.as_mut() {
-            hash.flush()?;
-        }
         self.file.flush()
     }
 }

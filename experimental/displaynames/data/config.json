@@ -1,0 +1,28 @@
+{
+    "keys": {
+        "Explicit": [
+            "displaynames/languages@1",
+            "displaynames/locales@1",
+            "displaynames/regions@1",
+            "displaynames/scripts@1",
+            "displaynames/variants@1"
+        ]
+    },
+    "locales": {
+        "CldrSet": [
+            "modern"
+        ]
+    },
+    "cldr": "Latest",
+    "icu_export": "Latest",
+    "segmenter_lstm": "Latest",
+    "export": {
+        "Baked": {
+            "output_path": "data",
+            "use_separate_crates": true,
+            "pretty": true
+        }
+    },
+    "fallback": "Runtime",
+    "overwrite": true
+}

@@ -1,0 +1,17 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+##########################################
+# PLEASE KEEP THIS IN SYNC WITH cargo.md #
+##########################################
+
+[package]
+name = "tutorial_buffer"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+icu = { version = "1.2", features = ["serde"] }
+icu_provider_blob = "1.2"

@@ -8,7 +8,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use zerovec::maps::ZeroMapKV;
 use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec};
-use zerovec::ZeroMap;
+use zerovec::{ZeroHashMap, ZeroMap};
 
 const DATA: [(&str, &str); 16] = [
     ("ar", "Arabic"),
@@ -56,20 +56,51 @@ const POSTCARD_HASHMAP: [u8; 176] = [
     114, 97, 98, 105, 99,
 ];
 
-/// Run this function to print new data to the console. Requires the optional `serde` feature.
+const POSTCARD_ZEROHASHMAP: [u8; 412] = [
+    128, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+    0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+    0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 0, 0, 102, 16, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0, 11, 0,
+    0, 0, 13, 0, 0, 0, 15, 0, 0, 0, 17, 0, 0, 0, 19, 0, 0, 0, 21, 0, 0, 0, 24, 0, 0, 0, 26, 0, 0,
+    0, 28, 0, 0, 0, 30, 0, 0, 0, 32, 0, 0, 0, 101, 110, 102, 114, 106, 97, 101, 108, 99, 104, 114,
+    98, 110, 115, 114, 105, 117, 101, 111, 116, 114, 99, 99, 112, 122, 104, 114, 117, 101, 115,
+    116, 104, 97, 114, 177, 1, 16, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 13, 0, 0, 0, 21, 0, 0, 0, 26,
+    0, 0, 0, 34, 0, 0, 0, 40, 0, 0, 0, 47, 0, 0, 0, 56, 0, 0, 0, 65, 0, 0, 0, 72, 0, 0, 0, 78, 0,
+    0, 0, 85, 0, 0, 0, 92, 0, 0, 0, 99, 0, 0, 0, 103, 0, 0, 0, 69, 110, 103, 108, 105, 115, 104,
+    70, 114, 101, 110, 99, 104, 74, 97, 112, 97, 110, 101, 115, 101, 71, 114, 101, 101, 107, 67,
+    104, 101, 114, 111, 107, 101, 101, 66, 97, 110, 103, 108, 97, 83, 101, 114, 98, 105, 97, 110,
+    73, 110, 117, 107, 116, 105, 116, 117, 116, 69, 115, 112, 101, 114, 97, 110, 116, 111, 84, 117,
+    114, 107, 105, 115, 104, 67, 104, 97, 107, 109, 97, 67, 104, 105, 110, 101, 115, 101, 82, 117,
+    115, 115, 105, 97, 110, 83, 112, 97, 110, 105, 115, 104, 84, 104, 97, 105, 65, 114, 97, 98,
+    105, 99,
+];
+
+/// Run this function to print new data to the console.
+/// Requires the optional `serde` Cargo feature.
 #[allow(dead_code)]
-fn generate() {
+fn generate_zeromap() {
     let map = build_zeromap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
-    println!("{:?}", buf);
+    println!("{buf:?}");
 }
 
-/// Run this function to print new data to the console. Requires the optional `serde` feature.
+/// Run this function to print new data to the console.
+/// Requires the optional `serde` Cargo feature.
 #[allow(dead_code)]
 fn generate_hashmap() {
     let map = build_hashmap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
-    println!("{:?}", buf);
+    println!("{buf:?}");
+}
+
+/// Run this function to print new data to the console.
+/// Requires the optional `serde` Cargo feature.
+#[allow(dead_code)]
+fn generate_zerohashmap() {
+    let map = build_zerohashmap(false);
+    let buf = postcard::to_stdvec(&map).unwrap();
+    println!("{buf:?}");
 }
 
 #[cfg(feature = "generate")]
@@ -81,21 +112,29 @@ fn generate_test_data() {
     let hashmap = build_hashmap(true);
     let hashmap_bytes = postcard::to_stdvec(&hashmap).unwrap();
     fs::write("large_hashmap.postcard", &hashmap_bytes).unwrap();
+
+    let zerohashmap = build_zerohashmap(true);
+    let zerohashmap_bytes = postcard::to_stdvec(&zerohashmap).unwrap();
+    fs::write("large_zerohashmap.postcard", &zerohashmap_bytes).unwrap();
 }
 
 fn overview_bench(c: &mut Criterion) {
+    bench_zeromap(c);
+    bench_hashmap(c);
+    bench_zerohashmap(c);
+
+    #[cfg(feature = "generate")]
+    generate_test_data();
+}
+
+fn bench_zeromap(c: &mut Criterion) {
     // Uncomment the following line to re-generate the binary data.
-    // generate();
+    // generate_hashmap();
 
     bench_deserialize(c);
     bench_deserialize_large(c);
     bench_lookup(c);
     bench_lookup_large(c);
-
-    bench_hashmap(c);
-
-    #[cfg(feature = "generate")]
-    generate_test_data();
 }
 
 fn build_zeromap(large: bool) -> ZeroMap<'static, Index32Str, Index32Str> {
@@ -103,7 +142,7 @@ fn build_zeromap(large: bool) -> ZeroMap<'static, Index32Str, Index32Str> {
     for (key, value) in DATA.iter() {
         if large {
             for n in 0..8192 {
-                map.insert(indexify(&format!("{}{}", key, n)), indexify(value));
+                map.insert(indexify(&format!("{key}{n}")), indexify(value));
             }
         } else {
             map.insert(indexify(key), indexify(value));
@@ -183,7 +222,7 @@ fn build_hashmap(large: bool) -> HashMap<String, String> {
     for &(key, value) in DATA.iter() {
         if large {
             for n in 0..8192 {
-                map.insert(format!("{}{}", key, n), value.to_owned());
+                map.insert(format!("{key}{n}"), value.to_owned());
             }
         } else {
             map.insert(key.to_owned(), value.to_owned());
@@ -241,6 +280,102 @@ fn read_large_hashmap_postcard_bytes() -> Vec<u8> {
     fs::read(path).unwrap()
 }
 
+fn bench_zerohashmap(c: &mut Criterion) {
+    // Uncomment the following line to re-generate the binary data.
+    // generate_zerohashmap();
+
+    bench_deserialize_zerohashmap(c);
+    bench_deserialize_large_zerohashmap(c);
+    bench_zerohashmap_lookup(c);
+    bench_zerohashmap_lookup_large(c);
+}
+
+fn build_zerohashmap(large: bool) -> ZeroHashMap<'static, Index32Str, Index32Str> {
+    let mut kv = match large {
+        true => Vec::with_capacity(8192 * DATA.len()),
+        false => Vec::with_capacity(DATA.len()),
+    };
+
+    for (key, value) in DATA.iter() {
+        if large {
+            for n in 0..8192 {
+                kv.push((format!("{key}{n}"), indexify(value)));
+            }
+        } else {
+            kv.push((key.to_string(), indexify(value)));
+        }
+    }
+
+    ZeroHashMap::from_iter(kv.iter().map(|kv| (indexify(&kv.0), kv.1)))
+}
+
+fn bench_deserialize_zerohashmap(c: &mut Criterion) {
+    c.bench_function("zerohashmap/deserialize/small", |b| {
+        b.iter(|| {
+            let map: ZeroHashMap<Index32Str, Index32Str> =
+                postcard::from_bytes(black_box(&POSTCARD_ZEROHASHMAP)).unwrap();
+            assert_eq!(map.get(indexify("iu")).map(|x| &x.0), Some("Inuktitut"));
+        })
+    });
+}
+
+fn bench_deserialize_large_zerohashmap(c: &mut Criterion) {
+    let buf = read_large_zerohashmap_postcard_bytes();
+    c.bench_function("zerohashmap/deserialize/large", |b| {
+        b.iter(|| {
+            let map: ZeroHashMap<Index32Str, Index32Str> =
+                postcard::from_bytes(black_box(&buf)).unwrap();
+            assert_eq!(map.get(indexify("iu3333")).map(|x| &x.0), Some("Inuktitut"));
+        })
+    });
+}
+
+fn bench_zerohashmap_lookup(c: &mut Criterion) {
+    let zero_hashmap: ZeroHashMap<Index32Str, Index32Str> =
+        postcard::from_bytes(black_box(&POSTCARD_ZEROHASHMAP)).unwrap();
+
+    c.bench_function("zerohashmap/lookup/small", |b| {
+        b.iter(|| {
+            assert_eq!(
+                zero_hashmap.get(black_box(indexify("iu"))).map(|x| &x.0),
+                Some("Inuktitut")
+            );
+            assert_eq!(
+                zero_hashmap.get(black_box(indexify("zz"))).map(|x| &x.0),
+                None
+            );
+        });
+    });
+}
+
+fn bench_zerohashmap_lookup_large(c: &mut Criterion) {
+    let buf = read_large_zerohashmap_postcard_bytes();
+    let zero_hashmap: ZeroHashMap<Index32Str, Index32Str> = postcard::from_bytes(&buf).unwrap();
+
+    c.bench_function("zerohashmap/lookup/large", |b| {
+        b.iter(|| {
+            assert_eq!(
+                zero_hashmap
+                    .get(black_box(indexify("iu3333")))
+                    .map(|x| &x.0),
+                Some("Inuktitut")
+            );
+            assert_eq!(
+                zero_hashmap.get(black_box(indexify("zz"))).map(|x| &x.0),
+                None
+            );
+        });
+    });
+}
+
+fn read_large_zerohashmap_postcard_bytes() -> Vec<u8> {
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/benches/testdata/large_zerohashmap.postcard"
+    );
+    fs::read(path).unwrap()
+}
+
 criterion_group!(benches, overview_bench);
 criterion_main!(benches);
 
@@ -256,7 +391,7 @@ criterion_main!(benches);
 #[zerovec::make_varule(Index32Str)]
 #[zerovec::skip_derive(ZeroMapKV)]
 #[derive(Eq, PartialEq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
-#[zerovec::derive(Serialize, Deserialize)]
+#[zerovec::derive(Serialize, Deserialize, Hash)]
 pub(crate) struct Index32StrBorrowed<'a>(#[serde(borrow)] pub &'a str);
 
 impl<'a> ZeroMapKV<'a> for Index32Str {

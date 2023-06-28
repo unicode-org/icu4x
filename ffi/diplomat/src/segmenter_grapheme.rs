@@ -8,7 +8,6 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
-    use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
     use icu_segmenter::provider::GraphemeClusterBreakDataV1Marker;
     use icu_segmenter::{
@@ -23,16 +22,26 @@ pub mod ffi {
     pub struct ICU4XGraphemeClusterSegmenter(GraphemeClusterSegmenter);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
+    #[diplomat::rust_link(
+        icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
+        Typedef,
+        hidden
+    )]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf8<'a>(
         GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf16, Typedef, hidden)]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf16<'a>(
         GraphemeClusterBreakIteratorUtf16<'a, 'a>,
     );
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorLatin1, Typedef, hidden)]
     pub struct ICU4XGraphemeClusterBreakIteratorLatin1<'a>(
         GraphemeClusterBreakIteratorLatin1<'a, 'a>,
     );
@@ -45,20 +54,17 @@ pub mod ffi {
         )]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XGraphemeClusterSegmenter>, ICU4XError> {
+        ) -> Result<Box<ICU4XGraphemeClusterSegmenter>, ICU4XError> {
             Self::try_new_impl(&provider.0)
         }
 
-        fn try_new_impl<D>(
-            provider: &D,
-        ) -> DiplomatResult<Box<ICU4XGraphemeClusterSegmenter>, ICU4XError>
+        fn try_new_impl<D>(provider: &D) -> Result<Box<ICU4XGraphemeClusterSegmenter>, ICU4XError>
         where
             D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
         {
-            GraphemeClusterSegmenter::try_new_unstable(provider)
-                .map(|o| Box::new(ICU4XGraphemeClusterSegmenter(o)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XGraphemeClusterSegmenter(
+                GraphemeClusterSegmenter::try_new_unstable(provider)?,
+            )))
         }
 
         /// Segments a (potentially ill-formed) UTF-8 string.
@@ -105,6 +111,12 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -117,6 +129,12 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -129,6 +147,12 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()

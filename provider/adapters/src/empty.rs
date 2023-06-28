@@ -29,6 +29,7 @@ use icu_provider::prelude::*;
 ///     })
 /// ));
 /// ```
+#[derive(Debug)]
 pub struct EmptyDataProvider {
     error_kind: DataErrorKind,
 }
@@ -84,5 +85,28 @@ where
 {
     fn load(&self, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
         Err(self.error_kind.with_req(M::KEY, base_req))
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<M> icu_provider::datagen::IterableDataProvider<M> for EmptyDataProvider
+where
+    M: KeyedDataMarker,
+{
+    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+        Ok(vec![])
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<M> icu_provider::datagen::IterableDynamicDataProvider<M> for EmptyDataProvider
+where
+    M: DataMarker,
+{
+    fn supported_locales_for_key(
+        &self,
+        _: DataKey,
+    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+        Ok(vec![])
     }
 }

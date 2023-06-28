@@ -6,7 +6,6 @@
 pub mod ffi {
     use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
     use icu_normalizer::properties::{
         CanonicalCombiningClassMap, CanonicalComposition, CanonicalDecomposition, Decomposed,
     };
@@ -24,11 +23,10 @@ pub mod ffi {
         )]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XCanonicalCombiningClassMap>, ICU4XError> {
-            CanonicalCombiningClassMap::try_new_unstable(&provider.0)
-                .map(|o| Box::new(ICU4XCanonicalCombiningClassMap(o)))
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XCanonicalCombiningClassMap>, ICU4XError> {
+            Ok(Box::new(ICU4XCanonicalCombiningClassMap(
+                CanonicalCombiningClassMap::try_new_unstable(&provider.0)?,
+            )))
         }
 
         #[diplomat::rust_link(
@@ -72,11 +70,10 @@ pub mod ffi {
         )]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XCanonicalComposition>, ICU4XError> {
-            CanonicalComposition::try_new_unstable(&provider.0)
-                .map(|o| Box::new(ICU4XCanonicalComposition(o)))
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XCanonicalComposition>, ICU4XError> {
+            Ok(Box::new(ICU4XCanonicalComposition(
+                CanonicalComposition::try_new_unstable(&provider.0)?,
+            )))
         }
 
         /// Performs canonical composition (including Hangul) on a pair of characters
@@ -114,11 +111,10 @@ pub mod ffi {
         )]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XCanonicalDecomposition>, ICU4XError> {
-            CanonicalDecomposition::try_new_unstable(&provider.0)
-                .map(|o| Box::new(ICU4XCanonicalDecomposition(o)))
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XCanonicalDecomposition>, ICU4XError> {
+            Ok(Box::new(ICU4XCanonicalDecomposition(
+                CanonicalDecomposition::try_new_unstable(&provider.0)?,
+            )))
         }
 
         /// Performs non-recursive canonical decomposition (including for Hangul).

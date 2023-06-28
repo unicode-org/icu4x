@@ -18,8 +18,7 @@ fn get_binary_prop_for_unicodeset<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.trie_type(),
-            key
+            source.options.trie_type, key
         ))?
         .binary_property
         .get(0)
@@ -32,8 +31,9 @@ macro_rules! expand {
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(
                     &self,
-                    _: DataRequest,
+                    req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
+                    self.check_req::<$marker>(req)?;
                     let data = get_binary_prop_for_unicodeset(&self.source, $prop_name)?;
 
                     let mut builder = CodePointInversionListBuilder::new();

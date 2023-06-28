@@ -9,7 +9,6 @@ pub mod ffi {
     use core::convert::TryInto;
     use core::fmt::Write;
 
-    use diplomat_runtime::DiplomatResult;
     use icu_calendar::types::Time;
     use icu_calendar::AnyCalendar;
     use icu_calendar::{DateTime, Iso};
@@ -19,7 +18,9 @@ pub mod ffi {
     use crate::date::ffi::{ICU4XDate, ICU4XIsoDate, ICU4XIsoWeekday};
     use crate::errors::ffi::ICU4XError;
     use crate::time::ffi::ICU4XTime;
-    use crate::week::ffi::{ICU4XWeekCalculator, ICU4XWeekOf};
+
+    #[cfg(feature = "icu_calendar")]
+    use crate::week::ffi::ICU4XWeekCalculator;
 
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
@@ -37,15 +38,10 @@ pub mod ffi {
             minute: u8,
             second: u8,
             nanosecond: u32,
-        ) -> DiplomatResult<Box<ICU4XIsoDateTime>, ICU4XError> {
-            let nanosecond = try_icu4x!(nanosecond.try_into());
-            DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)
-                .map(|mut dt| {
-                    dt.time.nanosecond = nanosecond;
-                    Box::new(ICU4XIsoDateTime(dt))
-                })
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XIsoDateTime>, ICU4XError> {
+            let mut dt = DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)?;
+            dt.time.nanosecond = nanosecond.try_into()?;
+            Ok(Box::new(ICU4XIsoDateTime(dt)))
         }
 
         /// Creates a new [`ICU4XIsoDateTime`] from an [`ICU4XIsoDate`] and [`ICU4XTime`] object
@@ -155,16 +151,12 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> DiplomatResult<ICU4XWeekOf, ICU4XError> {
-            self.0
-                .date
-                .week_of_year(&calculator.0)
-                .map(Into::into)
-                .map_err(Into::into)
-                .into()
+        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
+            Ok(self.0.date.week_of_year(&calculator.0)?.into())
         }
 
         /// Returns 1-indexed number of the month of this date in its year
@@ -217,16 +209,11 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
             calendar: &ICU4XCalendar,
-        ) -> DiplomatResult<Box<ICU4XDateTime>, ICU4XError> {
+        ) -> Result<Box<ICU4XDateTime>, ICU4XError> {
             let cal = calendar.0.clone();
-            let nanosecond = try_icu4x!(nanosecond.try_into());
-            DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)
-                .map(|mut dt| {
-                    dt.time.nanosecond = nanosecond;
-                    Box::new(ICU4XDateTime(dt.to_calendar(cal)))
-                })
-                .map_err(Into::into)
-                .into()
+            let mut dt = DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)?;
+            dt.time.nanosecond = nanosecond.try_into()?;
+            Ok(Box::new(ICU4XDateTime(dt.to_calendar(cal))))
         }
         /// Creates a new [`ICU4XDateTime`] from the given codes, which are interpreted in the given calendar system
         #[diplomat::rust_link(icu::calendar::DateTime::try_new_from_codes, FnInStruct)]
@@ -241,26 +228,25 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
             calendar: &ICU4XCalendar,
-        ) -> DiplomatResult<Box<ICU4XDateTime>, ICU4XError> {
+        ) -> Result<Box<ICU4XDateTime>, ICU4XError> {
             let era_code = era_code.as_bytes(); // #2520
             let month_code = month_code.as_bytes(); // #2520
-            let era = try_icu4x!(TinyAsciiStr::from_bytes(era_code)).into();
-            let month = try_icu4x!(TinyAsciiStr::from_bytes(month_code)).into();
+            let era = TinyAsciiStr::from_bytes(era_code)?.into();
+            let month = TinyAsciiStr::from_bytes(month_code)?.into();
             let cal = calendar.0.clone();
-            let hour = try_icu4x!(hour.try_into());
-            let minute = try_icu4x!(minute.try_into());
-            let second = try_icu4x!(second.try_into());
-            let nanosecond = try_icu4x!(nanosecond.try_into());
+            let hour = hour.try_into()?;
+            let minute = minute.try_into()?;
+            let second = second.try_into()?;
+            let nanosecond = nanosecond.try_into()?;
             let time = Time {
                 hour,
                 minute,
                 second,
                 nanosecond,
             };
-            DateTime::try_new_from_codes(era, year, month, day, time, cal)
-                .map(|dt| Box::new(ICU4XDateTime(dt)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XDateTime(DateTime::try_new_from_codes(
+                era, year, month, day, time, cal,
+            )?)))
         }
         /// Creates a new [`ICU4XDateTime`] from an [`ICU4XDate`] and [`ICU4XTime`] object
         #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
@@ -347,16 +333,12 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> DiplomatResult<ICU4XWeekOf, ICU4XError> {
-            self.0
-                .date
-                .week_of_year(&calculator.0)
-                .map(Into::into)
-                .map_err(Into::into)
-                .into()
+        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
+            Ok(self.0.date.week_of_year(&calculator.0)?.into())
         }
 
         /// Returns 1-indexed number of the month of this date in its year
@@ -375,11 +357,10 @@ pub mod ffi {
         pub fn month_code(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
+        ) -> Result<(), ICU4XError> {
             let code = self.0.date.month().code;
-            let result = write.write_str(&code.0).map_err(Into::into).into();
-            write.flush();
-            result
+            write.write_str(&code.0)?;
+            Ok(())
         }
 
         /// Returns the year number in the current era for this date
@@ -393,11 +374,10 @@ pub mod ffi {
         pub fn era(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
+        ) -> Result<(), ICU4XError> {
             let era = self.0.date.year().era;
-            let result = write.write_str(&era.0).map_err(Into::into).into();
-            write.flush();
-            result
+            write.write_str(&era.0)?;
+            Ok(())
         }
 
         /// Returns the number of months in the year represented by this date

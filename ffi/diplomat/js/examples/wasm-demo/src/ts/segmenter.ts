@@ -8,7 +8,7 @@ export class SegmenterDemo {
 
     constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
         this.#displayFn = displayFn;
-        this.#segmenter = ICU4XWordSegmenter.create(dataProvider);
+        this.#segmenter = ICU4XWordSegmenter.create_auto(dataProvider);
     }
 
     setText(text: string): void {

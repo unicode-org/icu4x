@@ -7,7 +7,6 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::fmt::Write;
-    use diplomat_runtime::DiplomatResult;
     use icu_calendar::types::IsoWeekday;
     use icu_calendar::AnyCalendar;
     use icu_calendar::{Date, Iso};
@@ -15,7 +14,9 @@ pub mod ffi {
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::errors::ffi::ICU4XError;
-    use crate::week::ffi::{ICU4XWeekCalculator, ICU4XWeekOf};
+
+    #[cfg(feature = "icu_calendar")]
+    use crate::week::ffi::ICU4XWeekCalculator;
 
     #[diplomat::enum_convert(IsoWeekday)]
     pub enum ICU4XIsoWeekday {
@@ -36,15 +37,16 @@ pub mod ffi {
     impl ICU4XIsoDate {
         /// Creates a new [`ICU4XIsoDate`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::Date::try_new_iso_date, FnInStruct)]
-        pub fn create(
-            year: i32,
-            month: u8,
-            day: u8,
-        ) -> DiplomatResult<Box<ICU4XIsoDate>, ICU4XError> {
-            Date::try_new_iso_date(year, month, day)
-                .map(|dt| Box::new(ICU4XIsoDate(dt)))
-                .map_err(Into::into)
-                .into()
+        pub fn create(year: i32, month: u8, day: u8) -> Result<Box<ICU4XIsoDate>, ICU4XError> {
+            Ok(Box::new(ICU4XIsoDate(Date::try_new_iso_date(
+                year, month, day,
+            )?)))
+        }
+
+        /// Creates a new [`ICU4XIsoDate`] representing January 1, 1970.
+        #[diplomat::rust_link(icu::calendar::Date::unix_epoch, FnInStruct)]
+        pub fn create_for_unix_epoch() -> Box<ICU4XIsoDate> {
+            Box::new(ICU4XIsoDate(Date::unix_epoch()))
         }
 
         /// Convert this date to one in a different calendar
@@ -91,15 +93,12 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> DiplomatResult<ICU4XWeekOf, ICU4XError> {
-            self.0
-                .week_of_year(&calculator.0)
-                .map(Into::into)
-                .map_err(Into::into)
-                .into()
+        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
+            Ok(self.0.week_of_year(&calculator.0)?.into())
         }
 
         /// Returns 1-indexed number of the month of this date in its year
@@ -148,12 +147,11 @@ pub mod ffi {
             month: u8,
             day: u8,
             calendar: &ICU4XCalendar,
-        ) -> DiplomatResult<Box<ICU4XDate>, ICU4XError> {
+        ) -> Result<Box<ICU4XDate>, ICU4XError> {
             let cal = calendar.0.clone();
-            Date::try_new_iso_date(year, month, day)
-                .map(|dt| Box::new(ICU4XDate(dt.to_calendar(cal))))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XDate(
+                Date::try_new_iso_date(year, month, day)?.to_calendar(cal),
+            )))
         }
 
         /// Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
@@ -164,16 +162,15 @@ pub mod ffi {
             month_code: &str,
             day: u8,
             calendar: &ICU4XCalendar,
-        ) -> DiplomatResult<Box<ICU4XDate>, ICU4XError> {
+        ) -> Result<Box<ICU4XDate>, ICU4XError> {
             let era_code = era_code.as_bytes(); // #2520
             let month_code = month_code.as_bytes(); // #2520
-            let era = try_icu4x!(TinyAsciiStr::from_bytes(era_code)).into();
-            let month = try_icu4x!(TinyAsciiStr::from_bytes(month_code)).into();
+            let era = TinyAsciiStr::from_bytes(era_code)?.into();
+            let month = TinyAsciiStr::from_bytes(month_code)?.into();
             let cal = calendar.0.clone();
-            Date::try_new_from_codes(era, year, month, day, cal)
-                .map(|dt| Box::new(ICU4XDate(dt)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XDate(Date::try_new_from_codes(
+                era, year, month, day, cal,
+            )?)))
         }
 
         /// Convert this date to one in a different calendar
@@ -221,15 +218,12 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> DiplomatResult<ICU4XWeekOf, ICU4XError> {
-            self.0
-                .week_of_year(&calculator.0)
-                .map(Into::into)
-                .map_err(Into::into)
-                .into()
+        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
+            Ok(self.0.week_of_year(&calculator.0)?.into())
         }
 
         /// Returns 1-indexed number of the month of this date in its year
@@ -248,11 +242,10 @@ pub mod ffi {
         pub fn month_code(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
+        ) -> Result<(), ICU4XError> {
             let code = self.0.month().code;
-            let result = write.write_str(&code.0).map_err(Into::into).into();
-            write.flush();
-            result
+            write.write_str(&code.0)?;
+            Ok(())
         }
 
         /// Returns the year number in the current era for this date
@@ -267,11 +260,10 @@ pub mod ffi {
         pub fn era(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
+        ) -> Result<(), ICU4XError> {
             let era = self.0.year().era;
-            let result = write.write_str(&era.0).map_err(Into::into).into();
-            write.flush();
-            result
+            write.write_str(&era.0)?;
+            Ok(())
         }
 
         /// Returns the number of months in the year represented by this date

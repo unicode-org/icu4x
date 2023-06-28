@@ -6,6 +6,8 @@ use crate::codepointtrie::error::Error;
 use crate::codepointtrie::impl_const::*;
 
 use crate::codepointinvlist::CodePointInversionList;
+use core::char::CharTryFromError;
+use core::convert::Infallible;
 use core::convert::TryFrom;
 use core::fmt::Display;
 use core::iter::FromIterator;
@@ -62,35 +64,47 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     /// When the serialization type width is smaller than 32 bits, then it is expected
     /// that the call site will widen the value to a `u32` first.
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error>;
-}
 
-impl TrieValue for u8 {
-    type TryFromU32Error = TryFromIntError;
-    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        Self::try_from(i)
+    /// A method for converting back to a u32 that can roundtrip through
+    /// [`Self::try_from_u32()`]. The default implementation of this trait
+    /// method panics in debug mode and returns 0 in release mode.
+    ///
+    /// This method is allowed to have GIGO behavior when fed a value that has
+    /// no corresponding u32 (since such values cannot be stored in the trie)
+    fn to_u32(self) -> u32 {
+        debug_assert!(
+            false,
+            "TrieValue::to_u32() not implemented for {}",
+            ::core::any::type_name::<Self>()
+        );
+        0
     }
 }
 
-impl TrieValue for u16 {
-    type TryFromU32Error = TryFromIntError;
-    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        Self::try_from(i)
-    }
+macro_rules! impl_primitive_trie_value {
+    ($primitive:ty, $error:ty) => {
+        impl TrieValue for $primitive {
+            type TryFromU32Error = $error;
+            fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+                Self::try_from(i)
+            }
+
+            fn to_u32(self) -> u32 {
+                // bitcast when the same size, zero-extend/sign-extend
+                // when not the same size
+                self as u32
+            }
+        }
+    };
 }
 
-impl TrieValue for u32 {
-    type TryFromU32Error = TryFromIntError;
-    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        Ok(i)
-    }
-}
-
-impl TrieValue for char {
-    type TryFromU32Error = core::char::CharTryFromError;
-    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        char::try_from(i)
-    }
-}
+impl_primitive_trie_value!(u8, TryFromIntError);
+impl_primitive_trie_value!(u16, TryFromIntError);
+impl_primitive_trie_value!(u32, Infallible);
+impl_primitive_trie_value!(i8, TryFromIntError);
+impl_primitive_trie_value!(i16, TryFromIntError);
+impl_primitive_trie_value!(i32, TryFromIntError);
+impl_primitive_trie_value!(char, CharTryFromError);
 
 /// Helper function used by [`get_range`]. Converts occurrences of trie's null
 /// value into the provided null_value.
@@ -271,7 +285,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             } else {
                 return self.trie_error_val_index();
             };
-            data_block = ((data_block << (2 + (2 * index3_pos))) as u32 & 0x30000) as u32;
+            data_block = (data_block << (2 + (2 * index3_pos))) & 0x30000;
             index3_block += 1;
             data_block =
                 if let Some(index3_val) = self.index.get((index3_block + index3_pos) as usize) {
@@ -402,6 +416,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// Borrowed data remains borrowed, and owned data remains owned.
     ///
+    /// If the old and new types are not the same size, use
+    /// [`CodePointTrie::try_alloc_map_value`].
+    ///
     /// # Panics
     ///
     /// Panics if `T` and `P` are different sizes.
@@ -412,11 +429,14 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```no_run
+    /// use icu_collections::codepointtrie::planes;
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
-    /// let cpt1: CodePointTrie<char> = unimplemented!();
-    /// let cpt2: CodePointTrie<u32> =
-    ///     cpt1.try_into_converted().expect("infallible");
+    /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
+    /// let planes_trie_i8: CodePointTrie<i8> =
+    ///     planes_trie_u8.try_into_converted().expect("infallible");
+    ///
+    /// assert_eq!(planes_trie_i8.get32(0x30000), 3);
     /// ```
     pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, ZeroVecError>
     where
@@ -435,6 +455,44 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             error_value: error_converted
                 .get(0)
                 .expect("vector known to have one element"),
+        })
+    }
+
+    /// Maps the CodePointTrie into one that returns a different type.
+    ///
+    /// This function returns owned data.
+    ///
+    /// If the old and new types are the same size, use the more efficient
+    /// [`CodePointTrie::try_into_converted`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use core::convert::Infallible;
+    /// use icu_collections::codepointtrie::planes;
+    /// use icu_collections::codepointtrie::CodePointTrie;
+    ///
+    /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
+    /// let planes_trie_u16: CodePointTrie<u16> = planes_trie_u8
+    ///     .try_alloc_map_value(TryFrom::try_from)
+    ///     .expect("infallible");
+    ///
+    /// assert_eq!(planes_trie_u16.get32(0x30000), 3);
+    /// ```
+    pub fn try_alloc_map_value<P, E>(
+        &self,
+        mut f: impl FnMut(T) -> Result<P, E>,
+    ) -> Result<CodePointTrie<'trie, P>, E>
+    where
+        P: TrieValue,
+    {
+        let error_converted = f(self.error_value)?;
+        let converted_data = self.data.iter().map(f).collect::<Result<ZeroVec<P>, E>>()?;
+        Ok(CodePointTrie {
+            header: self.header,
+            index: self.index.clone(),
+            data: converted_data,
+            error_value: error_converted,
         })
     }
 
@@ -861,6 +919,39 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             .map(|cpm_range| cpm_range.range)
     }
 
+    /// Yields an [`Iterator`] returning the ranges of the code points after passing
+    /// the value through a mapping function.
+    ///
+    /// This is preferable to calling `.get_ranges().map()` since it will coalesce
+    /// adjacent ranges into one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_collections::codepointtrie::planes;
+    ///
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// let plane_val = 2;
+    /// let mut sip_range_iter = trie.iter_ranges_mapped(|value| value != plane_val as u8).filter(|range| range.value);
+    ///
+    /// let end = plane_val * 0x1_0000 - 1;
+    ///
+    /// let sip_range = sip_range_iter.next()
+    ///     .expect("Complemented planes data should have at least one entry");
+    /// assert_eq!(0..=end, sip_range.range);
+    pub fn iter_ranges_mapped<'a, U: Eq + 'a>(
+        &'a self,
+        mut map: impl FnMut(T) -> U + Copy + 'a,
+    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
+        crate::iterator_utils::RangeListIteratorCoalescer::new(self.iter_ranges().map(
+            move |range| CodePointMapRange {
+                range: range.range,
+                value: map(range.value),
+            },
+        ))
+    }
+
     /// Returns a [`CodePointInversionList`] for the code points that have the given
     /// [`TrieValue`] in the trie.
     ///
@@ -901,7 +992,7 @@ impl<'trie, T: TrieValue + databake::Bake> databake::Bake for CodePointTrie<'tri
         let index = self.index.bake(env);
         let data = self.data.bake(env);
         let error_value = self.error_value.bake(env);
-        databake::quote! { ::icu_collections::codepointtrie::CodePointTrie::from_parts(#header, #index, #data, #error_value) }
+        databake::quote! { icu_collections::codepointtrie::CodePointTrie::from_parts(#header, #index, #data, #error_value) }
     }
 }
 
@@ -944,9 +1035,9 @@ where
 
 /// Represents a range of consecutive code points sharing the same value in a
 /// code point map. The start and end of the interval is represented as a
-/// `RangeInclusive<u32>`, and the value is represented as a [`TrieValue`].
+/// `RangeInclusive<u32>`, and the value is represented as `T`.
 #[derive(PartialEq, Eq, Debug, Clone)]
-pub struct CodePointMapRange<T: TrieValue> {
+pub struct CodePointMapRange<T> {
     /// Range of code points from start to end (inclusive).
     pub range: RangeInclusive<u32>,
     /// Trie value associated with this range.
@@ -1180,8 +1271,8 @@ mod tests {
                     null_value: 5u32,
                     trie_type: crate::codepointtrie::TrieType::Small,
                 },
-                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
-                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+                zerovec::ZeroVec::new(),
+                zerovec::ZeroVec::new(),
                 0u32,
             ),
             icu_collections,

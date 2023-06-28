@@ -8,9 +8,16 @@
 //!
 //! [`FilesystemExporter`]: super::FilesystemExporter
 
+#[doc(hidden)]
 pub mod bincode;
+#[doc(hidden)]
 pub mod json;
+#[doc(hidden)]
 pub mod postcard;
+
+pub use self::bincode::Serializer as Bincode;
+pub use self::json::Serializer as Json;
+pub use self::postcard::Serializer as Postcard;
 
 use icu_provider::buf::BufferFormat;
 use icu_provider::datagen::*;
@@ -18,7 +25,7 @@ use icu_provider::prelude::*;
 use std::io;
 
 /// A simple serializer trait that works on whole objects.
-pub trait AbstractSerializer {
+pub trait AbstractSerializer: core::fmt::Debug {
     /// Serializes an object to a sink.
     fn serialize(
         &self,

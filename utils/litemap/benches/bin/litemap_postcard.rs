@@ -43,7 +43,7 @@ fn generate() {
     }
 
     let buf = postcard::to_stdvec(&map).unwrap();
-    println!("{:?}", buf);
+    println!("{buf:?}");
 }
 
 #[no_mangle]

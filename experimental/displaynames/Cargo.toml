@@ -4,13 +4,15 @@
 
 [package]
 name = "icu_displaynames"
-description = "API to enable the translation of Region display names"
-version = "0.7.0"
+description = "API to enable the translation of Language and Region display names"
+version = "0.10.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
+homepage = "https://icu4x.unicode.org"
+license = "Unicode-DFS-2016"
 # Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
@@ -22,24 +24,27 @@ include = [
     "README.md"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
-icu_collections = { version = "1.0.0", path = "../../components/collections" }
-icu_locid = { version = "1.0.0", path = "../../components/locid" }
-icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
-zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
+icu_collections = { version = "1.2.0", path = "../../components/collections" }
+icu_locid = { version = "1.2.0", path = "../../components/locid" }
+icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
+tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }
+
+databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
-tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", "zerovec"], default-features = false }
 
-[dev-dependencies]
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_displaynames"] }
-
-[lib]
-path = "src/lib.rs"
-bench = false  # This option is required for Benchmark CI
+icu_displaynames_data = { path = "data", optional = true }
+icu_locid_transform = { path = "../../components/locid_transform", features = ["data"], optional = true }
 
 [features]
-std = ["icu_provider/std"]
-default = []
-serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "tinystr/serde"]
-datagen = ["serde", "std", "databake", "zerovec/databake", "icu_collections/databake"]
+std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "tinystr/serde", "icu_provider/serde"]
+datagen = ["serde", "std", "dep:databake", "zerovec/databake", "icu_collections/databake", "tinystr/databake"]
+data = ["dep:icu_displaynames_data", "dep:icu_locid_transform"]

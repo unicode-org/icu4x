@@ -86,12 +86,11 @@ pub fn encode_varule_to_box<S: EncodeAsVarULE<T>, T: VarULE + ?Sized>(x: &S) -> 
     // zero-fill the vector to avoid uninitialized data UB
     vec.resize(x.encode_var_ule_len(), 0);
     x.encode_var_ule_write(&mut vec);
-    let boxed = vec.into_boxed_slice();
+    let boxed = mem::ManuallyDrop::new(vec.into_boxed_slice());
     unsafe {
         // Safety: `ptr` is a box, and `T` is a VarULE which guarantees it has the same memory layout as `[u8]`
         // and can be recouped via from_byte_slice_unchecked()
         let ptr: *mut T = T::from_byte_slice_unchecked(&boxed) as *const T as *mut T;
-        mem::forget(boxed);
 
         // Safety: we can construct an owned version since we have mem::forgotten the older owner
         Box::from_raw(ptr)
@@ -121,7 +120,7 @@ where
 
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for Box<T> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[T::as_byte_slice(&*self)])
+        cb(&[T::as_byte_slice(self)])
     }
 }
 
@@ -138,7 +137,7 @@ where
     T: ULE,
 {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[<[T] as VarULE>::as_byte_slice(&*self)])
+        cb(&[<[T] as VarULE>::as_byte_slice(self)])
     }
 }
 

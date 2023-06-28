@@ -5,9 +5,10 @@
 [package]
 name = "databake-derive"
 description = "Custom derive for the databake crate"
-version = "0.1.1"
+version = "0.1.5"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
@@ -23,7 +24,8 @@ include = [
     "README.md"
 ]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.workspaces]
+independent = true
 
 [lib]
 proc_macro = true
@@ -32,8 +34,8 @@ path = "src/lib.rs"
 [dependencies]
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
-syn = { version = "1.0.73", features = ["derive", "fold"] }
-synstructure = "0.12.4"
+syn = { version = "2", features = ["derive", "fold"] }
+synstructure = "0.13"
 
 [dev-dependencies]
-databake = { version = "0.1.1", path = "..", features = ["derive"]}
+databake = { path = "..", features = ["derive"]}

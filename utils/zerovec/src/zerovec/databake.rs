@@ -8,12 +8,16 @@ use databake::*;
 
 impl<T> Bake for ZeroVec<'_, T>
 where
-    T: AsULE + ?Sized,
+    T: AsULE + ?Sized + Bake,
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
-        let bytes = self.as_bytes();
-        quote! { unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[#(#bytes),*]) } }
+        if self.is_empty() {
+            quote! { zerovec::ZeroVec::new() }
+        } else {
+            let bytes = databake::Bake::bake(&self.as_bytes(), env);
+            quote! { unsafe { zerovec::ZeroVec::from_bytes_unchecked(#bytes) } }
+        }
     }
 }
 
@@ -23,8 +27,12 @@ where
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
-        let bytes = self.as_bytes();
-        quote! { unsafe { ::zerovec::ZeroSlice::from_bytes_unchecked(&[#(#bytes),*]) } }
+        if self.is_empty() {
+            quote! { zerovec::ZeroSlice::new_empty() }
+        } else {
+            let bytes = databake::Bake::bake(&self.as_bytes(), env);
+            quote! { unsafe { zerovec::ZeroSlice::from_bytes_unchecked(#bytes) } }
+        }
     }
 }
 
@@ -32,8 +40,13 @@ where
 fn test_baked_vec() {
     test_bake!(
         ZeroVec<u32>,
+        const: crate::ZeroVec::new(),
+        zerovec
+    );
+    test_bake!(
+        ZeroVec<u32>,
         const: unsafe {
-            crate::ZeroVec::from_bytes_unchecked(&[2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8])
+            crate::ZeroVec::from_bytes_unchecked(b"\x02\x01\0\x16\0M\x01\\")
         },
         zerovec
     );
@@ -43,8 +56,13 @@ fn test_baked_vec() {
 fn test_baked_slice() {
     test_bake!(
         &ZeroSlice<u32>,
+        const: crate::ZeroSlice::new_empty(),
+        zerovec
+    );
+    test_bake!(
+        &ZeroSlice<u32>,
         const: unsafe {
-            crate::ZeroSlice::from_bytes_unchecked(&[2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8])
+            crate::ZeroSlice::from_bytes_unchecked(b"\x02\x01\0\x16\0M\x01\\")
         },
         zerovec
     );

@@ -32,19 +32,15 @@ fn test_parsing_operands() {
                     assert!(
                         test_condition(&ast, &operands),
                         "\nExpected true\n\
-                            AST: {:#?}\n\
-                            Operands: {:#?}\n",
-                        ast,
-                        operands
+                            AST: {ast:#?}\n\
+                            Operands: {operands:#?}\n"
                     );
                 } else {
                     assert!(
                         !test_condition(&ast, &operands),
                         "\nExpected false\n\
-                            AST: {:#?}\n\
-                            Operands: {:#?}\n",
-                        ast,
-                        operands
+                            AST: {ast:#?}\n\
+                            Operands: {operands:#?}\n"
                     );
                 }
 
@@ -56,7 +52,7 @@ fn test_parsing_operands() {
             }
             fixtures::RuleTestOutput::Error(val) => {
                 let err = parse(test.rule.as_bytes()).unwrap_err();
-                assert_eq!(format!("{:?}", err), val);
+                assert_eq!(format!("{err:?}"), val);
             }
         }
     }

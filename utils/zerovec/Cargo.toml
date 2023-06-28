@@ -5,7 +5,8 @@
 [package]
 name = "zerovec"
 description = "Zero-copy vector backed by a byte array"
-version = "0.9.1"
+version = "0.9.4"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -22,35 +23,52 @@ include = [
     "README.md"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-serde = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
-yoke = { version = "0.6.0", path = "../yoke", optional = true }
-zerofrom = { version = "0.1.0", path = "../zerofrom" }
-zerovec-derive = {version = "0.9.0", path = "./derive", optional = true}
-databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true }
+zerofrom = { version = "0.1.1", path = "../zerofrom" }
+
+zerovec-derive = { version = "0.9.2", path = "./derive", optional = true}
+
+databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true }
+serde = { version = "1.0", default-features = false, features = ["alloc"], optional = true }
+
+# Special dep for yoke: avoid non-breaking zerovec bumps requiring breaking yoke bumps
+# Can be reset on next zerovec breaking if necessary
+#
+# This effectively stands for the range `~0.6 OR ~0.7`, i.e. it supports all 0.6 versions
+# and all 0.7 versions, but not further.
+yoke = { version = ">=0.6.0, <0.8.0", path = "../yoke", optional = true }
+t1ha = { version = "0.1", optional = true }
 
 [dev-dependencies]
-icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
-criterion = "0.3.4"
+bincode = "1.3"
+criterion = "0.4"
+getrandom = { version = "0.2", features = ["js"] }
 iai = "0.1"
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+postcard = { version = "1.0.0", features = ["use-std"], default-features = false }
+rand = "0.8"
+rand_distr = "0.4"
+rand_pcg = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-bincode = "1.3"
-postcard = { version = "1.0.0", features = ["use-std"] }
-rand = "0.8"
-rand_pcg = "0.3"
-rand_distr = "0.4"
-getrandom = { version = "0.2", features = ["js"] }
-yoke = { version = "0.6.0", path = "../yoke", features = ["derive"] }
-zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
+yoke = { path = "../yoke", features = ["derive"] }
+zerofrom = { path = "../zerofrom", features = ["derive"] }
 
 [features]
-bench = []
 std = []
-derive = ["zerovec-derive"]
+derive = ["dep:zerovec-derive"]
+hashmap = ["dep:t1ha"]
+bench = []
+
+[package.metadata.cargo-all-features]
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [[bench]]
 name = "zerovec"
@@ -72,7 +90,7 @@ harness = false
 [[bench]]
 name = "zeromap"
 harness = false
-required-features = ["serde"]
+required-features = ["serde", "hashmap"]
 
 [[example]]
 name = "zv_serde"

@@ -4,16 +4,17 @@
 
 [package]
 name = "yoke-derive"
-version = "0.6.1"
+version = "0.7.1"
 description = "Custom derive for the yoke crate"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.workspaces]
+independent = true
 
 [lib]
 proc_macro = true
@@ -22,9 +23,9 @@ path = "src/lib.rs"
 [dependencies]
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
-syn = { version = "1.0.73", features = ["derive", "fold"] }
-synstructure = "0.12.4"
+syn = { version = "2", features = ["derive", "fold"] }
+synstructure = "0.13"
 
 [dev-dependencies]
-yoke = { version = "0.6.0", path = "..", features = ["derive"]}
-zerovec = { version = "0.9", path = "../../zerovec", features = ["yoke"] }
+yoke = { path = "..", features = ["derive"]}
+zerovec = { path = "../../zerovec", features = ["yoke"] }

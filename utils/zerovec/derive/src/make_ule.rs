@@ -6,15 +6,11 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
 use crate::utils::{self, FieldInfo, ZeroVecAttrs};
-use syn::spanned::Spanned;
-use syn::{
-    parse_quote, AttributeArgs, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Fields,
-    Ident, Lit,
-};
-
 use std::collections::HashSet;
+use syn::spanned::Spanned;
+use syn::{parse_quote, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Fields, Ident, Lit};
 
-pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream2 {
+pub fn make_ule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()
         || input.generics.lifetimes().next().is_some()
         || input.generics.const_params().next().is_some()
@@ -25,17 +21,6 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
         )
         .to_compile_error();
     }
-
-    if attr.len() != 1 {
-        return Error::new(
-            input.span(),
-            "#[make_ule] takes one argument for the name of the ULE type it produces",
-        )
-        .to_compile_error();
-    }
-    let arg = &attr[0];
-    let ule_name: Ident = parse_quote!(#arg);
-
     let sp = input.span();
     let attrs = match utils::extract_attributes_common(&mut input.attrs, sp, false) {
         Ok(val) => val,
@@ -112,7 +97,7 @@ fn make_ule_enum_impl(
     let mut not_found = HashSet::new();
 
     for (i, variant) in enu.variants.iter().enumerate() {
-        if variant.fields != Fields::Unit {
+        if !matches!(variant.fields, Fields::Unit) {
             // This can be supported in the future, see zerovec/design_doc.md
             return Error::new(
                 variant.span(),
@@ -157,8 +142,8 @@ fn make_ule_enum_impl(
     let not_found = not_found.iter().collect::<Vec<_>>();
 
     if !not_found.is_empty() {
-        return Error::new(input.span(), &format!("#[make_ule] must be applied to enums with discriminants \
-                                                  filling the range from 0 to a maximum; could not find {:?}", not_found))
+        return Error::new(input.span(), format!("#[make_ule] must be applied to enums with discriminants \
+                                                  filling the range from 0 to a maximum; could not find {not_found:?}"))
             .to_compile_error();
     }
 
@@ -336,6 +321,19 @@ fn make_ule_struct_impl(
         )
     };
 
+    let maybe_hash = if attrs.hash {
+        quote!(
+            #[allow(clippy::derive_hash_xor_eq)]
+            impl core::hash::Hash for #ule_name {
+                fn hash<H>(&self, state: &mut H) where H: core::hash::Hasher {
+                    state.write(<#ule_name as zerovec::ule::ULE>::as_byte_slice(&[*self]));
+                }
+            }
+        )
+    } else {
+        quote!()
+    };
+
     quote!(
         #asule_impl
 
@@ -344,5 +342,7 @@ fn make_ule_struct_impl(
         #derived
 
         #maybe_ord_impls
+
+        #maybe_hash
     )
 }

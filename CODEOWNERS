@@ -7,38 +7,61 @@
 
 # List of components with at least two owners as specified in docs/crate-ownership.
 
+components/calendar/              @Manishearth @sffc
 components/collator/              @hsivonen @echeran
+components/collections/           @echeran
 components/datetime/              @zbraniecki @gregtatum @nordzilla
 components/decimal/               @sffc
-components/icu/                   @unicode-org/icu4x-owners
-components/icu4x/                 @unicode-org/icu4x-owners
-components/locale_canonicalizer/  @dminor @zbraniecki
+components/list/                  @robertbastian
 components/locid/                 @zbraniecki @nciric
+components/locid_transform/       @dminor @zbraniecki
 components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
-components/uniset/                @echeran @iainireland
+components/segmenter/             @aethanyc @makotokato @sffc
+components/timezone/              @nordzilla
 experimental/bies/                @sffc
-experimental/calendar/            @Manishearth @sffc
-experimental/codepointtrie/       @echeran
-experimental/provider_ppucd/      @echeran
-experimental/segmenter/           @aethanyc @makotokato @sffc
+experimental/casemapping/         @Manishearth
+experimental/compactdecimal/      @eggrobin
+experimental/displaynames/        @sffc @snktd
+experimental/harfbuzz/            @hsivonen
+experimental/relativetime/        @pdogr
 ffi/capi/                         @Manishearth
-ffi/cpp/                          @Manishearth
 ffi/ecma402/                      @filmil
-ffi/wasm/                         @Manishearth
+ffi/gn/                           @sffc
 provider/blob/                    @sffc @Manishearth
 provider/core/                    @sffc @Manishearth
 provider/datagen/                 @sffc @robertbastian @Manishearth
 provider/fs/                      @sffc
 provider/macros/                  @Manishearth @sffc
-provider/testdata/                @unicode-org/icu4x-owners
 tools/benchmark/binsize/          @gnrunge
 tools/benchmark/macros/           @gregtatum
 tools/benchmark/memory/           @gregtatum
-tools/scripts/                    @Manishearth @sffc
+tools/depcheck/                   @Manishearth
+tools/depcheck/src/allowlist.rs   @unicode-org/icu4x-owners
+tools/make/                       @Manishearth @sffc
+utils/databake                    @robertbastian @Manishearth
+utils/deduplicating_array         @robertbastian
 utils/fixed_decimal/              @sffc
 utils/litemap/                    @Manishearth @sffc
 utils/pattern/                    @zbraniecki
-utils/writeable/                  @sffc
+utils/tinystr                     @zbraniecki @sffc
+utils/writeable/                  @sffc @robertbastian
 utils/yoke/                       @Manishearth @sffc
+utils/zerofrom                    @Manishearth @sffc
 utils/zerovec/                    @Manishearth @sffc
+
+components/calendar/data             @unicode-org/icu4x-owners
+components/collator/data             @unicode-org/icu4x-owners
+components/collections/data          @unicode-org/icu4x-owners
+components/datetime/data             @unicode-org/icu4x-owners
+components/decimal/data              @unicode-org/icu4x-owners
+components/list/data                 @unicode-org/icu4x-owners
+components/locid_transform/data      @unicode-org/icu4x-owners
+components/normalizer/data           @unicode-org/icu4x-owners
+components/plurals/data              @unicode-org/icu4x-owners
+components/segmenter/data            @unicode-org/icu4x-owners
+components/timezone/data             @unicode-org/icu4x-owners
+experimental/casemapping/data        @unicode-org/icu4x-owners
+experimental/compactdecimal/data     @unicode-org/icu4x-owners
+experimental/displaynames/data       @unicode-org/icu4x-owners
+experimental/relativetime/data       @unicode-org/icu4x-owners

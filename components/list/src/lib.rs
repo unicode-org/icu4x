@@ -16,12 +16,11 @@
 //! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_and_with_length_unstable(
-//!     &icu_testdata::unstable(),
+//! let list_formatter = ListFormatter::try_new_and_with_length(
 //!     &locale!("es").into(),
 //!     ListLength::Wide,
 //! )
-//! .expect("Data should load successfully");
+//! .expect("locale should be present");
 //!
 //! assert_writeable_eq!(
 //!     list_formatter.format(["España", "Suiza"].iter()),
@@ -42,12 +41,11 @@
 //! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_or_with_length_unstable(
-//!     &icu_testdata::unstable(),
+//! let list_formatter = ListFormatter::try_new_or_with_length(
 //!     &locale!("th").into(),
 //!     ListLength::Short,
 //! )
-//! .expect("Data should load successfully");
+//! .expect("locale should be present");
 //!
 //! // We can use any Writeables as inputs
 //! assert_writeable_eq!(list_formatter.format(1..=3), "1, 2 หรือ 3",);
@@ -60,12 +58,11 @@
 //! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_unit_with_length_unstable(
-//!     &icu_testdata::unstable(),
+//! let list_formatter = ListFormatter::try_new_unit_with_length(
 //!     &locale!("en").into(),
 //!     ListLength::Wide,
 //! )
-//! .expect("Data should load successfully");
+//! .expect("locale should be present");
 //!
 //! assert_writeable_eq!(
 //!     list_formatter.format(["1ft", "2in"].iter()),
@@ -85,7 +82,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -93,8 +90,9 @@
 extern crate alloc;
 
 mod error;
+mod lazy_automaton;
 mod list_formatter;
-mod string_matcher;
+mod patterns;
 
 pub mod provider;
 
@@ -102,7 +100,7 @@ pub use list_formatter::*;
 
 pub use error::ListError;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use ListError as Error;
 
 /// Represents the style of a list. See the

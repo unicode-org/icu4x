@@ -9,10 +9,9 @@
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. It can be enabled with the "experimental" feature
+//! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 //! of the icu meta-crate. Use with caution.
 //! </div>
-//!
 
 #![warn(missing_docs)]
 
@@ -28,3 +27,5 @@ pub use error::RelativeTimeError;
 pub use format::FormattedRelativeTime;
 pub use options::RelativeTimeFormatterOptions;
 pub use relativetime::RelativeTimeFormatter;
+#[doc(no_inline)]
+pub use RelativeTimeError as Error;

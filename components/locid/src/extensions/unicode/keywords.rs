@@ -9,7 +9,7 @@ use litemap::LiteMap;
 
 use super::Key;
 use super::Value;
-use crate::helpers::ShortVec;
+use crate::helpers::ShortSlice;
 use crate::ordering::SubtagOrderingResult;
 
 /// A list of [`Key`]-[`Value`] pairs representing functional information
@@ -30,8 +30,7 @@ use crate::ordering::SubtagOrderingResult;
 ///
 /// ```
 /// use icu::locid::{
-///     extensions::unicode::Keywords, extensions_unicode_key as key,
-///     extensions_unicode_value as value, locale,
+///     extensions::unicode::{Keywords, key, value}, locale,
 /// };
 ///
 /// let keywords = vec![(key!("hc"), value!("h23"))]
@@ -45,7 +44,7 @@ use crate::ordering::SubtagOrderingResult;
 ///
 /// ```
 /// use icu::locid::{
-///     extensions_unicode_key as key, extensions_unicode_value as value,
+///     extensions::unicode::{key, value},
 ///     Locale,
 /// };
 ///
@@ -66,7 +65,7 @@ use crate::ordering::SubtagOrderingResult;
 ///
 /// [`Locale`]: crate::Locale
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Keywords(LiteMap<Key, Value, ShortVec<(Key, Value)>>);
+pub struct Keywords(LiteMap<Key, Value, ShortSlice<(Key, Value)>>);
 
 impl Keywords {
     /// Returns a new empty list of key-value pairs. Same as [`default()`](Default::default()), but is `const`.
@@ -86,9 +85,9 @@ impl Keywords {
     /// Create a new list of key-value pairs having exactly one pair, callable in a `const` context.
     #[inline]
     pub const fn new_single(key: Key, value: Value) -> Self {
-        Self(LiteMap::from_sorted_store_unchecked(ShortVec::new_single(
-            (key, value),
-        )))
+        Self(LiteMap::from_sorted_store_unchecked(
+            ShortSlice::new_single((key, value)),
+        ))
     }
 
     /// Returns `true` if there are no keywords.
@@ -116,10 +115,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{
-    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
-    ///     extensions_unicode_value as value,
-    /// };
+    /// use icu::locid::extensions::unicode::{Keywords, key, value};
     ///
     /// let keywords = vec![(key!("ca"), value!("gregory"))]
     ///     .into_iter()
@@ -141,10 +137,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{
-    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
-    ///     extensions_unicode_value as value,
-    /// };
+    /// use icu::locid::extensions::unicode::{Keywords, key, value};
     ///
     /// let keywords = vec![(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
@@ -167,10 +160,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{
-    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
-    ///     extensions_unicode_value as value,
-    /// };
+    /// use icu::locid::extensions::unicode::{Keywords, key, value};
     ///
     /// let mut keywords = vec![(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
@@ -198,7 +188,7 @@ impl Keywords {
     /// use icu::locid::extensions::unicode::Value;
     /// use icu::locid::Locale;
     /// use icu::locid::{
-    ///     extensions_unicode_key as key, extensions_unicode_value as value,
+    ///     extensions::unicode::{key, value},
     /// };
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
@@ -222,8 +212,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Key;
-    /// use icu::locid::extensions_unicode_key as key;
+    /// use icu::locid::extensions::unicode::{Key, key};
     /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
@@ -258,7 +247,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions_unicode_key as key;
+    /// use icu::locid::extensions::unicode::key;
     /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "und-u-ca-buddhist-hc-h12-ms-metric".parse().unwrap();
@@ -390,8 +379,8 @@ impl Keywords {
     }
 }
 
-impl From<LiteMap<Key, Value, ShortVec<(Key, Value)>>> for Keywords {
-    fn from(map: LiteMap<Key, Value, ShortVec<(Key, Value)>>) -> Self {
+impl From<LiteMap<Key, Value, ShortSlice<(Key, Value)>>> for Keywords {
+    fn from(map: LiteMap<Key, Value, ShortSlice<(Key, Value)>>) -> Self {
         Self(map)
     }
 }

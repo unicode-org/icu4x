@@ -8,13 +8,18 @@
 use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
 use icu_provider::prelude::*;
-use icu_provider::{yoke, zerofrom};
 use tinystr::{tinystr, TinyStr4};
-use zerovec::ZeroMap;
+use zerovec::{ule::UnvalidatedStr, ZeroMap};
 
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
     marker(GregorianDateSymbolsV1Marker, "datetime/gregory/datesymbols@1"),
     marker(BuddhistDateSymbolsV1Marker, "datetime/buddhist/datesymbols@1"),
@@ -56,6 +61,12 @@ impl DataMarker for ErasedDateSymbolsV1Marker {
 /// Symbol data for the day periods needed to format a time.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(marker(TimeSymbolsV1Marker, "datetime/timesymbols@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
@@ -71,7 +82,7 @@ pub struct TimeSymbolsV1<'data> {
     pub day_periods: day_periods::ContextsV1<'data>,
 }
 
-/// String data for the name, abbrevation, and narrow form of a date's era.
+/// String data for the name, abbreviation, and narrow form of a date's era.
 ///
 /// Keys of the map represent era codes, and the values are the display names.
 ///
@@ -81,6 +92,12 @@ pub struct TimeSymbolsV1<'data> {
 /// such as for the extended Japanese calendar.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
@@ -94,17 +111,17 @@ pub struct Eras<'data> {
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub names: ZeroMap<'data, str, str>,
+    pub names: ZeroMap<'data, UnvalidatedStr, str>,
     /// Symbol data for era abbreviations.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub abbr: ZeroMap<'data, str, str>,
+    pub abbr: ZeroMap<'data, UnvalidatedStr, str>,
     /// Symbol data for era narrow forms.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub narrow: ZeroMap<'data, str, str>,
+    pub narrow: ZeroMap<'data, UnvalidatedStr, str>,
 }
 
 // Note: the SymbolsV* struct doc strings metadata are attached to `$name` in the macro invocation to
@@ -131,6 +148,12 @@ macro_rules! symbols {
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Locale data for ", stringify!($field_id), " corresponding to the symbols.")]
+            ///
+            /// <div class="stab unstable">
+            /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+            /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+            /// to be stable, their Rust representation might not be. Use with caution.
+            /// </div>
             $symbols
 
             // UTS 35 specifies that `format` widths are mandatory,
@@ -146,6 +169,12 @@ macro_rules! symbols {
             #[doc = concat!("Symbol data for the \"format\" style formatting of ", stringify!($field_id),
                 ".\n\nThe format style is used in contexts where it is different from the stand-alone form, ex: ",
                 "a case inflected form where the stand-alone form is the nominative case.")]
+            ///
+            /// <div class="stab unstable">
+            /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+            /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+            /// to be stable, their Rust representation might not be. Use with caution.
+            /// </div>
             pub struct FormatWidthsV1<'data> {
                 #[doc = concat!("Abbreviated length symbol for \"format\" style symbol for ", stringify!($name), ".")]
                 #[cfg_attr(feature = "serde", serde(borrow))]
@@ -172,6 +201,12 @@ macro_rules! symbols {
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Symbol data for the \"stand-alone\" style formatting of ", stringify!($field_id),
                 ".\n\nThe stand-alone style is used in contexts where the field is displayed by itself.")]
+            ///
+            /// <div class="stab unstable">
+            /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+            /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+            /// to be stable, their Rust representation might not be. Use with caution.
+            /// </div>
             pub struct StandAloneWidthsV1<'data> {
                 #[doc = concat!("Abbreviated length symbol for \"stand-alone\" style symbol for ", stringify!($name), ".")]
                 #[cfg_attr(feature = "serde", serde(borrow))]
@@ -197,6 +232,12 @@ macro_rules! symbols {
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("The struct containing the symbol data for ", stringify!($field_id),
                 " that contains the \"format\" style symbol data ([`FormatWidthsV1`]) and \"stand-alone\" style symbol data ([`StandAloneWidthsV1`]).")]
+            ///
+            /// <div class="stab unstable">
+            /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+            /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+            /// to be stable, their Rust representation might not be. Use with caution.
+            /// </div>
             pub struct ContextsV1<'data> {
                 /// The symbol data for "format" style symbols.
                 #[cfg_attr(feature = "serde", serde(borrow))]

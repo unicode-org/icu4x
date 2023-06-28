@@ -10,6 +10,7 @@ use super::{
 use alloc::vec::Vec;
 use core::str::FromStr;
 
+#[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct GenericPattern {
     pub items: Vec<GenericPatternItem>,

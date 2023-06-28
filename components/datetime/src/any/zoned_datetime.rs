@@ -70,7 +70,7 @@ use writeable::Writeable;
 /// assert_writeable_eq!(
 ///     zdtf.format(&any_datetime, &time_zone)
 ///         .expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34:28 PM GMT"
+///     "Sep 1, 2020, 12:34:28 PM GMT"
 /// );
 /// ```
 ///
@@ -115,10 +115,11 @@ use writeable::Writeable;
 ///     zdtf
 ///       .format(&any_datetime, &time_zone)
 ///       .expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34:28 PM Central Daylight Time");
+///     "Sep 1, 2020, 12:34:28 PM Central Daylight Time");
 /// ```
 ///
 /// [`TimeZoneFormatter`]: crate::time_zone::TimeZoneFormatter
+#[derive(Debug)]
 pub struct ZonedDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
 impl ZonedDateTimeFormatter {
@@ -136,7 +137,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. It can be enabled with the "experimental" feature
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
     /// of the icu meta-crate. Use with caution.
     /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
     /// </div>
@@ -175,7 +176,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
-    ///     "April 2021 at 16:12 GMT-07:00"
+    ///     "April 2021, 16:12 GMT-07:00"
     /// );
     /// ```
     ///
@@ -288,7 +289,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
-    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
+    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
     /// );
     /// ```
     ///
@@ -398,7 +399,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
-    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
+    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
     /// );
     /// ```
     #[inline]
@@ -461,7 +462,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
-    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
+    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
     /// );
     /// ```
     #[inline]

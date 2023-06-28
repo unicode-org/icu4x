@@ -9,6 +9,7 @@ use crate::helpers;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
+use core::ops::{Add, AddAssign, Sub, SubAssign};
 use core::str::FromStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
@@ -37,8 +38,7 @@ impl FromStr for Era {
 
 /// Representation of a formattable year.
 ///
-/// More fields may be added in the future, for things like
-/// the cyclic or extended year
+/// More fields may be added in the future for things like extended year
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct FormattableYear {
@@ -47,6 +47,10 @@ pub struct FormattableYear {
 
     /// The year number in the current era (usually 1-based).
     pub number: i32,
+
+    /// The year in the current cycle for cyclic calendars;
+    /// can be set to None for non-cyclic calendars
+    pub cyclic: Option<i32>,
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
@@ -61,10 +65,11 @@ impl FormattableYear {
     ///
     /// Other fields can be set mutably after construction
     /// as needed
-    pub fn new(era: Era, number: i32) -> Self {
+    pub fn new(era: Era, number: i32, cyclic: Option<i32>) -> Self {
         Self {
             era,
             number,
+            cyclic,
             related_iso: None,
         }
     }
@@ -293,28 +298,45 @@ dt_unit!(
     IsoHour,
     u8,
     24,
-    "An ISO-8601 hour component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 24]`."
+    "An ISO-8601 hour component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 24]`. The value could be equal to 24 to
+denote the end of a day, with the writing 24:00:00. It corresponds to the same
+time as the next day at 00:00:00."
 );
 
 dt_unit!(
     IsoMinute,
     u8,
     60,
-    "An ISO-8601 minute component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 60]`."
+    "An ISO-8601 minute component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 60]`. The value could be equal to 60 to
+denote the end of an hour, with the writing 12:60:00. This example corresponds
+to the same time as 13:00:00. This is an extension to ISO 8601."
 );
 
 dt_unit!(
     IsoSecond,
     u8,
     61,
-    "An ISO-8601 second component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 61]`."
+    "An ISO-8601 second component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 61]`. `60` accomodates for leap seconds.
+
+The value could also be equal to 60 or 61, to indicate the end of a leap second,
+with the writing `23:59:61.000000000Z` or `23:59:60.000000000Z`. These examples,
+if used with this goal, would correspond to the same time as the next day, at
+time `00:00:00.000000000Z`. This is an extension to ISO 8601."
 );
 
 dt_unit!(
     NanoSecond,
     u32,
     999_999_999,
-    "A fractional second component, stored as nanoseconds.\n\nMust be within inclusive bounds `[0, 999_999_999]`."
+    "A fractional second component, stored as nanoseconds.
+
+Must be within inclusive bounds `[0, 999_999_999]`."
 );
 
 #[test]
@@ -459,6 +481,16 @@ impl Time {
             minute,
             second,
             nanosecond,
+        }
+    }
+
+    /// Construct a new [`Time`] representing midnight (00:00.000)
+    pub const fn midnight() -> Self {
+        Self {
+            hour: IsoHour::zero(),
+            minute: IsoMinute::zero(),
+            second: IsoSecond::zero(),
+            nanosecond: NanoSecond::zero(),
         }
     }
 
@@ -620,8 +652,8 @@ fn test_from_minute_with_remainder_days() {
     ];
     for cas in cases {
         let (actual_time, actual_remainder) = Time::from_minute_with_remainder_days(cas.minute);
-        assert_eq!(actual_time, cas.expected_time, "{:?}", cas);
-        assert_eq!(actual_remainder, cas.expected_remainder, "{:?}", cas);
+        assert_eq!(actual_time, cas.expected_time, "{cas:?}");
+        assert_eq!(actual_remainder, cas.expected_remainder, "{cas:?}");
     }
 }
 
@@ -677,5 +709,60 @@ impl From<usize> for IsoWeekday {
             ordinal = 7;
         }
         unsafe { core::mem::transmute(ordinal) }
+    }
+}
+
+/// A moment is a RataDie with a fractional part giving the time of day.
+///
+/// NOTE: This should not cause overflow errors for most cases, but consider
+/// alternative implementations if necessary.
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+pub(crate) struct Moment(f64);
+
+/// Add a number of days to a Moment
+impl Add<f64> for Moment {
+    type Output = Self;
+    fn add(self, rhs: f64) -> Self::Output {
+        Self(self.0 + rhs)
+    }
+}
+
+impl AddAssign<f64> for Moment {
+    fn add_assign(&mut self, rhs: f64) {
+        self.0 += rhs;
+    }
+}
+
+/// Subtract a number of days from a Moment
+impl Sub<f64> for Moment {
+    type Output = Self;
+    fn sub(self, rhs: f64) -> Self::Output {
+        Self(self.0 - rhs)
+    }
+}
+
+impl SubAssign<f64> for Moment {
+    fn sub_assign(&mut self, rhs: f64) {
+        self.0 -= rhs;
+    }
+}
+
+/// Calculate the number of days between two moments
+impl Sub for Moment {
+    type Output = f64;
+    fn sub(self, rhs: Self) -> Self::Output {
+        self.0 - rhs.0
+    }
+}
+
+impl Moment {
+    /// Create a new moment
+    pub const fn new(value: f64) -> Moment {
+        Moment(value)
+    }
+
+    /// Get the inner field of a Moment
+    pub const fn inner(self) -> f64 {
+        self.0
     }
 }

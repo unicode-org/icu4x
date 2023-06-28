@@ -8,16 +8,24 @@ use databake::*;
 impl Bake for FlexZeroVec<'_> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
-        let bytes = self.as_bytes();
-        quote! { unsafe { ::zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[#(#bytes),*]).as_flexzerovec() } }
+        if self.is_empty() {
+            quote! { zerovec::vecs::FlexZeroVec::new() }
+        } else {
+            let slice = self.as_ref().bake(env);
+            quote! { #slice.as_flexzerovec() }
+        }
     }
 }
 
 impl Bake for &FlexZeroSlice {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
-        let bytes = self.as_bytes();
-        quote! { unsafe { ::zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[#(#bytes),*]) } }
+        if self.is_empty() {
+            quote! { zerovec::vecs::FlexZeroSlice::new_empty() }
+        } else {
+            let bytes = databake::Bake::bake(&self.as_bytes(), env);
+            quote! { unsafe { zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(#bytes) } }
+        }
     }
 }
 
@@ -25,12 +33,16 @@ impl Bake for &FlexZeroSlice {
 fn test_baked_vec() {
     test_bake!(
         FlexZeroVec,
+        const: crate::vecs::FlexZeroVec::new(),
+        zerovec
+    );
+    test_bake!(
+        FlexZeroVec,
         const: unsafe {
-            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[
-                2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8,
-            ])
-            .as_flexzerovec()
-        },
+            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(
+                b"\x02\x01\0\x16\0M\x01\x11"
+            )
+        }.as_flexzerovec(),
         zerovec
     );
 }
@@ -39,10 +51,15 @@ fn test_baked_vec() {
 fn test_baked_slice() {
     test_bake!(
         &FlexZeroSlice,
+        const: crate::vecs::FlexZeroSlice::new_empty(),
+        zerovec
+    );
+    test_bake!(
+        &FlexZeroSlice,
         const: unsafe {
-            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[
-                2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8,
-            ])
+            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(
+                b"\x02\x01\0\x16\0M\x01\x11"
+            )
         },
         zerovec
     );

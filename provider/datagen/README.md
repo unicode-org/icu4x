@@ -5,33 +5,41 @@
 Data files can be generated either programmatically (i.e. in `build.rs`), or through a
 command-line utility.
 
+
+Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md)
+
 ## Examples
 
 ### `build.rs`
 
 ```rust
-use icu::locid::langid;
-use icu_datagen::*;
+use icu_datagen::prelude::*;
+use icu_provider_blob::export::*;
 use std::fs::File;
-use std::path::PathBuf;
 
 fn main() {
-    icu_datagen::datagen(
-        Some(&[langid!("de"), langid!("en-AU")]),
-        &icu_datagen::keys(&["list/and@1"]),
-        &SourceData::default(),
-        vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
-    )
-    .unwrap();
+    DatagenProvider::default()
+        .export(
+            [icu::list::provider::AndListV1Marker::KEY].into_iter().collect(),
+            BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())),
+        )
+        .unwrap();
 }
 ```
 
 ### Command line
-The command line interface can be installed with the `bin` feature.
+
+The command line interface can be installed through Cargo.
+
 ```bash
-$ cargo install icu_datagen --features bin
+$ cargo install icu_datagen
+```
+
+Once the tool is installed, you can invoke it like this:
+
+```bash
 $ icu4x-datagen \
->    --all-keys \
+>    --keys all \
 >    --locales de en-AU \
 >    --format blob \
 >    --out data.postcard

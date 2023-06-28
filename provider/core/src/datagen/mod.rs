@@ -6,14 +6,12 @@
 //! via the `icu_datagen` reference crate. End users should not need to consume anything in
 //! this module as a library unless defining new types that integrate with `icu_datagen`.
 //!
-//! This module can be enabled with the `datagen` feature on `icu_provider`.
+//! This module can be enabled with the `datagen` Cargo feature on `icu_provider`.
 
 mod data_conversion;
-mod heap_measure;
 mod iter;
 mod payload;
 pub use data_conversion::DataConverter;
-pub use heap_measure::{HeapStats, HeapStatsMarker};
 pub use iter::IterableDataProvider;
 
 #[doc(hidden)] // exposed for make_exportable_provider
@@ -22,6 +20,23 @@ pub use iter::IterableDynamicDataProvider;
 pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;
+
+/// The type of fallback that the data was generated for. Data size can be reduced as
+/// long as the data consumers know how this was done.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum FallbackMode {
+    /// No fallback
+    None,
+    /// Full fallback
+    Full,
+}
+
+impl Default for FallbackMode {
+    fn default() -> Self {
+        Self::None
+    }
+}
 
 /// An object capable of exporting data payloads in some form.
 pub trait DataExporter: Sync {
@@ -34,8 +49,30 @@ pub trait DataExporter: Sync {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError>;
 
-    /// Function called after all keys have been fully dumped.
+    /// Function called for singleton keys.
     /// Takes non-mut self as it can be called concurrently.
+    fn flush_singleton(
+        &self,
+        key: DataKey,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.put_payload(key, &Default::default(), payload)?;
+        self.flush_with_fallback(key, FallbackMode::None)
+    }
+
+    /// Function called after a non-singleton key has been fully dumped.
+    /// Takes non-mut self as it can be called concurrently.
+    fn flush_with_fallback(
+        &self,
+        key: DataKey,
+        _fallback_mode: FallbackMode,
+    ) -> Result<(), DataError> {
+        #[allow(deprecated)]
+        self.flush(key)
+    }
+
+    /// Use `self.flush_with_fallback(key, FallbackMode::None)`
+    #[deprecated(since = "1.3.0", note = "Use `self.flush_with_fallback`")]
     fn flush(&self, _key: DataKey) -> Result<(), DataError> {
         Ok(())
     }
@@ -50,7 +87,7 @@ pub trait DataExporter: Sync {
 
 /// A [`DynamicDataProvider`] that can be used for exporting data.
 ///
-/// Use [`make_exportable_provider`] to implement this.
+/// Use [`make_exportable_provider`](crate::make_exportable_provider) to implement this.
 pub trait ExportableProvider: IterableDynamicDataProvider<ExportMarker> + Sync {}
 impl<T> ExportableProvider for T where T: IterableDynamicDataProvider<ExportMarker> + Sync {}
 
@@ -97,24 +134,61 @@ macro_rules! make_exportable_provider {
                 }
             }
         }
-
-        impl $crate::datagen::DataConverter<$crate::buf::BufferMarker, $crate::datagen::HeapStatsMarker> for $provider {
-            fn convert(&self, key: $crate::DataKey, from: $crate::DataPayload<$crate::buf::BufferMarker>) -> Result<$crate::DataPayload<$crate::datagen::HeapStatsMarker>, ($crate::DataPayload<$crate::buf::BufferMarker>, $crate::DataError)> {
-                #![allow(non_upper_case_globals)]
-                // Reusing the struct names as identifiers
-                $(
-                    const $struct_m: $crate::DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.hashed();
-                )+
-                match key.hashed() {
-                    $(
-                        $struct_m => {
-                            let heap_stats = from.attempt_zero_copy_heap_size::<$struct_m>();
-                            return Ok($crate::DataPayload::from_owned(heap_stats));
-                        }
-                    )+,
-                    _ => Err((from, $crate::DataErrorKind::MissingDataKey.with_key(key)))
-                }
-            }
-        }
     };
+}
+
+/// A `DataExporter` that forks to multiple `DataExporter`s.
+#[derive(Default)]
+pub struct MultiExporter(Vec<Box<dyn DataExporter>>);
+
+impl MultiExporter {
+    /// Creates a `MultiExporter` for the given exporters.
+    pub const fn new(exporters: Vec<Box<dyn DataExporter>>) -> Self {
+        Self(exporters)
+    }
+}
+
+impl core::fmt::Debug for MultiExporter {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MultiExporter")
+            .field("0", &format!("vec[len = {}]", self.0.len()))
+            .finish()
+    }
+}
+
+impl DataExporter for MultiExporter {
+    fn put_payload(
+        &self,
+        key: DataKey,
+        locale: &DataLocale,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.0
+            .iter()
+            .try_for_each(|e| e.put_payload(key, locale, payload))
+    }
+
+    fn flush_singleton(
+        &self,
+        key: DataKey,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.0
+            .iter()
+            .try_for_each(|e| e.flush_singleton(key, payload))
+    }
+
+    fn flush_with_fallback(
+        &self,
+        key: DataKey,
+        fallback_mode: FallbackMode,
+    ) -> Result<(), DataError> {
+        self.0
+            .iter()
+            .try_for_each(|e| e.flush_with_fallback(key, fallback_mode))
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        self.0.iter_mut().try_for_each(|e| e.close())
+    }
 }

@@ -24,10 +24,6 @@ extern "C" {
 
 diplomat_result_box_ICU4XLocale_ICU4XError ICU4XLocale_create_from_string(const char* name_data, size_t name_len);
 
-ICU4XLocale* ICU4XLocale_create_en();
-
-ICU4XLocale* ICU4XLocale_create_bn();
-
 ICU4XLocale* ICU4XLocale_create_und();
 
 ICU4XLocale* ICU4XLocale_clone(const ICU4XLocale* self);
@@ -55,6 +51,10 @@ diplomat_result_void_ICU4XError ICU4XLocale_to_string(const ICU4XLocale* self, D
 bool ICU4XLocale_normalizing_eq(const ICU4XLocale* self, const char* other_data, size_t other_len);
 
 ICU4XOrdering ICU4XLocale_strict_cmp(const ICU4XLocale* self, const char* other_data, size_t other_len);
+
+ICU4XLocale* ICU4XLocale_create_en();
+
+ICU4XLocale* ICU4XLocale_create_bn();
 void ICU4XLocale_destroy(ICU4XLocale* self);
 
 #ifdef __cplusplus

@@ -30,7 +30,7 @@ struct ICU4XListFormatterDeleter {
 /**
  * 
  * 
- * See the [Rust documentation for `ListFormatter`](https://unicode-org.github.io/icu4x-docs/doc/icu/list/struct.ListFormatter.html) for more information.
+ * See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html) for more information.
  */
 class ICU4XListFormatter {
  public:
@@ -38,35 +38,35 @@ class ICU4XListFormatter {
   /**
    * Construct a new ICU4XListFormatter instance for And patterns
    * 
-   * See the [Rust documentation for `try_new_and_with_length_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_and_with_length_unstable) for more information.
+   * See the [Rust documentation for `try_new_and_with_length_unstable`](https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_and_with_length_unstable) for more information.
    */
   static diplomat::result<ICU4XListFormatter, ICU4XError> create_and_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListLength length);
 
   /**
    * Construct a new ICU4XListFormatter instance for And patterns
    * 
-   * See the [Rust documentation for `try_new_or_with_length_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_or_with_length_unstable) for more information.
+   * See the [Rust documentation for `try_new_or_with_length_unstable`](https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_or_with_length_unstable) for more information.
    */
   static diplomat::result<ICU4XListFormatter, ICU4XError> create_or_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListLength length);
 
   /**
    * Construct a new ICU4XListFormatter instance for And patterns
    * 
-   * See the [Rust documentation for `try_new_unit_with_length_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_with_length_unstable) for more information.
+   * See the [Rust documentation for `try_new_unit_with_length_unstable`](https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_with_length_unstable) for more information.
    */
   static diplomat::result<ICU4XListFormatter, ICU4XError> create_unit_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListLength length);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_to_writeable(const ICU4XList& list, W& write) const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format(const ICU4XList& list) const;
   inline const capi::ICU4XListFormatter* AsFFI() const { return this->inner.get(); }

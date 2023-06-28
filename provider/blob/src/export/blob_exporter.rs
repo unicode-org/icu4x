@@ -24,9 +24,22 @@ pub struct BlobExporter<'w> {
     /// List of (key hash, locale byte string, blob ID)
     #[allow(clippy::type_complexity)]
     resources: Mutex<Vec<(DataKeyHash, Vec<u8>, usize)>>,
+    // All seen keys
+    all_keys: Mutex<Vec<DataKeyHash>>,
     /// Map from blob to blob ID
     unique_resources: Mutex<HashMap<Vec<u8>, usize>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
+}
+
+impl core::fmt::Debug for BlobExporter<'_> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("BlobExporter")
+            .field("resources", &self.resources)
+            .field("unique_resources", &self.unique_resources)
+            .field("all_keys", &self.all_keys)
+            .field("sink", &"<sink>")
+            .finish()
+    }
 }
 
 impl<'w> BlobExporter<'w> {
@@ -35,6 +48,7 @@ impl<'w> BlobExporter<'w> {
         Self {
             resources: Mutex::new(Vec::new()),
             unique_resources: Mutex::new(HashMap::new()),
+            all_keys: Mutex::new(Vec::new()),
             sink,
         }
     }
@@ -47,7 +61,6 @@ impl DataExporter for BlobExporter<'_> {
         locale: &DataLocale,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        log::trace!("Adding: {}/{}", key, locale);
         let mut serializer = postcard::Serializer {
             output: AllocVec::new(),
         };
@@ -67,6 +80,11 @@ impl DataExporter for BlobExporter<'_> {
             locale.write_to_string().into_owned().into_bytes(),
             idx,
         ));
+        Ok(())
+    }
+
+    fn flush(&self, key: DataKey) -> Result<(), DataError> {
+        self.all_keys.lock().expect("poison").push(key.hashed());
         Ok(())
     }
 
@@ -90,7 +108,7 @@ impl DataExporter for BlobExporter<'_> {
             .collect();
 
         // Now build up the ZeroMap2d, changing old ID to new ID
-        let zm = self
+        let mut zm = self
             .resources
             .get_mut()
             .expect("poison")
@@ -103,7 +121,13 @@ impl DataExporter for BlobExporter<'_> {
                     remap.get(old_id).expect("in-bound index"),
                 )
             })
-            .collect::<ZeroMap2d<_, _, _>>();
+            .collect::<ZeroMap2d<DataKeyHash, Index32U8, usize>>();
+
+        for key in self.all_keys.lock().expect("poison").iter() {
+            if zm.get0(key).is_none() {
+                zm.insert(key, Index32U8::SENTINEL, &sorted.len());
+            }
+        }
 
         // Convert the sorted list to a VarZeroVec
         let vzv: VarZeroVec<[u8], Index32> = {

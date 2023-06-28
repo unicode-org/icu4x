@@ -26,9 +26,8 @@ use icu_normalizer::provider::DecompositionTablesV1;
 use icu_properties::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
-use zerovec::ule::CharULE;
 use zerovec::ule::RawBytesULE;
-use zerovec::ZeroSlice;
+use zerovec::{zeroslice, ZeroSlice};
 
 use crate::provider::CollationDataV1;
 
@@ -45,7 +44,7 @@ const FDFA_MARKER: u16 = 3;
 const BACKWARD_COMBINING_STARTER_MARKER: u32 = 1;
 
 // Magic marker trie value for characters whose decomposition
-// starts with a non-starter. The actual decompostion is
+// starts with a non-starter. The actual decomposition is
 // hard-coded.
 const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER: u32 = 2;
 
@@ -148,18 +147,13 @@ pub(crate) const FFFD_CE: CollationElement = CollationElement(FFFD_CE_VALUE);
 pub(crate) const FFFD_CE32_VALUE: u32 = 0xFFFD0505;
 pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VALUE);
 
-pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
+pub(crate) const EMPTY_U16: &ZeroSlice<u16> = zeroslice![];
 const SINGLE_REPLACEMENT_CHARACTER_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
-        REPLACEMENT_CHARACTER as u16
-    ]));
+    zeroslice![u16; <u16 as AsULE>::ULE::from_unsigned; REPLACEMENT_CHARACTER as u16];
 
-pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
-
-const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> = ZeroSlice::from_ule_slice(&[unsafe {
-    core::mem::transmute::<[u8; 3], CharULE>([0xFDu8, 0xFFu8, 0u8])
-}]);
+pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = zeroslice![];
+const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> =
+    zeroslice![char; <char as AsULE>::ULE::from_aligned; REPLACEMENT_CHARACTER];
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
@@ -311,7 +305,7 @@ pub(crate) enum Tag {
 /// tertiary weight are zero.)
 ///
 /// For the special case:
-/// Bits 31..8: tag-specific; see the documention for `Tag`.
+/// Bits 31..8: tag-specific; see the documentation for `Tag`.
 /// Bits  7..6: The specialness marker; both bits set to 1
 /// Bits  5..4: Reserved. May be used in the future to indicate lccc!=0 and tccc!=0.
 /// Bits  3..0: the tag (bit-compatible with `Tag`)
@@ -789,7 +783,7 @@ where
     ///
     /// Invariant: (Checked by `debug_assert!`) At the start of `next()` call,
     /// if `upcoming` isn't empty (with `iter` having been exhausted), the
-    /// first `char` in `upcoming` must have its decompostion start with a
+    /// first `char` in `upcoming` must have its decomposition start with a
     /// starter.
     upcoming: SmallVec<[CharacterAndClassAndTrieValue; 10]>, /* TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long */
     /// The root collation data.
@@ -1237,11 +1231,7 @@ where
                 }
             }
         };
-        let start = if c.decomposition_starts_with_non_starter() {
-            0
-        } else {
-            1
-        };
+        let start = c.decomposition_starts_with_non_starter() as usize;
         self.upcoming.insert(0, c);
         // Indices in range by construction
         #[allow(clippy::indexing_slicing)]

@@ -35,14 +35,15 @@ mod key;
 mod value;
 
 pub use fields::Fields;
-pub use key::Key;
+#[doc(inline)]
+pub use key::{key, Key};
 pub use value::Value;
 
+use crate::helpers::ShortSlice;
 use crate::parser::SubtagIterator;
 use crate::parser::{parse_language_identifier_from_iter, ParserError, ParserMode};
 use crate::subtags::Language;
 use crate::LanguageIdentifier;
-use alloc::vec;
 use litemap::LiteMap;
 
 /// A list of [`Unicode BCP47 T Extensions`] as defined in [`Unicode Locale
@@ -144,21 +145,24 @@ impl Transform {
         }
 
         let mut current_tkey = None;
-        let mut current_tvalue = vec![];
+        let mut current_tvalue = ShortSlice::new();
+        let mut has_current_tvalue = false;
 
         while let Some(subtag) = iter.peek() {
             if let Some(tkey) = current_tkey {
                 if let Ok(val) = Value::parse_subtag(subtag) {
-                    current_tvalue.push(val);
+                    has_current_tvalue = true;
+                    if let Some(val) = val {
+                        current_tvalue.push(val);
+                    }
                 } else {
-                    if current_tvalue.is_empty() {
+                    if !has_current_tvalue {
                         return Err(ParserError::InvalidExtension);
                     }
-                    tfields.try_insert(
-                        tkey,
-                        Value::from_vec_unchecked(current_tvalue.drain(..).flatten().collect()),
-                    );
+                    tfields.try_insert(tkey, Value::from_short_slice_unchecked(current_tvalue));
                     current_tkey = None;
+                    current_tvalue = ShortSlice::new();
+                    has_current_tvalue = false;
                     continue;
                 }
             } else if let Ok(tkey) = Key::try_from_bytes(subtag) {
@@ -171,13 +175,10 @@ impl Transform {
         }
 
         if let Some(tkey) = current_tkey {
-            if current_tvalue.is_empty() {
+            if !has_current_tvalue {
                 return Err(ParserError::InvalidExtension);
             }
-            tfields.try_insert(
-                tkey,
-                Value::from_vec_unchecked(current_tvalue.into_iter().flatten().collect()),
-            );
+            tfields.try_insert(tkey, Value::from_short_slice_unchecked(current_tvalue));
         }
 
         Ok(Self {

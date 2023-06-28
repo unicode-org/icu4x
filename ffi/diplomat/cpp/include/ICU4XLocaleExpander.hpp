@@ -29,7 +29,7 @@ struct ICU4XLocaleExpanderDeleter {
 /**
  * A locale expander.
  * 
- * See the [Rust documentation for `LocaleExpander`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleExpander.html) for more information.
+ * See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html) for more information.
  */
 class ICU4XLocaleExpander {
  public:
@@ -37,21 +37,28 @@ class ICU4XLocaleExpander {
   /**
    * Create a new [`ICU4XLocaleExpander`].
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleExpander.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XLocaleExpander, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
+   * Create a new [`ICU4XLocaleExpander`] with extended data.
+   * 
+   * See the [Rust documentation for `try_new_extended_unstable`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.try_new_extended_unstable) for more information.
+   */
+  static diplomat::result<ICU4XLocaleExpander, ICU4XError> create_extended(const ICU4XDataProvider& provider);
+
+  /**
    * FFI version of `LocaleExpander::maximize()`.
    * 
-   * See the [Rust documentation for `maximize`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleExpander.html#method.maximize) for more information.
+   * See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.maximize) for more information.
    */
   ICU4XTransformResult maximize(ICU4XLocale& locale) const;
 
   /**
    * FFI version of `LocaleExpander::minimize()`.
    * 
-   * See the [Rust documentation for `minimize`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleExpander.html#method.minimize) for more information.
+   * See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize) for more information.
    */
   ICU4XTransformResult minimize(ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleExpander* AsFFI() const { return this->inner.get(); }
@@ -69,6 +76,16 @@ class ICU4XLocaleExpander {
 
 inline diplomat::result<ICU4XLocaleExpander, ICU4XError> ICU4XLocaleExpander::create(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XLocaleExpander_create(provider.AsFFI());
+  diplomat::result<ICU4XLocaleExpander, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XLocaleExpander>(std::move(ICU4XLocaleExpander(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XLocaleExpander, ICU4XError> ICU4XLocaleExpander::create_extended(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLocaleExpander_create_extended(provider.AsFFI());
   diplomat::result<ICU4XLocaleExpander, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLocaleExpander>(std::move(ICU4XLocaleExpander(diplomat_result_raw_out_value.ok)));

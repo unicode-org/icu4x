@@ -5,11 +5,13 @@
 [package]
 name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
-version = "1.0.0"
+version = "1.2.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -23,46 +25,44 @@ include = [
     "README.md"
 ]
 
-[package.metadata.cargo-all-features]
-skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
-
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
-icu_collections = { version = "1.0.0", path = "../../components/collections" }
-icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-zerovec = { version = "0.9", path = "../../utils/zerovec" }
-icu_properties = { version = "1.0.0", path = "../../components/properties" }
-utf8_iter = "1.0.1"
+icu_collections = { version = "1.2.0", path = "../../components/collections" }
+icu_properties = { version = "1.2.0", path = "../../components/properties" }
+icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
+smallvec = "1.6"
 utf16_iter = "1.0.3"
+utf8_iter = "1.0.1"
 write16 = { version = "1.0", features = ["alloc"] }
-databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
-zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
+
+databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+
+icu_normalizer_data = { path = "data", optional = true }
 
 [dev-dependencies]
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_normalizer", "icu_properties"] }
-atoi = "1.0.0"
 arraystring = "0.3.0"
 arrayvec = "0.7.2"
+atoi = "1.0.0"
 write16 = { version = "1.0", features = ["arrayvec"] }
-
-[lib]
-path = "src/lib.rs"
-bench = false  # This option is required for Benchmark CI
+detone = "1.0.0"
+criterion = "0.4.0"
 
 [features]
-default = []
-std = []
+std = ["icu_collections/std", "icu_properties/std", "icu_provider/std"]
 serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_properties/serde"]
-datagen = ["serde", "databake", "icu_collections/databake", "zerovec/databake", "icu_properties/databake"]
+datagen = ["serde", "dep:databake", "icu_collections/databake", "zerovec/databake", "icu_properties/datagen"]
 experimental = []
+data = ["dep:icu_normalizer_data", "icu_properties/data"]
 
 [[test]]
 name = "tests"
 path = "tests/tests.rs"
+
+[[bench]]
+name = "bench"
+harness = false

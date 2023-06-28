@@ -11,75 +11,42 @@
 //! in ICU:
 //! * [`unstable`], [`unstable_no_fallback`]
 //! * [`any`], [`any_no_fallback`]
-//! * [`buffer`], [`buffer_no_fallback`] (`buffer` feature)
-//!
-//!
-//! Additionally, the `metadata` feature exposes the [`metadata`] module which contains information
-//! such as the CLDR Gitref  and the list of included locales.
-//!
-//! # `bin` feature
-//!
-//! ## Downloading fresh CLDR data
-//!
-//! ```bash
-//! $ cargo run --bin --features=bin icu4x-testdata-download-sources
-//! ```
-//!
-//! ## Regenerating data
-//!
-//! ```bash
-//! $ cargo run --bin --features=bin icu4x-testdata-datagen
-//! ```
+//! * [`buffer`], [`buffer_no_fallback`] (`buffer` Cargo feature)
 //!
 //! # Examples
 //!
 //! ```
 //! use icu::locid::locale;
-//! use icu_provider::hello_world::*;
-//! use icu_provider::prelude::*;
+//! use icu_provider::hello_world::HelloWorldFormatter;
 //!
-//! let req = DataRequest {
-//!     locale: &locale!("en").into(),
-//!     metadata: Default::default(),
-//! };
+//! // Unstable constructor
+//! HelloWorldFormatter::try_new_unstable(
+//!     &icu_testdata::unstable(),
+//!     &locale!("en-CH").into(),
+//! ).unwrap();
 //!
-//! assert_eq!(
-//!     DataProvider::<HelloWorldV1Marker>::load(
-//!         &icu_testdata::unstable(),
-//!         req
-//!     )
-//!     .and_then(DataResponse::take_payload)
-//!     .unwrap()
-//!     .get()
-//!     .message,
-//!     "Hello World"
-//! );
+//! // AnyProvider constructor
+//! HelloWorldFormatter::try_new_with_any_provider(
+//!     &icu_testdata::any(),
+//!     &locale!("en-CH").into(),
+//! ).unwrap();
 //!
-//! assert_eq!(
-//!     BufferProvider::load_buffer(
-//!         &icu_testdata::buffer(),
-//!         HelloWorldV1Marker::KEY,
-//!         req
-//!     )
-//!     .and_then(DataResponse::take_payload)
-//!     .unwrap()
-//!     .get(),
-//!     &b"\x0bHello World"
-//! );
+//! // BufferProvider constructor (`icu` with `serde` feature, `icu_testdata` with `buffer` feature)
+//! HelloWorldFormatter::try_new_with_buffer_provider(
+//!     &icu_testdata::buffer(),
+//!     &locale!("en-CH").into(),
+//! ).unwrap();
 //!
-//! assert_eq!(
-//!     AnyProvider::load_any(
-//!         &icu_testdata::any(),
-//!         HelloWorldV1Marker::KEY,
-//!         req
-//!     )
-//!     .and_then(AnyResponse::downcast::<HelloWorldV1Marker>)
-//!     .and_then(DataResponse::take_payload)
-//!     .unwrap()
-//!     .get()
-//!     .message,
-//!     "Hello World"
-//! );
+//! // Without fallback the locale match needs to be exact
+//! HelloWorldFormatter::try_new_unstable(
+//!     &icu_testdata::unstable_no_fallback(),
+//!     &locale!("en-CH").into(),
+//! ).is_err();
+//!
+//! HelloWorldFormatter::try_new_unstable(
+//!     &icu_testdata::unstable_no_fallback(),
+//!     &locale!("en").into(),
+//! ).unwrap();
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -94,66 +61,70 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
+#![allow(unused_imports)] // too many feature combinations too keep track of
 
 extern crate alloc;
 
-// If you want this to be made public stable, file an issue on the ICU4X repository.
-#[cfg(feature = "metadata")]
-#[doc(hidden)]
-pub mod metadata;
+#[path = "../data/metadata.rs.data"]
+mod metadata;
 
-#[cfg(feature = "metadata")]
 pub mod versions {
     //! Functions to access version info of the ICU test data.
 
     /// Gets the CLDR tag used as the test data source (for formatters, likely subtags, ...)
     ///
-    /// Enabled with the "metadata" feature.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the package metadata cannot be loaded.
-    ///
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("41.0.0", icu_testdata::versions::cldr_tag());
+    /// assert_eq!("43.0.0", icu_testdata::versions::cldr_tag());
     /// ```
-    #[allow(clippy::unwrap_used)] // documented
-    pub fn cldr_tag() -> String {
-        crate::metadata::load()
-            .unwrap()
-            .package_metadata
-            .cldr_json_gitref
+    pub fn cldr_tag() -> alloc::string::String {
+        alloc::string::String::from(super::metadata::CLDR_TAG)
     }
 
     /// Gets the ICU tag used as the test data source (for properties, collator, ...)
     ///
-    /// Enabled with the "metadata" feature.
+    /// # Examples
     ///
-    /// # Panics
-    ///
-    /// Panics if the package metadata cannot be loaded.
+    /// ```
+    /// assert_eq!("icu4x/2023-05-02/73.x", icu_testdata::versions::icu_tag());
+    /// ```
+    pub fn icu_tag() -> alloc::string::String {
+        alloc::string::String::from(super::metadata::ICUEXPORT_TAG)
+    }
+
+    /// Gets the segmenter LSTM tag used as the test data source
     ///
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("release-72-1", icu_testdata::versions::icu_tag());
+    /// assert_eq!("v0.1.0", icu_testdata::versions::segmenter_lstm_tag());
     /// ```
-    #[allow(clippy::unwrap_used)] // documented
-    pub fn icu_tag() -> String {
-        crate::metadata::load()
-            .unwrap()
-            .package_metadata
-            .icuexportdata_gitref
+    pub fn segmenter_lstm_tag() -> alloc::string::String {
+        alloc::string::String::from(super::metadata::SEGMENTER_LSTM_TAG)
     }
 }
 
+/// Gets the locales supported by the test data.
+///
+/// # Examples
+///
+/// ```
+/// # use icu_locid::langid;
+/// assert!(icu_testdata::locales().contains(&langid!("es-AR")));
+/// assert!(icu_testdata::locales().len() > 10);
+/// ```
+pub fn locales() -> alloc::vec::Vec<icu_locid::LanguageIdentifier> {
+    alloc::vec::Vec::from(metadata::LOCALES)
+}
+
 #[cfg(feature = "std")]
+#[deprecated]
 pub mod paths;
 
 use icu_provider::prelude::*;
@@ -164,6 +135,7 @@ use icu_provider_adapters::fallback::LocaleFallbackProvider;
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
+#[cfg(feature = "icu_locid_transform")]
 pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider> {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
@@ -180,6 +152,7 @@ pub fn unstable_no_fallback() -> UnstableDataProvider {
 }
 
 /// An [`AnyProvider`] backed by baked data.
+#[cfg(feature = "icu_locid_transform")]
 pub fn any() -> impl AnyProvider {
     // The baked data is valid.
     #[allow(clippy::unwrap_used)]
@@ -192,6 +165,9 @@ pub fn any_no_fallback() -> impl AnyProvider {
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
+///
+/// This deserializes a large data blob from static memory, please cache the result if you
+/// are calling this repeatedly and care about performance
 #[cfg(feature = "buffer")]
 pub fn buffer() -> impl BufferProvider {
     // The statically compiled data file is valid.
@@ -200,26 +176,25 @@ pub fn buffer() -> impl BufferProvider {
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
+///
+/// This deserializes a large data blob from static memory, please cache the result if you
+/// are calling this repeatedly and care about performance
 #[cfg(feature = "buffer")]
 pub fn buffer_no_fallback() -> impl BufferProvider {
-    lazy_static::lazy_static! {
-        static ref POSTCARD: icu_provider_blob::BlobDataProvider = {
-            // The statically compiled data file is valid.
-            #[allow(clippy::unwrap_used)]
-            icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(concat!(
-                env!("CARGO_MANIFEST_DIR"),
-                "/data/testdata.postcard"
-            )))
-            .unwrap()
-        };
-    }
-    POSTCARD.clone()
+    #[allow(clippy::unwrap_used)] // The statically compiled data file is valid.
+    icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(
+        "../data/testdata.postcard"
+    ))
+    .unwrap()
 }
 
 #[doc(hidden)]
-pub use baked::BakedDataProvider as UnstableDataProvider;
+#[non_exhaustive]
+#[derive(Debug)]
+pub struct UnstableDataProvider;
 
 mod baked {
-    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
-    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/any.rs"));
+    include!("../data/baked/mod.rs");
+    impl_data_provider!(super::UnstableDataProvider);
+    impl_any_provider!(super::UnstableDataProvider);
 }

@@ -5,11 +5,13 @@
 [package]
 name = "icu_testdata"
 description = "Pre-built test data for ICU4X"
-version = "1.0.0"
+version = "1.2.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -24,323 +26,45 @@ include = [
     # Exception: We want to be able to run tests, so
     # we include the test data
     "data/**/*",
+    "!data/postcard/**/*",
 ]
 
 [package.metadata.docs.rs]
 all-features = true
 
-# icu4x_testdata metadata: schema defined in ./src/metadata.rs
-[package.metadata.icu4x_testdata]
-
-# Locales to include in testdata. Keep this list somewhat short, but cover all features.
-# We use 10 base languages with a small number of variants to allow for 10 languages to be
-# used in microbenchmarks.
-locales = [
-    # Arabic:
-    # - Good example for RTL
-    # - Non-latin numerals in Egypt
-    "ar",
-    "ar-EG",
-
-    # Bangla:
-    # - Uses non-Latin numerals
-    "bn",
-
-    # Chakma:
-    # - High-coverage language that uses non-BMP code points
-    "ccp",
-
-    # English:
-    # - Widely understood language in software engineering
-    # - Includes regional variants to test similar-data fallbacks
-    "en",
-    "en-001",
-    "en-ZA",
-
-    # Spanish:
-    #  - Most popular Romance language
-    #  - South American dialect
-    #  - Has context dependent list fragments
-    "es",
-    "es-AR",
-
-    # French:
-    # - Often the first non-English locale to receive new data in CLDR
-    "fr",
-
-    # Filipino:
-    # - Week of month/year have plural variants.
-    "fil",
-
-    # Japanese:
-    # - Four scripts
-    # - Complex date patterns
-    "ja",
-
-    # Russian:
-    # - Cyrillic script
-    # - Interesting plural rules
-    # - Hightly inflected, many gramatical cases
-    "ru",
-
-    # Serbian:
-    # - Multiple scripts
-    # - Southern Europe
-    # - Hightly inflected, many gramatical cases
-    "sr",
-    "sr-Cyrl",
-    "sr-Latn",
-
-    # Thai:
-    # - Complex word breaking
-    "th",
-
-    # Turkish:
-    # - Interesting case-mappings
-    "tr",
-
-    # Root data
-    "und",
-]
-
-# Paths from CLDR JSON to copy into testdata. Uses gitignore-like syntax.
-# The variable "$LOCALES" is replaced with the list of locales from above.
-cldr_json_glob = [
-    "cldr-core/supplemental/aliases.json",
-    "cldr-core/supplemental/calendarData.json",
-    "cldr-core/supplemental/likelySubtags.json",
-    "cldr-core/supplemental/numberingSystems.json",
-    "cldr-core/supplemental/metaZones.json",
-    "cldr-core/supplemental/ordinals.json",
-    "cldr-core/supplemental/parentLocales.json",
-    "cldr-core/supplemental/plurals.json",
-    "cldr-core/supplemental/weekData.json",
-    "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
-    "cldr-dates-full/main/$LOCALES/dateFields.json",
-    "cldr-numbers-full/main/$LOCALES/currencies.json",
-    "cldr-numbers-full/main/$LOCALES/numbers.json",
-    "cldr-dates-full/main/$LOCALES/timeZoneNames.json",
-    "cldr-misc-full/main/$LOCALES/characters.json",
-    "cldr-misc-full/main/$LOCALES/listPatterns.json",
-    "cldr-cal-buddhist-full/main/$LOCALES/ca-buddhist.json",
-    "cldr-cal-japanese-full/main/$LOCALES/ca-japanese.json",
-    "cldr-cal-coptic-full/main/$LOCALES/ca-coptic.json",
-    "cldr-cal-indian-full/main/$LOCALES/ca-indian.json",
-    "cldr-cal-ethiopic-full/main/$LOCALES/ca-ethiopic.json",
-    "cldr-cal-ethiopic-full/main/$LOCALES/ca-ethiopic-amete-alem.json",
-    "cldr-bcp47/bcp47/timezone.json",
-    "cldr-localenames-full/main/$LOCALES/territories.json",
-    "cldr-localenames-full/main/$LOCALES/languages.json",
-    # Extra data for feature coverage in provider_cldr tests:
-    "cldr-dates-full/main/cs/ca-gregorian.json",
-    "cldr-dates-full/main/cs/timeZoneNames.json",
-    "cldr-dates-full/main/haw/ca-gregorian.json",
-    "cldr-dates-full/main/haw/timeZoneNames.json",
-    "cldr-dates-full/main/en-CA/ca-gregorian.json", # alt-variant in skeletons
-    "cldr-dates-full/main/en-CA/timeZoneNames.json", # required by en-CA/ca-gregorian.json
-    "cldr-misc-full/main/he/listPatterns.json", # required for list transformer test
-]
-
-# Git tag or sha1 for the CLDR data used to generate the testdata.
-cldr_json_gitref = "41.0.0"
-
-icuexportdata_glob = [
-    "collation/implicithan/bn_standard_data.toml",
-    "collation/implicithan/bn_standard_meta.toml",
-    "collation/implicithan/bn_standard_reord.toml",
-    "collation/implicithan/ee_standard_dia.toml",
-    "collation/implicithan/es_standard_data.toml",
-    "collation/implicithan/es_standard_meta.toml",
-    "collation/implicithan/es_traditional_data.toml",
-    "collation/implicithan/es_traditional_meta.toml",
-    "collation/implicithan/fi_standard_data.toml",
-    "collation/implicithan/fi_standard_meta.toml",
-    "collation/implicithan/ja_standard_data.toml",
-    "collation/implicithan/ja_standard_meta.toml",
-    "collation/implicithan/ja_standard_reord.toml",
-    "collation/implicithan/ko_search_data.toml",
-    "collation/implicithan/ko_search_meta.toml",
-    "collation/implicithan/ko_searchjl_data.toml",
-    "collation/implicithan/ko_searchjl_meta.toml",
-    "collation/implicithan/ko_standard_data.toml",
-    "collation/implicithan/ko_standard_meta.toml",
-    "collation/implicithan/ko_standard_reord.toml",
-    "collation/implicithan/ko_unihan_data.toml",
-    "collation/implicithan/ko_unihan_meta.toml",
-    "collation/implicithan/ko_unihan_reord.toml",
-    "collation/implicithan/lt_standard_data.toml",
-    "collation/implicithan/lt_standard_meta.toml",
-    "collation/implicithan/no_standard_data.toml",
-    "collation/implicithan/no_standard_meta.toml",
-    "collation/implicithan/root_standard_data.toml",
-    "collation/implicithan/root_standard_dia.toml",
-    "collation/implicithan/root_standard_jamo.toml",
-    "collation/implicithan/root_standard_meta.toml",
-    "collation/implicithan/root_standard_prim.toml",
-    "collation/implicithan/sv_search_data.toml",
-    "collation/implicithan/sv_search_meta.toml",
-    "collation/implicithan/sv_standard_data.toml",
-    "collation/implicithan/sv_standard_meta.toml",
-    "collation/implicithan/sv_traditional_data.toml",
-    "collation/implicithan/sv_traditional_meta.toml",
-    "collation/implicithan/th_standard_data.toml",
-    "collation/implicithan/th_standard_meta.toml",
-    "collation/implicithan/th_standard_reord.toml",
-    "collation/implicithan/tr_standard_data.toml",
-    "collation/implicithan/tr_standard_meta.toml",
-    "collation/implicithan/vi_standard_dia.toml",
-    "collation/implicithan/vi_traditional_dia.toml",
-    "collation/implicithan/zh_big5han_data.toml",
-    "collation/implicithan/zh_big5han_meta.toml",
-    "collation/implicithan/zh_big5han_reord.toml",
-    "collation/implicithan/zh_gb2312han_data.toml",
-    "collation/implicithan/zh_gb2312han_meta.toml",
-    "collation/implicithan/zh_gb2312han_reord.toml",
-    "collation/implicithan/zh_pinyin_data.toml",
-    "collation/implicithan/zh_pinyin_meta.toml",
-    "collation/implicithan/zh_pinyin_reord.toml",
-    "collation/implicithan/zh_stroke_data.toml",
-    "collation/implicithan/zh_stroke_meta.toml",
-    "collation/implicithan/zh_stroke_reord.toml",
-    "collation/implicithan/zh_unihan_data.toml",
-    "collation/implicithan/zh_unihan_meta.toml",
-    "collation/implicithan/zh_unihan_reord.toml",
-    "collation/implicithan/zh_zhuyin_data.toml",
-    "collation/implicithan/zh_zhuyin_meta.toml",
-    "collation/implicithan/zh_zhuyin_reord.toml",
-    "norm/small/compositions.toml",
-    "norm/small/decompositionex.toml",
-    "norm/small/nfd.toml",
-    "norm/small/nfdex.toml",
-    "norm/small/nfkd.toml",
-    "norm/small/nfkdex.toml",
-    "norm/small/uts46d.toml",
-    "ucase/small/ucase.toml",
-    "uprops/small/AHex.toml",
-    "uprops/small/Alpha.toml",
-    "uprops/small/Basic_Emoji.toml",
-    "uprops/small/bc.toml",
-    "uprops/small/Bidi_C.toml",
-    "uprops/small/Bidi_M.toml",
-    "uprops/small/Cased.toml",
-    "uprops/small/ccc.toml",
-    "uprops/small/CI.toml",
-    "uprops/small/CWCF.toml",
-    "uprops/small/CWKCF.toml",
-    "uprops/small/CWL.toml",
-    "uprops/small/CWT.toml",
-    "uprops/small/CWU.toml",
-    "uprops/small/Dash.toml",
-    "uprops/small/Dep.toml",
-    "uprops/small/DI.toml",
-    "uprops/small/Dia.toml",
-    "uprops/small/ea.toml",
-    "uprops/small/EBase.toml",
-    "uprops/small/EComp.toml",
-    "uprops/small/EMod.toml",
-    "uprops/small/Emoji.toml",
-    "uprops/small/EPres.toml",
-    "uprops/small/Ext.toml",
-    "uprops/small/ExtPict.toml",
-    "uprops/small/gc.toml",
-    "uprops/small/GCB.toml",
-    "uprops/small/Gr_Base.toml",
-    "uprops/small/Gr_Ext.toml",
-    "uprops/small/Hex.toml",
-    "uprops/small/IDC.toml",
-    "uprops/small/Ideo.toml",
-    "uprops/small/IDS.toml",
-    "uprops/small/IDSB.toml",
-    "uprops/small/IDST.toml",
-    "uprops/small/Join_C.toml",
-    "uprops/small/lb.toml",
-    "uprops/small/LOE.toml",
-    "uprops/small/Lower.toml",
-    "uprops/small/Math.toml",
-    "uprops/small/NChar.toml",
-    "uprops/small/Pat_Syn.toml",
-    "uprops/small/Pat_WS.toml",
-    "uprops/small/QMark.toml",
-    "uprops/small/Radical.toml",
-    "uprops/small/RI.toml",
-    "uprops/small/SB.toml",
-    "uprops/small/sc.toml",
-    "uprops/small/scx.toml",
-    "uprops/small/SD.toml",
-    "uprops/small/STerm.toml",
-    "uprops/small/Term.toml",
-    "uprops/small/UIdeo.toml",
-    "uprops/small/Upper.toml",
-    "uprops/small/VS.toml",
-    "uprops/small/WB.toml",
-    "uprops/small/WSpace.toml",
-    "uprops/small/XIDC.toml",
-    "uprops/small/XIDS.toml",
-]
-
-icuexportdata_gitref = "release-72-1"
-
-[package.metadata.cargo-all-features]
-skip_optional_dependencies = true
-extra_features = [
-    "icu_datetime",
-    "icu_list",
-]
-
 [dependencies]
-icu_provider = { version = "1.0.0", path = "../core" }
-icu_provider_adapters = { version = "1.0.0", path = "../adapters" }
+icu_provider = { version = "1.2.0", path = "../core" }
+icu_provider_adapters = { version = "1.2.0", path = "../adapters" }
 
-# serde feature
-icu_provider_blob = { version = "1.0.0", path = "../blob", optional = true }
-lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
-
-# bin feature
-bytes = {version = "1.1.0", optional = true }
-clap = { version = "2.33", optional = true }
-eyre = { version = "0.6", optional = true }
-futures = { version = "0.3", optional = true }
-icu_provider_fs = { version = "1.0.0", path = "../fs", optional = true }
-icu_datagen = { version = "1.0.0", path = "../datagen", features = ["experimental"], optional = true }
-log = { version = "0.4", optional = true }
-reqwest = { version = "0.11", features = ["stream"], optional = true }
-simple_logger = { version = "1.12", optional = true, default-features = false }
-tokio = { version = "1.13", features = ["rt-multi-thread", "macros", "fs"], optional = true }
-zip = { version = "0.6.2", optional = true }
-
-# metadata feature
-cargo_metadata = { version = "0.13", optional = true }
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-serde_json = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
-displaydoc = { version = "0.2.3", default-features = false, optional = true }
-writeable = { version = "0.5", path = "../../utils/writeable", optional = true }
+# buffer feature
+icu_provider_blob = { version = "1.2.0", path = "../blob", optional = true }
 
 # databake deps
-icu_locid = { version = "1.0.0", path = "../../components/locid" }
-icu_collections = { version = "1.0.0", path = "../../components/collections" }
-litemap = { version = "0.6", path = "../../utils/litemap", default-features = false }
-tinystr = { version = "0.7", path = "../../utils/tinystr" }
-zerovec = { version = "0.9", path = "../../utils/zerovec" }
+icu_locid = { version = "1.2.0", path = "../../components/locid" }
+icu_collections = { version = "1.2.0", path = "../../components/collections" }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
 
 # databake options
-icu_calendar = { version = "1.0.0", path = "../../components/calendar", default-features = false, optional = true }
-icu_casemapping = { version = "0.7.0", path = "../../experimental/casemapping", default-features = false, optional = true }
-icu_collator = { version = "1.0.0", path = "../../components/collator", default-features = false, optional = true }
-icu_datetime = { version = "1.0.0", path = "../../components/datetime", default-features = false, optional = true }
-icu_decimal = { version = "1.0.0", path = "../../components/decimal", default-features = false, optional = true }
-icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", default-features = false, optional = true }
+icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, optional = true }
+icu_casemapping = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, optional = true }
+icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, optional = true }
+icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
+icu_datetime = { version = "1.2.0", path = "../../components/datetime", default-features = false, optional = true }
+icu_decimal = { version = "1.2.0", path = "../../components/decimal", default-features = false, optional = true }
+icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", default-features = false, optional = true }
+icu_list = { version = "1.2.0", path = "../../components/list", default-features = false, optional = true }
+icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform", default-features = false, optional = true }
+icu_normalizer = { version = "1.2.0", path = "../../components/normalizer", default-features = false, optional = true }
+icu_plurals = { version = "1.2.0", path = "../../components/plurals", default-features = false, optional = true }
+icu_properties = { version = "1.2.0", path = "../../components/properties", default-features = false, optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
-icu_list = { version = "1.0.0", path = "../../components/list", default-features = false, optional = true }
-icu_locid_transform = { version = "1.0.0", path = "../../components/locid_transform", default-features = false, optional = true }
-icu_normalizer = { version = "1.0.0", path = "../../components/normalizer", default-features = false, optional = true }
-icu_plurals = { version = "1.0.0", path = "../../components/plurals", default-features = false, optional = true }
-icu_properties = { version = "1.0.0", path = "../../components/properties", default-features = false, optional = true }
-icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter", default-features = false, optional = true }
-icu_timezone = { version = "1.0.0", path = "../../components/timezone", default-features = false, optional = true }
+icu_segmenter = { version = "1.2.0", path = "../../components/segmenter", default-features = false, optional = true }
+icu_timezone = { version = "1.2.0", path = "../../components/timezone", default-features = false, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu" }
-criterion = "0.3"
+icu_provider = { path = "../../provider/core", features = ["deserialize_json"] }
+criterion = "0.4"
 
 [features]
 default = [
@@ -353,49 +77,22 @@ default = [
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",
+    "icu_segmenter",
     "icu_timezone",
 ]
 icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
-buffer = ["icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde", "lazy_static"]
+buffer = ["dep:icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde"]
 std = []
-bin = [
-    "bytes",
-    "clap",
-    "eyre",
-    "simple_logger",
-    "log",
-    "reqwest",
-    "tokio",
-    "futures",
-    "std",
-    "metadata",
-    "icu_datagen",
-    "icu_provider_fs",
-    "zip",
-]
-# Enables programmatic access to this Cargo.toml file
-# If you want this to be made public stable, file an issue on the ICU4X repository.
-metadata = [
-    "cargo_metadata",
-    "icu_locid/serde",
-    "serde_json",
-    "serde",
-    "displaydoc",
-    "writeable",
-    "std"
-]
 
-[[bin]]
-name = "icu4x-testdata-download-sources"
-path = "src/bin/download-sources.rs"
-required-features = ["bin"]
-
-[[bin]]
-name = "icu4x-testdata-datagen"
-path = "src/bin/datagen.rs"
-required-features = ["bin"]
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+denylist = ["internal_all_features_hack"]
+extra_features = [
+    "icu_datetime",
+    "icu_list",
+]
 
 [[bench]]
 name = "providers"

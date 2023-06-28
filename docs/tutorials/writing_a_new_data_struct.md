@@ -36,11 +36,13 @@ In general, data structs should be annotated with `#[icu_provider::data_struct]`
 
 As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. The `#[icu_provider::data_struct]` annotation will enforce this for you. **See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/docs/process/style_guide.md#zero-copy-in-dataprovider-structs--required),** as well as the example below in this tutorial.
 
+Additionally, data structs should keep internal invariants to a minimum. For more information, see [data_safety.md](../design/data_safety.md).
+
 ### Data Download
 
 The first step to introduce data into the ICU4X pipeline is to download it from an external source. This corresponds to step 1 above.
 
-When clients use ICU4X, this is generally a manual step, although we may provide tooling to assist with it. For the purpose of ICU4X test data, the tool [`icu4x-testdata-download-source`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/index.html) should automatically download data from the external source and save it in the ICU4X tree. `icu4x-testdata-download-source` should not do anything other than downloading the raw source data.
+When clients use ICU4X, this is generally a manual step, although we may provide tooling to assist with it. For the purpose of ICU4X test data, the tool `download-repo-sources` should automatically download data from the external source and save it in the ICU4X tree. `download-repo-sources` should not do anything other than downloading the raw source data.
 
 To download test data into the ICU4X source tree, run: 
 
@@ -56,15 +58,15 @@ Although they may share common code, source data providers are implemented speci
 
 Examples of source data providers include:
 
-- [`NumbersProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/cldr/struct.NumbersProvider.html)
-- [`BinaryPropertyCodePointSetDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/uprops/struct.BinaryPropertyCodePointSetDataProvider.html)
-- [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/index.html)
+- [`NumbersProvider`](https://unicode-org.github.io/icu4x/docs/icu_datagen/transform/cldr/struct.NumbersProvider.html)
+- [`BinaryPropertyCodePointSetDataProvider`](https://unicode-org.github.io/icu4x/docs/icu_datagen/transform/uprops/struct.BinaryPropertyCodePointSetDataProvider.html)
+- [&hellip; more examples](https://unicode-org.github.io/icu4x/docs/icu_datagen/transform/index.html)
 
 Source data providers must implement the following traits:
 
 - `DataProvider<M>` or `DynamicDataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
 - `IterableDataProvider<M>`, required for the data exporter (see below)
-- `DynamicDataProvider<SerializeMarker>` and `IterableDynamicDataProvider<SerializeMarker>`, usually implemented with the macro [`impl_dynamic_data_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dynamic_data_provider.html) after the above traits have been implemented
+- `DynamicDataProvider<SerializeMarker>` and `IterableDynamicDataProvider<SerializeMarker>`, usually implemented with the macro [`impl_dynamic_data_provider!`](https://unicode-org.github.io/icu4x/docs/icu_provider/macro.impl_dynamic_data_provider.html) after the above traits have been implemented
 
 Source data providers are often complex to write. Rules of thumb:
 
@@ -78,21 +80,21 @@ Source data providers are often complex to write. Rules of thumb:
 
 Examples of data exporters include:
 
-- [`FilesystemExporter`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/export/fs_exporter/struct.FilesystemExporter.html)
-- [`BlobExporter`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/export/struct.BlobExporter.html)
+- [`FilesystemExporter`](https://unicode-org.github.io/icu4x/docs/icu_provider_fs/export/fs_exporter/struct.FilesystemExporter.html)
+- [`BlobExporter`](https://unicode-org.github.io/icu4x/docs/icu_provider_blob/export/struct.BlobExporter.html)
 
 "Runtime data providers" are ones that read serialized ICU4X data structs and deserialize them for use at runtime. These are the providers where performance is the key driving factor.
 
 Examples of runtime data providers include:
 
-- [`FsDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html)
-- [`BlobDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html)
+- [`FsDataProvider`](https://unicode-org.github.io/icu4x/docs/icu_provider_fs/struct.FsDataProvider.html)
+- [`BlobDataProvider`](https://unicode-org.github.io/icu4x/docs/icu_provider_blob/struct.BlobDataProvider.html)
 
 **Most ICU4X contributors will not need to touch the data exporters or runtime data providers.** New implementations are only necessary when adding a new ICU4X data struct storage mechanism.
 
 ### Data Generation Tool (`icu4x-datagen`)
 
-The [data generation tool, i.e., `icu4x-datagen`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/index.html), ties together the source data providers with a data exporter.
+The [data generation tool, i.e., `icu4x-datagen`](https://unicode-org.github.io/icu4x/docs/icu_datagen/index.html), ties together the source data providers with a data exporter.
 
 When adding new data structs, it is necessary to make `icu4x-datagen` aware of your source data provider. To do this, edit 
 [*provider/datagen/src/registry.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/registry.rs) and add your data provider to the macro
@@ -136,16 +138,16 @@ The following example shows all the pieces that make up the data pipeline for `D
 
 ```rust
 use std::borrow::Cow;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
 #[icu_provider::data_struct(marker(DecimalSymbolsV1Marker, "decimal/symbols@1", extension_key = "nu" ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
-feature = "datagen",
-derive(serde::Serialize, databake::Bake),
-databake(path = icu_decimal::provider),
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_decimal::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {

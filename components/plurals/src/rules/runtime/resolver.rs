@@ -8,7 +8,7 @@ use crate::rules::runtime::ast;
 #[inline]
 pub fn test_rule(rule: &ast::Rule, operands: &PluralOperands) -> bool {
     // This algorithm is a simple non-recursive interpreter of the
-    // [`UTS #35: Language Plural Rules`].
+    // [UTS #35: Language Plural Rules].
     //
     // The algorithm exploits the fact that plural rules syntax is a simple
     // logical operator expression composition with maximum depth of one
@@ -26,7 +26,7 @@ pub fn test_rule(rule: &ast::Rule, operands: &PluralOperands) -> bool {
     // interpreter skips to the first `OR` operator, rejects the left side, and
     // evaluates the right as a candidate and so on.
     //
-    // [`UTS #35: Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
+    // [UTS #35: Language Plural Rules]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 
     let mut left = true;
 

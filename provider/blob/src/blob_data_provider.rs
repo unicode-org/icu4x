@@ -19,7 +19,7 @@ use yoke::*;
 ///
 /// # `Sync + Send`
 ///
-/// This provider uses reference counting internally. When the `sync` feature on the [`icu_provider`]
+/// This provider uses reference counting internally. When the `sync` Cargo feature on the [`icu_provider`]
 /// crate is enabled, it uses [`Arc`](alloc::sync::Arc) instead of [`Rc`](alloc::rc::Rc), making
 /// it `Sync + Send`.
 ///
@@ -88,6 +88,14 @@ use yoke::*;
 #[derive(Clone)]
 pub struct BlobDataProvider {
     data: Yoke<BlobSchemaV1<'static>, Option<Cart>>,
+}
+
+impl core::fmt::Debug for BlobDataProvider {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("BlobDataProvider")
+            .field("data", &"[...]")
+            .finish()
+    }
 }
 
 impl BlobDataProvider {

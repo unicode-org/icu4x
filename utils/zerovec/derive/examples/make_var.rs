@@ -59,6 +59,16 @@ struct MultiFieldStruct<'a> {
     f: char,
 }
 
+#[make_varule(CustomVarFieldULE)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
+#[zerovec::derive(Serialize, Deserialize, Debug)]
+struct CustomVarField<'a> {
+    #[zerovec::varule(MultiFieldStructULE)]
+    #[serde(borrow)]
+    a: MultiFieldStruct<'a>,
+    b: u32,
+}
+
 #[make_varule(MultiFieldTupleULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
 #[zerovec::derive(Serialize, Deserialize, Debug)]
@@ -93,7 +103,7 @@ where
     let bytes = varzerovec.as_bytes();
     let name = std::any::type_name::<T>();
     let reparsed: VarZeroVec<T> = VarZeroVec::parse_byte_slice(bytes)
-        .unwrap_or_else(|_| panic!("Parsing VarZeroVec<{}> should succeed", name));
+        .unwrap_or_else(|_| panic!("Parsing VarZeroVec<{name}> should succeed"));
 
     assert_eq!(reparsed.len(), slice.len());
 

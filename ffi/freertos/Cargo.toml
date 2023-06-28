@@ -5,11 +5,13 @@
 [package]
 name = "icu_freertos"
 description = "C interface to ICU4X"
-version = "1.0.0"
+version = "1.2.1"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 resolver = "2"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -32,12 +34,16 @@ crate-type = ["staticlib", "rlib"]
 path = "src/lib.rs"
 
 [dependencies]
-icu_capi = { version = "1.0.0", path = "../diplomat", default-features = false }
+icu_capi = { version = "1.2.0", path = "../diplomat", default-features = false }
 
 [target.'cfg(target_os = "none")'.dependencies]
-freertos-rust = { version = "0.1.2" }
-cortex-m = { version = "0.7.3" }
+cortex-m = "0.7.3"
+freertos-rust = "0.1.2"
 
 [features]
 # Currently we don't enable anything here as WearOS loads data manually, but the feature remains for future use
 wearos = []
+default = ["icu_capi/default_components"]
+
+[build-dependencies]
+rustc_version = "0.4"

@@ -5,11 +5,13 @@
 [package]
 name = "icu_capi"
 description = "C interface to ICU4X"
-version = "1.0.0"
+version = "1.2.2"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 resolver = "2"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -28,33 +30,35 @@ include = [
 all-features = true
 
 [package.metadata.cargo-all-features]
-# Omit most optional dependency features from permutation testing
-skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # logging enables a feature of a dependency that has no externally visible API changes
-# serde enables dependency features but buffer_provider affects the actual code
-denylist = ["bench", "logging"]
+denylist = ["bench", "logging", "cpp_default", "wasm_default"]
+# This has a lot of features, run a reduced test that is likely to catch 99% of bugs
+max_combination_size = 2
 
-# Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates
+# Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates (except for components features)
 [features]
-default = ["any_provider"]
+default = ["any_provider", "default_components"]
 any_provider = []
 buffer_provider = [
     "dep:icu_provider_blob",
     "dep:serde",
-    "icu_collator/serde",
-    "icu_datetime/serde",
-    "icu_decimal/serde",
-    "icu_list/serde",
-    "icu_locid_transform/serde",
+    "icu_calendar?/serde",
+    "icu_collator?/serde",
+    "icu_datetime?/serde",
+    "icu_decimal?/serde",
+    "icu_displaynames?/serde",
+    "icu_list?/serde",
+    "icu_locid_transform?/serde",
     "icu_locid/serde",
-    "icu_normalizer/serde",
-    "icu_plurals/serde",
-    "icu_properties/serde",
+    "icu_normalizer?/serde",
+    "icu_plurals?/serde",
+    "icu_properties?/serde",
     "icu_provider/serde",
     "icu_provider_adapters/serde",
-    "icu_segmenter/serde",
+    "icu_segmenter?/serde",
     "icu_testdata?/buffer",
+    "icu_timezone?/serde",
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider"]
 provider_test = ["dep:icu_testdata"]
@@ -68,47 +72,74 @@ cpp_default = ["provider_test", "logging", "simple_logger"]
 # meta feature for things we enable by default in wasm
 wasm_default = ["buffer_provider", "logging"]
 
-[dependencies]
-fixed_decimal = { version = "0.5", path = "../../utils/fixed_decimal", features = ["ryu"] }
-icu_calendar = { version = "1.0.0", path = "../../components/calendar"}
-icu_collator = { version = "1.0.0", path = "../../components/collator" }
-icu_collections = { version = "1.0.0", path = "../../components/collections"}
-icu_datetime = { version = "1.0.0", path = "../../components/datetime/" }
-icu_decimal = { version = "1.0.0", path = "../../components/decimal/" }
-icu_list = { version = "1.0.0", path = "../../components/list" }
-icu_locid_transform = { version = "1.0.0", path = "../../components/locid_transform" }
-icu_locid = { version = "1.0.0", path = "../../components/locid" }
-icu_normalizer = { version = "1.0.0", path = "../../components/normalizer/" }
-icu_plurals = { version = "1.0.0", path = "../../components/plurals/" }
-icu_properties = { version = "1.0.0", path = "../../components/properties/", features = ["bidi"] }
-icu_provider = { version = "1.0.0", path = "../../provider/core" }
-icu_provider_adapters = { version = "1.0.0", path = "../../provider/adapters" }
-icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter" }
-icu_timezone = { version = "1.0.0", path = "../../components/timezone" }
-tinystr = { version = "0.7", path = "../../utils/tinystr", default-features = false }
-unicode-bidi = { version = "0.3.8", default-features = false }
-writeable = { version = "0.5", path = "../../utils/writeable/" }
+# Components
+default_components = ["icu_calendar", "icu_collator", "icu_datetime", "icu_decimal",
+                      "icu_list", "icu_locid_transform",
+                      "icu_normalizer", "icu_plurals", "icu_properties",
+                      "icu_segmenter", "icu_timezone"]
+# icu_displaynames is experimental, not included by default
 
-icu_provider_blob = { version = "1.0.0", path = "../../provider/blob", optional = true }
+icu_calendar = ["dep:icu_calendar"]
+icu_collator = ["dep:icu_collator"]
+# icu_collections = ["dep:icu_collections"] # Not useful on its own
+icu_datetime = ["dep:icu_datetime", "dep:icu_calendar", "dep:icu_timezone", "dep:icu_decimal", "dep:icu_plurals"]
+icu_decimal = ["dep:icu_decimal", "dep:fixed_decimal"]
+icu_displaynames = ["dep:icu_displaynames"]
+icu_list = ["dep:icu_list"]
+icu_locid_transform = ["dep:icu_locid_transform"]
+icu_normalizer = ["dep:icu_normalizer"]
+icu_plurals = ["dep:icu_plurals", "dep:fixed_decimal"]
+icu_properties = ["dep:icu_properties", "dep:icu_collections", "dep:unicode-bidi"]
+icu_segmenter = ["dep:icu_segmenter"]
+icu_timezone = ["dep:icu_timezone", "dep:icu_calendar"]
+
+
+[dependencies]
+# Mandatory ICU4X components and utils
+icu_locid = { version = "1.2.0", path = "../../components/locid" }
+icu_provider = { version = "1.2.0", path = "../../provider/core" }
+icu_provider_adapters = { version = "1.2.0", path = "../../provider/adapters" }
+tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false }
+writeable = { version = "0.5.1", path = "../../utils/writeable/" }
+
+# Optional ICU4X components and their dependent utils
+fixed_decimal = { version = "0.5.2", path = "../../utils/fixed_decimal", features = ["ryu"] , optional = true}
+icu_calendar = { version = "1.2.0", path = "../../components/calendar", optional = true}
+icu_collator = { version = "1.2.0", path = "../../components/collator" , optional = true}
+icu_collections = { version = "1.2.0", path = "../../components/collections", optional = true}
+icu_datetime = { version = "1.2.0", path = "../../components/datetime/" , optional = true}
+icu_decimal = { version = "1.2.0", path = "../../components/decimal/" , optional = true}
+icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", optional = true }
+icu_list = { version = "1.2.0", path = "../../components/list" , optional = true}
+icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform" , optional = true}
+icu_normalizer = { version = "1.2.0", path = "../../components/normalizer/" , optional = true}
+icu_plurals = { version = "1.2.0", path = "../../components/plurals/" , optional = true}
+icu_properties = { version = "1.2.0", path = "../../components/properties/", features = ["bidi"] , optional = true}
+icu_segmenter = { version = "1.2.0", path = "../../components/segmenter" , optional = true}
+icu_timezone = { version = "1.2.0", path = "../../components/timezone" , optional = true}
+unicode-bidi = { version = "0.3.13", default-features = false, optional = true}
+
+# Optional ICU4X features (not components)
+icu_provider_blob = { version = "1.2.0", path = "../../provider/blob", optional = true }
 serde = { version = "1.0", default-features = false, optional = true }
 
-icu_testdata = { version = "1.0.0", path = "../../provider/testdata", optional = true, features = ["icu_segmenter"] }
+icu_testdata = { version = "1.2.0", path = "../../provider/testdata", optional = true, features = ["icu_segmenter"] }
 
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Since this crate is published, Diplomat must be published preceding a new ICU4X release but may use git versions in between
-# ALSO MAKE SURE TO UPDATE ffi_coverage/Cargo.toml!
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0" }
+# ALSO MAKE SURE TO UPDATE /tools/ffi_coverage/Cargo.toml!
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "8d125999893fedfdf30595e97334c21ec4b18da9" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "8d125999893fedfdf30595e97334c21ec4b18da9" }
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # Logging is automagical in wasm, we only need this for native
-simple_logger = { version = "1.12", optional = true }
+simple_logger = { version = "4.1.0", optional = true }
 log = { version = "0.4", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-log = { version = "0.4" }
+log = "0.4"
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
-icu_provider_fs = { version = "1.0.0", path = "../../provider/fs/", optional = true }
+icu_provider_fs = { version = "1.2.0", path = "../../provider/fs/", optional = true }

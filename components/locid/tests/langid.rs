@@ -124,7 +124,7 @@ fn test_langid_normalizing_eq_str() {
         helpers::read_fixture(path).expect("Failed to read a fixture");
     for test in tests {
         let parsed: LanguageIdentifier = test.input.try_into().expect("Parsing failed.");
-        assert!(parsed.normalizing_eq(&*parsed.write_to_string()));
+        assert!(parsed.normalizing_eq(&parsed.write_to_string()));
     }
 
     // Check that trailing characters are not ignored
@@ -152,7 +152,7 @@ fn test_langid_strict_cmp() {
             let a_normalized = a_langid.write_to_string();
             let string_cmp = a_normalized.as_bytes().cmp(b.as_bytes());
             let test_cmp = a_langid.strict_cmp(b.as_bytes());
-            assert_eq!(string_cmp, test_cmp, "{:?}/{:?}", a, b);
+            assert_eq!(string_cmp, test_cmp, "{a:?}/{b:?}");
         }
     }
 }

@@ -71,15 +71,15 @@
 //! let formatted_date = dtf.format(&date).expect("Calendars should match");
 //! let typed_formatted_date = typed_dtf.format(&typed_date);
 //!
-//! assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34 PM");
-//! assert_writeable_eq!(typed_formatted_date, "Sep 12, 2020, 12:34 PM");
+//! assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34 PM");
+//! assert_writeable_eq!(typed_formatted_date, "Sep 12, 2020, 12:34 PM");
 //!
 //! let formatted_date_string =
 //!     dtf.format_to_string(&date).expect("Calendars should match");
 //! let typed_formatted_date_string = typed_dtf.format_to_string(&typed_date);
 //!
-//! assert_eq!(formatted_date_string, "Sep 12, 2020, 12:34 PM");
-//! assert_eq!(typed_formatted_date_string, "Sep 12, 2020, 12:34 PM");
+//! assert_eq!(formatted_date_string, "Sep 12, 2020, 12:34 PM");
+//! assert_eq!(typed_formatted_date_string, "Sep 12, 2020, 12:34 PM");
 //! ```
 //!
 //! The options can be created more ergonomically using the `Into` trait to automatically
@@ -129,7 +129,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -149,7 +149,7 @@ pub mod provider;
 pub(crate) mod raw;
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
-#[cfg(feature = "experimental_skeleton_matching")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod skeleton;
 pub mod time_zone;
 mod zoned_datetime;
@@ -166,5 +166,77 @@ pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
 pub use zoned_datetime::TypedZonedDateTimeFormatter;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use DateTimeError as Error;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use core::mem::size_of;
+    use icu_calendar::provider::WeekDataV1Marker;
+    use icu_calendar::Gregorian;
+    use icu_decimal::FixedDecimalFormatter;
+    use icu_plurals::PluralRules;
+    use icu_provider::prelude::*;
+    use icu_timezone::CustomTimeZone;
+    use provider::calendar::patterns::GenericPatternV1Marker;
+    use provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
+    use provider::calendar::ErasedDateSymbolsV1Marker;
+    use provider::calendar::TimeSymbolsV1Marker;
+    use provider::time_zones::ExemplarCitiesV1Marker;
+    use provider::time_zones::MetazoneGenericNamesLongV1Marker;
+    use provider::time_zones::MetazoneGenericNamesShortV1Marker;
+    use provider::time_zones::MetazoneSpecificNamesLongV1Marker;
+    use provider::time_zones::MetazoneSpecificNamesShortV1Marker;
+    use provider::time_zones::TimeZoneFormatsV1Marker;
+    use time_zone::TimeZoneDataPayloads;
+    use time_zone::TimeZoneFormatter;
+    use time_zone::TimeZoneFormatterUnit;
+
+    /// Checks that the size of the type is one of the given sizes.
+    /// The size might differ across Rust versions or channels.
+    macro_rules! check_size_of {
+        ($sizes:pat, $type:path) => {
+            assert!(
+                matches!(size_of::<$type>(), $sizes),
+                concat!(stringify!($type), " is of size {}"),
+                size_of::<$type>()
+            );
+        };
+    }
+
+    #[test]
+    fn check_sizes() {
+        check_size_of!(5800 | 4592, DateFormatter);
+        check_size_of!(6792 | 5456, DateTimeFormatter);
+        check_size_of!(7904 | 6480, ZonedDateTimeFormatter);
+        check_size_of!(1496 | 1320, TimeFormatter);
+        check_size_of!(1112 | 1024, TimeZoneFormatter);
+        check_size_of!(5752 | 4544, TypedDateFormatter::<Gregorian>);
+        check_size_of!(6744 | 5408, TypedDateTimeFormatter::<Gregorian>);
+
+        check_size_of!(88, DateTimeError);
+        check_size_of!(200, FormattedDateTime);
+        check_size_of!(16, FormattedTimeZone::<CustomTimeZone>);
+        check_size_of!(184, FormattedZonedDateTime);
+        check_size_of!(13, DateTimeFormatterOptions);
+
+        type DP<M> = DataPayload<M>;
+        check_size_of!(208, DP::<PatternPluralsFromPatternsV1Marker>);
+        check_size_of!(1032 | 904, DP::<TimeSymbolsV1Marker>);
+        check_size_of!(40, DP::<GenericPatternV1Marker>);
+        check_size_of!(208, DP::<PatternPluralsFromPatternsV1Marker>);
+        check_size_of!(5064 | 3904, DP::<ErasedDateSymbolsV1Marker>);
+        check_size_of!(16, DP::<WeekDataV1Marker>);
+        check_size_of!(288 | 232, DP::<TimeZoneFormatsV1Marker>);
+        check_size_of!(64 | 56, DP::<ExemplarCitiesV1Marker>);
+        check_size_of!(120 | 112, DP::<MetazoneGenericNamesLongV1Marker>);
+        check_size_of!(120 | 112, DP::<MetazoneGenericNamesShortV1Marker>);
+        check_size_of!(216 | 208, DP::<MetazoneSpecificNamesLongV1Marker>);
+        check_size_of!(216 | 208, DP::<MetazoneSpecificNamesShortV1Marker>);
+        check_size_of!(168, PluralRules);
+        check_size_of!(256 | 208, FixedDecimalFormatter);
+        check_size_of!(1024 | 936, TimeZoneDataPayloads);
+        check_size_of!(3, TimeZoneFormatterUnit);
+    }
+}

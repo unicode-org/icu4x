@@ -2,18 +2,53 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data structs for the normalizer
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
+//!
+//! Read more about data providers: [`icu_provider`]
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
+#[cfg(feature = "data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_normalizer;
+    icu_normalizer_data::impl_normalizer_comp_v1!(Baked);
+    icu_normalizer_data::impl_normalizer_decomp_v1!(Baked);
+    icu_normalizer_data::impl_normalizer_nfd_v1!(Baked);
+    icu_normalizer_data::impl_normalizer_nfdex_v1!(Baked);
+    icu_normalizer_data::impl_normalizer_nfkd_v1!(Baked);
+    icu_normalizer_data::impl_normalizer_nfkdex_v1!(Baked);
+    icu_normalizer_data::impl_normalizer_uts46d_v1!(Baked);
+};
+
 /// Main data for NFD
-#[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(
+    CanonicalDecompositionDataV1Marker,
+    "normalizer/nfd@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -25,9 +60,19 @@ pub struct DecompositionDataV1<'data> {
 
 /// Data that either NFKD or the decomposed form of UTS 46 needs
 /// _in addition to_ the NFD data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
-    CompatibilityDecompositionSupplementV1Marker = "normalizer/nfkd@1",
-    Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1"
+    marker(
+        CompatibilityDecompositionSupplementV1Marker,
+        "normalizer/nfkd@1",
+        singleton
+    ),
+    marker(Uts46DecompositionSupplementV1Marker, "normalizer/uts46d@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
@@ -68,9 +113,19 @@ impl DecompositionSupplementV1<'_> {
 
 /// The expansion tables for cases where the decomposition isn't
 /// contained in the trie value
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
-    CanonicalDecompositionTablesV1Marker = "normalizer/nfdex@1",
-    CompatibilityDecompositionTablesV1Marker = "normalizer/nfkdex@1"
+    marker(CanonicalDecompositionTablesV1Marker, "normalizer/nfdex@1", singleton),
+    marker(
+        CompatibilityDecompositionTablesV1Marker,
+        "normalizer/nfkdex@1",
+        singleton
+    )
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
@@ -86,7 +141,13 @@ pub struct DecompositionTablesV1<'data> {
 }
 
 /// Non-Hangul canonical compositions
-#[icu_provider::data_struct(CanonicalCompositionsV1Marker = "normalizer/comp@1")]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(CanonicalCompositionsV1Marker, "normalizer/comp@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -100,7 +161,17 @@ pub struct CanonicalCompositionsV1<'data> {
 
 /// Non-recursive canonical decompositions that differ from
 /// `DecompositionDataV1`.
-#[icu_provider::data_struct(NonRecursiveDecompositionSupplementV1Marker = "normalizer/decomp@1")]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(
+    NonRecursiveDecompositionSupplementV1Marker,
+    "normalizer/decomp@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

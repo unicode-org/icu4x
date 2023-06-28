@@ -35,7 +35,7 @@ fn main() {
     let _output = syntatically_canonicalize_locales(input);
 
     #[cfg(debug_assertions)]
-    println!("\nInput: {}\nOutput: {}", input, _output);
+    println!("\nInput: {input}\nOutput: {_output}");
 }
 
 #[cfg(test)]

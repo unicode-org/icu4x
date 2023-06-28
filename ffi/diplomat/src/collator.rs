@@ -5,7 +5,6 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
     use icu_collator::{Collator, CollatorOptions};
 
     use crate::{
@@ -91,14 +90,15 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             options: ICU4XCollatorOptionsV1,
-        ) -> DiplomatResult<Box<ICU4XCollator>, ICU4XError> {
+        ) -> Result<Box<ICU4XCollator>, ICU4XError> {
             let locale = locale.to_datalocale();
             let options = CollatorOptions::from(options);
 
-            Collator::try_new_unstable(&provider.0, &locale, options)
-                .map(|o| Box::new(ICU4XCollator(o)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XCollator(Collator::try_new_unstable(
+                &provider.0,
+                &locale,
+                options,
+            )?)))
         }
 
         /// Compare potentially ill-formed UTF-8 strings.

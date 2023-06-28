@@ -110,7 +110,7 @@ Pros:
 Cons:
 
 - **Doesn't support multiple attributes or nested fields:** Additional business logic is required to support all but the most basic field logic.  For example, "2020" is a year, a number, and an integer, but this data model is only able to represent one type.  This problem comes up in situations like DateIntervalFormat, where ECMA-402 requires the implementation to return multiple attributes on a particular `formatToParts` object.
-- **Doesn't distinguish adjacent fields:** Since adjacent field identifiers are coallesced, this data model doesn't support situations where two fields of the same type are adjacent to each other in the string.  For example, in Chinese, no separators are used in certain types of lists, so different list items cannot be distinguished without an extra data structure.
+- **Doesn't distinguish adjacent fields:** Since adjacent field identifiers are coalesced, this data model doesn't support situations where two fields of the same type are adjacent to each other in the string.  For example, in Chinese, no separators are used in certain types of lists, so different list items cannot be distinguished without an extra data structure.
 
 ### Model B
 

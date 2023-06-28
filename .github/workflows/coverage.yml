@@ -7,8 +7,6 @@ name:                           Coverage
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: '*'
 
 jobs:
   test:
@@ -17,9 +15,7 @@ jobs:
     runs-on:                    ubuntu-latest
 
     steps:
-      - uses:                   actions/checkout@v2
-
-      # TODO(#315) Re-include caching that also includes the Rust version in the cache key
+      - uses:                   actions/checkout@v3
 
       ## Coverage steps
 
@@ -29,7 +25,7 @@ jobs:
           echo "::set-output name=hash::$(cargo search grcov | grep '^grcov =' | md5sum)"
         shell: bash
       - name: Attempt to load cached grcov
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: grcov-cache
         with:
           path: |
@@ -38,20 +34,15 @@ jobs:
           key: ${{ runner.os }}-make-${{ steps.grcov-version.outputs.hash }}
       - name: Install grcov
         if: steps.grcov-cache.outputs.cache-hit != 'true'
-        uses: actions-rs/install@v0.1.2
-        with:
-          crate: grcov
-          version: latest
+        run: |
+          cargo +stable install grcov
   
       - uses:                   actions-rs/toolchain@v1
         with:
-          toolchain:            nightly-2022-04-05
+          toolchain:            nightly-2023-01-31
           override:             true
 
-      - uses:                   actions-rs/cargo@v1
-        with:
-          command:              test
-          args:                 --all-features --no-fail-fast
+      - run: cargo test --all-features --no-fail-fast
         env:
           CARGO_INCREMENTAL:    '0'
           RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests'
@@ -68,7 +59,7 @@ jobs:
           path-to-lcov:         ${{ steps.coverage.outputs.report }}
 
       - name:                   Push grcov results to Codecov via GitHub Action
-        uses:                   codecov/codecov-action@v1
+        uses:                   codecov/codecov-action@v3
         with:
           file:                 ${{ steps.coverage.outputs.report }}
           fail_ci_if_error:     true

@@ -16,6 +16,7 @@
 )]
 #![allow(clippy::upper_case_acronyms)]
 #![allow(clippy::needless_lifetimes)]
+#![allow(clippy::result_unit_err)]
 
 //! This crate contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! FFI bindings. This generates the C, C++, JavaScript, and TypeScript bindings. This crate also contains the `extern "C"`
@@ -43,41 +44,95 @@ extern crate std as rust_std;
 
 extern crate alloc;
 
-#[macro_use]
-mod utils;
+// Common modules
 
-pub mod bidi;
-pub mod calendar;
-pub mod collator;
 pub mod common;
 pub mod data_struct;
-pub mod date;
-pub mod datetime;
-pub mod datetime_formatter;
-pub mod decimal;
 pub mod errors;
-pub mod fallbacker;
-pub mod fixed_decimal;
-pub mod list;
 pub mod locale;
-pub mod locid_transform;
 pub mod logging;
-pub mod normalizer;
-pub mod normalizer_properties;
-pub mod pluralrules;
-pub mod properties_maps;
-pub mod properties_sets;
 pub mod provider;
-pub mod script;
-pub mod segmenter_grapheme;
-pub mod segmenter_line;
-pub mod segmenter_sentence;
-pub mod segmenter_word;
-pub mod time;
-pub mod timezone;
-pub mod timezone_formatter;
-pub mod week;
-pub mod zoned_formatter;
 
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;
+
+// Components
+
+#[cfg(feature = "icu_properties")]
+pub mod bidi;
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
+pub mod calendar;
+#[cfg(feature = "icu_collator")]
+pub mod collator;
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
+pub mod date;
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
+pub mod datetime;
+#[cfg(feature = "icu_datetime")]
+pub mod datetime_formatter;
+#[cfg(feature = "icu_decimal")]
+pub mod decimal;
+#[cfg(feature = "icu_displaynames")]
+pub mod displaynames;
+#[cfg(feature = "icu_locid_transform")]
+pub mod fallbacker;
+#[cfg(feature = "icu_decimal")]
+pub mod fixed_decimal;
+#[cfg(feature = "icu_list")]
+pub mod list;
+#[cfg(feature = "icu_locid_transform")]
+pub mod locid_transform;
+#[cfg(feature = "icu_timezone")]
+pub mod metazone_calculator;
+#[cfg(feature = "icu_normalizer")]
+pub mod normalizer;
+#[cfg(feature = "icu_normalizer")]
+pub mod normalizer_properties;
+#[cfg(feature = "icu_plurals")]
+pub mod pluralrules;
+#[cfg(feature = "icu_properties")]
+pub mod properties_iter;
+#[cfg(feature = "icu_properties")]
+pub mod properties_maps;
+#[cfg(feature = "icu_properties")]
+pub mod properties_names;
+#[cfg(feature = "icu_properties")]
+pub mod properties_sets;
+#[cfg(feature = "icu_properties")]
+pub mod properties_unisets;
+#[cfg(feature = "icu_properties")]
+pub mod script;
+#[cfg(feature = "icu_segmenter")]
+pub mod segmenter_grapheme;
+#[cfg(feature = "icu_segmenter")]
+pub mod segmenter_line;
+#[cfg(feature = "icu_segmenter")]
+pub mod segmenter_sentence;
+#[cfg(feature = "icu_segmenter")]
+pub mod segmenter_word;
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
+pub mod time;
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+pub mod timezone;
+#[cfg(feature = "icu_datetime")]
+pub mod timezone_formatter;
+#[cfg(any(feature = "icu_calendar"))]
+pub mod week;
+#[cfg(feature = "icu_datetime")]
+pub mod zoned_formatter;

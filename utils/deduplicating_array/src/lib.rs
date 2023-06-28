@@ -39,7 +39,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 
@@ -100,8 +100,7 @@ where
                     // which makes the assume_init_ref safe
                     if j >= i {
                         return Err(D::Error::custom(format!(
-                            "Illegal forward fallback {}->{}",
-                            i, j
+                            "Illegal forward fallback {i}->{j}",
                         )));
                     }
                     #[allow(clippy::indexing_slicing)] // j < i in 0..N by enumerate
@@ -123,8 +122,7 @@ where
                     // which makes the assume_init_ref safe
                     if j >= i {
                         return Err(D::Error::custom(format!(
-                            "Illegal forward fallback {}->{}",
-                            i, j
+                            "Illegal forward fallback {i}->{j}",
                         )));
                     }
                     #[allow(clippy::indexing_slicing)] // j < i in 0..N by enumerate
@@ -158,7 +156,7 @@ enum MachineSer<'a, T> {
 //
 // These are not considered part of the stable API.
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Debug)]
 #[serde(untagged)]
 #[doc(hidden)]
 #[allow(clippy::exhaustive_enums)] // internal type
@@ -168,6 +166,7 @@ pub enum HumanDe<T> {
 }
 
 #[doc(hidden)]
+#[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // internal type
 pub enum MachineDe<T> {
     Value(T),

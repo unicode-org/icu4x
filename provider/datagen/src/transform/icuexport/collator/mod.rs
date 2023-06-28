@@ -7,9 +7,9 @@
 
 use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
+use icu_locid::extensions::unicode::key;
 use icu_locid::extensions::unicode::Value;
-use icu_locid::extensions_unicode_key as key;
-use icu_locid::subtags_language as language;
+use icu_locid::subtags::language;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
 use icu_provider::datagen::IterableDataProvider;
@@ -28,13 +28,16 @@ static DEFAULT_REMOVED_COLLATIONS: &[&str] = &["big5han", "gb2312"];
 mod test;
 
 /// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
-fn has_legacy_swedish_variants(
-    icuexport: &crate::SerdeCache,
-    collation_han_database: crate::CollationHanDatabase,
-) -> Result<bool, DataError> {
-    icuexport
-        .list(&format!("collation/{}", collation_han_database))
-        .map(|mut iter| iter.any(|s| s.as_os_str() == "sv_reformed_meta.toml"))
+fn has_legacy_swedish_variants(source: &crate::SourceData) -> bool {
+    source
+        .icuexport()
+        .and_then(|i| {
+            i.file_exists(&format!(
+                "collation/{}/sv_reformed_meta.toml",
+                source.options.collation_han_database,
+            ))
+        })
+        .unwrap_or(false)
 }
 
 fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -> String {
@@ -111,19 +114,14 @@ impl crate::DatagenProvider {
     /// Whether to include the given collation value based on
     /// the default excludes and explicit includes.
     fn should_include_collation(&self, collation: &Value) -> bool {
-        let collation_str = collation.write_to_string();
-        if self
-            .source
-            .collations()
-            .iter()
-            .any(|s| s == &*collation_str)
-        {
+        let collation_str = &*collation.write_to_string();
+        if self.source.options.collations.contains(collation_str) {
             true
         } else if collation_str.starts_with("search") {
             // Note: literal "search" and "searchjl" are handled above
-            self.source.collations().iter().any(|s| s == "search*")
+            self.source.options.collations.contains("search*")
         } else {
-            !DEFAULT_REMOVED_COLLATIONS.contains(&&*collation_str)
+            !DEFAULT_REMOVED_COLLATIONS.contains(&collation_str)
         }
     }
 }
@@ -133,15 +131,14 @@ macro_rules! collation_provider {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    let has_legacy_swedish_variants =
-                        has_legacy_swedish_variants(self.source.icuexport()?, self.source.collation_han_database())?;
+                    self.check_req::<$marker>(req)?;
                     let $toml_data: &collator_serde::$serde_struct = self
                         .source
                         .icuexport()?
                         .read_and_parse_toml(&format!(
                             "collation/{}/{}{}.toml",
-                            self.source.collation_han_database(),
-                            locale_to_file_name(&req.locale, has_legacy_swedish_variants),
+                            self.source.options.collation_han_database,
+                            locale_to_file_name(&req.locale, has_legacy_swedish_variants(&self.source)),
                             $suffix
                         ))
                         .map_err(|e| match e.kind {
@@ -164,25 +161,24 @@ macro_rules! collation_provider {
 
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                    let has_legacy_swedish_variants =
-                        has_legacy_swedish_variants(self.source.icuexport()?, self.source.collation_han_database())?;
-                    Ok(self
+                    if <$marker>::KEY.metadata().singleton {
+                        return Ok(vec![Default::default()])
+                    }
+                    Ok(self.source.options.locales.filter_by_langid_equality(self
                         .source
                         .icuexport()?
                         .list(&format!(
                             "collation/{}",
-                            self.source.collation_han_database()
+                            self.source.options.collation_han_database
                         ))?
-                        .filter_map(|entry| {
-                            entry
-                                .file_stem()
-                                .unwrap()
-                                .to_string_lossy()
-                                .into_owned()
-                                .strip_suffix($suffix)
-                                .map(ToString::to_string)
+                        .filter_map(|mut file_name| {
+                            file_name.truncate(file_name.len() - ".toml".len());
+                            file_name.ends_with($suffix).then(|| {
+                                file_name.truncate(file_name.len() - $suffix.len());
+                                file_name
+                            })
                         })
-                        .filter_map(|s| file_name_to_locale(&s, has_legacy_swedish_variants))
+                        .filter_map(|s| file_name_to_locale(&s, has_legacy_swedish_variants(&self.source)))
                         .filter(|locale| {
                             locale
                                 .extensions
@@ -193,7 +189,7 @@ macro_rules! collation_provider {
                                 .unwrap_or(true)
                         })
                         .map(DataLocale::from)
-                        .collect())
+                        .collect()))
                 }
             }
         )+

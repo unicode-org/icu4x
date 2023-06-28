@@ -32,7 +32,7 @@ struct ICU4XTimeFormatterDeleter {
 /**
  * An ICU4X TimeFormatter object capable of formatting an [`ICU4XTime`] type (and others) as a string
  * 
- * See the [Rust documentation for `TimeFormatter`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html) for more information.
+ * See the [Rust documentation for `TimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html) for more information.
  */
 class ICU4XTimeFormatter {
  public:
@@ -40,49 +40,49 @@ class ICU4XTimeFormatter {
   /**
    * Creates a new [`ICU4XTimeFormatter`] from locale data.
    * 
-   * See the [Rust documentation for `try_new_with_length_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length_unstable) for more information.
+   * See the [Rust documentation for `try_new_with_length_unstable`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length_unstable) for more information.
    */
   static diplomat::result<ICU4XTimeFormatter, ICU4XError> create_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length);
 
   /**
    * Formats a [`ICU4XTime`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_time_to_writeable(const ICU4XTime& value, W& write) const;
 
   /**
    * Formats a [`ICU4XTime`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format_time(const ICU4XTime& value) const;
 
   /**
    * Formats a [`ICU4XDateTime`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_datetime_to_writeable(const ICU4XDateTime& value, W& write) const;
 
   /**
    * Formats a [`ICU4XDateTime`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format_datetime(const ICU4XDateTime& value) const;
 
   /**
    * Formats a [`ICU4XIsoDateTime`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const;
 
   /**
    * Formats a [`ICU4XIsoDateTime`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format_iso_datetime(const ICU4XIsoDateTime& value) const;
   inline const capi::ICU4XTimeFormatter* AsFFI() const { return this->inner.get(); }

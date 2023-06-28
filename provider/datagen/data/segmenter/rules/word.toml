@@ -1,0 +1,710 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# These word boundary rules are based on UAX #29, Unicode Version 15.0.0.
+# https://www.unicode.org/reports/tr29/tr29-41.html
+
+segmenter_type = "word"
+
+[[tables]]
+name = "CR"
+
+[[tables]]
+name = "LF"
+
+[[tables]]
+name = "Newline"
+
+[[tables]]
+name = "Extend"
+
+[[tables]]
+name = "ZWJ"
+
+[[tables]]
+name = "Regional_Indicator"
+
+[[tables]]
+name = "Format"
+
+[[tables]]
+name = "Katakana"
+
+[[tables]]
+name = "Hebrew_Letter"
+
+[[tables]]
+name = "ALetter"
+
+[[tables]]
+name = "Single_Quote"
+
+[[tables]]
+name = "Double_Quote"
+
+[[tables]]
+name = "MidNumLet"
+
+[[tables]]
+name = "MidLetter"
+
+[[tables]]
+name = "MidNum"
+
+[[tables]]
+name = "Numeric"
+
+[[tables]]
+name = "ExtendNumLet"
+
+[[tables]]
+name = "WSegSpace"
+
+[[tables]]
+name = "Extended_Pictographic"
+
+[[tables]]
+name = "SA"
+
+[[tables]]
+name = "ALetter"
+left = "ALetter"
+right = "Extend"
+
+[[tables]]
+name = "ALetter"
+left = "ALetter"
+right = "Format"
+
+[[tables]]
+name = "ALetter"
+left = "ALetter_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "ALetter"
+left = "ALetter_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "ALetter_ZWJ"
+left = "ALetter"
+right = "ZWJ"
+
+[[tables]]
+name = "ALetter_ZWJ"
+left = "ALetter_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+name = "Numeric"
+left = "Numeric"
+right = "Extend"
+
+[[tables]]
+name = "Numeric"
+left = "Numeric"
+right = "Format"
+
+[[tables]]
+name = "Numeric"
+left = "Numeric"
+right = "ZWJ"
+
+[[tables]]
+name = "ExtendNumLet"
+left = "ExtendNumLet"
+right = "Extend"
+
+[[tables]]
+name = "ExtendNumLet"
+left = "ExtendNumLet"
+right = "Format"
+
+[[tables]]
+name = "ExtendNumLet"
+left = "ExtendNumLet"
+right = "ZWJ"
+
+[[tables]]
+name = "Single_Quote"
+left = "Single_Quote"
+right = "Extend"
+
+[[tables]]
+name = "Single_Quote"
+left = "Single_Quote"
+right = "Format"
+
+[[tables]]
+name = "Single_Quote"
+left = "Single_Quote"
+right = "ZWJ"
+
+[[tables]]
+name = "Double_Quote"
+left = "Double_Quote"
+right = "Extend"
+
+[[tables]]
+name = "Double_Quote"
+left = "Double_Quote"
+right = "Format"
+
+[[tables]]
+name = "Double_Quote"
+left = "Double_Quote"
+right = "ZWJ"
+
+[[tables]]
+name = "MidLetter"
+left = "MidLetter"
+right = "Extend"
+
+[[tables]]
+name = "MidLetter"
+left = "MidLetter"
+right = "Format"
+
+[[tables]]
+name = "MidLetter"
+left = "MidLetter"
+right = "ZWJ"
+
+[[tables]]
+name = "MidNum"
+left = "MidNum"
+right = "Extend"
+
+[[tables]]
+name = "MidNum"
+left = "MidNum"
+right = "Format"
+
+[[tables]]
+name = "MidNum"
+left = "MidNum"
+right = "ZWJ"
+
+[[tables]]
+name = "MidNumLet"
+left = "MidNumLet"
+right = "Extend"
+
+[[tables]]
+name = "MidNumLet"
+left = "MidNumLet"
+right = "Format"
+
+[[tables]]
+name = "MidNumLet"
+left = "MidNumLet"
+right = "ZWJ"
+
+[[tables]]
+name = "WSegSpace_Extend"
+left = "WSegSpace"
+right = "Extend"
+
+[[tables]]
+name = "WSegSpace_Extend"
+left = "WSegSpace_Extend"
+right = "Extend"
+
+[[tables]]
+name = "WSegSpace_Format"
+left = "WSegSpace"
+right = "Format"
+
+[[tables]]
+name = "WSegSpace_Format"
+left = "WSegSpace_Format"
+right = "Format"
+
+[[tables]]
+name = "WSegSpace_Extend"
+left = "WSegSpace_Format"
+right = "Extend"
+
+[[tables]]
+name = "WSegSpace_Format"
+left = "WSegSpace_Extend"
+right = "Format"
+
+[[tables]]
+name = "WSegSpace_ZWJ"
+left = "WSegSpace"
+right = "ZWJ"
+
+[[tables]]
+name = "WSegSpace_ZWJ"
+left = "WSegSpace_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+name = "WSegSpace_ZWJ"
+left = "WSegSpace_Extend"
+right = "ZWJ"
+
+[[tables]]
+name = "WSegSpace_ZWJ"
+left = "WSegSpace_Format"
+right = "ZWJ"
+
+[[tables]]
+name = "WSegSpace_Extend"
+left = "WSegSpace_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "WSegSpace_Format"
+left = "WSegSpace_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "Unknown"
+left = "Unknown"
+right = "Extend"
+
+[[tables]]
+name = "Unknown"
+left = "Unknown"
+right = "Format"
+
+[[tables]]
+name = "Unknown_ZWJ"
+left = "Unknown"
+right = "ZWJ"
+
+[[tables]]
+name = "Katakana"
+left = "Katakana"
+right = "Extend"
+
+[[tables]]
+name = "Katakana"
+left = "Katakana"
+right = "Format"
+
+[[tables]]
+name = "Katakana"
+left = "Katakana"
+right = "ZWJ"
+
+[[tables]]
+name = "Regional_Indicator"
+left = "Regional_Indicator"
+right = "Extend"
+
+[[tables]]
+name = "Regional_Indicator"
+left = "Regional_Indicator"
+right = "Format"
+
+[[tables]]
+name = "Regional_Indicator"
+left = "Regional_Indicator"
+right = "ZWJ"
+
+[[tables]]
+name = "Hebrew_Letter"
+left = "Hebrew_Letter"
+right = "Extend"
+
+[[tables]]
+name = "Hebrew_Letter"
+left = "Hebrew_Letter"
+right = "Format"
+
+[[tables]]
+name = "Hebrew_Letter"
+left = "Hebrew_Letter"
+right = "ZWJ"
+
+[[tables]]
+name = "Extended_Pictographic"
+left = "Extended_Pictographic"
+right = "Extend"
+
+[[tables]]
+name = "Extended_Pictographic"
+left = "Extended_Pictographic"
+right = "Format"
+
+[[tables]]
+name = "Extended_Pictographic_ZWJ"
+left = "Extended_Pictographic"
+right = "ZWJ"
+
+[[tables]]
+name = "Extended_Pictographic"
+left = "Extended_Pictographic_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "Extended_Pictographic"
+left = "Extended_Pictographic_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "Format"
+left = "Format"
+right = "Extend"
+
+[[tables]]
+name = "Format"
+left = "Format"
+right = "Format"
+
+[[tables]]
+name = "Format"
+left = "Format"
+right = "ZWJ"
+
+[[tables]]
+name = "Extend"
+left = "Extend"
+right = "Extend"
+
+[[tables]]
+name = "Extend"
+left = "Extend"
+right = "Format"
+
+[[tables]]
+name = "Extend"
+left = "Extend"
+right = "ZWJ"
+
+[[tables]]
+name = "ZWJ_Extend"
+left = "ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "ZWJ_Extend"
+left = "ZWJ_Extend"
+right = "Extend"
+
+[[tables]]
+name = "ZWJ_Format"
+left = "ZWJ"
+right = "Format"
+
+[[tables]]
+name = "ZWJ_Format"
+left = "ZWJ_Format"
+right = "Format"
+
+[[tables]]
+name = "ZWJ_Extend"
+left = "ZWJ_Format"
+right = "Extend"
+
+[[tables]]
+name = "ZWJ_Format"
+left = "ZWJ_Extend"
+right = "Format"
+
+[[tables]]
+name = "ZWJ"
+left = "ZWJ"
+right = "ZWJ"
+
+[[tables]]
+name = "ZWJ"
+left = "ZWJ_Extend"
+right = "ZWJ"
+
+[[tables]]
+name = "ZWJ"
+left = "ZWJ_Format"
+right = "ZWJ"
+
+[[tables]]
+name = "ALetter_MidLetter"
+left = "ALetter_MidLetter"
+right = "Extend"
+
+[[tables]]
+name = "ALetter_MidLetter"
+left = "ALetter_MidLetter"
+right = "Format"
+
+[[tables]]
+name = "ALetter_Single_Quote"
+left = "ALetter_Single_Quote"
+right = "Extend"
+
+[[tables]]
+name = "ALetter_Single_Quote"
+left = "ALetter_Single_Quote"
+right = "Format"
+
+[[tables]]
+name = "Numeric_Single_Quote"
+left = "Numeric_Single_Quote"
+right = "Extend"
+
+[[tables]]
+name = "Numeric_Single_Quote"
+left = "Numeric_Single_Quote"
+right = "Format"
+
+[[tables]]
+name = "Numeric_MidNum"
+left = "Numeric_MidNum"
+right = "Extend"
+
+[[tables]]
+name = "Numeric_MidNum"
+left = "Numeric_MidNum"
+right = "Format"
+
+[[tables]]
+name = "Numeric_MidNumLet"
+left = "Numeric_MidNumLet"
+right = "Extend"
+
+[[tables]]
+name = "Numeric_MidNumLet"
+left = "Numeric_MidNumLet"
+right = "Format"
+
+[[tables]]
+name = "Unknown"
+left = "Unknown"
+right = "Extend"
+
+[[tables]]
+name = "Unknown"
+left = "Unknown"
+right = "Format"
+
+[[tables]]
+name = "ALetter_MidLetter"
+left = "ALetter"
+right = "MidLetter"
+
+[[tables]]
+name = "ALetter_MidLetter"
+left = "ALetter_ZWJ"
+right = "MidLetter"
+
+[[tables]]
+name = "ALetter_MidNumLet"
+left = "ALetter"
+right = "MidNumLet"
+
+[[tables]]
+name = "ALetter_MidNumLet"
+left = "ALetter_ZWJ"
+right = "MidNumLet"
+
+[[tables]]
+name = "ALetter_Single_Quote"
+left = "ALetter"
+right = "Single_Quote"
+
+[[tables]]
+name = "ALetter_Single_Quote"
+left = "ALetter_ZWJ"
+right = "Single_Quote"
+
+[[tables]]
+name = "Hebrew_Letter_MidLetter"
+left = "Hebrew_Letter"
+right = "MidLetter"
+
+[[tables]]
+name = "Hebrew_Letter_MidNumLet"
+left = "Hebrew_Letter"
+right = "MidNumLet"
+
+[[tables]]
+name = "Hebrew_Letter_Single_Quote"
+left = "Hebrew_Letter"
+right = "Single_Quote"
+
+[[tables]]
+name = "Hebrew_Letter_Double_Quote"
+left = "Hebrew_Letter"
+right = "Double_Quote"
+
+[[tables]]
+name = "Numeric_MidNum"
+left = "Numeric"
+right = "MidNum"
+
+[[tables]]
+name = "Numeric_MidNumLet"
+left = "Numeric"
+right = "MidNumLet"
+
+[[tables]]
+name = "Numeric_Single_Quote"
+left = "Numeric"
+right = "Single_Quote"
+
+[[tables]]
+name = "RI_RI"
+left = "Regional_Indicator"
+right = "Regional_Indicator"
+
+[[tables]]
+name = "RI_RI_ZWJ"
+left = "RI_RI"
+right = "ZWJ"
+
+[[rules]]
+# WB1
+left = [ "sot" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# WB2
+left = [
+  "ALetter",
+  "Katakana",
+  "Hebrew_Letter",
+  "Numeric",
+  "MidNumLet",
+  "ExtendNumLet",
+  "MidNumLet",
+  "MidLetter",
+  "ZWJ",
+  "Extend",
+  "Format",
+  "Regional_Indicator",
+  "Extended_Pictographic",
+  "Single_Quote",
+  "Double_Quote",
+  "ALetter_ZWJ",
+  "Unknown_ZWJ",
+  "Extended_Pictographic_ZWJ",
+  "Hebrew_Letter_Single_Quote",
+  "ALetter_ZWJ"
+]
+right = [ "eot" ]
+break_state = true
+
+[[rules]]
+# WB3
+left = [ "CR" ]
+right = [ "LF" ]
+break_state = false
+
+[[rules]]
+# WB3c
+left = [
+  "ZWJ",
+  "Extended_Pictographic_ZWJ",
+  "ALetter_ZWJ",
+  "Unknown_ZWJ"
+]
+right = [ "Extended_Pictographic" ]
+break_state = false
+
+[[rules]]
+# WB3d
+left = [ "WSegSpace" ]
+right = [ "WSegSpace" ]
+break_state = false
+
+[[rules]]
+# WB5
+left = [ "ALetter", "ALetter_ZWJ", "Hebrew_Letter" ]
+right = [ "ALetter", "Hebrew_Letter" ]
+break_state = false
+
+[[rules]]
+# WB6/WB7
+left = [
+  "ALetter_MidLetter",
+  "ALetter_MidNumLet",
+  "ALetter_Single_Quote",
+  "Hebrew_Letter_MidLetter",
+  "Hebrew_Letter_MidNumLet",
+  "Hebrew_Letter_Single_Quote"
+]
+right = [ "ALetter", "Hebrew_Letter" ]
+break_state = false
+
+[[rules]]
+# WB7a
+left = [ "Hebrew_Letter" ]
+right = [ "Single_Quote" ]
+break_state = false
+
+[[rules]]
+# WB7b/WB7c
+left = [ "Hebrew_Letter_Double_Quote" ]
+right = [ "Hebrew_Letter" ]
+break_state = false
+
+[[rules]]
+# WB8
+left = [ "Numeric" ]
+right = [ "Numeric" ]
+break_state = false
+
+[[rules]]
+# WB9
+left = [ "ALetter", "ALetter_ZWJ", "Hebrew_Letter" ]
+right = [ "Numeric" ]
+break_state = false
+
+[[rules]]
+# WB10
+left = [ "Numeric" ]
+right = [ "ALetter", "Hebrew_Letter" ]
+break_state = false
+
+[[rules]]
+# WB11
+left = [
+  "Numeric_MidNum",
+  "Numeric_MidNumLet",
+  "Numeric_Single_Quote"
+]
+right = [ "Numeric" ]
+break_state = false
+
+[[rules]]
+# WB13
+left = [ "Katakana" ]
+right = [ "Katakana" ]
+break_state = false
+
+[[rules]]
+# WB13a
+left = [
+  "ALetter",
+  "ALetter_ZWJ",
+  "Hebrew_Letter",
+  "Numeric",
+  "Katakana",
+  "ExtendNumLet"
+]
+right = [ "ExtendNumLet" ]
+break_state = false
+
+[[rules]]
+# WB13b
+left = [ "ExtendNumLet" ]
+right = [ "ALetter", "Hebrew_Letter", "Numeric", "Katakana" ]
+break_state = false
+
+[[rules]]
+# WB999
+left = [ "Any" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# WB999
+left = [ "ALetter_ZWJ" ]
+right = [ "WSegSpace" ]
+break_state = true

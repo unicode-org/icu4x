@@ -81,8 +81,6 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     f(self)
                 }
             }
-            // This is safe because there are no lifetime parameters.
-            unsafe impl<'a, #(#tybounds),*> yoke::IsCovariant<'a> for #name<#(#typarams),*> where #(#static_bounds),* {}
         }
     } else {
         if lts != 1 {
@@ -110,11 +108,11 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 .collect();
             let mut yoke_bounds: Vec<WherePredicate> = vec![];
             structure.bind_with(|_| synstructure::BindStyle::Move);
-            let body = structure.each_variant(|vi| {
+            let owned_body = structure.each_variant(|vi| {
                 vi.construct(|f, i| {
-                    let binding = format!("__binding_{}", i);
+                    let binding = format!("__binding_{i}");
                     let field = Ident::new(&binding, Span::call_site());
-                    let fty = replace_lifetime(&f.ty, static_lt());
+                    let fty_static = replace_lifetime(&f.ty, static_lt());
 
                     let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
                     if has_ty {
@@ -123,11 +121,14 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         // to `FieldTy: Yokeable` that need to be satisfied. We get them to be satisfied by requiring
                         // `FieldTy<'static>: Yokeable<FieldTy<'a>>`
                         if has_lt {
-                            let a_ty = replace_lifetime(&f.ty, custom_lt("'a"));
-                            yoke_bounds
-                                .push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #a_ty>));
+                            let fty_a = replace_lifetime(&f.ty, custom_lt("'a"));
+                            yoke_bounds.push(
+                                parse_quote!(#fty_static: yoke::Yokeable<'a, Output = #fty_a>),
+                            );
                         } else {
-                            yoke_bounds.push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #fty>));
+                            yoke_bounds.push(
+                                parse_quote!(#fty_static: yoke::Yokeable<'a, Output = #fty_static>),
+                            );
                         }
                     }
                     if has_ty || has_lt {
@@ -135,13 +136,37 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         // that the lifetimes are covariant, since this requirement
                         // must already be true for the type that implements transform_owned().
                         quote! {
-                            <#fty as yoke::Yokeable<'a>>::transform_owned(#field)
+                            <#fty_static as yoke::Yokeable<'a>>::transform_owned(#field)
                         }
                     } else {
                         // No nested lifetimes, so nothing to be done
                         quote! { #field }
                     }
                 })
+            });
+            let borrowed_body = structure.each(|binding| {
+                let f = binding.ast();
+                let field = &binding.binding;
+
+                let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
+
+                if has_ty || has_lt {
+                    let fty_static = replace_lifetime(&f.ty, static_lt());
+                    let fty_a = replace_lifetime(&f.ty, custom_lt("'a"));
+                    // We also must assert that each individual field can `transform()` correctly
+                    //
+                    // Even though transform_owned() does such an assertion already, CoerceUnsized
+                    // can cause type transformations that allow it to succeed where this would fail.
+                    // We need to check both.
+                    //
+                    // https://github.com/unicode-org/icu4x/issues/2928
+                    quote! {
+                        let _: &#fty_a = &<#fty_static as yoke::Yokeable<'a>>::transform(#field);
+                    }
+                } else {
+                    // No nested lifetimes, so nothing to be done
+                    quote! {}
+                }
             });
             return quote! {
                 unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*>
@@ -150,6 +175,12 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     type Output = #name<'a, #(#typarams),*>;
                     #[inline]
                     fn transform(&'a self) -> &'a Self::Output {
+                        // These are just type asserts, we don't need them for anything
+                        if false {
+                            match self {
+                                #borrowed_body
+                            }
+                        }
                         unsafe {
                             // safety: we have asserted covariance in
                             // transform_owned
@@ -158,7 +189,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     }
                     #[inline]
                     fn transform_owned(self) -> Self::Output {
-                        match self { #body }
+                        match self { #owned_body }
                     }
                     #[inline]
                     unsafe fn make(this: Self::Output) -> Self {
@@ -217,9 +248,6 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     unsafe { f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
                 }
             }
-            // This is safe because it is in the same block as the above impl, which only compiles
-            // if 'a is a covariant lifetime.
-            unsafe impl<'a, #(#tybounds),*> yoke::IsCovariant<'a> for #name<'a, #(#typarams),*> where #(#static_bounds),* {}
         }
     }
 }

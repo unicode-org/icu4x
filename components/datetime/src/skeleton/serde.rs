@@ -35,7 +35,7 @@ pub mod reference {
         {
             Skeleton::try_from(skeleton_string).map_err(|err| {
                 de::Error::invalid_value(
-                    de::Unexpected::Other(&format!("{:?} {}", skeleton_string, err)),
+                    de::Unexpected::Other(&format!("{skeleton_string:?} {err}")),
                     &"field symbols representing a skeleton",
                 )
             })

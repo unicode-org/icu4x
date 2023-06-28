@@ -57,7 +57,7 @@ mod reference {
             // Parse a string into a list of fields.
             pattern_string.parse().map_err(|err| {
                 de::Error::invalid_value(
-                    de::Unexpected::Other(&format!("{}", err)),
+                    de::Unexpected::Other(&format!("{err}")),
                     &"a valid UTS 35 pattern string",
                 )
             })

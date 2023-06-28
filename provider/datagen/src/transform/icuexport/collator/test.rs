@@ -7,7 +7,10 @@ use std::cmp::Ordering;
 use crate::testutil::ResolvedLocaleAdapter;
 use crate::*;
 use icu_collator::{provider::CollationDataV1Marker, Collator, CollatorOptions, Strength};
-use icu_locid::{langid, locale, subtags::Language, subtags_language as language};
+use icu_locid::{
+    langid, locale,
+    subtags::{language, Language},
+};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use writeable::Writeable;
 
@@ -27,7 +30,7 @@ fn check_expectations(locale: &DataLocale, options: CollatorOptions, cases: &[Te
             right,
             expectation,
         } = cas;
-        assert_eq!(collator.compare(left, right), *expectation, "{:?}", cas);
+        assert_eq!(collator.compare(left, right), *expectation, "{cas:?}");
     }
 }
 
@@ -209,7 +212,9 @@ fn test_nb_nn_no() {
 
 #[test]
 fn test_zh() {
-    let provider = crate::DatagenProvider::for_test();
+    let mut provider = crate::DatagenProvider::for_test();
+    // `zh-u-co-gb2312` needs to be manually enabled
+    provider.source.options.collations.insert("gb2312".into());
     let provider = LocaleFallbackProvider::try_new_unstable(provider).unwrap();
     let provider = ResolvedLocaleAdapter::new(provider);
 
@@ -284,15 +289,13 @@ fn test_collation_filtering() {
         },
     ];
     for cas in cases {
-        let provider = DatagenProvider {
-            source: SourceData::for_test().with_collations(
-                cas.include_collations
-                    .iter()
-                    .copied()
-                    .map(String::from)
-                    .collect(),
-            ),
-        };
+        let mut provider = DatagenProvider::for_test();
+        provider.source.options.collations = cas
+            .include_collations
+            .iter()
+            .copied()
+            .map(String::from)
+            .collect();
         let mut resolved_locales: Vec<String> =
             IterableDataProvider::<CollationDataV1Marker>::supported_locales(&provider)
                 .unwrap()
@@ -304,6 +307,6 @@ fn test_collation_filtering() {
         let mut expected_locales: Vec<String> =
             cas.expected.iter().copied().map(String::from).collect();
         expected_locales.sort();
-        assert_eq!(resolved_locales, expected_locales, "{:?}", cas);
+        assert_eq!(resolved_locales, expected_locales, "{cas:?}");
     }
 }

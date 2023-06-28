@@ -1,0 +1,44 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_personnames"
+description = "API for formatting person names according to language-dependent conventions"
+version = "0.1.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2021"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license = "Unicode-DFS-2016"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+icu_collections = { path = "../../components/collections"}
+icu_locid = { path = "../../components/locid" }
+icu_provider = { path = "../../provider/core", features = ["macros"] }
+zerovec = { path = "../../utils/zerovec", features = ["serde", "derive"] }
+databake = { path = "../../utils/databake", features = ["derive"], optional = true}
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true}
+litemap = { version = "0.7.0", path = "../../utils/litemap" }
+
+
+[features]
+std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
+datagen = ["serde", "std", "dep:databake", "zerovec/databake", "icu_collections/databake"]
+
+[[test]]
+name = "tests"
+path = "tests/tests.rs"

@@ -248,6 +248,7 @@ impl From<LocaleError> for ParserError {
             "InvalidLanguage" => ParserError::InvalidLanguage,
             "InvalidSubtag" => ParserError::InvalidSubtag,
             "InvalidExtension" => ParserError::InvalidExtension,
+            "DuplicatedExtension" => ParserError::DuplicatedExtension,
             _ => unreachable!("Unknown error name"),
         }
     }

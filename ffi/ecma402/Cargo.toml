@@ -5,11 +5,13 @@
 [package]
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
-version = "0.7.0"
+version = "0.8.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -20,24 +22,18 @@ include = [
     "tests/**/*",
     "Cargo.toml",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "build.rs",
 ]
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-ecma402_traits = { version = "0.2.0" }
-icu = { version = "1.0.0", path = "../../components/icu", features = ["std"] }
-icu_provider = { version = "1.0.0", path = "../../provider/core" }
-writeable = { version = "0.5", path = "../../utils/writeable" }
+ecma402_traits = "4"
+icu = { version = "1.2.0", path = "../../components/icu", features = ["std", "data"] }
+icu_provider = { version = "1.2.0", path = "../../provider/core" }
+writeable = { version = "0.5.1", path = "../../utils/writeable" }
 
-# Bake dependencies
-icu_plurals = { version = "1.0.0", path = "../../components/plurals" }
-icu_list = { version = "1.0.0", path = "../../components/list"}
-zerovec = { version = "0.9", path = "../../utils/zerovec" }
-litemap = { version = "0.6", path = "../../utils/litemap" }
-
-[build-dependencies]
-icu = { version = "1.0.0", path = "../../components/icu", features = ["std"] }
-icu_datagen = { version = "1.0.0", path = "../../provider/datagen" }
+[dev-dependencies]
+icu = { path = "../../components/icu", features = ["experimental"] }

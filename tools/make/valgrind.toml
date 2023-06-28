@@ -1,0 +1,69 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# This is a cargo-make file included in the toplevel Makefile.toml
+
+[tasks.valgrind-build]
+description = "Pre-build artifacts for use with the Valgrind task"
+category = "ICU4X Valgrind"
+command = "cargo"
+# Add features here and below if a desired example is not being built
+args = [
+    "build", "--examples",
+    "--features", "icu_benchmark_macros/rust_global_allocator",
+    "--features", "zerovec/serde",
+    "--profile", "bench",
+]
+
+[tasks.valgrind]
+description = "Build ICU4X example files with default features and run through Valgrind"
+category = "ICU4X Valgrind"
+dependencies = [
+    "valgrind-build",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+valgrind = which valgrind
+assert ${valgrind} "Could not find 'valgrind' in path.\n***\nRead about Valgrind: https://valgrind.org/\nInstall on Ubuntu: `apt-get install valgrind`\n***"
+
+mkdir benchmarks
+mkdir benchmarks/valgrind
+
+# Re-run the build command only to generate the JSON output (--message-format=json)
+output = exec cargo build --examples --message-format=json --features icu_benchmark_macros/rust_global_allocator --features zerovec/serde --profile bench
+if ${output.code}
+    trigger_error "Build failed! To debug, build examples with `--features icu_benchmark_macros/rust_global_allocator`"
+end
+
+# Parse the JSON messages from --message-format=json line by line
+trimmed_stdout = trim ${output.stdout}
+json_messages = split ${trimmed_stdout} "\n"
+for json_message in ${json_messages}
+    json_obj = json_parse ${json_message}
+
+    # The following two JSON keys determine whether this is an example artifact
+    is_compiler_artifact = eq ${json_obj.reason} "compiler-artifact"
+    is_example = eq ${json_obj.target.kind[0]} "example"
+    if ${is_compiler_artifact} and ${is_example}
+
+        # Run the example through Valgrind and save the output in the benchmarks folder
+        out_file = concat "benchmarks/valgrind/" ${json_obj.target.name} ".out"
+        set_env LD_BIND_NOW "y"
+        vg_output = exec ${valgrind} --tool=callgrind --zero-before=_start --callgrind-out-file=${out_file} ${json_obj.executable}
+        if ${vg_output.code}
+            echo ${vg_output.stdout}
+            echo ${vg_output.stderr}
+            trigger_error "Valgrind failed; see output above"
+        else
+            # Display the summary line
+            grep_output = exec grep "summary" ${out_file}
+            summary_line = trim ${grep_output.stdout}
+            ir_count = substring ${summary_line} 9
+            echo ${ir_count} "Ir:" ${json_obj.target.name}
+        end
+    end
+end
+'''

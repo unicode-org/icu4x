@@ -5,9 +5,10 @@
 [package]
 name = "writeable"
 description = "A more efficient alternative to fmt::Display"
-version = "0.5.0"
+version = "0.5.2"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
@@ -22,22 +23,27 @@ include = [
     "README.md"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
 [package.metadata.docs.rs]
 all-features = true
 
 [dev-dependencies]
-criterion = "0.3"
-icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
+criterion = "0.4"
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 rand = { version = "0.8", features = ["small_rng"] }
+
+[features]
+bench = []
+
+[package.metadata.cargo-all-features]
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
-
-[features]
-default = []
-
-bench = []
 
 [[bench]]
 name = "writeable"

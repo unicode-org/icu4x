@@ -16,9 +16,12 @@ static POSTCARD_BYTES: &[u8] = include_bytes!(concat!(
     "/data/testdata.postcard"
 ));
 
+struct BakedDataProvider;
+
 mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
-    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/any.rs"));
+    impl_data_provider!(super::BakedDataProvider);
+    impl_any_provider!(super::BakedDataProvider);
 }
 
 #[inline(never)]
@@ -33,8 +36,13 @@ fn create_blob_data_provider() -> BlobDataProvider {
 }
 
 #[inline(never)]
-fn create_baked_data_provider() -> baked::BakedDataProvider {
-    baked::BakedDataProvider
+fn create_baked_data_provider() -> BakedDataProvider {
+    BakedDataProvider
+}
+
+#[inline(never)]
+fn create_baked_any_provider() -> BakedDataProvider {
+    BakedDataProvider
 }
 
 fn providers_bench(c: &mut Criterion) {
@@ -45,6 +53,9 @@ fn providers_bench(c: &mut Criterion) {
         b.iter(create_blob_data_provider);
     });
     c.bench_function("provider/construct/baked", |b| {
+        b.iter(create_baked_data_provider);
+    });
+    c.bench_function("provider/construct/any", |b| {
         b.iter(create_baked_data_provider);
     });
 
@@ -78,6 +89,19 @@ fn providers_bench(c: &mut Criterion) {
         let provider = create_baked_data_provider();
         b.iter(|| {
             let result: DataResponse<HelloWorldV1Marker> = provider
+                .load(DataRequest {
+                    locale: &locale!("ja").into(),
+                    metadata: Default::default(),
+                })
+                .unwrap();
+            result
+        });
+    });
+    c.bench_function("provider/load/any", |b| {
+        let provider = create_baked_any_provider();
+        b.iter(|| {
+            let result: DataResponse<HelloWorldV1Marker> = provider
+                .as_downcasting()
                 .load(DataRequest {
                     locale: &locale!("ja").into(),
                     metadata: Default::default(),

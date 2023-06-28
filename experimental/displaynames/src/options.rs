@@ -4,34 +4,31 @@
 
 //! Options for [`DisplayNames`](crate::DisplayNames).
 
-/// A bag of options defining how region codes will be translated by
+/// A bag of options defining how region or language codes will be translated by
 /// [`DisplayNames`](crate::DisplayNames).
-///
 /// # Example
 ///
 /// ```
-/// use icu_displaynames::options::{DisplayNamesOptions, Style};
-/// use icu_displaynames::displaynames::DisplayNames;
-/// use icu_locid::locale;
+/// use icu_displaynames::{DisplayNamesOptions, RegionDisplayNames, Style};
+/// use icu_locid::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
-/// options.style = Style::Short;
-/// let display_name = DisplayNames::try_new_region_unstable(
-///     &icu_testdata::unstable(),
+/// options.style = Some(Style::Short);
+/// let display_name = RegionDisplayNames::try_new(
 ///     &locale.into(),
 ///     options,
 /// )
 /// .expect("Data should load successfully");
 ///
-/// let region_code = "BA";
-/// assert_eq!(display_name.of(&region_code), Ok("Bosnia"));
+/// // Full name would be "Bosnia & Herzegovina"
+/// assert_eq!(display_name.of(region!("BA")), Some("Bosnia"));
+/// ```
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
 pub struct DisplayNamesOptions {
-    /// The formatting style to use for display name,
-    /// defaults to "long".
-    pub style: Style,
+    /// The optional formatting style to use for display name.
+    pub style: Option<Style>,
     /// The fallback return when the system does not have the
     /// requested display name, defaults to "code".
     pub fallback: Fallback,
@@ -47,17 +44,12 @@ pub enum Style {
     Narrow,
     Short,
     Long,
-}
-
-impl Default for Style {
-    fn default() -> Self {
-        Self::Long
-    }
+    Menu,
 }
 
 /// An enum for fallback return when the system does not have the
 /// requested display name.
-#[allow(missing_docs)] // The variants are self explanotory.
+#[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum Fallback {
@@ -72,7 +64,7 @@ impl Default for Fallback {
 }
 
 /// An enum for the language display kind.
-#[allow(missing_docs)] // The variants are self explanotory.
+#[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum LanguageDisplay {

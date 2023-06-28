@@ -65,7 +65,7 @@ On the input side, `&str` differs from `&[u8]` holding potentially-invalid UTF-8
 
 On the outside, the function that takes `&mut str` always delegates to the version that takes `&mut [u8]` and trailing loop that zeros bytes after the last byte written by the delegate function until either the end of the slice or UTF a lead byte is reached. This is enough to uphold the invariant of `&mut str`.
 
-A given ICU4X operation that outputs text must always provide a version, whose input type is `&str` and output type is `&mut [u8]` (this one gets exposed via FFI as `_unsafe_utf8`), the version whose input type is `&str` and output type is `&mut str`, and a version whose input type is `&str` and that returns a `String` instead of having an output argument. The last two or always implemented as a thin mechanical wrappers around the first one. If performance considerations permit, the first one may just delegate to the version that takes `&[u8]` input. The function that returs a `String` has no name annotation.
+A given ICU4X operation that outputs text must always provide a version, whose input type is `&str` and output type is `&mut [u8]` (this one gets exposed via FFI as `_unsafe_utf8`), the version whose input type is `&str` and output type is `&mut str`, and a version whose input type is `&str` and that returns a `String` instead of having an output argument. The last two or always implemented as a thin mechanical wrappers around the first one. If performance considerations permit, the first one may just delegate to the version that takes `&[u8]` input. The function that returns a `String` has no name annotation.
 
 ### Potentially-invalid UTF-16
 

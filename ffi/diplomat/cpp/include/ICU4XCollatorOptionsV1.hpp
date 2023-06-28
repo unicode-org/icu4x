@@ -19,19 +19,11 @@
 #include "ICU4XCollatorNumeric.hpp"
 #include "ICU4XCollatorBackwardSecondLevel.hpp"
 
-/**
- * A destruction policy for using ICU4XCollatorOptionsV1 with std::unique_ptr.
- */
-struct ICU4XCollatorOptionsV1Deleter {
-  void operator()(capi::ICU4XCollatorOptionsV1* l) const noexcept {
-    capi::ICU4XCollatorOptionsV1_destroy(l);
-  }
-};
 
 /**
  * 
  * 
- * See the [Rust documentation for `CollatorOptions`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.CollatorOptions.html) for more information.
+ * See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
  */
 struct ICU4XCollatorOptionsV1 {
  public:

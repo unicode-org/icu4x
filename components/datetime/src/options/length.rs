@@ -231,7 +231,7 @@ pub enum Time {
     ///
     /// # Examples
     ///
-    /// * 8:25:07 AM Pacific Standard Time (`en-US`)
+    /// * 8:25:07 AM Pacific Standard Time (`en-US`)
     /// * 08:25:07 czas pacyficzny standardowy (`pl`)
     /// * ٨:٢٥:٠٧ ص توقيت المحيط الهادي الرسمي (`ar`)
     /// * 08:25:07 Тихоокеанское стандартное время (`ru`)
@@ -242,7 +242,7 @@ pub enum Time {
     ///
     /// # Examples
     ///
-    /// * 8:25:07 AM PST (`en-US`)
+    /// * 8:25:07 AM PST (`en-US`)
     /// * 08:25:07 GMT-8 (`pl`)
     /// * ٨:٢٥:٠٧ ص غرينتش-٨ (`ar`)
     /// * 08:25:07 GMT-8 (`ru`)
@@ -253,7 +253,7 @@ pub enum Time {
     ///
     /// # Examples
     ///
-    /// * 8:25:07 AM (`en-US`)
+    /// * 8:25:07 AM (`en-US`)
     /// * 08:25:07 (`pl`)
     /// * ٨:٢٥:٠٧ ص (`ar`)
     /// * 08:25:07 (`ru`)
@@ -264,7 +264,7 @@ pub enum Time {
     ///
     /// # Examples
     ///
-    /// * 8:25 AM (`en-US`)
+    /// * 8:25 AM (`en-US`)
     /// * 08:25 (`pl`)
     /// * ٨:٢٥ ص (`ar`)
     /// * 08:25 (`ru`)

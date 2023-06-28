@@ -108,7 +108,7 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         let mut zf_bounds: Vec<WherePredicate> = vec![];
         let body = structure.each_variant(|vi| {
             vi.construct(|f, i| {
-                let binding = format!("__binding_{}", i);
+                let binding = format!("__binding_{i}");
                 let field = Ident::new(&binding, Span::call_site());
 
                 if has_clone_attr(&f.attrs) {

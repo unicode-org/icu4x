@@ -22,7 +22,7 @@ export class ICU4XBidiParagraph {
 
    * The primary direction of this paragraph
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at Rust documentation for `level_at`} for more information.
+   * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at Rust documentation for `level_at`} for more information.
    */
   direction(): ICU4XBidiDirection;
 
@@ -30,7 +30,7 @@ export class ICU4XBidiParagraph {
 
    * The number of bytes in this paragraph
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.ParagraphInfo.html#method.len Rust documentation for `len`} for more information.
+   * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.ParagraphInfo.html#method.len Rust documentation for `len`} for more information.
    */
   size(): usize;
 
@@ -50,7 +50,7 @@ export class ICU4XBidiParagraph {
 
    * Reorder a line based on display order. The ranges are specified relative to the source text and must be contained within this paragraph's range.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at Rust documentation for `level_at`} for more information.
+   * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at Rust documentation for `level_at`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   reorder_line(range_start: usize, range_end: usize): string | never;
@@ -61,7 +61,7 @@ export class ICU4XBidiParagraph {
 
    * Returns 0 (equivalent to `Level::ltr()`) on error
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at Rust documentation for `level_at`} for more information.
+   * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at Rust documentation for `level_at`} for more information.
    */
   level_at(pos: usize): u8;
 }

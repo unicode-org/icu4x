@@ -68,8 +68,7 @@ fn test_errors() {
                     ..
                 })
             ),
-            "{:?}",
-            err
+            "{err:?}"
         );
 
         struct WrongV1Marker;
@@ -91,8 +90,7 @@ fn test_errors() {
                     ..
                 })
             ),
-            "{:?}",
-            err
+            "{err:?}"
         );
     }
 }

@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `IsoSeconds`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.IsoSeconds.html) for more information.
+ * See the [Rust documentation for `IsoSeconds`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoSeconds.html) for more information.
  */
 enum struct ICU4XIsoTimeZoneSecondDisplay {
   Optional = 0,

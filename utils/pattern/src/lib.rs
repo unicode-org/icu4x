@@ -112,7 +112,7 @@
         clippy::panic,
         // TODO(#1668): enable clippy::exhaustive_structs,
         // TODO(#1668): enable clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 

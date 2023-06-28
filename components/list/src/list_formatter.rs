@@ -9,21 +9,39 @@ use core::fmt::{self, Write};
 use icu_provider::prelude::*;
 use writeable::*;
 
+#[cfg(doc)]
+extern crate writeable;
+
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
 /// [crate-level documentation](crate) for more details.
+#[derive(Debug)]
 pub struct ListFormatter {
     data: DataPayload<ErasedListV1Marker>,
     length: ListLength,
 }
 
 macro_rules! constructor {
-    ($name: ident, $name_any: ident, $name_buffer: ident, $marker: ty, $doc: literal) => {
-        #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list.\n\nSee the [CLDR spec]",
-            "(https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for an explanation of the different types.\n\n",
-            "[📚 Help choosing a constructor](icu_provider::constructors)\n\n",
-            "<div class=\"stab unstable\">⚠️ The bounds on this function may change over time, including in SemVer minor releases.</div>")]
-        pub fn $name<D: DataProvider<$marker> + ?Sized>(
-            data_provider: &D,
+    ($name: ident, $name_any: ident, $name_buffer: ident, $name_unstable: ident, $marker: ty, $doc: literal) => {
+        icu_provider::gen_any_buffer_data_constructors!(
+            locale: include,
+            style: ListLength,
+            error: ListError,
+            #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list.")]
+            ///
+            /// See the [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for
+            /// an explanation of the different types.
+            functions: [
+                $name,
+                $name_any,
+                $name_buffer,
+                $name_unstable,
+                Self
+            ]
+        );
+
+        #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$name)]
+        pub fn $name_unstable(
+            data_provider: &(impl DataProvider<$marker> + ?Sized),
             locale: &DataLocale,
             length: ListLength,
         ) -> Result<Self, ListError> {
@@ -35,45 +53,68 @@ macro_rules! constructor {
                 .take_payload()?.cast();
             Ok(Self { data, length })
         }
-        icu_provider::gen_any_buffer_constructors!(
-            locale: include,
-            style: ListLength,
-            error: ListError,
-            functions: [
-                Self::$name,
-                $name_any,
-                $name_buffer
-            ]
-        );
     };
 }
 
 impl ListFormatter {
     constructor!(
-        try_new_and_with_length_unstable,
+        try_new_and_with_length,
         try_new_and_with_length_with_any_provider,
         try_new_and_with_length_with_buffer_provider,
+        try_new_and_with_length_unstable,
         AndListV1Marker,
         "and"
     );
     constructor!(
-        try_new_or_with_length_unstable,
+        try_new_or_with_length,
         try_new_or_with_length_with_any_provider,
         try_new_or_with_length_with_buffer_provider,
+        try_new_or_with_length_unstable,
         OrListV1Marker,
         "or"
     );
     constructor!(
-        try_new_unit_with_length_unstable,
+        try_new_unit_with_length,
         try_new_unit_with_length_with_any_provider,
         try_new_unit_with_length_with_buffer_provider,
+        try_new_unit_with_length_unstable,
         UnitListV1Marker,
         "unit"
     );
 
     /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
-    /// formatting. The first layer of parts contains [`parts::ELEMENT`] for input
-    /// elements, and [`parts::LITERAL`] for list literals.
+    /// formatting.
+    ///
+    /// The [`Writeable`] is annotated with [`parts::ELEMENT`] for input elements,
+    /// and [`parts::LITERAL`] for list literals.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::list::*;
+    /// # use icu::locid::locale;
+    /// # use writeable::*;
+    /// let formatteur = ListFormatter::try_new_and_with_length(
+    ///     &locale!("fr").into(),
+    ///     ListLength::Wide,
+    /// )
+    /// .unwrap();
+    /// let pays = ["Italie", "France", "Espagne", "Allemagne"];
+    ///
+    /// assert_writeable_parts_eq!(
+    ///     formatteur.format(pays.iter()),
+    ///     "Italie, France, Espagne et Allemagne",
+    ///     [
+    ///         (0, 6, parts::ELEMENT),
+    ///         (6, 8, parts::LITERAL),
+    ///         (8, 14, parts::ELEMENT),
+    ///         (14, 16, parts::LITERAL),
+    ///         (16, 23, parts::ELEMENT),
+    ///         (23, 27, parts::LITERAL),
+    ///         (27, 36, parts::ELEMENT),
+    ///     ]
+    /// );
+    /// ```
     pub fn format<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a>(
         &'a self,
         values: I,
@@ -99,6 +140,9 @@ pub mod parts {
     use writeable::Part;
 
     /// The [`Part`] used by [`FormattedList`](super::FormattedList) to mark the part of the string that is an element.
+    ///
+    /// * `category`: `"list"`
+    /// * `value`: `"element"`
     pub const ELEMENT: Part = Part {
         category: "list",
         value: "element",
@@ -106,6 +150,9 @@ pub mod parts {
 
     /// The [`Part`] used by [`FormattedList`](super::FormattedList) to mark the part of the string that is a list literal,
     /// such as ", " or " and ".
+    ///
+    /// * `category`: `"list"`
+    /// * `value`: `"literal"`
     pub const LITERAL: Part = Part {
         category: "list",
         value: "literal",
@@ -114,6 +161,7 @@ pub mod parts {
 
 /// The [`Writeable`] implementation that is returned by [`ListFormatter::format`]. See
 /// the [`writeable`] crate for how to consume this.
+#[derive(Debug)]
 pub struct FormattedList<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> {
     formatter: &'a ListFormatter,
     values: I,
@@ -234,7 +282,7 @@ mod tests {
 
     fn formatter(length: ListLength) -> ListFormatter {
         ListFormatter {
-            data: DataPayload::from_owned(crate::provider::test::test_patterns()),
+            data: DataPayload::from_owned(crate::patterns::test::test_patterns()),
             length,
         }
     }

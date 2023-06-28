@@ -52,8 +52,7 @@ the trait objects.
 
 Examples of AnyProviders:
 
-- [`CldrJsonDataProvider`] reads structured data from CLDR JSON source files and returns
-  structured Rust objects.
+- [`DatagenProvider`] reads structured data from CLDR source files and returns ICU4X data structs.
 - [`AnyPayloadProvider`] wraps a specific data struct and returns it.
 - The `BakedDataProvider` which encodes structured data directly in Rust source
 
@@ -75,7 +74,7 @@ These can be found in the [`icu_provider_adapters`] crate.
 
 ### Testing Provider
 
-This crate also contains a concrete provider for testing purposes:
+This crate also contains a concrete provider for demonstration purposes:
 
 - [`HelloWorldProvider`] returns "hello world" strings in several languages.
 
@@ -92,7 +91,7 @@ structs to borrow zero-copy data.
 
 ### Data generation API
 
-*This functionality is enabled with the "datagen" feature*
+*This functionality is enabled with the "datagen" Cargo feature*
 
 The [`datagen`] module contains several APIs for data generation. See [`icu_datagen`] for the reference
 data generation implementation.
@@ -109,6 +108,7 @@ data generation implementation.
 [`Yokeable`]: yoke::Yokeable
 [`impl_dynamic_data_provider!`]: impl_dynamic_data_provider
 [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
+[`DatagenProvider`]: ../icu_datagen/struct.DatagenProvider.html
 [`as_downcasting()`]: AsDowncastingAnyProvider::as_downcasting
 [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
 [`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html

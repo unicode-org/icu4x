@@ -11,7 +11,7 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020 at 8:25:07 AM Pacific Daylight Time"
+                "en": "Tuesday, January 21, 2020, 8:25:07\u202fAM Pacific Daylight Time"
             }
         }
     },
@@ -27,7 +27,7 @@
         },
         "output": {
             "values": {
-                "ru": "10 сентября 2020 г., 13:34:59 Тихоокеанское летнее время"
+                "ru": "10 сентября 2020\u202fг., 13:34:59 Тихоокеанское летнее время"
             }
         }
     },
@@ -43,7 +43,7 @@
         },
         "output": {
             "values": {
-                "fr": "20 févr. 2020, 00:12:00 heure d’été du Pacifique"
+                "fr": "20 févr. 2020, 00:12:00 heure d’été du Pacifique nord-américain"
             }
         }
     },

@@ -4,10 +4,11 @@
 
 [package]
 name = "zerofrom"
-version = "0.1.1"
+version = "0.1.2"
 description = "ZeroFrom trait for constructing"
+rust-version = "1.61.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
 categories = ["data-structures", "caching", "no-std"]
@@ -21,13 +22,16 @@ include = [
     "README.md"
 ]
 
-[features]
-alloc = []
-derive = ["zerofrom-derive"]
-default = ["alloc"]
+[package.metadata.workspaces]
+independent = true
 
 [package.metadata.docs.rs]
 all-features = true
 
+[features]
+alloc = []
+derive = ["dep:zerofrom-derive"]
+default = ["alloc"]
+
 [dependencies]
-zerofrom-derive = { path = "./derive", version = "0.1.0", optional = true}
+zerofrom-derive = { version = "0.1.1", path = "./derive", optional = true}

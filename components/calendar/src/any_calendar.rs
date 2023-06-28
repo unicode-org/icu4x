@@ -11,14 +11,14 @@ use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
 use crate::japanese::{Japanese, JapaneseExtended};
+use crate::persian::Persian;
 use crate::{
     types, AsCalendar, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Ref,
 };
 
-use icu_locid::{
-    extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
-    subtags_language as language, Locale,
-};
+use icu_locid::extensions::unicode::{key, value, Value};
+use icu_locid::subtags::language;
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 use core::fmt;
@@ -28,8 +28,7 @@ use core::fmt;
 /// This allows for the construction of [`Date`] objects that have their calendar known at runtime.
 ///
 /// This can be constructed by calling `.into()` on a concrete calendar type if the calendar type is known at
-/// compile time. When the type is known at runtime, the [`AnyCalendar::try_new_with_any_provider()`],
-/// [`AnyCalendar::try_new_with_buffer_provider()`], and [`AnyCalendar::try_new_unstable()`] methods may be used.
+/// compile time. When the type is known at runtime, the [`AnyCalendar::new()`] and sibling methods may be used.
 ///
 /// [`Date`](crate::Date) can also be converted to [`AnyCalendar`]-compatible ones
 /// via [`Date::to_any()`](crate::Date::to_any()).
@@ -44,8 +43,7 @@ use core::fmt;
 ///
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::try_new_for_locale_unstable(&icu_testdata::unstable(), &locale.into())
-///                    .expect("constructing AnyCalendar failed");
+/// let calendar = AnyCalendar::new_for_locale(&locale.into());
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu_calendar::Ref instead.
 ///
@@ -64,12 +62,13 @@ use core::fmt;
 /// let iso_converted = iso_datetime.to_calendar(calendar);
 ///
 /// // Construct a datetime in the appropriate typed calendar and convert
-/// let japanese_calendar = Japanese::try_new_unstable(&icu_testdata::unstable()).unwrap();
+/// let japanese_calendar = Japanese::new();
 /// let japanese_datetime = DateTime::try_new_japanese_datetime("heisei".parse().unwrap(), 15, 3, 28,
 ///                                                         12, 33, 12, japanese_calendar).unwrap();
 /// // This is a DateTime<AnyCalendar>
 /// let any_japanese_datetime = japanese_datetime.to_any();
 /// ```
+#[derive(Debug)]
 #[non_exhaustive]
 pub enum AnyCalendar {
     /// A [`Gregorian`] calendar
@@ -84,12 +83,15 @@ pub enum AnyCalendar {
     Ethiopian(Ethiopian),
     /// An [`Indian`] calendar
     Indian(Indian),
+    /// A [`Persian`] calendar
+    Persian(Persian),
     /// A [`Coptic`] calendar
     Coptic(Coptic),
     /// An [`Iso`] calendar
     Iso(Iso),
 }
 
+// TODO(#3469): Decide on the best way to implement Ord.
 /// The inner date type for [`AnyCalendar`]
 #[derive(Clone, PartialEq, Eq, Debug)]
 #[non_exhaustive]
@@ -106,6 +108,8 @@ pub enum AnyDateInner {
     Ethiopian(<Ethiopian as Calendar>::DateInner),
     /// A date for an [`Indian`] calendar
     Indian(<Indian as Calendar>::DateInner),
+    /// A date for a [`Persian`] calendar
+    Persian(<Persian as Calendar>::DateInner),
     /// A date for a [`Coptic`] calendar
     Coptic(<Coptic as Calendar>::DateInner),
     /// A date for an [`Iso`] calendar
@@ -124,6 +128,7 @@ macro_rules! match_cal_and_date {
             ) => $e,
             (&Self::Ethiopian(ref $cal_matched), &AnyDateInner::Ethiopian(ref $date_matched)) => $e,
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
+            (&Self::Persian(ref $cal_matched), &AnyDateInner::Persian(ref $date_matched)) => $e,
             (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
             (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $e,
             _ => panic!(
@@ -163,6 +168,9 @@ impl Calendar for AnyCalendar {
             Self::Indian(ref c) => {
                 AnyDateInner::Indian(c.date_from_codes(era, year, month_code, day)?)
             }
+            Self::Persian(ref c) => {
+                AnyDateInner::Persian(c.date_from_codes(era, year, month_code, day)?)
+            }
             Self::Coptic(ref c) => {
                 AnyDateInner::Coptic(c.date_from_codes(era, year, month_code, day)?)
             }
@@ -180,6 +188,7 @@ impl Calendar for AnyCalendar {
             Self::Indian(ref c) => AnyDateInner::Indian(c.date_from_iso(iso)),
             Self::Coptic(ref c) => AnyDateInner::Coptic(c.date_from_iso(iso)),
             Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_iso(iso)),
+            Self::Persian(ref c) => AnyDateInner::Persian(c.date_from_iso(iso)),
         }
     }
 
@@ -201,28 +210,31 @@ impl Calendar for AnyCalendar {
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
         match (self, date) {
-            (&Self::Gregorian(ref c), &mut AnyDateInner::Gregorian(ref mut d)) => {
+            (Self::Gregorian(c), &mut AnyDateInner::Gregorian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Buddhist(ref c), &mut AnyDateInner::Buddhist(ref mut d)) => {
+            (Self::Buddhist(c), &mut AnyDateInner::Buddhist(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Japanese(ref c), &mut AnyDateInner::Japanese(ref mut d)) => {
+            (Self::Japanese(c), &mut AnyDateInner::Japanese(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::JapaneseExtended(ref c), &mut AnyDateInner::JapaneseExtended(ref mut d)) => {
+            (Self::JapaneseExtended(c), &mut AnyDateInner::JapaneseExtended(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Ethiopian(ref c), &mut AnyDateInner::Ethiopian(ref mut d)) => {
+            (Self::Ethiopian(c), &mut AnyDateInner::Ethiopian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Indian(ref c), &mut AnyDateInner::Indian(ref mut d)) => {
+            (Self::Indian(c), &mut AnyDateInner::Indian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Coptic(ref c), &mut AnyDateInner::Coptic(ref mut d)) => {
+            (Self::Coptic(c), &mut AnyDateInner::Coptic(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Iso(ref c), &mut AnyDateInner::Iso(ref mut d)) => {
+            (Self::Iso(c), &mut AnyDateInner::Iso(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            (Self::Persian(c), &mut AnyDateInner::Persian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             // This is only reached from misuse of from_raw, a semi-internal api
@@ -245,67 +257,70 @@ impl Calendar for AnyCalendar {
     ) -> DateDuration<Self> {
         match (self, calendar2, date1, date2) {
             (
-                &Self::Gregorian(ref c1),
-                &Self::Gregorian(ref c2),
-                &AnyDateInner::Gregorian(ref d1),
-                &AnyDateInner::Gregorian(ref d2),
+                Self::Gregorian(c1),
+                Self::Gregorian(c2),
+                AnyDateInner::Gregorian(d1),
+                AnyDateInner::Gregorian(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Buddhist(ref c1),
-                &Self::Buddhist(ref c2),
-                &AnyDateInner::Buddhist(ref d1),
-                &AnyDateInner::Buddhist(ref d2),
+                Self::Buddhist(c1),
+                Self::Buddhist(c2),
+                AnyDateInner::Buddhist(d1),
+                AnyDateInner::Buddhist(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Japanese(ref c1),
-                &Self::Japanese(ref c2),
-                &AnyDateInner::Japanese(ref d1),
-                &AnyDateInner::Japanese(ref d2),
+                Self::Japanese(c1),
+                Self::Japanese(c2),
+                AnyDateInner::Japanese(d1),
+                AnyDateInner::Japanese(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::JapaneseExtended(ref c1),
-                &Self::JapaneseExtended(ref c2),
-                &AnyDateInner::JapaneseExtended(ref d1),
-                &AnyDateInner::JapaneseExtended(ref d2),
+                Self::JapaneseExtended(c1),
+                Self::JapaneseExtended(c2),
+                AnyDateInner::JapaneseExtended(d1),
+                AnyDateInner::JapaneseExtended(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Ethiopian(ref c1),
-                &Self::Ethiopian(ref c2),
-                &AnyDateInner::Ethiopian(ref d1),
-                &AnyDateInner::Ethiopian(ref d2),
+                Self::Ethiopian(c1),
+                Self::Ethiopian(c2),
+                AnyDateInner::Ethiopian(d1),
+                AnyDateInner::Ethiopian(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Indian(ref c1),
-                &Self::Indian(ref c2),
-                &AnyDateInner::Indian(ref d1),
-                &AnyDateInner::Indian(ref d2),
+                Self::Indian(c1),
+                Self::Indian(c2),
+                AnyDateInner::Indian(d1),
+                AnyDateInner::Indian(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Coptic(ref c1),
-                &Self::Coptic(ref c2),
-                &AnyDateInner::Coptic(ref d1),
-                &AnyDateInner::Coptic(ref d2),
+                Self::Persian(c1),
+                Self::Persian(c2),
+                AnyDateInner::Persian(d1),
+                AnyDateInner::Persian(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Iso(ref c1),
-                &Self::Iso(ref c2),
-                &AnyDateInner::Iso(ref d1),
-                &AnyDateInner::Iso(ref d2),
+                Self::Coptic(c1),
+                Self::Coptic(c2),
+                AnyDateInner::Coptic(d1),
+                AnyDateInner::Coptic(d2),
             ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
+            (Self::Iso(c1), Self::Iso(c2), AnyDateInner::Iso(d1), AnyDateInner::Iso(d2)) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             _ => {
@@ -353,6 +368,7 @@ impl Calendar for AnyCalendar {
             Self::Indian(_) => "AnyCalendar (Indian)",
             Self::Coptic(_) => "AnyCalendar (Coptic)",
             Self::Iso(_) => "AnyCalendar (Iso)",
+            Self::Persian(_) => "AnyCalendar (Persian)",
         }
     }
 
@@ -362,14 +378,37 @@ impl Calendar for AnyCalendar {
 }
 
 impl AnyCalendar {
-    /// Constructs an AnyCalendar for a given calendar kind and [`AnyProvider`] data source
+    /// Constructs an AnyCalendar for a given calendar kind.
     ///
     /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
-    /// fallbacking. If this is desired, use [`Self::try_new_for_locale_with_any_provider()`].
+    /// fallbacking. If this is desired, use [`Self::new_for_locale()`].
     ///
-    /// For calendars that need data, will attempt to load the appropriate data from the source.
+    /// ✨ **Enabled with the `"data"` feature.**
     ///
-    /// This API needs the `calendar/japanese@1` or `calendar/japanext@1` data key if working with Japanese calendars.
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new(kind: AnyCalendarKind) -> Self {
+        match kind {
+            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
+            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
+            AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::new()),
+            AnyCalendarKind::JapaneseExtended => {
+                AnyCalendar::JapaneseExtended(JapaneseExtended::new())
+            }
+            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
+            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
+            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
+                EthiopianEraStyle::AmeteMihret,
+            )),
+            AnyCalendarKind::EthiopianAmeteAlem => {
+                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
+            }
+        }
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
     pub fn try_new_with_any_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
@@ -387,6 +426,7 @@ impl AnyCalendar {
                 JapaneseExtended::try_new_with_any_provider(provider)?,
             ),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -398,17 +438,8 @@ impl AnyCalendar {
         })
     }
 
-    /// Constructs an AnyCalendar for a given calendar kind and [`BufferProvider`] data source
-    ///
-    /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
-    /// fallbacking. If this is desired, use [`Self::try_new_for_locale_with_buffer_provider()`].
-    ///
-    /// For calendars that need data, will attempt to load the appropriate data from the source.
-    ///
-    /// This API needs the `calendar/japanese@1` or `calendar/japanext@1` data key if working with Japanese calendars.
-    ///
-    /// This needs the `"serde"` feature to be enabled to be used
     #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new)]
     pub fn try_new_with_buffer_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
@@ -426,6 +457,7 @@ impl AnyCalendar {
                 JapaneseExtended::try_new_with_buffer_provider(provider)?,
             ),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -437,19 +469,7 @@ impl AnyCalendar {
         })
     }
 
-    /// Constructs an AnyCalendar for a given calendar kind and data source.
-    ///
-    /// **This method is unstable; the bounds on `P` might expand over time as more calendars are added**
-    ///
-    /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
-    /// fallbacking. If this is desired, use [`Self::try_new_for_locale_unstable()`].
-    ///
-    /// For calendars that need data, will attempt to load the appropriate data from the source
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, CalendarError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
@@ -466,6 +486,7 @@ impl AnyCalendar {
                 AnyCalendar::JapaneseExtended(JapaneseExtended::try_new_unstable(provider)?)
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -477,25 +498,35 @@ impl AnyCalendar {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: skip,
-        error: CalendarError,
-        functions: [
-            Self::try_new_for_locale_unstable,
-            try_new_for_locale_with_any_provider,
-            try_new_for_locale_with_buffer_provider
-        ]
-    );
-
-    /// Constructs an AnyCalendar for a given calendar kind and data source.
-    ///
-    /// **This method is unstable; the bounds on `P` might expand over time as more calendars are added**
+    /// Constructs an AnyCalendar for a given calendar kind.
     ///
     /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
     /// calendar for the locale, falling back to gregorian.
     ///
-    /// For calendars that need data, will attempt to load the appropriate data from the source
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub fn new_for_locale(locale: &DataLocale) -> Self {
+        let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
+        Self::new(kind)
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: skip,
+        error: CalendarError,
+        #[cfg(skip)]
+        functions: [
+            new_for_locale,
+            try_new_for_locale_with_any_provider,
+            try_new_for_locale_with_buffer_provider,
+            try_new_for_locale_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_locale)]
     pub fn try_new_for_locale_unstable<P>(
         provider: &P,
         locale: &DataLocale,
@@ -519,6 +550,7 @@ impl AnyCalendar {
             Self::Indian(_) => "Indian",
             Self::Coptic(_) => "Coptic",
             Self::Iso(_) => "Iso",
+            Self::Persian(_) => "Persian",
         }
     }
 
@@ -536,6 +568,7 @@ impl AnyCalendar {
             Self::Indian(_) => AnyCalendarKind::Indian,
             Self::Coptic(_) => AnyCalendarKind::Coptic,
             Self::Iso(_) => AnyCalendarKind::Iso,
+            Self::Persian(_) => AnyCalendarKind::Persian,
         }
     }
 
@@ -579,6 +612,7 @@ impl AnyDateInner {
             AnyDateInner::Indian(_) => "Indian",
             AnyDateInner::Coptic(_) => "Coptic",
             AnyDateInner::Iso(_) => "Iso",
+            AnyDateInner::Persian(_) => "Persian",
         }
     }
 }
@@ -605,6 +639,8 @@ pub enum AnyCalendarKind {
     Coptic,
     /// The kind of an [`Iso`] calendar
     Iso,
+    /// The kind of a [`Persian`] calendar
+    Persian,
 }
 
 impl AnyCalendarKind {
@@ -630,6 +666,7 @@ impl AnyCalendarKind {
             b"iso" => AnyCalendarKind::Iso,
             b"ethiopic" => AnyCalendarKind::Ethiopian,
             b"ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
+            b"persian" => AnyCalendarKind::Persian,
             _ => return None,
         })
     }
@@ -656,6 +693,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::Ethiopian
         } else if *x == value!("ethioaa") {
             AnyCalendarKind::EthiopianAmeteAlem
+        } else if *x == value!("persian") {
+            AnyCalendarKind::Persian
         } else {
             return None;
         })
@@ -673,6 +712,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Iso => "iso",
             AnyCalendarKind::Ethiopian => "ethiopic",
             AnyCalendarKind::EthiopianAmeteAlem => "ethioaa",
+            AnyCalendarKind::Persian => "persian",
         }
     }
 
@@ -688,6 +728,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Iso => value!("iso"),
             AnyCalendarKind::Ethiopian => value!("ethiopic"),
             AnyCalendarKind::EthiopianAmeteAlem => value!("ethioaa"),
+            AnyCalendarKind::Persian => value!("persian"),
         }
     }
 
@@ -722,9 +763,9 @@ impl AnyCalendarKind {
             if lang == language!("th") {
                 Self::Buddhist
             // Other known fallback routes for currently-unsupported calendars
-            // } else if lang == langugage!("sa") {
+            // } else if lang == language!("sa") {
             //     Self::IslamicUmalqura
-            // } else if lang == language!("af") || lang == langugage!("ir") {
+            // } else if lang == language!("af") || lang == language!("ir") {
             //     Self::Persian
             } else {
                 Self::Gregorian
@@ -847,6 +888,18 @@ impl IntoAnyCalendar for Coptic {
     }
 }
 
+impl IntoAnyCalendar for Persian {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Persian(Persian)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Persian(Persian)
+    }
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Persian(*d)
+    }
+}
+
 impl IntoAnyCalendar for Iso {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Iso(Iso)
@@ -933,48 +986,16 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "serde")]
     fn test_any_construction() {
-        let buddhist = AnyCalendar::try_new_with_buffer_provider(
-            &icu_testdata::buffer(),
-            AnyCalendarKind::Buddhist,
-        )
-        .expect("Calendar construction must succeed");
-        let coptic = AnyCalendar::try_new_with_buffer_provider(
-            &icu_testdata::buffer(),
-            AnyCalendarKind::Coptic,
-        )
-        .expect("Calendar construction must succeed");
-        let ethiopian = AnyCalendar::try_new_with_buffer_provider(
-            &icu_testdata::buffer(),
-            AnyCalendarKind::Ethiopian,
-        )
-        .expect("Calendar construction must succeed");
-        let ethioaa = AnyCalendar::try_new_with_buffer_provider(
-            &icu_testdata::buffer(),
-            AnyCalendarKind::EthiopianAmeteAlem,
-        )
-        .expect("Calendar construction must succeed");
-        let gregorian = AnyCalendar::try_new_with_buffer_provider(
-            &icu_testdata::buffer(),
-            AnyCalendarKind::Gregorian,
-        )
-        .expect("Calendar construction must succeed");
-        let indian = AnyCalendar::try_new_with_buffer_provider(
-            &icu_testdata::buffer(),
-            AnyCalendarKind::Indian,
-        )
-        .expect("Calendar construction must succeed");
-        let japanese = AnyCalendar::try_new_with_buffer_provider(
-            &icu_testdata::buffer(),
-            AnyCalendarKind::Japanese,
-        )
-        .expect("Calendar construction must succeed");
-        let japanext = AnyCalendar::try_new_with_buffer_provider(
-            &icu_testdata::buffer(),
-            AnyCalendarKind::JapaneseExtended,
-        )
-        .expect("Calendar construction must succeed");
+        let buddhist = AnyCalendar::new(AnyCalendarKind::Buddhist);
+        let coptic = AnyCalendar::new(AnyCalendarKind::Coptic);
+        let ethiopian = AnyCalendar::new(AnyCalendarKind::Ethiopian);
+        let ethioaa = AnyCalendar::new(AnyCalendarKind::EthiopianAmeteAlem);
+        let gregorian = AnyCalendar::new(AnyCalendarKind::Gregorian);
+        let indian = AnyCalendar::new(AnyCalendarKind::Indian);
+        let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
+        let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
+        let persian = AnyCalendar::new(AnyCalendarKind::Persian);
         let buddhist = Ref(&buddhist);
         let coptic = Ref(&coptic);
         let ethiopian = Ref(&ethiopian);
@@ -983,6 +1004,7 @@ mod tests {
         let indian = Ref(&indian);
         let japanese = Ref(&japanese);
         let japanext = Ref(&japanext);
+        let persian = Ref(&persian);
 
         single_test_roundtrip(buddhist, "be", 100, "M03", 1);
         single_test_roundtrip(buddhist, "be", 2000, "M03", 1);
@@ -1111,6 +1133,18 @@ mod tests {
                 "M13".parse().unwrap(),
                 "Japanese (With historical eras)",
             ),
+        );
+
+        single_test_roundtrip(persian, "ah", 477, "M03", 1);
+        single_test_roundtrip(persian, "ah", 2083, "M07", 21);
+        single_test_roundtrip(persian, "ah", 1600, "M12", 20);
+        single_test_error(
+            persian,
+            "ah",
+            100,
+            "M9",
+            1,
+            CalendarError::UnknownMonthCode("M9".parse().unwrap(), "Persian"),
         );
     }
 }

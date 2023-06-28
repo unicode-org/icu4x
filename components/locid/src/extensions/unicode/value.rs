@@ -2,9 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::helpers::ShortVec;
-use crate::parser::{get_subtag_iterator, ParserError};
-use alloc::vec::Vec;
+use crate::helpers::ShortSlice;
+use crate::parser::{ParserError, SubtagIterator};
 use core::ops::RangeInclusive;
 use core::str::FromStr;
 use tinystr::TinyAsciiStr;
@@ -20,9 +19,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{
-///     extensions::unicode::Value, extensions_unicode_value as value,
-/// };
+/// use icu::locid::extensions::unicode::{Value, value};
 /// use writeable::assert_writeable_eq;
 ///
 /// assert_writeable_eq!(value!("gregory"), "gregory");
@@ -35,7 +32,7 @@ use tinystr::TinyAsciiStr;
 /// assert_eq!(value!("true").to_string(), "");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
-pub struct Value(ShortVec<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
+pub struct Value(ShortSlice<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
 
 const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
 const TRUE_VALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
@@ -52,10 +49,10 @@ impl Value {
     /// Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     /// ```
     pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
-        let mut v = ShortVec::new();
+        let mut v = ShortSlice::new();
 
         if !input.is_empty() {
-            for subtag in get_subtag_iterator(input) {
+            for subtag in SubtagIterator::new(input) {
                 let val = Self::subtag_from_bytes(subtag)?;
                 if let Some(val) = val {
                     v.push(val);
@@ -85,7 +82,7 @@ impl Value {
 
     #[doc(hidden)]
     pub fn as_tinystr_slice(&self) -> &[TinyAsciiStr<8>] {
-        self.0.as_slice()
+        &self.0
     }
 
     #[doc(hidden)]
@@ -96,17 +93,17 @@ impl Value {
     #[doc(hidden)]
     pub const fn from_tinystr(subtag: Option<TinyAsciiStr<8>>) -> Self {
         match subtag {
-            None => Self(ShortVec::new()),
+            None => Self(ShortSlice::new()),
             Some(val) => {
                 debug_assert!(val.is_ascii_alphanumeric());
                 debug_assert!(!matches!(val, TRUE_VALUE));
-                Self(ShortVec::new_single(val))
+                Self(ShortSlice::new_single(val))
             }
         }
     }
 
-    pub(crate) fn from_vec_unchecked(input: Vec<TinyAsciiStr<8>>) -> Self {
-        Self(input.into())
+    pub(crate) fn from_short_slice_unchecked(input: ShortSlice<TinyAsciiStr<8>>) -> Self {
+        Self(input)
     }
 
     #[doc(hidden)]
@@ -140,7 +137,7 @@ impl Value {
     where
         F: FnMut(&str) -> Result<(), E>,
     {
-        self.0.as_slice().iter().map(|t| t.as_str()).try_for_each(f)
+        self.0.iter().map(TinyAsciiStr::as_str).try_for_each(f)
     }
 }
 
@@ -162,9 +159,7 @@ impl_writeable_for_subtag_list!(Value, "islamic", "civil");
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{
-///     extensions_unicode_key as key, extensions_unicode_value as value,
-/// };
+/// use icu::locid::extensions::unicode::{key, value};
 ///
 /// let loc: Locale = "de-u-ca-buddhist".parse().unwrap();
 ///
@@ -176,6 +171,7 @@ impl_writeable_for_subtag_list!(Value, "islamic", "civil");
 ///
 /// [`Value`]: crate::extensions::unicode::Value
 #[macro_export]
+#[doc(hidden)]
 macro_rules! extensions_unicode_value {
     ($value:literal) => {{
         // What we want:
@@ -196,3 +192,5 @@ macro_rules! extensions_unicode_value {
         R
     }};
 }
+#[doc(inline)]
+pub use extensions_unicode_value as value;

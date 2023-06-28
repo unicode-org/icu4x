@@ -9,17 +9,18 @@
 
 pub mod aliases;
 pub mod ca;
+pub mod coverage_levels;
 pub mod currencies;
 pub mod date_fields;
+pub mod directionality;
+pub mod displaynames;
 pub mod exemplar_chars;
 pub mod japanese;
-pub mod language_displaynames;
 pub mod likely_subtags;
 pub mod list_patterns;
 pub mod numbering_systems;
 pub mod numbers;
 pub mod parent_locales;
 pub mod plurals;
-pub mod territory_displaynames;
 pub mod time_zones;
 pub mod week_data;

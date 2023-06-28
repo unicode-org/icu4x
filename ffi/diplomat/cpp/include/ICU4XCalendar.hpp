@@ -29,7 +29,7 @@ struct ICU4XCalendarDeleter {
 /**
  * 
  * 
- * See the [Rust documentation for `AnyCalendar`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html) for more information.
+ * See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html) for more information.
  */
 class ICU4XCalendar {
  public:
@@ -37,21 +37,21 @@ class ICU4XCalendar {
   /**
    * Creates a new [`ICU4XCalendar`] from the specified date and time.
    * 
-   * See the [Rust documentation for `try_new_for_locale_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable) for more information.
+   * See the [Rust documentation for `try_new_for_locale_unstable`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable) for more information.
    */
   static diplomat::result<ICU4XCalendar, ICU4XError> create_for_locale(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * Creates a new [`ICU4XCalendar`] from the specified date and time.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XCalendar, ICU4XError> create_for_kind(const ICU4XDataProvider& provider, ICU4XAnyCalendarKind kind);
 
   /**
    * Returns the kind of this calendar
    * 
-   * See the [Rust documentation for `kind`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
+   * See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
    */
   ICU4XAnyCalendarKind kind() const;
   inline const capi::ICU4XCalendar* AsFFI() const { return this->inner.get(); }

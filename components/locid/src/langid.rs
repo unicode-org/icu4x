@@ -7,8 +7,8 @@ use core::str::FromStr;
 
 use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
-    get_subtag_iterator, parse_language_identifier, parse_language_identifier_with_single_variant,
-    ParserError, ParserMode,
+    parse_language_identifier, parse_language_identifier_with_single_variant, ParserError,
+    ParserMode, SubtagIterator,
 };
 use crate::subtags;
 use alloc::string::String;
@@ -19,9 +19,7 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{
-///     langid, subtags_language as language, subtags_region as region,
-/// };
+/// use icu::locid::{langid, subtags::{language, region}};
 ///
 /// let li = langid!("en-US");
 ///
@@ -49,8 +47,7 @@ use writeable::Writeable;
 ///
 /// ```
 /// use icu::locid::{
-///     langid, subtags_language as language, subtags_region as region,
-///     subtags_script as script, subtags_variant as variant,
+///     langid, subtags::{language, region, variant, script}
 /// };
 ///
 /// let li = langid!("eN_latn_Us-Valencia");
@@ -288,7 +285,7 @@ impl LanguageIdentifier {
             };
         }
 
-        let mut iter = get_subtag_iterator(other.as_bytes());
+        let mut iter = SubtagIterator::new(other.as_bytes());
         if !subtag_matches!(subtags::Language, iter, self.language) {
             return false;
         }
@@ -307,7 +304,7 @@ impl LanguageIdentifier {
                 return false;
             }
         }
-        iter.next() == None
+        iter.next().is_none()
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
@@ -383,7 +380,7 @@ fn test_writeable() {
 ///
 /// ```
 /// use icu::locid::{
-///     langid, subtags_language as language, LanguageIdentifier,
+///     langid, subtags::language, LanguageIdentifier,
 /// };
 ///
 /// assert_eq!(LanguageIdentifier::from(language!("en")), langid!("en"));
@@ -400,7 +397,7 @@ impl From<subtags::Language> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{langid, subtags_script as script, LanguageIdentifier};
+/// use icu::locid::{langid, subtags::script, LanguageIdentifier};
 ///
 /// assert_eq!(
 ///     LanguageIdentifier::from(Some(script!("latn"))),
@@ -419,7 +416,7 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{langid, subtags_region as region, LanguageIdentifier};
+/// use icu::locid::{langid, subtags::region, LanguageIdentifier};
 ///
 /// assert_eq!(
 ///     LanguageIdentifier::from(Some(region!("US"))),
@@ -441,8 +438,7 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
 ///
 /// ```
 /// use icu::locid::{
-///     langid, subtags_language as language, subtags_region as region,
-///     subtags_script as script, LanguageIdentifier,
+///     langid, subtags::{language, region, script}, LanguageIdentifier,
 /// };
 ///
 /// let lang = language!("en");
@@ -482,8 +478,7 @@ impl
 ///
 /// ```
 /// use icu::locid::{
-///     langid, subtags_language as language, subtags_region as region,
-///     subtags_script as script,
+///     langid, subtags::{language, region, script},
 /// };
 ///
 /// let lid = langid!("en-Latn-US");

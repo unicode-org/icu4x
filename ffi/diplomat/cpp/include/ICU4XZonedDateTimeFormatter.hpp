@@ -34,7 +34,7 @@ struct ICU4XZonedDateTimeFormatterDeleter {
 /**
  * An object capable of formatting a date time with time zone to a string.
  * 
- * See the [Rust documentation for `ZonedDateTimeFormatter`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html) for more information.
+ * See the [Rust documentation for `ZonedDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html) for more information.
  */
 class ICU4XZonedDateTimeFormatter {
  public:
@@ -45,7 +45,7 @@ class ICU4XZonedDateTimeFormatter {
    * This function has `date_length` and `time_length` arguments and uses default options
    * for the time zone.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XZonedDateTimeFormatter, ICU4XError> create_with_lengths(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length);
 
@@ -55,35 +55,35 @@ class ICU4XZonedDateTimeFormatter {
    * This function has `date_length` and `time_length` arguments and uses an ISO-8601 style
    * fallback for the time zone with the given configurations.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XZonedDateTimeFormatter, ICU4XError> create_with_lengths_and_iso_8601_time_zone_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XIsoTimeZoneOptions zone_options);
 
   /**
    * Formats a [`ICU4XDateTime`] and [`ICU4XCustomTimeZone`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_datetime_with_custom_time_zone_to_writeable(const ICU4XDateTime& datetime, const ICU4XCustomTimeZone& time_zone, W& write) const;
 
   /**
    * Formats a [`ICU4XDateTime`] and [`ICU4XCustomTimeZone`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format_datetime_with_custom_time_zone(const ICU4XDateTime& datetime, const ICU4XCustomTimeZone& time_zone) const;
 
   /**
    * Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_iso_datetime_with_custom_time_zone_to_writeable(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone, W& write) const;
 
   /**
    * Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format_iso_datetime_with_custom_time_zone(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone) const;
   inline const capi::ICU4XZonedDateTimeFormatter* AsFFI() const { return this->inner.get(); }

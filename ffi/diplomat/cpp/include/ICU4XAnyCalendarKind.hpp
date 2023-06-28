@@ -16,7 +16,7 @@
 /**
  * The various calendar types currently supported by [`ICU4XCalendar`]
  * 
- * See the [Rust documentation for `AnyCalendarKind`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html) for more information.
+ * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html) for more information.
  */
 enum struct ICU4XAnyCalendarKind {
 

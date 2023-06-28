@@ -285,7 +285,7 @@ use core::mem;
 /// }
 /// ```
 #[repr(transparent)]
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct YokeTraitHack<T>(pub T);
 

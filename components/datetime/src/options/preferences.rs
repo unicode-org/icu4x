@@ -12,7 +12,7 @@
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. It can be enabled with the "experimental" feature
+//! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 //! of the icu meta-crate. Use with caution.
 //! <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 //! </div>
@@ -36,7 +36,7 @@ use crate::fields;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use icu_locid::extensions_unicode_key as key;
+use icu_locid::extensions::unicode::key;
 use icu_provider::DataLocale;
 use tinystr::tinystr;
 use tinystr::TinyAsciiStr;
@@ -45,7 +45,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -101,7 +101,7 @@ impl Bag {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>

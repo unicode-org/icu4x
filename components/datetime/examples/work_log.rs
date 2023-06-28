@@ -31,7 +31,7 @@ fn print(_input: &str, _value: Option<usize>) {
     if let Some(value) = _value {
         println!("{}", _input.replace("{}", &value.to_string()));
     } else {
-        println!("{}", _input);
+        println!("{_input}");
     }
 }
 
@@ -62,7 +62,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         for (idx, date) in dates.iter().enumerate() {
             let fdt = dtf.format(date);
-            println!("{}) {}", idx, fdt);
+            println!("{idx}) {fdt}");
         }
     }
 

@@ -44,7 +44,7 @@ impl databake::Bake for CodePointInversionListAndStringList<'_> {
         let str_list = self.str_list.bake(env);
         // Safe because our parts are safe.
         databake::quote! {
-            ::icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(#cp_inv_list, #str_list)
+            icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(#cp_inv_list, #str_list)
         }
     }
 }
@@ -228,37 +228,7 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
         // Ensure that the string list is sorted. If not, the binary search that
         // is used for `.contains(&str)` will return garbase otuput.
         strings.sort_unstable();
-
-        // Ensure that `strings` is deduplicated. Check for any duplicates first.
-        let is_deduped = strings.windows(2).all(|adjacents| {
-            if let (Some(s1), Some(s2)) = (adjacents.get(0), adjacents.get(1)) {
-                s1 != s2
-            } else {
-                false
-            }
-        });
-        let strings = if is_deduped {
-            strings
-        } else {
-            let mut deduped_strs = Vec::<&str>::new();
-            let mut strs_iter = strings.iter();
-
-            let first_str = strs_iter.next();
-            debug_assert!(first_str.is_some()); // If `strings` was empty or len() < 2, then
-                                                // `is_deduped_strs` would have been true.
-            if let Some(mut next_str) = first_str {
-                deduped_strs.push(*next_str);
-
-                for s in strs_iter {
-                    if s != next_str {
-                        deduped_strs.push(*s);
-                        next_str = s;
-                    }
-                }
-            }
-
-            deduped_strs
-        };
+        strings.dedup();
 
         let cp_inv_list = builder.build();
         let str_list = VarZeroVec::<str>::from(&strings);
@@ -289,7 +259,7 @@ pub enum CodePointInversionListAndStringListError {
     StringListNotSorted(String, String),
 }
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use CodePointInversionListAndStringListError as Error;
 
 #[cfg(test)]

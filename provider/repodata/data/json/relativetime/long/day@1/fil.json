@@ -1,0 +1,37 @@
+{
+  "relatives": {
+    "-2": "Araw bago ang kahapon",
+    "-1": "kahapon",
+    "0": "ngayong araw",
+    "1": "bukas",
+    "2": "Samakalawa"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " araw ang nakalipas",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " araw ang nakalipas",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "sa  araw",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "sa  araw",
+      "index": 3
+    }
+  }
+}

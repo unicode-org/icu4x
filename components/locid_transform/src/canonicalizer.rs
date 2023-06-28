@@ -13,9 +13,9 @@ use crate::LocaleExpander;
 use crate::TransformResult;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
-    extensions_unicode_key as key,
-    subtags::{Variant, Variants},
-    subtags_language as language, LanguageIdentifier, Locale,
+    extensions::unicode::key,
+    subtags::{language, Variant, Variants},
+    LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -43,6 +43,7 @@ use tinystr::TinyAsciiStr;
 /// [`ICU4X`]: ../icu/index.html
 /// [`CLDR`]: http://cldr.unicode.org/
 /// [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
+#[derive(Debug)]
 pub struct LocaleCanonicalizer {
     /// Data to support canonicalization.
     aliases: DataPayload<AliasesV1Marker>,
@@ -171,9 +172,12 @@ fn uts35_check_language_rules(
     if !locale.id.language.is_empty() {
         let lang: TinyAsciiStr<3> = locale.id.language.into();
         let replacement = if lang.len() == 2 {
-            alias_data.get().language_len2.get(&lang.resize())
+            alias_data
+                .get()
+                .language_len2
+                .get(&lang.resize().to_unvalidated())
         } else {
-            alias_data.get().language_len3.get(&lang)
+            alias_data.get().language_len3.get(&lang.to_unvalidated())
         };
 
         if let Some(replacement) = replacement {
@@ -205,30 +209,83 @@ where
     true
 }
 
+#[cfg(feature = "data")]
+impl Default for LocaleCanonicalizer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl LocaleCanonicalizer {
-    /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
+    /// A constructor which creates a [`LocaleCanonicalizer`].
+    ///
+    /// ✨ **Enabled with the `"data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[cfg(feature = "data")]
+    pub const fn new() -> Self {
+        Self::new_with_expander(LocaleExpander::new_extended())
+    }
+
+    // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl AnyProvider + ?Sized),
+    ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
+        let expander = LocaleExpander::try_new_with_any_provider(provider)?;
+        Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
+    }
+
+    // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new)]
+    #[cfg(feature = "serde")]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
+        let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
+        Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleCanonicalizer, LocaleTransformError>
     where
-        P: DataProvider<AliasesV1Marker> + DataProvider<LikelySubtagsV1Marker> + ?Sized,
+        P: DataProvider<AliasesV1Marker>
+            + DataProvider<LikelySubtagsForLanguageV1Marker>
+            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+            + ?Sized,
+    {
+        let expander = LocaleExpander::try_new_unstable(provider)?;
+        Self::try_new_with_expander_unstable(provider, expander)
+    }
+
+    /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] object.
+    ///
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub const fn new_with_expander(expander: LocaleExpander) -> Self {
+        Self {
+            aliases: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_ALIASES_V1,
+            ),
+            expander,
+        }
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
+    pub fn try_new_with_expander_unstable<P>(
+        provider: &P,
+        expander: LocaleExpander,
+    ) -> Result<LocaleCanonicalizer, LocaleTransformError>
+    where
+        P: DataProvider<AliasesV1Marker> + ?Sized,
     {
         let aliases: DataPayload<AliasesV1Marker> =
             provider.load(Default::default())?.take_payload()?;
 
-        let expander = LocaleExpander::try_new_unstable(provider)?;
-
         Ok(LocaleCanonicalizer { aliases, expander })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: LocaleTransformError
-    );
 
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm
@@ -237,7 +294,8 @@ impl LocaleCanonicalizer {
     /// Some BCP47 canonicalization data is not part of the CLDR json package. Because
     /// of this, some canonicalizations are not performed, e.g. the canonicalization of
     /// `und-u-ca-islamicc` to `und-u-ca-islamic-civil`. This will be fixed in a future
-    /// release once the missing data has been added to the CLDR json data.
+    /// release once the missing data has been added to the CLDR json data. See:
+    /// <https://github.com/unicode-org/icu4x/issues/746>
     ///
     /// # Examples
     ///
@@ -337,7 +395,12 @@ impl LocaleCanonicalizer {
                 // If the region is specified, check sgn-region rules first
                 if let Some(region) = locale.id.region {
                     if locale.id.language == language!("sgn") {
-                        if let Some(&sgn_lang) = self.aliases.get().sgn_region.get(&region.into()) {
+                        if let Some(&sgn_lang) = self
+                            .aliases
+                            .get()
+                            .sgn_region
+                            .get(&region.into_tinystr().to_unvalidated())
+                        {
                             uts35_replacement::<core::iter::Empty<&str>>(
                                 locale,
                                 true,
@@ -359,7 +422,12 @@ impl LocaleCanonicalizer {
             }
 
             if let Some(script) = locale.id.script {
-                if let Some(&replacement) = self.aliases.get().script.get(&script.into()) {
+                if let Some(&replacement) = self
+                    .aliases
+                    .get()
+                    .script
+                    .get(&script.into_tinystr().to_unvalidated())
+                {
                     locale.id.script = Some(replacement);
                     result = TransformResult::Modified;
                     continue;
@@ -368,10 +436,15 @@ impl LocaleCanonicalizer {
 
             if let Some(region) = locale.id.region {
                 let replacement = if region.is_alphabetic() {
-                    let region: TinyAsciiStr<3> = region.into();
-                    self.aliases.get().region_alpha.get(&region.resize())
+                    self.aliases
+                        .get()
+                        .region_alpha
+                        .get(&region.into_tinystr().resize().to_unvalidated())
                 } else {
-                    self.aliases.get().region_num.get(&region.into())
+                    self.aliases
+                        .get()
+                        .region_num
+                        .get(&region.into_tinystr().to_unvalidated())
                 };
                 if let Some(&replacement) = replacement {
                     locale.id.region = Some(replacement);
@@ -379,7 +452,12 @@ impl LocaleCanonicalizer {
                     continue;
                 }
 
-                if let Some(regions) = self.aliases.get().complex_region.get(&region.into()) {
+                if let Some(regions) = self
+                    .aliases
+                    .get()
+                    .complex_region
+                    .get(&region.into_tinystr().to_unvalidated())
+                {
                     // Skip if regions are empty
                     if let Some(default_region) = regions.get(0) {
                         let mut maximized = LanguageIdentifier {
@@ -409,7 +487,12 @@ impl LocaleCanonicalizer {
                 let mut modified = Vec::new();
                 let mut unmodified = Vec::new();
                 for &variant in locale.id.variants.iter() {
-                    if let Some(&updated) = self.aliases.get().variant.get(&variant.into()) {
+                    if let Some(&updated) = self
+                        .aliases
+                        .get()
+                        .variant
+                        .get(&variant.into_tinystr().to_unvalidated())
+                    {
                         modified.push(updated);
                     } else {
                         unmodified.push(variant);
@@ -457,8 +540,11 @@ impl LocaleCanonicalizer {
         for key in &[key!("rg"), key!("sd")] {
             if let Some(value) = locale.extensions.unicode.keywords.get_mut(key) {
                 if let &[only_value] = value.as_tinystr_slice() {
-                    if let Some(modified_value) =
-                        self.aliases.get().subdivision.get(&only_value.resize())
+                    if let Some(modified_value) = self
+                        .aliases
+                        .get()
+                        .subdivision
+                        .get(&only_value.resize().to_unvalidated())
                     {
                         if let Ok(modified_value) = modified_value.parse() {
                             *value = modified_value;
@@ -492,8 +578,7 @@ fn test_uts35_rule_matches() {
                 rule.variants.iter().map(Variant::as_str),
             ),
             result,
-            "{}",
-            source
+            "{source}"
         );
     }
 }

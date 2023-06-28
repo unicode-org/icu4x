@@ -32,7 +32,7 @@ fn serialize() {
         nums: ZeroVec::from_slice_or_alloc(&U16_SLICE),
     };
     let postcard_bytes = postcard::to_stdvec(&data).expect("Serialization should be successful");
-    println!("Postcard bytes: {:#x?}", postcard_bytes);
+    println!("Postcard bytes: {postcard_bytes:#x?}");
     println!("ZeroVec bytes: {:#x?}", data.nums.as_bytes());
 }
 

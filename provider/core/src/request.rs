@@ -37,7 +37,10 @@ impl fmt::Display for DataRequest<'_> {
 /// for tuning locale fallback, buffer layout, and so forth.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
-pub struct DataRequestMetadata;
+pub struct DataRequestMetadata {
+    /// Silent requests do not log errors. This can be used for exploratory querying, such as fallbacks.
+    pub silent: bool,
+}
 
 /// The main locale type used by the ICU4X data provider.
 ///
@@ -120,7 +123,7 @@ impl<'a> Default for &'a DataLocale {
 
 impl fmt::Debug for DataLocale {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "DataLocale{{{}}}", self)
+        write!(f, "DataLocale{{{self}}}")
     }
 }
 
@@ -336,7 +339,7 @@ impl DataLocale {
     ///
     /// ```
     /// use icu_locid::{
-    ///     langid, locale, subtags_language as language, subtags_region as region,
+    ///     langid, locale, subtags::{language, region},
     ///     Locale,
     /// };
     /// use icu_provider::prelude::*;
@@ -438,10 +441,7 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{
-    ///     extensions_unicode_key as key, extensions_unicode_value as value,
-    ///     Locale,
-    /// };
+    /// use icu_locid::{Locale, extensions::unicode::{key, value}};
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");

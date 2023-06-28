@@ -102,11 +102,11 @@ impl ExtensionType {
 #[derive(Debug, Default, PartialEq, Eq, Clone, Hash)]
 #[non_exhaustive]
 pub struct Extensions {
-    /// A representation of the data for a Unicode extension, when present in the locale identifer.
+    /// A representation of the data for a Unicode extension, when present in the locale identifier.
     pub unicode: Unicode,
-    /// A representation of the data for a transform extension, when present in the locale identifer.
+    /// A representation of the data for a transform extension, when present in the locale identifier.
     pub transform: Transform,
-    /// A representation of the data for a private-use extension, when present in the locale identifer.
+    /// A representation of the data for a private-use extension, when present in the locale identifier.
     pub private: Private,
     /// A sequence of any other extensions that are present in the locale identifier but are not formally
     /// [defined](https://unicode.org/reports/tr35/) and represented explicitly as [`Unicode`], [`Transform`],
@@ -210,19 +210,33 @@ impl Extensions {
         let mut private = None;
         let mut other = Vec::new();
 
-        let mut st = iter.next();
-        while let Some(subtag) = st {
-            match subtag.get(0).map(|b| ExtensionType::try_from_byte(*b)) {
+        while let Some(subtag) = iter.next() {
+            if subtag.is_empty() {
+                return Err(ParserError::InvalidExtension);
+            }
+            match subtag.first().map(|b| ExtensionType::try_from_byte(*b)) {
                 Some(Ok(ExtensionType::Unicode)) => {
+                    if unicode.is_some() {
+                        return Err(ParserError::DuplicatedExtension);
+                    }
                     unicode = Some(Unicode::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Transform)) => {
+                    if transform.is_some() {
+                        return Err(ParserError::DuplicatedExtension);
+                    }
                     transform = Some(Transform::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Private)) => {
+                    if private.is_some() {
+                        return Err(ParserError::DuplicatedExtension);
+                    }
                     private = Some(Private::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Other(ext))) => {
+                    if other.iter().any(|o: &Other| o.get_ext_byte() == ext) {
+                        return Err(ParserError::DuplicatedExtension);
+                    }
                     let parsed = Other::try_from_iter(ext, iter)?;
                     if let Err(idx) = other.binary_search(&parsed) {
                         other.insert(idx, parsed);
@@ -230,11 +244,8 @@ impl Extensions {
                         return Err(ParserError::InvalidExtension);
                     }
                 }
-                None => {}
                 _ => return Err(ParserError::InvalidExtension),
             }
-
-            st = iter.next();
         }
 
         Ok(Self {

@@ -7,6 +7,8 @@ use displaydoc::Display;
 /// List of parser errors that can be generated
 /// while parsing [`LanguageIdentifier`](crate::LanguageIdentifier), [`Locale`](crate::Locale),
 /// [`subtags`](crate::subtags) or [`extensions`](crate::extensions).
+///
+/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
 pub enum ParserError {
@@ -48,6 +50,22 @@ pub enum ParserError {
     /// ```
     #[displaydoc("Invalid extension")]
     InvalidExtension,
+
+    /// Duplicated extension.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use icu::locid::ParserError;
+    ///
+    /// assert_eq!(
+    ///     "und-u-hc-h12-u-ca-calendar".parse::<Locale>(),
+    ///     Err(ParserError::DuplicatedExtension)
+    /// );
+    /// ```
+    #[displaydoc("Duplicated extension")]
+    DuplicatedExtension,
 }
 
 #[cfg(feature = "std")]

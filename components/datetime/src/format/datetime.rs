@@ -50,6 +50,7 @@ use writeable::Writeable;
 ///
 /// let _ = format!("Date: {}", formatted_date);
 /// ```
+#[derive(Debug)]
 pub struct FormattedDateTime<'l> {
     pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub(crate) date_symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
@@ -568,7 +569,7 @@ mod tests {
             &mut sink,
         )
         .unwrap();
-        println!("{}", sink);
+        println!("{sink}");
     }
 
     #[test]
@@ -599,7 +600,7 @@ mod tests {
                 format_number(
                     &mut s,
                     &fixed_decimal_format,
-                    FixedDecimal::from(*value as i32),
+                    FixedDecimal::from(*value),
                     *length,
                 )
                 .unwrap();

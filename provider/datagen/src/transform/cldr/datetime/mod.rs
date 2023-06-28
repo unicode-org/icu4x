@@ -5,7 +5,10 @@
 use crate::transform::cldr::cldr_serde;
 use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
+use icu_locid::{
+    extensions::unicode::{key, value},
+    Locale,
+};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use lazy_static::lazy_static;
@@ -37,6 +40,7 @@ macro_rules! impl_data_provider {
     ($marker:ident, $expr:expr, calendared = $calendared:expr) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
                 if $calendared == "locale" && req.locale.is_empty() {
                     return Err(DataErrorKind::NeedsLocale.into_error());
                 }
@@ -117,33 +121,36 @@ macro_rules! impl_data_provider {
                         .insert("2".to_string(), mundi_narrow.clone());
                 }
 
-                if calendar == value!("japanese") {
-                    let era_dates: &cldr_serde::japanese::Resource = self
-                        .source
-                        .cldr()?
-                        .core()
-                        .read_and_parse("supplemental/calendarData.json")?;
-                    let mut set = HashSet::<String>::new();
-                    for (era_index, date) in
-                        era_dates.supplemental.calendar_data.japanese.eras.iter()
-                    {
-                        let start_date = EraStartDate::from_str(&date.start).map_err(|_| {
-                            DataError::custom(
-                                "calendarData.json contains unparseable data for a japanese era",
-                            )
-                            .with_display_context(&format!("era index {}", era_index))
-                        })?;
+                if calendar == value!("japanese") || calendar == value!("japanext") {
+                    // Filter out non-modern eras
+                    if calendar != value!("japanext") {
+                        let era_dates: &cldr_serde::japanese::Resource = self
+                            .source
+                            .cldr()?
+                            .core()
+                            .read_and_parse("supplemental/calendarData.json")?;
+                        let mut set = HashSet::<String>::new();
+                        for (era_index, date) in
+                            era_dates.supplemental.calendar_data.japanese.eras.iter()
+                        {
+                            let start_date =
+                                EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() { start_date } else { continue }).map_err(|_| {
+                                    DataError::custom(
+                                        "calendarData.json contains unparseable data for a japanese era",
+                                    )
+                                    .with_display_context(&format!("era index {}", era_index))
+                                })?;
 
-                        if start_date.year >= 1868 {
-                            set.insert(era_index.into());
+                            if start_date.year >= 1868 {
+                                set.insert(era_index.into());
+                            }
                         }
+
+                        data.eras.names.retain(|e, _| set.contains(e));
+                        data.eras.abbr.retain(|e, _| set.contains(e));
+                        data.eras.narrow.retain(|e, _| set.contains(e));
                     }
 
-                    data.eras.names.retain(|e, _| set.contains(e));
-                    data.eras.abbr.retain(|e, _| set.contains(e));
-                    data.eras.narrow.retain(|e, _| set.contains(e));
-                }
-                if calendar == value!("japanese") || calendar == value!("japanext") {
                     // Splice in gregorian data for pre-meiji
                     let greg_resource: &cldr_serde::ca::Resource = self
                         .source
@@ -162,10 +169,8 @@ macro_rules! impl_data_provider {
                         .expect("CLDR file contains a gregorian calendar")
                         .clone();
 
-                    // The "eras" map is largely keyed by a number, but instead of trying to
-                    // come up with a number that the japanese era map would not use, we just use a regular string
                     data.eras.names.insert(
-                        "bce".into(),
+                        "-2".into(),
                         greg.eras
                             .names
                             .get("0")
@@ -173,7 +178,7 @@ macro_rules! impl_data_provider {
                             .into(),
                     );
                     data.eras.names.insert(
-                        "ce".into(),
+                        "-1".into(),
                         greg.eras
                             .names
                             .get("1")
@@ -181,7 +186,7 @@ macro_rules! impl_data_provider {
                             .into(),
                     );
                     data.eras.abbr.insert(
-                        "bce".into(),
+                        "-2".into(),
                         greg.eras
                             .abbr
                             .get("0")
@@ -189,7 +194,7 @@ macro_rules! impl_data_provider {
                             .into(),
                     );
                     data.eras.abbr.insert(
-                        "ce".into(),
+                        "-1".into(),
                         greg.eras
                             .abbr
                             .get("1")
@@ -197,7 +202,7 @@ macro_rules! impl_data_provider {
                             .into(),
                     );
                     data.eras.narrow.insert(
-                        "bce".into(),
+                        "-2".into(),
                         greg.eras
                             .narrow
                             .get("0")
@@ -205,7 +210,7 @@ macro_rules! impl_data_provider {
                             .into(),
                     );
                     data.eras.narrow.insert(
-                        "ce".into(),
+                        "-1".into(),
                         greg.eras
                             .narrow
                             .get("1")
@@ -267,7 +272,12 @@ macro_rules! impl_data_provider {
                     );
                 }
 
-                Ok(r)
+                // TODO(#3212): Remove
+                if $marker::KEY == TimeLengthsV1Marker::KEY {
+                    r.retain(|l| l.get_langid() != icu_locid::langid!("byn") && l.get_langid() != icu_locid::langid!("ssy"));
+                }
+
+                Ok(self.source.options.locales.filter_by_langid_equality(r))
             }
         }
     };
@@ -313,7 +323,6 @@ impl_data_provider!(
     |dates, _| { symbols::convert_times(dates) },
     calendared = "false"
 );
-#[cfg(feature = "experimental")]
 impl_data_provider!(
     DateSkeletonPatternsV1Marker,
     |dates, _| { DateSkeletonPatternsV1::from(dates) },
@@ -402,7 +411,6 @@ mod test {
     }
 
     #[test]
-    #[cfg(feature = "experimental")]
     fn test_datetime_skeletons() {
         use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
         use icu_plurals::PluralCategory;

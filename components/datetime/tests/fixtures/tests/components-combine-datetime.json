@@ -18,7 +18,7 @@
         },
         "output": {
             "values": {
-                "en": "Tue, Jan 7, 2020, 8:25 AM"
+                "en": "Tue, Jan 7, 2020, 8:25\u202fAM"
             }
         }
     },
@@ -41,7 +41,7 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 7, 2020 at 8:25 AM"
+                "en": "Tuesday, January 7, 2020, 8:25\u202fAM"
             }
         }
     }

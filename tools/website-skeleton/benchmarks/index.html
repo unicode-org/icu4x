@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ICU4X Benchmarks</title>
+</head>
+<body>
+    <p>
+        The <a href="https://github.com/unicode-org/icu4x/blob/main/docs/process/benchmarking.md">performance benchmarks</a> are all run on Ubuntu, and are broken out by component.
+        <ul>
+            <li><a href="perf/components/locid">locid</a></li>
+            <li><a href="perf/components/collections">collections</a></li>
+            <li><a href="perf/utils/fixed_decimal">fixed_decimal</a></li>
+            <li><a href="perf/components/plurals">plurals</a></li>
+            <li><a href="perf/components/datetime">datetime</a></li>
+        </ul>
+    </p>
+    <p>
+        The <a href="https://github.com/unicode-org/icu4x/blob/main/tools/benchmark#icu_benchmark_memory">memory benchmarks</a> are run separately on each platform, and examples are individually instrumented.
+        <ul>
+            <li><a href="memory/macos-latest/">macOS</a></li>
+            <li><a href="memory/ubuntu-latest/">Ubuntu</a></li>
+            <li><a href="memory/windows-latest/">Windows</a></li>
+        </ul>
+    </p>
+    <p>
+        The <a href="https://github.com/unicode-org/icu4x/blob/main/docs/process/benchmarking.md">binary size benchmarks</a> run on Ubuntu, and are broken out by file type.
+        <ul>
+            <li><a href="binsize/wasm/">wasm</a></li>
+            <li><a href="binsize/gz">gzip</a></li>
+        </ul>
+    </p>
+    <p>
+        The data size benchmark tracks size of `provider/testdata/data/testdata.postcard` and runs on Linux.
+        <ul>
+            <li><a href="datasize">data</a></li>
+        </ul>
+    </p>
+</body>
+</html>

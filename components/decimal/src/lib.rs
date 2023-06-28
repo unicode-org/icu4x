@@ -14,21 +14,21 @@
 //!
 //! # Examples
 //!
-//! ## Format a number with Bengali digits
+//! ## Format a number with Bangla digits
 //!
 //! ```
+//! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
 //! use icu::locid::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
-//!     &icu_testdata::unstable(),
+//! let fdf = FixedDecimalFormatter::try_new(
 //!     &locale!("bn").into(),
 //!     Default::default(),
 //! )
-//! .expect("Data should load successfully");
+//! .expect("locale should be present");
 //!
-//! let fixed_decimal = 1000007.into();
+//! let fixed_decimal = FixedDecimal::from(1000007);
 //!
 //! assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
 //! ```
@@ -41,12 +41,11 @@
 //! use icu::locid::Locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
-//!     &icu_testdata::unstable(),
+//! let fdf = FixedDecimalFormatter::try_new(
 //!     &Locale::UND.into(),
 //!     Default::default(),
 //! )
-//! .expect("Data should load successfully");
+//! .expect("locale should be present");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
 //!
@@ -59,18 +58,18 @@
 //! symbols for that numbering system.
 //!
 //! ```
+//! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
 //! use icu::locid::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
-//!     &icu_testdata::unstable(),
+//! let fdf = FixedDecimalFormatter::try_new(
 //!     &locale!("th-u-nu-thai").into(),
 //!     Default::default(),
 //! )
-//! .expect("Data should load successfully");
+//! .expect("locale should be present");
 //!
-//! let fixed_decimal = 1000007.into();
+//! let fixed_decimal = FixedDecimal::from(1000007);
 //!
 //! assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 //! ```
@@ -88,7 +87,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -104,7 +103,7 @@ pub mod provider;
 pub use error::DecimalError;
 pub use format::FormattedFixedDecimal;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use DecimalError as Error;
 
 use alloc::string::String;
@@ -123,18 +122,21 @@ use writeable::Writeable;
 /// Read more about the options in the [`options`] module.
 ///
 /// See the crate-level documentation for examples.
+#[derive(Debug)]
 pub struct FixedDecimalFormatter {
     options: options::FixedDecimalFormatterOptions,
     symbols: DataPayload<provider::DecimalSymbolsV1Marker>,
 }
 
 impl FixedDecimalFormatter {
-    /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: options::FixedDecimalFormatterOptions,
+        error: DecimalError,
+        /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
@@ -148,12 +150,6 @@ impl FixedDecimalFormatter {
             .take_payload()?;
         Ok(Self { options, symbols })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: options::FixedDecimalFormatterOptions,
-        error: DecimalError
-    );
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
     pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {

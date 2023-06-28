@@ -58,7 +58,7 @@ use writeable::Writeable;
 ///
 /// assert_writeable_eq!(
 ///     dtf.format(&any_datetime).expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34 PM"
+///     "Sep 1, 2020, 12:34 PM"
 /// );
 /// ```
 ///
@@ -102,15 +102,16 @@ use writeable::Writeable;
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let manual_value = dtf.format(&manual_datetime).expect("Calendars should match");
-/// assert_writeable_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
+/// assert_writeable_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
 ///
 /// let converted_value = dtf.format(&iso_converted).expect("Calendars should match");
-/// assert_writeable_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
+/// assert_writeable_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
+#[derive(Debug)]
 pub struct DateTimeFormatter(pub(crate) raw::DateTimeFormatter, AnyCalendar);
 
 impl DateTimeFormatter {
@@ -181,7 +182,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     dtf.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020, 12:34 PM"
+    ///     "Sep 1, 2020, 12:34 PM"
     /// );
     /// ```
     #[inline]
@@ -202,7 +203,7 @@ impl DateTimeFormatter {
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. It can be enabled with the "experimental" feature
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
     /// of the icu meta-crate. Use with caution.
     /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
     /// </div>
@@ -331,7 +332,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     dtf.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020, 12:34 PM"
+    ///     "Sep 1, 2020, 12:34 PM"
     /// );
     /// ```
     #[inline(never)]
@@ -425,7 +426,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     dtf.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020, 12:34 PM"
+    ///     "Sep 1, 2020, 12:34 PM"
     /// );
     /// ```
     ///
@@ -571,11 +572,11 @@ mod tests {
         let datetime = DateTime::try_new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
-        test_format(&datetime, locale!("fr"), "5 avril 2022 à 12:33");
+        test_format(&datetime, locale!("fr"), "5 avril 2022, 12:33");
         test_format(
             &datetime,
             locale!("fr-u-ca-blahblah"),
-            "5 avril 2022 à 12:33",
+            "5 avril 2022, 12:33",
         );
         // thai falls back to buddhist
         test_format(

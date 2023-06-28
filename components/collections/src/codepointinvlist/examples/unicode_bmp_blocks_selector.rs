@@ -62,7 +62,7 @@ impl<'data> BmpBlockSelector<'data> {
 
 fn print(_input: &str) {
     #[cfg(debug_assertions)]
-    println!("{}", _input);
+    println!("{_input}");
 }
 
 #[no_mangle]
@@ -80,7 +80,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     print("\n====== Unicode BMP Block Selector example ============");
     for (ch, block) in result {
-        print(&format!("{}: {:#?}", ch, block));
+        print(&format!("{ch}: {block:#?}"));
     }
 
     0

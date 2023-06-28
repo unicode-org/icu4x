@@ -26,13 +26,41 @@ pub struct CompactDecimal {
 }
 
 impl CompactDecimal {
+    /// Constructs a [`CompactDecimal`] from its significand and exponent.
+    pub fn from_significand_and_exponent(significand: FixedDecimal, exponent: u8) -> Self {
+        Self {
+            significand,
+            exponent: exponent.into(),
+        }
+    }
+
+    /// Returns a reference to the significand of `self`.
+    /// ```
+    /// # use fixed_decimal::CompactDecimal;
+    /// # use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    /// #
+    /// assert_eq!(
+    ///     CompactDecimal::from_str("+1.20c6").unwrap().significand(),
+    ///     &FixedDecimal::from_str("+1.20").unwrap()
+    /// );
+    /// ```
+    pub fn significand(&self) -> &FixedDecimal {
+        &self.significand
+    }
+
     /// Returns the significand of `self`.
     /// ```
     /// # use fixed_decimal::CompactDecimal;
     /// # use fixed_decimal::FixedDecimal;
     /// # use std::str::FromStr;
     /// #
-    /// assert_eq!(CompactDecimal::from_str("+1.20c6").unwrap().into_significand(), FixedDecimal::from_str("+1.20").unwrap());
+    /// assert_eq!(
+    ///     CompactDecimal::from_str("+1.20c6")
+    ///         .unwrap()
+    ///         .into_significand(),
+    ///     FixedDecimal::from_str("+1.20").unwrap()
+    /// );
     /// ```
     pub fn into_significand(self) -> FixedDecimal {
         self.significand
@@ -62,7 +90,10 @@ impl CompactDecimal {
 /// # use std::str::FromStr;
 /// # use writeable::assert_writeable_eq;
 /// #
-/// assert_writeable_eq!(CompactDecimal::from_str("+1.20c6").unwrap(), "+1.20c6");
+/// assert_writeable_eq!(
+///     CompactDecimal::from_str("+1.20c6").unwrap(),
+///     "+1.20c6"
+/// );
 /// assert_writeable_eq!(CompactDecimal::from_str("+1729").unwrap(), "+1729");
 /// ```
 impl writeable::Writeable for CompactDecimal {
@@ -114,7 +145,7 @@ impl TryFrom<&[u8]> for CompactDecimal {
                 }
                 if exponent_str.is_empty()
                     || exponent_str.bytes().next() == Some(b'0')
-                    || !exponent_str.bytes().all(|c| (b'0'..=b'9').contains(&c))
+                    || !exponent_str.bytes().all(|c| c.is_ascii_digit())
                 {
                     return Err(Error::Syntax);
                 }
@@ -180,11 +211,11 @@ fn test_compact_syntax_error() {
     for cas in &cases {
         match CompactDecimal::from_str(cas.input_str) {
             Ok(dec) => {
-                assert_eq!(cas.expected_err, None, "{:?}", cas);
-                assert_eq!(cas.input_str, dec.to_string(), "{:?}", cas);
+                assert_eq!(cas.expected_err, None, "{cas:?}");
+                assert_eq!(cas.input_str, dec.to_string(), "{cas:?}");
             }
             Err(err) => {
-                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+                assert_eq!(cas.expected_err, Some(err), "{cas:?}");
             }
         }
     }

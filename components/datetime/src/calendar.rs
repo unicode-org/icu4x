@@ -8,8 +8,7 @@ use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, japanese::Japanese,
     japanese::JapaneseExtended, Gregorian,
 };
-use icu_locid::extensions::unicode::Value;
-use icu_locid::extensions_unicode_value as value;
+use icu_locid::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 
 /// A calendar that can be found in CLDR
@@ -23,10 +22,10 @@ pub trait CldrCalendar {
     const DEFAULT_BCP_47_IDENTIFIER: Value;
 
     /// The data marker for loading symbols for this calendar.
-    type DateSymbolsV1Marker: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>> + 'static;
+    type DateSymbolsV1Marker: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>;
 
     /// The data marker for loading length-patterns for this calendar.
-    type DateLengthsV1Marker: KeyedDataMarker<Yokeable = DateLengthsV1<'static>> + 'static;
+    type DateLengthsV1Marker: KeyedDataMarker<Yokeable = DateLengthsV1<'static>>;
 
     /// Checks if a given BCP 47 identifier is allowed to be used with this calendar
     ///

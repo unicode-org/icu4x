@@ -4,8 +4,9 @@
 
 [package]
 name = "tinystr"
-version = "0.7.0"
+version = "0.7.1"
 description = "A small ASCII-only bounded length string representation."
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
@@ -22,28 +23,35 @@ include = [
     "README.md"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-serde = { version = "1.0.123", optional = true, default-features = false, features = ["alloc"] }
-zerovec = { version = "0.9", path = "../../utils/zerovec", optional = true }
-databake = { version = "0.1", path = "../../utils/databake", optional = true }
+
+serde = { version = "1.0.123", default-features = false, features = ["alloc"], optional = true }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec", optional = true }
+databake = { version = "0.1.3", path = "../../utils/databake", optional = true }
 
 [dev-dependencies]
-serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 bincode = "1.3"
-postcard = { version = "1.0.0", features = ["use-std"] }
-tinystr_old = { version = "0.4", package = "tinystr", features = ["serde"] }
-criterion = "0.3"
+criterion = "0.4"
+postcard = { version = "1.0.0", features = ["use-std"], default-features = false }
 rand = { version = "0.8.5", features = ["small_rng"] }
+serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 
 [features]
 default = ["alloc"]
 alloc = []
 bench = []
-zerovec = ["dep:zerovec"]
+std = []
+
+[package.metadata.cargo-all-features]
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [[test]]
 name = "serde"

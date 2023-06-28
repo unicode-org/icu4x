@@ -43,13 +43,19 @@ impl ScientificDecimal {
 /// # use writeable::assert_writeable_eq;
 /// #
 /// assert_writeable_eq!(
-///     ScientificDecimal::from(FixedDecimal::from(1729).multiplied_pow10(-3),
-///                             FixedInteger::from(3)),
-///     "1.729e3");
+///     ScientificDecimal::from(
+///         FixedDecimal::from(1729).multiplied_pow10(-3),
+///         FixedInteger::from(3)
+///     ),
+///     "1.729e3"
+/// );
 /// assert_writeable_eq!(
-///     ScientificDecimal::from(FixedDecimal::from_str("+1.729").unwrap(),
-///                             FixedInteger::from_str("+03").unwrap()),
-///     "+1.729e+03");
+///     ScientificDecimal::from(
+///         FixedDecimal::from_str("+1.729").unwrap(),
+///         FixedInteger::from_str("+03").unwrap()
+///     ),
+///     "+1.729e+03"
+/// );
 /// ```
 impl writeable::Writeable for ScientificDecimal {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
@@ -150,11 +156,11 @@ fn test_scientific_syntax_error() {
     for cas in &cases {
         match ScientificDecimal::from_str(cas.input_str) {
             Ok(dec) => {
-                assert_eq!(cas.expected_err, None, "{:?}", cas);
-                assert_eq!(cas.input_str, dec.to_string(), "{:?}", cas);
+                assert_eq!(cas.expected_err, None, "{cas:?}");
+                assert_eq!(cas.input_str, dec.to_string(), "{cas:?}");
             }
             Err(err) => {
-                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+                assert_eq!(cas.expected_err, Some(err), "{cas:?}");
             }
         }
     }

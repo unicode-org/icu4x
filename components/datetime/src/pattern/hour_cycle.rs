@@ -6,7 +6,7 @@ use super::{reference, runtime, PatternItem};
 use crate::{fields, options::preferences};
 #[cfg(all(feature = "datagen"))]
 use crate::{provider, skeleton};
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
 /// hour cycles as H12 or H23.
@@ -121,7 +121,7 @@ pub(crate) fn naively_apply_preferences(
     pattern: &mut runtime::Pattern,
     preferences: &Option<preferences::Bag>,
 ) {
-    // If there is a preference overiding the hour cycle, apply it now.
+    // If there is a preference overriding the hour cycle, apply it now.
     if let Some(preferences::Bag {
         hour_cycle: Some(hour_cycle),
     }) = preferences

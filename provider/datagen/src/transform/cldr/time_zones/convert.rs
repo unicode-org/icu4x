@@ -20,7 +20,6 @@ use icu_timezone::ZoneVariant;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
-use zerovec::{ZeroMap, ZeroMap2d};
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -120,47 +119,51 @@ impl Location {
 
 impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
     fn from(other: CldrTimeZonesData<'_>) -> Self {
-        let time_zone_names_data = other.time_zone_names_resource;
-        let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
         Self(
-            time_zone_names_data
-                .zone
-                .0
+            other
+                .bcp47_tzids_resource
                 .iter()
-                .flat_map(|(key, region)| {
-                    region
-                        .0
-                        .iter()
-                        .flat_map(move |(inner_key, place_or_region)| {
-                            let mut key = key.clone();
-                            key.push('/');
-                            key.push_str(inner_key);
-                            match place_or_region {
-                                LocationOrSubRegion::Location(place) => {
-                                    match bcp47_tzid_data.get(&key) {
-                                        Some(bcp47) => place
-                                            .exemplar_city()
-                                            .map(|city| vec![(bcp47, city)])
-                                            .unwrap_or_default(),
-                                        None => panic!("Cannot find bcp47 for {:?}.", key),
-                                    }
+                .filter_map(|(bcp47, bcp47_tzid_data)| {
+                    bcp47_tzid_data
+                        .alias
+                        .as_ref()
+                        .map(|aliases| (bcp47, aliases))
+                })
+                // Montreal is meant to be deprecated, but pre-43 the deprecation
+                // fallback was not set, which is why it might show up here.
+                .filter(|(bcp47, _)| bcp47.0 != "camtr")
+                .filter_map(|(bcp47, aliases)| {
+                    let alias = aliases.split(' ').next().expect("split non-empty");
+                    let mut alias_parts = alias.split('/');
+                    let continent = alias_parts.next().expect("split non-empty");
+                    let location_or_subregion = alias_parts.next()?;
+                    let location_in_subregion = alias_parts.next();
+
+                    Some((
+                        bcp47,
+                        other
+                            .time_zone_names_resource
+                            .zone
+                            .0
+                            .get(continent)
+                            .and_then(|x| x.0.get(location_or_subregion))
+                            .and_then(|x| match x {
+                                LocationOrSubRegion::Location(place) => Some(place),
+                                LocationOrSubRegion::SubRegion(region) => {
+                                    region.get(location_in_subregion?)
                                 }
-                                LocationOrSubRegion::SubRegion(region) => region
-                                    .iter()
-                                    .filter_map(|(inner_key, place)| {
-                                        let mut key = key.clone();
-                                        key.push('/');
-                                        key.push_str(inner_key);
-                                        match bcp47_tzid_data.get(&key) {
-                                            Some(bcp47) => {
-                                                place.exemplar_city().map(|city| (bcp47, city))
-                                            }
-                                            None => panic!("Cannot find bcp47 for {:?}.", key),
-                                        }
-                                    })
-                                    .collect::<Vec<_>>(),
-                            }
-                        })
+                            })
+                            .and_then(|p| p.exemplar_city())
+                            .or_else(|| {
+                                (continent != "Etc").then(|| {
+                                    alias
+                                        .split('/')
+                                        .next_back()
+                                        .expect("split non-empty")
+                                        .replace('_', " ")
+                                })
+                            })?,
+                    ))
                 })
                 .collect(),
         )
@@ -181,7 +184,7 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                             Some(bcp47) => {
                                 vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
                             }
-                            None => panic!("Cannot find bcp47 for {:?}.", key),
+                            None => panic!("Cannot find bcp47 for {key:?}."),
                         },
                         ZonePeriod::LocationOrSubRegion(place) => place
                             .iter()
@@ -199,7 +202,7 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                                                     meta_zone_id_data.clone(),
                                                 )]
                                             }
-                                            None => panic!("Cannot find bcp47 for {:?}.", key),
+                                            None => panic!("Cannot find bcp47 for {key:?}."),
                                         }
                                     }
                                     MetaLocationOrSubRegion::SubRegion(subregion) => subregion
@@ -216,7 +219,7 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                                                         meta_zone_id_data.clone(),
                                                     )]
                                                 }
-                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                                None => panic!("Cannot find bcp47 for {key:?}."),
                                             }
                                         })
                                         .collect::<Vec<_>>(),
@@ -241,7 +244,7 @@ macro_rules! long_short_impls {
                     &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
                 Self {
                     defaults: match &data.metazone {
-                        None => ZeroMap::new(),
+                        None => Default::default(),
                         Some(metazones) => metazones
                             .0
                             .iter()
@@ -264,8 +267,7 @@ macro_rules! long_short_impls {
                                             )
                                         } else {
                                             panic!(
-                                                "Cannot find short id of meta zone for {:?}.",
-                                                key
+                                                "Cannot find short id of meta zone for {key:?}."
                                             )
                                         }
                                     }
@@ -293,7 +295,7 @@ macro_rules! long_short_impls {
                                                     .and_then(|zf| type_fallback(&zf).cloned())
                                                     .map(|format| vec![(bcp47, format)])
                                                     .unwrap_or_default(),
-                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                                None => panic!("Cannot find bcp47 for {key:?}."),
                                             }
                                         }
                                         LocationOrSubRegion::SubRegion(region) => region
@@ -308,7 +310,7 @@ macro_rules! long_short_impls {
                                                         .and_then(|zf| type_fallback(&zf).cloned())
                                                         .map(|format| (bcp47, format)),
                                                     None => {
-                                                        panic!("Cannot find bcp47 for {:?}.", key)
+                                                        panic!("Cannot find bcp47 for {key:?}.")
                                                     }
                                                 }
                                             })
@@ -329,7 +331,7 @@ macro_rules! long_short_impls {
                     &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
                 Self {
                     defaults: match &data.metazone {
-                        None => ZeroMap2d::new(),
+                        None => Default::default(),
                         Some(metazones) => metazones
                             .0
                             .iter()
@@ -349,8 +351,7 @@ macro_rules! long_short_impls {
                                             })
                                         } else {
                                             panic!(
-                                                "Cannot find short id of meta zone for {:?}.",
-                                                key
+                                                "Cannot find short id of meta zone for {key:?}."
                                             )
                                         }
                                     }
@@ -382,7 +383,7 @@ macro_rules! long_short_impls {
                                                             .map(|format| (bcp47.clone(), format))
                                                     })
                                                     .collect::<Vec<_>>(),
-                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                                None => panic!("Cannot find bcp47 for {key:?}."),
                                             }
                                         }
                                         LocationOrSubRegion::SubRegion(region) => region
@@ -396,7 +397,7 @@ macro_rules! long_short_impls {
                                                         .$metazones_name()
                                                         .map(|format| (bcp47.clone(), format)),
                                                     None => {
-                                                        panic!("Cannot find bcp47 for {:?}.", key)
+                                                        panic!("Cannot find bcp47 for {key:?}.")
                                                     }
                                                 }
                                             })
@@ -430,10 +431,7 @@ fn convert_cldr_zone_variant(cldr_zone_variant: &str) -> ZoneVariant {
     match cldr_zone_variant {
         "standard" => ZoneVariant::standard(),
         "daylight" => ZoneVariant::daylight(),
-        _ => panic!(
-            "Time-zone variant was not compatible with ZoneVariant: {}",
-            cldr_zone_variant
-        ),
+        _ => panic!("Time-zone variant was not compatible with ZoneVariant: {cldr_zone_variant}"),
     }
 }
 

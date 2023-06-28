@@ -53,8 +53,6 @@ mod test {
     use super::*;
     use crate::hello_world::*;
     use crate::prelude::*;
-    use crate::yoke::Yokeable;
-    use crate::zerofrom;
     use alloc::borrow::Cow;
     use alloc::string::String;
     use core::fmt::Debug;
@@ -68,7 +66,7 @@ mod test {
 
     /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
     #[derive(
-        Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, zerofrom::ZeroFrom,
+        Serialize, Deserialize, Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom,
     )]
     struct HelloAlt {
         #[zerofrom(clone)]

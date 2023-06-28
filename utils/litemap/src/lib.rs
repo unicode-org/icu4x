@@ -51,7 +51,7 @@ mod serde;
 mod serde_helpers;
 pub mod store;
 
-#[cfg(feature = "testing")]
+#[cfg(any(test, feature = "testing"))]
 pub mod testing;
 
 pub use map::LiteMap;

@@ -39,12 +39,13 @@ const POSTCARD: [u8; 176] = [
     105, 110, 101, 115, 101,
 ];
 
-/// Run this function to print new data to the console. Requires the optional `serde` feature.
+/// Run this function to print new data to the console.
+/// Requires the optional `serde` Cargo feature.
 #[allow(dead_code)]
 fn generate() {
     let map = build_litemap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
-    println!("{:?}", buf);
+    println!("{buf:?}");
 }
 
 #[cfg(feature = "generate")]
@@ -72,7 +73,7 @@ fn build_litemap(large: bool) -> LiteMap<String, String> {
     for (key, value) in DATA.into_iter() {
         if large {
             for n in 0..8192 {
-                map.insert(format!("{}{}", key, n), value.to_owned());
+                map.insert(format!("{key}{n}"), value.to_owned());
             }
         } else {
             map.insert(key.to_owned(), value.to_owned());

@@ -154,7 +154,8 @@ impl CodePointInversionListBuilder {
     /// ```
     pub fn add_range_u32(&mut self, range: &impl RangeBounds<u32>) {
         let (start, end) = deconstruct_range(range);
-        if start <= end && end <= char::MAX as u32 {
+        // Sets that include char::MAX need to allow an end value of MAX + 1
+        if start <= end && end <= char::MAX as u32 + 1 {
             self.add(start, end);
         }
     }

@@ -1,0 +1,110 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# This is a cargo-make file included in the toplevel Makefile.toml
+
+[tasks.check-all-features]
+description = "Build all permutations of all features"
+category = "ICU4X Development"
+install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
+install_crate_args = ["--version", "^1.9"]
+command = "cargo"
+args = ["check-all-features"]
+
+[tasks.build-all-features]
+description = "Build all permutations of all features"
+category = "ICU4X Development"
+install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
+install_crate_args = ["--version", "^1.8"]
+command = "cargo"
+args = ["build-all-features"]
+
+[tasks.test-all-features]
+description = "Run all Rust tests with all features and targets"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
+
+[tasks.test-docs]
+description = "Run all Rust doctests with all features"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--all-features", "--doc", "--no-fail-fast"]
+
+[tasks.check-cargo-tutorial-local]
+description = "Build the Cargo tutorial projects based on local crates"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+pwd = pwd
+set_env CARGO_TARGET_DIR ${pwd}/target
+
+cd docs/tutorials/crates
+
+exec --fail-on-error cargo --config patch.toml check -p tutorial_baked
+exec --fail-on-error cargo --config patch.toml check -p tutorial_buffer
+exec --fail-on-error cargo --config patch.toml check -p tutorial_experimental
+exec --fail-on-error cargo --config patch.toml check -p tutorial_lazy_static
+exec --fail-on-error cargo --config patch.toml check -p tutorial_testdata
+'''
+
+[tasks.test-cargo-tutorial-local]
+description = "Build and run the Cargo tutorial projects based on local crates"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+project_dir = pwd
+set_env CARGO_TARGET_DIR ${project_dir}/target
+
+exec --fail-on-error cargo build -p icu_datagen
+
+cd docs/tutorials/crates
+
+# Build the postcard file
+# Copy our own icu4x-datagen and tutorial_buffer to speed up the task
+exec --fail-on-error cargo --config patch.toml build -p tutorial_buffer
+mkdir -p buffer/bin
+cp ${project_dir}/target/debug/icu4x-datagen buffer/bin/icu4x-datagen
+cp ${project_dir}/target/debug/tutorial_buffer buffer/bin/tutorial_buffer
+exec --fail-on-error make -C buffer buffer_data.postcard
+
+# Run the 5 projects
+exec --fail-on-error cargo --config patch.toml run -p tutorial_baked
+exec --fail-on-error cargo --config patch.toml run -p tutorial_buffer
+exec --fail-on-error cargo --config patch.toml run -p tutorial_experimental
+exec --fail-on-error cargo --config patch.toml run -p tutorial_lazy_static
+exec --fail-on-error cargo --config patch.toml run -p tutorial_testdata
+'''
+
+[tasks.test-cargo-tutorial-cratesio]
+description = "Build and run the Cargo tutorial projects based on crates.io"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+cd docs/tutorials/crates
+
+# Delete the lockfile to make a clean crates.io build
+rm -f Cargo.lock
+
+pwd = pwd
+set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
+
+# Build the postcard file
+# Use the full Makefile task
+exec --fail-on-error cargo build --release -p tutorial_buffer
+exec --fail-on-error make -C buffer
+
+# Run the 5 projects
+exec --fail-on-error cargo run --release -p tutorial_baked
+exec --fail-on-error cargo run --release -p tutorial_buffer
+exec --fail-on-error cargo run --release -p tutorial_experimental
+exec --fail-on-error cargo run --release -p tutorial_lazy_static
+exec --fail-on-error cargo run --release -p tutorial_testdata
+'''

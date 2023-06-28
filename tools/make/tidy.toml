@@ -1,0 +1,234 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# This is a cargo-make file included in the toplevel Makefile.toml
+
+[tasks.clippy-all]
+description = "Run clippy based on the alias in /.cargo/config.toml"
+category = "ICU4X Development"
+command = "cargo"
+args = ["clippy-all"]
+install_crate = false
+
+[tasks.fmt-check]
+description = "Check code is appropriately formatted"
+category = "ICU4X Development"
+command = "cargo"
+args = ["fmt", "--", "--check"]
+
+[tasks.license-header-check]
+description = "Ensure all the source files have license headers"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+# Check files matching these patterns.
+glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp"
+
+# Skip the files matching these patterns.
+glob_skip_pattern_array = array "**/target/**/*" "ffi/diplomat/*/docs/**/*" "**/node_modules/**/*" "**/data/**/*" "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*"
+
+blank_line = set ""
+
+license_hash_line_1 = set "# This file is part of ICU4X. For terms of use, please see the file"
+license_hash_line_2 = set "# called LICENSE at the top level of the ICU4X source tree"
+license_hash_line_3 = set "# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE )."
+license_hash_array = array ${license_hash_line_1} ${license_hash_line_2} ${license_hash_line_3} ${blank_line}
+license_hash_str = array_join ${license_hash_array} "\n"
+
+license_slash_line_1 = set "// This file is part of ICU4X. For terms of use, please see the file"
+license_slash_line_2 = set "// called LICENSE at the top level of the ICU4X source tree"
+license_slash_line_3 = set "// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE )."
+license_slash_array = array ${license_slash_line_1} ${license_slash_line_2} ${license_slash_line_3} ${blank_line}
+license_slash_str = array_join ${license_slash_array} "\n"
+
+license_rst_line_0 = set ".."
+license_rst_line_1 = set "    This file is part of ICU4X. For terms of use, please see the file"
+license_rst_line_2 = set "    called LICENSE at the top level of the ICU4X source tree"
+license_rst_line_3 = set "    (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE )."
+license_rst_array = array ${license_rst_line_0} ${license_rst_line_1} ${license_rst_line_2} ${license_rst_line_3} ${blank_line}
+license_rst_str = array_join ${license_rst_array} "\n"
+
+license_rem_line_1 = set "REM This file is part of ICU4X. For terms of use, please see the file"
+license_rem_line_2 = set "REM called LICENSE at the top level of the ICU4X source tree"
+license_rem_line_3 = set "REM (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE )."
+license_rem_array = array ${license_rem_line_1} ${license_rem_line_2} ${license_rem_line_3} ${blank_line}
+license_rem_str = array_join ${license_rem_array} "\n"
+
+license_unicode_hash_line_1 = set "# Copyright (C) 2021 and later: Unicode, Inc. and others."
+license_unicode_hash_line_2 = set "# License & terms of use: http://www.unicode.org/copyright.html"
+license_unicode_hash_array = array ${license_unicode_hash_line_1} ${license_unicode_hash_line_2}
+license_unicode_hash_str = array_join ${license_unicode_hash_array} "\n"
+
+skip_paths = set_new
+for skip_pattern in ${glob_skip_pattern_array}
+    echo "License header check skipped in files match ${skip_pattern}"
+    paths = glob_array ${skip_pattern}
+    for p in ${paths}
+        set_put ${skip_paths} ${p}
+    end
+end
+
+for pattern in ${glob_pattern_array}
+    handle = glob_array ${pattern}
+    for path in ${handle}
+        should_skip = set_contains ${skip_paths} ${path}
+        should_check_header = eq ${should_skip} false
+        if ${should_check_header}
+            text = readfile ${path}
+            result_hash = starts_with ${text} ${license_hash_str}
+            result_slash = starts_with ${text} ${license_slash_str}
+            result_rst = starts_with ${text} ${license_rst_str}
+            result_rem = starts_with ${text} ${license_rem_str}
+            result_unicode_hash = starts_with ${text} ${license_unicode_hash_str}
+            not_result_hash = not ${result_hash}
+            not_result_slash = not ${result_slash}
+            not_result_rst = not ${result_rst}
+            not_result_rem = not ${result_rem}
+            not_result_unicode_hash = not ${result_unicode_hash}
+            if ${not_result_hash} and ${not_result_slash} and ${not_result_rst} and ${not_result_rem} and ${not_result_unicode_hash}
+              echo "License header missing in ${path}"
+              trigger_error "License header missing or misformatted in ${path}."
+            end
+        end
+    end
+    echo "License headers found in files matching ${pattern}"
+end
+echo "License header check complete"
+'''
+
+[tasks.generate-readmes]
+description = "Automatically generate README.md for each component."
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+glob_pattern = set "./**/Cargo.toml"
+glob_skip_pattern = array "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*" "ffi/diplomat/*/examples/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "provider/repodata/**/*" "docs/tutorials/crates/Cargo.toml"
+
+template = canonicalize README.tpl
+
+cargo_list = exec cargo --list
+if not contains ${cargo_list.stdout} "readme"
+    trigger_error "Please run 'cargo install cargo-readme' to support generating README.md files"
+end
+
+skip_paths = set_new
+for skip_pattern in ${glob_skip_pattern}
+    paths = glob_array ${skip_pattern}
+    for p in ${paths}
+        set_put ${skip_paths} ${p}
+    end
+end
+
+handle = glob_array ${glob_pattern}
+for path in ${handle}
+    root_dir = dirname ${path}
+    skip_this = is_empty ${root_dir}
+    if set_contains ${skip_paths} ${path}
+        skip_this = set true
+    end
+    if not ${skip_this}
+        echo "Automatically generating ${root_dir}/README.md"
+        exec --fail-on-error cargo readme -r ${root_dir} -o README.md -t ${template}
+    end
+end
+'''
+
+[tasks.generated-readme-check]
+description = "Check that README.md was properly generated for each component."
+category = "ICU4X Development"
+dependencies = [
+    "generate-readmes"
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    if contains ${output.stdout} README.md
+        msg = array "" ""
+        array_push ${msg} "A README.md file is out-of-sync with lib.rs"
+        array_push ${msg} ""
+        array_push ${msg} "If you modified a lib.rs file, please run `cargo make generate-readmes`. If you edited a"
+        array_push ${msg} "README.md file directly, please also update the corresponding lib.rs."
+        array_push ${msg} ""
+        array_push ${msg} "The modified files were:"
+        array_push ${msg} "${output.stdout}"
+        msg = array_join ${msg} "\n"
+        trigger_error ${msg}
+    end
+end
+'''
+
+[tasks.copy-license]
+description = "Copy the license file to each component for packaging."
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+glob_pattern = set "./**/Cargo.toml"
+license = canonicalize LICENSE
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/diplomat/c/examples" "docs/tutorials/crates/"
+
+handle = glob_array ${glob_pattern}
+for path in ${handle}
+    root_dir = dirname ${path}
+    skip_this = is_empty ${root_dir}
+    for skip_path_prefix in ${skip_path_prefixes}
+        if starts_with ${path} ${skip_path_prefix}
+            skip_this = set true
+        end
+    end
+    if not ${skip_this}
+        echo "Copying LICENSE to ${root_dir}/LICENSE"
+        cp ${license} ${root_dir}/LICENSE
+    end
+end
+'''
+
+[tasks.license-file-check]
+description = "Check that each component has a LICENSE file."
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+glob_pattern = set "./**/Cargo.toml"
+license = canonicalize LICENSE
+license_text = readfile ${license}
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/diplomat/c/examples" "docs/tutorials/crates/"
+
+handle = glob_array ${glob_pattern}
+for path in ${handle}
+    root_dir = dirname ${path}
+    skip_this = is_empty ${root_dir}
+    for skip_path_prefix in ${skip_path_prefixes}
+        if starts_with ${path} ${skip_path_prefix}
+            skip_this = set true
+        end
+    end
+    if not ${skip_this}
+        if not is_path_exists ${root_dir}/LICENSE
+            trigger_error "LICENSE file missing in ${root_dir}, run `cargo make copy-license` to copy the license file to all necessary locations."
+        end
+        copy_license_text = readfile ${root_dir}/LICENSE
+        license_equal = eq ${license_text} ${copy_license_text}
+        if not ${license_equal}
+            trigger_error "LICENSE text incorrect in ${root_dir}/LICENSE, run `cargo make copy-license` to copy the license file to all necessary locations."
+        end
+    end
+end
+'''
+
+[tasks.depcheck]
+description = "Run the dependency checker"
+category = "ICU4X Development"
+command = "cargo"
+args = ["run", "-p", "icu_depcheck"]

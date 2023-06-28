@@ -119,7 +119,7 @@ mod test {
                     "ccc"
                 )
             }
-            best => panic!("Unexpected {:?}", best),
+            best => panic!("Unexpected {best:?}"),
         };
     }
 
@@ -155,7 +155,7 @@ mod test {
                     "MMMM d, y vvvv"
                 )
             }
-            best => panic!("Unexpected {:?}", best),
+            best => panic!("Unexpected {best:?}"),
         };
     }
 
@@ -231,8 +231,7 @@ mod test {
                 Ok(_) => {}
                 Err(err) => {
                     panic!(
-                        "Unable to parse string_skeleton {:?} with error, {:?}",
-                        string_skeleton, err
+                        "Unable to parse string_skeleton {string_skeleton:?} with error, {err:?}"
                     )
                 }
             }
@@ -245,16 +244,15 @@ mod test {
             match Skeleton::try_from(*string_skeleton) {
                 Ok(_) => {
                     panic!(
-                        "An unsupported field is now supported, consider moving {:?} to the \
-                         supported skeletons, and ensure the skeleton is properly implemented.",
-                        string_skeleton
+                        "An unsupported field is now supported, consider moving {string_skeleton:?} to the \
+                         supported skeletons, and ensure the skeleton is properly implemented."
                     )
                 }
                 Err(err) => match err {
                     SkeletonError::SymbolUnimplemented(_) => {
                         // Every skeleton should return this error.
                     }
-                    _ => panic!("{}", err),
+                    _ => panic!("{err}"),
                 },
             }
         }
@@ -328,7 +326,7 @@ mod test {
             serde_json::from_str::<Skeleton>(&json).expect_err("Expected a duplicate field error.");
 
         assert_eq!(
-            format!("{}", err),
+            format!("{err}"),
             "invalid value: \"EEEEyMdEEEE\" duplicate field in skeleton, expected field symbols representing a skeleton at line 1 column 13"
         );
     }
@@ -362,8 +360,7 @@ mod test {
                     .expect("Failed to create pattern from bytes.")
             ))
             .expect("Failed to transform skeleton to string."),
-            "{}",
-            message
+            "{message}"
         );
     }
 

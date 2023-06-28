@@ -4,10 +4,11 @@
 
 [package]
 name = "yoke"
-version = "0.6.2"
+version = "0.7.1"
 description = "Abstraction allowing borrowed data to be carried along with the backing data it borrows from"
+rust-version = "1.61.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
@@ -21,8 +22,11 @@ include = [
     "README.md"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
 [features]
-derive = ["yoke-derive", "zerofrom/derive"]
+derive = ["dep:yoke-derive", "zerofrom/derive"]
 alloc = ["stable_deref_trait/alloc", "serde?/alloc", "zerofrom/alloc"]
 default = ["alloc", "zerofrom"]
 
@@ -31,9 +35,11 @@ all-features = true
 
 [dependencies]
 stable_deref_trait = { version = "1.2.0", default-features = false }
-serde = { version = "1.0", optional = true, default-features = false }
-yoke-derive = { path = "./derive", version = "0.6.0", optional = true }
-zerofrom = { path = "../zerofrom", version = "0.1.0", default-features = false, optional = true} 
+
+yoke-derive = { version = "0.7.0", path = "./derive", optional = true }
+
+serde = { version = "1.0", default-features = false, optional = true }
+zerofrom = { version = "0.1.1", path = "../zerofrom", default-features = false, optional = true} 
 
 [dev-dependencies]
 bincode = "1.3.3"

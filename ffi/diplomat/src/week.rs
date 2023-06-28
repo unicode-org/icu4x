@@ -11,7 +11,6 @@ pub mod ffi {
     use crate::locale::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
     use icu_calendar::week::{RelativeUnit, WeekCalculator};
 
     #[diplomat::rust_link(icu::calendar::week::RelativeUnit, Enum)]
@@ -38,13 +37,12 @@ pub mod ffi {
         pub fn create(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> DiplomatResult<Box<ICU4XWeekCalculator>, ICU4XError> {
+        ) -> Result<Box<ICU4XWeekCalculator>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            WeekCalculator::try_new_unstable(&provider.0, &locale)
-                .map(|wc| Box::new(ICU4XWeekCalculator(wc)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XWeekCalculator(
+                WeekCalculator::try_new_unstable(&provider.0, &locale)?,
+            )))
         }
 
         #[diplomat::rust_link(

@@ -30,5 +30,5 @@ pub struct CalendarData {
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct EraStart {
     #[serde(rename = "_start")]
-    pub start: String,
+    pub start: Option<String>,
 }

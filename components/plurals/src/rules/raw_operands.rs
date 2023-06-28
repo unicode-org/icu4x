@@ -34,6 +34,7 @@ use crate::PluralRules;
 /// </div>
 #[cfg(feature = "experimental")]
 #[allow(clippy::exhaustive_structs)] // experimental
+#[derive(Debug)]
 pub struct RawPluralOperands {
     /// Integer value of input
     pub i: u64,

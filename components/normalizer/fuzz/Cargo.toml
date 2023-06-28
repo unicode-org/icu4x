@@ -4,22 +4,20 @@
 
 [package]
 name = "icu_normalizer-fuzz"
-version = "0.0.0"
-authors = ["Automatically generated"]
 publish = false
-edition = "2018"
-license = "Unicode-DFS-2016"
+version = "0.0.0"
+edition = "2021"
 
 [package.metadata]
 cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
-rust_icu_unorm2 = { path = "../../../../rust_icu/rust_icu_unorm2", features = ["use-bindgen", "icu_config"] }
-rust_icu_sys = { path = "../../../../rust_icu/rust_icu_sys", features = ["use-bindgen", "icu_config"] }
-rust_icu_ustring = { path = "../../../../rust_icu/rust_icu_ustring", features = ["use-bindgen", "icu_config"] }
+rust_icu_unorm2 = { version = "3", features = ["use-bindgen", "icu_config"] }
+rust_icu_sys = { version = "3", features = ["use-bindgen", "icu_config"] }
+rust_icu_ustring = { version = "3", features = ["use-bindgen", "icu_config"] }
 encoding_rs = "0.8.31"
-icu_testdata = { version = "1.0.0", path = "../../../provider/testdata" }
+icu_testdata = { path = "../../../provider/testdata" }
 icu_normalizer = { path = "..", features = ["serde"] }
 utf8_iter = "1.0.1"
 utf16_iter = "1.0.3"

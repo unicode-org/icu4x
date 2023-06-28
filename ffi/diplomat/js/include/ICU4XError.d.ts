@@ -5,7 +5,7 @@
 
  * The error names are stable and can be checked against as strings in the JS API
 
- * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.Error.html 1}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.CalendarError.html 2}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.CollatorError.html 3}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/enum.DateTimeError.html 4}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/enum.DecimalError.html 5}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/list/enum.ListError.html 6}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/enum.ParserError.html 7}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/enum.LocaleTransformError.html 8}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/enum.NormalizerError.html 9}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralsError.html 10}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/enum.PropertiesError.html 11}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/provider/struct.DataError.html 12}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/provider/enum.DataErrorKind.html 13}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/enum.SegmenterError.html 14}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/enum.TimeZoneError.html 15}
+ * Additional information: {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Error.html 1}, {@link https://docs.rs/icu/latest/icu/calendar/enum.CalendarError.html 2}, {@link https://docs.rs/icu/latest/icu/collator/enum.CollatorError.html 3}, {@link https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html 4}, {@link https://docs.rs/icu/latest/icu/decimal/enum.DecimalError.html 5}, {@link https://docs.rs/icu/latest/icu/list/enum.ListError.html 6}, {@link https://docs.rs/icu/latest/icu/locid/enum.ParserError.html 7}, {@link https://docs.rs/icu/latest/icu/locid_transform/enum.LocaleTransformError.html 8}, {@link https://docs.rs/icu/latest/icu/normalizer/enum.NormalizerError.html 9}, {@link https://docs.rs/icu/latest/icu/plurals/enum.PluralsError.html 10}, {@link https://docs.rs/icu/latest/icu/properties/enum.PropertiesError.html 11}, {@link https://docs.rs/icu/latest/icu/provider/struct.DataError.html 12}, {@link https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html 13}, {@link https://docs.rs/icu/latest/icu/segmenter/enum.SegmenterError.html 14}, {@link https://docs.rs/icu/latest/icu/timezone/enum.TimeZoneError.html 15}
  */
 export enum ICU4XError {
   /**
@@ -90,6 +90,9 @@ export enum ICU4XError {
   /**
    */
   PropertyUnknownGeneralCategoryGroupError = 'PropertyUnknownGeneralCategoryGroupError',
+  /**
+   */
+  PropertyUnexpectedPropertyNameError = 'PropertyUnexpectedPropertyNameError',
   /**
    */
   FixedDecimalLimitError = 'FixedDecimalLimitError',

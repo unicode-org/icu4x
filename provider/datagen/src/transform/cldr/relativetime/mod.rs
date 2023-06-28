@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg(feature = "experimental")]
-
 use std::borrow::Borrow;
 
 use crate::transform::cldr::cldr_serde;
@@ -11,8 +9,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_relativetime::provider::*;
 use lazy_static::lazy_static;
-use std::collections::HashMap;
-use zerovec::ZeroMap;
+use std::collections::{BTreeMap, HashMap};
 
 lazy_static! {
     static ref DATAKEY_FILTERS: HashMap<DataKey, &'static str> = {
@@ -76,6 +73,7 @@ macro_rules! make_data_provider {
                     &self,
                     req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
+                    self.check_req::<$marker>(req)?;
                     let langid = req.locale.get_langid();
                     let resource: &cldr_serde::date_fields::Resource = self
                         .source
@@ -107,13 +105,13 @@ macro_rules! make_data_provider {
 
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                    Ok(self
+                    Ok(self.source.options.locales.filter_by_langid_equality(self
                         .source
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
                         .map(DataLocale::from)
-                        .collect())
+                        .collect()))
                 }
             }
 
@@ -124,13 +122,12 @@ macro_rules! make_data_provider {
 impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> {
     type Error = DataError;
     fn try_from(field: &cldr_serde::date_fields::Field) -> Result<Self, Self::Error> {
-        let mut relatives = ZeroMap::new();
-        // TODO(#2826) Make this more efficient as it is worst case linear per element insertion
+        let mut relatives = BTreeMap::new();
         for relative in &field.relatives {
             relatives.insert(&relative.count, relative.pattern.as_ref());
         }
         Ok(Self {
-            relatives,
+            relatives: relatives.into_iter().collect(),
             past: PluralRulesCategoryMapping::try_from(&field.past)?,
             future: PluralRulesCategoryMapping::try_from(&field.future)?,
         })

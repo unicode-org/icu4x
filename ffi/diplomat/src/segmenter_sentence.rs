@@ -8,7 +8,6 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
-    use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
     use icu_segmenter::provider::SentenceBreakDataV1Marker;
     use icu_segmenter::{
@@ -22,14 +21,24 @@ pub mod ffi {
     pub struct ICU4XSentenceSegmenter(SentenceSegmenter);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
+    #[diplomat::rust_link(
+        icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8,
+        Typedef,
+        hidden
+    )]
     pub struct ICU4XSentenceBreakIteratorUtf8<'a>(
         SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf16, Typedef, hidden)]
     pub struct ICU4XSentenceBreakIteratorUtf16<'a>(SentenceBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorLatin1, Typedef, hidden)]
     pub struct ICU4XSentenceBreakIteratorLatin1<'a>(SentenceBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XSentenceSegmenter {
@@ -37,18 +46,17 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new_unstable, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XSentenceSegmenter>, ICU4XError> {
+        ) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XError> {
             Self::try_new_impl(&provider.0)
         }
 
-        fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XSentenceSegmenter>, ICU4XError>
+        fn try_new_impl<D>(provider: &D) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XError>
         where
             D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
         {
-            SentenceSegmenter::try_new_unstable(provider)
-                .map(|o| Box::new(ICU4XSentenceSegmenter(o)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XSentenceSegmenter(
+                SentenceSegmenter::try_new_unstable(provider)?,
+            )))
         }
 
         /// Segments a (potentially ill-formed) UTF-8 string.
@@ -87,6 +95,12 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -99,6 +113,12 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -111,6 +131,12 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()

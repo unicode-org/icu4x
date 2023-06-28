@@ -4,7 +4,7 @@
 
 use crate::transform::cldr::cldr_serde;
 use icu_list::provider::*;
-use icu_locid::subtags_language as language;
+use icu_locid::subtags::language;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use lazy_static::lazy_static;
@@ -58,30 +58,34 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         if M::KEY == AndListV1Marker::KEY || M::KEY == UnitListV1Marker::KEY {
             lazy_static! {
                 // Starts with i or (hi but not hia/hie)
-                static ref I_SOUND: StringMatcher<'static> = StringMatcher::new(Cow::Borrowed("i|hi([^ae]|$)")).expect("Valid regex");
+                static ref I_SOUND: SerdeDFA<'static> = SerdeDFA::new(
+                    Cow::Borrowed("i|hi([^ae]|$)")
+                ).expect("Valid regex");
             }
             // Replace " y " with " e " before /i/ sounds.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
             patterns
-                .make_conditional("{0} y {1}", &*I_SOUND, "{0} e {1}")
+                .make_conditional("{0} y {1}", &I_SOUND, "{0} e {1}")
                 .expect("valid pattern");
         } else if M::KEY == OrListV1Marker::KEY {
             lazy_static! {
                 // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
                 // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
-                static ref O_SOUND: StringMatcher<'static> = StringMatcher::new(Cow::Borrowed(r"o|ho|8|(11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$))")).expect("Valid regex");
+                static ref O_SOUND: SerdeDFA<'static> = SerdeDFA::new(
+                    Cow::Borrowed(r"o|ho|8|(11([\.  ]?[0-9]{3})*(,[0-9]*)?([^\.,[0-9]]|$))")
+                ).expect("Valid regex");
             }
             // Replace " o " with " u " before /o/ sound.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
             patterns
-                .make_conditional("{0} o {1}", &*O_SOUND, "{0} u {1}")
+                .make_conditional("{0} o {1}", &O_SOUND, "{0} u {1}")
                 .expect("valid pattern");
         }
     }
 
     if langid.language == language!("he") {
         // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
-        let non_hebrew = StringMatcher::new(Cow::Owned(format!(
+        let non_hebrew = SerdeDFA::new(Cow::Owned(format!(
             "[^{}]",
             icu_properties::maps::load_script(selff)
                 .map_err(|e| DataError::custom("data for CodePointTrie of Script")
@@ -118,19 +122,21 @@ macro_rules! implement {
     ($marker:ident) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
                 load(self, req)
             }
         }
 
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self
-                    .source
-                    .cldr()?
-                    .misc()
-                    .list_langs()?
-                    .map(DataLocale::from)
-                    .collect())
+                Ok(self.source.options.locales.filter_by_langid_equality(
+                    self.source
+                        .cldr()?
+                        .misc()
+                        .list_langs()?
+                        .map(DataLocale::from)
+                        .collect(),
+                ))
             }
         }
     };

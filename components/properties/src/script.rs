@@ -188,17 +188,14 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// ```
     /// use icu::properties::{script, Script};
-    /// let data =
-    ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let swe = data.as_borrowed();
+    /// let swe = script::script_with_extensions();
     ///
     /// assert!(swe
     ///     .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
     ///     .contains(&Script::Grantha));
     /// ```
     pub fn contains(&self, x: &Script) -> bool {
-        ZeroSlice::binary_search(&*self.values, x).is_ok()
+        ZeroSlice::binary_search(self.values, x).is_ok()
     }
 
     /// Gets an iterator over the elements.
@@ -207,10 +204,7 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// ```
     /// use icu::properties::{script, Script};
-    /// let data =
-    ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let swe = data.as_borrowed();
+    /// let swe = script::script_with_extensions();
     ///
     /// assert_eq!(
     ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
@@ -220,7 +214,7 @@ impl ScriptExtensionsSet<'_> {
     /// );
     /// ```
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + '_ {
-        ZeroSlice::iter(&*self.values)
+        ZeroSlice::iter(self.values)
     }
 
     /// For accessing this set as an array instead of an iterator
@@ -236,17 +230,19 @@ impl ScriptExtensionsSet<'_> {
         self.values.get(index)
     }
 }
+
 /// A wrapper around script extensions data. Can be obtained via [`load_script_with_extensions_unstable()`] and
 /// related getters.
 ///
 /// Most useful methods are on [`ScriptWithExtensionsBorrowed`] obtained by calling [`ScriptWithExtensions::as_borrowed()`]
+#[derive(Debug)]
 pub struct ScriptWithExtensions {
     data: DataPayload<ScriptWithExtensionsPropertyV1Marker>,
 }
 
 /// A borrowed wrapper around script extension data, returned by
 /// [`ScriptWithExtensions::as_borrowed()`]. More efficient to query.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct ScriptWithExtensionsBorrowed<'a> {
     data: &'a ScriptWithExtensionsPropertyV1<'a>,
 }
@@ -279,8 +275,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let swe = data.as_borrowed();
+    /// let swe = script::script_with_extensions();
     ///
     /// // U+0640 ARABIC TATWEEL
     /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // main Script value
@@ -373,8 +368,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let swe = data.as_borrowed();
+    /// let swe = script::script_with_extensions();
     ///
     /// assert_eq!(
     ///     swe.get_script_extensions_val('𐓐' as u32) // U+104D0 OSAGE CAPITAL LETTER KHA
@@ -425,11 +419,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::unstable();
-    /// let data =
-    ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
-    /// let swe = data.as_borrowed();
+    /// let swe = script::script_with_extensions();
     ///
     /// // U+0650 ARABIC KASRA
     /// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
@@ -475,15 +465,13 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let swe = data.as_borrowed();
+    /// let swe = script::script_with_extensions();
     ///
     /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
     ///
     /// let exp_ranges = vec![
     ///     0x060C..=0x060C, // ARABIC COMMA
-    ///     0x061B..=0x061B, // ARABIC SEMICOLON
-    ///     0x061C..=0x061C, // ARABIC LETTER MARK
+    ///     0x061B..=0x061C, // ARABIC SEMICOLON, ARABIC LETTER MARK
     ///     0x061F..=0x061F, // ARABIC QUESTION MARK
     ///     0x0640..=0x0640, // ARABIC TATWEEL
     ///     0x064B..=0x0655, // ARABIC FATHATAN..ARABIC HAMZA BELOW
@@ -515,9 +503,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.data
             .trie
-            .iter_ranges()
-            .filter(move |cpm_range| {
-                let sc_with_ext = ScriptWithExt(cpm_range.value.0);
+            .iter_ranges_mapped(move |value| {
+                let sc_with_ext = ScriptWithExt(value.0);
                 if sc_with_ext.has_extensions() {
                     self.get_scx_val_using_trie_val(&sc_with_ext.to_unaligned())
                         .iter()
@@ -526,7 +513,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
                     script == sc_with_ext.into()
                 }
             })
-            .map(|cpm_range| RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end()))
+            .filter(|v| v.value)
+            .map(|v| v.range)
     }
 
     /// Returns a [`CodePointInversionList`] for the given [`Script`] which represents all
@@ -537,8 +525,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let swe = data.as_borrowed();
+    /// let swe = script::script_with_extensions();
     ///
     /// let syriac = swe.get_script_extensions_set(Script::Syriac);
     ///
@@ -562,23 +549,14 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     }
 }
 
-/// Returns a [`ScriptWithExtensionsPropertyV1`] struct that represents the data for the Script
+/// Returns a [`ScriptWithExtensionsBorrowed`] struct that represents the data for the Script
 /// and Script_Extensions properties.
-///
-/// [📚 Help choosing a constructor](icu_provider::constructors)
-/// <div class="stab unstable">
-/// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-/// </div>
 ///
 /// # Examples
 ///
 /// ```
 /// use icu::properties::{script, Script};
-///
-/// let data =
-///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
-///         .expect("The data should be valid");
-/// let swe = data.as_borrowed();
+/// let swe = script::script_with_extensions();
 ///
 /// // get the `Script` property value
 /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // U+0640 ARABIC TATWEEL
@@ -625,6 +603,31 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
 /// assert!(syriac.contains32(0x0700)); // SYRIAC END OF PARAGRAPH
 /// assert!(syriac.contains32(0x074A)); // SYRIAC BARREKH
 /// ```
+///
+/// ✨ **Enabled with the `"data"` feature.**
+///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
+#[cfg(feature = "data")]
+pub const fn script_with_extensions() -> ScriptWithExtensionsBorrowed<'static> {
+    ScriptWithExtensionsBorrowed {
+        data: crate::provider::Baked::SINGLETON_PROPS_SCX_V1,
+    }
+}
+
+icu_provider::gen_any_buffer_data_constructors!(
+    locale: skip,
+    options: skip,
+    result: Result<ScriptWithExtensions, PropertiesError>,
+    #[cfg(skip)]
+    functions: [
+        script_with_extensions,
+        load_script_with_extensions_with_any_provider,
+        load_script_with_extensions_with_buffer_provider,
+        load_script_with_extensions_unstable,
+    ]
+);
+
+#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, script_with_extensions)]
 pub fn load_script_with_extensions_unstable(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
 ) -> Result<ScriptWithExtensions, PropertiesError> {
@@ -634,14 +637,3 @@ pub fn load_script_with_extensions_unstable(
             .and_then(DataResponse::take_payload)?,
     ))
 }
-
-icu_provider::gen_any_buffer_constructors!(
-    locale: skip,
-    options: skip,
-    result: Result<ScriptWithExtensions, PropertiesError>,
-    functions: [
-        load_script_with_extensions_unstable,
-        load_script_with_extensions_with_any_provider,
-        load_script_with_extensions_with_buffer_provider
-    ]
-);

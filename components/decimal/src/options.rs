@@ -13,6 +13,12 @@ pub struct FixedDecimalFormatterOptions {
     pub grouping_strategy: GroupingStrategy,
 }
 
+impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
+    fn from(grouping_strategy: GroupingStrategy) -> Self {
+        Self { grouping_strategy }
+    }
+}
+
 /// Configuration for how often to render grouping separators.
 ///
 /// # Examples
@@ -27,12 +33,11 @@ pub struct FixedDecimalFormatterOptions {
 /// let locale = Locale::UND;
 /// let mut options: options::FixedDecimalFormatterOptions = Default::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
-/// let fdf = FixedDecimalFormatter::try_new_unstable(
-///     &icu_testdata::unstable(),
+/// let fdf = FixedDecimalFormatter::try_new(
 ///     &locale.into(),
 ///     options,
 /// )
-/// .expect("Data should load successfully");
+/// .expect("locale should be present");
 ///
 /// let one_thousand = 1000.into();
 /// assert_writeable_eq!(fdf.format(&one_thousand), "1000");

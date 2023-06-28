@@ -10,7 +10,7 @@
 # If you are a frequent contributor, you can add the key to your fork. The key is shared with
 # icu4x collaborators and can be viewed here:
 #
-# https://drive.google.com/file/d/17-oMqRfuHOHL9hYp64NYOh8vcJ03DQHm/view
+# https://drive.google.com/file/d/1LHq_sUb5NgpfDrJBcp3EsJFiUmoDbj36/view
 #
 # To add the key, follow these steps:
 #
@@ -28,6 +28,15 @@ name: Artifacts Build
 on:
   push
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  GCP_PROJECT_ID: "dev-infra-273822"
+  GCP_BUCKET_ID: "icu4x-pr-artifacts"
+
 jobs:
   credentials:
     name: "Check Credentials"
@@ -42,28 +51,36 @@ jobs:
           echo "GCP key not found. Docs previews will not be uploaded. If you are a frequent contributor, you may add the key to your fork; for instructions, see 'artifacts-build.yml'"
           exit 1;
         fi
+
   docs:
     name: "Docs Preview"
     needs: credentials
     runs-on: "ubuntu-latest"
-    env:
-      GCP_PROJECT_ID: "dev-infra-273822"
-      GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
-    - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
-      with:
-        project_id: ${{ env.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
-        export_default_credentials: true
+    - uses: actions/checkout@v3
+
     - name: Build docs
       uses: actions-rs/cargo@v1
       with:
         command: doc
-        args: --workspace --release --all-features --no-deps
+        # Exclude tool and derive crates
+        args: >
+          --workspace --release --all-features --no-deps --lib 
+          --exclude icu_benchmark_macros
+          --exclude icu_ffi_coverage
+          --exclude icu_provider_macros
+          --exclude tutorials-test
+          --exclude databake-derive
+          --exclude yoke-derive
+          --exclude zerofrom-derive
+          --exclude zerovec-derive
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/setup-gcloud@v0.6.2
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
     - name: Upload docs to Google Cloud Storage
       run: |
         gsutil -m cp -r target/doc gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs
@@ -77,25 +94,20 @@ jobs:
     name: "FFI Preview"
     needs: credentials
     runs-on: "ubuntu-latest"
-    env:
-      GCP_PROJECT_ID: "dev-infra-273822"
-      GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
-    - uses: actions/checkout@v2
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
-      with:
-        project_id: ${{ env.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
-        export_default_credentials: true
+    - uses: actions/checkout@v3
+
     - name: Install Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
     - name: Install Sphinx
       uses: BSFishy/pip-action@v1
       with:
         packages: |
           sphinx
           sphinx-rtd-theme
+
     - name: Build CPP docs
       run: |
         cd ffi/diplomat/cpp/docs
@@ -106,6 +118,13 @@ jobs:
         cd ffi/diplomat/js/docs
         make html
         cd ../../../..
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/setup-gcloud@v0.6.2
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
     - name: Upload docs to Google Cloud Storage
       run: |
         gsutil -m cp -r ffi/diplomat/cpp/docs/build/html gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
@@ -120,22 +139,14 @@ jobs:
         echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/js/index.html"
         echo "::endgroup::"
 
-  webpack:
+  wasm-demo:
+    # This is too expensive to run on every push, so only run it on main.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     name: WASM Demo
     needs: credentials
     runs-on: "ubuntu-latest"
-    env:
-      GCP_PROJECT_ID: "dev-infra-273822"
-      GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
-      with:
-        project_id: ${{ env.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
-        export_default_credentials: true
+    - uses: actions/checkout@v3
 
     - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
@@ -144,11 +155,15 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
 
-    - name: Init
-      # Note: --foreground-scripts makes npm forward the output of build.sh
+    - name: Init node package
       run: |
-        cd ffi/diplomat/js/examples/wasm-demo
-        npm ci --foreground-scripts
+        cd ffi/diplomat/js/examples/node
+        make lib
+        make icu_capi.wasm
+        # Manually running datagen with the required keys
+        cargo run -p icu_datagen -- --key-file ../wasm-demo/required-keys.txt --locales full --format blob --out data.postcard
+        cd ../wasm-demo
+        npm ci
 
     - name: Run Webpack
       run: |
@@ -160,7 +175,14 @@ jobs:
         cp ffi/diplomat/js/examples/wasm-demo/index.html ffi/diplomat/js/examples/wasm-demo/dist/index.html
         printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/diplomat/js/examples/wasm-demo/dist/index.js
 
-    - name: Upload Webpack bundle to Google Cloud Storage
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/setup-gcloud@v0.6.2
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
+    - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
         # gsutil cors set ffi/diplomat/js/examples/wasm-demo/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
         gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
@@ -171,43 +193,423 @@ jobs:
         echo "https://storage.googleapis.com/icu4x-pr-artifacts/gha/${{ github.sha }}/wasm-demo/index.html"
         echo "::endgroup::"
 
-    #   TODO(qnnokabayashi): This was my attempt to get it to copy the HTML to
-    #     the `gh-pages` branch. As of 8/1/2022, idea is that
-    #     `index.html` contains the structure for
-    #     the demo. It needs to call into the Webpacked JavaScript. When testing
-    #     locally, this content is in `dist/`, but
-    #     when deployed, it lives in Google Cloud Storage. But we don't want to
-    #     be editing this arbitrarily complex HTML file in CI. The solution was
-    #     to have it call a very simple `index.js` file which modifies the HTML
-    #     and tells it where to get the script from. Locally, this lives next to
-    #     `index.html` at `index.js`, and contains
-    #     the following:
-    #       ```js
-    #       const gcs = document.createElement('script');
-    #       gcs.setAttribute('src', './dist/bundle.js');
-    #       document.body.appendChild(gcs);
-    #       ```
-    #     The plan was to rewrite this file in CI to point into GCS instead of
-    #     `./dist/bundle.js`, and then commit and push the original `index.html`
-    #     and this new `index.js` to the `gh-pages` branch. That way, when a
-    #     browser visited the Github page, `index.html` would read `index.js`,
-    #     which would then point the browser to get `bundle.js` from GCS.
-    #     
-    #     This was my attempt to make that work, but I couldn't quite figure out
-    #     how to push to `gh-pages`.
-    #     
-    # - name: Store index.html
-    #   run: |
-    #     cp index.html /tmp/wasm-demo-index.html
-    # - name: Checkout gh-pages
-    #   uses: actions/checkout@v2
-    #   with:
-    #     ref: gh-pages
-    # - name: Retrieve index.html
-    #   run: |
-    #     rm -rf wasm-demo-app
-    #     mkdir wasm-demo-app
-    #     printf "const gcs=document.createElement('script');gcs.setAttribute('src','https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/bundle.js');document.body.appendChild(gcs);" ${{ github.sha }} > wasm-demo-app/index.js
-    #     cp /tmp/wasm-demo-index.html wasm-demo-app/index.html
-    #     git diff-index --quiet HEAD || git commit -m "add wasm demo for ${{ github.sha }}"
-    #     git push
+  bench-perf:
+    # This is too expensive to run on every push, so only run it on main.
+    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        component:
+          - components/locid
+          - components/plurals
+          - components/datetime
+          - components/collections
+          - utils/fixed_decimal
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-perf-${{ matrix.component }}
+
+    # If you are modifying and debugging is required, don't be afraid to get
+    # messy in a personal fork, if no better way to do it.
+    # Example "debugging" workflow: https://github.com/echeran/icu4x/actions/runs/296714990
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+    # Actual job
+
+    - name: Setup output data directory
+      run: |
+        mkdir -p benchmarks/perf/${{ matrix.component }}
+
+    - name: Run benchmark
+      run: |
+        cargo bench --features bench --manifest-path ${{ matrix.component }}/Cargo.toml -- --output-format bencher | tee benchmarks/perf/${{ matrix.component }}/output.txt;
+
+    - name:  Download previous benchmark data
+      run: |
+        # We're on main, so the previous run is the parent.
+        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
+
+    - name: Store benchmark result & create dashboard
+      uses: rhysd/github-action-benchmark@v1.15.0
+      with:
+        name: Rust Benchmark
+        tool: 'cargo'
+        output-file-path: ./benchmarks/perf/${{ matrix.component }}/output.txt
+        benchmark-data-dir-path: ./benchmarks/perf/${{ matrix.component }}
+        # Show alert with commit comment on detecting possible performance regression
+        alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
+        fail-on-alert: true
+        comment-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: empty
+        alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
+
+    - name: Authenticate to Google Cloud
+      if: success() || failure()
+      uses: google-github-actions/setup-gcloud@v0.6.2
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
+    - name: Upload new benchmark data
+      if: success() || failure()
+      run: |
+          git checkout empty
+          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf/${{ matrix.component }}
+
+  # Run examples with dhat-rs in order to collect memory heap size metrics. These
+  # metrics will then be charted over time. See tools/benchmark/memory/README.md for
+  # more information.
+
+  # dhat-rs:
+  #   https://github.com/nnethercote/dhat-rs
+  # Benchmarking action (forked):
+  #   https://github.com/gregtatum/github-action-benchmark
+  # The memory data is collected in:
+  #   benchmarks/memory/{os}/output.ndjson
+  # The full data report is stored in:
+  #   benchmarks/memory/{os}/{example}-dhat-heap.json
+
+  bench-memory:
+    # This is too expensive to run on every push, so only run it on main.
+    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    strategy:
+      fail-fast: false
+      # Create a matrix of all platforms, and all components. Each job then can run
+      # multiple examples in that job. The examples are defined as a space separated
+      # list of the name of the examples. The examples are assumed to be in the
+      # examples folder.
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        # The list of examples to run, with the form {package}/{example}.
+        #
+        # n.b. Don't get tripped up by the yml syntax here. This is a list with a single string
+        # entry. It is using the block chomping indicator ">-", which means the multiline string
+        # will be joined together into one line using a single space between each line. This
+        # will place all of the examples on the same line so they can get passed to the
+        # icu_benchmark_memory cli.
+        examples:
+          - >-
+              icu_calendar/iso_date_manipulations
+              icu_calendar/iso_datetime_manipulations
+              icu_datetime/work_log
+              icu_list/and_list
+              icu_locid/syntatically_canonicalize_locales
+              icu_locid/filter_langids
+              icu_plurals/unread_emails
+              icu_plurals/elevator_floors
+              icu_collections/unicode_bmp_blocks_selector
+              fixed_decimal/permyriad
+              writeable/writeable_message
+              litemap/language_names_lite_map
+    runs-on: ${{ matrix.os }}
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-memory-${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+    # Actual job
+
+    - name: Run the example with dhat-rs to collect memory information
+      run: |
+        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+      with:
+        version: '>= 417.0.0'
+        skip_install:  ${{ matrix.os }} == "ubuntu-latest" # preinstalled
+
+    - name:  Download previous benchmark data
+      if: matrix.os != 'windows-latest'
+      run: |
+        # We're on main, so the previous run is the parent.
+        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
+
+    - name:  Download previous benchmark data
+      if: matrix.os == 'windows-latest'
+      run: |
+        # We're on main, so the previous run is the parent.
+        $BASELINE = git log --pretty=format:'%H' -1 -r HEAD^
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
+
+    - name: Store benchmark result & create dashboard
+      # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
+      # If the PR gets merged, this can be switched back to the main project.
+      # https://github.com/rhysd/github-action-benchmark/pull/54
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        name: Heap – ${{ matrix.os }}
+        # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
+        tool: 'ndjson'
+        benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}
+        output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
+        alert-threshold: '200%'
+        fail-on-alert: true
+        comment-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: empty
+        alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
+
+    - name: Authenticate to Google Cloud
+      if: success() || failure()
+      uses: google-github-actions/setup-gcloud@v0.6.2
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
+    - name: Upload new benchmark data
+      if: success() || failure()
+      run: |
+          git checkout empty
+          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory/${{ matrix.os }}
+
+  # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
+  bench-binsize:
+    # This is too expensive to run on every push, so only run it on main.
+    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    runs-on: ubuntu-latest
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-binsize
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+    # Job-specific dependencies
+    - name: Install Node.js v16.18.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install npm tools
+      run: |
+        npm install -g wasm-opt
+    
+    # Actual job
+    - name: Build wasm executables
+      run: cargo make wasm-opt
+
+    - name: gzip wasm executables
+      run: (cd wasmpkg/wasm-opt && gzip -k *+opt.wasm)
+
+    - name: Setup output data directory
+      run: |
+        mkdir -p benchmarks/binsize/wasm
+        mkdir -p benchmarks/binsize/gz
+
+    - name: Measure size of executables (wasm)
+      run: |
+        cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt wasm | tee benchmarks/binsize/wasm/output.txt
+
+    - name: Measure size of executables (gz)
+      run: |
+        cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt gz | tee benchmarks/binsize/gz/output.txt
+
+    - name:  Download previous benchmark data
+      run: |
+        mkdir -p benchmarks/binsize
+        # We're on main, so the previous run is the parent.
+        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize benchmarks/binsize
+
+    - name: Store benchmark result & create dashboard (wasm)
+      # Use gregtatum special feature to process ndjson-formatted benchmark data
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        tool: 'ndjson'
+        output-file-path: benchmarks/binsize/wasm/output.txt
+        benchmark-data-dir-path: ./benchmarks/binsize/wasm
+        # Tentative setting, optimized value to be determined
+        alert-threshold: '200%'
+        fail-on-alert: true
+        comment-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: empty
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
+
+    - name: Store benchmark result & create dashboard (gz)
+      if: success() || failure()
+      # Use gregtatum special feature to process ndjson-formatted benchmark data
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        tool: 'ndjson'
+        output-file-path: benchmarks/binsize/gz/output.txt
+        benchmark-data-dir-path: ./benchmarks/binsize/gz
+        # Tentative setting, optimized value to be determined
+        alert-threshold: '200%'
+        fail-on-alert: true
+        comment-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: empty
+        skip-fetch-gh-pages: true
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
+
+    - name: Authenticate to Google Cloud
+      if: success() || failure()
+      uses: google-github-actions/setup-gcloud@v0.6.2
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
+    - name: Upload new benchmark data
+      if: success() || failure()
+      run: |
+          git checkout empty
+          gsutil -m cp -r benchmarks/binsize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/binsize
+
+  # Data size benchmark: track size of provider/testdata/data/testdata.postcard (total data size).
+  bench-datasize:
+    # This is too expensive to run on every push, so only run it on main.
+    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-datasize
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    - name: Setup output data directory
+      run: |
+        mkdir -p benchmarks/datasize
+
+    - name: Measure size of selected data package provider/testdata/data/testdata.postcard
+      run: |
+        cargo run --package icu_benchmark_binsize  -- provider/testdata/data/testdata.postcard file | tee benchmarks/datasize/output.txt
+
+    - name:  Download previous benchmark data
+      run: |
+        mkdir -p benchmarks
+        # We're on main, so the previous run is the parent.
+        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
+
+    - name: Store benchmark result & create dashboard
+      # Use gregtatum special feature to process ndjson-formatted benchmark data
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        tool: 'ndjson'
+        output-file-path: benchmarks/datasize/output.txt
+        benchmark-data-dir-path: ./benchmarks/datasize
+        # Tentative setting, optimized value to be determined
+        alert-threshold: '100%'
+        fail-on-alert: true
+        comment-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: empty
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
+
+    - name: Authenticate to Google Cloud
+      if: success() || failure()
+      uses: google-github-actions/setup-gcloud@v0.6.2
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
+    - name: Upload new benchmark data
+      if: success() || failure()
+      run: |
+          git checkout empty
+          gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/datasize
+
+  gh-pages:
+    name: "Copy artifacts to gh-pages branch"
+    needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
+    # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
+    if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
+    runs-on: 'ubuntu-latest'
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download artifacts
+        run: |
+          gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks tools/website-skeleton/ || true
+          gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs tools/website-skeleton || true
+          mkdir -p tools/website-skeleton/docs/ffi
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo tools/website-skeleton/ || true
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'tools/website-skeleton'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

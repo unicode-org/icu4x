@@ -13,19 +13,11 @@
 
 #include "ICU4XWeekRelativeUnit.hpp"
 
-/**
- * A destruction policy for using ICU4XWeekOf with std::unique_ptr.
- */
-struct ICU4XWeekOfDeleter {
-  void operator()(capi::ICU4XWeekOf* l) const noexcept {
-    capi::ICU4XWeekOf_destroy(l);
-  }
-};
 
 /**
  * 
  * 
- * See the [Rust documentation for `WeekOf`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekOf.html) for more information.
+ * See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
  */
 struct ICU4XWeekOf {
  public:

@@ -18,11 +18,16 @@ pub mod binary {
     pub struct Main {
         #[serde(default)]
         pub binary_property: Vec<BinaryProperty>,
-        #[serde(skip)]
-        pub enum_property: (),
-        #[serde(skip)]
-        pub script_extensions: (),
     }
+}
+
+#[derive(serde::Deserialize)]
+pub struct PropertyValue {
+    pub discr: u32,
+    pub long: String,
+    pub short: Option<String>,
+    #[serde(default)]
+    pub aliases: Vec<String>,
 }
 
 pub mod enumerated {
@@ -38,18 +43,55 @@ pub mod enumerated {
     pub struct EnumeratedPropertyMap {
         pub long_name: String,
         pub short_name: String,
+        pub values: Vec<super::PropertyValue>,
         pub ranges: Vec<EnumeratedPropertyMapRange>,
         pub code_point_trie: super::CodePointTrieToml,
     }
 
     #[derive(serde::Deserialize)]
     pub struct Main {
-        #[serde(skip)]
-        pub binary_property: (),
         #[serde(default)]
         pub enum_property: Vec<EnumeratedPropertyMap>,
-        #[serde(skip)]
-        pub script_extensions: (),
+    }
+}
+
+pub mod code_point_prop {
+    #[derive(serde::Deserialize)]
+    pub struct CodePointPropertyMapRange {
+        pub a: u32,
+        pub b: u32,
+        pub v: u32,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct CodePointPropertyMap {
+        pub long_name: String,
+        pub short_name: String,
+        pub ranges: Vec<CodePointPropertyMapRange>,
+        pub code_point_trie: super::CodePointTrieToml,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct Main {
+        // TODO: update icuexportdata to print a different TOML header than "enum_property"
+        #[serde(default)]
+        pub enum_property: Vec<CodePointPropertyMap>,
+    }
+}
+
+pub mod mask {
+    #[derive(serde::Deserialize)]
+    pub struct MaskPropertyMap {
+        pub long_name: String,
+        pub short_name: String,
+        pub mask_for: String,
+        pub values: Vec<super::PropertyValue>,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct Main {
+        #[serde(default)]
+        pub mask_property: Vec<MaskPropertyMap>,
     }
 }
 
@@ -66,10 +108,6 @@ pub mod script_extensions {
 
     #[derive(serde::Deserialize)]
     pub struct Main {
-        #[serde(skip)]
-        pub binary_property: (),
-        #[serde(skip)]
-        pub enum_property: (),
         #[serde(default)]
         pub script_extensions: Vec<ScriptWithExtensionsPropertyV1Property>,
     }

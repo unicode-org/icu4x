@@ -26,7 +26,9 @@ struct ICU4XLocaleFallbackerWithConfigDeleter {
 /**
  * An object that runs the ICU4X locale fallback algorithm with specific configurations.
  * 
- * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
+ * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html) for more information.
+ * 
+ * See the [Rust documentation for `LocaleFallbackerConfig`](https://docs.rs/icu/latest/icu/locid/fallback/struct.LocaleFallbackerConfig.html) for more information.
  */
 class ICU4XLocaleFallbackerWithConfig {
  public:
@@ -34,7 +36,7 @@ class ICU4XLocaleFallbackerWithConfig {
   /**
    * Creates an iterator from a locale with each step of fallback.
    * 
-   * See the [Rust documentation for `fallback_for`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackerWithConfig.html#method.fallback_for) for more information.
+   * See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */

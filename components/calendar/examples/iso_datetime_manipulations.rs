@@ -40,7 +40,7 @@ fn print<A: Calendar>(_datetime_input: &DateTime<A>) {
             u8::from(_datetime_input.time.second),
         );
 
-        println!("{}", formatted_datetime);
+        println!("{formatted_datetime}");
     }
 }
 

@@ -32,6 +32,11 @@ impl<P0, P1, F> ForkByErrorProvider<P0, P1, F> {
         (&self.0, &self.1)
     }
 
+    /// Returns mutable references to the inner providers.
+    pub fn inner_mut(&mut self) -> (&mut P0, &mut P1) {
+        (&mut self.0, &mut self.1)
+    }
+
     /// Returns ownership of the inner providers to the caller.
     pub fn into_inner(self) -> (P0, P1) {
         (self.0, self.1)
@@ -120,6 +125,7 @@ where
 ///
 /// [`MultiForkByErrorProvider`] does not support forking between [`DataProvider`]s. However, it
 /// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
+#[derive(Debug)]
 pub struct MultiForkByErrorProvider<P, F> {
     providers: Vec<P>,
     predicate: F,
@@ -142,9 +148,19 @@ impl<P, F> MultiForkByErrorProvider<P, F> {
         &self.providers
     }
 
+    /// Exposes a mutable vector of providers to a closure so it can be mutated.
+    pub fn with_inner_mut(&mut self, f: impl FnOnce(&mut Vec<P>)) {
+        f(&mut self.providers)
+    }
+
     /// Returns ownership of the inner providers to the caller.
     pub fn into_inner(self) -> Vec<P> {
         self.providers
+    }
+
+    /// Adds an additional child provider.
+    pub fn push(&mut self, provider: P) {
+        self.providers.push(provider);
     }
 }
 
@@ -158,15 +174,16 @@ where
         key: DataKey,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let mut last_error = DataErrorKind::MissingDataKey.with_key(key);
         for provider in self.providers.iter() {
             let result = provider.load_buffer(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
-                _ => (),
+                Err(err) => last_error = err,
             };
         }
-        Err(DataErrorKind::MissingDataKey.with_key(key))
+        Err(last_error)
     }
 }
 
@@ -176,15 +193,16 @@ where
     F: ForkByErrorPredicate,
 {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        let mut last_error = DataErrorKind::MissingDataKey.with_key(key);
         for provider in self.providers.iter() {
             let result = provider.load_any(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
-                _ => (),
+                Err(err) => last_error = err,
             };
         }
-        Err(DataErrorKind::MissingDataKey.with_key(key))
+        Err(last_error)
     }
 }
 
@@ -195,15 +213,16 @@ where
     F: ForkByErrorPredicate,
 {
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let mut last_error = DataErrorKind::MissingDataKey.with_key(key);
         for provider in self.providers.iter() {
             let result = provider.load_data(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
-                _ => (),
+                Err(err) => last_error = err,
             };
         }
-        Err(DataErrorKind::MissingDataKey.with_key(key))
+        Err(last_error)
     }
 }
 
@@ -215,15 +234,16 @@ where
     F: ForkByErrorPredicate,
 {
     fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+        let mut last_error = DataErrorKind::MissingDataKey.with_key(key);
         for provider in self.providers.iter() {
             let result = provider.supported_locales_for_key(key);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(key, None, err) => return Err(err),
-                _ => (),
+                Err(err) => last_error = err,
             };
         }
-        Err(DataErrorKind::MissingDataKey.with_key(key))
+        Err(last_error)
     }
 }
 
@@ -240,6 +260,7 @@ where
         key: DataKey,
         mut from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
+        let mut last_error = DataErrorKind::MissingDataKey.with_key(key);
         for provider in self.providers.iter() {
             let result = provider.convert(key, from);
             match result {
@@ -250,10 +271,11 @@ where
                         return Err((returned, err));
                     }
                     from = returned;
+                    last_error = err;
                 }
             };
         }
-        Err((from, DataErrorKind::MissingDataKey.with_key(key)))
+        Err((from, last_error))
     }
 }
 

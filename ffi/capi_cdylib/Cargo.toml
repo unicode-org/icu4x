@@ -5,11 +5,13 @@
 [package]
 name = "icu_capi_cdylib"
 description = "C interface to ICU4X"
-version = "1.0.0"
+version = "1.2.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 resolver = "2"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -32,9 +34,9 @@ crate-type = ["cdylib"]
 path = "src/lib.rs"
 
 [dependencies]
-icu_capi = { version = "1.0.0", path = "../diplomat", default-features = false }
+icu_capi = { version = "1.2.0", path = "../diplomat", default-features = false }
 # Included to allow syntax selection
-icu_provider = { version = "1.0.0", path = "../../provider/core", default-features = false }
+icu_provider = { version = "1.2.0", path = "../../provider/core", default-features = false }
 
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]
@@ -49,8 +51,5 @@ wasm_default = ["icu_capi/wasm_default"]
 cpp_default = ["icu_capi/cpp_default"]
 
 [package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI.
-# logging enables a feature of a dependency that has no externally visible API changes
-# serde enables dependency features but buffer_provider affects the actual code
-# wasm_default and cpp_default are metafeatures
-denylist = ["bench", "serde", "logging", "wasm_default", "cpp_default"]
+# Tested by icu_capi
+skip_feature_sets = [[]]

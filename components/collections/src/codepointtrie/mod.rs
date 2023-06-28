@@ -50,5 +50,5 @@ pub use cptrie::TrieType;
 pub use cptrie::TrieValue;
 pub use error::Error as CodePointTrieError;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use CodePointTrieError as Error;

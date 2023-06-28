@@ -4,7 +4,8 @@
 
 [package]
 name = "litemap"
-version = "0.6.0"
+version = "0.7.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
 edition = "2021"
@@ -24,23 +25,26 @@ include = [
     "README.md"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 serde = {version = "1", optional = true, default-features = false, features = ["alloc"]}
-yoke = { version = "0.6.0", path = "../yoke", features = ["derive"], optional = true }
+yoke = { version = "0.7.1", path = "../yoke", features = ["derive"], optional = true }
 
 [dev-dependencies]
+bincode = "1"
+bytecheck = "0.6"
+criterion = "0.4"
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+icu_locid = { path = "../../components/locid" }
+postcard = { version = "1.0.0", features = ["use-std"], default-features = false }
+rkyv = { version = "0.7", features = ["validation"] }
 serde = "1"
 serde_json = "1"
-rkyv = { version = "0.7", features = ["validation"] }
-bytecheck = "0.6"
-bincode = "1"
-postcard = { version = "1.0.0", features = ["use-std"] }
-icu_locid = { version = "1.0.0", path = "../../components/locid" }
-icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
-criterion = "0.3.4"
 
 [features]
 bench = []
@@ -49,6 +53,10 @@ alloc = []
 
 # Enables the `testing` module with tools for testing custom stores.
 testing = ["alloc"]
+
+[package.metadata.cargo-all-features]
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [[test]]
 name = "serde"

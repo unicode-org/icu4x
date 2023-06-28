@@ -4,11 +4,11 @@
 
 use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
-use crate::yoke::*;
 use alloc::boxed::Box;
 use databake::{Bake, CrateEnv, TokenStream};
+use yoke::*;
 
-trait ExportableYoke {
+trait ExportableDataPayload {
     fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
     fn serialize_yoke(
         &self,
@@ -16,10 +16,9 @@ trait ExportableYoke {
     ) -> Result<(), DataError>;
 }
 
-impl<Y, C> ExportableYoke for Yoke<Y, C>
+impl<M: DataMarker> ExportableDataPayload for DataPayload<M>
 where
-    Y: for<'a> Yokeable<'a>,
-    for<'a> <Y as Yokeable<'a>>::Output: Bake + serde::Serialize,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
 {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
@@ -40,18 +39,26 @@ where
 #[doc(hidden)] // exposed for make_exportable_provider
 #[derive(yoke::Yokeable)]
 pub struct ExportBox {
-    payload: Box<dyn ExportableYoke + Sync>,
+    payload: Box<dyn ExportableDataPayload + Sync + Send>,
+}
+
+impl core::fmt::Debug for ExportBox {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("ExportBox")
+            .field("payload", &"<payload>")
+            .finish()
+    }
 }
 
 impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DataMarker,
-    M::Yokeable: Sync,
+    M::Yokeable: Sync + Send,
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
-            payload: Box::new(other.yoke),
+            payload: Box::new(other),
         })
     }
 }
@@ -76,7 +83,7 @@ impl DataPayload<ExportMarker> {
     /// export
     ///     .serialize(&mut serde_json::Serializer::new(&mut buffer))
     ///     .expect("Serialization should succeed");
-    /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
+    /// assert_eq!(r#"{"message":"(und) Hello World"}"#.as_bytes(), buffer);
     /// ```
     pub fn serialize<S>(&self, serializer: S) -> Result<(), DataError>
     where
@@ -109,7 +116,7 @@ impl DataPayload<ExportMarker> {
     /// let tokens = export.tokenize(&env);
     /// assert_eq!(
     ///     quote! {
-    ///         ::icu_provider::hello_world::HelloWorldV1 {
+    ///         icu_provider::hello_world::HelloWorldV1 {
     ///             message: alloc::borrow::Cow::Borrowed("(und) Hello World"),
     ///         }
     ///     }
@@ -130,6 +137,7 @@ impl DataPayload<ExportMarker> {
 
 /// Marker type for [`ExportBox`].
 #[allow(clippy::exhaustive_structs)] // marker type
+#[derive(Debug)]
 pub struct ExportMarker {}
 
 impl DataMarker for ExportMarker {

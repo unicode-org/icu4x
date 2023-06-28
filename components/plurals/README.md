@@ -2,10 +2,10 @@
 
 Determine the plural category appropriate for a given number in a given language.
 
-This module is published as its own crate ([`icu_plural`](https://docs.rs/icu_plural/latest/icu_plural/))
+This module is published as its own crate ([`icu_plurals`](https://docs.rs/icu_plurals/latest/icu_plurals/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
-For example in English language, when constructing a message
+For example in English, when constructing a message
 such as `{ num } items`, the user has to prepare
 two variants of the message:
 
@@ -15,9 +15,9 @@ two variants of the message:
 The former variant is used when the placeholder variable has value `1`,
 while the latter is used for all other values of the variable.
 
-Unicode defines [`Language Plural Rules`] as a mechanism to codify those
+Unicode defines [Language Plural Rules] as a mechanism to codify those
 variants and provides data and algorithms to calculate
-appropriate [`Plural Category`].
+appropriate [`PluralCategory`].
 
 ## Examples
 
@@ -25,12 +25,11 @@ appropriate [`Plural Category`].
 use icu::locid::locale;
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 
-let pr = PluralRules::try_new_unstable(
-    &icu_testdata::unstable(),
+let pr = PluralRules::try_new(
     &locale!("en").into(),
     PluralRuleType::Cardinal,
 )
-.expect("Failed to construct a PluralRules struct.");
+.expect("locale should be present");
 
 assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 ```
@@ -38,30 +37,26 @@ assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 ### Plural Rules
 
 The crate provides the main struct [`PluralRules`] which handles selection
-of the correct [`Plural Category`] for a given language and [`Plural Type`].
+of the correct [`PluralCategory`] for a given language and [`PluralRuleType`].
 
 ### Plural Category
 
-Every number in every language belongs to a certain [`Plural Category`].
-For example, Polish language uses four:
+Every number in every language belongs to a certain [`PluralCategory`].
+For example, the Polish language uses four:
 
 * [`One`](PluralCategory::One): `1 miesiąc`
 * [`Few`](PluralCategory::Few): `2 miesiące`
 * [`Many`](PluralCategory::Many): `5 miesięcy`
 * [`Other`](PluralCategory::Other): `1.5 miesiąca`
 
-### Plural Rule Type
+### `PluralRuleType`
 
 Plural rules depend on the use case. This crate supports two types of plural rules:
 
 * [`Cardinal`](PluralRuleType::Cardinal): `3 doors`, `1 month`, `10 dollars`
 * [`Ordinal`](PluralRuleType::Ordinal): `1st place`, `10th day`, `11th floor`
 
-[`ICU4X`]: ../icu/index.html
-[`Plural Type`]: PluralRuleType
-[`Plural Category`]: PluralCategory
-[`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
-[`CLDR`]: http://cldr.unicode.org/
+[Language Plural Rules]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 
 ## More Information
 

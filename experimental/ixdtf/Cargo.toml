@@ -5,11 +5,13 @@
 [package]
 name = "ixdtf"
 description = "Parser for Internet eXtended DateTime Format"
-version = "1.0.0-alpha1"
+version = "0.1.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
@@ -23,19 +25,15 @@ include = [
     "README.md"
 ]
 
-[package.metadata.cargo-all-features]
-skip_optional_dependencies = true
+[package.metadata.workspaces]
+independent = true
+
+[package.metadata.docs.rs]
+all-features = true
 
 [dependencies]
 
 [dev-dependencies]
-criterion = "0.3"
+criterion = "0.4"
 icu_testdata = { path = "../../provider/testdata" }
 serde-json-core = { version = "0.4", features = ["std"] }
-
-[lib]
-path = "src/lib.rs"
-bench = false  # This option is required for Benchmark CI
-
-[features]
-default = []

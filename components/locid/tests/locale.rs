@@ -85,7 +85,7 @@ fn test_locale_normalizing_eq_str() {
         helpers::read_fixture(path).expect("Failed to read a fixture");
     for test in tests {
         let parsed: Locale = test.input.try_into().expect("Parsing failed.");
-        assert!(parsed.normalizing_eq(&*parsed.write_to_string()));
+        assert!(parsed.normalizing_eq(&parsed.write_to_string()));
     }
 
     // Check that trailing characters are not ignored
@@ -104,7 +104,7 @@ fn test_locale_strict_cmp() {
             fixtures::LocaleInfo::Identifier(ref s) => s.identifier.as_str(),
             _ => match t.output {
                 fixtures::LocaleInfo::Identifier(ref s) => s.identifier.as_str(),
-                _ => panic!("No string in fixture input or output: {:?}", t),
+                _ => panic!("No string in fixture input or output: {t:?}"),
             },
         })
         .collect::<Vec<&str>>();
@@ -114,7 +114,7 @@ fn test_locale_strict_cmp() {
             let a_normalized = a_langid.write_to_string();
             let string_cmp = a_normalized.as_bytes().cmp(b.as_bytes());
             let test_cmp = a_langid.strict_cmp(b.as_bytes());
-            assert_eq!(string_cmp, test_cmp, "{:?}/{:?}", a, b);
+            assert_eq!(string_cmp, test_cmp, "{a:?}/{b:?}");
         }
     }
 }

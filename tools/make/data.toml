@@ -1,0 +1,217 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# This is a cargo-make file included in the toplevel Makefile.toml
+
+###### CI TASKS
+
+[tasks.testdata]
+description = "Rebuild all ICU4X testdata from source data checked into the repository"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=make-testdata",
+]
+
+[tasks.testdata-check]
+description = "Rebuild ICU4X testdata and ensure that the working copy is clean"
+category = "ICU4X Data"
+dependencies = [
+    "testdata",
+    "testdata-hello-world",
+    "download-repo-sources",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1 provider/testdata/data provider/fs/tests/data provider/blob/tests/data provider/repodata
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    msg = array "" ""
+    array_push ${msg} "Test data needs to be updated. Please run `cargo make testdata` and `cargo make testdata-hello-world:"
+    array_push ${msg} ""
+    array_push ${msg} "${output.stdout}"
+    msg = array_join ${msg} "\n"
+    trigger_error ${msg}
+end
+'''
+
+[tasks.testdata-hello-world-json]
+description = "Build the Hello World JSON tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--keys=core/helloworld@1",
+    "--locales=full",
+    "--format=dir",
+    "--out=provider/fs/tests/data/json",
+    "--overwrite",
+]
+
+[tasks.testdata-hello-world-bincode]
+description = "Build the Hello World bincode tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--keys=core/helloworld@1",
+    "--locales=full",
+    "--format=dir",
+    "--syntax=bincode",
+    "--out=provider/fs/tests/data/bincode",
+    "--overwrite",
+]
+
+[tasks.testdata-hello-world-postcard]
+description = "Build the Hello World postcard tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--keys=core/helloworld@1",
+    "--locales=full",
+    "--format=dir",
+    "--syntax=postcard",
+    "--out=provider/fs/tests/data/postcard",
+    "--overwrite",
+]
+
+[tasks.testdata-hello-world-blob]
+description = "Build the Hello World postcard testdata file."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--keys=core/helloworld@1",
+    "--locales=full",
+    "--format=blob",
+    "--out=provider/blob/tests/data/hello_world.postcard",
+    "--overwrite",
+]
+
+[tasks.testdata-hello-world]
+description = "Build all three the Hello World outputs."
+category = "ICU4X Data"
+dependencies = [
+    "testdata-hello-world-json",
+    "testdata-hello-world-bincode",
+    "testdata-hello-world-postcard",
+    "testdata-hello-world-blob",
+]
+
+[tasks.bakeddata]
+description = "Builds full baked data"
+category = "ICU4X Data"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+if array_is_empty ${@}
+    mode = set "--release"
+    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemapping experimental/compactdecimal experimental/displaynames experimental/relativetime
+else
+    mode = set "--bin=icu4x-datagen" # need some valid argument
+    components = set ${@}
+end
+
+root = pwd
+for component in ${components}
+    cd "${component}/data"
+    exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking ${mode} -- --config config.json
+    cd "${root}"
+end
+'''
+
+[tasks.bakeddata-check]
+description = "Rebuild baked data and ensure that the working copy is clean"
+category = "ICU4X Data"
+dependencies = ["bakeddata"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    msg = array "" ""
+    array_push ${msg} "Baked data needs to be updated. Please run `cargo make bakeddata`"
+    array_push ${msg} ""
+    array_push ${msg} "${output.stdout}"
+    msg = array_join ${msg} "\n"
+    trigger_error ${msg}
+end
+'''
+
+[tasks.full-data]
+description = "Builds a complete postcard file from latest data."
+category = "ICU4X Data"
+dependencies = ["bakeddata"]
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking --release -- --locales basic moderate --keys experimental-all --format mod --out nonbake
+rm -r nonbake
+'''
+
+[tasks.download-repo-sources]
+description = "Download fresh CLDR JSON and icuexportdata, overwriting the existing CLDR JSON/icuexportdata."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=download-repo-sources",
+    "--",
+    "--out=provider/repodata/data",
+    "-v",
+]
+
+###### END CI TASKS
+
+[tasks.provider-adapters-hello-world-lang-de]
+description = "Build Hello World data for 'de'"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--keys=core/helloworld@1",
+    "--locales=de",
+    "--format=dir",
+    "--out=provider/adapters/tests/data/langtest/de",
+    "--overwrite",
+]
+
+[tasks.provider-adapters-hello-world-lang-ro]
+description = "Build Hello World data for 'ro'"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--keys=core/helloworld@1",
+    "--locales=ro",
+    "--format=dir",
+    "--out=provider/adapters/tests/data/langtest/ro",
+    "--overwrite",
+]
+
+[tasks.provider-adapters-testdata]
+description = "Build all testdata for the icu_provider_adapters crate."
+category = "ICU4X Data"
+dependencies = [
+    "provider-adapters-hello-world-lang-de",
+    "provider-adapters-hello-world-lang-ro",
+]

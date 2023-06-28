@@ -5,26 +5,165 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-//! Data provider struct definitions for this ICU4X component.
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
+
+pub mod names;
 
 use crate::script::ScriptWithExt;
 use crate::Script;
 
 use core::ops::RangeInclusive;
+use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
+use icu_provider::{DataKeyMetadata, FallbackPriority};
 use zerofrom::ZeroFrom;
 
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
+
+#[cfg(feature = "data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_properties;
+    icu_properties_data::impl_propnames_from_gcb_v1!(Baked);
+    icu_properties_data::impl_propnames_from_bc_v1!(Baked);
+    icu_properties_data::impl_propnames_from_ccc_v1!(Baked);
+    icu_properties_data::impl_propnames_from_ea_v1!(Baked);
+    icu_properties_data::impl_propnames_from_gc_v1!(Baked);
+    icu_properties_data::impl_propnames_from_gcm_v1!(Baked);
+    icu_properties_data::impl_propnames_from_lb_v1!(Baked);
+    icu_properties_data::impl_propnames_from_sb_v1!(Baked);
+    icu_properties_data::impl_propnames_from_sc_v1!(Baked);
+    icu_properties_data::impl_propnames_from_wb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_long_linear_bc_v1!(Baked);
+    icu_properties_data::impl_propnames_to_long_linear_ea_v1!(Baked);
+    icu_properties_data::impl_propnames_to_long_linear_gc_v1!(Baked);
+    icu_properties_data::impl_propnames_to_long_linear_gcb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_long_linear_lb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_long_linear_sb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_long_linear_sc_v1!(Baked);
+    icu_properties_data::impl_propnames_to_long_linear_wb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_long_sparse_ccc_v1!(Baked);
+    icu_properties_data::impl_propnames_to_short_linear_bc_v1!(Baked);
+    icu_properties_data::impl_propnames_to_short_linear_ea_v1!(Baked);
+    icu_properties_data::impl_propnames_to_short_linear_gc_v1!(Baked);
+    icu_properties_data::impl_propnames_to_short_linear_gcb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_short_linear_lb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_short_linear_sb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_short_linear_wb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_short_linear4_sc_v1!(Baked);
+    icu_properties_data::impl_propnames_to_short_sparse_ccc_v1!(Baked);
+    icu_properties_data::impl_props_ahex_v1!(Baked);
+    icu_properties_data::impl_props_alnum_v1!(Baked);
+    icu_properties_data::impl_props_alpha_v1!(Baked);
+    icu_properties_data::impl_props_basic_emoji_v1!(Baked);
+    icu_properties_data::impl_props_bc_v1!(Baked);
+    icu_properties_data::impl_props_bidi_c_v1!(Baked);
+    icu_properties_data::impl_props_bidi_m_v1!(Baked);
+    icu_properties_data::impl_props_bidiauxiliaryprops_v1!(Baked);
+    icu_properties_data::impl_props_blank_v1!(Baked);
+    icu_properties_data::impl_props_cased_v1!(Baked);
+    icu_properties_data::impl_props_ccc_v1!(Baked);
+    icu_properties_data::impl_props_ci_v1!(Baked);
+    icu_properties_data::impl_props_comp_ex_v1!(Baked);
+    icu_properties_data::impl_props_cwcf_v1!(Baked);
+    icu_properties_data::impl_props_cwcm_v1!(Baked);
+    icu_properties_data::impl_props_cwkcf_v1!(Baked);
+    icu_properties_data::impl_props_cwl_v1!(Baked);
+    icu_properties_data::impl_props_cwt_v1!(Baked);
+    icu_properties_data::impl_props_cwu_v1!(Baked);
+    icu_properties_data::impl_props_dash_v1!(Baked);
+    icu_properties_data::impl_props_dep_v1!(Baked);
+    icu_properties_data::impl_props_di_v1!(Baked);
+    icu_properties_data::impl_props_dia_v1!(Baked);
+    icu_properties_data::impl_props_ea_v1!(Baked);
+    icu_properties_data::impl_props_ebase_v1!(Baked);
+    icu_properties_data::impl_props_ecomp_v1!(Baked);
+    icu_properties_data::impl_props_emod_v1!(Baked);
+    icu_properties_data::impl_props_emoji_v1!(Baked);
+    icu_properties_data::impl_props_epres_v1!(Baked);
+    icu_properties_data::impl_props_exemplarchars_auxiliary_v1!(Baked);
+    icu_properties_data::impl_props_exemplarchars_index_v1!(Baked);
+    icu_properties_data::impl_props_exemplarchars_main_v1!(Baked);
+    icu_properties_data::impl_props_exemplarchars_numbers_v1!(Baked);
+    icu_properties_data::impl_props_exemplarchars_punctuation_v1!(Baked);
+    icu_properties_data::impl_props_ext_v1!(Baked);
+    icu_properties_data::impl_props_extpict_v1!(Baked);
+    icu_properties_data::impl_props_gc_v1!(Baked);
+    icu_properties_data::impl_props_gcb_v1!(Baked);
+    icu_properties_data::impl_props_gr_base_v1!(Baked);
+    icu_properties_data::impl_props_gr_ext_v1!(Baked);
+    icu_properties_data::impl_props_gr_link_v1!(Baked);
+    icu_properties_data::impl_props_graph_v1!(Baked);
+    icu_properties_data::impl_props_hex_v1!(Baked);
+    icu_properties_data::impl_props_hyphen_v1!(Baked);
+    icu_properties_data::impl_props_idc_v1!(Baked);
+    icu_properties_data::impl_props_ideo_v1!(Baked);
+    icu_properties_data::impl_props_ids_v1!(Baked);
+    icu_properties_data::impl_props_idsb_v1!(Baked);
+    icu_properties_data::impl_props_idst_v1!(Baked);
+    icu_properties_data::impl_props_join_c_v1!(Baked);
+    icu_properties_data::impl_props_lb_v1!(Baked);
+    icu_properties_data::impl_props_loe_v1!(Baked);
+    icu_properties_data::impl_props_lower_v1!(Baked);
+    icu_properties_data::impl_props_math_v1!(Baked);
+    icu_properties_data::impl_props_nchar_v1!(Baked);
+    icu_properties_data::impl_props_nfcinert_v1!(Baked);
+    icu_properties_data::impl_props_nfdinert_v1!(Baked);
+    icu_properties_data::impl_props_nfkcinert_v1!(Baked);
+    icu_properties_data::impl_props_nfkdinert_v1!(Baked);
+    icu_properties_data::impl_props_pat_syn_v1!(Baked);
+    icu_properties_data::impl_props_pat_ws_v1!(Baked);
+    icu_properties_data::impl_props_pcm_v1!(Baked);
+    icu_properties_data::impl_props_print_v1!(Baked);
+    icu_properties_data::impl_props_qmark_v1!(Baked);
+    icu_properties_data::impl_props_radical_v1!(Baked);
+    icu_properties_data::impl_props_ri_v1!(Baked);
+    icu_properties_data::impl_props_sb_v1!(Baked);
+    icu_properties_data::impl_props_sc_v1!(Baked);
+    icu_properties_data::impl_props_scx_v1!(Baked);
+    icu_properties_data::impl_props_sd_v1!(Baked);
+    icu_properties_data::impl_props_segstart_v1!(Baked);
+    icu_properties_data::impl_props_sensitive_v1!(Baked);
+    icu_properties_data::impl_props_sterm_v1!(Baked);
+    icu_properties_data::impl_props_term_v1!(Baked);
+    icu_properties_data::impl_props_uideo_v1!(Baked);
+    icu_properties_data::impl_props_upper_v1!(Baked);
+    icu_properties_data::impl_props_vs_v1!(Baked);
+    icu_properties_data::impl_props_wb_v1!(Baked);
+    icu_properties_data::impl_props_wspace_v1!(Baked);
+    icu_properties_data::impl_props_xdigit_v1!(Baked);
+    icu_properties_data::impl_props_xidc_v1!(Baked);
+    icu_properties_data::impl_props_xids_v1!(Baked);
+};
+
+// include the specialized structs for the compact representation of Bidi property data
+pub mod bidi_data;
 
 /// A set of characters which share a particular property value.
 ///
 /// This data enum is extensible, more backends may be added in the future.
 /// Old data can be used with newer code but not vice versa.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -45,6 +184,12 @@ pub enum PropertyCodePointSetV1<'data> {
 ///
 /// This data enum is extensible, more backends may be added in the future.
 /// Old data can be used with newer code but not vice versa.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -62,6 +207,12 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
 }
 
 /// A set of characters and strings which share a particular property value.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -130,7 +281,17 @@ impl<'data> PropertyUnicodeSetV1<'data> {
 }
 
 /// A struct that efficiently stores `Script` and `Script_Extensions` property data.
-#[icu_provider::data_struct(ScriptWithExtensionsPropertyV1Marker = "props/scx@1")]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(
+    ScriptWithExtensionsPropertyV1Marker,
+    "props/scx@1",
+    singleton
+))]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 
@@ -201,6 +362,15 @@ impl<'data> PropertyCodePointSetV1<'data> {
     }
 
     #[inline]
+    pub(crate) fn iter_ranges_complemented(
+        &self,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        match *self {
+            Self::InversionList(ref l) => l.iter_ranges_complemented(),
+        }
+    }
+
+    #[inline]
     pub(crate) fn from_code_point_inversion_list(l: CodePointInversionList<'static>) -> Self {
         Self::InversionList(l)
     }
@@ -259,6 +429,15 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
             Self::CodePointTrie(ref t) => t.iter_ranges(),
         }
     }
+    #[inline]
+    pub(crate) fn iter_ranges_mapped<'a, U: Eq + 'a>(
+        &'a self,
+        map: impl FnMut(T) -> U + Copy + 'a,
+    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
+        match *self {
+            Self::CodePointTrie(ref t) => t.iter_ranges_mapped(map),
+        }
+    }
 
     #[inline]
     pub(crate) fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
@@ -284,37 +463,35 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 macro_rules! expand {
     (
         ($(($code_point_set_marker:ident, $bin_cp_s:literal),)+),
-        ($(($unicode_set_marker:ident, $bin_us_s:literal),)+),
-        ($(($code_point_map_marker:ident, $enum_s:literal, $value_ty:ident),)+)
+        ($(($unicode_set_marker:ident, $bin_us_s:literal, $us_singleton:literal),)+),
+        ($(($code_point_map_marker:ident,
+            $name_value_marker:ident,
+
+            $((sparse: $value_short_name_marker_sparse:ident, $value_long_name_marker_sparse:ident),)?
+            $((linear: $value_short_name_marker_linear:ident, $value_long_name_marker_linear:ident ),)?
+            $((linear4: $value_short_name_marker_linear4:ident, $value_long_name_marker_linear4:ident ),)?
+            $enum_s:literal, $value_ty:ident),)+)
     ) => {
 
             // Data keys that return code point sets (represented as CodePointSetData).
             // For now, synonymous with binary properties of code points only.
             $(
                 #[doc = core::concat!("Data marker for the '", $bin_cp_s, "' Unicode property")]
+                #[derive(Debug, Default)]
+                #[cfg_attr(
+                    feature = "datagen",
+                    derive(databake::Bake),
+                    databake(path = icu_properties::provider),
+                )]
                 pub struct $code_point_set_marker;
 
                 impl DataMarker for $code_point_set_marker {
                     type Yokeable = PropertyCodePointSetV1<'static>;
                 }
                 impl KeyedDataMarker for $code_point_set_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"));
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                 }
 
-                #[cfg(feature = "datagen")]
-                impl Default for $code_point_set_marker {
-                    fn default() -> Self {
-                        Self
-                    }
-                }
-
-                #[cfg(feature = "datagen")]
-                impl databake::Bake for $code_point_set_marker {
-                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
-                        env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$code_point_set_marker }
-                    }
-                }
             )+
 
             // Data keys that return sets of strings + code points (represented as UnicodeSetData).
@@ -323,28 +500,19 @@ macro_rules! expand {
             //   - exemplar characters
             $(
                 #[doc = core::concat!("Data marker for the '", $bin_us_s, "' Unicode property")]
+                #[derive(Debug, Default)]
+                #[cfg_attr(
+                    feature = "datagen",
+                    derive(databake::Bake),
+                    databake(path = icu_properties::provider),
+                )]
                 pub struct $unicode_set_marker;
 
                 impl DataMarker for $unicode_set_marker {
                     type Yokeable = PropertyUnicodeSetV1<'static>;
                 }
                 impl KeyedDataMarker for $unicode_set_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"));
-                }
-
-                #[cfg(feature = "datagen")]
-                impl Default for $unicode_set_marker {
-                    fn default() -> Self {
-                        Self
-                    }
-                }
-
-                #[cfg(feature = "datagen")]
-                impl databake::Bake for $unicode_set_marker {
-                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
-                        env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$unicode_set_marker }
-                    }
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, $us_singleton));
                 }
             )+
 
@@ -352,6 +520,12 @@ macro_rules! expand {
             // For now, synonymous with enumerated properties [of code points only].
             $(
                 #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
+                #[derive(Debug, Default)]
+                #[cfg_attr(
+                    feature = "datagen",
+                    derive(databake::Bake),
+                    databake(path = icu_properties::provider),
+                )]
                 pub struct $code_point_map_marker;
 
                 impl DataMarker for $code_point_map_marker {
@@ -359,26 +533,140 @@ macro_rules! expand {
                 }
 
                 impl KeyedDataMarker for $code_point_map_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"));
+                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                 }
 
-                #[cfg(feature = "datagen")]
-                impl Default for $code_point_map_marker {
-                    fn default() -> Self {
-                        Self
-                    }
+
+                #[doc = core::concat!("Data marker for parsing the names of the values of the '", $enum_s, "' Unicode property")]
+                #[derive(Debug, Default)]
+                #[cfg_attr(
+                    feature = "datagen",
+                    derive(databake::Bake),
+                    databake(path = icu_properties::provider),
+                )]
+                pub struct $name_value_marker;
+
+                impl DataMarker for $name_value_marker {
+                    type Yokeable = names::PropertyValueNameToEnumMapV1<'static>;
                 }
 
-                #[cfg(feature = "datagen")]
-                impl databake::Bake for $code_point_map_marker {
-                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
-                        env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$code_point_map_marker }
-                    }
+                impl KeyedDataMarker for $name_value_marker {
+                    const KEY: DataKey = data_key!(concat!("propnames/from/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                 }
+
+                $(
+                    #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_short_name_marker_sparse;
+
+                    impl DataMarker for $value_short_name_marker_sparse {
+                        type Yokeable = names::PropertyEnumToValueNameSparseMapV1<'static>;
+                    }
+
+                    impl KeyedDataMarker for $value_short_name_marker_sparse {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/sparse/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                    }
+
+                    #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_long_name_marker_sparse;
+
+                    impl DataMarker for $value_long_name_marker_sparse {
+                        type Yokeable = names::PropertyEnumToValueNameSparseMapV1<'static>;
+                    }
+
+                    impl KeyedDataMarker for $value_long_name_marker_sparse {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/sparse/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                    }
+                )?
+
+                $(
+                    #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_short_name_marker_linear;
+
+                    impl DataMarker for $value_short_name_marker_linear {
+                        type Yokeable = names::PropertyEnumToValueNameLinearMapV1<'static>;
+                    }
+
+                    impl KeyedDataMarker for $value_short_name_marker_linear {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                    }
+
+                    #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_long_name_marker_linear;
+
+                    impl DataMarker for $value_long_name_marker_linear {
+                        type Yokeable = names::PropertyEnumToValueNameLinearMapV1<'static>;
+                    }
+
+                    impl KeyedDataMarker for $value_long_name_marker_linear {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                    }
+                )?
+
+                $(
+                    #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_short_name_marker_linear4;
+
+                    impl DataMarker for $value_short_name_marker_linear4 {
+                        type Yokeable = names::PropertyEnumToValueNameLinearTiny4MapV1<'static>;
+                    }
+
+                    impl KeyedDataMarker for $value_short_name_marker_linear4 {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear4/", $enum_s, "@1"));
+                    }
+
+                    #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_long_name_marker_linear4;
+
+                    impl DataMarker for $value_long_name_marker_linear4 {
+                        // Tiny4 is only for short names
+                        type Yokeable = names::PropertyEnumToValueNameLinearMapV1<'static>;
+                    }
+
+                    impl KeyedDataMarker for $value_long_name_marker_linear4 {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                    }
+                )?
             )+
     };
 }
+
+pub use self::names::GeneralCategoryMaskNameToValueV1Marker;
 
 expand!(
     (
@@ -451,33 +739,121 @@ expand!(
     ),
     (
         // UnicodeSets (code points + strings)
-        (BasicEmojiV1Marker, "Basic_Emoji"),
-        (ExemplarCharactersMainV1Marker, "exemplarchars/main"),
+        (BasicEmojiV1Marker, "Basic_Emoji", true),
+        (ExemplarCharactersMainV1Marker, "exemplarchars/main", false),
         (
             ExemplarCharactersAuxiliaryV1Marker,
-            "exemplarchars/auxiliary"
+            "exemplarchars/auxiliary",
+            false
         ),
         (
             ExemplarCharactersPunctuationV1Marker,
-            "exemplarchars/punctuation"
+            "exemplarchars/punctuation",
+            false
         ),
-        (ExemplarCharactersNumbersV1Marker, "exemplarchars/numbers"),
-        (ExemplarCharactersIndexV1Marker, "exemplarchars/index"),
+        (
+            ExemplarCharactersNumbersV1Marker,
+            "exemplarchars/numbers",
+            false
+        ),
+        (
+            ExemplarCharactersIndexV1Marker,
+            "exemplarchars/index",
+            false
+        ),
     ),
     (
         // code point maps
         (
             CanonicalCombiningClassV1Marker,
+            CanonicalCombiningClassNameToValueV1Marker,
+            (
+                sparse: CanonicalCombiningClassValueToShortNameV1Marker,
+                CanonicalCombiningClassValueToLongNameV1Marker
+            ),
             "ccc",
             CanonicalCombiningClass
         ),
-        (GeneralCategoryV1Marker, "gc", GeneralCategory),
-        (BidiClassV1Marker, "bc", BidiClass),
-        (ScriptV1Marker, "sc", Script),
-        (EastAsianWidthV1Marker, "ea", EastAsianWidth),
-        (LineBreakV1Marker, "lb", LineBreak),
-        (GraphemeClusterBreakV1Marker, "GCB", GraphemeClusterBreak),
-        (WordBreakV1Marker, "WB", WordBreak),
-        (SentenceBreakV1Marker, "SB", SentenceBreak),
+        (
+            GeneralCategoryV1Marker,
+            GeneralCategoryNameToValueV1Marker,
+            (
+                linear: GeneralCategoryValueToShortNameV1Marker,
+                GeneralCategoryValueToLongNameV1Marker
+            ),
+            "gc",
+            GeneralCategory
+        ),
+        (
+            BidiClassV1Marker,
+            BidiClassNameToValueV1Marker,
+            (
+                linear: BidiClassValueToShortNameV1Marker,
+                BidiClassValueToLongNameV1Marker
+            ),
+            "bc",
+            BidiClass
+        ),
+        (
+            ScriptV1Marker,
+            ScriptNameToValueV1Marker,
+            (
+                linear4: ScriptValueToShortNameV1Marker,
+                ScriptValueToLongNameV1Marker
+            ),
+            "sc",
+            Script
+        ),
+        (
+            EastAsianWidthV1Marker,
+            EastAsianWidthNameToValueV1Marker,
+            (
+                linear: EastAsianWidthValueToShortNameV1Marker,
+                EastAsianWidthValueToLongNameV1Marker
+            ),
+            "ea",
+            EastAsianWidth
+        ),
+        (
+            LineBreakV1Marker,
+            LineBreakNameToValueV1Marker,
+            (
+                linear: LineBreakValueToShortNameV1Marker,
+                LineBreakValueToLongNameV1Marker
+            ),
+            "lb",
+            LineBreak
+        ),
+        (
+            GraphemeClusterBreakV1Marker,
+            GraphemeClusterBreakNameToValueV1Marker,
+            (
+                linear: GraphemeClusterBreakValueToShortNameV1Marker,
+                GraphemeClusterBreakValueToLongNameV1Marker
+            ),
+            "GCB",
+            GraphemeClusterBreak
+        ),
+        (
+            WordBreakV1Marker,
+            WordBreakNameToValueV1Marker,
+            (
+                linear: WordBreakValueToShortNameV1Marker,
+                WordBreakValueToLongNameV1Marker
+            ),
+            "WB",
+            WordBreak
+        ),
+        (
+            SentenceBreakV1Marker,
+            SentenceBreakNameToValueV1Marker,
+            (
+                linear: SentenceBreakValueToShortNameV1Marker,
+                SentenceBreakValueToLongNameV1Marker
+            ),
+            "SB",
+            SentenceBreak
+        ),
+        // note: the names key for the GCM mask is handled above
     )
 );

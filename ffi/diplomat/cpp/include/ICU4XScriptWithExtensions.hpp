@@ -15,6 +15,7 @@ class ICU4XDataProvider;
 class ICU4XScriptWithExtensions;
 #include "ICU4XError.hpp"
 class ICU4XScriptWithExtensionsBorrowed;
+class CodePointRangeIterator;
 
 /**
  * A destruction policy for using ICU4XScriptWithExtensions with std::unique_ptr.
@@ -28,7 +29,7 @@ struct ICU4XScriptWithExtensionsDeleter {
 /**
  * An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
  * 
- * See the [Rust documentation for `ScriptWithExtensions`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
+ * See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
  */
 class ICU4XScriptWithExtensions {
  public:
@@ -36,32 +37,41 @@ class ICU4XScriptWithExtensions {
   /**
    * 
    * 
-   * See the [Rust documentation for `load_script_with_extensions_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/fn.load_script_with_extensions_unstable.html) for more information.
+   * See the [Rust documentation for `load_script_with_extensions_unstable`](https://docs.rs/icu/latest/icu/properties/script/fn.load_script_with_extensions_unstable.html) for more information.
    */
   static diplomat::result<ICU4XScriptWithExtensions, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Get the Script property value for a code point
    * 
-   * See the [Rust documentation for `get_script_val`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
+   * See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
    */
   uint16_t get_script_val(uint32_t code_point) const;
 
   /**
    * Check if the Script_Extensions property of the given code point covers the given script
    * 
-   * See the [Rust documentation for `has_script`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
+   * See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
    */
   bool has_script(uint32_t code_point, uint16_t script) const;
 
   /**
    * Borrow this object for a slightly faster variant with more operations
    * 
-   * See the [Rust documentation for `as_borrowed`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
+   * See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */
   ICU4XScriptWithExtensionsBorrowed as_borrowed() const;
+
+  /**
+   * Get a list of ranges of code points that contain this script in their Script_Extensions values
+   * 
+   * See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
+   */
+  CodePointRangeIterator iter_ranges_for_script(uint16_t script) const;
   inline const capi::ICU4XScriptWithExtensions* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptWithExtensions* AsFFIMut() { return this->inner.get(); }
   inline ICU4XScriptWithExtensions(capi::ICU4XScriptWithExtensions* i) : inner(i) {}
@@ -74,6 +84,7 @@ class ICU4XScriptWithExtensions {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XScriptWithExtensionsBorrowed.hpp"
+#include "CodePointRangeIterator.hpp"
 
 inline diplomat::result<ICU4XScriptWithExtensions, ICU4XError> ICU4XScriptWithExtensions::create(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XScriptWithExtensions_create(provider.AsFFI());
@@ -93,5 +104,8 @@ inline bool ICU4XScriptWithExtensions::has_script(uint32_t code_point, uint16_t 
 }
 inline ICU4XScriptWithExtensionsBorrowed ICU4XScriptWithExtensions::as_borrowed() const {
   return ICU4XScriptWithExtensionsBorrowed(capi::ICU4XScriptWithExtensions_as_borrowed(this->inner.get()));
+}
+inline CodePointRangeIterator ICU4XScriptWithExtensions::iter_ranges_for_script(uint16_t script) const {
+  return CodePointRangeIterator(capi::ICU4XScriptWithExtensions_iter_ranges_for_script(this->inner.get(), script));
 }
 #endif

@@ -32,6 +32,7 @@ use icu_decimal::{
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
+#[derive(Debug)]
 pub(crate) struct TimeFormatter {
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
@@ -123,6 +124,7 @@ impl TimeFormatter {
     }
 }
 
+#[derive(Debug)]
 pub(crate) struct DateFormatter {
     pub generic_pattern: DataPayload<GenericPatternV1Marker>,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
@@ -243,6 +245,7 @@ impl DateFormatter {
 
 /// This is the internal "raw" version of [crate::DateTimeFormatter], i.e. a version of DateTimeFormatter
 /// without the generic parameter. The actual implementation of [crate::DateTimeFormatter] should live here.
+#[derive(Debug)]
 pub(crate) struct DateTimeFormatter {
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,

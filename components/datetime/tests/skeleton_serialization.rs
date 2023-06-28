@@ -46,20 +46,14 @@ fn test_skeleton_json_serialization_roundtrip() {
         let skeleton: Skeleton = match serde_json::from_str(&json_in) {
             Ok(p) => p,
             Err(err) => {
-                panic!(
-                    "Unable to parse the skeleton {:?}. {:?}",
-                    skeleton_string, err
-                );
+                panic!("Unable to parse the skeleton {skeleton_string:?}. {err:?}");
             }
         };
 
         let json_out = match serde_json::to_string(&skeleton) {
             Ok(s) => s,
             Err(err) => {
-                panic!(
-                    "Unable to re-serialize the skeleton {:?}. {:?}",
-                    skeleton_string, err
-                );
+                panic!("Unable to re-serialize the skeleton {skeleton_string:?}. {err:?}");
             }
         };
 
@@ -100,10 +94,7 @@ fn test_skeleton_bincode_serialization_roundtrip() {
         let skeleton: Skeleton = match serde_json::from_str(&json_in) {
             Ok(p) => p,
             Err(err) => {
-                panic!(
-                    "Unable to parse the skeleton {:?}. {:?}",
-                    skeleton_string, err
-                );
+                panic!("Unable to parse the skeleton {skeleton_string:?}. {err:?}");
             }
         };
 
@@ -112,12 +103,11 @@ fn test_skeleton_bincode_serialization_roundtrip() {
         if let Some(ref expect_vec) = expect_vec {
             if bincode != *expect_vec.get(i).unwrap() {
                 panic!(
-                    "The bincode representations of the skeleton {:?} did not match the stored \
+                    "The bincode representations of the skeleton {json_in:?} did not match the stored \
                      representation. Skeletons are supposed to have stable bincode representations. \
                      Something changed to make it different than what it was in the past. If this is \
                      expected, then the bincode can be updated by re-running the test with the \
-                     environment variable ICU4X_REGEN_FIXTURE set.",
-                    json_in
+                     environment variable ICU4X_REGEN_FIXTURE set."
                 )
             }
         }

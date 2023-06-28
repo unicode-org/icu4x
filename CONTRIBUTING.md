@@ -68,17 +68,10 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
  - `cargo make ci-job-clippy`: Runs `cargo clippy` on all the crates.
  - `cargo doc --no-deps --all-features`: Recreates API docs locally; any warning should be fixed since it will be treated as an error in CI.
  - `cargo make ci-job-ffi`: Runs all of the FFI tests; mostly important if you're changing the FFI interface. This has several additional dependencies:
-     + Rust toolchain `nightly-2022-04-05`: `rustup install nightly-2022-04-05`
-         * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2022-04-05 rust-src`
-         * Various targets for that toolchain: `rustup target add thumbv7m-none-eabi --toolchain nightly-2022-04-05`, `rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2022-04-05`, `rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-04-05`
      + [`Diplomat`](https://github.com/rust-diplomat/diplomat) installed at the appropriate version: `cargo make diplomat-install`
      + `clang-14` and `lld-14` with the `gold` plugin (APT packages `llvm-14` and `lld-14`)
-     + [`Sphinx`](https://www.sphinx-doc.org/en/master/) on Python3: `pip3 install sphinx sphinx-rtd-theme`
- - `cargo make ci-job-wasm`: Runs WASM tests; mostly important if you're changing the FFI interface. This also has a couple additional dependencies:
+ - `cargo make ci-job-wasm`: Runs Rust-to-WASM tests. This also has a couple additional dependencies:
      + Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
-     + Rust toolchain `nightly-2022-04-05`: `rustup install nightly-2022-04-05`
-         * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2022-04-05 rust-src`
-         * Various WASM targets for that toolchain: `rustup target add wasm32-unknown-unknown --toolchain nightly-2022-04-05`, `rustup target add wasm32-unknown-emscripten --toolchain nightly-2022-04-05`
      + [`Twiggy`](https://github.com/rustwasm/twiggy) (at least 0.7.0: `cargo install twiggy`
      + [`emsdk`](https://github.com/emscripten-core/emsdk): Make sure to `./emsdk activate latest` it into your shell
  - `cargo make ci-job-features`: This is a pretty slow test that tries to build all ICU4X crates with all feature combinations. It has an additional dependency:
@@ -211,8 +204,17 @@ The following PR has one non-blocking review, one blocking review, one approval,
 
 ## Licenses
 
-See the file called [LICENSE](LICENSE) for terms applying to your contribution.
-When creating the PR, you will be asked to [sign the CLA](https://cla-assistant.io/unicode-org/icu4x).
+### Contributor License Agreement
+
+In order to contribute to this project, the Unicode Consortium must have on file a Contributor License Agreement (CLA) covering your contributions, either an individual or a corporate CLA. Pull Requests will not be merged until the correct CLA is signed. Which version needs to be signed depends on who owns the contribution being made: you as the individual making the contribution or your employer. _It is your responsibility to determine whether your contribution is owned by your employer._ Please review [The Unicode Consortium Intellectual Property, Licensing, and Technical Contribution Policies][policies] for further guidance on which CLA to sign, as well as other information and guidelines regarding the Consortium’s licensing and technical contribution policies and procedures.
+
+- **Individual CLA**: If you have determined that the Individual CLA is appropriate, just open a Pull Request and you will have the opportunity to click to accept the Individual CLA.
+
+- **Corporate CLA**: If you have determined that a Corporate CLA is appropriate, please check the [public list of Corporate CLAs][unicode-corporate-clas] that the Consortium has on file. If your employer has already signed a CLA, then just open a Pull Request and you will have the opportunity to click that your employer has already signed a CLA. If your employer has not already signed a CLA, you will need to arrange for your employer to sign the Corporate CLA, as described in [How to Sign a Unicode CLA][signing].
+
+Unless otherwise noted in the [LICENSE](./LICENSE) file, this project is released under the free and open-source [Unicode License][unicode-license], also known as Unicode, Inc. License Agreement - Data Files and Software.
+
+SPDX-License-Identifier: Unicode-DFS-2016
 
 ### New files
 
@@ -284,3 +286,7 @@ _(followed by the original boilerplate from Unicode data)_
 Please discuss first.
 
 [style_guide]: docs/process/style_guide.md
+[policies]: https://www.unicode.org/policies/licensing_policy.html
+[unicode-corporate-clas]: https://www.unicode.org/policies/corporate-cla-list/
+[signing]: https://www.unicode.org/policies/licensing_policy.html#signing
+[unicode-license]: https://www.unicode.org/license.txt

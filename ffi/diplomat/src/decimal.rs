@@ -5,7 +5,6 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
     use icu_decimal::{
         options::{FixedDecimalFormatterOptions, GroupingStrategy},
         provider::DecimalSymbolsV1Marker,
@@ -42,7 +41,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
-        ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
             Self::try_new_impl(&provider.0, locale, grouping_strategy)
         }
 
@@ -54,8 +53,8 @@ pub mod ffi {
         pub fn create_with_decimal_symbols_v1(
             data_struct: &ICU4XDataStruct,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
-        ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
-            use icu_provider::prelude::AsDowncastingAnyProvider;
+        ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
+            use icu_provider::AsDowncastingAnyProvider;
             let provider = AnyPayloadProvider::from_any_payload::<DecimalSymbolsV1Marker>(
                 // Note: This clone is free, since cloning AnyPayload is free.
                 data_struct.0.clone(),
@@ -71,7 +70,7 @@ pub mod ffi {
             provider: &D,
             locale: &ICU4XLocale,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
-        ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError>
+        ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XError>
         where
             D: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
         {
@@ -85,10 +84,9 @@ pub mod ffi {
             };
             let mut options = FixedDecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy;
-            FixedDecimalFormatter::try_new_unstable(provider, &locale, options)
-                .map(|fdf| Box::new(ICU4XFixedDecimalFormatter(fdf)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XFixedDecimalFormatter(
+                FixedDecimalFormatter::try_new_unstable(provider, &locale, options)?,
+            )))
         }
 
         /// Formats a [`ICU4XFixedDecimal`] to a string.
@@ -102,16 +100,9 @@ pub mod ffi {
             &self,
             value: &ICU4XFixedDecimal,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
-            #[allow(unused_variables)]
-            let result = self
-                .0
-                .format(&value.0)
-                .write_to(write)
-                .map_err(Into::into)
-                .into();
-            write.flush();
-            result
+        ) -> Result<(), ICU4XError> {
+            self.0.format(&value.0).write_to(write)?;
+            Ok(())
         }
     }
 }

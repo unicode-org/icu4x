@@ -13,7 +13,7 @@ import { ICU4XWeekOf } from "./ICU4XWeekOf";
 
  * An ICU4X DateTime object capable of containing a ISO-8601 date and time.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html Rust documentation for `DateTime`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html Rust documentation for `DateTime`} for more information.
  */
 export class ICU4XIsoDateTime {
 
@@ -21,7 +21,7 @@ export class ICU4XIsoDateTime {
 
    * Creates a new {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} from the specified date and time.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime Rust documentation for `try_new_iso_datetime`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime Rust documentation for `try_new_iso_datetime`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XIsoDateTime | never;
@@ -30,7 +30,7 @@ export class ICU4XIsoDateTime {
 
    * Creates a new {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} from an {@link ICU4XIsoDate `ICU4XIsoDate`} and {@link ICU4XTime `ICU4XTime`} object
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new Rust documentation for `new`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new Rust documentation for `new`} for more information.
    */
   static crate_from_date_and_time(date: ICU4XIsoDate, time: ICU4XTime): ICU4XIsoDateTime;
 
@@ -38,7 +38,7 @@ export class ICU4XIsoDateTime {
 
    * Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch Rust documentation for `from_minutes_since_local_unix_epoch`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch Rust documentation for `from_minutes_since_local_unix_epoch`} for more information.
    */
   static create_from_minutes_since_local_unix_epoch(minutes: i32): ICU4XIsoDateTime;
 
@@ -46,7 +46,7 @@ export class ICU4XIsoDateTime {
 
    * Gets the date contained in this object
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date Rust documentation for `date`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date Rust documentation for `date`} for more information.
    */
   date(): ICU4XIsoDate;
 
@@ -54,7 +54,7 @@ export class ICU4XIsoDateTime {
 
    * Gets the time contained in this object
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time Rust documentation for `time`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time Rust documentation for `time`} for more information.
    */
   time(): ICU4XTime;
 
@@ -62,7 +62,7 @@ export class ICU4XIsoDateTime {
 
    * Converts this to an {@link ICU4XDateTime `ICU4XDateTime`} capable of being mixed with dates of other calendars
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_any Rust documentation for `to_any`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_any Rust documentation for `to_any`} for more information.
    */
   to_any(): ICU4XDateTime;
 
@@ -70,7 +70,7 @@ export class ICU4XIsoDateTime {
 
    * Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.minutes_since_local_unix_epoch Rust documentation for `minutes_since_local_unix_epoch`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.minutes_since_local_unix_epoch Rust documentation for `minutes_since_local_unix_epoch`} for more information.
    */
   minutes_since_local_unix_epoch(): i32;
 
@@ -78,7 +78,7 @@ export class ICU4XIsoDateTime {
 
    * Convert this datetime to one in a different calendar
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar Rust documentation for `to_calendar`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_calendar Rust documentation for `to_calendar`} for more information.
    */
   to_calendar(calendar: ICU4XCalendar): ICU4XDateTime;
 
@@ -86,7 +86,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the hour in this time
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.hour Rust documentation for `hour`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour Rust documentation for `hour`} for more information.
    */
   hour(): u8;
 
@@ -94,7 +94,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the minute in this time
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.minute Rust documentation for `minute`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute Rust documentation for `minute`} for more information.
    */
   minute(): u8;
 
@@ -102,7 +102,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the second in this time
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.second Rust documentation for `second`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second Rust documentation for `second`} for more information.
    */
   second(): u8;
 
@@ -110,7 +110,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the nanosecond in this time
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond Rust documentation for `nanosecond`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond Rust documentation for `nanosecond`} for more information.
    */
   nanosecond(): u32;
 
@@ -118,7 +118,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the 1-indexed day in the month for this date
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_month Rust documentation for `day_of_month`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month Rust documentation for `day_of_month`} for more information.
    */
   day_of_month(): u32;
 
@@ -126,7 +126,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the day in the week for this day
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week Rust documentation for `day_of_week`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week Rust documentation for `day_of_week`} for more information.
    */
   day_of_week(): ICU4XIsoWeekday;
 
@@ -136,7 +136,7 @@ export class ICU4XIsoDateTime {
 
    * `first_weekday` can be obtained via `first_weekday()` on {@link ICU4XWeekCalculator `ICU4XWeekCalculator`}
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_month Rust documentation for `week_of_month`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month Rust documentation for `week_of_month`} for more information.
    */
   week_of_month(first_weekday: ICU4XIsoWeekday): u32;
 
@@ -144,7 +144,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the week number in this year, using week data
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_year Rust documentation for `week_of_year`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year Rust documentation for `week_of_year`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   week_of_year(calculator: ICU4XWeekCalculator): ICU4XWeekOf | never;
@@ -153,7 +153,7 @@ export class ICU4XIsoDateTime {
 
    * Returns 1-indexed number of the month of this date in its year
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month Rust documentation for `month`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month Rust documentation for `month`} for more information.
    */
   month(): u32;
 
@@ -161,7 +161,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the year number for this date
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year Rust documentation for `year`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year Rust documentation for `year`} for more information.
    */
   year(): i32;
 
@@ -169,7 +169,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the number of months in the year represented by this date
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.months_in_year Rust documentation for `months_in_year`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year Rust documentation for `months_in_year`} for more information.
    */
   months_in_year(): u8;
 
@@ -177,7 +177,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the number of days in the month represented by this date
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_month Rust documentation for `days_in_month`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month Rust documentation for `days_in_month`} for more information.
    */
   days_in_month(): u8;
 
@@ -185,7 +185,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the number of days in the year represented by this date
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_year Rust documentation for `days_in_year`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year Rust documentation for `days_in_year`} for more information.
    */
   days_in_year(): u32;
 }

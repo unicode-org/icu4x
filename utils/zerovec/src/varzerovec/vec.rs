@@ -11,7 +11,7 @@ use core::ops::Deref;
 
 use super::*;
 
-/// A zero-copy vector for variable-width types.
+/// A zero-copy, byte-aligned vector for variable-width types.
 ///
 /// `VarZeroVec<T>` is designed as a drop-in replacement for `Vec<T>` in situations where it is
 /// desirable to borrow data from an unaligned byte slice, such as zero-copy deserialization, and
@@ -38,6 +38,20 @@ use super::*;
 ///
 /// The `F` type parameter is a [`VarZeroVecFormat`] (see its docs for more details), which can be used to select the
 /// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index16`].
+///
+/// # Bytes and Equality
+///
+/// Two [`VarZeroVec`]s are equal if and only if their bytes are equal, as described in the trait
+/// [`VarULE`]. However, we do not guarantee stability of byte equality or serialization format
+/// across major SemVer releases.
+///
+/// To compare a [`Vec<T>`] to a [`VarZeroVec<T>`], it is generally recommended to use
+/// [`Iterator::eq`], since it is somewhat expensive at runtime to convert from a [`Vec<T>`] to a
+/// [`VarZeroVec<T>`] or vice-versa.
+///
+/// Prior to zerovec reaching 1.0, the precise byte representation of [`VarZeroVec`] is still
+/// under consideration, with different options along the space-time spectrum. See
+/// [#1410](https://github.com/unicode-org/icu4x/issues/1410).
 ///
 /// # Example
 ///
@@ -234,7 +248,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// assert!(vzv.is_empty());
     /// ```
     #[inline]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self::Borrowed(VarZeroSlice::new_empty())
     }
 
@@ -340,7 +354,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
     pub fn as_slice(&self) -> &VarZeroSlice<T, F> {
         match *self {
-            VarZeroVec::Owned(ref owned) => &**owned,
+            VarZeroVec::Owned(ref owned) => owned,
             VarZeroVec::Borrowed(b) => b,
         }
     }
@@ -399,8 +413,7 @@ where
 {
     #[inline]
     fn from(elements: &Vec<A>) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
-        VarZeroVecOwned::try_from_elements(elements).unwrap().into()
+        Self::from(elements.as_slice())
     }
 }
 
@@ -425,8 +438,7 @@ where
 {
     #[inline]
     fn from(elements: &[A; N]) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
-        VarZeroVecOwned::try_from_elements(elements).unwrap().into()
+        Self::from(elements.as_slice())
     }
 }
 

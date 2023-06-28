@@ -37,7 +37,7 @@ fn print<A: Calendar>(_date_input: &Date<A>) {
             _date_input.day_of_month().0,
         );
 
-        println!("{}", formatted_date);
+        println!("{formatted_date}");
     }
 }
 
