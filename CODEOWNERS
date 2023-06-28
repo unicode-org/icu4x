@@ -50,18 +50,18 @@ utils/yoke/                       @Manishearth @sffc
 utils/zerofrom                    @Manishearth @sffc
 utils/zerovec/                    @Manishearth @sffc
 
-components/calendar/data             @robertbastian
-components/collator/data             @robertbastian
-components/collections/data          @robertbastian
-components/datetime/data             @robertbastian
-components/decimal/data              @robertbastian
-components/list/data                 @robertbastian
-components/locid_transform/data      @robertbastian
-components/normalizer/data           @robertbastian
-components/plurals/data              @robertbastian
-components/segmenter/data            @robertbastian
-components/timezone/data             @robertbastian
-experimental/casemapping/data        @robertbastian
-experimental/compactdecimal/data     @robertbastian
-experimental/displaynames/data       @robertbastian
-experimental/relativetime/data       @robertbastian
+components/calendar/data             @unicode-org/icu4x-owners
+components/collator/data             @unicode-org/icu4x-owners
+components/collections/data          @unicode-org/icu4x-owners
+components/datetime/data             @unicode-org/icu4x-owners
+components/decimal/data              @unicode-org/icu4x-owners
+components/list/data                 @unicode-org/icu4x-owners
+components/locid_transform/data      @unicode-org/icu4x-owners
+components/normalizer/data           @unicode-org/icu4x-owners
+components/plurals/data              @unicode-org/icu4x-owners
+components/segmenter/data            @unicode-org/icu4x-owners
+components/timezone/data             @unicode-org/icu4x-owners
+experimental/casemapping/data        @unicode-org/icu4x-owners
+experimental/compactdecimal/data     @unicode-org/icu4x-owners
+experimental/displaynames/data       @unicode-org/icu4x-owners
+experimental/relativetime/data       @unicode-org/icu4x-owners
