@@ -2,6 +2,38 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module contains types and implementations for the Chinese calendar.
+//! 
+//! ```rust
+//! use icu::calendar::{Date, DateTime};
+//! use tinystr::tinystr;
+//! 
+//! // `Date` type
+//! let chinese_date = Date::try_new_chinese_date(4660, 6, 6)
+//!     .expect("Failed to initialize Chinese Date instance.");
+//! 
+//! // `DateTime` type
+//! let chinese_datetime = DateTime::try_new_chinese_datetime(4660, 6, 6, 13, 1, 0)
+//!     .expect("Failed to initialize Chinese DateTime instance");
+//! 
+//! // `Date` checks
+//! assert_eq!(chinese_date.year().number, 4660);
+//! assert_eq!(chinese_date.year().related_iso, Some(2023));
+//! assert_eq!(chinese_date.year().cyclic, Some(40));
+//! assert_eq!(chinese_date.month().ordinal, 6);
+//! assert_eq!(chinese_date.day_of_month().0, 6);
+//! 
+//! // `DateTime` checks
+//! assert_eq!(chinese_datetime.date.year().number, 4660);
+//! assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
+//! assert_eq!(chinese_datetime.date.year().cyclic, Some(40));
+//! assert_eq!(chinese_datetime.date.month().ordinal, 6);
+//! assert_eq!(chinese_datetime.date.day_of_month().0, 6);
+//! assert_eq!(chinese_datetime.time.hour.number(), 13);
+//! assert_eq!(chinese_datetime.time.minute.number(), 1);
+//! assert_eq!(chinese_datetime.time.second.number(), 0);
+//! ```
+
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
@@ -272,7 +304,6 @@ impl DateTime<Chinese> {
     pub fn try_new_chinese_datetime(
         year: i32,
         month: u8,
-        leap_month: u8,
         day: u8,
         hour: u8,
         minute: u8,
@@ -497,11 +528,6 @@ impl Chinese {
         Date::try_new_chinese_date(year, month_int, day).unwrap()
     }
 
-    /// Get a RataDie from a Date<Chinese>
-    pub(crate) fn fixed_from_chinese_date(date: Date<Chinese>) -> RataDie {
-        Self::fixed_from_chinese_date_inner(date.inner)
-    }
-
     /// Get a RataDie from a ChineseDateInner
     pub(crate) fn fixed_from_chinese_date_inner(date: ChineseDateInner) -> RataDie {
         let year = date.0.year;
@@ -563,7 +589,7 @@ impl Chinese {
     fn format_chinese_year(year: i32) -> FormattableYear {
         let era = Era(tinystr!(16, "era"));
         let number = year;
-        let cyclic = Some(div_rem_euclid(number, 60).1 + 1);
+        let cyclic = Some(div_rem_euclid(number - 1, 60).1 + 1);
         let mid_year = Self::fixed_mid_year_from_year(number);
         let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
         let related_iso = Some(iso_formattable_year.number);
@@ -602,7 +628,7 @@ mod test {
     #[test]
     fn test_fixed_from_chinese() {
         let date = Date::try_new_chinese_date(4660, 6, 6).unwrap();
-        let fixed = Chinese::fixed_from_chinese_date(date);
+        let fixed = Chinese::fixed_from_chinese_date_inner(date.inner);
         assert_eq!(fixed.to_i64_date(), 738694);
     }
 }
