@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::astronomy::PI;
+use alloc::vec::Vec;
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///
@@ -88,33 +89,46 @@ pub const fn quotient64(n: i64, d: i64) -> i64 {
 // cosine of x in radians
 pub fn cos_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
-    radians.cos()
+    libm::cos(radians)
 }
 // sine of x in radians
 pub fn sin_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
-    radians.sin()
+    libm::sin(radians)
 }
 // tan of x in radians
 pub fn tan_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
-    radians.tan()
+    libm::tan(radians)
 }
 
 // Arccosine of x in degrees
 pub fn arccos_degrees(x: f64) -> f64 {
-    let radians = x.acos();
+    let radians = libm::acos(x);
     radians.to_degrees()
 }
 
 // Arcsine of x in degrees
 pub fn arcsin_degrees(x: f64) -> f64 {
-    let radians = x.asin();
-    radians.to_degrees()
+    let radians = libm::asin(x);
+    let r = radians.to_degrees();
+
+    div_rem_euclid_f64(r, 360.0).1
 }
 
 fn mod_degrees(x: f64) -> f64 {
     ((x % 360.0) + 360.0) % 360.0
+}
+
+pub fn mod3(x: f64, a: f64, b: f64) -> f64 {
+    // The value of x shifted into the range [a..b).
+    // Returns x if a=b.
+    if (a - b).abs() < f64::EPSILON {
+        x
+    } else {
+        let (_, rem) = div_rem_euclid_f64(x - a, b - a);
+        a + rem
+    }
 }
 
 // Arctan of x,y in degrees
@@ -128,11 +142,11 @@ pub fn arctan_degrees(y: f64, x: f64) -> Result<f64, &'static str> {
             Ok(-90.0)
         }
     } else {
-        let alpha = (y / x).atan() * 180.0 / PI;
+        let alpha = libm::atan(y / x) * 180.0 / PI;
         Ok(mod_degrees(if x >= 0.0 { alpha } else { alpha + 180.0 }))
     }
 }
-
+// TODO: convert recursive into iterative
 pub fn poly(x: f64, coeffs: Vec<f64>) -> f64 {
     match coeffs.split_first() {
         Some((first, rest)) => first + x * poly(x, rest.to_vec()),

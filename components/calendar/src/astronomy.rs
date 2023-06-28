@@ -11,6 +11,7 @@ use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
 use crate::{Date, Gregorian};
+use alloc::vec;
 
 #[derive(Debug, Copy, Clone, Default)]
 /// A Location on the Earth given as a latitude, longitude, and elevation,
@@ -282,12 +283,23 @@ impl Astronomical {
     // Calculates declination at a given Moment of UTC time for the latitude and longitude of an object lambda
     pub(crate) fn declination(moment: Moment, beta: f64, lambda: f64) -> f64 {
         let varepsilon = Self::obliquity(moment);
+
+        let sin_beta = sin_degrees(beta);
+        let sin_var = sin_degrees(varepsilon);
+        let cos_var = cos_degrees(varepsilon);
+        let cos_beta = cos_degrees(beta);
+        let sin_lambda = sin_degrees(lambda);
+
+        let add_1 = sin_beta * cos_var;
+        let add_2 = cos_beta * sin_var * sin_lambda;
+
+        let r = add_1 + add_2;
+
         arcsin_degrees(
             sin_degrees(beta) * cos_degrees(varepsilon)
                 + cos_degrees(beta) * sin_degrees(varepsilon) * sin_degrees(lambda),
         )
     }
-    #[allow(dead_code)]
     pub(crate) fn right_ascension(
         moment: Moment,
         beta: f64,
@@ -475,11 +487,93 @@ impl Astronomical {
     #[allow(dead_code)]
     pub(crate) fn sidereal_from_moment(moment: Moment) -> f64 {
         let c = (moment - J2000) / 36525.0;
-        let angle = 280.46061837 + c * (36525.0 * 360.98564736629 + 0.000387933 - c / 38710000.0);
-        angle % 360.0
+        let coefficients = vec![
+            (280.46061837),
+            (36525.0 * 360.98564736629),
+            (0.000387933),
+            (-1.0 / 38710000.0),
+        ];
+
+        let angle = poly(c, coefficients);
+
+        div_rem_euclid_f64(angle, 360.0).1
     }
 
-    // TODO LUNAR LATITUDE
+    /// Latitude of the moon (in degrees) at a given moment
+    ///
+    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4466
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
+    pub(crate) fn lunar_latitude(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let l = Self::mean_lunar_longitude(c);
+        let d = Self::lunar_elongation(c);
+        let ms = Self::solar_anomaly(c);
+        let ml = Self::lunar_anomaly(c);
+        let f = Self::moon_node(c);
+        let e = 1.0 - (0.002516 * c) - (0.0000074 * libm::pow(c, 2.0));
+        let args_lunar_elongation: [f64; 60] = [
+            0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 0.0, 2.0, 0.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+            0.0, 4.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 4.0, 4.0, 0.0, 4.0, 2.0, 2.0,
+            2.0, 2.0, 0.0, 2.0, 2.0, 2.0, 2.0, 4.0, 2.0, 2.0, 0.0, 2.0, 1.0, 1.0, 0.0, 2.0, 1.0,
+            2.0, 0.0, 4.0, 4.0, 1.0, 4.0, 1.0, 4.0, 2.0,
+        ];
+
+        let args_solar_anomaly: [f64; 60] = [
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, -1.0, -1.0,
+            -1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, -1.0, -2.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+            0.0, -1.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0, -2.0,
+        ];
+
+        let args_lunar_anomaly: [f64; 60] = [
+            0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 2.0, 1.0, 2.0, 0.0, -2.0, 1.0, 0.0, -1.0, 0.0,
+            -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 3.0, 0.0, -1.0, 1.0, -2.0,
+            0.0, 2.0, 1.0, -2.0, 3.0, 2.0, -3.0, -1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0,
+            -2.0, -1.0, 1.0, -2.0, 2.0, -2.0, -1.0, 1.0, 1.0, -1.0, 0.0, 0.0,
+        ];
+
+        let args_moon_node: [f64; 60] = [
+            1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0,
+            -1.0, -1.0, -1.0, 1.0, 3.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -3.0, 1.0,
+            -3.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 3.0, -1.0, -1.0, 1.0,
+            -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0,
+        ];
+
+        let sine_coeff: [f64; 60] = [
+            5128122.0, 280602.0, 277693.0, 173237.0, 55413.0, 46271.0, 32573.0, 17198.0, 9266.0,
+            8822.0, 8216.0, 4324.0, 4200.0, -3359.0, 2463.0, 2211.0, 2065.0, -1870.0, 1828.0,
+            -1794.0, -1749.0, -1565.0, -1491.0, -1475.0, -1410.0, -1344.0, -1335.0, 1107.0, 1021.0,
+            833.0, 777.0, 671.0, 607.0, 596.0, 491.0, -451.0, 439.0, 422.0, 421.0, -366.0, -351.0,
+            331.0, 315.0, 302.0, -283.0, -229.0, 223.0, 223.0, -220.0, -220.0, -185.0, 181.0,
+            -177.0, 176.0, 166.0, -164.0, 132.0, -119.0, 115.0, 107.0,
+        ];
+
+        let mut correction = 0.0;
+        let len = sine_coeff.len();
+
+        for i in 0..len {
+            let v = sine_coeff[i];
+            let w = args_lunar_elongation[i];
+            let x = args_solar_anomaly[i];
+            let y = args_lunar_anomaly[i];
+            let z = args_moon_node[i];
+
+            correction += v * libm::pow(e, x.abs()) * sin_degrees(w * d + x * ms + y * ml + z * f);
+        }
+        correction /= 1_000_000.0;
+
+        let venus = (175.0
+            * (sin_degrees(119.75 + c * 131.849 + f) + sin_degrees(119.75 + c * 131.849 - f)))
+            / 1_000_000.0;
+
+        let flat_earth =
+            (-2235.0 * sin_degrees(l) + 127.0 * sin_degrees(l - ml) + -115.0 * sin_degrees(l + ml))
+                / 1_000_000.0;
+
+        let extra = (382.0 * sin_degrees(313.45 + (c * 481266.484))) / 1_000_000.0;
+
+        correction + venus + flat_earth + extra
+    }
 
     /// Longitude of the moon (in degrees) at a given moment
     ///
@@ -557,13 +651,11 @@ impl Astronomical {
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4148-L4158
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn mean_lunar_longitude(c: f64) -> f64 {
-        div_rem_euclid_f64(
-            218.3164477 + 481267.88123421 * c - 0.0015786 * libm::pow(c, 2.0)
-                + libm::pow(c, 3.0) / 538841.0
-                - libm::pow(c, 4.0) / 65194000.0,
-            360.0,
-        )
-        .1
+        let n = 218.3164477
+            + c * (481267.88123421 - 0.0015786 * c + c * c / 538841.0
+                - libm::pow(c, 3.0) / 65194000.0);
+
+        div_rem_euclid_f64(n, 360.0).1
     }
 
     // Lunar elongation (the moon's angular distance east of the Sun) at a given Moment in Julian centuries
@@ -579,7 +671,39 @@ impl Astronomical {
         )
         .1
     }
+    /// Altitude of the moon (in degrees) at a given moment
+    ///
+    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4537
 
+    #[allow(dead_code)]
+    pub(crate) fn lunar_altitude(moment: Moment, location: Location) -> f64 {
+        let phi = location.latitude;
+        let psi = location.longitude;
+        let lambda = Self::lunar_longitude(moment); // This works
+        let beta = Self::lunar_latitude(moment); // This works
+        let alpha = Self::right_ascension(moment, beta, lambda).unwrap(); // Safe value
+        let delta = Self::declination(moment, beta, lambda);
+        let theta0 = Self::sidereal_from_moment(moment);
+        let c = -alpha + theta0 + psi;
+        let cap_h: f64 = div_rem_euclid_f64(theta0 + psi - alpha, 360.0).1;
+
+        let sin_phi = sin_degrees(phi);
+        let sin_delta = sin_degrees(delta);
+        let cos_phi = cos_degrees(phi);
+        let cos_delta = cos_degrees(delta);
+        let cos_h = cos_degrees(cap_h);
+
+        let add_1 = sin_phi * sin_delta;
+        let add_2 = cos_phi * cos_delta * cos_h;
+        let r = add_1 + add_2;
+
+        let altitude = arcsin_degrees(
+            sin_degrees(phi) * sin_degrees(delta)
+                + cos_degrees(phi) * cos_degrees(delta) * cos_degrees(cap_h),
+        );
+
+        mod3(altitude, -180.0, 180.0)
+    }
     // Average anomaly of the sun (in degrees) at a given Moment in Julian centuries
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4172-L4182
@@ -817,9 +941,20 @@ impl Astronomical {
 mod tests {
 
     use super::*;
+    use alloc::vec;
 
-    const TEST_LOWER_BOUND: f64 = 0.99999999;
-    const TEST_UPPER_BOUND: f64 = 1.00000001;
+    const TEST_LOWER_BOUND: f64 = 0.9999999;
+    const TEST_UPPER_BOUND: f64 = 1.0000001;
+
+    fn assert_eq_f64(expected_value: f64, value: f64, moment: Moment) {
+        if expected_value > 0.0 {
+            assert!(value > expected_value * TEST_LOWER_BOUND, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
+            assert!(value < expected_value * TEST_UPPER_BOUND, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
+        } else {
+            assert!(value > expected_value * TEST_UPPER_BOUND, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
+            assert!(value < expected_value * TEST_LOWER_BOUND, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
+        }
+    }
 
     #[test]
     // Checks that ephemeris_correction gives the same values as the lisp reference code for the given RD test cases
@@ -928,6 +1063,62 @@ mod tests {
     }
 
     #[test]
+    // Checks that lunar_latitude gives the same values as the lisp reference code for the given RD test cases
+    // (See function definition for lisp reference)
+
+    fn check_lunar_latitude() {
+        let rd_vals = [
+            -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+            470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
+            664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
+        ];
+
+        let expected_lunar_lat = [
+            2.4527590208461576,
+            -4.90223034654341,
+            -2.9394693592610484,
+            5.001904508580623,
+            -3.208909826304433,
+            0.894361559890105,
+            -3.8633355687979827,
+            -2.5224444701068927,
+            1.0320696124422062,
+            3.005689926794408,
+            1.613842956502888,
+            4.766740664556875,
+            4.899202930916035,
+            4.838473946607273,
+            2.301475724501815,
+            -0.8905637199828537,
+            4.7657836433468495,
+            -2.737358003826797,
+            -4.035652608005429,
+            -3.157214517184652,
+            -1.8796147336498752,
+            -3.379519408995276,
+            -4.398341468078228,
+            2.099198567294447,
+            5.268746128633113,
+            -1.6722994521634027,
+            4.6820126551666865,
+            3.705518210116447,
+            2.493964063649065,
+            -4.167774638752936,
+            -2.873757531859998,
+            -4.667251128743298,
+            5.138562328560728,
+        ];
+
+        for (rd, expected_lunar_lat) in rd_vals.iter().zip(expected_lunar_lat.iter()) {
+            let moment: Moment = Moment::new(*rd as f64);
+            let lunar_lat = Astronomical::lunar_latitude(moment);
+            let expected_lunar_lat_value = *expected_lunar_lat;
+
+            assert_eq_f64(expected_lunar_lat_value, lunar_lat, moment)
+        }
+    }
+
+    #[test]
     // Checks that lunar_longitude gives the same values as the lisp reference code for the given RD test cases
     // (See function definition for lisp reference)
     fn check_lunar_longitude() {
@@ -974,9 +1165,68 @@ mod tests {
         for (rd, expected_lunar_long) in rd_vals.iter().zip(expected_lunar_long.iter()) {
             let moment: Moment = Moment::new(*rd as f64);
             let lunar_long = Astronomical::lunar_longitude(moment);
-            let expected_lunar_long_value = expected_lunar_long;
-            assert!(lunar_long > expected_lunar_long_value * TEST_LOWER_BOUND, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
-            assert!(lunar_long < expected_lunar_long_value * TEST_UPPER_BOUND, "Lunar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_lunar_long_value} and calculated: {lunar_long}\n\n");
+            let expected_lunar_long_value = *expected_lunar_long;
+
+            assert_eq_f64(expected_lunar_long_value, lunar_long, moment)
+        }
+    }
+
+    #[test]
+    fn check_lunar_altitude() {
+        let rd_vals = [
+            -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+            470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
+            664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
+        ];
+
+        let expected_altitude_deg: [f64; 33] = [
+            -13.163184128188277,
+            -7.281425833096932,
+            -77.1499009115812,
+            -30.401178593900795,
+            71.84857827681589,
+            -43.79857984753659,
+            40.65320421851649,
+            -40.2787255279427,
+            29.611156512065406,
+            -19.973178784428228,
+            -23.740743779700097,
+            30.956688013173505,
+            -18.88869091014726,
+            -32.16116202243495,
+            -45.68091943596022,
+            -50.292110029959986,
+            -54.3453056090807,
+            -34.56600009726776,
+            44.13198955291821,
+            -57.539862986917285,
+            -62.08243959461623,
+            -54.07209109276471,
+            -16.120452006695814,
+            23.864594681196934,
+            32.95014668614863,
+            72.69165128891194,
+            -29.849481790038908,
+            31.610644151367637,
+            -42.21968940776054,
+            28.6478092363985,
+            -38.95055354031621,
+            27.601977078963245,
+            -54.85468160086816,
+        ];
+
+        let mecca = Location {
+            latitude: 6427.0 / 300.0,
+            longitude: 11947.0 / 300.0,
+            elevation: 298.0,
+        };
+
+        for (rd, expected_alt) in rd_vals.iter().zip(expected_altitude_deg.iter()) {
+            let moment: Moment = Moment::new(*rd as f64);
+            let lunar_alt = Astronomical::lunar_altitude(moment, mecca);
+            let expected_alt_value = *expected_alt;
+
+            assert_eq_f64(expected_alt_value, lunar_alt, moment)
         }
     }
 
@@ -1109,5 +1359,58 @@ mod tests {
         assert_eq!(long_too_small, LocationError::LongitudeOutOfBounds(180.1));
         let long_too_large = Location::try_new(-15.0, -180.1, 1000.0).unwrap_err();
         assert_eq!(long_too_large, LocationError::LongitudeOutOfBounds(-180.1));
+    }
+
+    #[test]
+    fn check_obliquity() {
+        let rd_vals = [
+            -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+            470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
+            664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
+        ];
+
+        let expected_obliquity_val = [
+            23.766686762858193,
+            23.715893268155952,
+            23.68649428364133,
+            23.678396646319815,
+            23.636406172247575,
+            23.622930685681105,
+            23.607863050353394,
+            23.567099369895143,
+            23.556410268115442,
+            23.544315732982724,
+            23.5378658942414,
+            23.531656189162007,
+            23.53035487913322,
+            23.518307553466993,
+            23.512526100422757,
+            23.50524564635773,
+            23.49727762748816,
+            23.49643975090472,
+            23.48498365949255,
+            23.48082101433542,
+            23.476136639530452,
+            23.469392588649566,
+            23.46274905945532,
+            23.460194773340504,
+            23.451866181318085,
+            23.44843969966849,
+            23.44686683973517,
+            23.446664978744177,
+            23.44660409993624,
+            23.440304562352033,
+            23.43979187336218,
+            23.434238093381342,
+            23.426996977623215,
+        ];
+
+        for (rd, expected_obl_val) in rd_vals.iter().zip(expected_obliquity_val.iter()) {
+            let moment = Moment::new(*rd as f64);
+            let obl_val = Astronomical::obliquity(moment);
+            let expected_val = *expected_obl_val;
+
+            assert_eq_f64(expected_val, obl_val, moment)
+        }
     }
 }
