@@ -17,7 +17,7 @@
 //! use icu_locid_transform::fallback::LocaleFallbacker;
 //!
 //! // Set up a LocaleFallbacker with data.
-//! let fallbacker = LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).expect("data");
+//! let fallbacker = LocaleFallbacker::new();
 //!
 //! // Create a LocaleFallbackerIterator with a default configuration.
 //! // By default, uses language priority with no additional extension keywords.
@@ -64,8 +64,7 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker =
-    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("data");
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Language;
     /// let mut fallback_iterator = fallbacker.fallback_for(config, locale!("ca-ES-valencia"));
@@ -95,8 +94,7 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker =
-    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("data");
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Region;
     /// let mut fallback_iterator = fallbacker.fallback_for(config, locale!("ca-ES-valencia"));
@@ -133,8 +131,7 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker =
-    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("data");
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.extension_key = Some(icu_locid::extensions::unicode::key!("nu"));
     /// let mut fallback_iterator = fallbacker
@@ -175,8 +172,7 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker =
-    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("data");
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Collation;
     /// config.fallback_supplement = Some(FallbackSupplement::Collation);
@@ -295,12 +291,14 @@ impl LocaleFallbacker {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "data")]
     #[allow(clippy::new_ret_no_self)] // keeping constructors together
-    pub const fn new() -> LocaleFallbackerBorrowed<'static> {
-        LocaleFallbackerBorrowed {
+    pub const fn new<'a>() -> LocaleFallbackerBorrowed<'a> {
+        let tickstatic = LocaleFallbackerBorrowed {
             likely_subtags: crate::provider::Baked::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1,
             parents: crate::provider::Baked::SINGLETON_FALLBACK_PARENTS_V1,
             collation_supplement: Some(crate::provider::Baked::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1),
-        }
+        };
+        // Shitty covariance because the zeromaps confuse the compiler
+        unsafe { core::mem::transmute(tickstatic) }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
@@ -369,17 +367,21 @@ impl LocaleFallbacker {
 
     #[doc(hidden)]
     pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
-        LocaleFallbackerBorrowed {
-            likely_subtags: self.likely_subtags.get(),
-            parents: self.parents.get(),
-            collation_supplement: self.collation_supplement.as_ref().map(|p| p.get()),
-        }
-        .for_config(config)
+        self.as_borrowed().for_config(config)
     }
 
     #[doc(hidden)]
     pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
         self.for_config(data_key.into())
+    }
+
+    #[doc(hidden)]
+    pub fn as_borrowed(&self) -> LocaleFallbackerBorrowed {
+        LocaleFallbackerBorrowed {
+            likely_subtags: self.likely_subtags.get(),
+            parents: self.parents.get(),
+            collation_supplement: self.collation_supplement.as_ref().map(|p| p.get()),
+        }
     }
 }
 
@@ -395,7 +397,7 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
         self,
         config: LocaleFallbackConfig,
         locale: impl Into<DataLocale>,
-    ) -> LocaleFallbackIterator<'a, 'a> {
+    ) -> LocaleFallbackIterator<'a, 'static> {
         self.for_config(config).fallback_for(locale.into())
     }
 
@@ -413,7 +415,7 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
 }
 
 impl<'a> LocaleFallbackerWithConfig<'a> {
-    pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'a> {
+    pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
         self.normalize(&mut locale);
         LocaleFallbackIterator {
             current: locale,

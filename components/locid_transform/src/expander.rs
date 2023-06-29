@@ -29,8 +29,7 @@ use crate::TransformResult;
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
-/// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-///     .expect("create failed");
+/// let lc = LocaleExpander::new();
 ///
 /// let mut locale = locale!("zh-CN");
 /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -47,8 +46,7 @@ use crate::TransformResult;
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
-/// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-///     .expect("create failed");
+/// let lc = LocaleExpander::new();
 ///
 /// let mut locale = locale!("zh-Hans-CN");
 /// assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
@@ -66,9 +64,7 @@ use crate::TransformResult;
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
-/// let lc =
-///     LocaleExpander::try_new_extended_unstable(&icu_testdata::unstable())
-///         .expect("create failed");
+/// let lc = LocaleExpander::new_extended();
 ///
 /// let mut locale = locale!("atj");
 /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -366,8 +362,7 @@ impl LocaleExpander {
     /// use icu_locid::locale;
     /// use icu_locid_transform::{LocaleExpander, TransformResult};
     ///
-    /// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("create failed");
+    /// let lc = LocaleExpander::new();
     ///
     /// let mut locale = locale!("zh-CN");
     /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -440,8 +435,7 @@ impl LocaleExpander {
     /// use icu_locid::locale;
     /// use icu_locid_transform::{LocaleExpander, TransformResult};
     ///
-    /// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("creation failed");
+    /// let lc = LocaleExpander::new();
     ///
     /// let mut locale = locale!("zh-Hans-CN");
     /// assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);

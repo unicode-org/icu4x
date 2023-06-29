@@ -23,8 +23,7 @@ This minimize method returns a new Locale that is the result of running the
 use icu::locid::Locale;
 use icu::locid_transform::{LocaleCanonicalizer, TransformResult};
 
-let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
-    .expect("create failed");
+let lc = LocaleCanonicalizer::new();
 
 let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
     .parse()
@@ -37,8 +36,7 @@ assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse::<Locale>().unwrap());
 use icu::locid::locale;
 use icu::locid_transform::{LocaleExpander, TransformResult};
 
-let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-    .expect("create failed");
+let lc = LocaleExpander::new();
 
 let mut locale = locale!("zh-CN");
 assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -54,8 +52,7 @@ use icu::locid::locale;
 use icu::locid_transform::{LocaleExpander, TransformResult};
 use writeable::assert_writeable_eq;
 
-let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-    .expect("create failed");
+let lc = LocaleExpander::new();
 
 let mut locale = locale!("zh-Hans-CN");
 assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);

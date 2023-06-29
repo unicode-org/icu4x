@@ -20,7 +20,9 @@ use icu_provider::prelude::*;
 use icu_provider::DataMarker;
 
 #[cfg(feature = "data")]
-pub(crate) struct Baked;
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
 
 #[cfg(feature = "data")]
 const _: () = {

@@ -43,7 +43,6 @@ icu_timezone_data = { path = "data", optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_timezone", "icu_locid_transform"] }
 
 [features]
 std = ["icu_calendar/std", "icu_locid/std", "icu_provider/std"]

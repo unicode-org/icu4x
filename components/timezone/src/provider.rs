@@ -22,7 +22,9 @@ use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 #[cfg(feature = "data")]
-pub(crate) struct Baked;
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
 
 #[cfg(feature = "data")]
 const _: () = {
