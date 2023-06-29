@@ -164,11 +164,11 @@ impl ZonedDateTimeFormatter {
     /// );
     /// ```
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "experimental")]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_experimental(
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
@@ -308,10 +308,10 @@ impl ZonedDateTimeFormatter {
     /// );
     /// ```
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new(
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,

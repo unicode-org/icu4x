@@ -57,7 +57,7 @@ std = ["icu_collections/std", "icu_properties/std", "icu_provider/std"]
 serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_properties/serde"]
 datagen = ["serde", "dep:databake", "icu_collections/databake", "zerovec/databake", "icu_properties/datagen"]
 experimental = []
-data = ["dep:icu_normalizer_data", "icu_properties/data"]
+compiled_data = ["dep:icu_normalizer_data", "icu_properties/compiled_data"]
 
 [[test]]
 name = "tests"

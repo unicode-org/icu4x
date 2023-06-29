@@ -319,8 +319,8 @@ macro_rules! make_map_property {
         }
         $(#[$doc])*
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
-        #[cfg(feature = "data")]
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
+        #[cfg(feature = "compiled_data")]
         pub const fn $constname() -> CodePointMapDataBorrowed<'static, $value_ty> {
             CodePointMapDataBorrowed {
                 map: crate::provider::Baked::$singleton

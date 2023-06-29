@@ -48,4 +48,4 @@ icu = { path = "../../components/icu", default-features = false }
 std = ["icu_calendar/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
-data = ["dep:icu_timezone_data"]
+compiled_data = ["dep:icu_timezone_data"]

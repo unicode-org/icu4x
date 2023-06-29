@@ -43,7 +43,7 @@ pub struct LocaleDirectionality {
 
 impl LocaleDirectionality {
     /// A constructor which creates a [`LocaleDirectionality`].
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self::new_with_expander(LocaleExpander::new())
     }
@@ -98,7 +98,7 @@ impl LocaleDirectionality {
     ///
     /// assert_eq!(ld_extended.get(&locale!("jbn")), Some(Direction::RightToLeft));
     /// ```
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new_with_expander(expander: LocaleExpander) -> Self {
         LocaleDirectionality {
             script_direction: DataPayload::from_static_ref(

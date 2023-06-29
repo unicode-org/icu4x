@@ -32,12 +32,12 @@ pub mod exceptions;
 mod exceptions_builder;
 pub mod unfold;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
     use crate as icu_casemapping;
     icu_casemapping_data::impl_props_casemap_v1!(Baked);

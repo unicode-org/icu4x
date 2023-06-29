@@ -115,7 +115,7 @@ pub enum TransformResult {
 #[doc(no_inline)]
 pub use LocaleTransformError as Error;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[doc(hidden)]
 pub mod data {
     use icu_locid_transform_data::*;

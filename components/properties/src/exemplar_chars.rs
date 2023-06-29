@@ -61,8 +61,8 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         }
         $(#[$attr])*
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
-        #[cfg(feature = "data")]
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
+        #[cfg(feature = "compiled_data")]
         $vis2 fn $constname(
             locale: &DataLocale,
         ) -> Result<UnicodeSetData, DataError> {

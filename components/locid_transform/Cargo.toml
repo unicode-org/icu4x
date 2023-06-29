@@ -62,7 +62,7 @@ bench = ["serde"]
 serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locid/databake", "tinystr/databake"]
 experimental = []
-data = ["dep:icu_locid_transform_data"]
+compiled_data = ["dep:icu_locid_transform_data"]
 
 [[bench]]
 name = "locale_canonicalizer"
