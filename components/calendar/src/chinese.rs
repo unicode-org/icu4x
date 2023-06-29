@@ -35,12 +35,9 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
+use crate::astronomy::{Astronomical, Location, MEAN_TROPICAL_YEAR};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{
-    adjusted_rem_euclid, adjusted_rem_euclid_f64, div_rem_euclid, div_rem_euclid_f64, i64_to_i32,
-    quotient, I32Result,
-};
+use crate::helpers::{adjusted_rem_euclid, div_rem_euclid, i64_to_i32, quotient, I32Result};
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
 use crate::types::{Era, FormattableYear, Moment};
