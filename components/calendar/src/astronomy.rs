@@ -808,6 +808,32 @@ impl Astronomical {
 
         385000560.0 + correction
     }
+
+    /// Parallax of moon at tee at location.
+    /// Adapted from "Astronomical Algorithms" by Jean Meeus,
+    /// Willmann-Bell, 2nd edn., 1998.
+    pub(crate) fn lunar_parallax(moment: Moment, location: Location) -> f64 {
+        let geo = Self::lunar_altitude(moment, location);
+        let cap_delta = Self::lunar_distance(moment);
+        let alt = 6378140.0 / cap_delta;
+        let arg = alt * libm::cos(geo.to_radians());
+        arcsin_degrees(arg)
+    }
+
+    /// Topocentric altitude of moon at moment at location,
+    /// as a small positive/negative angle in degrees.
+    pub(crate) fn topocentric_lunar_altitude(moment: Moment, location: Location) -> f64 {
+        Self::lunar_altitude(moment, location) - Self::lunar_parallax(moment, location)
+    }
+
+    /// Observed altitude of upper limb of moon at moment at location,
+    /// as a small positive/negative angle in degrees.
+    pub(crate) fn observed_lunar_altitude(moment: Moment, location: Location) -> f64 {
+        Self::topocentric_lunar_altitude(moment, location)
+            + Self::refraction(moment, location)
+            + 16.0 / 60.0
+    }
+
     // Average anomaly of the sun (in degrees) at a given Moment in Julian centuries
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4172-L4182
@@ -888,7 +914,6 @@ impl Astronomical {
             a
         }
     }
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> f64 {
         let tau = moment.inner()
             - MEAN_SYNODIC_MONTH / (360.0 / phase) * ((Self::lunar_phase(moment) - phase) % 360.0);
@@ -1386,6 +1411,59 @@ mod tests {
             let expected_distance_val = *expected_distance;
 
             assert_eq_f64(expected_distance_val, distance, moment)
+        }
+    }
+
+    #[test]
+    fn check_lunar_parallax() {
+        let rd_vals = [
+            -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+            470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
+            664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
+        ];
+
+        let expected_parallax = [
+            0.9180377088277034,
+            0.9208275970231943,
+            0.20205836298974478,
+            0.8029475944705559,
+            0.3103764190238057,
+            0.7224552232666479,
+            0.6896953754669151,
+            0.6900664438899986,
+            0.8412721901635796,
+            0.8519504336914271,
+            0.8916972264563727,
+            0.8471706468502866,
+            0.8589744596828851,
+            0.8253387743371953,
+            0.6328154405175959,
+            0.60452566100182,
+            0.5528114670829496,
+            0.7516491660573382,
+            0.6624140811593374,
+            0.5109678575066725,
+            0.4391324179474404,
+            0.5486027633624313,
+            0.9540023420545446,
+            0.835939538308717,
+            0.7585615249134946,
+            0.284040095327141,
+            0.8384425157447107,
+            0.8067682261382678,
+            0.7279971552035109,
+            0.8848306274359499,
+            0.720943806048675,
+            0.7980998225232075,
+            0.5204553405568378,
+        ];
+
+        for (rd, parallax) in rd_vals.iter().zip(expected_parallax.iter()) {
+            let moment: Moment = Moment::new(*rd as f64);
+            let parallax_val = Astronomical::lunar_parallax(moment, MECCA);
+            let expected_parallax_val = *parallax;
+
+            assert_eq_f64(expected_parallax_val, parallax_val, moment);
         }
     }
 
