@@ -1384,7 +1384,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_capi"
@@ -1454,7 +1454,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemapping_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_codepointtrie_builder"
@@ -1495,7 +1495,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_collections"
@@ -1537,7 +1537,7 @@ dependencies = [
 
 [[package]]
 name = "icu_compactdecimal_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_datagen"
@@ -1628,7 +1628,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_decimal"
@@ -1655,7 +1655,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_depcheck"
@@ -1678,7 +1678,7 @@ dependencies = [
 
 [[package]]
 name = "icu_displaynames_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_ffi_coverage"
@@ -1737,7 +1737,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_locid"
@@ -1779,7 +1779,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -1806,7 +1806,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_pattern"
@@ -1852,7 +1852,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_properties"
@@ -1874,7 +1874,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_provider"
@@ -1981,7 +1981,7 @@ dependencies = [
 
 [[package]]
 name = "icu_relativetime_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_segmenter"
@@ -2009,7 +2009,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_testdata"
@@ -2079,7 +2079,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "ident_case"
