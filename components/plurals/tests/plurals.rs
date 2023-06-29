@@ -31,16 +31,6 @@ fn test_static_load_works() {
 }
 
 #[test]
-fn test_plural_rules_missing() {
-    assert!(PluralRules::try_new_unstable(
-        &icu_plurals::provider::Baked,
-        &locale!("xx").into(),
-        PluralRuleType::Cardinal
-    )
-    .is_err());
-}
-
-#[test]
 fn test_plural_category_all() {
     let categories: Vec<PluralCategory> = PluralCategory::all().collect();
 
