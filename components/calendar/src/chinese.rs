@@ -38,7 +38,7 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{
-    adjusted_rem_euclid, adjusted_rem_euclid_f64, div_rem_euclid, i64_to_i32, quotient, I32Result,
+    adjusted_rem_euclid, adjusted_rem_euclid_f64, div_rem_euclid, i64_to_i32, quotient, I32Result, div_rem_euclid_f64,
 };
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
@@ -112,17 +112,24 @@ impl CalendarArithmetic for Chinese {
     fn month_days(year: i32, month: u8) -> u8 {
         let mid_year = Self::fixed_mid_year_from_year(year);
         let new_year = Chinese::chinese_new_year_on_or_before_fixed_date(mid_year);
-        let mut cur_month: u8 = 1;
-        let mut cur_rata_die = new_year;
-        let mut iters: u8 = 0;
-        let max_iters: u8 = 13;
-        while cur_month < month && iters < max_iters {
-            cur_rata_die = Chinese::chinese_new_moon_on_or_after((cur_rata_die + 1).as_moment());
-            cur_month += 1;
-            iters += 1;
-        }
-        debug_assert!(iters < max_iters, "Unexpectedly large number of iterations");
-        (Chinese::chinese_new_moon_on_or_after((cur_rata_die + 1).as_moment()) - cur_rata_die) as u8
+        let approx = new_year + ((month - 1) as i64 * 29);
+        let prev_new_moon = Chinese::chinese_new_moon_before((approx + 15).as_moment());
+        let next_new_moon = Chinese::chinese_new_moon_on_or_after((approx + 15).as_moment());
+        (next_new_moon - prev_new_moon) as u8
+
+        // let mid_year = Self::fixed_mid_year_from_year(year);
+        // let new_year = Chinese::chinese_new_year_on_or_before_fixed_date(mid_year);
+        // let mut cur_month: u8 = 1;
+        // let mut cur_rata_die = new_year;
+        // let mut iters: u8 = 0;
+        // let max_iters: u8 = 13;
+        // while cur_month < month && iters < max_iters {
+        //     cur_rata_die = Chinese::chinese_new_moon_on_or_after((cur_rata_die + 1).as_moment());
+        //     cur_month += 1;
+        //     iters += 1;
+        // }
+        // debug_assert!(iters < max_iters, "Unexpectedly large number of iterations");
+        // (Chinese::chinese_new_moon_on_or_after((cur_rata_die + 1).as_moment()) - cur_rata_die) as u8
     }
 
     fn months_for_every_year(year: i32) -> u8 {
@@ -569,31 +576,25 @@ impl Chinese {
     }
 
     /// Get a Date<Chinese> from a fixed date
-    ///
-    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
     pub(crate) fn chinese_date_from_fixed(date: RataDie) -> Date<Chinese> {
-        let solstices = Self::get_chinese_winter_solstices(date);
-        let prior_solstice = solstices.0;
-        let month_after_eleventh =
-            Self::chinese_new_moon_on_or_after((prior_solstice + 1).as_moment());
-        let start_of_month = Self::chinese_new_moon_before((date + 1).as_moment());
-        let m_float = start_of_month.as_moment().inner();
-        let m12_float = month_after_eleventh.as_moment().inner();
-        let month = adjusted_rem_euclid_f64(
-            libm::round((m_float - m12_float) / MEAN_SYNODIC_MONTH),
-            12.0,
-        );
-        let month_int = month as u8;
-        let elapsed_years =
-            libm::floor(1.5 - month / 12.0 + ((date - CHINESE_EPOCH) as f64) / MEAN_TROPICAL_YEAR);
+        let new_year = Self::chinese_new_year_on_or_before_fixed_date(date);
+        let elapsed_years = libm::floor(1.5 - 1.0 / 12.0 + ((new_year - CHINESE_EPOCH) as f64) / MEAN_TROPICAL_YEAR);
         let elapsed_years_int = i64_to_i32(elapsed_years as i64);
-        debug_assert!(
-            matches!(elapsed_years_int, I32Result::WithinRange(_)),
-            "Chinese year should be in range of i32"
-        );
+        debug_assert!(matches!(elapsed_years_int, I32Result::WithinRange(_)),
+                        "Chinese year should be in range of i32");
         let year = elapsed_years_int.saturate();
-        let day = (date - start_of_month + 1) as u8;
-        Date::try_new_chinese_date(year, month_int, day).unwrap()
+        let mut month = 1;
+        let max_months = 14;
+        let mut cur_month = new_year;
+        let mut next_month = Self::chinese_new_moon_on_or_after((cur_month + 1).as_moment());
+        while next_month <= date && month < max_months {
+            month += 1;
+            cur_month = next_month;
+            next_month = Self::chinese_new_moon_on_or_after((cur_month + 1).as_moment());
+        }
+        debug_assert!(month < max_months, "Unexpectedly large number of months");
+        let day = (date - cur_month + 1) as u8;
+        Date::try_new_chinese_date(year, month, day).unwrap()
     }
 
     /// Get a RataDie from a ChineseDateInner
@@ -615,24 +616,12 @@ impl Chinese {
         CHINESE_EPOCH + ((((cycle - 1) * 60 + year - 1) as f64 + 0.5) * MEAN_TROPICAL_YEAR) as i64
     }
 
-    /// Get the fixed date of the winter solstices immediately prior to and following a fixed date
-    /// Returned as a tuple (prior, following)
-    fn get_chinese_winter_solstices(date: RataDie) -> (RataDie, RataDie) {
-        let prior_solstice = Self::chinese_winter_solstice_on_or_before(date);
-        let following_solstice = Self::chinese_winter_solstice_on_or_before(prior_solstice + 370);
-        (prior_solstice, following_solstice)
-    }
-
     /// Returns true if the fixed date given is in a leap year, false otherwise
     fn fixed_date_is_in_leap_year(date: RataDie) -> bool {
-        let solstices = Self::get_chinese_winter_solstices(date);
-        let prior = solstices.0;
-        let following = solstices.1;
-        let month_after_eleventh =
-            Self::chinese_new_moon_on_or_after((prior + 1).as_moment()).as_moment();
-        let next_eleventh_month =
-            Self::chinese_new_moon_before((following + 1).as_moment()).as_moment();
-        libm::round((next_eleventh_month - month_after_eleventh) / MEAN_SYNODIC_MONTH) == 12.0
+        let prev_new_year = Self::chinese_new_year_on_or_before_fixed_date(date);
+        let next_new_year = Self::chinese_new_year_on_or_before_fixed_date(prev_new_year + 400);
+        let difference = next_new_year - prev_new_year;
+        difference > 365
     }
 
     /// Given that a date is in a leap year, find which month in the year is a leap month.
@@ -694,9 +683,219 @@ mod test {
     }
 
     #[test]
+    fn test_chinese_from_fixed() {
+        #[derive(Debug)]
+        struct TestCase {
+            fixed: i64,
+            expected_year: i32,
+            expected_month: u32,
+            expected_day: u32,
+        }
+
+        let cases = [
+            TestCase {
+                fixed: -963099,
+                expected_year: 1,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            TestCase {
+                fixed: 738700,
+                expected_year: 4660,
+                expected_month: 6,
+                expected_day: 12,
+            },
+            TestCase {
+                fixed: 738718,
+                expected_year: 4660,
+                expected_month: 6,
+                expected_day: 30,
+            },
+            TestCase {
+                fixed: 738747,
+                expected_year: 4660,
+                expected_month: 7,
+                expected_day: 29,
+            },
+            TestCase {
+                fixed: 738748,
+                expected_year: 4660,
+                expected_month: 8,
+                expected_day: 1,
+            },
+            TestCase {
+                fixed: 738865,
+                expected_year: 4660,
+                expected_month: 11,
+                expected_day: 29,
+            },
+            TestCase {
+                fixed: 738895,
+                expected_year: 4660,
+                expected_month: 12,
+                expected_day: 29,
+            },
+            TestCase {
+                fixed: 738925,
+                expected_year: 4660,
+                expected_month: 13,
+                expected_day: 30,
+            }
+        ];
+
+        for case in cases {
+            let chinese = Chinese::chinese_date_from_fixed(RataDie::new(case.fixed));
+            assert_eq!(case.expected_year, chinese.year().number, "Chinese from fixed failed for case: {case:?}");
+            assert_eq!(case.expected_month, chinese.month().ordinal, "Chinese from fixed failed for case: {case:?}");
+            assert_eq!(case.expected_day, chinese.day_of_month().0, "Chinese from fixed failed for case: {case:?}");
+        }
+    }
+
+    #[test]
     fn test_fixed_from_chinese() {
-        let date = Date::try_new_chinese_date(4660, 6, 6).unwrap();
-        let fixed = Chinese::fixed_from_chinese_date_inner(date.inner);
-        assert_eq!(fixed.to_i64_date(), 738694);
+        #[derive(Debug)]
+        struct TestCase {
+            year: i32,
+            month: u8,
+            day: u8,
+            expected: i64
+        }
+
+        let cases = [
+            TestCase {
+                year: 4660,
+                month: 6,
+                day: 6,
+                expected: 738694
+            },
+            TestCase {
+                year: 1,
+                month: 1,
+                day: 1,
+                expected: -963099,
+            }
+        ];
+
+        for case in cases {
+            let date = Date::try_new_chinese_date(case.year, case.month, case.day).unwrap();
+            let fixed = Chinese::fixed_from_chinese_date_inner(date.inner).to_i64_date();
+            let expected = case.expected;
+            assert_eq!(fixed, expected, "Fixed from Chinese failed with expected: {fixed} and calculated: {expected}, for test case: {case:?}");
+        }
+    }
+
+    #[test]
+    fn test_fixed_chinese_roundtrip() {
+        let mut fixed = -1822160;
+        let max_fixed = 1963020;
+        let mut iters = 0;
+        let max_iters = 560;
+        while fixed < max_fixed && iters < max_iters {
+            let rata_die = RataDie::new(fixed);
+            let chinese = Chinese::chinese_date_from_fixed(rata_die);
+            let result = Chinese::fixed_from_chinese_date_inner(chinese.inner);
+            let result_debug = result.to_i64_date();
+            assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
+            fixed += 7043;
+            iters += 1;
+        }
+    }
+
+    #[test]
+    fn test_chinese_epoch() {
+        let iso = Date::try_new_iso_date(-2636, 2, 15)
+            .unwrap();
+        let chinese = iso.to_calendar(Chinese);
+        assert_eq!(chinese.year().number, 1);
+        assert_eq!(chinese.month().ordinal, 1);
+        assert_eq!(chinese.month().code.0, "M01");
+        assert_eq!(chinese.day_of_month().0, 1);
+        assert_eq!(chinese.year().cyclic, Some(1));
+        assert_eq!(chinese.year().related_iso, Some(-2636));
+    }
+
+    #[test]
+    fn test_iso_to_chinese_negative_years() {
+        #[derive(Debug)]
+        struct TestCase {
+            iso_year: i32,
+            iso_month: u8,
+            iso_day: u8,
+            expected_year: i32,
+            expected_month: u32,
+            expected_day: u32,
+        }
+
+        let cases = [
+            TestCase {
+                iso_year: -2636,
+                iso_month: 2,
+                iso_day: 14,
+                expected_year: 0,
+                expected_month: 13,
+                expected_day: 30,
+            },
+            TestCase {
+                iso_year: -2636,
+                iso_month: 1,
+                iso_day: 15,
+                expected_year: 0,
+                expected_month: 12,
+                expected_day: 30,
+            }
+        ];
+
+        for case in cases {
+            let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+            let chinese = iso.to_calendar(Chinese);
+            assert_eq!(case.expected_year, chinese.year().number, "ISO to Chinese failed for case: {case:?}");
+            assert_eq!(case.expected_month, chinese.month().ordinal, "ISO to Chinese failed for case: {case:?}");
+            assert_eq!(case.expected_day, chinese.day_of_month().0, "ISO to Chinese failed for case: {case:?}");
+        }
+    }
+
+    #[test]
+    fn test_chinese_leap_months() {
+        let expected = [
+            (1933, 6),
+            (1938, 8),
+            (1984, 11),
+            (2009, 6),
+            (2017, 7),
+            (2028, 6),
+        ];
+        for case in expected {
+            let year = case.0;
+            let expected_month = case.1;
+            let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
+            let chinese_year = iso.to_calendar(Chinese).year().number;
+            let rata_die = Iso::fixed_from_iso(*iso.inner());
+            assert_eq!(true, Chinese::is_leap_year(chinese_year));
+            assert_eq!(expected_month, Chinese::get_leap_month_in_year(rata_die));
+        }
+    }
+
+    #[test]
+    fn test_month_days() {
+        let year = 4660;
+        let cases = [
+            (1, 29),
+            (2, 30),
+            (3, 29),
+            (4, 29),
+            (5, 30),
+            (6, 30),
+            (7, 29),
+            (8, 30),
+            (9, 30),
+            (10, 29),
+            (11, 30),
+            (12, 29),
+            (13, 30),
+        ];
+        for case in cases {
+            let days_in_month = Chinese::month_days(year, case.0);
+            assert_eq!(case.1, days_in_month, "month_days test failed for case: {case:?}");
+        }
     }
 }
