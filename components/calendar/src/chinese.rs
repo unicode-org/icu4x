@@ -929,4 +929,119 @@ mod test {
             );
         }
     }
+
+    #[test]
+    fn test_month_codes() {
+        #[derive(Debug)]
+        struct TestCase {
+            year: i32,
+            month: u8,
+            day: u8,
+            expected_code: &'static str,
+        }
+
+        let cases = [
+            TestCase {
+                year: 2023,
+                month: 1,
+                day: 9,
+                expected_code: "M12",
+            },
+            TestCase {
+                year: 2023,
+                month: 2,
+                day: 9,
+                expected_code: "M01",
+            },
+            TestCase {
+                year: 2023,
+                month: 3,
+                day: 9,
+                expected_code: "M02",
+            },
+            TestCase {
+                year: 2023,
+                month: 4,
+                day: 9,
+                expected_code: "M02L",
+            },
+            TestCase {
+                year: 2023,
+                month: 5,
+                day: 9,
+                expected_code: "M03I",
+            },
+            TestCase {
+                year: 2023,
+                month: 6,
+                day: 9,
+                expected_code: "M04I",
+            },
+            TestCase {
+                year: 2023,
+                month: 7,
+                day: 9,
+                expected_code: "M05I",
+            },
+            TestCase {
+                year: 2023,
+                month: 8,
+                day: 9,
+                expected_code: "M06I",
+            },
+            TestCase {
+                year: 2023,
+                month: 9,
+                day: 9,
+                expected_code: "M07I",
+            },
+            TestCase {
+                year: 2023,
+                month: 10,
+                day: 9,
+                expected_code: "M08I",
+            },
+            TestCase {
+                year: 2023,
+                month: 11,
+                day: 9,
+                expected_code: "M09I",
+            },
+            TestCase {
+                year: 2023,
+                month: 12,
+                day: 9,
+                expected_code: "M10I",
+            },
+            TestCase {
+                year: 2024,
+                month: 1,
+                day: 9,
+                expected_code: "M11I",
+            },
+            TestCase {
+                year: 2024,
+                month: 2,
+                day: 9,
+                expected_code: "M12I",
+            },
+            TestCase {
+                year: 2024,
+                month: 2,
+                day: 10,
+                expected_code: "M01",
+            },
+        ];
+
+        for case in cases {
+            let iso = Date::try_new_iso_date(case.year, case.month, case.day).unwrap();
+            let chinese = iso.to_calendar(Chinese);
+            let result_code = chinese.month().code.0;
+            let expected_code = case.expected_code.to_string();
+            assert_eq!(
+                expected_code, result_code,
+                "Month codes did not match for test case: {case:?}"
+            );
+        }
+    }
 }
