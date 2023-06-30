@@ -4488,15 +4488,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "wyhash"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "baf6e163c25e3fac820b4b453185ea2dea3b6a3e0a721d4d23d75bd33734c295"
-dependencies = [
- "rand_core",
-]
-
-[[package]]
 name = "yoke"
 version = "0.7.1"
 dependencies = [
@@ -4553,8 +4544,6 @@ dependencies = [
  "ref-cast",
  "serde",
  "serde_json",
- "t1ha",
- "wyhash",
  "zerovec",
 ]
 

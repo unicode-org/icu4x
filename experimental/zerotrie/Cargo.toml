@@ -34,8 +34,6 @@ zerovec = { path = "../../utils/zerovec", optional = true }
 litemap = { path = "../../utils/litemap", default-features = false, features = ["alloc"], optional = true }
 ref-cast = { version = "1.0.12" }
 serde = { version = "1.0", optional = true }
-t1ha = "0.1"
-wyhash = "0.5"
 displaydoc = { version = "0.2.3", default-features = false }
 
 [dev-dependencies]
