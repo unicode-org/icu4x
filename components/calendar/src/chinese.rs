@@ -34,6 +34,8 @@
 //! assert_eq!(chinese_datetime.time.second.number(), 0);
 //! ```
 
+use core::cmp::Ordering;
+
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Astronomical, Location, MEAN_TROPICAL_YEAR};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
@@ -258,8 +260,8 @@ impl Calendar for Chinese {
         } else {
             14
         };
-        let code_inner = if ordinal < leap_month {
-            match ordinal {
+        let code_inner = match ordinal.cmp(&leap_month) {
+            Ordering::Less => match ordinal {
                 1 => tinystr!(4, "M01"),
                 2 => tinystr!(4, "M02"),
                 3 => tinystr!(4, "M03"),
@@ -273,9 +275,8 @@ impl Calendar for Chinese {
                 11 => tinystr!(4, "M11"),
                 12 => tinystr!(4, "M12"),
                 _ => tinystr!(4, "und"), // maximum num of months in a non-leap year is 12
-            }
-        } else if ordinal == leap_month {
-            match ordinal {
+            },
+            Ordering::Equal => match ordinal {
                 1 => tinystr!(4, "und"), // cannot have a leap month before the actual month
                 2 => tinystr!(4, "M01L"),
                 3 => tinystr!(4, "M02L"),
@@ -290,10 +291,8 @@ impl Calendar for Chinese {
                 12 => tinystr!(4, "M11L"),
                 13 => tinystr!(4, "M12L"),
                 _ => tinystr!(4, "und"), // maximum num of months in a leap year is 13
-            }
-        } else {
-            // if ordinal > leap_month; this means the date is in a leap year
-            match ordinal {
+            },
+            Ordering::Greater => match ordinal {
                 1 => tinystr!(4, "und"), // this implies the leap month is < 1, which is impossible
                 2 => tinystr!(4, "und"), // this implies the leap month is = 1, which is impossible
                 3 => tinystr!(4, "M02"),
@@ -308,7 +307,7 @@ impl Calendar for Chinese {
                 12 => tinystr!(4, "M11"),
                 13 => tinystr!(4, "M12"),
                 _ => tinystr!(4, "und"), // maximum number of months in a leap year is 13
-            }
+            },
         };
         let code = types::MonthCode(code_inner);
         types::FormattableMonth {
