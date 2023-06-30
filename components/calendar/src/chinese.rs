@@ -107,7 +107,6 @@ pub struct Chinese;
 pub struct ChineseDateInner(ArithmeticDate<Chinese>);
 
 impl CalendarArithmetic for Chinese {
-
     /// Returns the number of days in the given (year, month). In the Chinese calendar, months start at each
     /// new moon, so this function finds the number of days between the new moon at the beginning of the given
     /// month and the new moon at the beginning of the next month.
@@ -434,7 +433,7 @@ impl Chinese {
     }
 
     /// Get the current major solar term of a fixed date, output as an integer from 1..=12.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
     pub(crate) fn major_solar_term_from_fixed(date: RataDie) -> i32 {
@@ -452,7 +451,7 @@ impl Chinese {
 
     /// Returns true if the month of a given fixed date does not have a major solar term,
     /// false otherwise.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5345-L5351
     fn chinese_no_major_solar_term(date: RataDie) -> bool {
@@ -479,7 +478,7 @@ impl Chinese {
     }
 
     /// Get the current minor solar term of a fixed date, output as an integer from 1..=12.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
     pub(crate) fn minor_solar_term_from_fixed(date: RataDie) -> i32 {
@@ -508,7 +507,7 @@ impl Chinese {
     }
 
     /// The fixed date in Chinese standard time of the next new moon on or after a given Moment.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5329-L5338
     fn chinese_new_moon_on_or_after(moment: Moment) -> RataDie {
@@ -518,7 +517,7 @@ impl Chinese {
     }
 
     /// The fixed date in Chinese standard time of the previous new moon before a given Moment.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5318-L5327
     fn chinese_new_moon_before(moment: Moment) -> RataDie {
@@ -528,7 +527,7 @@ impl Chinese {
     }
 
     /// Universal time of midnight at start of a Moment in China
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5353-L5357
     fn midnight_in_china(date: Moment) -> Moment {
@@ -537,7 +536,7 @@ impl Chinese {
 
     /// Determines the fixed date of the Chinese new year in the sui4 (solar year based on the winter solstice)
     /// which contains the fixed date passed as an argument.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5370-L5394
     fn chinese_new_year_in_sui(date: RataDie) -> RataDie {
@@ -564,7 +563,7 @@ impl Chinese {
     }
 
     /// Get the moment of the nearest winter solstice on or before a given fixed date
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5359-L5368
     fn chinese_winter_solstice_on_or_before(date: RataDie) -> RataDie {
@@ -607,7 +606,7 @@ impl Chinese {
     }
 
     /// Get the fixed date of the nearest Chinese New Year on or before a given fixed date.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5396-L5405
     pub(crate) fn chinese_new_year_on_or_before_fixed_date(date: RataDie) -> RataDie {
@@ -620,11 +619,11 @@ impl Chinese {
     }
 
     /// Get a Date<Chinese> from a fixed date
-    /// 
+    ///
     /// Months are calculated by iterating through the dates of new moons until finding the last month which
     /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
     /// from the fixed date of the beginning of the month.
-    /// 
+    ///
     /// The calculation for `elapsed_years` in this function is based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
     pub(crate) fn chinese_date_from_fixed(date: RataDie) -> Date<Chinese> {
@@ -653,7 +652,7 @@ impl Chinese {
     }
 
     /// Get a RataDie from a ChineseDateInner
-    /// 
+    ///
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
     /// (beginning of month) of the month given, then adds the necessary number of days.
     pub(crate) fn fixed_from_chinese_date_inner(date: ChineseDateInner) -> RataDie {
@@ -670,7 +669,7 @@ impl Chinese {
     /// Get the a RataDie in the middle of a Chinese year; this is not necessarily meant for direct use
     /// in calculations, rather it is useful for getting a RataDie guaranteed to be in a given Chinese
     /// year as input for other functions like [`get_leap_month_in_year`].
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5469-L5475
     fn fixed_mid_year_from_year(elapsed_years: i32) -> RataDie {
@@ -693,7 +692,7 @@ impl Chinese {
     /// the number of that month. This function assumes the date passed in is in a leap year
     /// and tests to ensure this is the case by asserting that no more than twelve months are
     /// analyzed.
-    /// 
+    ///
     /// Conceptually similar to code from _Calendrical Calculations_ by Reingold & Dershowitz
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5443-L5450
     fn get_leap_month_in_year(date: RataDie) -> u8 {
@@ -709,7 +708,7 @@ impl Chinese {
     }
 
     /// Get a FormattableYear from an integer Chinese year
-    /// 
+    ///
     /// `era` is always `Era(tinystr!(16, "chinese"))`
     /// `number` is the year since the inception of the Chinese calendar (see [`Chinese`])
     /// `cyclic` is an option with the current year in the sexigesimal cycle (see [`Chinese`])
