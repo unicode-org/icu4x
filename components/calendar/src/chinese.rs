@@ -1008,7 +1008,7 @@ mod test {
             let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
             let chinese_year = iso.to_calendar(Chinese).year().number;
             let rata_die = Iso::fixed_from_iso(*iso.inner());
-            assert_eq!(true, Chinese::is_leap_year(chinese_year));
+            assert!(Chinese::is_leap_year(chinese_year));
             assert_eq!(expected_month, Chinese::get_leap_month_in_year(rata_die));
         }
     }
@@ -1159,26 +1159,26 @@ mod test {
     fn test_month_code_to_ordinal() {
         let year = 4660;
         let codes = [
-            tinystr!(4, "M01"),
-            tinystr!(4, "M02"),
-            tinystr!(4, "M02L"),
-            tinystr!(4, "M03"),
-            tinystr!(4, "M04"),
-            tinystr!(4, "M05"),
-            tinystr!(4, "M06"),
-            tinystr!(4, "M07"),
-            tinystr!(4, "M08"),
-            tinystr!(4, "M09"),
-            tinystr!(4, "M10"),
-            tinystr!(4, "M11"),
-            tinystr!(4, "M12"),
+            (1, tinystr!(4, "M01")),
+            (2, tinystr!(4, "M02")),
+            (3, tinystr!(4, "M02L")),
+            (4, tinystr!(4, "M03")),
+            (5, tinystr!(4, "M04")),
+            (6, tinystr!(4, "M05")),
+            (7, tinystr!(4, "M06")),
+            (8, tinystr!(4, "M07")),
+            (9, tinystr!(4, "M08")),
+            (10, tinystr!(4, "M09")),
+            (11, tinystr!(4, "M10")),
+            (12, tinystr!(4, "M11")),
+            (13, tinystr!(4, "M12")),
         ];
-        for i in 0..codes.len() {
-            let code = MonthCode(codes[i]);
+        for ordinal_code_pair in codes {
+            let code = MonthCode(ordinal_code_pair.1);
             let ordinal = Chinese::ordinal_lunar_month_from_code(year, code);
             assert_eq!(
                 ordinal,
-                Some(i as u8 + 1),
+                Some(ordinal_code_pair.0),
                 "Code to ordinal failed for year: {year}, code: {code}"
             );
         }
@@ -1198,9 +1198,9 @@ mod test {
             (non_leap_year, tinystr!(4, "M13")),
             (leap_year, tinystr!(4, "M13")),
         ];
-        for i in 0..invalid_codes.len() {
-            let year = invalid_codes[i].0;
-            let code = MonthCode(invalid_codes[i].1);
+        for year_code_pair in invalid_codes {
+            let year = year_code_pair.0;
+            let code = MonthCode(year_code_pair.1);
             let ordinal = Chinese::ordinal_lunar_month_from_code(year, code);
             assert_eq!(
                 ordinal, None,
