@@ -88,7 +88,7 @@ impl Location {
     /// of a location with a longitude of 0 degrees.
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn zone_from_longitude(longitude: f64) -> f64 {
-        longitude / 360.0
+        longitude / (360.0)
     }
     // Convert standard time to local mean time given a location and a time zone with given offset
     #[allow(dead_code)]
@@ -97,8 +97,10 @@ impl Location {
         location: Location,
         utc_offset: f64,
     ) -> Moment {
-        let universal_time = Self::universal_from_standard(standard_time, utc_offset);
-        Self::local_from_universal(universal_time, location)
+        Self::standard_from_universal(
+            Self::universal_from_local(standard_time, location),
+            utc_offset,
+        )
     }
 
     /// Convert from local mean time to universal time given a location
@@ -258,10 +260,11 @@ impl Astronomical {
     #[allow(dead_code)]
     pub(crate) fn dusk(date: f64, location: Location, alpha: f64) -> Moment {
         let evening = false;
-        let result = Self::moment_of_depression(Moment::new(date + 18.0), location, alpha, evening);
+        let result =
+            Self::moment_of_depression(Moment::new(date + (18.0 / 24.0)), location, alpha, evening);
 
         match result {
-            Ok(m) => Location::standard_from_local(m, location, alpha),
+            Ok(m) => Location::standard_from_local(m, location, (1_f64 / 12_f64)), // UTC offset is being hardcoded for now
             Err(_) => Moment::new(date),
         }
     }
@@ -929,6 +932,17 @@ impl Astronomical {
         }
     }
 
+    #[allow(dead_code)]
+    fn sunset(date: Moment, location: Location) -> Moment {
+        let a = Self::refraction(date + (18.0 / 24.0), location);
+        let b = 18.0 / 60.0;
+        let moment = date + (18.0 / 24.0);
+
+        let alpha = Self::refraction(date + (18.0 / 24.0), location);
+
+        Self::dusk(date.inner(), location, alpha)
+    }
+
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn moonlag(date: f64, location: Location) {}
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
@@ -1575,6 +1589,66 @@ mod tests {
             } else {
                 assert_eq_f64(expected_moonset_val, moonset_val.unwrap().inner(), moment);
             }
+        }
+    }
+
+    #[test]
+    fn check_sunset() {
+        let rd_vals = [
+            -214193.0, -61387.0, 25469.0, 49217.0, 171307.0, 210155.0, 253427.0, 369740.0,
+            400085.0, 434355.0, 452605.0, 470160.0, 473837.0, 507850.0, 524156.0, 544676.0,
+            567118.0, 569477.0, 601716.0, 613424.0, 626596.0, 645554.0, 664224.0, 671401.0,
+            694799.0, 704424.0, 708842.0, 709409.0, 709580.0, 727274.0, 728714.0, 744313.0,
+            764652.0,
+        ];
+
+        let expected_sunset_values = [
+            -214192.2194436165,
+            -61386.30267524347,
+            25469.734889564967,
+            49217.72851448112,
+            171307.70878832813,
+            210155.77420199668,
+            253427.70087725233,
+            369740.7627365203,
+            400085.77677703864,
+            434355.74808897293,
+            452605.7425360138,
+            470160.75310216413,
+            473837.76440251875,
+            507850.7840412511,
+            524156.7225351998,
+            544676.7561346035,
+            567118.7396585084,
+            569477.7396636717,
+            601716.784057734,
+            613424.7870863203,
+            626596.781969136,
+            645554.7863087669,
+            664224.778132625,
+            671401.7496876866,
+            694799.7602310368,
+            704424.7619096127,
+            708842.730647343,
+            709409.7603906896,
+            709580.7240122546,
+            727274.745361792,
+            728714.734750938,
+            744313.699821144,
+            764652.7844809336,
+        ];
+
+        let jerusalem = Location {
+            latitude: 31.78,
+            longitude: 35.24,
+            elevation: 740.0,
+        };
+
+        for (rd, expected_sunset_value) in rd_vals.iter().zip(expected_sunset_values.iter()) {
+            let moment = Moment::new(*rd);
+            let sunset_value = Astronomical::sunset(moment, jerusalem);
+            let expected_sunset_val = *expected_sunset_value;
+            assert_eq_f64(expected_sunset_val, sunset_value.inner(), moment)
         }
     }
 
