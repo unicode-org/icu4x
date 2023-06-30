@@ -90,7 +90,7 @@ const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
 /// years marking Chinese years before February 15, 2637 BCE.
 ///
 /// Because the Chinese calendar does not traditionally count years, era codes are not used in this calendar;
-/// internally, a single era code "era" is used, but this is never checked, so era code input can be anything.
+/// internally, a single era code "chinese" is used, but this is never checked, so era code input can be anything.
 /// This Chinese calendar implementation does support a related ISO year, which marks the ISO year in which a
 /// Chinese year begins, and a cyclic year corresponding to the year in the 60 year cycle as described above.
 ///
@@ -668,7 +668,7 @@ impl Chinese {
 
     /// Get a FormattableYear from an integer Chinese year
     fn format_chinese_year(year: i32) -> FormattableYear {
-        let era = Era(tinystr!(16, "era"));
+        let era = Era(tinystr!(16, "chinese"));
         let number = year;
         let cyclic = Some(div_rem_euclid(number - 1, 60).1 + 1);
         let mid_year = Self::fixed_mid_year_from_year(number);
