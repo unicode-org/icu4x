@@ -23,6 +23,7 @@ pub(crate) struct Location {
     latitude: f64,  // latitude from -90 to 90
     longitude: f64, // longitude from -180 to 180
     elevation: f64, // elevation in meters
+    zone: f64 // UTC timezone offset
 }
 
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
@@ -50,6 +51,7 @@ impl Location {
         latitude: f64,
         longitude: f64,
         elevation: f64,
+        zone: f64,
     ) -> Result<Location, LocationError> {
         if !(-90.0..=90.0).contains(&latitude) {
             return Err(LocationError::LatitudeOutOfBounds(latitude));
@@ -61,6 +63,7 @@ impl Location {
             latitude,
             longitude,
             elevation,
+            zone,
         })
     }
 
@@ -81,6 +84,12 @@ impl Location {
     pub(crate) fn elevation(&self) -> f64 {
         self.elevation
     }
+    
+    /// Get the utc-offset of a Location
+    #[allow(dead_code)]
+    pub(crate) fn zone(&self) -> f64 {
+        self.zone
+    }
 
     /// Convert a longitude into a mean time zone;
     /// this yields the difference in Moment given a longitude
@@ -95,11 +104,10 @@ impl Location {
     pub(crate) fn standard_from_local(
         standard_time: Moment,
         location: Location,
-        utc_offset: f64,
     ) -> Moment {
         Self::standard_from_universal(
             Self::universal_from_local(standard_time, location),
-            utc_offset,
+            location
         )
     }
 
@@ -118,18 +126,18 @@ impl Location {
     /// return the Moment in universal time from the time zone with the given offset.
     /// The field utc_offset should be within the range of possible offsets given by
     /// the constand fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
-    pub(crate) fn universal_from_standard(standard_moment: Moment, utc_offset: f64) -> Moment {
-        debug_assert!(utc_offset > MIN_UTC_OFFSET && utc_offset < MAX_UTC_OFFSET, "UTC offset {utc_offset} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)");
-        standard_moment - utc_offset
+    pub(crate) fn universal_from_standard(standard_moment: Moment, location: Location) -> Moment {
+        debug_assert!(location.zone > MIN_UTC_OFFSET && location.zone < MAX_UTC_OFFSET, "UTC offset {0} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)", location.zone);
+        standard_moment - location.zone
     }
     /// Given a Moment in standard time and UTC-offset in hours,
     /// return the Moment in standard time from the time zone with the given offset.
     /// The field utc_offset should be within the range of possible offsets given by
     /// the constand fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
     #[allow(dead_code)]
-    pub(crate) fn standard_from_universal(standard_time: Moment, utc_offset: f64) -> Moment {
-        debug_assert!(utc_offset > MIN_UTC_OFFSET && utc_offset < MAX_UTC_OFFSET, "UTC offset {utc_offset} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)");
-        standard_time + utc_offset
+    pub(crate) fn standard_from_universal(standard_time: Moment, location: Location) -> Moment {
+        debug_assert!(location.zone > MIN_UTC_OFFSET && location.zone < MAX_UTC_OFFSET, "UTC offset {0} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)", location.zone);
+        standard_time + location.zone
     }
 }
 
@@ -264,7 +272,7 @@ impl Astronomical {
             Self::moment_of_depression(Moment::new(date + (18.0 / 24.0)), location, alpha, evening);
 
         match result {
-            Ok(m) => Location::standard_from_local(m, location, (1_f64 / 12_f64)), // UTC offset is being hardcoded for now
+            Ok(m) => Location::standard_from_local(m, location),
             Err(_) => Moment::new(date),
         }
     }
@@ -894,8 +902,8 @@ impl Astronomical {
     }
 
     #[allow(dead_code)]
-    fn moonset(date: Moment, location: Location, utc_offset: f64) -> Option<Moment> {
-        let moment = Location::universal_from_standard(date, utc_offset);
+    fn moonset(date: Moment, location: Location) -> Option<Moment> {
+        let moment = Location::universal_from_standard(date, location);
         let waxing = Self::lunar_phase(date) < 180.0;
         let alt = Self::observed_lunar_altitude(moment, location);
         let lat = location.latitude;
@@ -920,7 +928,7 @@ impl Astronomical {
 
         if set < moment + 1.0 {
             let std = Moment::new(libm::fmax(
-                Location::standard_from_universal(set, utc_offset).inner(),
+                Location::standard_from_universal(set, location).inner(),
                 date.inner(),
             ));
             if std < date {
@@ -934,10 +942,6 @@ impl Astronomical {
 
     #[allow(dead_code)]
     fn sunset(date: Moment, location: Location) -> Moment {
-        let a = Self::refraction(date + (18.0 / 24.0), location);
-        let b = 18.0 / 60.0;
-        let moment = date + (18.0 / 24.0);
-
         let alpha = Self::refraction(date + (18.0 / 24.0), location);
 
         Self::dusk(date.inner(), location, alpha)
@@ -1148,6 +1152,7 @@ mod tests {
         latitude: 6427.0 / 300.0,
         longitude: 11947.0 / 300.0,
         elevation: 298.0,
+        zone: (1_f64/8_f64),
     };
 
     fn assert_eq_f64(expected_value: f64, value: f64, moment: Moment) {
@@ -1582,7 +1587,7 @@ mod tests {
 
         for (rd, expected_val) in rd_vals.iter().zip(expected_time_of_day.iter()) {
             let moment: Moment = Moment::new(*rd as f64);
-            let moonset_val = Astronomical::moonset(moment, MECCA, 0.125);
+            let moonset_val = Astronomical::moonset(moment, MECCA);
             let expected_moonset_val = *expected_val;
             if moonset_val.is_none() {
                 assert_eq!(expected_moonset_val, 0.0);
@@ -1642,6 +1647,7 @@ mod tests {
             latitude: 31.78,
             longitude: 35.24,
             elevation: 740.0,
+            zone: (1_f64/12_f64)
         };
 
         for (rd, expected_sunset_value) in rd_vals.iter().zip(expected_sunset_values.iter()) {
@@ -1759,9 +1765,10 @@ mod tests {
         // Checks that location construction and functions work for various valid lats and longs
         let mut long = -180.0;
         let mut lat = -90.0;
+        let zone = 0.0;
         while long <= 180.0 {
             while lat <= 90.0 {
-                let location: Location = Location::try_new(lat, long, 1000.0).unwrap();
+                let location: Location = Location::try_new(lat, long, 1000.0, zone).unwrap();
                 assert_eq!(lat, location.latitude());
                 assert_eq!(long, location.longitude());
 
@@ -1773,13 +1780,13 @@ mod tests {
 
     #[test]
     fn check_location_errors() {
-        let lat_too_small = Location::try_new(-90.1, 15.0, 1000.0).unwrap_err();
+        let lat_too_small = Location::try_new(-90.1, 15.0, 1000.0, 0.0).unwrap_err();
         assert_eq!(lat_too_small, LocationError::LatitudeOutOfBounds(-90.1));
-        let lat_too_large = Location::try_new(90.1, -15.0, 1000.0).unwrap_err();
+        let lat_too_large = Location::try_new(90.1, -15.0, 1000.0, 0.0).unwrap_err();
         assert_eq!(lat_too_large, LocationError::LatitudeOutOfBounds(90.1));
-        let long_too_small = Location::try_new(15.0, 180.1, 1000.0).unwrap_err();
+        let long_too_small = Location::try_new(15.0, 180.1, 1000.0, 0.0).unwrap_err();
         assert_eq!(long_too_small, LocationError::LongitudeOutOfBounds(180.1));
-        let long_too_large = Location::try_new(-15.0, -180.1, 1000.0).unwrap_err();
+        let long_too_large = Location::try_new(-15.0, -180.1, 1000.0, 0.0).unwrap_err();
         assert_eq!(long_too_large, LocationError::LongitudeOutOfBounds(-180.1));
     }
 
