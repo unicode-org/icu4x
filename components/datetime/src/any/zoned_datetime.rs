@@ -53,8 +53,7 @@ use writeable::Writeable;
 ///     length::Date::Medium,
 ///     length::Time::Long,
 /// );
-/// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
-///     &icu_testdata::unstable(),
+/// let zdtf = ZonedDateTimeFormatter::try_new(
 ///     &locale!("en").into(),
 ///     options.into(),
 ///     Default::default(),
@@ -88,8 +87,7 @@ use writeable::Writeable;
 ///     length::Date::Medium,
 ///     length::Time::Full,
 /// );
-/// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
-///     &icu_testdata::unstable(),
+/// let zdtf = ZonedDateTimeFormatter::try_new(
 ///     &locale!("en").into(),
 ///     options.into(),
 ///     Default::default(),
@@ -108,7 +106,7 @@ use writeable::Writeable;
 /// time_zone.zone_variant = Some(ZoneVariant::daylight());
 ///
 /// // Compute the metazone during `datetime` (September 1, 2020 at 12:34:28 PM):
-/// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable()).unwrap();
+/// let mzc = MetazoneCalculator::new();
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 ///
 /// assert_writeable_eq!(
@@ -123,24 +121,11 @@ use writeable::Writeable;
 pub struct ZonedDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
 impl ZonedDateTimeFormatter {
-    /// Constructor that takes a selected [`DataLocale`], a reference to a [data provider] for
-    /// dates, a [data provider] for time zones, a [data provider] for calendars, and a list of [`DateTimeFormatterOptions`].
+    /// Constructor that takes a selected [`DataLocale`] and a list of [`DateTimeFormatterOptions`] and uses compiled data.
     /// It collects all data necessary to format zoned datetime values into the given locale.
-    ///
-    /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
-    /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
-    /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
-    /// may also be used if compile stability is desired.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-    /// of the icu meta-crate. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -161,8 +146,7 @@ impl ZonedDateTimeFormatter {
     /// options.minute = Some(components::Numeric::Numeric);
     /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
-    /// let zdtf = ZonedDateTimeFormatter::try_new_experimental_unstable(
-    ///     &icu_testdata::buffer().as_deserializing(),
+    /// let zdtf = ZonedDateTimeFormatter::try_new_experimental(
     ///     &locale!("en-u-ca-gregory").into(),
     ///     options.into(),
     ///     Default::default(),
@@ -180,7 +164,45 @@ impl ZonedDateTimeFormatter {
     /// );
     /// ```
     ///
-    /// [data provider]: icu_provider
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "experimental")]
+    #[cfg(feature = "data")]
+    pub fn try_new_experimental(
+        locale: &DataLocale,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeError> {
+        let calendar = AnyCalendar::new_for_locale(locale);
+        let kind = calendar.kind();
+
+        let patterns = PatternSelector::for_options_experimental(
+            &crate::provider::Baked,
+            calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
+            locale,
+            &kind.as_bcp47_value(),
+            &date_time_format_options,
+        )?;
+
+        Ok(Self(
+            raw::ZonedDateTimeFormatter::try_new(
+                patterns,
+                || {
+                    calendar::load_symbols_for_any_calendar_kind(
+                        &crate::provider::Baked,
+                        locale,
+                        kind,
+                    )
+                },
+                locale,
+                time_zone_format_options,
+            )?,
+            calendar,
+        ))
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_experimental)]
     #[cfg(feature = "experimental")]
     #[inline]
     #[allow(clippy::too_many_arguments)]
@@ -233,7 +255,7 @@ impl ZonedDateTimeFormatter {
         )?;
 
         Ok(Self(
-            raw::ZonedDateTimeFormatter::try_new(
+            raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
                 || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
@@ -244,14 +266,8 @@ impl ZonedDateTimeFormatter {
         ))
     }
 
-    /// Constructor that takes a selected [`DataLocale`], a reference to a [data provider] for
-    /// dates, a [data provider] for time zones, a [data provider] for calendars, and a list of [`DateTimeFormatterOptions`].
+    /// Constructor that takes a selected [`DataLocale`] and a list of [`DateTimeFormatterOptions`] and uses compiled data.
     /// It collects all data necessary to format zoned datetime values into the given locale.
-    ///
-    /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
-    /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
-    /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
-    /// may also be used if compile stability is desired.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
@@ -274,8 +290,7 @@ impl ZonedDateTimeFormatter {
     /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
-    ///     &icu_testdata::unstable(),
+    /// let zdtf = ZonedDateTimeFormatter::try_new(
     ///     &locale.into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
@@ -293,8 +308,44 @@ impl ZonedDateTimeFormatter {
     /// );
     /// ```
     ///
-    /// [data provider]: icu_provider
+    /// ✨ **Enabled with the `"data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "data")]
+    pub fn try_new(
+        locale: &DataLocale,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeError> {
+        let calendar = AnyCalendar::new_for_locale(locale);
+        let kind = calendar.kind();
+
+        let patterns = PatternSelector::for_options(
+            &crate::provider::Baked,
+            calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
+            locale,
+            &date_time_format_options,
+        )?;
+
+        Ok(Self(
+            raw::ZonedDateTimeFormatter::try_new(
+                patterns,
+                || {
+                    calendar::load_symbols_for_any_calendar_kind(
+                        &crate::provider::Baked,
+                        locale,
+                        kind,
+                    )
+                },
+                locale,
+                time_zone_format_options,
+            )?,
+            calendar,
+        ))
+    }
+
     #[inline]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     #[allow(clippy::too_many_arguments)]
     pub fn try_new_unstable<P>(
         provider: &P,
@@ -343,7 +394,7 @@ impl ZonedDateTimeFormatter {
         )?;
 
         Ok(Self(
-            raw::ZonedDateTimeFormatter::try_new(
+            raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
                 || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
@@ -354,26 +405,9 @@ impl ZonedDateTimeFormatter {
         ))
     }
 
-    /// Construct a new [`ZonedDateTimeFormatter`] from a data provider that implements
-    /// [`AnyProvider`].
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new)]
     ///
-    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
-    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
-    ///
-    /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
-    /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, `plurals/ordinals@1`,
-    /// `time_zone/formats@1`, `time_zone/exemplar_cities@1`, `time_zone/generic_long@1`, `time_zone/generic_short@1`,
-    /// `time_zone/specific_long@1`, `time_zone/specific_short@1`, `time_zone/metazone_period@1`.
-    ///
-    /// Furthermore, based on the type of calendar used, one of the following data keys may be necessary:
-    ///
-    /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
-    ///
-    /// Test will currently fail due to <https://github.com/unicode-org/icu4x/issues/2188>,
-    /// since these functions currently *must* be given a fallback-enabled provider and
-    /// we do not have one in `icu_testdata`
-    ///
-    /// ```ignore
+    /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
@@ -403,35 +437,18 @@ impl ZonedDateTimeFormatter {
     /// );
     /// ```
     #[inline]
-    pub fn try_new_with_any_provider<P>(
-        data_provider: &P,
+    pub fn try_new_with_any_provider(
+        provider: &impl AnyProvider,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeError>
-    where
-        P: AnyProvider,
-    {
-        let downcasting = data_provider.as_downcasting();
+    ) -> Result<Self, DateTimeError> {
+        let downcasting = provider.as_downcasting();
         Self::try_new_unstable(&downcasting, locale, options, time_zone_format_options)
     }
 
-    /// Construct a new [`ZonedDateTimeFormatter`] from a data provider that implements
-    /// [`BufferProvider`].
-    ///
-    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
-    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
-    ///
-    /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
-    /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, `plurals/ordinals@1`,
-    /// `time_zone/formats@1`, `time_zone/exemplar_cities@1`, `time_zone/generic_long@1`, `time_zone/generic_short@1`,
-    /// `time_zone/specific_long@1`, `time_zone/specific_short@1`, `time_zone/metazone_period@1`.
-    ///
-    /// Furthermore, based on the type of calendar used, one of the following data keys may be necessary:
-    ///
-    /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
-    ///
-    /// ```rust
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new)]
+    /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
@@ -467,16 +484,13 @@ impl ZonedDateTimeFormatter {
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
-    pub fn try_new_with_buffer_provider<P>(
-        data_provider: &P,
+    pub fn try_new_with_buffer_provider(
+        provider: &impl BufferProvider,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeError>
-    where
-        P: BufferProvider,
-    {
-        let deserializing = data_provider.as_deserializing();
+    ) -> Result<Self, DateTimeError> {
+        let deserializing = provider.as_deserializing();
         Self::try_new_unstable(&deserializing, locale, options, time_zone_format_options)
     }
 

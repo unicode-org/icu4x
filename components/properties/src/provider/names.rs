@@ -189,7 +189,8 @@ impl NormalizedPropertyNameStr {
 #[derive(Debug, Clone)]
 #[icu_provider::data_struct(marker(
     GeneralCategoryMaskNameToValueV1Marker,
-    "propnames/from/gcm@1"
+    "propnames/from/gcm@1",
+    singleton,
 ))]
 #[cfg_attr(
     feature = "datagen", 

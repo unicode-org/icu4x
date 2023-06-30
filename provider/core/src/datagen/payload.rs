@@ -39,7 +39,7 @@ where
 #[doc(hidden)] // exposed for make_exportable_provider
 #[derive(yoke::Yokeable)]
 pub struct ExportBox {
-    payload: Box<dyn ExportableDataPayload + Sync>,
+    payload: Box<dyn ExportableDataPayload + Sync + Send>,
 }
 
 impl core::fmt::Debug for ExportBox {
@@ -53,7 +53,7 @@ impl core::fmt::Debug for ExportBox {
 impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DataMarker,
-    M::Yokeable: Sync,
+    M::Yokeable: Sync + Send,
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {

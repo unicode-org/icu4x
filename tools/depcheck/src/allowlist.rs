@@ -26,6 +26,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_provider_adapters", // not included in icu, but needed generally
     "icu_segmenter",
     "icu_timezone",
+    "libm",
     "litemap",
     "memchr",
     "regex-automata",
@@ -70,6 +71,7 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_personnames",
     "icu_relativetime",
     "icu_compactdecimal",
+    "icu_unicodeset_parser",
 ];
 
 /// Dependencies allowed when opting in to LSTM segmenter

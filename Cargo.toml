@@ -42,6 +42,7 @@ members = [
     "experimental/ixdtf",
     "experimental/relativetime",
     "experimental/relativetime/data",
+    "experimental/unicodeset_parser",
     "experimental/zerotrie",
     "ffi/capi_cdylib",
     "ffi/capi_staticlib",

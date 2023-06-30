@@ -17,8 +17,9 @@ use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        _: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
+        self.check_req::<ScriptWithExtensionsPropertyV1Marker>(req)?;
         let scx_data = self
             .source
             .icuexport()?

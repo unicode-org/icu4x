@@ -37,13 +37,80 @@ pub(crate) struct ZonedDateTimeFormatter {
 }
 
 impl ZonedDateTimeFormatter {
-    /// Constructor that takes a selected [`DataLocale`], a reference to a [`DataProvider`] for
-    /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatterOptions`].
-    /// It collects all data necessary to format zoned datetime values into the given locale.
-    ///
-    /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     #[inline(never)]
-    pub fn try_new<P>(
+    #[cfg(feature = "data")]
+    pub fn try_new(
+        patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
+        symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
+        locale: &DataLocale,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeError> {
+        let required = datetime::analyze_patterns(&patterns.get().0, true)
+            .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
+
+        let req = DataRequest {
+            locale,
+            metadata: Default::default(),
+        };
+
+        let week_data = if required.week_data {
+            Some(icu_calendar::provider::Baked.load(req)?.take_payload()?)
+        } else {
+            None
+        };
+
+        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
+            Some(PluralRules::try_new_ordinal(locale)?)
+        } else {
+            None
+        };
+
+        let date_symbols_data = if required.date_symbols_data {
+            Some(symbols_data_fn()?)
+        } else {
+            None
+        };
+
+        let time_symbols_data = if required.time_symbols_data {
+            Some(crate::provider::Baked.load(req)?.take_payload()?)
+        } else {
+            None
+        };
+
+        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
+                .map_err(DateTimeError::FixedDecimalFormatter)?;
+
+        let datetime_format = raw::DateTimeFormatter::new(
+            patterns,
+            date_symbols_data,
+            time_symbols_data,
+            week_data,
+            ordinal_rules,
+            fixed_decimal_format,
+        );
+
+        let time_zone_format = TimeZoneFormatter::try_new_for_pattern(
+            &crate::provider::Baked,
+            locale,
+            datetime_format
+                // Only dates have plural variants so we can use any of the patterns for the time segment.
+                .patterns
+                .clone(),
+            &time_zone_format_options,
+        )?;
+
+        Ok(Self {
+            datetime_format,
+            time_zone_format,
+        })
+    }
+
+    #[inline(never)]
+    pub fn try_new_unstable<P>(
         provider: &P,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,

@@ -441,7 +441,8 @@ pub use zerovec_derive::make_ule;
 ///
 /// This can be attached to structs containing only [`AsULE`] types with the last fields being
 /// [`Cow<'a, str>`](alloc::borrow::Cow), [`ZeroSlice`], or [`VarZeroSlice`]. If there is more than one such field, it will be represented
-/// using [`MultiFieldsULE`](crate::ule::MultiFieldsULE) and getters will be generated.
+/// using [`MultiFieldsULE`](crate::ule::MultiFieldsULE) and getters will be generated. Other VarULE fields will be detected if they are
+/// tagged with `#[zerovec::varule(NameOfVarULETy)]`.
 ///
 /// The type must be [`PartialEq`] and [`Eq`].
 ///

@@ -25,14 +25,10 @@ fn strip_headers(content: &str) -> String {
 }
 
 fn normalizer_bench_data() -> [BenchDataContent; 15] {
-    let nfc_normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfd_normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkc_normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkd_normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
+    let nfc_normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let nfd_normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let nfkc_normalizer: ComposingNormalizer = ComposingNormalizer::new_nfkc();
+    let nfkd_normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
 
     let content_latin: (&str, &str) = (
         "TestNames_Latin",
@@ -139,7 +135,7 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "canonical_decomposition";
     let mut group = criterion.benchmark_group(group_name);
 
-    let decomposer = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let decomposer = CanonicalDecomposition::new();
 
     for bench_data_content in black_box(normalizer_bench_data()) {
         group.bench_function(

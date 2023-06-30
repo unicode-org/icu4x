@@ -197,6 +197,9 @@ impl<P> LocaleFallbackProvider<P> {
         F1: FnMut(DataRequest) -> Result<R, DataError>,
         F2: FnMut(&mut R) -> &mut DataResponseMetadata,
     {
+        if key.metadata().singleton {
+            return f1(base_req);
+        }
         let mut fallback_iterator = self
             .fallbacker
             .fallback_for(key.into(), base_req.locale.clone());

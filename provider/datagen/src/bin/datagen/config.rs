@@ -25,6 +25,8 @@ pub struct Config {
     pub collations: HashSet<String>,
     pub export: Export,
     #[serde(default, skip_serializing_if = "is_default")]
+    pub fallback: FallbackMode,
+    #[serde(default, skip_serializing_if = "is_default")]
     pub overwrite: bool,
 }
 

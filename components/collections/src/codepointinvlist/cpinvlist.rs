@@ -36,7 +36,7 @@ pub struct CodePointInversionList<'data> {
 
     // Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
     inv_list: ZeroVec<'data, u32>,
-    size: usize,
+    size: u32,
 }
 
 #[cfg(feature = "serde")]
@@ -179,7 +179,7 @@ impl<'data> CodePointInversionList<'data> {
                     <u32 as AsULE>::from_unaligned(end_points[1])
                         - <u32 as AsULE>::from_unaligned(end_points[0])
                 })
-                .sum::<u32>() as usize;
+                .sum::<u32>();
             Ok(Self { inv_list, size })
         } else {
             Err(CodePointInversionListError::InvalidSet(inv_list.to_vec()))
@@ -187,7 +187,7 @@ impl<'data> CodePointInversionList<'data> {
     }
 
     #[doc(hidden)] // databake internal
-    pub const unsafe fn from_parts_unchecked(inv_list: ZeroVec<'data, u32>, size: usize) -> Self {
+    pub const unsafe fn from_parts_unchecked(inv_list: ZeroVec<'data, u32>, size: u32) -> Self {
         Self { inv_list, size }
     }
 
@@ -295,7 +295,7 @@ impl<'data> CodePointInversionList<'data> {
     pub fn all() -> Self {
         Self {
             inv_list: ALL_VEC,
-            size: (char::MAX as usize) + 1,
+            size: (char::MAX as u32) + 1,
         }
     }
 
@@ -324,7 +324,7 @@ impl<'data> CodePointInversionList<'data> {
     pub fn bmp() -> Self {
         Self {
             inv_list: BMP_INV_LIST_VEC,
-            size: (BMP_MAX as usize) + 1,
+            size: BMP_MAX + 1,
         }
     }
 
@@ -461,7 +461,7 @@ impl<'data> CodePointInversionList<'data> {
         if self.is_empty() {
             return 0;
         }
-        self.size
+        self.size as usize
     }
 
     /// Returns whether or not the [`CodePointInversionList`] is empty
@@ -995,7 +995,7 @@ mod tests {
                             b"0\0\0\0:\0\0\0A\0\0\0G\0\0\0a\0\0\0g\0\0\0"
                         )
                     },
-                    22usize,
+                    22u32,
                 )
             },
             icu_collections,

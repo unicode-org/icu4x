@@ -6,8 +6,6 @@
 
 #![allow(clippy::exhaustive_structs)] // data struct module
 
-#[cfg(feature = "datagen")]
-use crate::datagen::IterableDataProvider;
 use crate::prelude::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
@@ -133,7 +131,7 @@ impl DataPayload<HelloWorldV1Marker> {
 
 // AnyProvider support.
 #[cfg(not(feature = "datagen"))]
-impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
+crate::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 
 #[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.
@@ -187,7 +185,7 @@ impl BufferProvider for HelloWorldJsonProvider {
 }
 
 #[cfg(feature = "datagen")]
-impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+impl crate::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
         Ok(Self::DATA
@@ -199,7 +197,7 @@ impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
 }
 
 #[cfg(feature = "datagen")]
-make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
+crate::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 /// A type that formats localized "hello world" strings.
 ///
@@ -236,12 +234,22 @@ pub struct FormattedHelloWorld<'l> {
 impl HelloWorldFormatter {
     /// Creates a new [`HelloWorldFormatter`] for the specified locale.
     ///
-    /// See [`HelloWorldFormatter`] for an example.
-    ///
     /// [📚 Help choosing a constructor](crate::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
+        Self::try_new_unstable(&HelloWorldProvider, locale)
+    }
+
+    crate::gen_any_buffer_data_constructors!(locale: include, options: skip, error: DataError,
+        #[cfg(skip_new)]
+        functions: [
+            try_new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+    ]);
+
+    #[doc = crate::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
     where
         P: DataProvider<HelloWorldV1Marker>,
@@ -254,8 +262,6 @@ impl HelloWorldFormatter {
             .take_payload()?;
         Ok(Self { data })
     }
-
-    crate::gen_any_buffer_constructors!(locale: include, options: skip, error: DataError);
 
     /// Formats a hello world message, returning a [`FormattedHelloWorld`].
     #[allow(clippy::needless_lifetimes)] // documentary example
@@ -290,6 +296,7 @@ writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 #[cfg(feature = "datagen")]
 #[test]
 fn test_iter() {
+    use crate::datagen::IterableDataProvider;
     use icu_locid::locale;
 
     assert_eq!(

@@ -56,8 +56,7 @@ impl From<fields::SymbolError> for SkeletonError {
             fields::SymbolError::InvalidIndex(_) => unimplemented!(),
             fields::SymbolError::Unknown(ch) => {
                 // NOTE: If you remove a symbol due to it now being supported,
-                //       make sure to regenerate the test data.
-                //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
+                //       make sure to regenerate data: cargo make bakeddata components/datetime.
                 match ch {
                     // TODO(#487) - Flexible day periods
                     'B'

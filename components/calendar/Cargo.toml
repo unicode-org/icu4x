@@ -39,7 +39,10 @@ writeable = { version = "0.5.1", path = "../../utils/writeable" }
 databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
-icu_calendar_data = { path = "data", optional = true }
+icu_calendar_data = { version = "~1.3.0", path = "data", optional = true }
+icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform", features = ["data"], optional = true }
+
+libm = { version = "0.2", default-features = false }
 
 [dev-dependencies]
 criterion = "0.4"
@@ -53,7 +56,7 @@ std = ["icu_provider/std", "icu_locid/std"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
 bench = []
-data = ["dep:icu_calendar_data"]
+data = ["dep:icu_calendar_data", "dep:icu_locid_transform"]
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI

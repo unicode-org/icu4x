@@ -29,8 +29,7 @@ pub enum Direction {
 /// use icu_locid::locale;
 /// use icu_locid_transform::{Direction, LocaleDirectionality};
 ///
-/// let ld = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
-///     .expect("create failed");
+/// let ld = LocaleDirectionality::new();
 ///
 /// assert_eq!(ld.get(&locale!("en")), Some(Direction::LeftToRight));
 /// ```
@@ -46,12 +45,7 @@ impl LocaleDirectionality {
     /// A constructor which creates a [`LocaleDirectionality`].
     #[cfg(feature = "data")]
     pub const fn new() -> Self {
-        Self {
-            script_direction: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_SCRIPT_DIR_V1,
-            ),
-            expander: LocaleExpander::new(),
-        }
+        Self::new_with_expander(LocaleExpander::new())
     }
 
     // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
@@ -89,31 +83,32 @@ impl LocaleDirectionality {
     ///
     /// For example, use this constructor if you wish to support all languages.
     ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
-    ///
     /// # Examples
     ///
     /// ```
     /// use icu_locid::locale;
     /// use icu_locid_transform::{Direction, LocaleDirectionality, LocaleExpander};
     ///
-    /// let ld_default = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("create failed");
+    /// let ld_default = LocaleDirectionality::new();
     ///
     /// assert_eq!(ld_default.get(&locale!("jbn")), None);
     ///
-    /// let expander = LocaleExpander::try_new_extended_unstable(&icu_testdata::unstable())
-    ///     .expect("create failed");
-    /// let ld_extended = LocaleDirectionality::try_new_with_expander_unstable(
-    ///         &icu_testdata::unstable(),
-    ///         expander,
-    ///     ).expect("create failed");
+    /// let expander = LocaleExpander::new_extended();
+    /// let ld_extended = LocaleDirectionality::new_with_expander(expander);
     ///
     /// assert_eq!(ld_extended.get(&locale!("jbn")), Some(Direction::RightToLeft));
     /// ```
+    #[cfg(feature = "data")]
+    pub const fn new_with_expander(expander: LocaleExpander) -> Self {
+        LocaleDirectionality {
+            script_direction: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_SCRIPT_DIR_V1,
+            ),
+            expander,
+        }
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,
@@ -146,8 +141,7 @@ impl LocaleDirectionality {
     /// use icu_locid::locale;
     /// use icu_locid_transform::{Direction, LocaleDirectionality};
     ///
-    /// let ld = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("create failed");
+    /// let ld = LocaleDirectionality::new();
     ///
     /// assert_eq!(ld.get(&locale!("en-US")), Some(Direction::LeftToRight));
     ///
@@ -159,12 +153,11 @@ impl LocaleDirectionality {
     /// Using a script directly:
     ///
     /// ```
-    /// use icu_locid::subtags_script as script;
+    /// use icu_locid::subtags::script;
     /// use icu_locid::Locale;
     /// use icu_locid_transform::{Direction, LocaleDirectionality};
     ///
-    /// let ld = LocaleDirectionality::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("create failed");
+    /// let ld = LocaleDirectionality::new();
     ///
     /// assert_eq!(ld.get(&Locale::from(Some(script!("Latn")))), Some(Direction::LeftToRight));
     /// ```

@@ -22,7 +22,9 @@ use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 #[cfg(feature = "data")]
-pub(crate) struct Baked;
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
 
 #[cfg(feature = "data")]
 const _: () = {
@@ -144,7 +146,11 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(MetazonePeriodV1Marker = "time_zone/metazone_period@1")]
+#[icu_provider::data_struct(marker(
+    MetazonePeriodV1Marker,
+    "time_zone/metazone_period@1",
+    singleton
+))]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",

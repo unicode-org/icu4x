@@ -116,6 +116,7 @@ mod date;
 mod datetime;
 
 pub mod any_calendar;
+mod astronomy;
 pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
@@ -129,6 +130,7 @@ pub mod indian;
 pub mod iso;
 pub mod japanese;
 pub mod julian;
+pub mod persian;
 pub mod provider;
 mod rata_die;
 pub mod types;

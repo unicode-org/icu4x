@@ -57,6 +57,7 @@ macro_rules! implement {
                 &self,
                 req: DataRequest,
             ) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
                 let data = self.load_dictionary_data(req)?;
                 Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
@@ -68,7 +69,7 @@ macro_rules! implement {
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             // TODO(#3408): Do we actually want to filter these by the user-selected locales?
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self.source.options.locales.filter_by_langid_equality(vec![$(locale!($locale).into()),*]))
+                Ok(self.filter_data_locales(vec![$(locale!($locale).into()),*]))
             }
         }
     }

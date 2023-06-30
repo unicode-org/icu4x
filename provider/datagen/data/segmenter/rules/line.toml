@@ -1141,12 +1141,6 @@ break_state = true
 
 [[rules]]
 # LB25
-left = [ "LB25_NU_IS" ]
-right = [ "Any" ]
-break_state = true
-
-[[rules]]
-# LB25
 left = [ "LB25_NU_SY" ]
 right = [ "Any" ]
 break_state = true
@@ -1192,7 +1186,7 @@ break_state = false
 [[rules]]
 # LB29
 # (LB1 AL = AI, AL, SA or XX)
-left = [ "IS" ]
+left = [ "IS", "LB25_NU_IS" ]
 right = [ "AL", "HL", "AI", "SA", "XX" ]
 break_state = false
 
@@ -1231,7 +1225,7 @@ break_state = false
 
 [[rules]]
 # (LB25)
-left = [ "LB25_NU_CP" ]
+left = [ "LB25_NU_CP", "LB25_NU_IS" ]
 right = [ "Any" ]
 break_state = true
 

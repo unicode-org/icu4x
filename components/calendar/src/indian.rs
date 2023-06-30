@@ -35,7 +35,6 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 /// The Indian National Calendar (aka the Saka calendar)
@@ -114,7 +113,7 @@ impl Calendar for Indian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IndianDateInner)
+        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(IndianDateInner)
     }
 
     //
@@ -188,6 +187,7 @@ impl Calendar for Indian {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year,
+            cyclic: None,
             related_iso: None,
         }
     }
@@ -204,11 +204,13 @@ impl Calendar for Indian {
         let prev_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year - 1,
+            cyclic: None,
             related_iso: None,
         };
         let next_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year + 1,
+            cyclic: None,
             related_iso: None,
         };
         types::DayOfYearInfo {
@@ -262,19 +264,9 @@ impl Date<Indian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Indian>, CalendarError> {
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        let bound = inner.days_in_month();
-        if day > bound {
-            return Err(CalendarError::OutOfRange);
-        }
-
-        Ok(Date::from_raw(IndianDateInner(inner), Indian))
+        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+            .map(IndianDateInner)
+            .map(|inner| Date::from_raw(inner, Indian))
     }
 }
 

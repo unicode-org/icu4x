@@ -26,6 +26,24 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
+#[cfg(feature = "data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "data")]
+const _: () = {
+    use crate as icu_segmenter;
+    icu_segmenter_data::impl_segmenter_dictionary_w_auto_v1!(Baked);
+    icu_segmenter_data::impl_segmenter_dictionary_wl_ext_v1!(Baked);
+    icu_segmenter_data::impl_segmenter_grapheme_v1!(Baked);
+    icu_segmenter_data::impl_segmenter_line_v1!(Baked);
+    #[cfg(feature = "lstm")]
+    icu_segmenter_data::impl_segmenter_lstm_wl_auto_v1!(Baked);
+    icu_segmenter_data::impl_segmenter_sentence_v1!(Baked);
+    icu_segmenter_data::impl_segmenter_word_v1!(Baked);
+};
+
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 ///
 /// <div class="stab unstable">
@@ -34,10 +52,10 @@ use zerovec::ZeroVec;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    LineBreakDataV1Marker = "segmenter/line@1",
-    WordBreakDataV1Marker = "segmenter/word@1",
-    GraphemeClusterBreakDataV1Marker = "segmenter/grapheme@1",
-    SentenceBreakDataV1Marker = "segmenter/sentence@1"
+    marker(LineBreakDataV1Marker, "segmenter/line@1", singleton),
+    marker(WordBreakDataV1Marker, "segmenter/word@1", singleton),
+    marker(GraphemeClusterBreakDataV1Marker, "segmenter/grapheme@1", singleton),
+    marker(SentenceBreakDataV1Marker, "segmenter/sentence@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(

@@ -16,6 +16,7 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<RegionDisplayNamesV1Marker>, DataError> {
+        self.check_req::<RegionDisplayNamesV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::displaynames::region::Resource = self
@@ -37,7 +38,7 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.source.options.locales.filter_by_langid_equality(
+        Ok(self.filter_data_locales(
             self.source
                 .cldr()?
                 .displaynames()
@@ -95,7 +96,7 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags_region as region};
+    use icu_locid::{locale, subtags::region};
 
     #[test]
     fn test_basic() {

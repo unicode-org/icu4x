@@ -19,9 +19,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{
-///     extensions::unicode::Value, extensions_unicode_value as value,
-/// };
+/// use icu::locid::extensions::unicode::{Value, value};
 /// use writeable::assert_writeable_eq;
 ///
 /// assert_writeable_eq!(value!("gregory"), "gregory");
@@ -161,9 +159,7 @@ impl_writeable_for_subtag_list!(Value, "islamic", "civil");
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{
-///     extensions_unicode_key as key, extensions_unicode_value as value,
-/// };
+/// use icu::locid::extensions::unicode::{key, value};
 ///
 /// let loc: Locale = "de-u-ca-buddhist".parse().unwrap();
 ///
@@ -175,6 +171,7 @@ impl_writeable_for_subtag_list!(Value, "islamic", "civil");
 ///
 /// [`Value`]: crate::extensions::unicode::Value
 #[macro_export]
+#[doc(hidden)]
 macro_rules! extensions_unicode_value {
     ($value:literal) => {{
         // What we want:
@@ -195,3 +192,5 @@ macro_rules! extensions_unicode_value {
         R
     }};
 }
+#[doc(inline)]
+pub use extensions_unicode_value as value;
