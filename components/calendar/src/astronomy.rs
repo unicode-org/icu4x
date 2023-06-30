@@ -383,8 +383,11 @@ impl Astronomical {
         // The moment is not used.
         let h = location.elevation.max(0.0);
         let earth_r = 6.372e6; // Radius of Earth.
-        let dip = (earth_r / (earth_r + h)).acos().to_degrees(); // Depression of visible horizon.
-        dip + 34.0 + 19.0 * h.sqrt()
+        let dip = arccos_degrees(earth_r / (earth_r + h));
+
+        let result = (34.0 / 60.0) + dip + ((19.0 / 3600.0) * f64::sqrt(h));
+
+        result
     }
 
     /// The moment (in universal time) of the nth new moon after
@@ -822,16 +825,27 @@ impl Astronomical {
 
     /// Topocentric altitude of moon at moment at location,
     /// as a small positive/negative angle in degrees.
-    pub(crate) fn topocentric_lunar_altitude(moment: Moment, location: Location) -> f64 {
-        Self::lunar_altitude(moment, location) - Self::lunar_parallax(moment, location)
+    fn topocentric_lunar_altitude(moment: Moment, location: Location) -> f64 {
+        let m = moment;
+        let l = location;
+
+        let lp = Self::lunar_parallax(moment, location);
+        let la = Self::lunar_altitude(moment, location);
+
+        la - lp
     }
 
     /// Observed altitude of upper limb of moon at moment at location,
     /// as a small positive/negative angle in degrees.
-    pub(crate) fn observed_lunar_altitude(moment: Moment, location: Location) -> f64 {
-        Self::topocentric_lunar_altitude(moment, location)
+    fn observed_lunar_altitude(moment: Moment, location: Location) -> f64 {
+        let r = Self::topocentric_lunar_altitude(moment, location);
+        let y = Self::refraction(moment, location);
+        let z = 16.0 / 60.0;
+        let result = Self::topocentric_lunar_altitude(moment, location)
             + Self::refraction(moment, location)
-            + 16.0 / 60.0
+            + 16.0 / 60.0;
+
+        result
     }
 
     // Average anomaly of the sun (in degrees) at a given Moment in Julian centuries
@@ -874,6 +888,45 @@ impl Astronomical {
             360.0,
         )
         .1
+    }
+
+    #[allow(dead_code)]
+    fn moonset(date: Moment, location: Location, utc_offset: f64) -> Option<Moment> {
+        let moment = Location::universal_from_standard(date, utc_offset);
+        let waxing = Self::lunar_phase(date) < 180.0;
+        let alt = Self::observed_lunar_altitude(moment, location);
+        let lat = location.latitude;
+        let offset = alt / (4.0 * (90.0 - lat.abs()));
+
+        let approx = if waxing {
+            if offset > 0.0 {
+                moment + offset
+            } else {
+                moment + 1.0 + offset
+            }
+        } else {
+            moment - offset + 0.5
+        };
+
+        let set = Moment::new(binary_search(
+            approx.inner() - (6.0 / 24.0),
+            approx.inner() + (6.0 / 24.0),
+            |x| Self::observed_lunar_altitude(Moment::new(x), location) < 0.0,
+            |u, l| (u - l) < 1.0 / (24.0 * 60.0),
+        ));
+
+        if set < moment + 1.0 {
+            let std = Moment::new(libm::fmax(
+                Location::standard_from_universal(set, utc_offset).inner(),
+                date.inner(),
+            ));
+            if std < date {
+                return None;
+            }
+            Some(std)
+        } else {
+            return None;
+        }
     }
 
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
@@ -1464,6 +1517,64 @@ mod tests {
             let expected_parallax_val = *parallax;
 
             assert_eq_f64(expected_parallax_val, parallax_val, moment);
+        }
+    }
+
+    #[test]
+    fn check_moonset() {
+        let rd_vals = [
+            -214193.0, -61387.0, 25469.0, 49217.0, 171307.0, 210155.0, 253427.0, 369740.0,
+            400085.0, 434355.0, 452605.0, 470160.0, 473837.0, 507850.0, 524156.0, 544676.0,
+            567118.0, 569477.0, 601716.0, 613424.0, 626596.0, 645554.0, 664224.0, 671401.0,
+            694799.0, 704424.0, 708842.0, 709409.0, 709580.0, 727274.0, 728714.0, 744313.0,
+            764652.0,
+        ];
+
+        let expected_time_of_day = [
+            -214192.91577491348,
+            -61386.372392431986,
+            25469.842646633304,
+            49217.03030766261,
+            171307.41988615665,
+            210155.96578468647,
+            253427.2528524993,
+            0.0,
+            400085.5281194299,
+            434355.0524936674,
+            452605.0379962325,
+            470160.4931771927,
+            473837.06032208423,
+            507850.8560177605,
+            0.0,
+            544676.908706548,
+            567118.8180096536,
+            569477.7141856537,
+            601716.4168627897,
+            613424.9325031227,
+            626596.9563783304,
+            645554.9526297608,
+            664224.070965863,
+            671401.2004198332,
+            694799.4892001058,
+            704424.4299627786,
+            708842.0314145002,
+            709409.2245215117,
+            0.0,
+            727274.2148254914,
+            0.0,
+            744313.2118589033,
+            764652.9631741203,
+        ];
+
+        for (rd, expected_val) in rd_vals.iter().zip(expected_time_of_day.iter()) {
+            let moment: Moment = Moment::new(*rd as f64);
+            let moonset_val = Astronomical::moonset(moment, MECCA, 0.125);
+            let expected_moonset_val = *expected_val;
+            if moonset_val.is_none() {
+                assert_eq!(expected_moonset_val, 0.0);
+            } else {
+                assert_eq_f64(expected_moonset_val, moonset_val.unwrap().inner(), moment);
+            }
         }
     }
 
