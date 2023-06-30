@@ -257,6 +257,24 @@ impl<'a, T: AsULE + Ord> Ord for ZeroVec<'a, T> {
     }
 }
 
+impl<'a, T: AsULE> AsRef<[T::ULE]> for ZeroVec<'a, T> {
+    fn as_ref(&self) -> &[T::ULE] {
+        self.as_ule_slice()
+    }
+}
+
+impl<'a, T: AsULE> From<&'a [T::ULE]> for ZeroVec<'a, T> {
+    fn from(other: &'a [T::ULE]) -> Self {
+        ZeroVec::new_borrowed(other)
+    }
+}
+
+impl<'a, T: AsULE> From<Vec<T::ULE>> for ZeroVec<'a, T> {
+    fn from(other: Vec<T::ULE>) -> Self {
+        ZeroVec::new_owned(other)
+    }
+}
+
 impl<'a, T> ZeroVec<'a, T>
 where
     T: AsULE + ?Sized,
