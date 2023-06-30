@@ -46,8 +46,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     print(format!("User: {user_name}"));
 
     {
-        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-            &icu_testdata::unstable(),
+        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
             &locale.into(),
             DateTimeFormatterOptions::default(),
             TimeZoneFormatterOptions::default(),
@@ -77,11 +76,8 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal_unstable(
-            &icu_testdata::unstable(),
-            &locale!("en").into(),
-        )
-        .expect("Failed to create PluralRules.");
+        let pr = PluralRules::try_new_cardinal(&locale!("en").into())
+            .expect("Failed to create PluralRules.");
 
         match pr.category_for(email_count) {
             PluralCategory::One => print("Note: You have one unread email."),

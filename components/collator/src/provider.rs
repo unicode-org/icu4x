@@ -38,12 +38,12 @@ use crate::elements::NO_CE_PRIMARY;
 use super::CaseFirst;
 use super::MaxVariable;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
     use crate as icu_collator;
     icu_collator_data::impl_collator_data_v1!(Baked);

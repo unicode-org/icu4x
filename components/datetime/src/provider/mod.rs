@@ -19,12 +19,12 @@ pub mod calendar;
 pub(crate) mod date_time;
 pub mod time_zones;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
     use crate as icu_datetime;
     icu_datetime_data::impl_datetime_buddhist_datelengths_v1!(Baked);

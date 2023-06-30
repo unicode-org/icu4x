@@ -1321,7 +1321,6 @@ dependencies = [
  "icu_provider",
  "icu_relativetime",
  "icu_segmenter",
- "icu_testdata",
  "icu_timezone",
  "writeable",
 ]
@@ -1384,7 +1383,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_capi"
@@ -1454,7 +1453,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemapping_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_codepointtrie_builder"
@@ -1495,7 +1494,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_collections"
@@ -1507,7 +1506,7 @@ dependencies = [
  "iai",
  "icu",
  "icu_benchmark_macros",
- "icu_testdata",
+ "icu_properties",
  "postcard",
  "serde",
  "serde_json",
@@ -1537,7 +1536,7 @@ dependencies = [
 
 [[package]]
 name = "icu_compactdecimal_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_datagen"
@@ -1628,7 +1627,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_decimal"
@@ -1655,7 +1654,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_depcheck"
@@ -1678,7 +1677,7 @@ dependencies = [
 
 [[package]]
 name = "icu_displaynames_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_ffi_coverage"
@@ -1737,7 +1736,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_locid"
@@ -1779,7 +1778,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -1806,7 +1805,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_pattern"
@@ -1844,7 +1843,6 @@ dependencies = [
  "icu_locid_transform",
  "icu_plurals_data",
  "icu_provider",
- "icu_testdata",
  "serde",
  "serde_json",
  "zerovec",
@@ -1852,7 +1850,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_properties"
@@ -1874,7 +1872,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_provider"
@@ -1981,7 +1979,7 @@ dependencies = [
 
 [[package]]
 name = "icu_relativetime_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_segmenter"
@@ -2009,7 +2007,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_testdata"
@@ -2070,7 +2068,6 @@ dependencies = [
  "icu_calendar",
  "icu_locid",
  "icu_provider",
- "icu_testdata",
  "icu_timezone_data",
  "serde",
  "tinystr",
@@ -2079,7 +2076,20 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone_data"
+version = "1.3.0"
+
+[[package]]
+name = "icu_unicodeset_parser"
 version = "0.0.0"
+dependencies = [
+ "icu_collections",
+ "icu_properties",
+ "icu_provider",
+ "icu_testdata",
+ "log",
+ "tinystr",
+ "zerovec",
+]
 
 [[package]]
 name = "ident_case"

@@ -103,6 +103,7 @@ pub mod prelude {
     pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out};
 }
 
+use icu_locid::subtags::Language;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use memchr::memmem;
@@ -148,6 +149,14 @@ impl DatagenProvider {
 
         source.options = options;
 
+        if matches!(source.options.fallback, options::FallbackMode::Expand)
+            && !matches!(source.options.locales, options::LocaleInclude::Explicit(_))
+        {
+            return Err(DataError::custom(
+                "FallbackMode::Expand requires LocaleInclude::Explicit",
+            ));
+        }
+
         source.options.locales = match core::mem::take(&mut source.options.locales) {
             options::LocaleInclude::None => options::LocaleInclude::Explicit(Default::default()),
             options::LocaleInclude::CldrSet(levels) => options::LocaleInclude::Explicit(
@@ -158,15 +167,26 @@ impl DatagenProvider {
             ),
             options::LocaleInclude::Explicit(set) => options::LocaleInclude::Explicit(set),
             options::LocaleInclude::All => options::LocaleInclude::All,
+            options::LocaleInclude::Recommended => options::LocaleInclude::Explicit(
+                source
+                    .locales(&[
+                        options::CoverageLevel::Modern,
+                        options::CoverageLevel::Moderate,
+                        options::CoverageLevel::Basic,
+                    ])?
+                    .into_iter()
+                    .collect(),
+            ),
         };
 
-        if source.options.fallback == options::FallbackMode::Runtime {
-            if let options::LocaleInclude::Explicit(ref mut set) = source.options.locales {
-                set.insert(Default::default());
-            }
+        let mut provider = Self { source };
+
+        if provider.source.options.fallback == options::FallbackMode::Runtime {
+            provider.source.fallbacker =
+                Some(icu_locid_transform::fallback::LocaleFallbacker::try_new_unstable(&provider)?);
         }
 
-        Ok(Self { source })
+        Ok(provider)
     }
 
     #[cfg(test)]
@@ -183,6 +203,39 @@ impl DatagenProvider {
             };
         }
         TEST_PROVIDER.clone()
+    }
+
+    pub(crate) fn filter_data_locales(
+        &self,
+        supported: Vec<icu_provider::DataLocale>,
+    ) -> Vec<icu_provider::DataLocale> {
+        match &self.source.options.locales {
+            options::LocaleInclude::All => supported,
+            options::LocaleInclude::Explicit(set) => supported
+                .into_iter()
+                .filter(|l| {
+                    if let Some(fallbacker) = &self.source.fallbacker {
+                        // Include any UND-*
+                        if l.get_langid().language == Language::UND {
+                            return true;
+                        }
+                        let mut chain = fallbacker
+                            .for_config(Default::default())
+                            .fallback_for(l.clone());
+                        while !chain.get().is_empty() {
+                            if set.contains(&chain.get().get_langid()) {
+                                return true;
+                            }
+                            chain.step();
+                        }
+                        false
+                    } else {
+                        set.contains(&l.get_langid())
+                    }
+                })
+                .collect(),
+            _ => unreachable!("resolved"),
+        }
     }
 
     /// Exports data for the set of keys to the given exporter.
@@ -209,6 +262,8 @@ impl DatagenProvider {
             use rayon_prelude::*;
 
             keys.into_par_iter().try_for_each(|key| {
+                log::info!("Generating key {key}");
+
                 if key.metadata().singleton {
                     let payload = provider
                         .load_data(key, Default::default())
@@ -290,9 +345,7 @@ impl DatagenProvider {
                                 exporter.flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
                                 .map_err(|e| e.with_key(key))
                         }
-                        _ => Err(DataError::custom(
-                            "FallbackMode::Expand requires LocaleInclude::Explicit or LocaleInclude::CldrSet",
-                        )),
+                        _ => unreachable!("checked in constructor"),
                     },
                 }
             })?;

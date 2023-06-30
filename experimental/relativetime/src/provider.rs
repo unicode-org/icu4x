@@ -13,12 +13,12 @@ use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
     use crate as icu_relativetime;
     icu_relativetime_data::impl_relativetime_long_day_v1!(Baked);

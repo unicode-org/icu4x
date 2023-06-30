@@ -604,10 +604,10 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
 /// assert!(syriac.contains32(0x074A)); // SYRIAC BARREKH
 /// ```
 ///
-/// ✨ **Enabled with the `"data"` feature.**
+/// ✨ **Enabled with the `"compiled_data"` feature.**
 ///
 /// [📚 Help choosing a constructor](icu_provider::constructors)
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 pub const fn script_with_extensions() -> ScriptWithExtensionsBorrowed<'static> {
     ScriptWithExtensionsBorrowed {
         data: crate::provider::Baked::SINGLETON_PROPS_SCX_V1,

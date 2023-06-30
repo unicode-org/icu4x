@@ -113,7 +113,7 @@ impl CompactDecimalFormatter {
     ///     Default::default(),
     /// );
     /// ```
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_short(
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
@@ -196,7 +196,7 @@ impl CompactDecimalFormatter {
     ///     Default::default(),
     /// );
     /// ```
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_long(
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,

@@ -173,8 +173,8 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 /// assert_eq!(open_paren.mirrored, true);
 /// ```
 ///
-/// ✨ **Enabled with the `"data"` feature.**
-#[cfg(feature = "data")]
+/// ✨ **Enabled with the `"compiled_data"` feature.**
+#[cfg(feature = "compiled_data")]
 pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'static> {
     BidiAuxiliaryPropertiesBorrowed {
         data: crate::provider::Baked::SINGLETON_PROPS_BIDIAUXILIARYPROPS_V1,

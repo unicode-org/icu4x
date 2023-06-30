@@ -1,0 +1,37 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_unicodeset_parser"
+description = "API to parse unicode sets as defined in UTS35"
+version = "0.0.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2021"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license = "Unicode-DFS-2016"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+icu_collections = { path = "../../components/collections" }
+icu_properties = { path = "../../components/properties" }
+icu_provider = { path = "../../provider/core" }
+
+tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec",  features = ["yoke"] }
+log = "0.4"
+
+[dev-dependencies]
+icu_testdata = { version = "1.2.0", path = "../../provider/testdata" }

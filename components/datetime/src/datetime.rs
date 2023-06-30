@@ -86,10 +86,10 @@ impl TimeFormatter {
     /// .unwrap();
     /// ```
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
         locale: &DataLocale,
         length: length::Time,
@@ -285,10 +285,10 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///
     /// [`DateFormatter`]: crate::DateFormatter
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
         locale: &DataLocale,
         length: length::Date,
@@ -522,10 +522,10 @@ where {
     ///
     /// [data provider]: icu_provider
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new(
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
@@ -640,12 +640,12 @@ where {
     ///
     /// [data provider]: icu_provider
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "experimental")]
     #[inline]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_experimental(
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
