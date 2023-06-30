@@ -40,7 +40,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{adjusted_rem_euclid, div_rem_euclid, i64_to_i32, quotient, I32Result};
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
-use crate::types::{Era, FormattableYear, Moment};
+use crate::types::{Era, FormattableYear, Moment, MonthCode};
 use crate::{
     astronomy, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
@@ -168,7 +168,31 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        ArithmeticDate::new_from_lunar_codes(self, year, month_code, day).map(ChineseDateInner)
+        let month = if let Some(ordinal) = Self::ordinal_lunar_month_from_code(year, month_code) {
+            ordinal
+        } else {
+            return Err(CalendarError::UnknownMonthCode(
+                month_code.0,
+                self.debug_name(),
+            ));
+        };
+
+        if month > Self::months_for_every_year(year) {
+            return Err(CalendarError::UnknownMonthCode(
+                month_code.0,
+                self.debug_name(),
+            ));
+        }
+
+        let max_day = Self::month_days(year, month);
+        if day > max_day {
+            return Err(CalendarError::Overflow {
+                field: "day",
+                max: max_day as usize,
+            });
+        }
+
+        Ok(ArithmeticDate::new_unchecked(year, month, day)).map(ChineseDateInner)
     }
 
     // Construct the date from an ISO date
@@ -225,12 +249,10 @@ impl Calendar for Chinese {
         Self::format_chinese_year(date.0.year)
     }
 
-    /// The calendar-specific month code represented by `date`
-    /// since the Chinese calendar has leap months, it is necessary to track
-    /// whether a month is a leap month, as well as whether it comes after a
-    /// leap month in the current calendar year. To accomplish this, the Chinese
-    /// calendar month codes appends "L" (for "Leap") to a month code if it is a leap month,
-    /// and appends "I" (for "Increment") to a month code if it occurs after a leap month.
+    /// The calendar-specific month code represented by `date`;
+    /// since the Chinese calendar has leap months, an "L" is appended to the month code for
+    /// leap months. For example, in a year where an intercalary month is added after the second
+    /// month, the month codes for ordinal monts 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.0.month;
         let leap_month = if Self::is_leap_year(date.0.year) {
@@ -277,17 +299,17 @@ impl Calendar for Chinese {
                 match ordinal {
                     1 => tinystr!(4, "und"), // this implies the leap month is < 1, which is impossible
                     2 => tinystr!(4, "und"), // this implies the leap month is = 1, which is impossible
-                    3 => tinystr!(4, "M02I"),
-                    4 => tinystr!(4, "M03I"),
-                    5 => tinystr!(4, "M04I"),
-                    6 => tinystr!(4, "M05I"),
-                    7 => tinystr!(4, "M06I"),
-                    8 => tinystr!(4, "M07I"),
-                    9 => tinystr!(4, "M08I"),
-                    10 => tinystr!(4, "M09I"),
-                    11 => tinystr!(4, "M10I"),
-                    12 => tinystr!(4, "M11I"),
-                    13 => tinystr!(4, "M12I"),
+                    3 => tinystr!(4, "M02"),
+                    4 => tinystr!(4, "M03"),
+                    5 => tinystr!(4, "M04"),
+                    6 => tinystr!(4, "M05"),
+                    7 => tinystr!(4, "M06"),
+                    8 => tinystr!(4, "M07"),
+                    9 => tinystr!(4, "M08"),
+                    10 => tinystr!(4, "M09"),
+                    11 => tinystr!(4, "M10"),
+                    12 => tinystr!(4, "M11"),
+                    13 => tinystr!(4, "M12"),
                     _ => tinystr!(4, "und"), // maximum number of months in a leap year is 13
                 }
             }
@@ -659,6 +681,56 @@ impl Chinese {
             related_iso,
         }
     }
+
+    /// Get the ordinal lunar month from a code
+    ///
+    /// TODO: The behavior of this fn is calendar specific, but this needs to be implemented in every lunar
+    /// calendar; consider abstracting this function to a Lunar trait
+    fn ordinal_lunar_month_from_code(year: i32, code: MonthCode) -> Option<u8> {
+        if code.0.len() < 3 {
+            return None;
+        }
+        let mid_year = Self::fixed_mid_year_from_year(year);
+        let leap_month = if Self::is_leap_year(year) {
+            Self::get_leap_month_in_year(mid_year)
+        } else {
+            14
+        };
+        let bytes = code.0.all_bytes();
+        if bytes[0] != b'M' {
+            return None;
+        }
+        if code.0.len() == 4 {
+            if bytes[3] != b'L' {
+                return None;
+            }
+        }
+        let mut unadjusted = 0;
+        if bytes[1] == b'0' {
+            if bytes[2] >= b'1' && bytes[2] <= b'9' {
+                unadjusted = bytes[2] - b'0';
+            }
+        } else if bytes[1] == b'1' {
+            if bytes[2] >= b'0' && bytes[2] <= b'2' {
+                unadjusted = 10 + bytes[2] - b'0';
+            }
+        }
+        if bytes[3] == b'L' {
+            if unadjusted + 1 != leap_month {
+                return None;
+            } else {
+                return Some(unadjusted + 1);
+            }
+        }
+        if unadjusted != 0 {
+            if unadjusted + 1 > leap_month {
+                return Some(unadjusted + 1);
+            } else {
+                return Some(unadjusted);
+            }
+        }
+        None
+    }
 }
 
 #[cfg(test)]
@@ -928,7 +1000,7 @@ mod test {
     }
 
     #[test]
-    fn test_month_codes() {
+    fn test_ordinal_to_month_code() {
         #[derive(Debug)]
         struct TestCase {
             year: i32,
@@ -966,61 +1038,61 @@ mod test {
                 year: 2023,
                 month: 5,
                 day: 9,
-                expected_code: "M03I",
+                expected_code: "M03",
             },
             TestCase {
                 year: 2023,
                 month: 6,
                 day: 9,
-                expected_code: "M04I",
+                expected_code: "M04",
             },
             TestCase {
                 year: 2023,
                 month: 7,
                 day: 9,
-                expected_code: "M05I",
+                expected_code: "M05",
             },
             TestCase {
                 year: 2023,
                 month: 8,
                 day: 9,
-                expected_code: "M06I",
+                expected_code: "M06",
             },
             TestCase {
                 year: 2023,
                 month: 9,
                 day: 9,
-                expected_code: "M07I",
+                expected_code: "M07",
             },
             TestCase {
                 year: 2023,
                 month: 10,
                 day: 9,
-                expected_code: "M08I",
+                expected_code: "M08",
             },
             TestCase {
                 year: 2023,
                 month: 11,
                 day: 9,
-                expected_code: "M09I",
+                expected_code: "M09",
             },
             TestCase {
                 year: 2023,
                 month: 12,
                 day: 9,
-                expected_code: "M10I",
+                expected_code: "M10",
             },
             TestCase {
                 year: 2024,
                 month: 1,
                 day: 9,
-                expected_code: "M11I",
+                expected_code: "M11",
             },
             TestCase {
                 year: 2024,
                 month: 2,
                 day: 9,
-                expected_code: "M12I",
+                expected_code: "M12",
             },
             TestCase {
                 year: 2024,
@@ -1038,6 +1110,60 @@ mod test {
             assert_eq!(
                 expected_code, result_code,
                 "Month codes did not match for test case: {case:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_month_code_to_ordinal() {
+        let year = 4660;
+        let codes = [
+            tinystr!(4, "M01"),
+            tinystr!(4, "M02"),
+            tinystr!(4, "M02L"),
+            tinystr!(4, "M03"),
+            tinystr!(4, "M04"),
+            tinystr!(4, "M05"),
+            tinystr!(4, "M06"),
+            tinystr!(4, "M07"),
+            tinystr!(4, "M08"),
+            tinystr!(4, "M09"),
+            tinystr!(4, "M10"),
+            tinystr!(4, "M11"),
+            tinystr!(4, "M12"),
+        ];
+        for i in 0..codes.len() {
+            let code = MonthCode(codes[i]);
+            let ordinal = Chinese::ordinal_lunar_month_from_code(year, code);
+            assert_eq!(
+                ordinal,
+                Some(i as u8 + 1),
+                "Code to ordinal failed for year: {year}, code: {code}"
+            );
+        }
+    }
+
+    #[test]
+    fn check_invalid_month_code_to_ordinal() {
+        let non_leap_year = 4659;
+        let leap_year = 4660;
+        let invalid_codes = [
+            (non_leap_year, tinystr!(4, "M2")),
+            (leap_year, tinystr!(4, "M0")),
+            (non_leap_year, tinystr!(4, "J01")),
+            (leap_year, tinystr!(4, "3M")),
+            (non_leap_year, tinystr!(4, "M04L")),
+            (leap_year, tinystr!(4, "M04L")),
+            (non_leap_year, tinystr!(4, "M13")),
+            (leap_year, tinystr!(4, "M13")),
+        ];
+        for i in 0..invalid_codes.len() {
+            let year = invalid_codes[i].0;
+            let code = MonthCode(invalid_codes[i].1);
+            let ordinal = Chinese::ordinal_lunar_month_from_code(year, code);
+            assert_eq!(
+                ordinal, None,
+                "Invalid month code failed for year: {year}, code: {code}"
             );
         }
     }
