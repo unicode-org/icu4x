@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::builder::bytestr::ByteStr;
-use crate::zerotrie::ZeroTrieInner;
+use crate::zerotrie::ZeroTrieFlavor;
 use crate::ZeroTrie;
 use crate::ZeroTrieExtendedCapacity;
 use crate::ZeroTriePerfectHash;
@@ -288,9 +288,9 @@ where
             lm.serialize(serializer)
         } else {
             let (tag, bytes) = match &self.0 {
-                ZeroTrieInner::SimpleAscii(t) => (tags::SIMPLE_ASCII, t.as_bytes()),
-                ZeroTrieInner::PerfectHash(t) => (tags::PERFECT_HASH, t.as_bytes()),
-                ZeroTrieInner::ExtendedCapacity(t) => (tags::EXTENDED_CAPACITY, t.as_bytes()),
+                ZeroTrieFlavor::SimpleAscii(t) => (tags::SIMPLE_ASCII, t.as_bytes()),
+                ZeroTrieFlavor::PerfectHash(t) => (tags::PERFECT_HASH, t.as_bytes()),
+                ZeroTrieFlavor::ExtendedCapacity(t) => (tags::EXTENDED_CAPACITY, t.as_bytes()),
             };
             let mut all_in_one_vec = Vec::with_capacity(bytes.len() + 1);
             all_in_one_vec.push(tag);

@@ -62,10 +62,10 @@ use litemap::LiteMap;
 /// # Ok::<_, zerotrie::ZeroTrieError>(())
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ZeroTrie<S>(pub(crate) ZeroTrieInner<S>);
+pub struct ZeroTrie<S>(pub(crate) ZeroTrieFlavor<S>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum ZeroTrieInner<S> {
+pub(crate) enum ZeroTrieFlavor<S> {
     SimpleAscii(ZeroTrieSimpleAscii<S>),
     PerfectHash(ZeroTriePerfectHash<S>),
     ExtendedCapacity(ZeroTrieExtendedCapacity<S>),
@@ -146,7 +146,7 @@ macro_rules! impl_zerotrie_subtype {
             /// Wrap this specific ZeroTrie variant into a ZeroTrie.
             #[inline]
             pub const fn into_zerotrie(self) -> ZeroTrie<S> {
-                ZeroTrie(ZeroTrieInner::$variant(self))
+                ZeroTrie(ZeroTrieFlavor::$variant(self))
             }
             /// Create a trie directly from a store.
             ///
@@ -493,30 +493,30 @@ impl_zerotrie_subtype!(
 macro_rules! impl_dispatch {
     ($self:ident, $inner_fn:ident()) => {
         match $self.0 {
-            ZeroTrieInner::SimpleAscii(subtype) => subtype.$inner_fn(),
-            ZeroTrieInner::PerfectHash(subtype) => subtype.$inner_fn(),
-            ZeroTrieInner::ExtendedCapacity(subtype) => subtype.$inner_fn(),
+            ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn(),
+            ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn(),
+            ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn(),
         }
     };
     (&$self:ident, $inner_fn:ident()) => {
         match &$self.0 {
-            ZeroTrieInner::SimpleAscii(subtype) => subtype.$inner_fn(),
-            ZeroTrieInner::PerfectHash(subtype) => subtype.$inner_fn(),
-            ZeroTrieInner::ExtendedCapacity(subtype) => subtype.$inner_fn(),
+            ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn(),
+            ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn(),
+            ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn(),
         }
     };
     ($self:ident, $inner_fn:ident($arg:ident)) => {
         match $self.0 {
-            ZeroTrieInner::SimpleAscii(subtype) => subtype.$inner_fn($arg),
-            ZeroTrieInner::PerfectHash(subtype) => subtype.$inner_fn($arg),
-            ZeroTrieInner::ExtendedCapacity(subtype) => subtype.$inner_fn($arg),
+            ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn($arg),
+            ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn($arg),
+            ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn($arg),
         }
     };
     (&$self:ident, $inner_fn:ident($arg:ident)) => {
         match &$self.0 {
-            ZeroTrieInner::SimpleAscii(subtype) => subtype.$inner_fn($arg),
-            ZeroTrieInner::PerfectHash(subtype) => subtype.$inner_fn($arg),
-            ZeroTrieInner::ExtendedCapacity(subtype) => subtype.$inner_fn($arg),
+            ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn($arg),
+            ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn($arg),
+            ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn($arg),
         }
     };
 }
