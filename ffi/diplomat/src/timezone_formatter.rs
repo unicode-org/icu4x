@@ -182,7 +182,7 @@ pub mod ffi {
             &mut self,
             options: ICU4XIsoTimeZoneOptions,
         ) -> Result<(), ICU4XError> {
-            self.0.load_iso_8601_format(
+            self.0.include_iso_8601_format(
                 options.format.into(),
                 options.minutes.into(),
                 options.seconds.into(),
