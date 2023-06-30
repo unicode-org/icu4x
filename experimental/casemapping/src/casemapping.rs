@@ -25,7 +25,7 @@ pub struct CaseMapping {
     data: DataPayload<CaseMappingV1Marker>,
 }
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 impl Default for CaseMapping {
     fn default() -> Self {
         Self::new()
@@ -46,10 +46,10 @@ impl CaseMapping {
     /// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
     /// ```
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
             data: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_PROPS_CASEMAP_V1),
@@ -570,7 +570,7 @@ impl CaseMapping {
 }
 
 #[cfg(test)]
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
     use icu_locid::langid;

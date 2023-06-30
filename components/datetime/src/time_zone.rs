@@ -464,7 +464,7 @@ impl TimeZoneFormatter {
     }
 
     /// Load generic non location long format for timezone from compiled data. For example, Pacific Time.
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn with_generic_non_location_long(
         &mut self,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
@@ -472,7 +472,7 @@ impl TimeZoneFormatter {
     }
 
     /// Load generic non location short format for timezone from compiled data. For example, PT.
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn with_generic_non_location_short(
         &mut self,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
@@ -480,7 +480,7 @@ impl TimeZoneFormatter {
     }
 
     /// Load specific non location long format for timezone from compiled data. For example, Pacific Standard Time.
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn with_specific_non_location_long(
         &mut self,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
@@ -488,7 +488,7 @@ impl TimeZoneFormatter {
     }
 
     /// Load specific non location short format for timezone from compiled data. For example, PDT.
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn with_specific_non_location_short(
         &mut self,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
@@ -496,7 +496,7 @@ impl TimeZoneFormatter {
     }
 
     /// Load generic location format for timezone. For example, Los Angeles Time.
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn with_generic_location_format(
         &mut self,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {

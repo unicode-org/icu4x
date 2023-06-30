@@ -68,7 +68,7 @@ impl ComplexPayloads {
     }
 
     #[cfg(feature = "lstm")]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub(crate) fn new_lstm() -> Self {
         #[allow(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
@@ -121,7 +121,7 @@ impl ComplexPayloads {
         })
     }
 
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub(crate) fn new_dict() -> Self {
         #[allow(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
@@ -193,7 +193,7 @@ impl ComplexPayloads {
     }
 
     #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub(crate) fn new_auto() -> Self {
         #[allow(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
@@ -253,7 +253,7 @@ impl ComplexPayloads {
         })
     }
 
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub(crate) fn new_southeast_asian() -> Self {
         #[allow(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.

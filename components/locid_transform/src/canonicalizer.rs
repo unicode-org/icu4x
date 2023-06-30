@@ -208,7 +208,7 @@ where
     true
 }
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 impl Default for LocaleCanonicalizer {
     fn default() -> Self {
         Self::new()
@@ -218,10 +218,10 @@ impl Default for LocaleCanonicalizer {
 impl LocaleCanonicalizer {
     /// A constructor which creates a [`LocaleCanonicalizer`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self::new_with_expander(LocaleExpander::new_extended())
     }
@@ -259,10 +259,10 @@ impl LocaleCanonicalizer {
 
     /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] object.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new_with_expander(expander: LocaleExpander) -> Self {
         Self {
             aliases: DataPayload::from_static_ref(

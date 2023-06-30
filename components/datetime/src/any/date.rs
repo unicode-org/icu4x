@@ -97,11 +97,11 @@ impl DateFormatter {
     /// );
     /// ```
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[inline(never)]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
         locale: &DataLocale,
         length: length::Date,

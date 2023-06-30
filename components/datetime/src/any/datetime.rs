@@ -149,10 +149,10 @@ impl DateTimeFormatter {
     ///     "Sep 1, 2020, 12:34 PM"
     /// );
     /// ```
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[inline]
     pub fn try_new(
         locale: &DataLocale,
@@ -332,7 +332,7 @@ impl DateTimeFormatter {
     /// );
     /// ```
     #[cfg(feature = "experimental")]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[inline(never)]
     pub fn try_new_experimental(
         locale: &DataLocale,

@@ -41,7 +41,7 @@ pub(crate) struct TimeFormatter {
 
 impl TimeFormatter {
     #[inline(never)]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new(
         locale: &DataLocale,
         length: length::Time,
@@ -165,7 +165,7 @@ pub(crate) struct DateFormatter {
 }
 
 impl DateFormatter {
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[inline(never)]
     pub fn try_new(
         patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
@@ -374,7 +374,7 @@ impl DateTimeFormatter {
     }
 
     #[inline(never)]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new(
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
