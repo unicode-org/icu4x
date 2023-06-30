@@ -94,8 +94,7 @@
 //!     "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
 //!
 //! // Compute the metazone at January 1, 2022:
-//! let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
-//!     .unwrap();
+//! let mzc = MetazoneCalculator::new();
 //! let datetime = DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
 //! time_zone.maybe_calculate_metazone(&mzc, &datetime);
 //!

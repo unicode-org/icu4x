@@ -49,6 +49,7 @@ icu::locid_transform::LocaleDirectionality::get#FnInStruct
 icu::locid_transform::LocaleDirectionality::is_left_to_right#FnInStruct
 icu::locid_transform::LocaleDirectionality::is_right_to_left#FnInStruct
 icu::locid_transform::LocaleDirectionality::new#FnInStruct
+icu::locid_transform::LocaleDirectionality::new_with_expander#FnInStruct
 icu::locid_transform::LocaleDirectionality::try_new_unstable#FnInStruct
 icu::locid_transform::LocaleDirectionality::try_new_with_expander_unstable#FnInStruct
 icu::locid_transform::LocaleExpander::new#FnInStruct

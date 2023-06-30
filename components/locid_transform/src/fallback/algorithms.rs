@@ -408,11 +408,10 @@ mod tests {
     ];
 
     #[test]
-    #[cfg(feature = "serde")]
     fn test_fallback() {
         let fallbacker_no_data = LocaleFallbacker::new_without_data();
-        let fallbacker_with_data =
-            LocaleFallbacker::try_new_with_buffer_provider(&icu_testdata::buffer()).unwrap();
+        let fallbacker_no_data = fallbacker_no_data.as_borrowed();
+        let fallbacker_with_data = LocaleFallbacker::new();
         for cas in TEST_CASES {
             for (priority, expected_chain) in [
                 (FallbackPriority::Language, cas.expected_language_chain),
@@ -424,9 +423,9 @@ mod tests {
                     fallback_supplement: cas.fallback_supplement,
                 };
                 let fallbacker = if cas.requires_data {
-                    &fallbacker_with_data
+                    fallbacker_with_data
                 } else {
-                    &fallbacker_no_data
+                    fallbacker_no_data
                 };
                 let mut it = fallbacker.fallback_for(config, Locale::from_str(cas.input).unwrap());
                 for &expected in expected_chain {
