@@ -15,7 +15,7 @@ export class ICU4XScriptWithExtensions {
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/script/fn.load_script_with_extensions_unstable.html Rust documentation for `load_script_with_extensions_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html Rust documentation for `script_with_extensions`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XScriptWithExtensions | never;

@@ -10,8 +10,6 @@ pub mod ffi {
         provider::DecimalSymbolsV1Marker,
         FixedDecimalFormatter,
     };
-    use icu_locid::Locale;
-    use icu_provider::DataProvider;
     use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use writeable::Writeable;
 
@@ -36,13 +34,30 @@ pub mod ffi {
 
     impl ICU4XFixedDecimalFormatter {
         /// Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
-        #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
         pub fn create_with_grouping_strategy(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
-            Self::try_new_impl(&provider.0, locale, grouping_strategy)
+            let locale = locale.to_datalocale();
+
+            let grouping_strategy = match grouping_strategy {
+                ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
+                ICU4XFixedDecimalGroupingStrategy::Never => GroupingStrategy::Never,
+                ICU4XFixedDecimalGroupingStrategy::Always => GroupingStrategy::Always,
+                ICU4XFixedDecimalGroupingStrategy::Min2 => GroupingStrategy::Min2,
+            };
+            let mut options = FixedDecimalFormatterOptions::default();
+            options.grouping_strategy = grouping_strategy;
+            Ok(Box::new(ICU4XFixedDecimalFormatter(call_constructor!(
+                FixedDecimalFormatter::try_new,
+                FixedDecimalFormatter::try_new_with_any_provider,
+                FixedDecimalFormatter::try_new_with_buffer_provider,
+                provider,
+                &locale,
+                options,
+            )?)))
         }
 
         /// Creates a new [`ICU4XFixedDecimalFormatter`] from preconstructed locale data in the form of an [`ICU4XDataStruct`]
@@ -54,28 +69,6 @@ pub mod ffi {
             data_struct: &ICU4XDataStruct,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
-            use icu_provider::AsDowncastingAnyProvider;
-            let provider = AnyPayloadProvider::from_any_payload::<DecimalSymbolsV1Marker>(
-                // Note: This clone is free, since cloning AnyPayload is free.
-                data_struct.0.clone(),
-            );
-            Self::try_new_impl(
-                &provider.as_downcasting(),
-                &ICU4XLocale(Locale::UND),
-                grouping_strategy,
-            )
-        }
-
-        fn try_new_impl<D>(
-            provider: &D,
-            locale: &ICU4XLocale,
-            grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
-        ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XError>
-        where
-            D: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
-        {
-            let locale = locale.to_datalocale();
-
             let grouping_strategy = match grouping_strategy {
                 ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
                 ICU4XFixedDecimalGroupingStrategy::Never => GroupingStrategy::Never,
@@ -85,7 +78,14 @@ pub mod ffi {
             let mut options = FixedDecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy;
             Ok(Box::new(ICU4XFixedDecimalFormatter(
-                FixedDecimalFormatter::try_new_unstable(provider, &locale, options)?,
+                FixedDecimalFormatter::try_new_with_any_provider(
+                    &AnyPayloadProvider::from_any_payload::<DecimalSymbolsV1Marker>(
+                        // Note: This clone is free, since cloning AnyPayload is free.
+                        data_struct.0.clone(),
+                    ),
+                    &Default::default(),
+                    options,
+                )?,
             )))
         }
 

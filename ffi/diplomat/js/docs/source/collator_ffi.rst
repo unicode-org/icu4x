@@ -10,7 +10,7 @@
 
         Construct a new Collator instance.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new>`__ for more information.
 
 
     .. js:method:: compare(left, right)

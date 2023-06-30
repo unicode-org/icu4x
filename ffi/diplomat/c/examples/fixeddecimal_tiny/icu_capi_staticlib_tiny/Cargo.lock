@@ -94,6 +94,7 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
+ "libm",
  "serde",
  "tinystr",
  "writeable",
@@ -309,6 +310,7 @@ name = "icu_provider_adapters"
 version = "1.2.0"
 dependencies = [
  "icu_locid",
+ "icu_locid_transform",
  "icu_provider",
  "serde",
  "tinystr",

@@ -16,7 +16,7 @@ export class ICU4XLocaleExpander {
 
    * Create a new {@link ICU4XLocaleExpander `ICU4XLocaleExpander`}.
 
-   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XLocaleExpander | never;
@@ -25,7 +25,7 @@ export class ICU4XLocaleExpander {
 
    * Create a new {@link ICU4XLocaleExpander `ICU4XLocaleExpander`} with extended data.
 
-   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.try_new_extended_unstable Rust documentation for `try_new_extended_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new_extended Rust documentation for `new_extended`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_extended(provider: ICU4XDataProvider): ICU4XLocaleExpander | never;

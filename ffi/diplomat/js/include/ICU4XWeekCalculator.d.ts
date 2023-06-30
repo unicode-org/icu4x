@@ -17,7 +17,7 @@ export class ICU4XWeekCalculator {
 
    * Creates a new {@link ICU4XWeekCalculator `ICU4XWeekCalculator`} from locale data.
 
-   * See the {@link https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new Rust documentation for `try_new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XWeekCalculator | never;

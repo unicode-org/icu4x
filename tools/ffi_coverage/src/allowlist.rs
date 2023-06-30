@@ -94,9 +94,13 @@ lazy_static::lazy_static! {
     // Ignore if this is a substring of any path
     // keep this small
     pub static ref IGNORED_SUBSTRINGS: &'static [&'static str] = &[
-        // _unstable constructors cover these
-        "with_any_provider",
-        "with_buffer_provider",
+        // compiled data constructors cover these
+        "_with_any_provider",
+        "_with_buffer_provider",
+        "_unstable",
+
+        // compiled data constructors cover these
+        "load_",
     ];
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
@@ -161,10 +165,10 @@ lazy_static::lazy_static! {
         // experimental
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
-        "icu::datetime::DateTimeFormatter::try_new_experimental_unstable",
-        "icu::datetime::TypedDateTimeFormatter::try_new_experimental_unstable",
-        "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental_unstable",
-        "icu::datetime::ZonedDateTimeFormatter::try_new_experimental_unstable",
+        "icu::datetime::DateTimeFormatter::try_new_experimental",
+        "icu::datetime::TypedDateTimeFormatter::try_new_experimental",
+        "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
+        "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
 
         // Not necessary for now
         "icu::calendar::Date::day_of_year_info",
@@ -204,7 +208,7 @@ lazy_static::lazy_static! {
         "icu::properties::WordBreak",
 
         // Experimental
-        "icu::properties::maps::load_canonical_combining_class",
+        "icu::properties::maps::canonical_combining_class",
 
         // Not planned for 1.0
         "icu::properties::maps::CodePointMapData::as_code_point_trie",
@@ -229,7 +233,7 @@ lazy_static::lazy_static! {
         "icu::locid::LanguageIdentifier",
 
         // experimental
-        "icu::normalizer::ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_unstable",
+        "icu::normalizer::ComposingNormalizer::new_uts46_without_ignored_and_disallowed",
 
         // can't be exposed till Diplomat has Write16
         "icu::normalizer::ComposingNormalizer::normalize_utf16",
@@ -296,6 +300,28 @@ lazy_static::lazy_static! {
         "icu::properties::provider",
         "icu::segmenter::provider",
         "icu::timezone::provider",
+
+        // Borrowed <-> owned converters
+        "icu::locid_transform::fallback::LocaleFallbacker::as_borrowed",
+        "icu::locid_transform::fallback::LocaleFallbackerBorrowed::static_to_owned",
+        "icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed",
+        "icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::static_to_owned",
+        "icu::properties::maps::CodePointMapData::as_borrowed",
+        "icu::properties::maps::CodePointMapDataBorrowed::static_to_owned",
+        "icu::properties::names::PropertyEnumToValueNameLinearMapper::as_borrowed",
+        "icu::properties::names::PropertyEnumToValueNameLinearMapperBorrowed::static_to_owned",
+        "icu::properties::names::PropertyEnumToValueNameLinearTiny4Mapper::as_borrowed",
+        "icu::properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed::static_to_owned",
+        "icu::properties::names::PropertyEnumToValueNameSparseMapper::as_borrowed",
+        "icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::static_to_owned",
+        "icu::properties::names::PropertyValueNameToEnumMapper::as_borrowed",
+        "icu::properties::names::PropertyValueNameToEnumMapperBorrowed::static_to_owned",
+        "icu::properties::script::ScriptWithExtensions::as_borrowed",
+        "icu::properties::script::ScriptWithExtensionsBorrowed::static_to_owned",
+        "icu::properties::sets::CodePointSetData::as_borrowed",
+        "icu::properties::sets::CodePointSetDataBorrowed::static_to_owned",
+        "icu::properties::sets::UnicodeSetData::as_borrowed",
+        "icu::properties::sets::UnicodeSetDataBorrowed::static_to_owned",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",

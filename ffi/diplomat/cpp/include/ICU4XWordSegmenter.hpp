@@ -42,7 +42,7 @@ class ICU4XWordSegmenter {
    * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
    * Khmer, Lao, and Thai.
    * 
-   * See the [Rust documentation for `try_new_auto_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto_unstable) for more information.
+   * See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
    */
   static diplomat::result<ICU4XWordSegmenter, ICU4XError> create_auto(const ICU4XDataProvider& provider);
 
@@ -53,7 +53,7 @@ class ICU4XWordSegmenter {
    * Warning: [`ICU4XWordSegmenter`] created by this function doesn't handle Chinese or
    * Japanese.
    * 
-   * See the [Rust documentation for `try_new_lstm_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm_unstable) for more information.
+   * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
    */
   static diplomat::result<ICU4XWordSegmenter, ICU4XError> create_lstm(const ICU4XDataProvider& provider);
 
@@ -61,7 +61,7 @@ class ICU4XWordSegmenter {
    * Construct an [`ICU4XWordSegmenter`] with dictionary payload data for Chinese, Japanese,
    * Burmese, Khmer, Lao, and Thai.
    * 
-   * See the [Rust documentation for `try_new_dictionary_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary_unstable) for more information.
+   * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
    */
   static diplomat::result<ICU4XWordSegmenter, ICU4XError> create_dictionary(const ICU4XDataProvider& provider);
 

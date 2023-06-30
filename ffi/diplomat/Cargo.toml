@@ -38,7 +38,7 @@ max_combination_size = 2
 
 # Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates (except for components features)
 [features]
-default = ["any_provider", "default_components"]
+default = ["compiled_data", "default_components"]
 any_provider = []
 buffer_provider = [
     "dep:icu_provider_blob",
@@ -67,7 +67,7 @@ logging = ["icu_provider/log_error_context", "dep:log"]
 simple_logger = ["dep:simple_logger"]
 
 # meta feature for things we enable by default in C and C++
-cpp_default = ["provider_test", "logging", "simple_logger"]
+cpp_default = ["logging", "simple_logger"]
 
 # meta feature for things we enable by default in wasm
 wasm_default = ["buffer_provider", "logging"]
@@ -93,6 +93,20 @@ icu_properties = ["dep:icu_properties", "dep:icu_collections", "dep:unicode-bidi
 icu_segmenter = ["dep:icu_segmenter"]
 icu_timezone = ["dep:icu_timezone", "dep:icu_calendar"]
 
+compiled_data = [
+    "icu_calendar?/compiled_data",
+    "icu_collator?/compiled_data",
+    "icu_datetime?/compiled_data",
+    "icu_decimal?/compiled_data",
+    "icu_displaynames?/compiled_data",
+    "icu_list?/compiled_data",
+    "icu_locid_transform?/compiled_data",
+    "icu_normalizer?/compiled_data",
+    "icu_plurals?/compiled_data",
+    "icu_properties?/compiled_data",
+    "icu_segmenter?/compiled_data",
+    "icu_timezone?/compiled_data",
+]
 
 [dependencies]
 # Mandatory ICU4X components and utils
