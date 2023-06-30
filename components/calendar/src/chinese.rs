@@ -100,6 +100,7 @@ const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
 /// * Wikipedia: https://en.wikipedia.org/wiki/Chinese_calendar
 ///
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[non_exhaustive]
 pub struct Chinese;
 
 /// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
@@ -273,42 +274,40 @@ impl Calendar for Chinese {
                 12 => tinystr!(4, "M12"),
                 _ => tinystr!(4, "und"), // maximum num of months in a non-leap year is 12
             }
+        } else if ordinal == leap_month {
+            match ordinal {
+                1 => tinystr!(4, "und"), // cannot have a leap month before the actual month
+                2 => tinystr!(4, "M01L"),
+                3 => tinystr!(4, "M02L"),
+                4 => tinystr!(4, "M03L"),
+                5 => tinystr!(4, "M04L"),
+                6 => tinystr!(4, "M05L"),
+                7 => tinystr!(4, "M06L"),
+                8 => tinystr!(4, "M07L"),
+                9 => tinystr!(4, "M08L"),
+                10 => tinystr!(4, "M09L"),
+                11 => tinystr!(4, "M10L"),
+                12 => tinystr!(4, "M11L"),
+                13 => tinystr!(4, "M12L"),
+                _ => tinystr!(4, "und"), // maximum num of months in a leap year is 13
+            }
         } else {
-            if ordinal == leap_month {
-                match ordinal {
-                    1 => tinystr!(4, "und"), // cannot have a leap month before the actual month
-                    2 => tinystr!(4, "M01L"),
-                    3 => tinystr!(4, "M02L"),
-                    4 => tinystr!(4, "M03L"),
-                    5 => tinystr!(4, "M04L"),
-                    6 => tinystr!(4, "M05L"),
-                    7 => tinystr!(4, "M06L"),
-                    8 => tinystr!(4, "M07L"),
-                    9 => tinystr!(4, "M08L"),
-                    10 => tinystr!(4, "M09L"),
-                    11 => tinystr!(4, "M10L"),
-                    12 => tinystr!(4, "M11L"),
-                    13 => tinystr!(4, "M12L"),
-                    _ => tinystr!(4, "und"), // maximum num of months in a leap year is 13
-                }
-            } else {
-                // if ordinal > leap_month; this means the date is in a leap year
-                match ordinal {
-                    1 => tinystr!(4, "und"), // this implies the leap month is < 1, which is impossible
-                    2 => tinystr!(4, "und"), // this implies the leap month is = 1, which is impossible
-                    3 => tinystr!(4, "M02"),
-                    4 => tinystr!(4, "M03"),
-                    5 => tinystr!(4, "M04"),
-                    6 => tinystr!(4, "M05"),
-                    7 => tinystr!(4, "M06"),
-                    8 => tinystr!(4, "M07"),
-                    9 => tinystr!(4, "M08"),
-                    10 => tinystr!(4, "M09"),
-                    11 => tinystr!(4, "M10"),
-                    12 => tinystr!(4, "M11"),
-                    13 => tinystr!(4, "M12"),
-                    _ => tinystr!(4, "und"), // maximum number of months in a leap year is 13
-                }
+            // if ordinal > leap_month; this means the date is in a leap year
+            match ordinal {
+                1 => tinystr!(4, "und"), // this implies the leap month is < 1, which is impossible
+                2 => tinystr!(4, "und"), // this implies the leap month is = 1, which is impossible
+                3 => tinystr!(4, "M02"),
+                4 => tinystr!(4, "M03"),
+                5 => tinystr!(4, "M04"),
+                6 => tinystr!(4, "M05"),
+                7 => tinystr!(4, "M06"),
+                8 => tinystr!(4, "M07"),
+                9 => tinystr!(4, "M08"),
+                10 => tinystr!(4, "M09"),
+                11 => tinystr!(4, "M10"),
+                12 => tinystr!(4, "M11"),
+                13 => tinystr!(4, "M12"),
+                _ => tinystr!(4, "und"), // maximum number of months in a leap year is 13
             }
         };
         let code = types::MonthCode(code_inner);
@@ -626,6 +625,7 @@ impl Chinese {
     ///
     /// The calculation for `elapsed_years` in this function is based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
+    #[allow(clippy::unwrap_used)]
     pub(crate) fn chinese_date_from_fixed(date: RataDie) -> Date<Chinese> {
         let new_year = Self::chinese_new_year_on_or_before_fixed_date(date);
         let elapsed_years = libm::floor(
@@ -746,20 +746,16 @@ impl Chinese {
         if bytes[0] != b'M' {
             return None;
         }
-        if code.0.len() == 4 {
-            if bytes[3] != b'L' {
-                return None;
-            }
+        if code.0.len() == 4 && bytes[3] != b'L' {
+            return None;
         }
         let mut unadjusted = 0;
         if bytes[1] == b'0' {
             if bytes[2] >= b'1' && bytes[2] <= b'9' {
                 unadjusted = bytes[2] - b'0';
             }
-        } else if bytes[1] == b'1' {
-            if bytes[2] >= b'0' && bytes[2] <= b'2' {
-                unadjusted = 10 + bytes[2] - b'0';
-            }
+        } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'2' {
+            unadjusted = 10 + bytes[2] - b'0';
         }
         if bytes[3] == b'L' {
             if unadjusted + 1 != leap_month {
