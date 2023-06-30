@@ -62,13 +62,13 @@ use litemap::LiteMap;
 /// # Ok::<_, zerotrie::ZeroTrieError>(())
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ZeroTrie<S>(pub(crate) ZeroTrieFlavor<S>);
+pub struct ZeroTrie<Store>(pub(crate) ZeroTrieFlavor<Store>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum ZeroTrieFlavor<S> {
-    SimpleAscii(ZeroTrieSimpleAscii<S>),
-    PerfectHash(ZeroTriePerfectHash<S>),
-    ExtendedCapacity(ZeroTrieExtendedCapacity<S>),
+pub(crate) enum ZeroTrieFlavor<Store> {
+    SimpleAscii(ZeroTrieSimpleAscii<Store>),
+    PerfectHash(ZeroTriePerfectHash<Store>),
+    ExtendedCapacity(ZeroTrieExtendedCapacity<Store>),
 }
 
 /// A data structure that compactly maps from ASCII strings to integers.
@@ -97,8 +97,8 @@ pub(crate) enum ZeroTrieFlavor<S> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, ref_cast::RefCast)]
-pub struct ZeroTrieSimpleAscii<S: ?Sized> {
-    pub(crate) store: S,
+pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
+    pub(crate) store: Store,
 }
 
 /// A data structure that compactly maps from byte strings to integers.
@@ -127,8 +127,8 @@ pub struct ZeroTrieSimpleAscii<S: ?Sized> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, ref_cast::RefCast)]
-pub struct ZeroTriePerfectHash<S: ?Sized> {
-    pub(crate) store: S,
+pub struct ZeroTriePerfectHash<Store: ?Sized> {
+    pub(crate) store: Store,
 }
 
 /// A data structure that maps from a large number of byte strings to integers.
@@ -136,43 +136,43 @@ pub struct ZeroTriePerfectHash<S: ?Sized> {
 /// For more information, see [`ZeroTrie`].
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, ref_cast::RefCast)]
-pub struct ZeroTrieExtendedCapacity<S: ?Sized> {
-    pub(crate) store: S,
+pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
+    pub(crate) store: Store,
 }
 
 macro_rules! impl_zerotrie_subtype {
     ($name:ident, $variant:ident, $getter_fn:path, $iter_ty:ty, $iter_fn:path, $cnv_fn:path) => {
-        impl<S> $name<S> {
+        impl<Store> $name<Store> {
             /// Wrap this specific ZeroTrie variant into a ZeroTrie.
             #[inline]
-            pub const fn into_zerotrie(self) -> ZeroTrie<S> {
+            pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
                 ZeroTrie(ZeroTrieFlavor::$variant(self))
             }
             /// Create a trie directly from a store.
             ///
             /// If the store does not contain valid bytes, unexpected behavior may occur.
             #[inline]
-            pub const fn from_store(store: S) -> Self {
+            pub const fn from_store(store: Store) -> Self {
                 Self { store }
             }
             /// Takes the byte store from this trie.
             #[inline]
-            pub fn take_store(self) -> S {
+            pub fn take_store(self) -> Store {
                 self.store
             }
             /// Maps the store into another type.
             #[inline]
-            pub fn map_store<X>(self, f: impl FnOnce(S) -> X) -> $name<X> {
+            pub fn map_store<X>(self, f: impl FnOnce(Store) -> X) -> $name<X> {
                 $name::<X>::from_store(f(self.store))
             }
             #[inline]
-            pub(crate) fn map_store_into_zerotrie<X>(self, f: impl FnOnce(S) -> X) -> ZeroTrie<X> {
+            pub(crate) fn map_store_into_zerotrie<X>(self, f: impl FnOnce(Store) -> X) -> ZeroTrie<X> {
                 $name::<X>::from_store(f(self.store)).into_zerotrie()
             }
         }
-        impl<S> $name<S>
+        impl<Store> $name<Store>
         where
-            S: AsRef<[u8]> + ?Sized,
+        Store: AsRef<[u8]> + ?Sized,
         {
             /// Queries the trie for a string.
             #[inline]
@@ -214,9 +214,9 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         #[cfg(feature = "alloc")]
-        impl<S> $name<S>
+        impl<Store> $name<Store>
         where
-            S: AsRef<[u8]> + ?Sized,
+        Store: AsRef<[u8]> + ?Sized,
         {
             /// Converts a possibly-borrowed $name to an owned one.
             ///
@@ -298,9 +298,9 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         #[cfg(feature = "alloc")]
-        impl<S> $name<S>
+        impl<Store> $name<Store>
         where
-            S: AsRef<[u8]> + ?Sized
+            Store: AsRef<[u8]> + ?Sized
         {
             /// Exports the data from this ZeroTrie type into a BTreeMap.
             ///
@@ -378,9 +378,9 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         #[cfg(feature = "litemap")]
-        impl<S> $name<S>
+        impl<Store> $name<Store>
         where
-            S: AsRef<[u8]> + ?Sized,
+            Store: AsRef<[u8]> + ?Sized,
         {
             /// Exports the data from this ZeroTrie type into a LiteMap.
             ///
@@ -439,17 +439,17 @@ macro_rules! impl_zerotrie_subtype {
         // TODO(#2778): Auto-derive these impls based on the repr(transparent).
         // Safety: $name is repr(transparent) over S, a VarULE
         #[cfg(feature = "zerovec")]
-        unsafe impl<S> zerovec::ule::VarULE for $name<S>
+        unsafe impl<Store> zerovec::ule::VarULE for $name<Store>
         where
-            S: zerovec::ule::VarULE,
+            Store: zerovec::ule::VarULE,
         {
             #[inline]
             fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
-                S::validate_byte_slice(bytes)
+                Store::validate_byte_slice(bytes)
             }
             #[inline]
             unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-                core::mem::transmute(S::from_byte_slice_unchecked(bytes))
+                core::mem::transmute(Store::from_byte_slice_unchecked(bytes))
             }
         }
     };
@@ -521,20 +521,20 @@ macro_rules! impl_dispatch {
     };
 }
 
-impl<S> ZeroTrie<S> {
+impl<Store> ZeroTrie<Store> {
     /// Takes the byte store from this trie.
-    pub fn take_store(self) -> S {
+    pub fn take_store(self) -> Store {
         impl_dispatch!(self, take_store())
     }
     /// Maps the store into another type.
-    pub fn map_store<X>(self, f: impl FnOnce(S) -> X) -> ZeroTrie<X> {
+    pub fn map_store<NewStore>(self, f: impl FnOnce(Store) -> NewStore) -> ZeroTrie<NewStore> {
         impl_dispatch!(self, map_store_into_zerotrie(f))
     }
 }
 
-impl<S> ZeroTrie<S>
+impl<Store> ZeroTrie<Store>
 where
-    S: AsRef<[u8]>,
+    Store: AsRef<[u8]>,
 {
     /// Queries the trie for a string.
     pub fn get<K>(&self, key: K) -> Option<usize>
@@ -556,9 +556,9 @@ where
 }
 
 #[cfg(feature = "alloc")]
-impl<S> ZeroTrie<S>
+impl<Store> ZeroTrie<Store>
 where
-    S: AsRef<[u8]>,
+    Store: AsRef<[u8]>,
 {
     /// Exports the data from this ZeroTrie into a BTreeMap.
     pub fn to_btreemap(&self) -> BTreeMap<Box<[u8]>, usize> {
@@ -567,9 +567,9 @@ where
 }
 
 #[cfg(feature = "litemap")]
-impl<S> ZeroTrie<S>
+impl<Store> ZeroTrie<Store>
 where
-    S: AsRef<[u8]>,
+    Store: AsRef<[u8]>,
 {
     /// Exports the data from this ZeroTrie into a LiteMap.
     pub fn to_litemap(&self) -> LiteMap<Box<[u8]>, usize> {

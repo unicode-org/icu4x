@@ -91,14 +91,14 @@ impl<'data> Serialize for &'data ByteStr {
     }
 }
 
-impl<'de, 'data, X> Deserialize<'de> for ZeroTrieSimpleAscii<X>
+impl<'de, 'data, Store> Deserialize<'de> for ZeroTrieSimpleAscii<Store>
 where
     'de: 'data,
     // DISCUSS: There are several possibilities for the bounds here that would
     // get the job done. I could look for Deserialize, but this would require
     // creating a custom Deserializer for the map case. I also considered
     // introducing a new trait instead of relying on From.
-    X: From<&'data [u8]> + From<Vec<u8>> + 'data,
+    Store: From<&'data [u8]> + From<Vec<u8>> + 'data,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -118,9 +118,9 @@ where
     }
 }
 
-impl<X> Serialize for ZeroTrieSimpleAscii<X>
+impl<Store> Serialize for ZeroTrieSimpleAscii<Store>
 where
-    X: AsRef<[u8]>,
+Store: AsRef<[u8]>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -136,10 +136,10 @@ where
     }
 }
 
-impl<'de, 'data, X> Deserialize<'de> for ZeroTriePerfectHash<X>
+impl<'de, 'data, Store> Deserialize<'de> for ZeroTriePerfectHash<Store>
 where
     'de: 'data,
-    X: From<&'data [u8]> + From<Vec<u8>> + 'data,
+    Store: From<&'data [u8]> + From<Vec<u8>> + 'data,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -159,9 +159,9 @@ where
     }
 }
 
-impl<X> Serialize for ZeroTriePerfectHash<X>
+impl<Store> Serialize for ZeroTriePerfectHash<Store>
 where
-    X: AsRef<[u8]>,
+    Store: AsRef<[u8]>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -181,10 +181,10 @@ where
     }
 }
 
-impl<'de, 'data, X> Deserialize<'de> for ZeroTrieExtendedCapacity<X>
+impl<'de, 'data, Store> Deserialize<'de> for ZeroTrieExtendedCapacity<Store>
 where
     'de: 'data,
-    X: From<&'data [u8]> + From<Vec<u8>> + 'data,
+    Store: From<&'data [u8]> + From<Vec<u8>> + 'data,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -204,9 +204,9 @@ where
     }
 }
 
-impl<X> Serialize for ZeroTrieExtendedCapacity<X>
+impl<Store> Serialize for ZeroTrieExtendedCapacity<Store>
 where
-    X: AsRef<[u8]>,
+    Store: AsRef<[u8]>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -236,10 +236,10 @@ mod tags {
     pub(crate) const EXTENDED_CAPACITY: u8 = USE_PHF | BINARY_SPANS | EXTENDED;
 }
 
-impl<'de, 'data, X> Deserialize<'de> for ZeroTrie<X>
+impl<'de, 'data, Store> Deserialize<'de> for ZeroTrie<Store>
 where
     'de: 'data,
-    X: From<&'data [u8]> + From<Vec<u8>> + 'data,
+    Store: From<&'data [u8]> + From<Vec<u8>> + 'data,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -271,9 +271,9 @@ where
     }
 }
 
-impl<X> Serialize for ZeroTrie<X>
+impl<Store> Serialize for ZeroTrie<Store>
 where
-    X: AsRef<[u8]>,
+    Store: AsRef<[u8]>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
