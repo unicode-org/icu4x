@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! A data structure offering zero-copy storage and retrieval of byte strings, with a focus
-//! on the efficient storage of ASCII strings. Strings are mapped to a `usize` values.
+//! on the efficient storage of ASCII strings. Strings are mapped to `usize` values.
 //!
 //! [`ZeroTrie`] does not support mutation because doing so would require recomputing the entire
 //! data structure. Instead, it supports conversion to and from [`LiteMap`] and [`BTreeMap`].

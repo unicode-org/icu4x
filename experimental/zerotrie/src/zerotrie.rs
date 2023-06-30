@@ -28,6 +28,19 @@ use litemap::LiteMap;
 /// You can create a `ZeroTrie` directly, in which case the most appropriate
 /// backing implementation will be chosen.
 ///
+/// # Backing Store
+///
+/// The data structure has a flexible backing data store. The only requirement for most
+/// functionality is that it implement `AsRef<[u8]>`. All of the following are valid
+/// ZeroTrie types:
+///
+/// - `ZeroTrie<[u8]>` (dynamically sized type: must be stored in a reference or Box)
+/// - `ZeroTrie<&[u8]>` (borrows its data from a u8 buffer)
+/// - `ZeroTrie<Vec<u8>>` (fully owned data)
+/// - `ZeroTrie<ZeroVec<u8>>` (the recommended borrowed-or-owned signature)
+/// - `Cow<ZeroTrie<[u8]>>` (another borrowed-or-owned signature)
+/// - `ZeroTrie<Cow<[u8]>>` (another borrowed-or-owned signature)
+///
 /// # Examples
 ///
 /// ```
@@ -60,6 +73,8 @@ pub(crate) enum ZeroTrieInner<S> {
 
 /// A data structure that compactly maps from ASCII strings to integers.
 ///
+/// For more information, see [`ZeroTrie`].
+///
 /// # Examples
 ///
 /// ```
@@ -88,6 +103,8 @@ pub struct ZeroTrieSimpleAscii<S: ?Sized> {
 
 /// A data structure that compactly maps from byte strings to integers.
 ///
+/// For more information, see [`ZeroTrie`].
+///
 /// # Examples
 ///
 /// ```
@@ -115,6 +132,8 @@ pub struct ZeroTriePerfectHash<S: ?Sized> {
 }
 
 /// A data structure that maps from a large number of byte strings to integers.
+///
+/// For more information, see [`ZeroTrie`].
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, ref_cast::RefCast)]
 pub struct ZeroTrieExtendedCapacity<S: ?Sized> {
