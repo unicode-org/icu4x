@@ -107,29 +107,22 @@ pub struct Chinese;
 pub struct ChineseDateInner(ArithmeticDate<Chinese>);
 
 impl CalendarArithmetic for Chinese {
+
+    /// Returns the number of days in the given (year, month). In the Chinese calendar, months start at each
+    /// new moon, so this function finds the number of days between the new moon at the beginning of the given
+    /// month and the new moon at the beginning of the next month.
     fn month_days(year: i32, month: u8) -> u8 {
         let mid_year = Self::fixed_mid_year_from_year(year);
         let new_year = Chinese::chinese_new_year_on_or_before_fixed_date(mid_year);
         let approx = new_year + ((month - 1) as i64 * 29);
         let prev_new_moon = Chinese::chinese_new_moon_before((approx + 15).as_moment());
         let next_new_moon = Chinese::chinese_new_moon_on_or_after((approx + 15).as_moment());
-        (next_new_moon - prev_new_moon) as u8
-
-        // let mid_year = Self::fixed_mid_year_from_year(year);
-        // let new_year = Chinese::chinese_new_year_on_or_before_fixed_date(mid_year);
-        // let mut cur_month: u8 = 1;
-        // let mut cur_rata_die = new_year;
-        // let mut iters: u8 = 0;
-        // let max_iters: u8 = 13;
-        // while cur_month < month && iters < max_iters {
-        //     cur_rata_die = Chinese::chinese_new_moon_on_or_after((cur_rata_die + 1).as_moment());
-        //     cur_month += 1;
-        //     iters += 1;
-        // }
-        // debug_assert!(iters < max_iters, "Unexpectedly large number of iterations");
-        // (Chinese::chinese_new_moon_on_or_after((cur_rata_die + 1).as_moment()) - cur_rata_die) as u8
+        let result = (next_new_moon - prev_new_moon) as u8;
+        debug_assert!(result == 29 || result == 30);
+        result
     }
 
+    /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
     fn months_for_every_year(year: i32) -> u8 {
         if Self::is_leap_year(year) {
             13
@@ -138,11 +131,16 @@ impl CalendarArithmetic for Chinese {
         }
     }
 
+    /// Returns true if the given year is a leap year, and false if not.
     fn is_leap_year(year: i32) -> bool {
         let mid_year = Self::fixed_mid_year_from_year(year);
         Self::fixed_date_is_in_leap_year(mid_year)
     }
 
+    /// Returns the (month, day) of the last day in a Chinese year (the day before Chinese New Year).
+    /// The last month in a year will always be 12 in a common year or 13 in a leap year. The day is
+    /// determined by finding the day immediately before the next new year and calculating the number
+    /// of days since the last new moon (beginning of the last month in the year).
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
         let mid_year = Chinese::fixed_mid_year_from_year(year);
         let next_new_year = Chinese::chinese_new_year_on_or_before_fixed_date(mid_year + 370);
@@ -436,6 +434,9 @@ impl Chinese {
     }
 
     /// Get the current major solar term of a fixed date, output as an integer from 1..=12.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
     pub(crate) fn major_solar_term_from_fixed(date: RataDie) -> i32 {
         let moment: Moment = date.as_moment();
         let offset = Self::chinese_offset(date);
@@ -449,8 +450,11 @@ impl Chinese {
         adjusted_rem_euclid(2 + quotient(s, 30), 12)
     }
 
-    // Returns true if the month of a given fixed date does not have a major solar term,
-    // false otherwise.
+    /// Returns true if the month of a given fixed date does not have a major solar term,
+    /// false otherwise.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5345-L5351
     fn chinese_no_major_solar_term(date: RataDie) -> bool {
         Self::major_solar_term_from_fixed(date)
             == Self::major_solar_term_from_fixed(Self::chinese_new_moon_on_or_after(
@@ -475,6 +479,9 @@ impl Chinese {
     }
 
     /// Get the current minor solar term of a fixed date, output as an integer from 1..=12.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
     pub(crate) fn minor_solar_term_from_fixed(date: RataDie) -> i32 {
         let moment: Moment = date.as_moment();
         let offset = Self::chinese_offset(date);
@@ -488,8 +495,9 @@ impl Chinese {
         adjusted_rem_euclid(3 + quotient(s - 15, 30), 12)
     }
 
-    // Returns UTC_OFFSET_PRE_1929 if the year is before 1929,
-    // returns UTC_OFFSET_POST_1929 if the year is 1929 or after.
+    /// Returns the UTC time offset in China based on the date. The Chinese calendar determines the month based on
+    /// observations from China, so this function is necessary to discern the time offset in China, which changed in
+    /// 1929 when China adopted a standard time zone set at 120 degrees longitude.
     fn chinese_offset(date: RataDie) -> f64 {
         let year = Iso::iso_from_fixed(date).year().number;
         if year < 1929 {
@@ -499,29 +507,39 @@ impl Chinese {
         }
     }
 
-    // The fixed date in Chinese standard time of the next new moon
-    // on or after the given moment.
+    /// The fixed date in Chinese standard time of the next new moon on or after a given Moment.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5329-L5338
     fn chinese_new_moon_on_or_after(moment: Moment) -> RataDie {
         let new_moon_moment = Astronomical::new_moon_at_or_after(Self::midnight_in_china(moment));
         let chinese_offset = Self::chinese_offset(new_moon_moment.as_rata_die());
         Location::standard_from_universal(new_moon_moment, chinese_offset).as_rata_die()
     }
 
-    // The fixed date in Chinese standard time of the previous new moon
-    // before the given moment.
+    /// The fixed date in Chinese standard time of the previous new moon before a given Moment.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5318-L5327
     fn chinese_new_moon_before(moment: Moment) -> RataDie {
         let new_moon_moment = Astronomical::new_moon_before(Self::midnight_in_china(moment));
         let chinese_offset = Self::chinese_offset(new_moon_moment.as_rata_die());
         Location::standard_from_universal(new_moon_moment, chinese_offset).as_rata_die()
     }
 
-    // Universal time of midnight at start of a Moment in China
+    /// Universal time of midnight at start of a Moment in China
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5353-L5357
     fn midnight_in_china(date: Moment) -> Moment {
         Location::universal_from_standard(date, Self::chinese_offset(date.as_rata_die()))
     }
 
-    // Determines the fixed date of the Chinese new year in the sui4 (solar year based on the winter solstice)
-    // which contains the fixed date passed as an argument.
+    /// Determines the fixed date of the Chinese new year in the sui4 (solar year based on the winter solstice)
+    /// which contains the fixed date passed as an argument.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5370-L5394
     fn chinese_new_year_in_sui(date: RataDie) -> RataDie {
         let prior_solstice = Self::chinese_winter_solstice_on_or_before(date); // s1
         let following_solstice = Self::chinese_winter_solstice_on_or_before(prior_solstice + 370); // s2
@@ -545,7 +563,10 @@ impl Chinese {
         }
     }
 
-    // Get the moment of the nearest winter solstice on or before a given fixed date
+    /// Get the moment of the nearest winter solstice on or before a given fixed date
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5359-L5368
     fn chinese_winter_solstice_on_or_before(date: RataDie) -> RataDie {
         let approx = Astronomical::estimate_prior_solar_longitude(
             270.0,
@@ -586,6 +607,9 @@ impl Chinese {
     }
 
     /// Get the fixed date of the nearest Chinese New Year on or before a given fixed date.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5396-L5405
     pub(crate) fn chinese_new_year_on_or_before_fixed_date(date: RataDie) -> RataDie {
         let new_year = Self::chinese_new_year_in_sui(date);
         if date >= new_year {
@@ -596,6 +620,13 @@ impl Chinese {
     }
 
     /// Get a Date<Chinese> from a fixed date
+    /// 
+    /// Months are calculated by iterating through the dates of new moons until finding the last month which
+    /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
+    /// from the fixed date of the beginning of the month.
+    /// 
+    /// The calculation for `elapsed_years` in this function is based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
     pub(crate) fn chinese_date_from_fixed(date: RataDie) -> Date<Chinese> {
         let new_year = Self::chinese_new_year_on_or_before_fixed_date(date);
         let elapsed_years = libm::floor(
@@ -622,6 +653,9 @@ impl Chinese {
     }
 
     /// Get a RataDie from a ChineseDateInner
+    /// 
+    /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
+    /// (beginning of month) of the month given, then adds the necessary number of days.
     pub(crate) fn fixed_from_chinese_date_inner(date: ChineseDateInner) -> RataDie {
         let year = date.0.year;
         let month = date.0.month as i64;
@@ -633,7 +667,12 @@ impl Chinese {
         prior_new_moon + day - 1
     }
 
-    /// Get the mid-year RataDie of a given year
+    /// Get the a RataDie in the middle of a Chinese year; this is not necessarily meant for direct use
+    /// in calculations, rather it is useful for getting a RataDie guaranteed to be in a given Chinese
+    /// year as input for other functions like [`get_leap_month_in_year`].
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5469-L5475
     fn fixed_mid_year_from_year(elapsed_years: i32) -> RataDie {
         let cycle = quotient(elapsed_years - 1, 60) + 1;
         let year = adjusted_rem_euclid(elapsed_years, 60);
@@ -654,6 +693,9 @@ impl Chinese {
     /// the number of that month. This function assumes the date passed in is in a leap year
     /// and tests to ensure this is the case by asserting that no more than twelve months are
     /// analyzed.
+    /// 
+    /// Conceptually similar to code from _Calendrical Calculations_ by Reingold & Dershowitz
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5443-L5450
     fn get_leap_month_in_year(date: RataDie) -> u8 {
         let mut cur = Chinese::chinese_new_year_on_or_before_fixed_date(date);
         let mut result = 1;
@@ -667,6 +709,11 @@ impl Chinese {
     }
 
     /// Get a FormattableYear from an integer Chinese year
+    /// 
+    /// `era` is always `Era(tinystr!(16, "chinese"))`
+    /// `number` is the year since the inception of the Chinese calendar (see [`Chinese`])
+    /// `cyclic` is an option with the current year in the sexigesimal cycle (see [`Chinese`])
+    /// `related_iso` is the ISO year in which the given Chinese year begins (see [`Chinese`])
     fn format_chinese_year(year: i32) -> FormattableYear {
         let era = Era(tinystr!(16, "chinese"));
         let number = year;
