@@ -125,23 +125,28 @@ macro_rules! impl_zerotrie_subtype {
     ($name:ident, $variant:ident, $getter_fn:path, $iter_ty:ty, $iter_fn:path, $cnv_fn:path) => {
         impl<S> $name<S> {
             /// Wrap this specific ZeroTrie variant into a ZeroTrie.
+            #[inline]
             pub const fn into_zerotrie(self) -> ZeroTrie<S> {
                 ZeroTrie(ZeroTrieInner::$variant(self))
             }
             /// Create a trie directly from a store.
             ///
             /// If the store does not contain valid bytes, unexpected behavior may occur.
+            #[inline]
             pub const fn from_store(store: S) -> Self {
                 Self { store }
             }
             /// Takes the byte store from this trie.
+            #[inline]
             pub fn take_store(self) -> S {
                 self.store
             }
             /// Maps the store into another type.
+            #[inline]
             pub fn map_store<X>(self, f: impl FnOnce(S) -> X) -> $name<X> {
                 $name::<X>::from_store(f(self.store))
             }
+            #[inline]
             pub(crate) fn map_store_into_zerotrie<X>(self, f: impl FnOnce(S) -> X) -> ZeroTrie<X> {
                 $name::<X>::from_store(f(self.store)).into_zerotrie()
             }
@@ -151,11 +156,13 @@ macro_rules! impl_zerotrie_subtype {
             S: AsRef<[u8]> + ?Sized,
         {
             /// Queries the trie for a string.
+            #[inline]
             pub fn get<K>(&self, key: K) -> Option<usize> where K: AsRef<[u8]> {
                 // TODO: Should this be AsRef or Borrow?
                 $getter_fn(self.store.as_ref(), key.as_ref())
             }
             /// Returns `true` if the trie is empty.
+            #[inline]
             pub fn is_empty(&self) -> bool {
                 self.store.as_ref().is_empty()
             }
@@ -172,14 +179,17 @@ macro_rules! impl_zerotrie_subtype {
             /// assert_eq!(8, trie.byte_len());
             /// assert_eq!(2, trie.iter().count());
             /// ```
+            #[inline]
             pub fn byte_len(&self) -> usize {
                 self.store.as_ref().len()
             }
             /// Returns the bytes contained in the underlying store.
+            #[inline]
             pub fn as_bytes(&self) -> &[u8] {
                 self.store.as_ref()
             }
             /// Returns this trie as a reference transparent over a byte slice.
+            #[inline]
             pub fn as_borrowed(&self) -> &$name<[u8]> {
                 $name::from_bytes(self.store.as_ref())
             }
@@ -205,11 +215,13 @@ macro_rules! impl_zerotrie_subtype {
             /// assert_eq!(trie.get(b"abc"), Some(5));
             /// assert_eq!(owned.get(b"abc"), Some(5));
             /// ```
+            #[inline]
             pub fn to_owned(&self) -> $name<Vec<u8>> {
                 $name::from_store(
                     Vec::from(self.store.as_ref()),
                 )
             }
+            #[inline]
             pub fn iter(&self) -> impl Iterator<Item = ($iter_ty, usize)> + '_ {
                  $iter_fn(self.as_bytes())
             }
@@ -218,6 +230,7 @@ macro_rules! impl_zerotrie_subtype {
             /// Casts from a byte slice to a reference to a trie with the same lifetime.
             ///
             /// If the bytes are not a valid trie, unexpected behavior may occur.
+            #[inline]
             pub fn from_bytes(trie: &[u8]) -> &Self {
                 Self::ref_cast(trie)
             }
@@ -299,6 +312,7 @@ macro_rules! impl_zerotrie_subtype {
         }
         // Note: Can't generalize this impl due to the `core::borrow::Borrow` blanket impl.
         impl Borrow<$name<[u8]>> for $name<&[u8]> {
+            #[inline]
             fn borrow(&self) -> &$name<[u8]> {
                 self.as_borrowed()
             }
@@ -306,6 +320,7 @@ macro_rules! impl_zerotrie_subtype {
         // Note: Can't generalize this impl due to the `core::borrow::Borrow` blanket impl.
         #[cfg(feature = "alloc")]
         impl Borrow<$name<[u8]>> for $name<Box<[u8]>> {
+            #[inline]
             fn borrow(&self) -> &$name<[u8]> {
                 self.as_borrowed()
             }
@@ -313,6 +328,7 @@ macro_rules! impl_zerotrie_subtype {
         // Note: Can't generalize this impl due to the `core::borrow::Borrow` blanket impl.
         #[cfg(feature = "alloc")]
         impl Borrow<$name<[u8]>> for $name<Vec<u8>> {
+            #[inline]
             fn borrow(&self) -> &$name<[u8]> {
                 self.as_borrowed()
             }
