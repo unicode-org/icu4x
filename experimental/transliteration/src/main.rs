@@ -17,6 +17,7 @@ use std::io::Write;
 mod dfaparsing;
 mod compile;
 mod translit;
+mod datastruct_design;
 
 const RULES: &str = r#"
 $AE = [Ä {A \u0308}];
