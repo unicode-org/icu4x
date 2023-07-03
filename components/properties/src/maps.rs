@@ -65,9 +65,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
     ///
-    /// let data =
-    ///     maps::load_general_category(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
+    /// let data = maps::general_category().static_to_owned();
     ///
     /// let gc = data.try_into_converted::<u8>().unwrap();
     /// let gc = gc.as_borrowed();

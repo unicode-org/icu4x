@@ -1863,7 +1863,6 @@ dependencies = [
  "icu_locid_transform",
  "icu_properties_data",
  "icu_provider",
- "icu_testdata",
  "serde",
  "tinystr",
  "unicode-bidi",
