@@ -577,7 +577,8 @@ mod test {
         }
         {
             // single element slice
-            const DATA: &ZeroSlice<u16> = zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [211]);
+            const DATA: &ZeroSlice<u16> =
+                zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [211]);
             assert_eq!((211, zeroslice![]), DATA.split_first().unwrap());
         }
         {
