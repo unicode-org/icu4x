@@ -45,6 +45,7 @@ icu_timezone_data = { version = "~1.3.0", path = "data", optional = true }
 icu = { path = "../../components/icu", default-features = false }
 
 [features]
+default = ["compiled_data"]
 std = ["icu_calendar/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]

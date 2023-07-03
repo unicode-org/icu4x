@@ -49,6 +49,7 @@ icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transf
 icu = { path = "../../components/icu", features = ["icu_relativetime"] }
 
 [features]
+default = ["compiled_data"]
 std = ["fixed_decimal/std", "icu_decimal/std", "icu_plurals/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_provider/serde", "icu_plurals/serde", "icu_decimal/serde"]
 datagen = ["std", "serde", "dep:databake", "zerovec/databake"]

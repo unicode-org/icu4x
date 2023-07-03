@@ -56,7 +56,7 @@ bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
 
 [features]
-default = []
+default = ["compiled_data"]
 std = []
 bench = ["serde"]
 serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde"]

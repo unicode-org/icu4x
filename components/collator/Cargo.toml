@@ -53,6 +53,7 @@ icu = { path = "../icu" }
 criterion = "0.4"
 
 [features]
+default = ["compiled_data"]
 std = ["icu_collections/std", "icu_locid/std", "icu_normalizer/std", "icu_properties/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_properties/serde", "icu_normalizer/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_properties/datagen", "icu_normalizer/datagen", "icu_collections/databake"]

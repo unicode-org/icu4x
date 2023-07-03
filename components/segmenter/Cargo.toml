@@ -56,7 +56,7 @@ icu_provider_adapters = { path = "../../provider/adapters" }
 itertools = "0.10"
 
 [features]
-default = ["auto"]
+default = ["compiled_data", "auto"]
 std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]

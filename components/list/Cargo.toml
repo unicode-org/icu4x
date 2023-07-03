@@ -48,6 +48,7 @@ icu = { path = "../icu" }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 
 [features]
+default = ["compiled_data"]
 std = ["icu_provider/std"]
 serde = ["dep:deduplicating_array", "dep:serde", "icu_provider/serde"]
 serde_human = ["serde", "regex-automata/alloc"]

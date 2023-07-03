@@ -53,6 +53,7 @@ detone = "1.0.0"
 criterion = "0.4.0"
 
 [features]
+default = ["compiled_data"]
 std = ["icu_collections/std", "icu_properties/std", "icu_provider/std"]
 serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_properties/serde"]
 datagen = ["serde", "dep:databake", "icu_collections/databake", "zerovec/databake", "icu_properties/datagen"]

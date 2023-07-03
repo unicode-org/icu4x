@@ -57,7 +57,21 @@ writeable = { path = "../../utils/writeable" }
 
 [features]
 default = [
+    "icu_calendar/default",
+    "icu_casemapping?/default",
+    "icu_collator/default",
+    "icu_compactdecimal?/default",
+    "icu_datetime/default",
+    "icu_decimal/default",
+    "icu_displaynames?/default",
+    "icu_list/default",
+    "icu_locid_transform/default",
+    "icu_normalizer/default",
+    "icu_plurals/default",
+    "icu_properties/default",
+    "icu_relativetime?/default",
     "icu_segmenter/default",
+    "icu_timezone/default",
 ]
 std = [
     "icu_calendar/std",
