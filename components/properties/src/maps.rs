@@ -262,6 +262,15 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     }
 }
 
+impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
+    /// Cheaply converts a `CodePointMapDataBorrowed<'static>` into a `CodePointMapData`.
+    pub fn static_to_owned(self) -> CodePointMapData<T> {
+        CodePointMapData {
+            data: DataPayload::from_static_ref(self.map),
+        }
+    }
+}
+
 impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
     /// Yields an [`Iterator`] returning ranges of consecutive code points that
     /// have a `General_Category` value belonging to the specified [`GeneralCategoryGroup`]
