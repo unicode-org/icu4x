@@ -43,7 +43,7 @@ databake = { version = "0.1.3", path = "../../utils/databake", features = ["deri
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
 icu_compactdecimal_data = { version = "~1.3.0", path = "data", optional = true }
-icu_locid_transform = { path = "../../components/locid_transform", features = ["compiled_data"], optional = true}
+icu_locid_transform = { path = "../../components/locid_transform", optional = true}
 
 [dev-dependencies]
 icu_locid = { path = "../../components/locid" }
