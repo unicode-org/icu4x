@@ -113,5 +113,5 @@ fn test_basic() {
         .take_payload()
         .unwrap();
     assert_eq!(usd.get().symbol, "US$");
-    assert_eq!(usd.get().pattern.pattern, "¤\u{a0}#,##0.00");
+    assert_eq!(usd.get().pattern.pattern, "\u{200f}#,##0.00\u{a0}¤;\u{200f}-#,##0.00\u{a0}¤");
 }
