@@ -26,7 +26,7 @@ all-features = true
 
 [dependencies]
 icu_collections = { path = "../../components/collections" }
-icu_properties = { path = "../../components/properties" }
+icu_properties = { path = "../../components/properties", default-features = false }
 icu_provider = { path = "../../provider/core" }
 
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }

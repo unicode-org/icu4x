@@ -32,18 +32,6 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "yoke",
     "zerofrom",
     "zerovec",
-    // ICU4X data
-    "icu_calendar_data",
-    "icu_collator_data",
-    "icu_datetime_data",
-    "icu_decimal_data",
-    "icu_list_data",
-    "icu_locid_transform_data",
-    "icu_normalizer_data",
-    "icu_plurals_data",
-    "icu_properties_data",
-    "icu_segmenter_data",
-    "icu_timezone_data",
     // 3P dependencies
     "either",
     "libm",
@@ -76,6 +64,21 @@ pub const BASIC_BUILD_DEPS: &[&str] = &[
 /// Dependencies allowed when opting in to serialization
 /// This should almost never change
 pub const EXTRA_SERDE_DEPS: &[&str] = &["deduplicating_array", "serde", "serde_derive"];
+
+/// Dependencies allowed when opting in to compiled data
+pub const EXTRA_DATA_DEPS: &[&str] = &[
+    "icu_calendar_data",
+    "icu_collator_data",
+    "icu_datetime_data",
+    "icu_decimal_data",
+    "icu_list_data",
+    "icu_locid_transform_data",
+    "icu_normalizer_data",
+    "icu_plurals_data",
+    "icu_properties_data",
+    "icu_segmenter_data",
+    "icu_timezone_data",
+];
 
 /// Dependencies allowed when opting in to experimental code
 /// This will likely grow when we add experimental crates

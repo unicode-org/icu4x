@@ -33,12 +33,12 @@ all-features = true
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.6.1", default-features = false }
 fixed_decimal = { version = "0.5.2", path = "../../utils/fixed_decimal" }
-icu_calendar = { version = "1.2.0", path = "../calendar" }
-icu_decimal = { version = "1.2.0", path = "../decimal" }
+icu_calendar = { version = "1.2.0", path = "../calendar", default-features = false }
+icu_decimal = { version = "1.2.0", path = "../decimal", default-features = false }
 icu_locid = { version = "1.2.0", path = "../locid" }
-icu_plurals = { version = "1.2.0", path = "../plurals" }
+icu_plurals = { version = "1.2.0", path = "../plurals", default-features = false }
 icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
-icu_timezone = { version = "1.2.0", path = "../timezone" }
+icu_timezone = { version = "1.2.0", path = "../timezone", default-features = false }
 smallvec = "1.6"
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
