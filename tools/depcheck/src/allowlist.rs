@@ -20,12 +20,12 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",
-    "icu_provider",
     "icu_segmenter",
     "icu_timezone",
     // ICU4X utils
     "fixed_decimal",
     "icu_provider_adapters", // not included in icu, but needed generally
+    "icu_provider",
     "litemap",
     "tinystr",
     "writeable",
@@ -42,7 +42,6 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_normalizer_data",
     "icu_plurals_data",
     "icu_properties_data",
-    "icu_provider_data",
     "icu_segmenter_data",
     "icu_timezone_data",
     // 3P dependencies
@@ -91,7 +90,6 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     // ICU4X data
     "icu_casemapping_data",
     "icu_displaynames_data",
-    "icu_personnames_data",
     "icu_relativetime_data",
     "icu_compactdecimal_data",
 ];
