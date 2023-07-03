@@ -43,6 +43,7 @@ members = [
     "experimental/relativetime",
     "experimental/relativetime/data",
     "experimental/single_number_formatter",
+    "experimental/unicodeset_parser",
     "ffi/capi_cdylib",
     "ffi/capi_staticlib",
     "ffi/diplomat",

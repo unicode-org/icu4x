@@ -574,8 +574,8 @@ macro_rules! impl_value_getter {
         impl $ty {
             $(#[$attr_n2e])*
             ///
-            /// ✨ **Enabled with the `"data"` feature.**
-            #[cfg(feature = "data")]
+            /// ✨ **Enabled with the `"compiled_data"` feature.**
+            #[cfg(feature = "compiled_data")]
             $vis_n2e fn $cname_n2e() -> Result<PropertyValueNameToEnumMapper<$ty>, DataError> {
                 DataProvider::<$marker_n2e>::load(&crate::provider::Baked, Default::default())
                     .and_then(DataResponse::take_payload).map(PropertyValueNameToEnumMapper::from_data)
@@ -591,8 +591,8 @@ macro_rules! impl_value_getter {
             $(
                 $(#[$attr_e2sn])*
                 ///
-                /// ✨ **Enabled with the `"data"` feature.**
-                #[cfg(feature = "data")]
+                /// ✨ **Enabled with the `"compiled_data"` feature.**
+                #[cfg(feature = "compiled_data")]
                 $vis_e2sn fn $cname_e2sn() -> Result<$mapper_e2sn<$ty>, DataError> {
                     DataProvider::<$marker_e2sn>::load(&crate::provider::Baked, Default::default())
                         .and_then(DataResponse::take_payload).map($mapper_e2sn::from_data)
@@ -607,8 +607,8 @@ macro_rules! impl_value_getter {
 
                 $(#[$attr_e2ln])*
                 ///
-                /// ✨ **Enabled with the `"data"` feature.**
-                #[cfg(feature = "data")]
+                /// ✨ **Enabled with the `"compiled_data"` feature.**
+                #[cfg(feature = "compiled_data")]
                 $vis_e2ln fn $cname_e2ln() -> Result<$mapper_e2ln<$ty>, DataError> {
                     DataProvider::<$marker_e2ln>::load(&crate::provider::Baked, Default::default())
                     .and_then(DataResponse::take_payload).map($mapper_e2ln::from_data)

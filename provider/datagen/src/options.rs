@@ -23,6 +23,8 @@ pub enum FallbackMode {
     /// performed and the fallback value will be exported. Note that for data exporters that deduplicate values (such as
     /// `BakedExporter` and `BlobDataExporter`), the only impact on data size will be additional keys (i.e `en-US`).
     ///
+    /// Requires using `LocaleInclude::Explicit`.
+    ///
     /// Data generated in this mode can be used without runtime fallback and guarantees that all locales are present.
     Expand,
 }
@@ -55,7 +57,7 @@ pub struct Options {
     pub fallback: FallbackMode,
 }
 
-/// Defines the locaes to include
+/// Defines the locales to include
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum LocaleInclude {
@@ -67,28 +69,16 @@ pub enum LocaleInclude {
     Explicit(HashSet<LanguageIdentifier>),
     /// All locales with the given CLDR coverage levels
     CldrSet(HashSet<CoverageLevel>),
+    /// A recommended set of locales.
+    ///
+    /// This currently resolves to `CldrSet({Modern, Moderate, Basic})` but
+    /// might change in future releases.
+    Recommended,
 }
 
 impl Default for LocaleInclude {
     fn default() -> Self {
         Self::All
-    }
-}
-
-impl LocaleInclude {
-    // TODO: Strict langid equality might not be what we want.
-    pub(crate) fn filter_by_langid_equality(
-        &self,
-        supported: Vec<icu_provider::DataLocale>,
-    ) -> Vec<icu_provider::DataLocale> {
-        match self {
-            LocaleInclude::All => supported,
-            LocaleInclude::Explicit(set) => supported
-                .into_iter()
-                .filter(|l| set.contains(&l.get_langid()))
-                .collect(),
-            _ => unreachable!("resolved"),
-        }
     }
 }
 

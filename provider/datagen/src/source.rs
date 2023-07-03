@@ -32,6 +32,7 @@ pub struct SourceData {
     segmenter_lstm_paths: Arc<SerdeCache>,
     // TODO: move this out when we decide we can break the exhaustiveness of DatagenProvider
     pub(crate) options: Options,
+    pub(crate) fallbacker: Option<icu_locid_transform::fallback::LocaleFallbacker>,
 }
 
 #[cfg(feature = "networking")]
@@ -77,6 +78,7 @@ impl SourceData {
             )),
             segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
             options: Default::default(),
+            fallbacker: None,
         }
     }
 

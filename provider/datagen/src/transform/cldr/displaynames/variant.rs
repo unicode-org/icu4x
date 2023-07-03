@@ -38,7 +38,7 @@ impl DataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.source.options.locales.filter_by_langid_equality(
+        Ok(self.filter_data_locales(
             self.source
                 .cldr()?
                 .displaynames()

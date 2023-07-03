@@ -164,7 +164,7 @@ macro_rules! collation_provider {
                     if <$marker>::KEY.metadata().singleton {
                         return Ok(vec![Default::default()])
                     }
-                    Ok(self.source.options.locales.filter_by_langid_equality(self
+                    Ok(self.filter_data_locales(self
                         .source
                         .icuexport()?
                         .list(&format!(

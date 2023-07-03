@@ -316,11 +316,12 @@ exit_on_error true
 if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
     echo "Skipping test-wasm since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
 else
-    cd ffi/diplomat/js/examples/tinywasm
+    echo "Skipping test-wasm since it's slow https://github.com/unicode-org/icu4x/issues/3582"
+    # cd ffi/diplomat/js/examples/tinywasm
 
-    exec --fail-on-error make
-    exec --fail-on-error ls -l
-    exec --fail-on-error node tiny.mjs
+    # exec --fail-on-error make
+    # exec --fail-on-error ls -l
+    # exec --fail-on-error node tiny.mjs
 end
 '''
 

@@ -71,8 +71,8 @@ impl CollationTable {
 #[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
 #[command(group(
             ArgGroup::new("key_mode")
-                // .required(true)
-                .args(["keys", "key_file", "keys_for_bin", "all_keys"]),
+                .required(true)
+                .args(["keys", "key_file", "keys_for_bin", "all_keys", "config"]),
         ))]
 pub struct Cli {
     #[arg(short, long)]
@@ -195,10 +195,11 @@ pub struct Cli {
     #[arg(help = "Deprecated: alias for --keys all")]
     all_keys: bool,
 
-    #[arg(long, short, num_args = 0..)]
+    #[arg(long, short, num_args = 0.., default_value = "recommended")]
     #[arg(
         help = "Include this locale in the output. Accepts multiple arguments. \
-                  Set to 'full' or 'modern' for the respective CLDR locale sets, or 'none' for no locales."
+                  Set to 'full' or 'modern' for the respective CLDR locale sets, 'none' for no locales, \
+                  or 'recommended' for the recommended set of locales."
     )]
     locales: Vec<String>,
 
@@ -311,6 +312,8 @@ impl Cli {
     fn make_locales(&self) -> eyre::Result<config::LocaleInclude> {
         Ok(if self.locales.as_slice() == ["none"] {
             config::LocaleInclude::None
+        } else if self.locales.as_slice() == ["recommended"] {
+            config::LocaleInclude::Recommended
         } else if self.locales.as_slice() == ["full"] || self.all_locales {
             config::LocaleInclude::All
         } else if let Some(locale_subsets) = self

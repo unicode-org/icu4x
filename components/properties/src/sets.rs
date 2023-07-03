@@ -334,8 +334,8 @@ macro_rules! make_code_point_set_property {
 
         $(#[$doc])*
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
-        #[cfg(feature = "data")]
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
+        #[cfg(feature = "compiled_data")]
         $cvis const fn $constname() -> CodePointSetDataBorrowed<'static> {
             CodePointSetDataBorrowed {
                 set: crate::provider::Baked::$singleton_name,
@@ -1718,8 +1718,8 @@ macro_rules! make_unicode_set_property {
         }
         $(#[$doc])*
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
-        #[cfg(feature = "data")]
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
+        #[cfg(feature = "compiled_data")]
         $cvis const fn $constname() -> UnicodeSetDataBorrowed<'static> {
             UnicodeSetDataBorrowed {
                 set: crate::provider::Baked::$singleton
@@ -1775,7 +1775,7 @@ pub fn load_for_general_category_group(
 }
 
 /// Return a [`CodePointSetData`] for a value or a grouping of values of the General_Category property. See [`GeneralCategoryGroup`].
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 pub fn for_general_category_group(enum_val: GeneralCategoryGroup) -> CodePointSetData {
     let matching_gc_ranges = maps::general_category()
         .iter_ranges()
@@ -1815,7 +1815,7 @@ pub fn for_general_category_group(enum_val: GeneralCategoryGroup) -> CodePointSe
 /// ```
 ///
 /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 pub fn load_for_ecma262(name: &str) -> Result<CodePointSetDataBorrowed, PropertiesError> {
     use crate::runtime::UnicodeProperty;
 

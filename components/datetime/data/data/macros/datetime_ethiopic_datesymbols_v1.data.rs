@@ -9,6 +9,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
         #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker>, icu_provider::DataError> {
+                static FF_ADLM: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0 \08\0P\0p\0|\0\x98\0\xB4\0\xD4\0\xEC\0\0\x01\x14\x010\x01\xF0\x9E\xA4\x83\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xAA\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xA5\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBC\xF0\x9E\xA4\x96\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB8\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xA7\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x92\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xBC\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xB3\xF0\x9E\xA4\x83\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBA\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA6\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xBC\xF0\x9E\xA4\x83\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA5\x81\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA4\x98\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xB2\xF0\x9E\xA4\xA6\xF0\x9E\xA4\xAE\xF0\x9E\xA4\xBC\xF0\x9E\xA4\x85\xF0\x9E\xA4\xAB\xF0\x9E\xA5\x85\xF0\x9E\xA4\xB2\xF0\x9E\xA4\xAB\xF0\x9E\xA4\x96\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xAB\xF0\x9E\xA4\x90\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xB8\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xAB\xF0\x9E\xA4\x86\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xBA\xF0\x9E\xA4\xB5\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xAB\xF0\x9E\xA5\x85\xF0\x9E\xA4\xB2") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x14\0\x18\0\x1C\0 \0$\0,\x004\0<\0\xF0\x9E\xA5\x91\xF0\x9E\xA5\x92\xF0\x9E\xA5\x93\xF0\x9E\xA5\x94\xF0\x9E\xA5\x95\xF0\x9E\xA5\x96\xF0\x9E\xA5\x97\xF0\x9E\xA5\x98\xF0\x9E\xA5\x99\xF0\x9E\xA5\x91\xF0\x9E\xA5\x90\xF0\x9E\xA5\x91\xF0\x9E\xA5\x91\xF0\x9E\xA5\x91\xF0\x9E\xA5\x92\xF0\x9E\xA5\x91\xF0\x9E\xA5\x93") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0 \08\0P\0p\0|\0\x98\0\xB4\0\xD4\0\xEC\0\0\x01\x14\x010\x01\xF0\x9E\xA4\x83\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xAA\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xA5\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBC\xF0\x9E\xA4\x96\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB8\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xA7\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x92\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xBC\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xB3\xF0\x9E\xA4\x83\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBA\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA6\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xBC\xF0\x9E\xA4\x83\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA5\x81\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA4\x98\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xB2\xF0\x9E\xA4\xA6\xF0\x9E\xA4\xAE\xF0\x9E\xA4\xBC\xF0\x9E\xA4\x85\xF0\x9E\xA4\xAB\xF0\x9E\xA5\x85\xF0\x9E\xA4\xB2\xF0\x9E\xA4\xAB\xF0\x9E\xA4\x96\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xAB\xF0\x9E\xA4\x90\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xB8\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xAB\xF0\x9E\xA4\x86\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xBA\xF0\x9E\xA4\xB5\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xAB\xF0\x9E\xA5\x85\xF0\x9E\xA4\xB2") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("𞤈𞤫𞤬"), alloc::borrow::Cow::Borrowed("𞤀\u{1e944}𞤩𞤵"), alloc::borrow::Cow::Borrowed("𞤃𞤢𞤦"), alloc::borrow::Cow::Borrowed("𞤔𞤫𞤧"), alloc::borrow::Cow::Borrowed("𞤐𞤢\u{1e944}𞤧"), alloc::borrow::Cow::Borrowed("𞤃𞤢𞤣"), alloc::borrow::Cow::Borrowed("𞤖𞤮𞤪")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("𞤈"), alloc::borrow::Cow::Borrowed("𞤀\u{1e944}"), alloc::borrow::Cow::Borrowed("𞤃"), alloc::borrow::Cow::Borrowed("𞤔"), alloc::borrow::Cow::Borrowed("𞤐"), alloc::borrow::Cow::Borrowed("𞤃"), alloc::borrow::Cow::Borrowed("𞤖")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("𞤈𞤫𞤬"), alloc::borrow::Cow::Borrowed("𞤀\u{1e944}𞤩𞤵"), alloc::borrow::Cow::Borrowed("𞤃𞤢𞤦"), alloc::borrow::Cow::Borrowed("𞤔𞤫𞤧"), alloc::borrow::Cow::Borrowed("𞤐𞤢\u{1e944}𞤧"), alloc::borrow::Cow::Borrowed("𞤃𞤢𞤣"), alloc::borrow::Cow::Borrowed("𞤖𞤮𞤪")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("𞤈𞤫𞤬𞤦𞤭𞤪\u{1e946}𞤫"), alloc::borrow::Cow::Borrowed("𞤀\u{1e944}𞤩𞤵𞤲𞥋𞤣𞤫"), alloc::borrow::Cow::Borrowed("𞤃𞤢𞤱𞤦𞤢\u{1e944}𞤪𞤫"), alloc::borrow::Cow::Borrowed("𞤐𞤶𞤫𞤧𞤤𞤢\u{1e944}𞤪𞤫"), alloc::borrow::Cow::Borrowed("𞤐𞤢\u{1e944}𞤧𞤢\u{1e944}𞤲𞤣𞤫"), alloc::borrow::Cow::Borrowed("𞤃𞤢𞤱𞤲𞤣𞤫"), alloc::borrow::Cow::Borrowed("𞤖𞤮𞤪𞤦𞤭𞤪\u{1e946}𞤫")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0-\0=\0\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAE \xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x85\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xB5\xF0\x9E\xA4\x98\xF0\x9E\xA4\x8B\xF0\x9E\xA4\x88\xF0\x9E\xA5\x90\xF0\x9E\xA4\xA9\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB1\xF0\x9E\xA4\xAE \xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x85\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xB5") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x18\0\xF0\x9E\xA4\x80\xF0\x9E\xA4\x81\xF0\x9E\xA4\x98\xF0\x9E\xA4\x8B\xF0\x9E\xA4\x88\xF0\x9E\xA5\x90\xF0\x9E\xA4\x87\xF0\x9E\xA4\x81") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x18\0\xF0\x9E\xA4\x80\xF0\x9E\xA4\x81\xF0\x9E\xA4\x98\xF0\x9E\xA4\x8B\xF0\x9E\xA4\x88\xF0\x9E\xA5\x90\xF0\x9E\xA4\x87\xF0\x9E\xA4\x81") })
+                        },
+                    },
+                };
                 static HE: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -184,6 +219,84 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static AST: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\x15\0\x18\0\x1B\0\x1E\0!\0$\0mestekhedtahteryekmegmiagensenhamnehpag") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x0B\0\x14\0\x1D\0&\0,\x006\0@\0I\0R\0Y\0b\0l\0de meskeremde tekemtd\xE2\x80\x99hedarde tahsasde terde yekatitde megabitde miaziade genbotde sened\xE2\x80\x99hamlede nehassede pagumen") })
+                            }),
+                        },
+                        stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
+                            abbreviated: None,
+                            narrow: None,
+                            short: None,
+                            wide: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            })),
+                        }),
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dom"), alloc::borrow::Cow::Borrowed("llu"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mié"), alloc::borrow::Cow::Borrowed("xue"), alloc::borrow::Cow::Borrowed("vie"), alloc::borrow::Cow::Borrowed("sáb")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("X"), alloc::borrow::Cow::Borrowed("V"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("do"), alloc::borrow::Cow::Borrowed("ll"), alloc::borrow::Cow::Borrowed("ma"), alloc::borrow::Cow::Borrowed("mi"), alloc::borrow::Cow::Borrowed("xu"), alloc::borrow::Cow::Borrowed("vi"), alloc::borrow::Cow::Borrowed("sá")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("domingu"), alloc::borrow::Cow::Borrowed("llunes"), alloc::borrow::Cow::Borrowed("martes"), alloc::borrow::Cow::Borrowed("miércoles"), alloc::borrow::Cow::Borrowed("xueves"), alloc::borrow::Cow::Borrowed("vienres"), alloc::borrow::Cow::Borrowed("sábadu")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x18\0\x1C\0antes de la Encarnaci\xC3\xB3nERA0despu\xC3\xA9s de la Encarnaci\xC3\xB3n") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\t\0a. E.ERA0d. E.") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x02\0\x06\0aEERA0dE") })
+                        },
+                    },
+                };
+                static SC: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x13\0\x17\0\x1B\0\x1F\0#\0'\0+\0/\0mes.tek.hed.tah.teryek.meg.mia.gen.seneham.neh.pagu.") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dom"), alloc::borrow::Cow::Borrowed("lun"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mèr"), alloc::borrow::Cow::Borrowed("giò"), alloc::borrow::Cow::Borrowed("che"), alloc::borrow::Cow::Borrowed("sàb")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("G"), alloc::borrow::Cow::Borrowed("C"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dom"), alloc::borrow::Cow::Borrowed("lun"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mèr"), alloc::borrow::Cow::Borrowed("giò"), alloc::borrow::Cow::Borrowed("che"), alloc::borrow::Cow::Borrowed("sàb")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("domìniga"), alloc::borrow::Cow::Borrowed("lunis"), alloc::borrow::Cow::Borrowed("martis"), alloc::borrow::Cow::Borrowed("mèrcuris"), alloc::borrow::Cow::Borrowed("giòbia"), alloc::borrow::Cow::Borrowed("chenàbura"), alloc::borrow::Cow::Borrowed("sàbadu")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x1D\0-\0in antis de s\xE2\x80\x99Incarnatzioneannu de su mundua pustis de s\xE2\x80\x99Incarnatzione") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x06\0\n\0a.Inc.a.m.p.Inc.") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x06\0\n\0a.Inc.a.m.p.Inc.") })
+                        },
+                    },
+                };
                 static YUE_HANS: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -324,6 +437,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static FR_CA: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x05\0\t\0\r\0\x11\0\x14\0\x19\0\x1E\0\"\0&\0+\0/\x004\0m\xC3\xA4s.teq.hed.tah.tery\xC3\xA4k.m\xC3\xA4g.miy.gue.s\xC3\xA4n.ham.n\xC3\xA4h.pag.") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0B\0\x0C\0MTHTTYMMGSHNP") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x0B\0\x11\0\x16\0\x1D\0 \0(\x000\x007\0>\0D\0J\0R\0m\xC3\xA4sk\xC3\xA4r\xC3\xA4mteqemthedartahesastery\xC3\xA4katitm\xC3\xA4gabitmiyazyaguenbots\xC3\xA4n\xC3\xA9haml\xC3\xA9n\xC3\xA4has\xC3\xA9pagum\xC3\xA9n") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dim."), alloc::borrow::Cow::Borrowed("lun."), alloc::borrow::Cow::Borrowed("mar."), alloc::borrow::Cow::Borrowed("mer."), alloc::borrow::Cow::Borrowed("jeu."), alloc::borrow::Cow::Borrowed("ven."), alloc::borrow::Cow::Borrowed("sam.")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("J"), alloc::borrow::Cow::Borrowed("V"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("di"), alloc::borrow::Cow::Borrowed("lu"), alloc::borrow::Cow::Borrowed("ma"), alloc::borrow::Cow::Borrowed("me"), alloc::borrow::Cow::Borrowed("je"), alloc::borrow::Cow::Borrowed("ve"), alloc::borrow::Cow::Borrowed("sa")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dimanche"), alloc::borrow::Cow::Borrowed("lundi"), alloc::borrow::Cow::Borrowed("mardi"), alloc::borrow::Cow::Borrowed("mercredi"), alloc::borrow::Cow::Borrowed("jeudi"), alloc::borrow::Cow::Borrowed("vendredi"), alloc::borrow::Cow::Borrowed("samedi")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x15\0\x19\0avant l\xE2\x80\x99IncarnationERA0apr\xC3\xA8s l\xE2\x80\x99Incarnation") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x0C\0av. Inc.ERA0ap. Inc.") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x0C\0av. Inc.ERA0ap. Inc.") })
+                        },
+                    },
+                };
                 static FR: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -434,6 +582,111 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         narrow: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static SR_LATN_ME: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0E\0MeskeremTekemtHedarTahsasTerJekatitMegabitMiaziaGenbotSeneHamleNehasePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0E\0MeskeremTekemtHedarTahsasTerJekatitMegabitMiaziaGenbotSeneHamleNehasePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ned"), alloc::borrow::Cow::Borrowed("pon"), alloc::borrow::Cow::Borrowed("uto"), alloc::borrow::Cow::Borrowed("sre"), alloc::borrow::Cow::Borrowed("čet"), alloc::borrow::Cow::Borrowed("pet"), alloc::borrow::Cow::Borrowed("sub")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("n"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("u"), alloc::borrow::Cow::Borrowed("s"), alloc::borrow::Cow::Borrowed("č"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("s")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ne"), alloc::borrow::Cow::Borrowed("po"), alloc::borrow::Cow::Borrowed("ut"), alloc::borrow::Cow::Borrowed("sr"), alloc::borrow::Cow::Borrowed("če"), alloc::borrow::Cow::Borrowed("pe"), alloc::borrow::Cow::Borrowed("su")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("nedjelja"), alloc::borrow::Cow::Borrowed("ponedeljak"), alloc::borrow::Cow::Borrowed("utorak"), alloc::borrow::Cow::Borrowed("srijeda"), alloc::borrow::Cow::Borrowed("četvrtak"), alloc::borrow::Cow::Borrowed("petak"), alloc::borrow::Cow::Borrowed("subota")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static SR_LATN_BA: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0E\0MeskeremTekemtHedarTahsasTerJekatitMegabitMiaziaGenbotSeneHamleNehasePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0E\0MeskeremTekemtHedarTahsasTerJekatitMegabitMiaziaGenbotSeneHamleNehasePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ned"), alloc::borrow::Cow::Borrowed("pon"), alloc::borrow::Cow::Borrowed("uto"), alloc::borrow::Cow::Borrowed("sri"), alloc::borrow::Cow::Borrowed("čet"), alloc::borrow::Cow::Borrowed("pet"), alloc::borrow::Cow::Borrowed("sub")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("n"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("u"), alloc::borrow::Cow::Borrowed("s"), alloc::borrow::Cow::Borrowed("č"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("s")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ne"), alloc::borrow::Cow::Borrowed("po"), alloc::borrow::Cow::Borrowed("ut"), alloc::borrow::Cow::Borrowed("sr"), alloc::borrow::Cow::Borrowed("če"), alloc::borrow::Cow::Borrowed("pe"), alloc::borrow::Cow::Borrowed("su")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("nedjelja"), alloc::borrow::Cow::Borrowed("ponedjeljak"), alloc::borrow::Cow::Borrowed("utorak"), alloc::borrow::Cow::Borrowed("srijeda"), alloc::borrow::Cow::Borrowed("četvrtak"), alloc::borrow::Cow::Borrowed("petak"), alloc::borrow::Cow::Borrowed("subota")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static RO_MD: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0E\0meskeremtaqemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehasepagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0E\0meskeremtaqemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehasepagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Dum"), alloc::borrow::Cow::Borrowed("Lun"), alloc::borrow::Cow::Borrowed("Mar"), alloc::borrow::Cow::Borrowed("Mie"), alloc::borrow::Cow::Borrowed("Joi"), alloc::borrow::Cow::Borrowed("Vin"), alloc::borrow::Cow::Borrowed("Sâm")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("Ma"), alloc::borrow::Cow::Borrowed("Mi"), alloc::borrow::Cow::Borrowed("J"), alloc::borrow::Cow::Borrowed("V"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Du"), alloc::borrow::Cow::Borrowed("Lu"), alloc::borrow::Cow::Borrowed("Ma"), alloc::borrow::Cow::Borrowed("Mi"), alloc::borrow::Cow::Borrowed("Jo"), alloc::borrow::Cow::Borrowed("Vi"), alloc::borrow::Cow::Borrowed("Sâ")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("duminică"), alloc::borrow::Cow::Borrowed("luni"), alloc::borrow::Cow::Borrowed("marți"), alloc::borrow::Cow::Borrowed("miercuri"), alloc::borrow::Cow::Borrowed("joi"), alloc::borrow::Cow::Borrowed("vineri"), alloc::borrow::Cow::Borrowed("sâmbătă")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x16\0\x1A\0\xC3\xAEnainte de \xC3\x8EntrupareERA0dup\xC4\x83 \xC3\x8Entrupare") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\t\0\r\0\xC3\xAE.\xC3\x8Entr.ERA0d.\xC3\x8Entr.") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\t\0\r\0\xC3\xAE.\xC3\x8Entr.ERA0d.\xC3\x8Entr.") })
                         },
                     },
                 };
@@ -647,6 +900,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static XH: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Caw"), alloc::borrow::Cow::Borrowed("Mvu"), alloc::borrow::Cow::Borrowed("Lwesb"), alloc::borrow::Cow::Borrowed("Tha"), alloc::borrow::Cow::Borrowed("Sin"), alloc::borrow::Cow::Borrowed("Hla"), alloc::borrow::Cow::Borrowed("Mgq")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("C"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("Sb"), alloc::borrow::Cow::Borrowed("Tht"), alloc::borrow::Cow::Borrowed("Sin"), alloc::borrow::Cow::Borrowed("Hl"), alloc::borrow::Cow::Borrowed("Mgq")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Caw"), alloc::borrow::Cow::Borrowed("Mvu"), alloc::borrow::Cow::Borrowed("Lwesb"), alloc::borrow::Cow::Borrowed("Tha"), alloc::borrow::Cow::Borrowed("Sin"), alloc::borrow::Cow::Borrowed("Hla"), alloc::borrow::Cow::Borrowed("Mgq")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Cawe"), alloc::borrow::Cow::Borrowed("Mvulo"), alloc::borrow::Cow::Borrowed("Lwesibini"), alloc::borrow::Cow::Borrowed("Lwesithathu"), alloc::borrow::Cow::Borrowed("Lwesine"), alloc::borrow::Cow::Borrowed("Lwesihlanu"), alloc::borrow::Cow::Borrowed("Mgqibelo")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Caw"), alloc::borrow::Cow::Borrowed("Mvu"), alloc::borrow::Cow::Borrowed("Bin"), alloc::borrow::Cow::Borrowed("Tha"), alloc::borrow::Cow::Borrowed("Sin"), alloc::borrow::Cow::Borrowed("Hla"), alloc::borrow::Cow::Borrowed("Mgq")])), narrow: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("C"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("Sb"), alloc::borrow::Cow::Borrowed("St"), alloc::borrow::Cow::Borrowed("Sin"), alloc::borrow::Cow::Borrowed("Hl"), alloc::borrow::Cow::Borrowed("Mgq")])), short: None, wide: None }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static GD: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -682,6 +970,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static WO: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Dib"), alloc::borrow::Cow::Borrowed("Alt"), alloc::borrow::Cow::Borrowed("Tal"), alloc::borrow::Cow::Borrowed("Àla"), alloc::borrow::Cow::Borrowed("Alx"), alloc::borrow::Cow::Borrowed("Àjj"), alloc::borrow::Cow::Borrowed("Ase")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Dib"), alloc::borrow::Cow::Borrowed("Alt"), alloc::borrow::Cow::Borrowed("Tal"), alloc::borrow::Cow::Borrowed("Àla"), alloc::borrow::Cow::Borrowed("Alx"), alloc::borrow::Cow::Borrowed("Àjj"), alloc::borrow::Cow::Borrowed("Ase")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Dib"), alloc::borrow::Cow::Borrowed("Alt"), alloc::borrow::Cow::Borrowed("Tal"), alloc::borrow::Cow::Borrowed("Àla"), alloc::borrow::Cow::Borrowed("Alx"), alloc::borrow::Cow::Borrowed("Àjj"), alloc::borrow::Cow::Borrowed("Ase")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Dibéer"), alloc::borrow::Cow::Borrowed("Altine"), alloc::borrow::Cow::Borrowed("Talaata"), alloc::borrow::Cow::Borrowed("Àlarba"), alloc::borrow::Cow::Borrowed("Alxamis"), alloc::borrow::Cow::Borrowed("Àjjuma"), alloc::borrow::Cow::Borrowed("Aseer")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static SQ: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -702,6 +1025,76 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         stand_alone: None,
                     },
                     weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Die"), alloc::borrow::Cow::Borrowed("Hën"), alloc::borrow::Cow::Borrowed("Mar"), alloc::borrow::Cow::Borrowed("Mër"), alloc::borrow::Cow::Borrowed("Enj"), alloc::borrow::Cow::Borrowed("Pre"), alloc::borrow::Cow::Borrowed("Sht")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("d"), alloc::borrow::Cow::Borrowed("h"), alloc::borrow::Cow::Borrowed("m"), alloc::borrow::Cow::Borrowed("m"), alloc::borrow::Cow::Borrowed("e"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("sh")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("die"), alloc::borrow::Cow::Borrowed("hën"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mër"), alloc::borrow::Cow::Borrowed("enj"), alloc::borrow::Cow::Borrowed("pre"), alloc::borrow::Cow::Borrowed("sht")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("e diel"), alloc::borrow::Cow::Borrowed("e hënë"), alloc::borrow::Cow::Borrowed("e martë"), alloc::borrow::Cow::Borrowed("e mërkurë"), alloc::borrow::Cow::Borrowed("e enjte"), alloc::borrow::Cow::Borrowed("e premte"), alloc::borrow::Cow::Borrowed("e shtunë")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("die"), alloc::borrow::Cow::Borrowed("hën"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mër"), alloc::borrow::Cow::Borrowed("enj"), alloc::borrow::Cow::Borrowed("pre"), alloc::borrow::Cow::Borrowed("sht")])), narrow: None, short: None, wide: None }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static CEB: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Dom"), alloc::borrow::Cow::Borrowed("Lun"), alloc::borrow::Cow::Borrowed("Mar"), alloc::borrow::Cow::Borrowed("Miy"), alloc::borrow::Cow::Borrowed("Huw"), alloc::borrow::Cow::Borrowed("Biy"), alloc::borrow::Cow::Borrowed("Sab")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("H"), alloc::borrow::Cow::Borrowed("B"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Dom"), alloc::borrow::Cow::Borrowed("Lun"), alloc::borrow::Cow::Borrowed("Mar"), alloc::borrow::Cow::Borrowed("Miy"), alloc::borrow::Cow::Borrowed("Huw"), alloc::borrow::Cow::Borrowed("Biy"), alloc::borrow::Cow::Borrowed("Sab")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Domingo"), alloc::borrow::Cow::Borrowed("Lunes"), alloc::borrow::Cow::Borrowed("Martes"), alloc::borrow::Cow::Borrowed("Miyerkules"), alloc::borrow::Cow::Borrowed("Huwebes"), alloc::borrow::Cow::Borrowed("Biyernes"), alloc::borrow::Cow::Borrowed("Sabado")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static QU: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Dom"), alloc::borrow::Cow::Borrowed("Lun"), alloc::borrow::Cow::Borrowed("Mar"), alloc::borrow::Cow::Borrowed("Mié"), alloc::borrow::Cow::Borrowed("Jue"), alloc::borrow::Cow::Borrowed("Vie"), alloc::borrow::Cow::Borrowed("Sab")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("X"), alloc::borrow::Cow::Borrowed("J"), alloc::borrow::Cow::Borrowed("V"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Dom"), alloc::borrow::Cow::Borrowed("Lun"), alloc::borrow::Cow::Borrowed("Mar"), alloc::borrow::Cow::Borrowed("Mié"), alloc::borrow::Cow::Borrowed("Jue"), alloc::borrow::Cow::Borrowed("Vie"), alloc::borrow::Cow::Borrowed("Sab")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Domingo"), alloc::borrow::Cow::Borrowed("Lunes"), alloc::borrow::Cow::Borrowed("Martes"), alloc::borrow::Cow::Borrowed("Miércoles"), alloc::borrow::Cow::Borrowed("Jueves"), alloc::borrow::Cow::Borrowed("Viernes"), alloc::borrow::Cow::Borrowed("Sábado")]) }, stand_alone: None },
                     eras: icu_datetime::provider::calendar::Eras {
                         names: unsafe {
                             #[allow(unused_unsafe)]
@@ -892,6 +1285,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static SU: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Mng"), alloc::borrow::Cow::Borrowed("Sen"), alloc::borrow::Cow::Borrowed("Sal"), alloc::borrow::Cow::Borrowed("Reb"), alloc::borrow::Cow::Borrowed("Kem"), alloc::borrow::Cow::Borrowed("Jum"), alloc::borrow::Cow::Borrowed("Sap")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("R"), alloc::borrow::Cow::Borrowed("K"), alloc::borrow::Cow::Borrowed("J"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Mng"), alloc::borrow::Cow::Borrowed("Sen"), alloc::borrow::Cow::Borrowed("Sal"), alloc::borrow::Cow::Borrowed("Reb"), alloc::borrow::Cow::Borrowed("Kem"), alloc::borrow::Cow::Borrowed("Jum"), alloc::borrow::Cow::Borrowed("Sap")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Minggu"), alloc::borrow::Cow::Borrowed("Senén"), alloc::borrow::Cow::Borrowed("Salasa"), alloc::borrow::Cow::Borrowed("Rebo"), alloc::borrow::Cow::Borrowed("Kemis"), alloc::borrow::Cow::Borrowed("Jumaah"), alloc::borrow::Cow::Borrowed("Saptu")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static ET: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -947,6 +1375,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         stand_alone: None,
                     },
                     weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Ravi"), alloc::borrow::Cow::Borrowed("Som"), alloc::borrow::Cow::Borrowed("Mangal"), alloc::borrow::Cow::Borrowed("Budh"), alloc::borrow::Cow::Borrowed("Guru"), alloc::borrow::Cow::Borrowed("Shukra"), alloc::borrow::Cow::Borrowed("Shani")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Ra"), alloc::borrow::Cow::Borrowed("So"), alloc::borrow::Cow::Borrowed("Ma"), alloc::borrow::Cow::Borrowed("Bu"), alloc::borrow::Cow::Borrowed("Gu"), alloc::borrow::Cow::Borrowed("Sh"), alloc::borrow::Cow::Borrowed("Sha")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Ra"), alloc::borrow::Cow::Borrowed("So"), alloc::borrow::Cow::Borrowed("Ma"), alloc::borrow::Cow::Borrowed("Bu"), alloc::borrow::Cow::Borrowed("Gu"), alloc::borrow::Cow::Borrowed("Shu"), alloc::borrow::Cow::Borrowed("Sha")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Raviwaar"), alloc::borrow::Cow::Borrowed("Somwaar"), alloc::borrow::Cow::Borrowed("Mangalwaar"), alloc::borrow::Cow::Borrowed("Budhwaar"), alloc::borrow::Cow::Borrowed("Guruwaar"), alloc::borrow::Cow::Borrowed("Shukrawaar"), alloc::borrow::Cow::Borrowed("Shaniwaar")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static MI: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Rāt"), alloc::borrow::Cow::Borrowed("Mane"), alloc::borrow::Cow::Borrowed("Tūr"), alloc::borrow::Cow::Borrowed("Wene"), alloc::borrow::Cow::Borrowed("Tāit"), alloc::borrow::Cow::Borrowed("Par"), alloc::borrow::Cow::Borrowed("Rāh")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Rt"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("E"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("P"), alloc::borrow::Cow::Borrowed("Rh")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Rāt"), alloc::borrow::Cow::Borrowed("Man"), alloc::borrow::Cow::Borrowed("Tū"), alloc::borrow::Cow::Borrowed("Wen"), alloc::borrow::Cow::Borrowed("Tāi"), alloc::borrow::Cow::Borrowed("Par"), alloc::borrow::Cow::Borrowed("Rāh")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Rātapu"), alloc::borrow::Cow::Borrowed("Mane"), alloc::borrow::Cow::Borrowed("Tūrei"), alloc::borrow::Cow::Borrowed("Wenerei"), alloc::borrow::Cow::Borrowed("Tāite"), alloc::borrow::Cow::Borrowed("Paraire"), alloc::borrow::Cow::Borrowed("Rāhoroi")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Rt"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("W"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("P"), alloc::borrow::Cow::Borrowed("Rh")])), short: None, wide: None }) },
                     eras: icu_datetime::provider::calendar::Eras {
                         names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1067,6 +1530,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static BR: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sul"), alloc::borrow::Cow::Borrowed("Lun"), alloc::borrow::Cow::Borrowed("Meu."), alloc::borrow::Cow::Borrowed("Mer."), alloc::borrow::Cow::Borrowed("Yaou"), alloc::borrow::Cow::Borrowed("Gwe."), alloc::borrow::Cow::Borrowed("Sad.")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Su"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("Mz"), alloc::borrow::Cow::Borrowed("Mc"), alloc::borrow::Cow::Borrowed("Y"), alloc::borrow::Cow::Borrowed("G"), alloc::borrow::Cow::Borrowed("Sa")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sul"), alloc::borrow::Cow::Borrowed("Lun"), alloc::borrow::Cow::Borrowed("Meu."), alloc::borrow::Cow::Borrowed("Mer."), alloc::borrow::Cow::Borrowed("Yaou"), alloc::borrow::Cow::Borrowed("Gwe."), alloc::borrow::Cow::Borrowed("Sad.")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sul"), alloc::borrow::Cow::Borrowed("Lun"), alloc::borrow::Cow::Borrowed("Meurzh"), alloc::borrow::Cow::Borrowed("Mercʼher"), alloc::borrow::Cow::Borrowed("Yaou"), alloc::borrow::Cow::Borrowed("Gwener"), alloc::borrow::Cow::Borrowed("Sadorn")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static EN: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -1122,6 +1620,76 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         stand_alone: None,
                     },
                     weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("W"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("F"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static EN_AU: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Su."), alloc::borrow::Cow::Borrowed("M."), alloc::borrow::Cow::Borrowed("Tu."), alloc::borrow::Cow::Borrowed("W."), alloc::borrow::Cow::Borrowed("Th."), alloc::borrow::Cow::Borrowed("F."), alloc::borrow::Cow::Borrowed("Sa.")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Su"), alloc::borrow::Cow::Borrowed("Mo"), alloc::borrow::Cow::Borrowed("Tu"), alloc::borrow::Cow::Borrowed("We"), alloc::borrow::Cow::Borrowed("Th"), alloc::borrow::Cow::Borrowed("Fr"), alloc::borrow::Cow::Borrowed("Sa")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sunday"), alloc::borrow::Cow::Borrowed("Monday"), alloc::borrow::Cow::Borrowed("Tuesday"), alloc::borrow::Cow::Borrowed("Wednesday"), alloc::borrow::Cow::Borrowed("Thursday"), alloc::borrow::Cow::Borrowed("Friday"), alloc::borrow::Cow::Borrowed("Saturday")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: None, short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tu"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")])), wide: None }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static TO: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sāp"), alloc::borrow::Cow::Borrowed("Mōn"), alloc::borrow::Cow::Borrowed("Tūs"), alloc::borrow::Cow::Borrowed("Pul"), alloc::borrow::Cow::Borrowed("Tuʻa"), alloc::borrow::Cow::Borrowed("Fal"), alloc::borrow::Cow::Borrowed("Tok")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("P"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("F"), alloc::borrow::Cow::Borrowed("T")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sāp"), alloc::borrow::Cow::Borrowed("Mōn"), alloc::borrow::Cow::Borrowed("Tūs"), alloc::borrow::Cow::Borrowed("Pul"), alloc::borrow::Cow::Borrowed("Tuʻa"), alloc::borrow::Cow::Borrowed("Fal"), alloc::borrow::Cow::Borrowed("Tok")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sāpate"), alloc::borrow::Cow::Borrowed("Mōnite"), alloc::borrow::Cow::Borrowed("Tūsite"), alloc::borrow::Cow::Borrowed("Pulelulu"), alloc::borrow::Cow::Borrowed("Tuʻapulelulu"), alloc::borrow::Cow::Borrowed("Falaite"), alloc::borrow::Cow::Borrowed("Tokonaki")]) }, stand_alone: None },
                     eras: icu_datetime::provider::calendar::Eras {
                         names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1347,6 +1915,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static IA: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dom"), alloc::borrow::Cow::Borrowed("lun"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mer"), alloc::borrow::Cow::Borrowed("jov"), alloc::borrow::Cow::Borrowed("ven"), alloc::borrow::Cow::Borrowed("sab")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("d"), alloc::borrow::Cow::Borrowed("l"), alloc::borrow::Cow::Borrowed("m"), alloc::borrow::Cow::Borrowed("m"), alloc::borrow::Cow::Borrowed("j"), alloc::borrow::Cow::Borrowed("v"), alloc::borrow::Cow::Borrowed("s")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("do"), alloc::borrow::Cow::Borrowed("lu"), alloc::borrow::Cow::Borrowed("ma"), alloc::borrow::Cow::Borrowed("me"), alloc::borrow::Cow::Borrowed("jo"), alloc::borrow::Cow::Borrowed("ve"), alloc::borrow::Cow::Borrowed("sa")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dominica"), alloc::borrow::Cow::Borrowed("lunedi"), alloc::borrow::Cow::Borrowed("martedi"), alloc::borrow::Cow::Borrowed("mercuridi"), alloc::borrow::Cow::Borrowed("jovedi"), alloc::borrow::Cow::Borrowed("venerdi"), alloc::borrow::Cow::Borrowed("sabbato")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static GL: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -1417,6 +2020,111 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static PT_AO: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("domingo"), alloc::borrow::Cow::Borrowed("segunda"), alloc::borrow::Cow::Borrowed("terça"), alloc::borrow::Cow::Borrowed("quarta"), alloc::borrow::Cow::Borrowed("quinta"), alloc::borrow::Cow::Borrowed("sexta"), alloc::borrow::Cow::Borrowed("sábado")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("Q"), alloc::borrow::Cow::Borrowed("Q"), alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dom."), alloc::borrow::Cow::Borrowed("seg."), alloc::borrow::Cow::Borrowed("ter."), alloc::borrow::Cow::Borrowed("qua."), alloc::borrow::Cow::Borrowed("qui."), alloc::borrow::Cow::Borrowed("sex."), alloc::borrow::Cow::Borrowed("sáb.")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("domingo"), alloc::borrow::Cow::Borrowed("segunda-feira"), alloc::borrow::Cow::Borrowed("terça-feira"), alloc::borrow::Cow::Borrowed("quarta-feira"), alloc::borrow::Cow::Borrowed("quinta-feira"), alloc::borrow::Cow::Borrowed("sexta-feira"), alloc::borrow::Cow::Borrowed("sábado")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static RM: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("du"), alloc::borrow::Cow::Borrowed("gli"), alloc::borrow::Cow::Borrowed("ma"), alloc::borrow::Cow::Borrowed("me"), alloc::borrow::Cow::Borrowed("gie"), alloc::borrow::Cow::Borrowed("ve"), alloc::borrow::Cow::Borrowed("so")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("G"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("G"), alloc::borrow::Cow::Borrowed("V"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("du"), alloc::borrow::Cow::Borrowed("gli"), alloc::borrow::Cow::Borrowed("ma"), alloc::borrow::Cow::Borrowed("me"), alloc::borrow::Cow::Borrowed("gie"), alloc::borrow::Cow::Borrowed("ve"), alloc::borrow::Cow::Borrowed("so")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dumengia"), alloc::borrow::Cow::Borrowed("glindesdi"), alloc::borrow::Cow::Borrowed("mardi"), alloc::borrow::Cow::Borrowed("mesemna"), alloc::borrow::Cow::Borrowed("gievgia"), alloc::borrow::Cow::Borrowed("venderdi"), alloc::borrow::Cow::Borrowed("sonda")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static KEA: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dum"), alloc::borrow::Cow::Borrowed("sig"), alloc::borrow::Cow::Borrowed("ter"), alloc::borrow::Cow::Borrowed("kua"), alloc::borrow::Cow::Borrowed("kin"), alloc::borrow::Cow::Borrowed("ses"), alloc::borrow::Cow::Borrowed("sab")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("K"), alloc::borrow::Cow::Borrowed("K"), alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("du"), alloc::borrow::Cow::Borrowed("si"), alloc::borrow::Cow::Borrowed("te"), alloc::borrow::Cow::Borrowed("ku"), alloc::borrow::Cow::Borrowed("ki"), alloc::borrow::Cow::Borrowed("se"), alloc::borrow::Cow::Borrowed("sa")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dumingu"), alloc::borrow::Cow::Borrowed("sigunda-fera"), alloc::borrow::Cow::Borrowed("tersa-fera"), alloc::borrow::Cow::Borrowed("kuarta-fera"), alloc::borrow::Cow::Borrowed("kinta-fera"), alloc::borrow::Cow::Borrowed("sesta-fera"), alloc::borrow::Cow::Borrowed("sábadu")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static EU: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -1437,6 +2145,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         stand_alone: None,
                     },
                     weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ig."), alloc::borrow::Cow::Borrowed("al."), alloc::borrow::Cow::Borrowed("ar."), alloc::borrow::Cow::Borrowed("az."), alloc::borrow::Cow::Borrowed("og."), alloc::borrow::Cow::Borrowed("or."), alloc::borrow::Cow::Borrowed("lr.")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("I"), alloc::borrow::Cow::Borrowed("A"), alloc::borrow::Cow::Borrowed("A"), alloc::borrow::Cow::Borrowed("A"), alloc::borrow::Cow::Borrowed("O"), alloc::borrow::Cow::Borrowed("O"), alloc::borrow::Cow::Borrowed("L")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ig."), alloc::borrow::Cow::Borrowed("al."), alloc::borrow::Cow::Borrowed("ar."), alloc::borrow::Cow::Borrowed("az."), alloc::borrow::Cow::Borrowed("og."), alloc::borrow::Cow::Borrowed("or."), alloc::borrow::Cow::Borrowed("lr.")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("igandea"), alloc::borrow::Cow::Borrowed("astelehena"), alloc::borrow::Cow::Borrowed("asteartea"), alloc::borrow::Cow::Borrowed("asteazkena"), alloc::borrow::Cow::Borrowed("osteguna"), alloc::borrow::Cow::Borrowed("ostirala"), alloc::borrow::Cow::Borrowed("larunbata")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static YRL: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("mit"), alloc::borrow::Cow::Borrowed("mur"), alloc::borrow::Cow::Borrowed("mmk"), alloc::borrow::Cow::Borrowed("mms"), alloc::borrow::Cow::Borrowed("sup"), alloc::borrow::Cow::Borrowed("yuk"), alloc::borrow::Cow::Borrowed("sau")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("Y"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("mit"), alloc::borrow::Cow::Borrowed("mur"), alloc::borrow::Cow::Borrowed("mmk"), alloc::borrow::Cow::Borrowed("mms"), alloc::borrow::Cow::Borrowed("sup"), alloc::borrow::Cow::Borrowed("yuk"), alloc::borrow::Cow::Borrowed("sau")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("mituú"), alloc::borrow::Cow::Borrowed("murakipí"), alloc::borrow::Cow::Borrowed("murakí-mukũi"), alloc::borrow::Cow::Borrowed("murakí-musapíri"), alloc::borrow::Cow::Borrowed("supapá"), alloc::borrow::Cow::Borrowed("yukuakú"), alloc::borrow::Cow::Borrowed("saurú")]) }, stand_alone: None },
                     eras: icu_datetime::provider::calendar::Eras {
                         names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1557,6 +2300,111 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static DSB: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("nje"), alloc::borrow::Cow::Borrowed("pón"), alloc::borrow::Cow::Borrowed("wał"), alloc::borrow::Cow::Borrowed("srj"), alloc::borrow::Cow::Borrowed("stw"), alloc::borrow::Cow::Borrowed("pět"), alloc::borrow::Cow::Borrowed("sob")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("n"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("w"), alloc::borrow::Cow::Borrowed("s"), alloc::borrow::Cow::Borrowed("s"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("s")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("nj"), alloc::borrow::Cow::Borrowed("pó"), alloc::borrow::Cow::Borrowed("wa"), alloc::borrow::Cow::Borrowed("sr"), alloc::borrow::Cow::Borrowed("st"), alloc::borrow::Cow::Borrowed("pě"), alloc::borrow::Cow::Borrowed("so")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("njeźela"), alloc::borrow::Cow::Borrowed("pónjeźele"), alloc::borrow::Cow::Borrowed("wałtora"), alloc::borrow::Cow::Borrowed("srjoda"), alloc::borrow::Cow::Borrowed("stwórtk"), alloc::borrow::Cow::Borrowed("pětk"), alloc::borrow::Cow::Borrowed("sobota")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static HSB: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("nje"), alloc::borrow::Cow::Borrowed("pón"), alloc::borrow::Cow::Borrowed("wut"), alloc::borrow::Cow::Borrowed("srj"), alloc::borrow::Cow::Borrowed("štw"), alloc::borrow::Cow::Borrowed("pja"), alloc::borrow::Cow::Borrowed("sob")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("n"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("w"), alloc::borrow::Cow::Borrowed("s"), alloc::borrow::Cow::Borrowed("š"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("s")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("nj"), alloc::borrow::Cow::Borrowed("pó"), alloc::borrow::Cow::Borrowed("wu"), alloc::borrow::Cow::Borrowed("sr"), alloc::borrow::Cow::Borrowed("št"), alloc::borrow::Cow::Borrowed("pj"), alloc::borrow::Cow::Borrowed("so")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("njedźela"), alloc::borrow::Cow::Borrowed("póndźela"), alloc::borrow::Cow::Borrowed("wutora"), alloc::borrow::Cow::Borrowed("srjeda"), alloc::borrow::Cow::Borrowed("štwórtk"), alloc::borrow::Cow::Borrowed("pjatk"), alloc::borrow::Cow::Borrowed("sobota")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static KGP: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("num."), alloc::borrow::Cow::Borrowed("pir."), alloc::borrow::Cow::Borrowed("rég."), alloc::borrow::Cow::Borrowed("tẽg."), alloc::borrow::Cow::Borrowed("vẽn."), alloc::borrow::Cow::Borrowed("pén."), alloc::borrow::Cow::Borrowed("sav.")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("N."), alloc::borrow::Cow::Borrowed("P."), alloc::borrow::Cow::Borrowed("R."), alloc::borrow::Cow::Borrowed("T."), alloc::borrow::Cow::Borrowed("V."), alloc::borrow::Cow::Borrowed("P."), alloc::borrow::Cow::Borrowed("S.")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("N."), alloc::borrow::Cow::Borrowed("1kh."), alloc::borrow::Cow::Borrowed("2kh."), alloc::borrow::Cow::Borrowed("3kh."), alloc::borrow::Cow::Borrowed("4kh."), alloc::borrow::Cow::Borrowed("5kh."), alloc::borrow::Cow::Borrowed("S.")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("numĩggu"), alloc::borrow::Cow::Borrowed("pir-kurã-há"), alloc::borrow::Cow::Borrowed("régre-kurã-há"), alloc::borrow::Cow::Borrowed("tẽgtũ-kurã-há"), alloc::borrow::Cow::Borrowed("vẽnhkãgra-kurã-há"), alloc::borrow::Cow::Borrowed("pénkar-kurã-há"), alloc::borrow::Cow::Borrowed("savnu")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static LT: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -1577,6 +2425,76 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         stand_alone: None,
                     },
                     weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("sk"), alloc::borrow::Cow::Borrowed("pr"), alloc::borrow::Cow::Borrowed("an"), alloc::borrow::Cow::Borrowed("tr"), alloc::borrow::Cow::Borrowed("kt"), alloc::borrow::Cow::Borrowed("pn"), alloc::borrow::Cow::Borrowed("št")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("P"), alloc::borrow::Cow::Borrowed("A"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("K"), alloc::borrow::Cow::Borrowed("P"), alloc::borrow::Cow::Borrowed("Š")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sk"), alloc::borrow::Cow::Borrowed("Pr"), alloc::borrow::Cow::Borrowed("An"), alloc::borrow::Cow::Borrowed("Tr"), alloc::borrow::Cow::Borrowed("Kt"), alloc::borrow::Cow::Borrowed("Pn"), alloc::borrow::Cow::Borrowed("Št")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("sekmadienis"), alloc::borrow::Cow::Borrowed("pirmadienis"), alloc::borrow::Cow::Borrowed("antradienis"), alloc::borrow::Cow::Borrowed("trečiadienis"), alloc::borrow::Cow::Borrowed("ketvirtadienis"), alloc::borrow::Cow::Borrowed("penktadienis"), alloc::borrow::Cow::Borrowed("šeštadienis")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static FO: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("sun."), alloc::borrow::Cow::Borrowed("mán."), alloc::borrow::Cow::Borrowed("týs."), alloc::borrow::Cow::Borrowed("mik."), alloc::borrow::Cow::Borrowed("hós."), alloc::borrow::Cow::Borrowed("frí."), alloc::borrow::Cow::Borrowed("ley.")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("H"), alloc::borrow::Cow::Borrowed("F"), alloc::borrow::Cow::Borrowed("L")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("su."), alloc::borrow::Cow::Borrowed("má."), alloc::borrow::Cow::Borrowed("tý."), alloc::borrow::Cow::Borrowed("mi."), alloc::borrow::Cow::Borrowed("hó."), alloc::borrow::Cow::Borrowed("fr."), alloc::borrow::Cow::Borrowed("le.")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("sunnudagur"), alloc::borrow::Cow::Borrowed("mánadagur"), alloc::borrow::Cow::Borrowed("týsdagur"), alloc::borrow::Cow::Borrowed("mikudagur"), alloc::borrow::Cow::Borrowed("hósdagur"), alloc::borrow::Cow::Borrowed("fríggjadagur"), alloc::borrow::Cow::Borrowed("leygardagur")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("sun"), alloc::borrow::Cow::Borrowed("mán"), alloc::borrow::Cow::Borrowed("týs"), alloc::borrow::Cow::Borrowed("mik"), alloc::borrow::Cow::Borrowed("hós"), alloc::borrow::Cow::Borrowed("frí"), alloc::borrow::Cow::Borrowed("ley")])), narrow: None, short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("su"), alloc::borrow::Cow::Borrowed("má"), alloc::borrow::Cow::Borrowed("tý"), alloc::borrow::Cow::Borrowed("mi"), alloc::borrow::Cow::Borrowed("hó"), alloc::borrow::Cow::Borrowed("fr"), alloc::borrow::Cow::Borrowed("le")])), wide: None }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static YO_BJ: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Àìk"), alloc::borrow::Cow::Borrowed("Aj"), alloc::borrow::Cow::Borrowed("Ìsɛ\u{301}g"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301}r"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301}b"), alloc::borrow::Cow::Borrowed("Ɛt"), alloc::borrow::Cow::Borrowed("Àbám")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("À"), alloc::borrow::Cow::Borrowed("A"), alloc::borrow::Cow::Borrowed("Ì"), alloc::borrow::Cow::Borrowed("Ɔ"), alloc::borrow::Cow::Borrowed("Ɔ"), alloc::borrow::Cow::Borrowed("Ɛ"), alloc::borrow::Cow::Borrowed("À")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Àìk"), alloc::borrow::Cow::Borrowed("Aj"), alloc::borrow::Cow::Borrowed("Ìsɛ\u{301}g"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301}r"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301}b"), alloc::borrow::Cow::Borrowed("Ɛt"), alloc::borrow::Cow::Borrowed("Àbám")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301} Àìkú"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301} Ajé"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301} Ìsɛ\u{301}gun"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301}rú"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301}bɔ"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301} Ɛtì"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301} Àbámɛ\u{301}ta")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: None, short: None, wide: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Àìkú"), alloc::borrow::Cow::Borrowed("Ajé"), alloc::borrow::Cow::Borrowed("Ìsɛ\u{301}gun"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301}rú"), alloc::borrow::Cow::Borrowed("Ɔjɔ\u{301}bɔ"), alloc::borrow::Cow::Borrowed("Ɛtì"), alloc::borrow::Cow::Borrowed("Àbámɛ\u{301}ta")])) }) },
                     eras: icu_datetime::provider::calendar::Eras {
                         names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1732,6 +2650,76 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static TG: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Яшб"), alloc::borrow::Cow::Borrowed("Дшб"), alloc::borrow::Cow::Borrowed("Сшб"), alloc::borrow::Cow::Borrowed("Чшб"), alloc::borrow::Cow::Borrowed("Пшб"), alloc::borrow::Cow::Borrowed("Ҷмъ"), alloc::borrow::Cow::Borrowed("Шнб")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Я"), alloc::borrow::Cow::Borrowed("Д"), alloc::borrow::Cow::Borrowed("С"), alloc::borrow::Cow::Borrowed("Ч"), alloc::borrow::Cow::Borrowed("П"), alloc::borrow::Cow::Borrowed("Ҷ"), alloc::borrow::Cow::Borrowed("Ш")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Яшб"), alloc::borrow::Cow::Borrowed("Дшб"), alloc::borrow::Cow::Borrowed("Сшб"), alloc::borrow::Cow::Borrowed("Чшб"), alloc::borrow::Cow::Borrowed("Пшб"), alloc::borrow::Cow::Borrowed("Ҷмъ"), alloc::borrow::Cow::Borrowed("Шнб")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Якшанбе"), alloc::borrow::Cow::Borrowed("Душанбе"), alloc::borrow::Cow::Borrowed("Сешанбе"), alloc::borrow::Cow::Borrowed("Чоршанбе"), alloc::borrow::Cow::Borrowed("Панҷшанбе"), alloc::borrow::Cow::Borrowed("Ҷумъа"), alloc::borrow::Cow::Borrowed("Шанбе")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static CV: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("выр."), alloc::borrow::Cow::Borrowed("тун."), alloc::borrow::Cow::Borrowed("ытл."), alloc::borrow::Cow::Borrowed("юн."), alloc::borrow::Cow::Borrowed("кӗҫ."), alloc::borrow::Cow::Borrowed("эр."), alloc::borrow::Cow::Borrowed("шӑм.")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("В"), alloc::borrow::Cow::Borrowed("Т"), alloc::borrow::Cow::Borrowed("Ы"), alloc::borrow::Cow::Borrowed("Ю"), alloc::borrow::Cow::Borrowed("К"), alloc::borrow::Cow::Borrowed("Э"), alloc::borrow::Cow::Borrowed("Ш")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("выр."), alloc::borrow::Cow::Borrowed("тун."), alloc::borrow::Cow::Borrowed("ытл."), alloc::borrow::Cow::Borrowed("юн."), alloc::borrow::Cow::Borrowed("кӗҫ."), alloc::borrow::Cow::Borrowed("эр."), alloc::borrow::Cow::Borrowed("шӑм.")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("вырсарникун"), alloc::borrow::Cow::Borrowed("тунтикун"), alloc::borrow::Cow::Borrowed("ытларикун"), alloc::borrow::Cow::Borrowed("юнкун"), alloc::borrow::Cow::Borrowed("кӗҫнерникун"), alloc::borrow::Cow::Borrowed("эрнекун"), alloc::borrow::Cow::Borrowed("шӑматкун")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static KY: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -1872,6 +2860,76 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static UZ_CYRL: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("якш"), alloc::borrow::Cow::Borrowed("душ"), alloc::borrow::Cow::Borrowed("сеш"), alloc::borrow::Cow::Borrowed("чор"), alloc::borrow::Cow::Borrowed("пай"), alloc::borrow::Cow::Borrowed("жум"), alloc::borrow::Cow::Borrowed("шан")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Я"), alloc::borrow::Cow::Borrowed("Д"), alloc::borrow::Cow::Borrowed("С"), alloc::borrow::Cow::Borrowed("Ч"), alloc::borrow::Cow::Borrowed("П"), alloc::borrow::Cow::Borrowed("Ж"), alloc::borrow::Cow::Borrowed("Ш")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("як"), alloc::borrow::Cow::Borrowed("ду"), alloc::borrow::Cow::Borrowed("се"), alloc::borrow::Cow::Borrowed("чо"), alloc::borrow::Cow::Borrowed("па"), alloc::borrow::Cow::Borrowed("жу"), alloc::borrow::Cow::Borrowed("ша")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("якшанба"), alloc::borrow::Cow::Borrowed("душанба"), alloc::borrow::Cow::Borrowed("сешанба"), alloc::borrow::Cow::Borrowed("чоршанба"), alloc::borrow::Cow::Borrowed("пайшанба"), alloc::borrow::Cow::Borrowed("жума"), alloc::borrow::Cow::Borrowed("шанба")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static TT: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("якш."), alloc::borrow::Cow::Borrowed("дүш."), alloc::borrow::Cow::Borrowed("сиш."), alloc::borrow::Cow::Borrowed("чәр."), alloc::borrow::Cow::Borrowed("пәнҗ."), alloc::borrow::Cow::Borrowed("җом."), alloc::borrow::Cow::Borrowed("шим.")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Я"), alloc::borrow::Cow::Borrowed("Д"), alloc::borrow::Cow::Borrowed("С"), alloc::borrow::Cow::Borrowed("Ч"), alloc::borrow::Cow::Borrowed("П"), alloc::borrow::Cow::Borrowed("Җ"), alloc::borrow::Cow::Borrowed("Ш")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("якш."), alloc::borrow::Cow::Borrowed("дүш."), alloc::borrow::Cow::Borrowed("сиш."), alloc::borrow::Cow::Borrowed("чәр."), alloc::borrow::Cow::Borrowed("пәнҗ."), alloc::borrow::Cow::Borrowed("җом."), alloc::borrow::Cow::Borrowed("шим.")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("якшәмбе"), alloc::borrow::Cow::Borrowed("дүшәмбе"), alloc::borrow::Cow::Borrowed("сишәмбе"), alloc::borrow::Cow::Borrowed("чәршәмбе"), alloc::borrow::Cow::Borrowed("пәнҗешәмбе"), alloc::borrow::Cow::Borrowed("җомга"), alloc::borrow::Cow::Borrowed("шимбә")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static HY: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -1892,6 +2950,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         stand_alone: None,
                     },
                     weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("կիր"), alloc::borrow::Cow::Borrowed("երկ"), alloc::borrow::Cow::Borrowed("երք"), alloc::borrow::Cow::Borrowed("չրք"), alloc::borrow::Cow::Borrowed("հնգ"), alloc::borrow::Cow::Borrowed("ուր"), alloc::borrow::Cow::Borrowed("շբթ")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Կ"), alloc::borrow::Cow::Borrowed("Ե"), alloc::borrow::Cow::Borrowed("Ե"), alloc::borrow::Cow::Borrowed("Չ"), alloc::borrow::Cow::Borrowed("Հ"), alloc::borrow::Cow::Borrowed("Ո"), alloc::borrow::Cow::Borrowed("Շ")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("կր"), alloc::borrow::Cow::Borrowed("եկ"), alloc::borrow::Cow::Borrowed("եք"), alloc::borrow::Cow::Borrowed("չք"), alloc::borrow::Cow::Borrowed("հգ"), alloc::borrow::Cow::Borrowed("ու"), alloc::borrow::Cow::Borrowed("շբ")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("կիրակի"), alloc::borrow::Cow::Borrowed("երկուշաբթի"), alloc::borrow::Cow::Borrowed("երեքշաբթի"), alloc::borrow::Cow::Borrowed("չորեքշաբթի"), alloc::borrow::Cow::Borrowed("հինգշաբթի"), alloc::borrow::Cow::Borrowed("ուրբաթ"), alloc::borrow::Cow::Borrowed("շաբաթ")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static KS: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("آتھوار"), alloc::borrow::Cow::Borrowed("ژ\u{654}ند\u{655}روار"), alloc::borrow::Cow::Borrowed("بۆموار"), alloc::borrow::Cow::Borrowed("بودوار"), alloc::borrow::Cow::Borrowed("برؠسوار"), alloc::borrow::Cow::Borrowed("ج\u{64f}مہ"), alloc::borrow::Cow::Borrowed("بٹوار")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ا"), alloc::borrow::Cow::Borrowed("ژ"), alloc::borrow::Cow::Borrowed("ب"), alloc::borrow::Cow::Borrowed("ب"), alloc::borrow::Cow::Borrowed("ب"), alloc::borrow::Cow::Borrowed("ج"), alloc::borrow::Cow::Borrowed("ب")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("آتھوار"), alloc::borrow::Cow::Borrowed("ژ\u{654}ند\u{655}روار"), alloc::borrow::Cow::Borrowed("بۆموار"), alloc::borrow::Cow::Borrowed("بودوار"), alloc::borrow::Cow::Borrowed("برؠسوار"), alloc::borrow::Cow::Borrowed("ج\u{64f}مہ"), alloc::borrow::Cow::Borrowed("بٹوار")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ا\u{64e}تھوار"), alloc::borrow::Cow::Borrowed("ژ\u{654}ندر\u{655}روار"), alloc::borrow::Cow::Borrowed("بۆموار"), alloc::borrow::Cow::Borrowed("بودوار"), alloc::borrow::Cow::Borrowed("برؠسوار"), alloc::borrow::Cow::Borrowed("ج\u{64f}مہ"), alloc::borrow::Cow::Borrowed("بٹوار")]) }, stand_alone: None },
                     eras: icu_datetime::provider::calendar::Eras {
                         names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2012,6 +3105,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static KS_DEVA: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("आथवार"), alloc::borrow::Cow::Borrowed("च\u{902}दिरवार"), alloc::borrow::Cow::Borrowed("ब\u{941}वार"), alloc::borrow::Cow::Borrowed("बोदवार"), alloc::borrow::Cow::Borrowed("ब\u{94d}र\u{947}सवार"), alloc::borrow::Cow::Borrowed("ज\u{941}म\u{94d}मा"), alloc::borrow::Cow::Borrowed("बटवार")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("अ"), alloc::borrow::Cow::Borrowed("च"), alloc::borrow::Cow::Borrowed("ब"), alloc::borrow::Cow::Borrowed("ब"), alloc::borrow::Cow::Borrowed("ब"), alloc::borrow::Cow::Borrowed("ज"), alloc::borrow::Cow::Borrowed("ब")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("आथवार"), alloc::borrow::Cow::Borrowed("च\u{902}दिरवार"), alloc::borrow::Cow::Borrowed("ब\u{941}वार"), alloc::borrow::Cow::Borrowed("बोदवार"), alloc::borrow::Cow::Borrowed("ब\u{94d}र\u{947}सवार"), alloc::borrow::Cow::Borrowed("ज\u{941}म\u{94d}मा"), alloc::borrow::Cow::Borrowed("बटवार")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("आथवार"), alloc::borrow::Cow::Borrowed("च\u{902}दिरवार"), alloc::borrow::Cow::Borrowed("ब\u{941}वार"), alloc::borrow::Cow::Borrowed("बोदवार"), alloc::borrow::Cow::Borrowed("ब\u{94d}र\u{947}सवार"), alloc::borrow::Cow::Borrowed("ज\u{941}म\u{94d}मा"), alloc::borrow::Cow::Borrowed("बटवार")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static KOK: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -2047,6 +3175,286 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static SD_DEVA: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("आर\u{94d}त"), alloc::borrow::Cow::Borrowed("स\u{942}"), alloc::borrow::Cow::Borrowed("म\u{902}ग"), alloc::borrow::Cow::Borrowed("ब\u{941}\u{952}ध"), alloc::borrow::Cow::Borrowed("विस"), alloc::borrow::Cow::Borrowed("ज\u{941}म"), alloc::borrow::Cow::Borrowed("छ\u{902}छ")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("आ"), alloc::borrow::Cow::Borrowed("स\u{942}"), alloc::borrow::Cow::Borrowed("म\u{902}"), alloc::borrow::Cow::Borrowed("ब\u{941}\u{952}"), alloc::borrow::Cow::Borrowed("वि"), alloc::borrow::Cow::Borrowed("ज\u{941}"), alloc::borrow::Cow::Borrowed("छ\u{902}")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("आर\u{94d}त"), alloc::borrow::Cow::Borrowed("स\u{942}"), alloc::borrow::Cow::Borrowed("म\u{902}ग"), alloc::borrow::Cow::Borrowed("ब\u{941}\u{952}ध"), alloc::borrow::Cow::Borrowed("विस"), alloc::borrow::Cow::Borrowed("ज\u{941}म"), alloc::borrow::Cow::Borrowed("छ\u{902}छ")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("आर\u{94d}तवार"), alloc::borrow::Cow::Borrowed("स\u{942}मर"), alloc::borrow::Cow::Borrowed("म\u{902}गल\u{941}"), alloc::borrow::Cow::Borrowed("ब\u{941}\u{952}धर"), alloc::borrow::Cow::Borrowed("विस\u{94d}पत"), alloc::borrow::Cow::Borrowed("ज\u{941}मो"), alloc::borrow::Cow::Borrowed("छ\u{902}छर")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("आ"), alloc::borrow::Cow::Borrowed("स\u{942}"), alloc::borrow::Cow::Borrowed("म\u{902}"), alloc::borrow::Cow::Borrowed("ब\u{941}ध"), alloc::borrow::Cow::Borrowed("विस"), alloc::borrow::Cow::Borrowed("ज\u{941}"), alloc::borrow::Cow::Borrowed("छ\u{902}छ")])), narrow: None, short: None, wide: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("आर\u{94d}त"), alloc::borrow::Cow::Borrowed("स\u{942}"), alloc::borrow::Cow::Borrowed("म\u{902}"), alloc::borrow::Cow::Borrowed("ब\u{941}\u{952}ध"), alloc::borrow::Cow::Borrowed("विस"), alloc::borrow::Cow::Borrowed("ज\u{941}म"), alloc::borrow::Cow::Borrowed("छ\u{902}छ")])) }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static DOI: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ऐत"), alloc::borrow::Cow::Borrowed("सोम"), alloc::borrow::Cow::Borrowed("म\u{902}गल"), alloc::borrow::Cow::Borrowed("ब\u{941}ध"), alloc::borrow::Cow::Borrowed("बीर"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}र"), alloc::borrow::Cow::Borrowed("शनि")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ऐ."), alloc::borrow::Cow::Borrowed("सो."), alloc::borrow::Cow::Borrowed("म."), alloc::borrow::Cow::Borrowed("ब\u{941}."), alloc::borrow::Cow::Borrowed("बी."), alloc::borrow::Cow::Borrowed("श\u{941}."), alloc::borrow::Cow::Borrowed("श.")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ऐत"), alloc::borrow::Cow::Borrowed("सोम"), alloc::borrow::Cow::Borrowed("म\u{902}गल"), alloc::borrow::Cow::Borrowed("ब\u{941}ध"), alloc::borrow::Cow::Borrowed("बीर"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}र"), alloc::borrow::Cow::Borrowed("शनि")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ऐतबार"), alloc::borrow::Cow::Borrowed("सोमबार"), alloc::borrow::Cow::Borrowed("म\u{902}गलबार"), alloc::borrow::Cow::Borrowed("ब\u{941}धबार"), alloc::borrow::Cow::Borrowed("बीरबार"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रबार"), alloc::borrow::Cow::Borrowed("शनिबार")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ऐ"), alloc::borrow::Cow::Borrowed("सो"), alloc::borrow::Cow::Borrowed("म."), alloc::borrow::Cow::Borrowed("ब\u{941}."), alloc::borrow::Cow::Borrowed("बी."), alloc::borrow::Cow::Borrowed("श\u{941}."), alloc::borrow::Cow::Borrowed("श.")])), short: None, wide: None }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static BGC: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ऐतवार"), alloc::borrow::Cow::Borrowed("सोमवार"), alloc::borrow::Cow::Borrowed("म\u{902}गलवार"), alloc::borrow::Cow::Borrowed("ब\u{941}धवार"), alloc::borrow::Cow::Borrowed("ब\u{943}हस\u{94d}पतवार"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रवार"), alloc::borrow::Cow::Borrowed("शनिवार")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("W"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("F"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ऐतवार"), alloc::borrow::Cow::Borrowed("सोमवार"), alloc::borrow::Cow::Borrowed("म\u{902}गलवार"), alloc::borrow::Cow::Borrowed("ब\u{941}धवार"), alloc::borrow::Cow::Borrowed("ब\u{943}हस\u{94d}पतवार"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रवार"), alloc::borrow::Cow::Borrowed("शनिवार")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ऐतवार"), alloc::borrow::Cow::Borrowed("सोमवार"), alloc::borrow::Cow::Borrowed("म\u{902}गलवार"), alloc::borrow::Cow::Borrowed("ब\u{941}धवार"), alloc::borrow::Cow::Borrowed("ब\u{943}हस\u{94d}पतवार"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रवार"), alloc::borrow::Cow::Borrowed("शनिवार")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static BRX: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रबि"), alloc::borrow::Cow::Borrowed("सम"), alloc::borrow::Cow::Borrowed("म\u{902}गल"), alloc::borrow::Cow::Borrowed("ब\u{941}ध"), alloc::borrow::Cow::Borrowed("बिस\u{94d}थि"), alloc::borrow::Cow::Borrowed("स\u{941}ख\u{941}र"), alloc::borrow::Cow::Borrowed("सनि")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("र"), alloc::borrow::Cow::Borrowed("स"), alloc::borrow::Cow::Borrowed("म\u{902}"), alloc::borrow::Cow::Borrowed("ब\u{941}"), alloc::borrow::Cow::Borrowed("बि"), alloc::borrow::Cow::Borrowed("स\u{941}"), alloc::borrow::Cow::Borrowed("स")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रबि"), alloc::borrow::Cow::Borrowed("सम"), alloc::borrow::Cow::Borrowed("म\u{902}गल"), alloc::borrow::Cow::Borrowed("ब\u{941}ध"), alloc::borrow::Cow::Borrowed("बिस\u{94d}थि"), alloc::borrow::Cow::Borrowed("स\u{941}ख\u{941}र"), alloc::borrow::Cow::Borrowed("सनि")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रबिबार"), alloc::borrow::Cow::Borrowed("समबार"), alloc::borrow::Cow::Borrowed("म\u{902}गलबार"), alloc::borrow::Cow::Borrowed("ब\u{941}धबार"), alloc::borrow::Cow::Borrowed("बिस\u{94d}थिबार"), alloc::borrow::Cow::Borrowed("स\u{941}ख\u{941}रबार"), alloc::borrow::Cow::Borrowed("सनिबार")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: None, short: None, wide: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रबिबार"), alloc::borrow::Cow::Borrowed("समबार"), alloc::borrow::Cow::Borrowed("म\u{902}गलबार"), alloc::borrow::Cow::Borrowed("ब\u{941}धबार"), alloc::borrow::Cow::Borrowed("बिस\u{94d}थिबार"), alloc::borrow::Cow::Borrowed("स\u{941}\u{941}ख\u{941}रबार"), alloc::borrow::Cow::Borrowed("सनिबार")])) }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static BHO: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रबीबार"), alloc::borrow::Cow::Borrowed("सोमबार"), alloc::borrow::Cow::Borrowed("म\u{902}गलबार"), alloc::borrow::Cow::Borrowed("ब\u{941}धबार"), alloc::borrow::Cow::Borrowed("ब\u{943}हस\u{94d}पतिबार"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रबार"), alloc::borrow::Cow::Borrowed("सनीचर")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("W"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("F"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रबीबार"), alloc::borrow::Cow::Borrowed("सोमबार"), alloc::borrow::Cow::Borrowed("म\u{902}गलबार"), alloc::borrow::Cow::Borrowed("ब\u{941}धबार"), alloc::borrow::Cow::Borrowed("ब\u{943}हस\u{94d}पतिबार"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रबार"), alloc::borrow::Cow::Borrowed("सनीचर")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रबीबार"), alloc::borrow::Cow::Borrowed("सोमबार"), alloc::borrow::Cow::Borrowed("म\u{902}गलबार"), alloc::borrow::Cow::Borrowed("ब\u{941}धबार"), alloc::borrow::Cow::Borrowed("ब\u{943}हस\u{94d}पतिबार"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रबार"), alloc::borrow::Cow::Borrowed("सनीचर")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static SA: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रवि"), alloc::borrow::Cow::Borrowed("सोम"), alloc::borrow::Cow::Borrowed("म\u{902}गल"), alloc::borrow::Cow::Borrowed("ब\u{941}ध"), alloc::borrow::Cow::Borrowed("ग\u{941}र\u{941}"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}र"), alloc::borrow::Cow::Borrowed("शनि")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("र"), alloc::borrow::Cow::Borrowed("सो"), alloc::borrow::Cow::Borrowed("म\u{902}"), alloc::borrow::Cow::Borrowed("ब\u{941}"), alloc::borrow::Cow::Borrowed("ग\u{941}"), alloc::borrow::Cow::Borrowed("श\u{941}"), alloc::borrow::Cow::Borrowed("श")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रविवासरः"), alloc::borrow::Cow::Borrowed("सोमवासरः"), alloc::borrow::Cow::Borrowed("म\u{902}गलवासरः"), alloc::borrow::Cow::Borrowed("ब\u{941}धवासरः"), alloc::borrow::Cow::Borrowed("ग\u{941}र\u{941}वासर:"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रवासरः"), alloc::borrow::Cow::Borrowed("शनिवासरः")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static MAI: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रवि"), alloc::borrow::Cow::Borrowed("सोम"), alloc::borrow::Cow::Borrowed("म\u{902}गल"), alloc::borrow::Cow::Borrowed("ब\u{941}ध"), alloc::borrow::Cow::Borrowed("ग\u{941}र\u{941}"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}र"), alloc::borrow::Cow::Borrowed("शनि")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("र"), alloc::borrow::Cow::Borrowed("सो"), alloc::borrow::Cow::Borrowed("म\u{902}"), alloc::borrow::Cow::Borrowed("ब\u{941}"), alloc::borrow::Cow::Borrowed("ग\u{941}"), alloc::borrow::Cow::Borrowed("श\u{941}"), alloc::borrow::Cow::Borrowed("श")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रवि"), alloc::borrow::Cow::Borrowed("सोम"), alloc::borrow::Cow::Borrowed("म\u{902}गल"), alloc::borrow::Cow::Borrowed("ब\u{941}ध"), alloc::borrow::Cow::Borrowed("ब\u{943}हस\u{94d}पति"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}र"), alloc::borrow::Cow::Borrowed("शनि")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रवि दिन"), alloc::borrow::Cow::Borrowed("सोम दिन"), alloc::borrow::Cow::Borrowed("म\u{902}गल दिन"), alloc::borrow::Cow::Borrowed("ब\u{941}ध दिन"), alloc::borrow::Cow::Borrowed("ब\u{943}हस\u{94d}पति दिन"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}र दिन"), alloc::borrow::Cow::Borrowed("शनि दिन")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static RAJ: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रविवार"), alloc::borrow::Cow::Borrowed("सोमवार"), alloc::borrow::Cow::Borrowed("म\u{902}गलवार"), alloc::borrow::Cow::Borrowed("ब\u{941}धवार"), alloc::borrow::Cow::Borrowed("ग\u{941}र\u{941}वार"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रवार"), alloc::borrow::Cow::Borrowed("शनिवार")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("W"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("F"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रविवार"), alloc::borrow::Cow::Borrowed("सोमवार"), alloc::borrow::Cow::Borrowed("म\u{902}गलवार"), alloc::borrow::Cow::Borrowed("ब\u{941}धवार"), alloc::borrow::Cow::Borrowed("ग\u{941}र\u{941}वार"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रवार"), alloc::borrow::Cow::Borrowed("शनिवार")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("रविवार"), alloc::borrow::Cow::Borrowed("सोमवार"), alloc::borrow::Cow::Borrowed("म\u{902}गलवार"), alloc::borrow::Cow::Borrowed("ब\u{941}धवार"), alloc::borrow::Cow::Borrowed("ग\u{941}र\u{941}वार"), alloc::borrow::Cow::Borrowed("श\u{941}क\u{94d}रवार"), alloc::borrow::Cow::Borrowed("शनिवार")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static AS: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -2067,6 +3475,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         stand_alone: None,
                     },
                     weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("দেও"), alloc::borrow::Cow::Borrowed("সোম"), alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গল"), alloc::borrow::Cow::Borrowed("ব\u{9c1}ধ"), alloc::borrow::Cow::Borrowed("ব\u{9c3}হ"), alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}ৰ"), alloc::borrow::Cow::Borrowed("শনি")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("দ"), alloc::borrow::Cow::Borrowed("স"), alloc::borrow::Cow::Borrowed("ম"), alloc::borrow::Cow::Borrowed("ব"), alloc::borrow::Cow::Borrowed("ব"), alloc::borrow::Cow::Borrowed("শ"), alloc::borrow::Cow::Borrowed("শ")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("দেও"), alloc::borrow::Cow::Borrowed("সোম"), alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গল"), alloc::borrow::Cow::Borrowed("ব\u{9c1}ধ"), alloc::borrow::Cow::Borrowed("ব\u{9c3}হ"), alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}ৰ"), alloc::borrow::Cow::Borrowed("শনি")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("দেওব\u{9be}ৰ"), alloc::borrow::Cow::Borrowed("সোমব\u{9be}ৰ"), alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গলব\u{9be}ৰ"), alloc::borrow::Cow::Borrowed("ব\u{9c1}ধব\u{9be}ৰ"), alloc::borrow::Cow::Borrowed("ব\u{9c3}হস\u{9cd}পতিব\u{9be}ৰ"), alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}ৰব\u{9be}ৰ"), alloc::borrow::Cow::Borrowed("শনিব\u{9be}ৰ")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static MNI: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("নোংম\u{9be}ইজিং"), alloc::borrow::Cow::Borrowed("নিংথৌক\u{9be}ব\u{9be}"), alloc::borrow::Cow::Borrowed("লৈব\u{9be}কপোকপ\u{9be}"), alloc::borrow::Cow::Borrowed("য\u{9bc}\u{9c1}মশকৈশ\u{9be}"), alloc::borrow::Cow::Borrowed("শগোলশেন"), alloc::borrow::Cow::Borrowed("ইর\u{9be}ই"), alloc::borrow::Cow::Borrowed("থ\u{9be}ংজ")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("নোং"), alloc::borrow::Cow::Borrowed("নিং"), alloc::borrow::Cow::Borrowed("লৈব\u{9be}"), alloc::borrow::Cow::Borrowed("য\u{9bc}\u{9c1}ম"), alloc::borrow::Cow::Borrowed("শগো"), alloc::borrow::Cow::Borrowed("ইর\u{9be}"), alloc::borrow::Cow::Borrowed("থ\u{9be}ং")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("নোংম\u{9be}ইজিং"), alloc::borrow::Cow::Borrowed("নিংথৌক\u{9be}ব\u{9be}"), alloc::borrow::Cow::Borrowed("লৈব\u{9be}কপোকপ\u{9be}"), alloc::borrow::Cow::Borrowed("য\u{9bc}\u{9c1}মশকৈশ\u{9be}"), alloc::borrow::Cow::Borrowed("শগোলশেন"), alloc::borrow::Cow::Borrowed("ইর\u{9be}ই"), alloc::borrow::Cow::Borrowed("থ\u{9be}ংজ")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("নোংম\u{9be}ইজিং"), alloc::borrow::Cow::Borrowed("নিংথৌক\u{9be}ব\u{9be}"), alloc::borrow::Cow::Borrowed("লৈব\u{9be}কপোকপ\u{9be}"), alloc::borrow::Cow::Borrowed("য\u{9bc}\u{9c1}মশকৈশ\u{9be}"), alloc::borrow::Cow::Borrowed("শগোলশেন"), alloc::borrow::Cow::Borrowed("ইর\u{9be}ই"), alloc::borrow::Cow::Borrowed("থ\u{9be}ংজ")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("নো"), alloc::borrow::Cow::Borrowed("নিং"), alloc::borrow::Cow::Borrowed("লৈ"), alloc::borrow::Cow::Borrowed("য\u{9bc}\u{9c1}ম"), alloc::borrow::Cow::Borrowed("শগ"), alloc::borrow::Cow::Borrowed("ইর\u{9be}"), alloc::borrow::Cow::Borrowed("থ\u{9be}ং")])), short: None, wide: None }) },
                     eras: icu_datetime::provider::calendar::Eras {
                         names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2222,6 +3665,76 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static TI: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ሰን"), alloc::borrow::Cow::Borrowed("ሰኑ"), alloc::borrow::Cow::Borrowed("ሰሉ"), alloc::borrow::Cow::Borrowed("ረቡ"), alloc::borrow::Cow::Borrowed("ሓሙ"), alloc::borrow::Cow::Borrowed("ዓር"), alloc::borrow::Cow::Borrowed("ቀዳ")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ሰ"), alloc::borrow::Cow::Borrowed("ሰ"), alloc::borrow::Cow::Borrowed("ሰ"), alloc::borrow::Cow::Borrowed("ረ"), alloc::borrow::Cow::Borrowed("ሓ"), alloc::borrow::Cow::Borrowed("ዓ"), alloc::borrow::Cow::Borrowed("ቀ")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ሰን"), alloc::borrow::Cow::Borrowed("ሰኑ"), alloc::borrow::Cow::Borrowed("ሰሉ"), alloc::borrow::Cow::Borrowed("ረቡ"), alloc::borrow::Cow::Borrowed("ሓሙ"), alloc::borrow::Cow::Borrowed("ዓር"), alloc::borrow::Cow::Borrowed("ቀዳ")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ሰንበት"), alloc::borrow::Cow::Borrowed("ሰኑይ"), alloc::borrow::Cow::Borrowed("ሰሉስ"), alloc::borrow::Cow::Borrowed("ረቡዕ"), alloc::borrow::Cow::Borrowed("ሓሙስ"), alloc::borrow::Cow::Borrowed("ዓርቢ"), alloc::borrow::Cow::Borrowed("ቀዳም")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static CHR: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ᏆᏍᎬ"), alloc::borrow::Cow::Borrowed("ᏉᏅᎯ"), alloc::borrow::Cow::Borrowed("ᏔᎵᏁ"), alloc::borrow::Cow::Borrowed("ᏦᎢᏁ"), alloc::borrow::Cow::Borrowed("ᏅᎩᏁ"), alloc::borrow::Cow::Borrowed("ᏧᎾᎩ"), alloc::borrow::Cow::Borrowed("ᏈᏕᎾ")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Ꮖ"), alloc::borrow::Cow::Borrowed("Ꮙ"), alloc::borrow::Cow::Borrowed("Ꮤ"), alloc::borrow::Cow::Borrowed("Ꮶ"), alloc::borrow::Cow::Borrowed("Ꮕ"), alloc::borrow::Cow::Borrowed("Ꮷ"), alloc::borrow::Cow::Borrowed("Ꭴ")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ᏍᎬ"), alloc::borrow::Cow::Borrowed("ᏅᎯ"), alloc::borrow::Cow::Borrowed("ᏔᎵ"), alloc::borrow::Cow::Borrowed("ᏦᎢ"), alloc::borrow::Cow::Borrowed("ᏅᎩ"), alloc::borrow::Cow::Borrowed("ᏧᎾ"), alloc::borrow::Cow::Borrowed("ᏕᎾ")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ᎤᎾᏙᏓᏆᏍᎬ"), alloc::borrow::Cow::Borrowed("ᎤᎾᏙᏓᏉᏅᎯ"), alloc::borrow::Cow::Borrowed("ᏔᎵᏁᎢᎦ"), alloc::borrow::Cow::Borrowed("ᏦᎢᏁᎢᎦ"), alloc::borrow::Cow::Borrowed("ᏅᎩᏁᎢᎦ"), alloc::borrow::Cow::Borrowed("ᏧᎾᎩᎶᏍᏗ"), alloc::borrow::Cow::Borrowed("ᎤᎾᏙᏓᏈᏕᎾ")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static KM: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -2257,6 +3770,76 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static SAT: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ᱥᱤᱸ"), alloc::borrow::Cow::Borrowed("ᱚᱛ"), alloc::borrow::Cow::Borrowed("ᱵᱟ"), alloc::borrow::Cow::Borrowed("ᱥᱟᱹ"), alloc::borrow::Cow::Borrowed("ᱥᱟᱹᱨ"), alloc::borrow::Cow::Borrowed("ᱡᱟᱹ"), alloc::borrow::Cow::Borrowed("ᱧᱩ")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ᱥ"), alloc::borrow::Cow::Borrowed("ᱚ"), alloc::borrow::Cow::Borrowed("ᱵ"), alloc::borrow::Cow::Borrowed("ᱥ"), alloc::borrow::Cow::Borrowed("ᱥ"), alloc::borrow::Cow::Borrowed("ᱡ"), alloc::borrow::Cow::Borrowed("ᱧ")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ᱥᱤᱸ"), alloc::borrow::Cow::Borrowed("ᱚᱛ"), alloc::borrow::Cow::Borrowed("ᱵᱟ"), alloc::borrow::Cow::Borrowed("ᱥᱟᱹ"), alloc::borrow::Cow::Borrowed("ᱥᱟᱹᱨ"), alloc::borrow::Cow::Borrowed("ᱡᱟᱹ"), alloc::borrow::Cow::Borrowed("ᱧᱩ")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ᱥᱤᱸᱜᱮ"), alloc::borrow::Cow::Borrowed("ᱚᱛᱮ"), alloc::borrow::Cow::Borrowed("ᱵᱟᱞᱮ"), alloc::borrow::Cow::Borrowed("ᱥᱟᱹᱜᱩᱱ"), alloc::borrow::Cow::Borrowed("ᱥᱟᱹᱨᱫᱤ"), alloc::borrow::Cow::Borrowed("ᱡᱟᱹᱨᱩᱢ"), alloc::borrow::Cow::Borrowed("ᱧᱩᱦᱩᱢ")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static HR_BA: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x02\0\x04\0\x06\0\x08\0\n\0\x0C\0\x0E\0\x10\0\x12\0\x15\0\x18\0\x1B\x001.2.3.4.5.6.7.8.9.10.11.12.13.") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0MeskeremTekemtHedarTahsasTerYekatitMegabitMiaziaGenbotSeneHamleNehassePagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ned"), alloc::borrow::Cow::Borrowed("pon"), alloc::borrow::Cow::Borrowed("uto"), alloc::borrow::Cow::Borrowed("sri"), alloc::borrow::Cow::Borrowed("čet"), alloc::borrow::Cow::Borrowed("pet"), alloc::borrow::Cow::Borrowed("sub")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("N"), alloc::borrow::Cow::Borrowed("P"), alloc::borrow::Cow::Borrowed("U"), alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("Č"), alloc::borrow::Cow::Borrowed("P"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ned"), alloc::borrow::Cow::Borrowed("pon"), alloc::borrow::Cow::Borrowed("uto"), alloc::borrow::Cow::Borrowed("sri"), alloc::borrow::Cow::Borrowed("čet"), alloc::borrow::Cow::Borrowed("pet"), alloc::borrow::Cow::Borrowed("sub")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("nedjelja"), alloc::borrow::Cow::Borrowed("ponedjeljak"), alloc::borrow::Cow::Borrowed("utorak"), alloc::borrow::Cow::Borrowed("srijeda"), alloc::borrow::Cow::Borrowed("četvrtak"), alloc::borrow::Cow::Borrowed("petak"), alloc::borrow::Cow::Borrowed("subota")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static HR: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -2277,6 +3860,181 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         stand_alone: None,
                     },
                     weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ned"), alloc::borrow::Cow::Borrowed("pon"), alloc::borrow::Cow::Borrowed("uto"), alloc::borrow::Cow::Borrowed("sri"), alloc::borrow::Cow::Borrowed("čet"), alloc::borrow::Cow::Borrowed("pet"), alloc::borrow::Cow::Borrowed("sub")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("N"), alloc::borrow::Cow::Borrowed("P"), alloc::borrow::Cow::Borrowed("U"), alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("Č"), alloc::borrow::Cow::Borrowed("P"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("ned"), alloc::borrow::Cow::Borrowed("pon"), alloc::borrow::Cow::Borrowed("uto"), alloc::borrow::Cow::Borrowed("sri"), alloc::borrow::Cow::Borrowed("čet"), alloc::borrow::Cow::Borrowed("pet"), alloc::borrow::Cow::Borrowed("sub")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("nedjelja"), alloc::borrow::Cow::Borrowed("ponedjeljak"), alloc::borrow::Cow::Borrowed("utorak"), alloc::borrow::Cow::Borrowed("srijeda"), alloc::borrow::Cow::Borrowed("četvrtak"), alloc::borrow::Cow::Borrowed("petak"), alloc::borrow::Cow::Borrowed("subota")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("n"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("u"), alloc::borrow::Cow::Borrowed("s"), alloc::borrow::Cow::Borrowed("č"), alloc::borrow::Cow::Borrowed("p"), alloc::borrow::Cow::Borrowed("s")])), short: None, wide: None }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static ES_419: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dom"), alloc::borrow::Cow::Borrowed("lun"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mié"), alloc::borrow::Cow::Borrowed("jue"), alloc::borrow::Cow::Borrowed("vie"), alloc::borrow::Cow::Borrowed("sáb")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("J"), alloc::borrow::Cow::Borrowed("V"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("DO"), alloc::borrow::Cow::Borrowed("LU"), alloc::borrow::Cow::Borrowed("MA"), alloc::borrow::Cow::Borrowed("MI"), alloc::borrow::Cow::Borrowed("JU"), alloc::borrow::Cow::Borrowed("VI"), alloc::borrow::Cow::Borrowed("SA")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("domingo"), alloc::borrow::Cow::Borrowed("lunes"), alloc::borrow::Cow::Borrowed("martes"), alloc::borrow::Cow::Borrowed("miércoles"), alloc::borrow::Cow::Borrowed("jueves"), alloc::borrow::Cow::Borrowed("viernes"), alloc::borrow::Cow::Borrowed("sábado")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static ES_CO: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dom"), alloc::borrow::Cow::Borrowed("lun"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mié"), alloc::borrow::Cow::Borrowed("jue"), alloc::borrow::Cow::Borrowed("vie"), alloc::borrow::Cow::Borrowed("sáb")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("J"), alloc::borrow::Cow::Borrowed("V"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("DO"), alloc::borrow::Cow::Borrowed("LU"), alloc::borrow::Cow::Borrowed("MA"), alloc::borrow::Cow::Borrowed("MI"), alloc::borrow::Cow::Borrowed("JU"), alloc::borrow::Cow::Borrowed("VI"), alloc::borrow::Cow::Borrowed("SA")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("domingo"), alloc::borrow::Cow::Borrowed("lunes"), alloc::borrow::Cow::Borrowed("martes"), alloc::borrow::Cow::Borrowed("miércoles"), alloc::borrow::Cow::Borrowed("jueves"), alloc::borrow::Cow::Borrowed("viernes"), alloc::borrow::Cow::Borrowed("sábado")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("d"), alloc::borrow::Cow::Borrowed("l"), alloc::borrow::Cow::Borrowed("m"), alloc::borrow::Cow::Borrowed("m"), alloc::borrow::Cow::Borrowed("j"), alloc::borrow::Cow::Borrowed("v"), alloc::borrow::Cow::Borrowed("s")])), short: None, wide: None }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static ES_VE: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dom"), alloc::borrow::Cow::Borrowed("lun"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mié"), alloc::borrow::Cow::Borrowed("jue"), alloc::borrow::Cow::Borrowed("vie"), alloc::borrow::Cow::Borrowed("sáb")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("J"), alloc::borrow::Cow::Borrowed("V"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Do"), alloc::borrow::Cow::Borrowed("Lu"), alloc::borrow::Cow::Borrowed("Ma"), alloc::borrow::Cow::Borrowed("Mi"), alloc::borrow::Cow::Borrowed("Ju"), alloc::borrow::Cow::Borrowed("Vi"), alloc::borrow::Cow::Borrowed("Sa")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("domingo"), alloc::borrow::Cow::Borrowed("lunes"), alloc::borrow::Cow::Borrowed("martes"), alloc::borrow::Cow::Borrowed("miércoles"), alloc::borrow::Cow::Borrowed("jueves"), alloc::borrow::Cow::Borrowed("viernes"), alloc::borrow::Cow::Borrowed("sábado")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static ES_PY: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dom"), alloc::borrow::Cow::Borrowed("lun"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mié"), alloc::borrow::Cow::Borrowed("jue"), alloc::borrow::Cow::Borrowed("vie"), alloc::borrow::Cow::Borrowed("sáb")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("J"), alloc::borrow::Cow::Borrowed("V"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("do"), alloc::borrow::Cow::Borrowed("lu"), alloc::borrow::Cow::Borrowed("ma"), alloc::borrow::Cow::Borrowed("mi"), alloc::borrow::Cow::Borrowed("ju"), alloc::borrow::Cow::Borrowed("vi"), alloc::borrow::Cow::Borrowed("sa")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("domingo"), alloc::borrow::Cow::Borrowed("lunes"), alloc::borrow::Cow::Borrowed("martes"), alloc::borrow::Cow::Borrowed("miércoles"), alloc::borrow::Cow::Borrowed("jueves"), alloc::borrow::Cow::Borrowed("viernes"), alloc::borrow::Cow::Borrowed("sábado")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: None, short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Do"), alloc::borrow::Cow::Borrowed("Lu"), alloc::borrow::Cow::Borrowed("Ma"), alloc::borrow::Cow::Borrowed("Mi"), alloc::borrow::Cow::Borrowed("Ju"), alloc::borrow::Cow::Borrowed("Vi"), alloc::borrow::Cow::Borrowed("Sa")])), wide: None }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static ES_CL: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x08\0\x0E\0\x13\0\x19\0\x1C\0#\0*\x000\x006\0:\0?\0F\0meskeremtekemthedartahsasteryekatitmegabitmiaziagenbotsenehamlenehassepagumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("dom"), alloc::borrow::Cow::Borrowed("lun"), alloc::borrow::Cow::Borrowed("mar"), alloc::borrow::Cow::Borrowed("mié"), alloc::borrow::Cow::Borrowed("jue"), alloc::borrow::Cow::Borrowed("vie"), alloc::borrow::Cow::Borrowed("sáb")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("L"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("J"), alloc::borrow::Cow::Borrowed("V"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("do"), alloc::borrow::Cow::Borrowed("lu"), alloc::borrow::Cow::Borrowed("ma"), alloc::borrow::Cow::Borrowed("mi"), alloc::borrow::Cow::Borrowed("ju"), alloc::borrow::Cow::Borrowed("vi"), alloc::borrow::Cow::Borrowed("sá")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("domingo"), alloc::borrow::Cow::Borrowed("lunes"), alloc::borrow::Cow::Borrowed("martes"), alloc::borrow::Cow::Borrowed("miércoles"), alloc::borrow::Cow::Borrowed("jueves"), alloc::borrow::Cow::Borrowed("viernes"), alloc::borrow::Cow::Borrowed("sábado")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: None, short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("DO"), alloc::borrow::Cow::Borrowed("LU"), alloc::borrow::Cow::Borrowed("MA"), alloc::borrow::Cow::Borrowed("MI"), alloc::borrow::Cow::Borrowed("JU"), alloc::borrow::Cow::Borrowed("VI"), alloc::borrow::Cow::Borrowed("SA")])), wide: None }) },
                     eras: icu_datetime::provider::calendar::Eras {
                         names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2397,7 +4155,7 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
-                static NO: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                static NB: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2638,6 +4396,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         }),
                     },
                     weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("sön"), alloc::borrow::Cow::Borrowed("mån"), alloc::borrow::Cow::Borrowed("tis"), alloc::borrow::Cow::Borrowed("ons"), alloc::borrow::Cow::Borrowed("tors"), alloc::borrow::Cow::Borrowed("fre"), alloc::borrow::Cow::Borrowed("lör")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("O"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("F"), alloc::borrow::Cow::Borrowed("L")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("sö"), alloc::borrow::Cow::Borrowed("må"), alloc::borrow::Cow::Borrowed("ti"), alloc::borrow::Cow::Borrowed("on"), alloc::borrow::Cow::Borrowed("to"), alloc::borrow::Cow::Borrowed("fr"), alloc::borrow::Cow::Borrowed("lö")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("söndag"), alloc::borrow::Cow::Borrowed("måndag"), alloc::borrow::Cow::Borrowed("tisdag"), alloc::borrow::Cow::Borrowed("onsdag"), alloc::borrow::Cow::Borrowed("torsdag"), alloc::borrow::Cow::Borrowed("fredag"), alloc::borrow::Cow::Borrowed("lördag")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static DE_CH: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x0B\0\x15\0\x1D\0'\0.\x006\0>\0E\0L\0Q\0X\0_\0M\xC3\xA4sk\xC3\xA4r\xC3\xA4m\xE1\xB9\xAC\xC9\x99q\xC9\x99mt\xE1\xB8\xAA\xC9\x99darTa\xE1\xB8\xAB\xC5\x9Ba\xC5\x9B\xE1\xB9\xAC\xC9\x99rrY\xC3\xA4katitM\xC3\xA4gabitMiyazyaG\xC9\x99nbotS\xC3\xA4ne\xE1\xB8\xA4amleN\xC3\xA4hase\xE1\xB9\x96agumen") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x0B\0\x15\0\x1D\0'\0.\x006\0>\0E\0L\0Q\0X\0_\0M\xC3\xA4sk\xC3\xA4r\xC3\xA4m\xE1\xB9\xAC\xC9\x99q\xC9\x99mt\xE1\xB8\xAA\xC9\x99darTa\xE1\xB8\xAB\xC5\x9Ba\xC5\x9B\xE1\xB9\xAC\xC9\x99rrY\xC3\xA4katitM\xC3\xA4gabitMiyazyaG\xC9\x99nbotS\xC3\xA4ne\xE1\xB8\xA4amleN\xC3\xA4hase\xE1\xB9\x96agumen") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("So."), alloc::borrow::Cow::Borrowed("Mo."), alloc::borrow::Cow::Borrowed("Di."), alloc::borrow::Cow::Borrowed("Mi."), alloc::borrow::Cow::Borrowed("Do."), alloc::borrow::Cow::Borrowed("Fr."), alloc::borrow::Cow::Borrowed("Sa.")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("D"), alloc::borrow::Cow::Borrowed("F"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("So"), alloc::borrow::Cow::Borrowed("Mo"), alloc::borrow::Cow::Borrowed("Di"), alloc::borrow::Cow::Borrowed("Mi"), alloc::borrow::Cow::Borrowed("Do"), alloc::borrow::Cow::Borrowed("Fr"), alloc::borrow::Cow::Borrowed("Sa")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sonntag"), alloc::borrow::Cow::Borrowed("Montag"), alloc::borrow::Cow::Borrowed("Dienstag"), alloc::borrow::Cow::Borrowed("Mittwoch"), alloc::borrow::Cow::Borrowed("Donnerstag"), alloc::borrow::Cow::Borrowed("Freitag"), alloc::borrow::Cow::Borrowed("Samstag")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("So"), alloc::borrow::Cow::Borrowed("Mo"), alloc::borrow::Cow::Borrowed("Di"), alloc::borrow::Cow::Borrowed("Mi"), alloc::borrow::Cow::Borrowed("Do"), alloc::borrow::Cow::Borrowed("Fr"), alloc::borrow::Cow::Borrowed("Sa")])), narrow: None, short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("So."), alloc::borrow::Cow::Borrowed("Mo."), alloc::borrow::Cow::Borrowed("Di."), alloc::borrow::Cow::Borrowed("Mi."), alloc::borrow::Cow::Borrowed("Do."), alloc::borrow::Cow::Borrowed("Fr."), alloc::borrow::Cow::Borrowed("Sa.")])), wide: None }) },
                     eras: icu_datetime::provider::calendar::Eras {
                         names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2898,6 +4691,76 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static SR_CYRL_BA: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x10\0\x1C\0&\x002\08\0F\0T\0`\0l\0t\0~\0\x8A\0\xD0\x9C\xD0\xB5\xD1\x81\xD0\xBA\xD0\xB5\xD1\x80\xD0\xB5\xD0\xBC\xD0\xA2\xD0\xB5\xD0\xBA\xD0\xB5\xD0\xBC\xD1\x82\xD0\xA5\xD0\xB5\xD0\xB4\xD0\xB0\xD1\x80\xD0\xA2\xD0\xB0\xD1\x85\xD1\x81\xD0\xB0\xD1\x81\xD0\xA2\xD0\xB5\xD1\x80\xD0\x88\xD0\xB5\xD0\xBA\xD0\xB0\xD1\x82\xD0\xB8\xD1\x82\xD0\x9C\xD0\xB5\xD0\xB3\xD0\xB0\xD0\xB1\xD0\xB8\xD1\x82\xD0\x9C\xD0\xB8\xD0\xB0\xD0\xB7\xD0\xB8\xD0\xB0\xD0\x93\xD0\xB5\xD0\xBD\xD0\xB1\xD0\xBE\xD1\x82\xD0\xA1\xD0\xB5\xD0\xBD\xD0\xB5\xD0\xA5\xD0\xB0\xD0\xBC\xD0\xBB\xD0\xB5\xD0\x9D\xD0\xB5\xD1\x85\xD0\xB0\xD1\x81\xD0\xB5\xD0\x9F\xD0\xB0\xD0\xB3\xD1\x83\xD0\xBC\xD0\xB5\xD0\xBD") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x10\0\x1C\0&\x002\08\0F\0T\0`\0l\0t\0~\0\x8A\0\xD0\x9C\xD0\xB5\xD1\x81\xD0\xBA\xD0\xB5\xD1\x80\xD0\xB5\xD0\xBC\xD0\xA2\xD0\xB5\xD0\xBA\xD0\xB5\xD0\xBC\xD1\x82\xD0\xA5\xD0\xB5\xD0\xB4\xD0\xB0\xD1\x80\xD0\xA2\xD0\xB0\xD1\x85\xD1\x81\xD0\xB0\xD1\x81\xD0\xA2\xD0\xB5\xD1\x80\xD0\x88\xD0\xB5\xD0\xBA\xD0\xB0\xD1\x82\xD0\xB8\xD1\x82\xD0\x9C\xD0\xB5\xD0\xB3\xD0\xB0\xD0\xB1\xD0\xB8\xD1\x82\xD0\x9C\xD0\xB8\xD0\xB0\xD0\xB7\xD0\xB8\xD0\xB0\xD0\x93\xD0\xB5\xD0\xBD\xD0\xB1\xD0\xBE\xD1\x82\xD0\xA1\xD0\xB5\xD0\xBD\xD0\xB5\xD0\xA5\xD0\xB0\xD0\xBC\xD0\xBB\xD0\xB5\xD0\x9D\xD0\xB5\xD1\x85\xD0\xB0\xD1\x81\xD0\xB5\xD0\x9F\xD0\xB0\xD0\xB3\xD1\x83\xD0\xBC\xD0\xB5\xD0\xBD") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("нед"), alloc::borrow::Cow::Borrowed("пон"), alloc::borrow::Cow::Borrowed("уто"), alloc::borrow::Cow::Borrowed("сри"), alloc::borrow::Cow::Borrowed("чет"), alloc::borrow::Cow::Borrowed("пет"), alloc::borrow::Cow::Borrowed("суб")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("н"), alloc::borrow::Cow::Borrowed("п"), alloc::borrow::Cow::Borrowed("у"), alloc::borrow::Cow::Borrowed("с"), alloc::borrow::Cow::Borrowed("ч"), alloc::borrow::Cow::Borrowed("п"), alloc::borrow::Cow::Borrowed("с")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("не"), alloc::borrow::Cow::Borrowed("по"), alloc::borrow::Cow::Borrowed("ут"), alloc::borrow::Cow::Borrowed("ср"), alloc::borrow::Cow::Borrowed("че"), alloc::borrow::Cow::Borrowed("пе"), alloc::borrow::Cow::Borrowed("су")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("недјеља"), alloc::borrow::Cow::Borrowed("понедјељак"), alloc::borrow::Cow::Borrowed("уторак"), alloc::borrow::Cow::Borrowed("сриједа"), alloc::borrow::Cow::Borrowed("четвртак"), alloc::borrow::Cow::Borrowed("петак"), alloc::borrow::Cow::Borrowed("субота")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
+                static BS_CYRL: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x10\0\x1C\0&\x002\08\0F\0T\0`\0l\0t\0~\0\x8A\0\xD0\x9C\xD0\xB5\xD1\x81\xD0\xBA\xD0\xB5\xD1\x80\xD0\xB5\xD0\xBC\xD0\xA2\xD0\xB5\xD0\xBA\xD0\xB5\xD0\xBC\xD1\x82\xD0\xA5\xD0\xB5\xD0\xB4\xD0\xB0\xD1\x80\xD0\xA2\xD0\xB0\xD1\x85\xD1\x81\xD0\xB0\xD1\x81\xD0\xA2\xD0\xB5\xD1\x80\xD0\x88\xD0\xB5\xD0\xBA\xD0\xB0\xD1\x82\xD0\xB8\xD1\x82\xD0\x9C\xD0\xB5\xD0\xB3\xD0\xB0\xD0\xB1\xD0\xB8\xD1\x82\xD0\x9C\xD0\xB8\xD0\xB0\xD0\xB7\xD0\xB8\xD0\xB0\xD0\x93\xD0\xB5\xD0\xBD\xD0\xB1\xD0\xBE\xD1\x82\xD0\xA1\xD0\xB5\xD0\xBD\xD0\xB5\xD0\xA5\xD0\xB0\xD0\xBC\xD0\xBB\xD0\xB5\xD0\x9D\xD0\xB5\xD1\x85\xD0\xB0\xD1\x81\xD0\xB5\xD0\x9F\xD0\xB0\xD0\xB3\xD1\x83\xD0\xBC\xD0\xB5\xD0\xBD") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\0\x0F\x0012345678910111213") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x10\0\x1C\0&\x002\08\0F\0T\0`\0l\0t\0~\0\x8A\0\xD0\x9C\xD0\xB5\xD1\x81\xD0\xBA\xD0\xB5\xD1\x80\xD0\xB5\xD0\xBC\xD0\xA2\xD0\xB5\xD0\xBA\xD0\xB5\xD0\xBC\xD1\x82\xD0\xA5\xD0\xB5\xD0\xB4\xD0\xB0\xD1\x80\xD0\xA2\xD0\xB0\xD1\x85\xD1\x81\xD0\xB0\xD1\x81\xD0\xA2\xD0\xB5\xD1\x80\xD0\x88\xD0\xB5\xD0\xBA\xD0\xB0\xD1\x82\xD0\xB8\xD1\x82\xD0\x9C\xD0\xB5\xD0\xB3\xD0\xB0\xD0\xB1\xD0\xB8\xD1\x82\xD0\x9C\xD0\xB8\xD0\xB0\xD0\xB7\xD0\xB8\xD0\xB0\xD0\x93\xD0\xB5\xD0\xBD\xD0\xB1\xD0\xBE\xD1\x82\xD0\xA1\xD0\xB5\xD0\xBD\xD0\xB5\xD0\xA5\xD0\xB0\xD0\xBC\xD0\xBB\xD0\xB5\xD0\x9D\xD0\xB5\xD1\x85\xD0\xB0\xD1\x81\xD0\xB5\xD0\x9F\xD0\xB0\xD0\xB3\xD1\x83\xD0\xBC\xD0\xB5\xD0\xBD") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("нед"), alloc::borrow::Cow::Borrowed("пон"), alloc::borrow::Cow::Borrowed("уто"), alloc::borrow::Cow::Borrowed("сри"), alloc::borrow::Cow::Borrowed("чет"), alloc::borrow::Cow::Borrowed("пет"), alloc::borrow::Cow::Borrowed("суб")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("н"), alloc::borrow::Cow::Borrowed("п"), alloc::borrow::Cow::Borrowed("у"), alloc::borrow::Cow::Borrowed("с"), alloc::borrow::Cow::Borrowed("ч"), alloc::borrow::Cow::Borrowed("п"), alloc::borrow::Cow::Borrowed("с")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("нед"), alloc::borrow::Cow::Borrowed("пон"), alloc::borrow::Cow::Borrowed("уто"), alloc::borrow::Cow::Borrowed("сри"), alloc::borrow::Cow::Borrowed("чет"), alloc::borrow::Cow::Borrowed("пет"), alloc::borrow::Cow::Borrowed("суб")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("недјеља"), alloc::borrow::Cow::Borrowed("понедјељак"), alloc::borrow::Cow::Borrowed("уторак"), alloc::borrow::Cow::Borrowed("сриједа"), alloc::borrow::Cow::Borrowed("четвртак"), alloc::borrow::Cow::Borrowed("петак"), alloc::borrow::Cow::Borrowed("субота")]) }, stand_alone: None },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        },
+                    },
+                };
                 static MK: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -3119,6 +4982,41 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
+                static BN_IN: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu_datetime::provider::calendar::months::ContextsV1 {
+                        format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x1B\0-\0<\0N\0W\0r\0\x87\0\xA5\0\xB4\0\xC0\0\xD5\0\xE7\0\xE0\xA6\xAE\xE0\xA6\xBE\xE0\xA6\xB8\xE0\xA7\x8D\xE0\xA6\x95\xE0\xA7\x87\xE0\xA6\xB0\xE0\xA7\x87\xE0\xA6\xAE\xE0\xA6\x9F\xE0\xA7\x87\xE0\xA6\x95\xE0\xA7\x87\xE0\xA6\xAE\xE0\xA6\x9F\xE0\xA6\xB9\xE0\xA6\xBF\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xA4\xE0\xA6\xBE\xE0\xA6\xB9\xE0\xA6\xB8\xE0\xA6\xBE\xE0\xA6\xB8\xE0\xA6\x9F\xE0\xA7\x87\xE0\xA6\xB0\xE0\xA6\x87\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA7\x87\xE0\xA6\x95\xE0\xA6\xBE\xE0\xA6\x9F\xE0\xA6\xBF\xE0\xA6\x9F\xE0\xA6\xAE\xE0\xA7\x87\xE0\xA6\x97\xE0\xA6\xBE\xE0\xA6\xAC\xE0\xA6\xBF\xE0\xA6\x9F\xE0\xA6\xAE\xE0\xA6\xBF\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\x9C\xE0\xA6\xBF\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\x97\xE0\xA7\x87\xE0\xA6\xA8\xE0\xA6\xAC\xE0\xA6\x9F\xE0\xA6\xB8\xE0\xA6\xBF\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xB9\xE0\xA7\x8D\xE0\xA6\xAF\xE0\xA6\xBE\xE0\xA6\xAE\xE0\xA6\xB2\xE0\xA6\xBF\xE0\xA6\xA8\xE0\xA7\x87\xE0\xA6\xB9\xE0\xA6\xBE\xE0\xA6\xB8\xE0\xA7\x87\xE0\xA6\xAA\xE0\xA6\xBE\xE0\xA6\x97\xE0\xA7\x81\xE0\xA6\xAE\xE0\xA7\x87\xE0\xA6\xA8") })
+                            }),
+                            narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\x15\0\x18\0\x1B\0!\0'\0-\0\xE0\xA7\xA7\xE0\xA7\xA8\xE0\xA7\xA9\xE0\xA7\xAA\xE0\xA7\xAB\xE0\xA7\xAC\xE0\xA7\xAD\xE0\xA7\xAE\xE0\xA7\xAF\xE0\xA7\xA7\xE0\xA7\xA6\xE0\xA7\xA7\xE0\xA7\xA7\xE0\xA7\xA7\xE0\xA7\xA8\xE0\xA7\xA7\xE0\xA7\xA9") })
+                            }),
+                            short: None,
+                            wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M06\0M07\0M08\0M09\0M10\0M11\0M12\0M13\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\r\0\0\0\0\0\x1B\0-\0<\0N\0W\0r\0\x87\0\xA5\0\xB4\0\xC0\0\xD5\0\xE7\0\xE0\xA6\xAE\xE0\xA6\xBE\xE0\xA6\xB8\xE0\xA7\x8D\xE0\xA6\x95\xE0\xA7\x87\xE0\xA6\xB0\xE0\xA7\x87\xE0\xA6\xAE\xE0\xA6\x9F\xE0\xA7\x87\xE0\xA6\x95\xE0\xA7\x87\xE0\xA6\xAE\xE0\xA6\x9F\xE0\xA6\xB9\xE0\xA6\xBF\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xA4\xE0\xA6\xBE\xE0\xA6\xB9\xE0\xA6\xB8\xE0\xA6\xBE\xE0\xA6\xB8\xE0\xA6\x9F\xE0\xA7\x87\xE0\xA6\xB0\xE0\xA6\x87\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA7\x87\xE0\xA6\x95\xE0\xA6\xBE\xE0\xA6\x9F\xE0\xA6\xBF\xE0\xA6\x9F\xE0\xA6\xAE\xE0\xA7\x87\xE0\xA6\x97\xE0\xA6\xBE\xE0\xA6\xAC\xE0\xA6\xBF\xE0\xA6\x9F\xE0\xA6\xAE\xE0\xA6\xBF\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\x9C\xE0\xA6\xBF\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\x97\xE0\xA7\x87\xE0\xA6\xA8\xE0\xA6\xAC\xE0\xA6\x9F\xE0\xA6\xB8\xE0\xA6\xBF\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xB9\xE0\xA7\x8D\xE0\xA6\xAF\xE0\xA6\xBE\xE0\xA6\xAE\xE0\xA6\xB2\xE0\xA6\xBF\xE0\xA6\xA8\xE0\xA7\x87\xE0\xA6\xB9\xE0\xA6\xBE\xE0\xA6\xB8\xE0\xA7\x87\xE0\xA6\xAA\xE0\xA6\xBE\xE0\xA6\x97\xE0\xA7\x81\xE0\xA6\xAE\xE0\xA7\x87\xE0\xA6\xA8") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu_datetime::provider::calendar::weekdays::ContextsV1 { format: icu_datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("রবি"), alloc::borrow::Cow::Borrowed("সোম"), alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গল"), alloc::borrow::Cow::Borrowed("ব\u{9c1}ধ"), alloc::borrow::Cow::Borrowed("ব\u{9c3}হস\u{9cd}পতি"), alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}র"), alloc::borrow::Cow::Borrowed("শনি")]), narrow: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("র"), alloc::borrow::Cow::Borrowed("সো"), alloc::borrow::Cow::Borrowed("ম"), alloc::borrow::Cow::Borrowed("ব\u{9c1}"), alloc::borrow::Cow::Borrowed("ব\u{9c3}"), alloc::borrow::Cow::Borrowed("শ\u{9c1}"), alloc::borrow::Cow::Borrowed("শ")]), short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("রঃ"), alloc::borrow::Cow::Borrowed("সোঃ"), alloc::borrow::Cow::Borrowed("মঃ"), alloc::borrow::Cow::Borrowed("ব\u{9c1}ঃ"), alloc::borrow::Cow::Borrowed("ব\u{9c3}ঃ"), alloc::borrow::Cow::Borrowed("শ\u{9c1}ঃ"), alloc::borrow::Cow::Borrowed("শঃ")])), wide: icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("রবিব\u{9be}র"), alloc::borrow::Cow::Borrowed("সোমব\u{9be}র"), alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গলব\u{9be}র"), alloc::borrow::Cow::Borrowed("ব\u{9c1}ধব\u{9be}র"), alloc::borrow::Cow::Borrowed("ব\u{9c3}হস\u{9cd}পতিব\u{9be}র"), alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}রব\u{9be}র"), alloc::borrow::Cow::Borrowed("শনিব\u{9be}র")]) }, stand_alone: Some(icu_datetime::provider::calendar::weekdays::StandAloneWidthsV1 { abbreviated: None, narrow: None, short: Some(icu_datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("রঃ"), alloc::borrow::Cow::Borrowed("সোঃ"), alloc::borrow::Cow::Borrowed("মঃ"), alloc::borrow::Cow::Borrowed("ব\u{9c1}ঃ"), alloc::borrow::Cow::Borrowed("ব\u{9c3}ঃ"), alloc::borrow::Cow::Borrowed("শ\u{9c1}ঃ"), alloc::borrow::Cow::Borrowed("শনি")])), wide: None }) },
+                    eras: icu_datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\r\0\x11\0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA6ERA0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA7") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\r\0\x11\0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA6ERA0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA7") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\r\0\x11\0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA6ERA0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA7") })
+                        },
+                    },
+                };
                 static BN: <icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::calendar::DateSymbolsV1 {
                     months: icu_datetime::provider::calendar::months::ContextsV1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
@@ -3329,8 +5227,8 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                         },
                     },
                 };
-                static VALUES: [&<icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable; 94usize] = [&AF, &AM, &AR, &AS, &AZ, &BE, &BG, &BN, &BS, &CA, &CS, &CY, &DA, &DE, &EL, &EN, &ES, &ET, &EU, &FA, &FI, &FIL, &FR, &GA, &GD, &GL, &GU, &HA, &HE, &HI, &HI_LATN, &HR, &HU, &HY, &ID, &IG, &IS, &IT, &JA, &JV, &KA, &KK, &KM, &KN, &KO, &KOK, &KY, &LO, &LT, &LV, &MK, &ML, &MN, &MR, &MS, &MY, &NE, &NL, &NN, &NO, &OR, &PA, &PCM, &PL, &PS, &PT, &RO, &RU, &SD, &SI, &SK, &SL, &SO, &SQ, &SR, &SR_LATN, &SV, &SW, &TA, &TE, &TH, &TK, &TR, &UK, &UND, &UR, &UZ, &VI, &YO, &YUE, &YUE_HANS, &ZH, &ZH_HANT, &ZU];
-                static KEYS: [&str; 94usize] = ["af", "am", "ar", "as", "az", "be", "bg", "bn", "bs", "ca", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fa", "fi", "fil", "fr", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hi-Latn", "hr", "hu", "hy", "id", "ig", "is", "it", "ja", "jv", "ka", "kk", "km", "kn", "ko", "kok", "ky", "lo", "lt", "lv", "mk", "ml", "mn", "mr", "ms", "my", "ne", "nl", "nn", "no", "or", "pa", "pcm", "pl", "ps", "pt", "ro", "ru", "sd", "si", "sk", "sl", "so", "sq", "sr", "sr-Latn", "sv", "sw", "ta", "te", "th", "tk", "tr", "uk", "und", "ur", "uz", "vi", "yo", "yue", "yue-Hans", "zh", "zh-Hant", "zu"];
+                static VALUES: [&<icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable; 444usize] = [&AF, &AF, &AM, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AS, &AST, &AZ, &AZ, &BE, &BE, &BG, &BGC, &BHO, &BN, &BN_IN, &BR, &BRX, &BS, &BS_CYRL, &BS, &CA, &CA, &CA, &CA, &CA, &CEB, &CHR, &CS, &CV, &CY, &DA, &DA, &DE, &DE, &DE, &DE_CH, &DE, &DE, &DE, &DOI, &DSB, &EL, &EL, &EL, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN_AU, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &ES, &ES_419, &ES_419, &ES_419, &ES_419, &ES_419, &ES_CL, &ES_CO, &ES_419, &ES_419, &ES_419, &ES, &ES_419, &ES, &ES_419, &ES_419, &ES, &ES_419, &ES_419, &ES_419, &ES_419, &ES, &ES_419, &ES_PY, &ES_419, &ES_419, &ES_419, &ES_VE, &ET, &EU, &FA, &FA, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FI, &FIL, &FO, &FO, &FR, &FR, &FR, &FR, &FR, &FR, &FR_CA, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &GA, &GA, &GD, &GL, &GU, &HA, &HA, &HA, &HE, &HI, &HI_LATN, &HR, &HR_BA, &HSB, &HU, &HY, &IA, &ID, &IG, &IS, &IT, &IT, &IT, &IT, &JA, &JV, &KA, &KEA, &KGP, &KK, &KM, &KN, &KO, &KO, &KOK, &KS, &KS, &KS_DEVA, &KY, &LO, &LT, &LV, &MAI, &MI, &MK, &ML, &MN, &MNI, &MNI, &MR, &MS, &MS, &MS, &MS, &MY, &NB, &NB, &NE, &NE, &NL, &NL, &NL, &NL, &NL, &NL, &NL, &NN, &NB, &OR, &PA, &PA, &PCM, &PL, &PS, &PS, &PT, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &QU, &QU, &QU, &RAJ, &RM, &RO, &RO_MD, &RU, &RU, &RU, &RU, &RU, &RU, &SA, &SAT, &SAT, &SC, &SD, &SD, &SD_DEVA, &SI, &SK, &SL, &SO, &SO, &SO, &SO, &SQ, &SQ, &SQ, &SR, &SR, &SR_CYRL_BA, &SR, &SR_LATN, &SR_LATN_BA, &SR_LATN_ME, &SR_LATN, &SU, &SU, &SV, &SV, &SV, &SW, &SW, &SW, &SW, &TA, &TA, &TA, &TA, &TE, &TG, &TH, &TI, &TI, &TK, &TO, &TR, &TR, &TT, &UK, &UND, &UR, &UR, &UZ, &UZ_CYRL, &UZ, &VI, &WO, &XH, &YO, &YO_BJ, &YRL, &YRL, &YRL, &YUE, &YUE_HANS, &YUE, &ZH, &ZH, &ZH, &ZH_HANT, &ZH_HANT, &ZH_HANT, &ZU];
+                static KEYS: [&str; 444usize] = ["af", "af-NA", "am", "ar", "ar-AE", "ar-BH", "ar-DJ", "ar-DZ", "ar-EG", "ar-EH", "ar-ER", "ar-IL", "ar-IQ", "ar-JO", "ar-KM", "ar-KW", "ar-LB", "ar-LY", "ar-MA", "ar-MR", "ar-OM", "ar-PS", "ar-QA", "ar-SA", "ar-SD", "ar-SO", "ar-SS", "ar-SY", "ar-TD", "ar-TN", "ar-YE", "as", "ast", "az", "az-Latn", "be", "be-tarask", "bg", "bgc", "bho", "bn", "bn-IN", "br", "brx", "bs", "bs-Cyrl", "bs-Latn", "ca", "ca-AD", "ca-ES-valencia", "ca-FR", "ca-IT", "ceb", "chr", "cs", "cv", "cy", "da", "da-GL", "de", "de-AT", "de-BE", "de-CH", "de-IT", "de-LI", "de-LU", "doi", "dsb", "el", "el-CY", "el-polyton", "en", "en-001", "en-150", "en-AE", "en-AG", "en-AI", "en-AS", "en-AT", "en-AU", "en-BB", "en-BE", "en-BI", "en-BM", "en-BS", "en-BW", "en-BZ", "en-CA", "en-CC", "en-CH", "en-CK", "en-CM", "en-CX", "en-CY", "en-DE", "en-DG", "en-DK", "en-DM", "en-ER", "en-FI", "en-FJ", "en-FK", "en-FM", "en-GB", "en-GD", "en-GG", "en-GH", "en-GI", "en-GM", "en-GU", "en-GY", "en-HK", "en-IE", "en-IL", "en-IM", "en-IN", "en-IO", "en-JE", "en-JM", "en-KE", "en-KI", "en-KN", "en-KY", "en-LC", "en-LR", "en-LS", "en-MG", "en-MH", "en-MO", "en-MP", "en-MS", "en-MT", "en-MU", "en-MV", "en-MW", "en-MY", "en-NA", "en-NF", "en-NG", "en-NL", "en-NR", "en-NU", "en-NZ", "en-PG", "en-PH", "en-PK", "en-PN", "en-PR", "en-PW", "en-RW", "en-SB", "en-SC", "en-SD", "en-SE", "en-SG", "en-SH", "en-SI", "en-SL", "en-SS", "en-SX", "en-SZ", "en-TC", "en-TK", "en-TO", "en-TT", "en-TV", "en-TZ", "en-UG", "en-UM", "en-VC", "en-VG", "en-VI", "en-VU", "en-WS", "en-ZA", "en-ZM", "en-ZW", "es", "es-419", "es-AR", "es-BO", "es-BR", "es-BZ", "es-CL", "es-CO", "es-CR", "es-CU", "es-DO", "es-EA", "es-EC", "es-GQ", "es-GT", "es-HN", "es-IC", "es-MX", "es-NI", "es-PA", "es-PE", "es-PH", "es-PR", "es-PY", "es-SV", "es-US", "es-UY", "es-VE", "et", "eu", "fa", "fa-AF", "ff-Adlm", "ff-Adlm-BF", "ff-Adlm-CM", "ff-Adlm-GH", "ff-Adlm-GM", "ff-Adlm-GW", "ff-Adlm-LR", "ff-Adlm-MR", "ff-Adlm-NE", "ff-Adlm-NG", "ff-Adlm-SL", "ff-Adlm-SN", "fi", "fil", "fo", "fo-DK", "fr", "fr-BE", "fr-BF", "fr-BI", "fr-BJ", "fr-BL", "fr-CA", "fr-CD", "fr-CF", "fr-CG", "fr-CH", "fr-CI", "fr-CM", "fr-DJ", "fr-DZ", "fr-GA", "fr-GF", "fr-GN", "fr-GP", "fr-GQ", "fr-HT", "fr-KM", "fr-LU", "fr-MA", "fr-MC", "fr-MF", "fr-MG", "fr-ML", "fr-MQ", "fr-MR", "fr-MU", "fr-NC", "fr-NE", "fr-PF", "fr-PM", "fr-RE", "fr-RW", "fr-SC", "fr-SN", "fr-SY", "fr-TD", "fr-TG", "fr-TN", "fr-VU", "fr-WF", "fr-YT", "ga", "ga-GB", "gd", "gl", "gu", "ha", "ha-GH", "ha-NE", "he", "hi", "hi-Latn", "hr", "hr-BA", "hsb", "hu", "hy", "ia", "id", "ig", "is", "it", "it-CH", "it-SM", "it-VA", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "ko-KP", "kok", "ks", "ks-Arab", "ks-Deva", "ky", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mni-Beng", "mr", "ms", "ms-BN", "ms-ID", "ms-SG", "my", "nb", "nb-SJ", "ne", "ne-IN", "nl", "nl-AW", "nl-BE", "nl-BQ", "nl-CW", "nl-SR", "nl-SX", "nn", "no", "or", "pa", "pa-Guru", "pcm", "pl", "ps", "ps-PK", "pt", "pt-AO", "pt-CH", "pt-CV", "pt-GQ", "pt-GW", "pt-LU", "pt-MO", "pt-MZ", "pt-PT", "pt-ST", "pt-TL", "qu", "qu-BO", "qu-EC", "raj", "rm", "ro", "ro-MD", "ru", "ru-BY", "ru-KG", "ru-KZ", "ru-MD", "ru-UA", "sa", "sat", "sat-Olck", "sc", "sd", "sd-Arab", "sd-Deva", "si", "sk", "sl", "so", "so-DJ", "so-ET", "so-KE", "sq", "sq-MK", "sq-XK", "sr", "sr-Cyrl", "sr-Cyrl-BA", "sr-Cyrl-XK", "sr-Latn", "sr-Latn-BA", "sr-Latn-ME", "sr-Latn-XK", "su", "su-Latn", "sv", "sv-AX", "sv-FI", "sw", "sw-CD", "sw-KE", "sw-UG", "ta", "ta-LK", "ta-MY", "ta-SG", "te", "tg", "th", "ti", "ti-ER", "tk", "to", "tr", "tr-CY", "tt", "uk", "und", "ur", "ur-IN", "uz", "uz-Cyrl", "uz-Latn", "vi", "wo", "xh", "yo", "yo-BJ", "yrl", "yrl-CO", "yrl-VE", "yue", "yue-Hans", "yue-Hant", "zh", "zh-Hans", "zh-Hans-SG", "zh-Hant", "zh-Hant-HK", "zh-Hant-MO", "zu"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
