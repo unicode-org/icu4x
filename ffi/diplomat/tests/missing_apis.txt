@@ -73,6 +73,7 @@ icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed#Struct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_mirroring_props#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_pairing_props#FnInStruct
+icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::static_to_owned#FnInStruct
 icu::properties::bidi_data::BidiMirroringProperties#Struct
 icu::properties::bidi_data::BidiPairingProperties#Enum
 icu::properties::bidi_data::bidi_auxiliary_properties#Fn
