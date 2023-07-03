@@ -4,7 +4,7 @@
 
 use crate::internals::{CaseMapLocale, FoldOptions};
 use crate::provider::data::MappingKind;
-use crate::provider::CaseMappingV1Marker;
+use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSet;
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
@@ -22,7 +22,7 @@ use writeable::Writeable;
 /// </div>
 #[derive(Clone, Debug)]
 pub struct CaseMapper {
-    data: DataPayload<CaseMappingV1Marker>,
+    data: DataPayload<CaseMapV1Marker>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -69,7 +69,7 @@ impl CaseMapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapper, DataError>
     where
-        P: DataProvider<CaseMappingV1Marker> + ?Sized,
+        P: DataProvider<CaseMapV1Marker> + ?Sized,
     {
         let data = provider.load(Default::default())?.take_payload()?;
         Ok(Self { data })

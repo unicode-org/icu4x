@@ -25,13 +25,13 @@ use zerovec::ZeroMap;
 )]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
-pub struct CaseMappingUnfoldData<'data> {
+pub struct CaseMapUnfoldData<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The actual map. Maps from strings to a list of codepoints, stored as a contiguous UTF-8 string
     pub map: ZeroMap<'data, str, str>,
 }
 
-impl<'data> CaseMappingUnfoldData<'data> {
+impl<'data> CaseMapUnfoldData<'data> {
     // Unfold data is exported by ICU as an array of 16-bit values, representing a short
     // header followed by a two-column key/value table. The header indicates:
     // - The number of rows.

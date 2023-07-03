@@ -736,7 +736,7 @@ macro_rules! __impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const PROPS_BLANK_V1: icu_provider::DataKeyHash = <icu_properties::provider::BlankV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_casemapping")]
-                const PROPS_CASEMAP_V1: icu_provider::DataKeyHash = <icu_casemapping::provider::CaseMappingV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const PROPS_CASEMAP_V1: icu_provider::DataKeyHash = <icu_casemapping::provider::CaseMapV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const PROPS_CCC_V1: icu_provider::DataKeyHash = <icu_properties::provider::CanonicalCombiningClassV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -1146,7 +1146,7 @@ macro_rules! __impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     PROPS_BLANK_V1 => icu_provider::DataProvider::<icu_properties::provider::BlankV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_casemapping")]
-                    PROPS_CASEMAP_V1 => icu_provider::DataProvider::<icu_casemapping::provider::CaseMappingV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    PROPS_CASEMAP_V1 => icu_provider::DataProvider::<icu_casemapping::provider::CaseMapV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_properties")]
                     PROPS_CCC_V1 => icu_provider::DataProvider::<icu_properties::provider::CanonicalCombiningClassV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_properties")]

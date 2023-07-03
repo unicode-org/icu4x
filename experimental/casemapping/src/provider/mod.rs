@@ -17,9 +17,9 @@
 
 use icu_provider::prelude::*;
 
-use crate::provider::data::CaseMappingData;
-use crate::provider::exceptions::CaseMappingExceptions;
-use crate::provider::unfold::CaseMappingUnfoldData;
+use crate::provider::data::CaseMapData;
+use crate::provider::exceptions::CaseMapExceptions;
+use crate::provider::unfold::CaseMapUnfoldData;
 
 use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(feature = "datagen")]
@@ -54,7 +54,7 @@ const _: () = {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CaseMappingV1Marker, "props/casemap@1", singleton))]
+#[icu_provider::data_struct(marker(CaseMapV1Marker, "props/casemap@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -64,26 +64,26 @@ const _: () = {
 #[yoke(prove_covariance_manually)]
 /// CaseMapper provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
-pub struct CaseMappingV1<'data> {
+pub struct CaseMapV1<'data> {
     /// Case mapping data
-    pub trie: CodePointTrie<'data, CaseMappingData>,
+    pub trie: CodePointTrie<'data, CaseMapData>,
     /// Exceptions to the case mapping data
-    pub exceptions: CaseMappingExceptions<'data>,
+    pub exceptions: CaseMapExceptions<'data>,
     /// Reverse case folding data.
-    pub unfold: CaseMappingUnfoldData<'data>,
+    pub unfold: CaseMapUnfoldData<'data>,
 }
 
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for CaseMappingV1<'de> {
+impl<'de> serde::Deserialize<'de> for CaseMapV1<'de> {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         #[derive(serde::Deserialize)]
         pub struct Raw<'data> {
             #[serde(borrow)]
-            pub trie: CodePointTrie<'data, CaseMappingData>,
+            pub trie: CodePointTrie<'data, CaseMapData>,
             #[serde(borrow)]
-            pub exceptions: CaseMappingExceptions<'data>,
+            pub exceptions: CaseMapExceptions<'data>,
             #[serde(borrow)]
-            pub unfold: CaseMappingUnfoldData<'data>,
+            pub unfold: CaseMapUnfoldData<'data>,
         }
 
         let Raw {
@@ -101,8 +101,8 @@ impl<'de> serde::Deserialize<'de> for CaseMappingV1<'de> {
     }
 }
 
-impl<'data> CaseMappingV1<'data> {
-    /// Creates a new CaseMappingV1 using data exported by the
+impl<'data> CaseMapV1<'data> {
+    /// Creates a new CaseMapV1 using data exported by the
     // `icuexportdata` tool in ICU4C. Validates that the data is
     // consistent.
     #[cfg(feature = "datagen")]
@@ -113,9 +113,9 @@ impl<'data> CaseMappingV1<'data> {
         exceptions: &[u16],
         unfold: &[u16],
     ) -> Result<Self, DataError> {
-        use self::exceptions_builder::CaseMappingExceptionsBuilder;
+        use self::exceptions_builder::CaseMapExceptionsBuilder;
         use zerovec::ZeroVec;
-        let exceptions_builder = CaseMappingExceptionsBuilder::new(exceptions);
+        let exceptions_builder = CaseMapExceptionsBuilder::new(exceptions);
         let (exceptions, idx_map) = exceptions_builder.build()?;
 
         let trie_index = ZeroVec::alloc_from_slice(trie_index);
@@ -124,7 +124,7 @@ impl<'data> CaseMappingV1<'data> {
         let trie_data = trie_data
             .iter()
             .map(|&i| {
-                CaseMappingData::try_from_icu_integer(i)
+                CaseMapData::try_from_icu_integer(i)
                     .unwrap()
                     .with_updated_exception(&idx_map)
             })
@@ -133,7 +133,7 @@ impl<'data> CaseMappingV1<'data> {
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)
             .map_err(|_| DataError::custom("Casemapping data does not form valid trie"))?;
 
-        let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
+        let unfold = CaseMapUnfoldData::try_from_icu(unfold)?;
 
         let result = Self {
             trie,
@@ -184,7 +184,7 @@ impl<'data> CaseMappingV1<'data> {
         Ok(())
     }
 
-    pub(crate) fn lookup_data(&self, c: char) -> CaseMappingData {
+    pub(crate) fn lookup_data(&self, c: char) -> CaseMapData {
         self.trie.get32(c as u32)
     }
 }

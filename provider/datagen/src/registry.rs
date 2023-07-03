@@ -275,7 +275,7 @@ registry!(
     XidStartV1Marker,
     # experimental #
     {
-        CaseMappingV1Marker,
+        CaseMapV1Marker,
         DateSkeletonPatternsV1Marker,
         RegionDisplayNamesV1Marker,
         LanguageDisplayNamesV1Marker,

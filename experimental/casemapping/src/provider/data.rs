@@ -119,11 +119,11 @@ pub(crate) enum MappingKind {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
-pub struct CaseMappingData {
+pub struct CaseMapData {
     /// Whether this is default-ignoreable
     pub ignoreable: bool,
     /// The rest of the case mapping data
-    pub kind: CaseMappingDataKind,
+    pub kind: CaseMapDataKind,
 }
 
 /// A subset of case mapping data associated with a single code point
@@ -137,11 +137,11 @@ pub struct CaseMappingData {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum CaseMappingDataKind {
+pub enum CaseMapDataKind {
     /// This code point is an exception. Provides the case type of its own case
-    /// and the exception index stored in [`CaseMappingExceptions`]
+    /// and the exception index stored in [`CaseMapExceptions`]
     ///
-    /// [`CaseMappingExceptions`]: crate::provider::exceptions::CaseMappingExceptions
+    /// [`CaseMapExceptions`]: crate::provider::exceptions::CaseMapExceptions
     Exception(Option<CaseType>, u16),
     /// This code point is uncased, and has the following extra data
     Uncased(NonExceptionData),
@@ -150,7 +150,7 @@ pub enum CaseMappingDataKind {
     Delta(NonExceptionData, CaseType, i16),
 }
 
-/// Data that is stored in CaseMappingData when it is *not* an exception
+/// Data that is stored in CaseMapData when it is *not* an exception
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -168,13 +168,13 @@ pub struct NonExceptionData {
     pub dot_type: DotType,
 }
 
-impl CaseMappingData {
+impl CaseMapData {
     #[inline]
     pub(crate) fn case_type(&self) -> Option<CaseType> {
         match self.kind {
-            CaseMappingDataKind::Exception(case_type, ..) => case_type,
-            CaseMappingDataKind::Delta(_, case_type, _) => Some(case_type),
-            CaseMappingDataKind::Uncased(..) => None,
+            CaseMapDataKind::Exception(case_type, ..) => case_type,
+            CaseMapDataKind::Delta(_, case_type, _) => Some(case_type),
+            CaseMapDataKind::Uncased(..) => None,
         }
     }
 
@@ -201,7 +201,7 @@ impl CaseMappingData {
 
     #[inline]
     pub(crate) fn has_exception(&self) -> bool {
-        matches!(self.kind, CaseMappingDataKind::Exception(..))
+        matches!(self.kind, CaseMapDataKind::Exception(..))
     }
 
     // Returns true if this code point is case-sensitive.
@@ -210,18 +210,18 @@ impl CaseMappingData {
     #[inline]
     pub(crate) fn is_sensitive(&self) -> bool {
         match self.kind {
-            CaseMappingDataKind::Exception(..) => false,
-            CaseMappingDataKind::Delta(ned, ..) => ned.sensitive,
-            CaseMappingDataKind::Uncased(ned) => ned.sensitive,
+            CaseMapDataKind::Exception(..) => false,
+            CaseMapDataKind::Delta(ned, ..) => ned.sensitive,
+            CaseMapDataKind::Uncased(ned) => ned.sensitive,
         }
     }
 
     #[inline]
     pub(crate) fn dot_type(&self) -> DotType {
         match self.kind {
-            CaseMappingDataKind::Exception(..) => DotType::NoDot,
-            CaseMappingDataKind::Delta(ned, ..) => ned.dot_type,
-            CaseMappingDataKind::Uncased(ned) => ned.dot_type,
+            CaseMapDataKind::Exception(..) => DotType::NoDot,
+            CaseMapDataKind::Delta(ned, ..) => ned.dot_type,
+            CaseMapDataKind::Uncased(ned) => ned.dot_type,
         }
     }
 
@@ -233,9 +233,9 @@ impl CaseMappingData {
     pub(crate) fn delta(&self) -> i16 {
         debug_assert!(!self.has_exception());
         match self.kind {
-            CaseMappingDataKind::Exception(..) => 0,
-            CaseMappingDataKind::Delta(.., delta) => delta,
-            CaseMappingDataKind::Uncased(..) => 0,
+            CaseMapDataKind::Exception(..) => 0,
+            CaseMapDataKind::Delta(.., delta) => delta,
+            CaseMapDataKind::Uncased(..) => 0,
         }
     }
 
@@ -244,14 +244,14 @@ impl CaseMappingData {
     #[inline]
     pub(crate) fn exception_index(&self) -> u16 {
         debug_assert!(self.has_exception());
-        if let CaseMappingDataKind::Exception(_, i) = self.kind {
+        if let CaseMapDataKind::Exception(_, i) = self.kind {
             i
         } else {
             0
         }
     }
 
-    // CaseMappingExceptionsBuilder moves the full mapping and closure
+    // CaseMapExceptionsBuilder moves the full mapping and closure
     // strings out of the exception table itself. This means that the
     // exception index for a code point in ICU4X will be different
     // from the exception index for the same codepoint in ICU4C. Given
@@ -259,9 +259,9 @@ impl CaseMappingData {
     // index if necessary.
     #[cfg(feature = "datagen")]
     pub(crate) fn with_updated_exception(self, updates: &BTreeMap<u16, u16>) -> Self {
-        let kind = if let CaseMappingDataKind::Exception(ty, index) = self.kind {
+        let kind = if let CaseMapDataKind::Exception(ty, index) = self.kind {
             if let Some(updated_exception) = updates.get(&index) {
-                CaseMappingDataKind::Exception(ty, *updated_exception)
+                CaseMapDataKind::Exception(ty, *updated_exception)
             } else {
                 self.kind
             }
@@ -276,18 +276,18 @@ impl CaseMappingData {
     #[cfg(any(feature = "datagen", test))]
     pub(crate) fn try_from_icu_integer(int: u16) -> Result<Self, ZeroVecError> {
         let raw = int.to_unaligned();
-        CaseMappingDataULE::validate_byte_slice(raw.as_bytes())?;
+        CaseMapDataULE::validate_byte_slice(raw.as_bytes())?;
 
-        let this = Self::from_unaligned(CaseMappingDataULE(raw));
+        let this = Self::from_unaligned(CaseMapDataULE(raw));
         Ok(this)
     }
 }
 
-impl TrieValue for CaseMappingData {
+impl TrieValue for CaseMapData {
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        u16::try_from(i).map(|u| AsULE::from_unaligned(CaseMappingDataULE(u.to_unaligned())))
+        u16::try_from(i).map(|u| AsULE::from_unaligned(CaseMapDataULE(u.to_unaligned())))
     }
 
     fn to_u32(self) -> u32 {
@@ -335,9 +335,9 @@ impl TrieValue for CaseMappingData {
 /// </div>
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[repr(transparent)]
-pub struct CaseMappingDataULE(RawBytesULE<2>);
+pub struct CaseMapDataULE(RawBytesULE<2>);
 
-impl CaseMappingDataULE {
+impl CaseMapDataULE {
     // 1..0 case type
     const CASE_TYPE_BITS: u16 = 0x3;
     // 2 case-ignorable
@@ -370,7 +370,7 @@ impl CaseMappingDataULE {
 /// 5. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines: They have been
 /// 6. The equality invariant is satisfied
-unsafe impl ULE for CaseMappingDataULE {
+unsafe impl ULE for CaseMapDataULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let sixteens = RawBytesULE::<2>::parse_byte_slice(bytes)?;
 
@@ -393,26 +393,25 @@ unsafe impl ULE for CaseMappingDataULE {
     }
 }
 
-impl AsULE for CaseMappingData {
-    type ULE = CaseMappingDataULE;
+impl AsULE for CaseMapData {
+    type ULE = CaseMapDataULE;
 
     fn from_unaligned(ule: Self::ULE) -> Self {
         let sixteen = ule.0.as_unsigned_int();
 
-        let ignoreable = (sixteen & CaseMappingDataULE::CASE_IGNOREABLE_BIT) != 0;
-        let exception = (sixteen & CaseMappingDataULE::EXCEPTION_BIT) != 0;
+        let ignoreable = (sixteen & CaseMapDataULE::CASE_IGNOREABLE_BIT) != 0;
+        let exception = (sixteen & CaseMapDataULE::EXCEPTION_BIT) != 0;
 
-        let case_type = sixteen & CaseMappingDataULE::CASE_TYPE_BITS;
+        let case_type = sixteen & CaseMapDataULE::CASE_TYPE_BITS;
         let case_type = CaseType::from_masked_bits(case_type);
         let kind = if exception {
             // No need to mask first since the exception bits start at 15
-            let exception = sixteen >> CaseMappingDataULE::EXCEPTION_SHIFT;
-            CaseMappingDataKind::Exception(case_type, exception)
+            let exception = sixteen >> CaseMapDataULE::EXCEPTION_SHIFT;
+            CaseMapDataKind::Exception(case_type, exception)
         } else {
-            let dot_type =
-                (sixteen & CaseMappingDataULE::DOT_TYPE_BITS) >> CaseMappingDataULE::DOT_SHIFT;
+            let dot_type = (sixteen & CaseMapDataULE::DOT_TYPE_BITS) >> CaseMapDataULE::DOT_SHIFT;
             let dot_type = DotType::from_masked_bits(dot_type);
-            let sensitive = (sixteen & CaseMappingDataULE::CASE_SENSITIVE_BIT) != 0;
+            let sensitive = (sixteen & CaseMapDataULE::CASE_SENSITIVE_BIT) != 0;
             let ned = NonExceptionData {
                 dot_type,
                 sensitive,
@@ -421,46 +420,46 @@ impl AsULE for CaseMappingData {
                 // no need to mask first since the delta bits start at 15
                 // We can also cast as i16 first so we do not have to
                 // sign-extend later
-                let delta = (sixteen as i16) >> CaseMappingDataULE::DELTA_SHIFT;
-                CaseMappingDataKind::Delta(ned, case_type, delta)
+                let delta = (sixteen as i16) >> CaseMapDataULE::DELTA_SHIFT;
+                CaseMapDataKind::Delta(ned, case_type, delta)
             } else {
-                CaseMappingDataKind::Uncased(ned)
+                CaseMapDataKind::Uncased(ned)
             }
         };
-        CaseMappingData { ignoreable, kind }
+        CaseMapData { ignoreable, kind }
     }
 
     fn to_unaligned(self) -> Self::ULE {
         let mut sixteen = 0;
         if self.ignoreable {
-            sixteen |= CaseMappingDataULE::CASE_IGNOREABLE_BIT;
+            sixteen |= CaseMapDataULE::CASE_IGNOREABLE_BIT;
         }
         match self.kind {
-            CaseMappingDataKind::Exception(case_type, e) => {
-                sixteen |= CaseMappingDataULE::EXCEPTION_BIT;
-                sixteen |= e << CaseMappingDataULE::EXCEPTION_SHIFT;
+            CaseMapDataKind::Exception(case_type, e) => {
+                sixteen |= CaseMapDataULE::EXCEPTION_BIT;
+                sixteen |= e << CaseMapDataULE::EXCEPTION_SHIFT;
                 sixteen |= case_type.map(|c| c as u16).unwrap_or(0);
             }
-            CaseMappingDataKind::Uncased(ned) => {
-                sixteen |= (ned.dot_type as u16) << CaseMappingDataULE::DOT_SHIFT;
+            CaseMapDataKind::Uncased(ned) => {
+                sixteen |= (ned.dot_type as u16) << CaseMapDataULE::DOT_SHIFT;
                 if ned.sensitive {
-                    sixteen |= CaseMappingDataULE::CASE_SENSITIVE_BIT;
+                    sixteen |= CaseMapDataULE::CASE_SENSITIVE_BIT;
                 }
                 // Remaining bytes are left at zero
                 // case_type is Uncased (0)
             }
-            CaseMappingDataKind::Delta(ned, case_type, delta) => {
+            CaseMapDataKind::Delta(ned, case_type, delta) => {
                 // First shift (which keeps the signedness), then cast to the
                 // right type
-                sixteen |= (delta << CaseMappingDataULE::DELTA_SHIFT) as u16;
-                sixteen |= (ned.dot_type as u16) << CaseMappingDataULE::DOT_SHIFT;
+                sixteen |= (delta << CaseMapDataULE::DELTA_SHIFT) as u16;
+                sixteen |= (ned.dot_type as u16) << CaseMapDataULE::DOT_SHIFT;
                 if ned.sensitive {
-                    sixteen |= CaseMappingDataULE::CASE_SENSITIVE_BIT;
+                    sixteen |= CaseMapDataULE::CASE_SENSITIVE_BIT;
                 }
                 sixteen |= case_type as u16;
             }
         }
-        CaseMappingDataULE(sixteen.to_unaligned())
+        CaseMapDataULE(sixteen.to_unaligned())
     }
 }
 
@@ -470,18 +469,18 @@ mod tests {
 
     #[test]
     fn test_roundtrip() {
-        const TESTCASES: &[CaseMappingData] = &[
-            CaseMappingData {
+        const TESTCASES: &[CaseMapData] = &[
+            CaseMapData {
                 ignoreable: true,
-                kind: CaseMappingDataKind::Exception(Some(CaseType::Title), 923),
+                kind: CaseMapDataKind::Exception(Some(CaseType::Title), 923),
             },
-            CaseMappingData {
+            CaseMapData {
                 ignoreable: false,
-                kind: CaseMappingDataKind::Exception(None, 923),
+                kind: CaseMapDataKind::Exception(None, 923),
             },
-            CaseMappingData {
+            CaseMapData {
                 ignoreable: true,
-                kind: CaseMappingDataKind::Delta(
+                kind: CaseMapDataKind::Delta(
                     NonExceptionData {
                         sensitive: true,
                         dot_type: DotType::SoftDotted,
@@ -490,9 +489,9 @@ mod tests {
                     50,
                 ),
             },
-            CaseMappingData {
+            CaseMapData {
                 ignoreable: false,
-                kind: CaseMappingDataKind::Delta(
+                kind: CaseMapDataKind::Delta(
                     NonExceptionData {
                         sensitive: true,
                         dot_type: DotType::SoftDotted,
@@ -501,9 +500,9 @@ mod tests {
                     -50,
                 ),
             },
-            CaseMappingData {
+            CaseMapData {
                 ignoreable: false,
-                kind: CaseMappingDataKind::Uncased(NonExceptionData {
+                kind: CaseMapDataKind::Uncased(NonExceptionData {
                     sensitive: false,
                     dot_type: DotType::SoftDotted,
                 }),
@@ -512,10 +511,10 @@ mod tests {
 
         for case in TESTCASES {
             let ule = case.to_unaligned();
-            let roundtrip = CaseMappingData::from_unaligned(ule);
+            let roundtrip = CaseMapData::from_unaligned(ule);
             assert_eq!(*case, roundtrip);
             let integer = ule.0.as_unsigned_int();
-            let roundtrip2 = CaseMappingData::try_from_icu_integer(integer).unwrap();
+            let roundtrip2 = CaseMapData::try_from_icu_integer(integer).unwrap();
             assert_eq!(*case, roundtrip2);
         }
     }
@@ -523,7 +522,7 @@ mod tests {
     fn test_integer_roundtrip() {
         // Buggy roundtrip cases go here
         fn test_single_integer(int: u16) {
-            let cmd = CaseMappingData::try_from_icu_integer(int).unwrap();
+            let cmd = CaseMapData::try_from_icu_integer(int).unwrap();
             assert_eq!(int, cmd.to_unaligned().0.as_unsigned_int())
         }
 
