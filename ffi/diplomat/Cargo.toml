@@ -44,6 +44,7 @@ buffer_provider = [
     "dep:icu_provider_blob",
     "dep:serde",
     "icu_calendar?/serde",
+    "icu_casemap?/serde",
     "icu_collator?/serde",
     "icu_datetime?/serde",
     "icu_decimal?/serde",
@@ -79,6 +80,7 @@ default_components = ["icu_calendar", "icu_collator", "icu_datetime", "icu_decim
 # icu_displaynames is experimental, not included by default
 
 icu_calendar = ["dep:icu_calendar"]
+icu_casemap = ["dep:icu_casemap"]
 icu_collator = ["dep:icu_collator"]
 # icu_collections = ["dep:icu_collections"] # Not useful on its own
 icu_datetime = ["dep:icu_datetime", "dep:icu_calendar", "dep:icu_timezone", "dep:icu_decimal", "dep:icu_plurals"]
@@ -94,6 +96,7 @@ icu_timezone = ["dep:icu_timezone", "dep:icu_calendar"]
 
 compiled_data = [
     "icu_calendar?/compiled_data",
+    "icu_casemap?/compiled_data",
     "icu_collator?/compiled_data",
     "icu_datetime?/compiled_data",
     "icu_decimal?/compiled_data",
@@ -118,6 +121,7 @@ writeable = { version = "0.5.1", path = "../../utils/writeable/" }
 # Optional ICU4X components and their dependent utils
 fixed_decimal = { version = "0.5.2", path = "../../utils/fixed_decimal", features = ["ryu"] , optional = true}
 icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, optional = true }
+icu_casemap = { version = "0.7.2", path = "../../experimental/casemapping", default-features = false, optional = true }
 icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, optional = true }
 icu_collections = { version = "1.2.0", path = "../../components/collections", default-features = false, optional = true }
 icu_datetime = { version = "1.2.0", path = "../../components/datetime/", default-features = false, optional = true }

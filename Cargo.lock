@@ -1294,6 +1294,7 @@ dependencies = [
  "diplomat-runtime",
  "fixed_decimal",
  "icu_calendar",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_datetime",
