@@ -26,7 +26,7 @@ const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
 
 /// This represents case mapping exceptions that can't be represented as a delta applied to
 /// the original code point. The codepoint
-/// trie in CaseMapping stores indices into this VarZeroVec.
+/// trie in CaseMapper stores indices into this VarZeroVec.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,

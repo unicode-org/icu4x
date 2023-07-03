@@ -62,7 +62,7 @@ const _: () = {
     databake(path = icu_casemapping::provider),
 )]
 #[yoke(prove_covariance_manually)]
-/// CaseMapping provides low-level access to the data necessary to
+/// CaseMapper provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
 pub struct CaseMappingV1<'data> {
     /// Case mapping data
@@ -144,8 +144,8 @@ impl<'data> CaseMappingV1<'data> {
         Ok(result)
     }
 
-    /// Given an existing CaseMapping, validates that the data is
-    /// consistent. A CaseMapping created by the ICU transformer has
+    /// Given an existing CaseMapper, validates that the data is
+    /// consistent. A CaseMapper created by the ICU transformer has
     /// already been validated. Calling this function is only
     /// necessary if you are concerned about data corruption after
     /// deserializing.

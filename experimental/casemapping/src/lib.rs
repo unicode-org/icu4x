@@ -40,5 +40,5 @@ mod set;
 
 mod internals;
 
-pub use casemapping::CaseMapping;
+pub use casemapping::CaseMapper;
 pub use set::ClosureSet;

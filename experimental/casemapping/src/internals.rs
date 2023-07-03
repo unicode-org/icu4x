@@ -16,7 +16,7 @@ use writeable::Writeable;
 
 const ACUTE: char = '\u{301}';
 
-// Used to control the behavior of CaseMapping::fold.
+// Used to control the behavior of CaseMapper::fold.
 // Currently only used to decide whether to use Turkic (T) mappings for dotted/dotless i.
 #[derive(Default)]
 pub struct FoldOptions {
@@ -506,7 +506,7 @@ impl<'data> CaseMappingV1<'data> {
     /// Maps the string to single code points and adds the associated case closure
     /// mappings.
     ///
-    /// (see docs on CaseMapping::add_string_case_closure)
+    /// (see docs on CaseMapper::add_string_case_closure)
     pub(crate) fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
         if s.chars().count() <= 1 {
             // The string is too short to find any match.
