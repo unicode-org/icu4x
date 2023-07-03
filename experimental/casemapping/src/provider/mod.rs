@@ -39,8 +39,8 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_casemapping;
-    icu_casemapping_data::impl_props_casemap_v1!(Baked);
+    use crate as icu_casemap;
+    icu_casemap_data::impl_props_casemap_v1!(Baked);
 };
 
 /// This type contains all of the casemapping data
@@ -59,7 +59,7 @@ const _: () = {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_casemapping::provider),
+    databake(path = icu_casemap::provider),
 )]
 #[yoke(prove_covariance_manually)]
 /// CaseMapper provides low-level access to the data necessary to

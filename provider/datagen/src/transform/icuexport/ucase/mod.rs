@@ -5,7 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-use icu_casemapping::provider::{CaseMapV1, CaseMapV1Marker};
+use icu_casemap::provider::{CaseMapV1, CaseMapV1Marker};
 use icu_collections::codepointtrie::toml::CodePointDataSlice;
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;

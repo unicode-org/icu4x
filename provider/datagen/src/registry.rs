@@ -5,7 +5,7 @@
 use icu_provider::prelude::*;
 
 use icu_calendar::provider::*;
-use icu_casemapping::provider::*;
+use icu_casemap::provider::*;
 use icu_collator::provider::*;
 use icu_compactdecimal::provider::*;
 use icu_datetime::provider::calendar::*;

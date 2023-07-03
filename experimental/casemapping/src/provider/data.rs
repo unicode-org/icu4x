@@ -21,7 +21,7 @@ use zerovec::ZeroVecError;
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider::data))]
 pub enum CaseType {
     /// Lowercase letter
     Lower = 1,
@@ -63,7 +63,7 @@ impl CaseType {
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider::data))]
 pub enum DotType {
     /// Normal characters with combining class 0
     NoDot = 0,
@@ -118,7 +118,7 @@ pub(crate) enum MappingKind {
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider::data))]
 pub struct CaseMapData {
     /// Whether this is default-ignoreable
     pub ignoreable: bool,
@@ -135,7 +135,7 @@ pub struct CaseMapData {
 /// </div>
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider::data))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum CaseMapDataKind {
     /// This code point is an exception. Provides the case type of its own case
@@ -159,7 +159,7 @@ pub enum CaseMapDataKind {
 /// </div>
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider::data))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider::data))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct NonExceptionData {
     /// Whether or not the type is case-sensitive

@@ -37,7 +37,7 @@ const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_casemapping::provider::exceptions),
+    databake(path = icu_casemap::provider::exceptions),
 )]
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct CaseMapExceptions<'data> {

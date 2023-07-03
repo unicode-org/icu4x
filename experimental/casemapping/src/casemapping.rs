@@ -38,7 +38,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     /// use icu_locid::langid;
     ///
     /// let cm = CaseMapper::new();
@@ -178,7 +178,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     /// use icu_locid::langid;
     ///
     /// let cm = CaseMapper::new();
@@ -216,7 +216,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     /// use icu_locid::langid;
     ///
     /// let cm = CaseMapper::new();
@@ -262,7 +262,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     /// use icu_locid::langid;
     ///
     /// let cm = CaseMapper::new();
@@ -307,7 +307,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -338,7 +338,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -377,7 +377,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
     ///
     /// let cm = CaseMapper::new();
@@ -408,7 +408,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
     ///
     /// let cm = CaseMapper::new();
@@ -439,7 +439,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -460,7 +460,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -482,7 +482,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -520,7 +520,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -555,7 +555,7 @@ impl CaseMapper {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapper;
+    /// use icu_casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///

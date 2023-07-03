@@ -136,7 +136,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - Better FFI provider ownership (#3140)
  - Experimental:
    - `bies`: 0.2.0 -> 0.2.1
-   - `icu_casemapping`: 0.7.1 -> 0.7.2
+   - `icu_casemap`: 0.7.1 -> 0.7.2
    - `icu_compactdecimal`: 0.1.0 -> 0.2.0
     - Support configurable grouping separators in CompactDecimalFormatter (#3045)
    - `icu_displaynames`: 0.8.0 -> 0.10.0
@@ -156,7 +156,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   * Fix Time::from_minute_with_remainder_days to handle negatives (#2643) (#2702)
   * doc improvements
 
-* `icu_casemapping`
+* `icu_casemap`
   * doc improvements
 
 * `icu_collator`
