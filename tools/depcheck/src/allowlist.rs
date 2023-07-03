@@ -8,38 +8,53 @@
 /// In general it is fine to add new ICU4X components or utils here
 /// For other crates, please get approval from @unicode-org/icu4x-owners
 pub const BASIC_RUNTIME_DEPS: &[&str] = &[
-    "either",
-    "fixed_decimal",
-    "icu",
+    // ICU4X components
     "icu_calendar",
     "icu_collator",
     "icu_collections",
     "icu_datetime",
     "icu_decimal",
     "icu_list",
-    "icu_locid",
     "icu_locid_transform",
+    "icu_locid",
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",
     "icu_provider",
-    "icu_provider_adapters", // not included in icu, but needed generally
     "icu_segmenter",
     "icu_timezone",
-    "libm",
+    // ICU4X utils
+    "fixed_decimal",
+    "icu_provider_adapters", // not included in icu, but needed generally
     "litemap",
-    "memchr",
-    "regex-automata",
-    "smallvec",
-    "stable_deref_trait",
     "tinystr",
-    "utf16_iter",
-    "utf8_iter",
-    "write16",
     "writeable",
     "yoke",
     "zerofrom",
     "zerovec",
+    // ICU4X data
+    "icu_calendar_data",
+    "icu_collator_data",
+    "icu_datetime_data",
+    "icu_decimal_data",
+    "icu_list_data",
+    "icu_locid_transform_data",
+    "icu_normalizer_data",
+    "icu_plurals_data",
+    "icu_properties_data",
+    "icu_provider_data",
+    "icu_segmenter_data",
+    "icu_timezone_data",
+    // 3P dependencies
+    "either",
+    "libm",
+    "memchr",
+    "regex-automata",
+    "smallvec",
+    "stable_deref_trait",
+    "utf16_iter",
+    "utf8_iter",
+    "write16",
 ];
 
 /// Dependencies that are always allowed as buildtime dependencies
@@ -66,12 +81,19 @@ pub const EXTRA_SERDE_DEPS: &[&str] = &["deduplicating_array", "serde", "serde_d
 /// Dependencies allowed when opting in to experimental code
 /// This will likely grow when we add experimental crates
 pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
+    // ICU4X components
     "icu_casemapping",
     "icu_displaynames",
     "icu_personnames",
     "icu_relativetime",
     "icu_compactdecimal",
     "icu_unicodeset_parser",
+    // ICU4X data
+    "icu_casemapping_data",
+    "icu_displaynames_data",
+    "icu_personnames_data",
+    "icu_relativetime_data",
+    "icu_compactdecimal_data",
 ];
 
 /// Dependencies allowed when opting in to LSTM segmenter
@@ -117,7 +139,6 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "elsa",
     "erased-serde",
     "icu_codepointtrie_builder",
-    "icu_datagen",
     "itertools",
     "itoa",
     "lazy_static",

@@ -108,6 +108,9 @@ fn test_dep_list(
     }
 
     'dep_loop: for i in dep_list {
+        if i.crate_name == package {
+            continue;
+        }
         let name = &i.crate_name;
         for s in sets {
             if s.contains(&**name) {
