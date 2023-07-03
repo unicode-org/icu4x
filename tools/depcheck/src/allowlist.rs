@@ -83,14 +83,17 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
 /// Dependencies allowed when opting in to experimental code
 /// This will likely grow when we add experimental crates
 pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
-    // ICU4X components
     "icu_casemapping",
     "icu_displaynames",
     "icu_personnames",
     "icu_relativetime",
     "icu_compactdecimal",
     "icu_unicodeset_parser",
-    // ICU4X data
+];
+
+/// Dependencies allowed when opting in to compiled data
+/// for experimental crates.
+pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &[
     "icu_casemapping_data",
     "icu_displaynames_data",
     "icu_relativetime_data",

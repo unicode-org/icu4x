@@ -139,6 +139,7 @@ fn main() {
     let serde: BTreeSet<_> = EXTRA_SERDE_DEPS.iter().copied().collect();
     let data: BTreeSet<_> = EXTRA_DATA_DEPS.iter().copied().collect();
     let experimental: BTreeSet<_> = EXTRA_EXPERIMENTAL_DEPS.iter().copied().collect();
+    let experimental_data: BTreeSet<_> = EXTRA_EXPERIMENTAL_DATA_DEPS.iter().copied().collect();
     let lstm: BTreeSet<_> = EXTRA_LSTM_DEPS.iter().copied().collect();
     let ryu: BTreeSet<_> = EXTRA_RYU_DEPS.iter().copied().collect();
     let capi_runtime: BTreeSet<_> = EXTRA_CAPI_DEPS.iter().copied().collect();
@@ -174,14 +175,14 @@ fn main() {
         "icu",
         "normal",
         "--features compiled_data,experimental",
-        &[&basic, &data, &experimental],
+        &[&basic, &data, &experimental_data, &experimental],
         "`EXTRA_EXPERIMENTAL_DEPS`",
     );
     test_dep_list(
         "icu",
         "normal",
         "--features compiled_data,experimental,icu_segmenter/lstm",
-        &[&basic, &data, &experimental, &lstm],
+        &[&basic, &data, &experimental, &experimental_data, &lstm],
         "`EXTRA_LSTM_DEPS`",
     );
     test_dep_list(

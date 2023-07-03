@@ -11,7 +11,7 @@ edition = "2021"
 [dependencies]
 # Note: Only dependencies that are explicitly listed here are given public GN build targets.
 icu_capi = { version = "1.0", path = "../../ffi/diplomat", default-features = false, features = ["default_components", "provider_test", "any_provider"] }
-icu = { version = "1.0", path = "../../components/icu" }
+icu = { version = "1.0", path = "../../components/icu", default-features = false }
 icu_provider = { version = "1.0", path = "../../provider/core" }
 
 [gn.package.log."0.4.17"]
@@ -34,36 +34,6 @@ rustflags = []
 rustflags = []
 
 [gn.package.libm."0.2.6"]
-
-[gn.package.icu_calendar_data."1.3.0"]
-
-[gn.package.icu_collator_data."1.3.0"]
-
-[gn.package.icu_datetime_data."1.3.0"]
-
-[gn.package.icu_decimal_data."1.3.0"]
-
-[gn.package.icu_list_data."1.3.0"]
-
-[gn.package.icu_locid_transform_data."1.3.0"]
-
-[gn.package.icu_normalizer_data."1.3.0"]
-
-[gn.package.icu_plurals_data."1.3.0"]
-
-[gn.package.icu_properties_data."1.3.0"]
-
-[gn.package.icu_segmenter_data."1.3.0"]
-
-[gn.package.icu_timezone_data."1.3.0"]
-
-[gn.package.icu_casemapping_data."1.3.0"]
-
-[gn.package.icu_displaynames_data."1.3.0"]
-
-[gn.package.icu_relativetime_data."1.3.0"]
-
-[gn.package.icu_compactdecimal_data."1.3.0"]
 
 # Build cargo-gnaw with the checked-in lockfile
 [workspace]
