@@ -21,12 +21,12 @@ use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
     use crate as icu_timezone;
     icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);

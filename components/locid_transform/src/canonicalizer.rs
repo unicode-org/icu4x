@@ -208,7 +208,7 @@ where
     true
 }
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 impl Default for LocaleCanonicalizer {
     fn default() -> Self {
         Self::new()
@@ -218,10 +218,10 @@ impl Default for LocaleCanonicalizer {
 impl LocaleCanonicalizer {
     /// A constructor which creates a [`LocaleCanonicalizer`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self::new_with_expander(LocaleExpander::new_extended())
     }
@@ -259,10 +259,10 @@ impl LocaleCanonicalizer {
 
     /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] object.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new_with_expander(expander: LocaleExpander) -> Self {
         Self {
             aliases: DataPayload::from_static_ref(
@@ -285,6 +285,20 @@ impl LocaleCanonicalizer {
 
         Ok(LocaleCanonicalizer { aliases, expander })
     }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: skip,
+        options: LocaleExpander,
+        error: LocaleTransformError,
+        #[cfg(skip)]
+        functions: [
+            new_with_expander,
+            try_new_with_expander_with_any_provider,
+            try_new_with_expander_with_buffer_provider,
+            try_new_with_expander_unstable,
+            Self,
+        ]
+    );
 
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm

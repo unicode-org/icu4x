@@ -38,12 +38,12 @@ use crate::elements::NO_CE_PRIMARY;
 use super::CaseFirst;
 use super::MaxVariable;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
     use crate as icu_collator;
     icu_collator_data::impl_collator_data_v1!(Baked);
@@ -55,9 +55,9 @@ const _: () = {
 };
 
 const SINGLE_U32: &ZeroSlice<u32> =
-    zeroslice![u32; <u32 as AsULE>::ULE::from_unsigned; FFFD_CE32_VALUE];
+    zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [FFFD_CE32_VALUE]);
 const SINGLE_U64: &ZeroSlice<u64> =
-    zeroslice![u64; <u64 as AsULE>::ULE::from_unsigned; FFFD_CE_VALUE];
+    zeroslice!(u64; <u64 as AsULE>::ULE::from_unsigned; [FFFD_CE_VALUE]);
 
 fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
     // Collation::getThreeBytePrimaryForOffsetData

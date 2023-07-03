@@ -102,7 +102,7 @@ pub struct SentenceSegmenter {
     payload: DataPayload<SentenceBreakDataV1Marker>,
 }
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 impl Default for SentenceSegmenter {
     fn default() -> Self {
         Self::new()
@@ -112,10 +112,10 @@ impl Default for SentenceSegmenter {
 impl SentenceSegmenter {
     /// Constructs a [`SentenceSegmenter`] with an invariant locale.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
             payload: DataPayload::from_static_ref(

@@ -21,12 +21,12 @@ use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
     use crate as icu_calendar;
     icu_calendar_data::impl_calendar_japanese_v1!(Baked);

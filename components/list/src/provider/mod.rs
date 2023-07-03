@@ -23,12 +23,12 @@ use icu_provider::DataMarker;
 mod serde_dfa;
 pub use serde_dfa::SerdeDFA;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
     use crate as icu_list;
     icu_list_data::impl_list_and_v1!(Baked);
