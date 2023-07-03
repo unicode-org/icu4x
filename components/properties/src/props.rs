@@ -100,16 +100,6 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
         }
     }
 
-    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
-    where
-        M: DataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
-    {
-        Self {
-            map: data.cast(),
-            markers: PhantomData,
-        }
-    }
-    
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use methods on individual property value types
