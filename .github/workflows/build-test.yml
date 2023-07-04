@@ -308,11 +308,11 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Set up Clang-14
+    - name: Set up Clang-15
       run: |
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
-        sudo ./llvm.sh 14
+        sudo ./llvm.sh 15
     - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
       with:

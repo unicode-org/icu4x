@@ -37,22 +37,17 @@ description = "Verify that the minimum version of cargo-make exists"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.36.2" }
 
-# TODO: Use $ICU4X_NIGHTLY_TOOLCHAIN for coverage task
-[tasks.install-nightly-2022-08-25]
-description = "Installs nightly-2022-08-25"
-category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup install nightly-2022-08-25 --profile minimal
-'''
-
 [tasks.diplomat-coverage]
 description = "Produces the list of ICU APIs that are not exported through Diplomat"
 category = "ICU4X Development"
-dependencies = ["install-nightly-2022-08-25"]
-toolchain = "nightly-2022-08-25"
+dependencies = ["install-nightly"]
 script = '''
-cargo run -p icu_ffi_coverage --all-features > ffi/diplomat/tests/missing_apis.txt
+exit_on_error true
+if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
+    echo "Skipping diplomat-coverage since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
+else
+    cargo run -p icu_ffi_coverage --all-features > ffi/diplomat/tests/missing_apis.txt
+end
 '''
 
 [tasks.verify-diplomat-coverage]
