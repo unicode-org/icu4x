@@ -10,14 +10,15 @@
 //! It is an implementation of the the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
 use crate::codepointinvlist::{
-    CodePointInversionList, CodePointInversionListULE, CodePointInversionListBuilder, CodePointInversionListError,
+    CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError,
+    CodePointInversionListULE,
 };
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use displaydoc::Display;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
-use zerovec::{VarZeroVec, VarZeroSlice};
+use zerovec::{VarZeroSlice, VarZeroVec};
 
 /// A data structure providing a concrete implementation of a `UnicodeSet`
 /// (which represents a set of code points and strings) using an inversion list for the code points and a simple
