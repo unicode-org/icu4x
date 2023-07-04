@@ -16,13 +16,11 @@ use tinystr::TinyAsciiStr;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct CurrencyPatterns {
-    // /// Map from plural category to the corresponding long pattern
-    // pub symbols: HashMap<TinyStr8, String>,
-
-    pub symbol: Option<String>,
+    #[serde(rename = "symbol")]
+    pub short: Option<String>,
 
     #[serde(rename = "symbol-alt-narrow")]
-    pub symbol_narrow: Option<String>,
+    pub narrow: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

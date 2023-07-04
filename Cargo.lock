@@ -2020,6 +2020,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "serde",
+ "tinystr",
  "zerovec",
 ]
 

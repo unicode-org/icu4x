@@ -310,7 +310,7 @@ registry!(
         NarrowYearRelativeTimeFormatDataV1Marker,
         LongCompactDecimalFormatDataV1Marker,
         ShortCompactDecimalFormatDataV1Marker,
-        CurrencyEssentialUsdV1Marker,
+        CurrencyEssentialV1Maker,
     }
 );
 

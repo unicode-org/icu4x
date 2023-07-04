@@ -22,6 +22,8 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 displaydoc = { version = "0.2.3", default-features = false }
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
+tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["zerovec"], default-features = false }
+
 
 [dev-dependencies]
 

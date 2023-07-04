@@ -10,10 +10,13 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
+use databake::Bake;
 use icu_provider::{yoke, zerofrom};
-use zerovec::ZeroMap;
+use serde::{Deserialize, Serialize};
+use tinystr::TinyAsciiStr;
+use zerovec::{VarZeroVec, ZeroMap};
 
-#[icu_provider::data_struct(CurrencyEssentialUsdV1Marker = "currency/usd/essential@1")]
+#[icu_provider::data_struct(CurrencyEssentialV1Maker = "currency/essential@1")]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -24,13 +27,98 @@ use zerovec::ZeroMap;
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentialV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub symbol: Cow<'data, str>,
+    pub indices_map: ZeroMap<'data, TinyAsciiStr<3>, PatternsIndices>,
+
+    // #[cfg_attr(feature = "serde", serde(borrow))]
+    // pub currencies_meta_data: VarZeroVec<'data, CurrencyPatternWithMetaDataULE>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pattern: CurrencyPattern<'data>,
+    pub place_holders: VarZeroVec<'data, str>,
 }
 
-#[icu_provider::data_struct(CurrencyLongUsdV1Marker = "currency/usd/long@1")]
+#[zerovec::make_ule(PatternsIndicesULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_singlenumberformatter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
+pub struct PatternsIndices {
+    pub short_pattern: u16,
+    pub narrow_pattern: u16,
+    pub short_place_holder: u16,
+    pub narrow_place_holder: u16,
+}
+
+#[zerovec::make_varule(CurrencyPatternWithMetaDataULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_singlenumberformatter::provider),
+)]
+#[zerovec::derive(Serialize, Deserialize, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
+pub struct CurrencyPatternWithMetaData<'data> {
+    pub standard_rounding: u16,
+    pub cash_rounding: u16,
+    pub place_holder: Cow<'data, str>,
+}
+
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+#[icu_provider::data_struct(CurrencyLongUsdV1Marker = "currency/long@1")]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
