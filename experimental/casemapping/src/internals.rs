@@ -6,6 +6,7 @@
 //!
 //! Primarily, it implements methods on `CaseMapV1`, which contains the data model.
 
+use crate::greek_to_me::{self, GreekDiacritics};
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::CaseMapV1;
@@ -158,12 +159,14 @@ impl<'data> CaseMapV1<'data> {
         }
 
         if !IS_TITLE_CONTEXT && locale == CaseMapLocale::Greek && kind == MappingKind::Upper {
-            if is_greek_diacritic_except_ypogegrammeni(c) && context.preceded_by_greek_letter() {
+            if greek_to_me::is_greek_diacritic_except_ypogegrammeni(c)
+                && context.preceded_by_greek_letter()
+            {
                 return FullMappingResult::Remove;
             }
-            if let Some(upper_base) = greek_base_uppercase(c) {
-                let mut diacritics =
-                    context.add_greek_diacritics(GreekDiacritics::on_precomposed_letter(c));
+            let data = greek_to_me::GREEK_DATA_TRIE.get(c);
+            if let Some(upper_base) = data.greek_base_uppercase() {
+                let mut diacritics = context.add_greek_diacritics(data.diacritics());
                 diacritics.dialytika = diacritics.dialytika
                     || ((upper_base == 'Ι' || upper_base == 'Υ')
                         && context.preceded_by_greek_accented_vowel_with_no_dialytika());
@@ -669,67 +672,6 @@ pub(crate) struct ContextIterator<'a> {
     after: &'a str,
 }
 
-struct GreekDiacritics {
-    accented: bool,
-    dialytika: bool,
-    precomposed_ypogegrammeni: bool,
-    combining_ypogegrammeni: bool,
-}
-
-impl GreekDiacritics {
-    fn on_precomposed_letter(c: char) -> GreekDiacritics {
-        GreekDiacritics{
-            // [:toNFD=/[\u0300\u0301\u0342\u0302\u0303\u0311]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
-            accented:"ἄἌᾄᾌἂἊᾂᾊἆἎᾆᾎἅἍᾅᾍἃἋᾃᾋἇἏᾇᾏάάΆΆᾴὰᾺᾲᾶᾷἔἜἒἚἕἝἓἛέέΈΈὲῈἤἬᾔᾜἢἪᾒᾚἦἮᾖᾞἥἭᾕᾝἣἫᾓᾛἧἯᾗᾟήήΉΉῄὴῊῂῆῇἴἼἲἺἶἾἵἽἳἻἷἿίίΊΊὶῚῖΐΐῒῗὄὌὂὊὅὍὃὋόόΌΌὸῸὔὒὖὕὝὓὛὗὟύύΎΎϓὺῪῦΰΰῢῧὤὬᾤᾬὢὪᾢᾪὦὮᾦᾮὥὭᾥᾭὣὫᾣᾫὧὯᾧᾯώώΏΏῴὼῺῲῶῷ".contains(c),
-            // [:toNFD=/[\u0308]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
-            dialytika:"ϊΪΐΐῒῗϋΫϔΰΰῢῧ".contains(c),
-            // [:toNFD=/[\u0345]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
-            precomposed_ypogegrammeni: "ᾄᾌᾂᾊᾆᾎᾀᾈᾅᾍᾃᾋᾇᾏᾁᾉᾴᾲᾷᾳᾼᾔᾜᾒᾚᾖᾞᾐᾘᾕᾝᾓᾛᾗᾟᾑᾙῄῂῇῃῌᾤᾬᾢᾪᾦᾮᾠᾨᾥᾭᾣᾫᾧᾯᾡᾩῴῲῷῳῼ".contains(c),
-            combining_ypogegrammeni: false,}
-    }
-}
-
-/// TODO(egg): data structures.
-/// `[[:Grek:]&[:L:]-[\u1D00-\u1DBF\uAB65]]` (the small capitals are excluded).
-const GREEK_LETTERS        : &str = "αΑἀἈἄἌᾄᾌἂἊᾂᾊἆἎᾆᾎᾀᾈἁἉἅἍᾅᾍἃἋᾃᾋἇἏᾇᾏᾁᾉάάΆΆᾴὰᾺᾲᾰᾸᾶᾷᾱᾹᾳᾼβϐΒγΓδΔεϵΕἐἘἔἜἒἚἑἙἕἝἓἛέέΈΈὲῈϝϜͷͶϛϚζΖͱͰηΗἠἨἤἬᾔᾜἢἪᾒᾚἦἮᾖᾞᾐᾘἡἩἥἭᾕᾝἣἫᾓᾛἧἯᾗᾟᾑᾙήήΉΉῄὴῊῂῆῇῃῌθϑΘϴιιͺΙἰἸἴἼἲἺἶἾἱἹἵἽἳἻἷἿίίΊΊὶῚῐῘῖϊΪΐΐῒῗῑῙϳͿκϰΚϗϏλΛμΜνΝξΞοΟὀὈὄὌὂὊὁὉὅὍὃὋόόΌΌὸῸπϖΠϻϺϟϞϙϘρϱΡῤῥῬϼσϲςΣϹͼϾͻϽͽϿτΤυΥϒὐὔὒὖὑὙὕὝὓὛὗὟύύΎΎϓὺῪῠῨῦϋΫϔΰΰῢῧῡῩφϕΦχΧψΨωΩΩὠὨὤὬᾤᾬὢὪᾢᾪὦὮᾦᾮᾠᾨὡὩὥὭᾥᾭὣὫᾣᾫὧὯᾧᾯᾡᾩώώΏΏῴὼῺῲῶῷῳῼϡϠͳͲϸϷ";
-/// Obtained from [`GREEK_LETTERS`] by
-/// ```
-/// :: NFD;
-/// \P{L} → ;
-/// :: Any-Upper;
-/// ```
-const GREEK_BASE_UPPERCASE : &str = "ΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΒΒΒΓΓΔΔΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕϜϜͶͶϚϚΖΖͰͰΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΘΘΘϴΙΙͺΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙͿͿΚΚΚϏϏΛΛΜΜΝΝΞΞΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΠΠΠϺϺϞϞϘϘΡΡΡΡΡΡϼΣϹΣΣϹϾϾϽϽϿϿΤΤΥΥϒΥΥΥΥΥΥΥΥΥΥΥΥΥΥΥΥϒΥΥΥΥΥΥΥϒΥΥΥΥΥΥΦΦΦΧΧΨΨΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩϠϠͲͲϷϷ";
-
-fn greek_base_uppercase(c: char) -> Option<char> {
-    return GREEK_LETTERS
-        .chars()
-        .position(|letter| c == letter)
-        .map(|i| GREEK_BASE_UPPERCASE.chars().nth(i).unwrap());
-}
-
-fn is_greek_letter(c: char) -> bool {
-    greek_base_uppercase(c).is_some()
-}
-
-fn is_greek_diacritic_except_ypogegrammeni(c: char) -> bool {
-    matches!(
-        c,
-        '\u{0300}'
-            | '\u{0301}'
-            | '\u{0342}'
-            | '\u{0302}'
-            | '\u{0303}'
-            | '\u{0311}'
-            | '\u{0344}'
-            | '\u{0308}'
-            | '\u{0304}'
-            | '\u{0306}'
-            | '\u{0313}'
-            | '\u{0314}'
-            | '\u{0343}'
-    )
-}
-
 impl<'a> ContextIterator<'a> {
     // Returns a context iterator with the characters before
     // and after the character at a given index, given the preceding
@@ -741,61 +683,17 @@ impl<'a> ContextIterator<'a> {
         Self { before, after }
     }
 
-    fn add_greek_diacritics(&self, diacritics: GreekDiacritics) -> GreekDiacritics {
-        let mut diacritics = diacritics;
-        for c in self.after.chars() {
-            match c {
-                '\u{0300}' | '\u{0301}' | '\u{0342}' | '\u{0302}' | '\u{0303}' | '\u{0311}' => {
-                    diacritics.accented = true
-                }
-                '\u{0344}' => {
-                    diacritics.dialytika = true;
-                    diacritics.accented = true;
-                }
-                '\u{0308}' => diacritics.dialytika = true,
-                '\u{0345}' => diacritics.combining_ypogegrammeni = true,
-                '\u{0304}' | '\u{0306}' | '\u{0313}' | '\u{0314}' | '\u{0343}' => continue,
-                _ => break,
-            }
-        }
+    fn add_greek_diacritics(&self, mut diacritics: GreekDiacritics) -> GreekDiacritics {
+        diacritics.consume_greek_diacritics(self.after);
         diacritics
     }
 
     fn preceded_by_greek_letter(&self) -> bool {
-        for c in self.before.chars().rev() {
-            match c {
-                '\u{0300}' | '\u{0301}' | '\u{0342}' | '\u{0302}' | '\u{0303}' | '\u{0311}'
-                | '\u{0344}' | '\u{0308}' | '\u{0345}' | '\u{0304}' | '\u{0306}' | '\u{0313}'
-                | '\u{0314}' | '\u{0343}' => continue,
-                _ => return is_greek_letter(c),
-            }
-        }
-        return false;
+        greek_to_me::preceded_by_greek_letter(self.before)
     }
 
     fn preceded_by_greek_accented_vowel_with_no_dialytika(&self) -> bool {
-        let mut accented = false;
-        for c in self.before.chars().rev() {
-            match c {
-                '\u{0300}' | '\u{0301}' | '\u{0342}' | '\u{0302}' | '\u{0303}' | '\u{0311}' => {
-                    accented = true
-                }
-                '\u{0344}' | '\u{0308}' => return false, // Dialytika.
-                '\u{0345}' | '\u{0304}' | '\u{0306}' | '\u{0313}' | '\u{0314}' | '\u{0343}' => {
-                    continue
-                }
-                _ => {
-                    return greek_base_uppercase(c).is_some_and(|letter| {
-                        let is_vowel = "ΑΕΗΙΟΥΩ".contains(letter);
-                        let base_diacritics = GreekDiacritics::on_precomposed_letter(c);
-                        return is_vowel
-                            && (accented || base_diacritics.accented)
-                            && !base_diacritics.dialytika;
-                    });
-                }
-            }
-        }
-        return false;
+        greek_to_me::preceded_by_greek_accented_vowel_with_no_dialytika(self.before)
     }
 
     fn preceded_by_soft_dotted(&self, mapping: &CaseMapV1) -> bool {
