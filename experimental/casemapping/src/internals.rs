@@ -157,6 +157,71 @@ impl<'data> CaseMapV1<'data> {
             }
         }
 
+        if !IS_TITLE_CONTEXT && locale == CaseMapLocale::Greek && kind == MappingKind::Upper {
+            if is_greek_diacritic_except_ypogegrammeni(c) && context.preceded_by_greek_letter() {
+                return FullMappingResult::Remove;
+            }
+            if let Some(upper_base) = greek_base_uppercase(c) {
+                let mut diacritics =
+                    context.add_greek_diacritics(GreekDiacritics::on_precomposed_letter(c));
+                diacritics.dialytika = diacritics.dialytika
+                    || ((upper_base == 'Ι' || upper_base == 'Υ')
+                        && context.preceded_by_greek_accented_vowel_with_no_dialytika());
+                let (letter, combining) = match upper_base {
+                    'Η' => {
+                        if diacritics.accented
+                            && !context.followed_by_cased_letter(self)
+                            && !context.preceded_by_cased_letter(self)
+                            && !diacritics.precomposed_ypogegrammeni
+                            && !diacritics.combining_ypogegrammeni
+                        {
+                            if diacritics.dialytika {
+                                ('Ή', Some('\u{0308}'))
+                            } else {
+                                ('Ή', None)
+                            }
+                        } else {
+                            (upper_base, None)
+                        }
+                    }
+                    'Ι' => {
+                        if diacritics.dialytika {
+                            ('Ϊ', None)
+                        } else {
+                            (upper_base, None)
+                        }
+                    }
+                    'Υ' => {
+                        if diacritics.dialytika {
+                            ('Ϋ', None)
+                        } else {
+                            (upper_base, None)
+                        }
+                    }
+                    _ => {
+                        if diacritics.dialytika {
+                            (upper_base, Some('\u{0308}'))
+                        } else {
+                            (upper_base, None)
+                        }
+                    }
+                };
+                if let Some(mark) = combining {
+                    if diacritics.precomposed_ypogegrammeni {
+                        return FullMappingResult::ThreeCodePoints(letter, mark, 'Ι');
+                    } else {
+                        return FullMappingResult::TwoCodePoints(letter, mark);
+                    }
+                } else {
+                    if diacritics.precomposed_ypogegrammeni {
+                        return FullMappingResult::TwoCodePoints(letter, 'Ι');
+                    } else {
+                        return FullMappingResult::CodePoint(letter);
+                    }
+                }
+            }
+        }
+
         let data = self.lookup_data(c);
         if !data.has_exception() {
             if data.is_relevant_to(kind) {
@@ -396,6 +461,19 @@ impl<'data> CaseMapV1<'data> {
                             sink.write_char(c2)?;
                             last_uncopied_idx = i + c.len_utf8();
                         }
+                        FullMappingResult::TwoCodePoints(c2, c3) => {
+                            sink.write_str(&src[last_uncopied_idx..i])?;
+                            sink.write_char(c2)?;
+                            sink.write_char(c3)?;
+                            last_uncopied_idx = i + c.len_utf8();
+                        }
+                        FullMappingResult::ThreeCodePoints(c2, c3, c4) => {
+                            sink.write_str(&src[last_uncopied_idx..i])?;
+                            sink.write_char(c2)?;
+                            sink.write_char(c3)?;
+                            sink.write_char(c4)?;
+                            last_uncopied_idx = i + c.len_utf8();
+                        }
                         FullMappingResult::Remove => {
                             sink.write_str(&src[last_uncopied_idx..i])?;
                             last_uncopied_idx = i + c.len_utf8();
@@ -562,6 +640,8 @@ pub enum FullMappingResult<'a> {
     Remove,
     CodePoint(char),
     String(&'a str),
+    TwoCodePoints(char, char),
+    ThreeCodePoints(char, char, char),
 }
 
 impl<'a> FullMappingResult<'a> {
@@ -569,6 +649,15 @@ impl<'a> FullMappingResult<'a> {
     fn add_to_set<S: ClosureSet>(&self, set: &mut S) {
         match self {
             FullMappingResult::CodePoint(c) => set.add_char(*c),
+            FullMappingResult::TwoCodePoints(c1, c2) => {
+                set.add_char(*c1);
+                set.add_char(*c2)
+            }
+            FullMappingResult::ThreeCodePoints(c1, c2, c3) => {
+                set.add_char(*c1);
+                set.add_char(*c2);
+                set.add_char(*c3)
+            }
             FullMappingResult::String(s) => set.add_string(s),
             FullMappingResult::Remove => {}
         }
@@ -580,6 +669,67 @@ pub(crate) struct ContextIterator<'a> {
     after: &'a str,
 }
 
+struct GreekDiacritics {
+    accented: bool,
+    dialytika: bool,
+    precomposed_ypogegrammeni: bool,
+    combining_ypogegrammeni: bool,
+}
+
+impl GreekDiacritics {
+    fn on_precomposed_letter(c: char) -> GreekDiacritics {
+        GreekDiacritics{
+            // [:toNFD=/[\u0300\u0301\u0342\u0302\u0303\u0311]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
+            accented:"ἄἌᾄᾌἂἊᾂᾊἆἎᾆᾎἅἍᾅᾍἃἋᾃᾋἇἏᾇᾏάάΆΆᾴὰᾺᾲᾶᾷἔἜἒἚἕἝἓἛέέΈΈὲῈἤἬᾔᾜἢἪᾒᾚἦἮᾖᾞἥἭᾕᾝἣἫᾓᾛἧἯᾗᾟήήΉΉῄὴῊῂῆῇἴἼἲἺἶἾἵἽἳἻἷἿίίΊΊὶῚῖΐΐῒῗὄὌὂὊὅὍὃὋόόΌΌὸῸὔὒὖὕὝὓὛὗὟύύΎΎϓὺῪῦΰΰῢῧὤὬᾤᾬὢὪᾢᾪὦὮᾦᾮὥὭᾥᾭὣὫᾣᾫὧὯᾧᾯώώΏΏῴὼῺῲῶῷ".contains(c),
+            // [:toNFD=/[\u0308]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
+            dialytika:"ϊΪΐΐῒῗϋΫϔΰΰῢῧ".contains(c),
+            // [:toNFD=/[\u0345]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
+            precomposed_ypogegrammeni: "ᾄᾌᾂᾊᾆᾎᾀᾈᾅᾍᾃᾋᾇᾏᾁᾉᾴᾲᾷᾳᾼᾔᾜᾒᾚᾖᾞᾐᾘᾕᾝᾓᾛᾗᾟᾑᾙῄῂῇῃῌᾤᾬᾢᾪᾦᾮᾠᾨᾥᾭᾣᾫᾧᾯᾡᾩῴῲῷῳῼ".contains(c),
+            combining_ypogegrammeni: false,}
+    }
+}
+
+/// TODO(egg): data structures.
+/// `[[:Grek:]&[:L:]-[\u1D00-\u1DBF\uAB65]]` (the small capitals are excluded).
+const GREEK_LETTERS        : &str = "αΑἀἈἄἌᾄᾌἂἊᾂᾊἆἎᾆᾎᾀᾈἁἉἅἍᾅᾍἃἋᾃᾋἇἏᾇᾏᾁᾉάάΆΆᾴὰᾺᾲᾰᾸᾶᾷᾱᾹᾳᾼβϐΒγΓδΔεϵΕἐἘἔἜἒἚἑἙἕἝἓἛέέΈΈὲῈϝϜͷͶϛϚζΖͱͰηΗἠἨἤἬᾔᾜἢἪᾒᾚἦἮᾖᾞᾐᾘἡἩἥἭᾕᾝἣἫᾓᾛἧἯᾗᾟᾑᾙήήΉΉῄὴῊῂῆῇῃῌθϑΘϴιιͺΙἰἸἴἼἲἺἶἾἱἹἵἽἳἻἷἿίίΊΊὶῚῐῘῖϊΪΐΐῒῗῑῙϳͿκϰΚϗϏλΛμΜνΝξΞοΟὀὈὄὌὂὊὁὉὅὍὃὋόόΌΌὸῸπϖΠϻϺϟϞϙϘρϱΡῤῥῬϼσϲςΣϹͼϾͻϽͽϿτΤυΥϒὐὔὒὖὑὙὕὝὓὛὗὟύύΎΎϓὺῪῠῨῦϋΫϔΰΰῢῧῡῩφϕΦχΧψΨωΩΩὠὨὤὬᾤᾬὢὪᾢᾪὦὮᾦᾮᾠᾨὡὩὥὭᾥᾭὣὫᾣᾫὧὯᾧᾯᾡᾩώώΏΏῴὼῺῲῶῷῳῼϡϠͳͲϸϷ";
+/// Obtained from [`GREEK_LETTERS`] by
+/// ```
+/// :: NFD;
+/// \P{L} → ;
+/// :: Any-Upper;
+/// ```
+const GREEK_BASE_UPPERCASE : &str = "ΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΑΒΒΒΓΓΔΔΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕΕϜϜͶͶϚϚΖΖͰͰΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΗΘΘΘϴΙΙͺΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙΙͿͿΚΚΚϏϏΛΛΜΜΝΝΞΞΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΟΠΠΠϺϺϞϞϘϘΡΡΡΡΡΡϼΣϹΣΣϹϾϾϽϽϿϿΤΤΥΥϒΥΥΥΥΥΥΥΥΥΥΥΥΥΥΥΥϒΥΥΥΥΥΥΥϒΥΥΥΥΥΥΦΦΦΧΧΨΨΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩϠϠͲͲϷϷ";
+
+fn greek_base_uppercase(c: char) -> Option<char> {
+    return GREEK_LETTERS
+        .chars()
+        .position(|letter| c == letter)
+        .map(|i| GREEK_BASE_UPPERCASE.chars().nth(i).unwrap());
+}
+
+fn is_greek_letter(c: char) -> bool {
+    greek_base_uppercase(c).is_some()
+}
+
+fn is_greek_diacritic_except_ypogegrammeni(c: char) -> bool {
+    matches!(
+        c,
+        '\u{0300}'
+            | '\u{0301}'
+            | '\u{0342}'
+            | '\u{0302}'
+            | '\u{0303}'
+            | '\u{0311}'
+            | '\u{0344}'
+            | '\u{0308}'
+            | '\u{0304}'
+            | '\u{0306}'
+            | '\u{0313}'
+            | '\u{0314}'
+            | '\u{0343}'
+    )
+}
+
 impl<'a> ContextIterator<'a> {
     // Returns a context iterator with the characters before
     // and after the character at a given index, given the preceding
@@ -589,6 +739,63 @@ impl<'a> ContextIterator<'a> {
         char_and_after.next(); // skip the character itself
         let after = char_and_after.as_str();
         Self { before, after }
+    }
+
+    fn add_greek_diacritics(&self, diacritics: GreekDiacritics) -> GreekDiacritics {
+        let mut diacritics = diacritics;
+        for c in self.after.chars() {
+            match c {
+                '\u{0300}' | '\u{0301}' | '\u{0342}' | '\u{0302}' | '\u{0303}' | '\u{0311}' => {
+                    diacritics.accented = true
+                }
+                '\u{0344}' => {
+                    diacritics.dialytika = true;
+                    diacritics.accented = true;
+                }
+                '\u{0308}' => diacritics.dialytika = true,
+                '\u{0345}' => diacritics.combining_ypogegrammeni = true,
+                '\u{0304}' | '\u{0306}' | '\u{0313}' | '\u{0314}' | '\u{0343}' => continue,
+                _ => break,
+            }
+        }
+        diacritics
+    }
+
+    fn preceded_by_greek_letter(&self) -> bool {
+        for c in self.before.chars().rev() {
+            match c {
+                '\u{0300}' | '\u{0301}' | '\u{0342}' | '\u{0302}' | '\u{0303}' | '\u{0311}'
+                | '\u{0344}' | '\u{0308}' | '\u{0345}' | '\u{0304}' | '\u{0306}' | '\u{0313}'
+                | '\u{0314}' | '\u{0343}' => continue,
+                _ => return is_greek_letter(c),
+            }
+        }
+        return false;
+    }
+
+    fn preceded_by_greek_accented_vowel_with_no_dialytika(&self) -> bool {
+        let mut accented = false;
+        for c in self.before.chars().rev() {
+            match c {
+                '\u{0300}' | '\u{0301}' | '\u{0342}' | '\u{0302}' | '\u{0303}' | '\u{0311}' => {
+                    accented = true
+                }
+                '\u{0344}' | '\u{0308}' => return false, // Dialytika.
+                '\u{0345}' | '\u{0304}' | '\u{0306}' | '\u{0313}' | '\u{0314}' | '\u{0343}' => {
+                    continue
+                }
+                _ => {
+                    return greek_base_uppercase(c).is_some_and(|letter| {
+                        let is_vowel = "ΑΕΗΙΟΥΩ".contains(letter);
+                        let base_diacritics = GreekDiacritics::on_precomposed_letter(c);
+                        return is_vowel
+                            && (accented || base_diacritics.accented)
+                            && !base_diacritics.dialytika;
+                    });
+                }
+            }
+        }
+        return false;
     }
 
     fn preceded_by_soft_dotted(&self, mapping: &CaseMapV1) -> bool {
