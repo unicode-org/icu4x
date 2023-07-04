@@ -35,3 +35,6 @@ log = "0.4"
 
 [dev-dependencies]
 icu_testdata = { version = "1.2.0", path = "../../provider/testdata" }
+
+[features]
+compiled_data = ["icu_properties/compiled_data"]

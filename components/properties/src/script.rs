@@ -549,6 +549,15 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     }
 }
 
+impl ScriptWithExtensionsBorrowed<'static> {
+    /// Cheaply converts a `ScriptWithExtensionsBorrowed<'static>` into a `ScriptWithExtensions`.
+    pub fn static_to_owned(self) -> ScriptWithExtensions {
+        ScriptWithExtensions {
+            data: DataPayload::from_static_ref(self.data),
+        }
+    }
+}
+
 /// Returns a [`ScriptWithExtensionsBorrowed`] struct that represents the data for the Script
 /// and Script_Extensions properties.
 ///

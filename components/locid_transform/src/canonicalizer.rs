@@ -286,6 +286,20 @@ impl LocaleCanonicalizer {
         Ok(LocaleCanonicalizer { aliases, expander })
     }
 
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: skip,
+        options: LocaleExpander,
+        error: LocaleTransformError,
+        #[cfg(skip)]
+        functions: [
+            new_with_expander,
+            try_new_with_expander_with_any_provider,
+            try_new_with_expander_with_buffer_provider,
+            try_new_with_expander_unstable,
+            Self,
+        ]
+    );
+
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm
     /// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>.
