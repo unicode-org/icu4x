@@ -974,9 +974,9 @@ where
 ///
 /// Parse ranges
 /// ```
-/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
 ///
-/// let set = parse_unstable("[a-zA-Z0-9]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let set = parse("[a-zA-Z0-9]", Default::default()).unwrap();
 /// let code_points = set.code_points();
 ///
 /// assert!(code_points.contains_range(&('a'..='z')));
@@ -986,9 +986,9 @@ where
 ///
 /// Parse properties, set operations, inner sets
 /// ```
-/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
 ///
-/// let set = parse_unstable("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let set = parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]", Default::default()).unwrap();
 /// let elements = 'a'..='z';
 /// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(elements.count(), set.size());
@@ -996,9 +996,9 @@ where
 ///
 /// Inversions remove strings
 /// ```
-/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
 ///
-/// let set = parse_unstable(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let set = parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]", Default::default()).unwrap();
 /// assert!(set.contains_char('z'));
 /// assert_eq!(set.size(), 1);
 /// assert!(!set.has_strings());
@@ -1006,13 +1006,22 @@ where
 ///
 /// Set operators (including the implicit union) have the same precedence and are left-associative
 /// ```
-/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
 ///
-/// let set = parse_unstable("[[ace][bdf] - [abc][def]]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let set = parse("[[ace][bdf] - [abc][def]]", Default::default()).unwrap();
 /// let elements = 'd'..='f';
 /// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(set.size(), elements.count());
 /// ```
+#[cfg(feature = "compiled_data")]
+pub fn parse(
+    source: &str,
+    options: UnicodeSetBuilderOptions,
+) -> Result<CodePointInversionListAndStringList<'static>> {
+    parse_unstable(source, options, &icu_properties::provider::Baked)
+}
+
+#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse)]
 pub fn parse_unstable<P>(
     source: &str,
     options: UnicodeSetBuilderOptions,

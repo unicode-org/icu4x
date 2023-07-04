@@ -34,7 +34,8 @@ impl_tinystr_subtag!(
     ///
     /// [`unicode_language_id`]: https://unicode.org/reports/tr35/#unicode_language_id
     Language,
-    subtags::Language,
+    subtags,
+    language,
     subtags_language,
     2..=3,
     s,
@@ -63,7 +64,7 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{subtags::Language, subtags_language as language};
+    /// use icu::locid::subtags::{language, Language};
     ///
     /// let mut lang = language!("csb");
     ///

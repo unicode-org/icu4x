@@ -279,7 +279,7 @@ where
 
     #[cfg(feature = "experimental")]
     fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
-        use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
+        use icu_locid::extensions::unicode::{key, value};
         let mut locale = self.locale.clone();
         #[allow(clippy::expect_used)] // experimental
         let cal_val = self.cal_val.expect("should be present for components bag");

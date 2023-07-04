@@ -21,7 +21,7 @@ rustflags = ["--cfg=atomic_cas", "--cfg=has_atomics"]
 [gn.package.memchr."2.5.0"]
 rustflags = []
 
-[gn.package.proc-macro2."1.0.56"]
+[gn.package.proc-macro2."1.0.63"]
 rustflags = ["--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_span"]
 
 [gn.package.quote."1.0.26"]

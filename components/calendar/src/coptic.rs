@@ -38,7 +38,6 @@ use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 /// The [Coptic Calendar]
@@ -125,7 +124,7 @@ impl Calendar for Coptic {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(CopticDateInner)
+        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(CopticDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> CopticDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
@@ -219,12 +218,8 @@ impl Coptic {
     }
 
     pub(crate) fn fixed_from_coptic_integers(year: i32, month: u8, day: u8) -> RataDie {
-        Self::fixed_from_coptic(ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        })
+        // TODO: Should we check bounds here?
+        Self::fixed_from_coptic(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
@@ -271,19 +266,9 @@ impl Date<Coptic> {
         month: u8,
         day: u8,
     ) -> Result<Date<Coptic>, CalendarError> {
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        let bound = inner.days_in_month();
-        if day > bound {
-            return Err(CalendarError::OutOfRange);
-        }
-
-        Ok(Date::from_raw(CopticDateInner(inner), Coptic))
+        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+            .map(CopticDateInner)
+            .map(|inner| Date::from_raw(inner, Coptic))
     }
 }
 
@@ -326,12 +311,14 @@ fn year_as_coptic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "ad")),
             number: year,
+            cyclic: None,
             related_iso: None,
         }
     } else {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "bd")),
             number: 1 - year,
+            cyclic: None,
             related_iso: None,
         }
     }

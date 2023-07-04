@@ -18,11 +18,11 @@ const BMP_MAX: u32 = 0xFFFF;
 
 /// Represents the inversion list for a set of all code points in the Basic Multilingual Plane.
 const BMP_INV_LIST_VEC: ZeroVec<u32> =
-    zerovec![u32; <u32 as AsULE>::ULE::from_unsigned; 0x0, BMP_MAX + 1];
+    zerovec!(u32; <u32 as AsULE>::ULE::from_unsigned; [0x0, BMP_MAX + 1]);
 
 /// Represents the inversion list for all of the code points in the Unicode range.
 const ALL_VEC: ZeroVec<u32> =
-    zerovec![u32; <u32 as AsULE>::ULE::from_unsigned; 0x0, (char::MAX as u32) + 1];
+    zerovec!(u32; <u32 as AsULE>::ULE::from_unsigned; [0x0, (char::MAX as u32) + 1]);
 
 /// A membership wrapper for [`CodePointInversionList`].
 ///

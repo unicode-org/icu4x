@@ -84,7 +84,7 @@ mod tests;
 /// );
 /// assert_eq!(
 ///     BazV1Marker::KEY.metadata().extension_key,
-///     Some(icu::locid::extensions_unicode_key!("ca"))
+///     Some(icu::locid::extensions::unicode::key!("ca"))
 /// );
 /// ```
 ///

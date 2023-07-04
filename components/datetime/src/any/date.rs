@@ -40,8 +40,7 @@ use writeable::Writeable;
 ///
 /// let length = length::Date::Medium;
 ///
-/// let df = DateFormatter::try_new_with_length_unstable(
-///     &icu_testdata::unstable(),
+/// let df = DateFormatter::try_new_with_length(
 ///     &locale!("en-u-ca-gregory").into(),
 ///     length,
 /// )
@@ -64,47 +63,85 @@ use writeable::Writeable;
 pub struct DateFormatter(pub(crate) raw::DateFormatter, pub(crate) AnyCalendar);
 
 impl DateFormatter {
-    /// Construct a new [`DateFormatter`] from a data provider that implements
-    /// [`AnyProvider`].
+    /// Construct a new [`DateFormatter`] from compiled data.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
-    ///
-    /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
-    /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, and `plurals/ordinals@1`.
-
-    ///
-    /// Furthermore, based on the type of calendar used, one of the following data keys may be necessary:
-    ///
-    /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
-    #[inline]
-    pub fn try_new_with_length_with_any_provider<P>(
-        data_provider: &P,
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, DateTimeError>
-    where
-        P: AnyProvider,
-    {
-        let downcasting = data_provider.as_downcasting();
-        Self::try_new_with_length_unstable(&downcasting, locale, length)
-    }
-
-    /// Construct a new [`DateFormatter`] from a data provider that implements
-    /// [`BufferProvider`].
-    ///
-    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
-    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
-    ///
-    /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/datelengths@1`,
-    /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, and `plurals/ordinals@1`.
-    ///
-    /// Furthermore, based on the type of calendar used, one of the following data keys may be necessary:
-    ///
-    /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     ///
     /// # Examples
     ///
+    /// ```
+    /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
+    /// use icu::datetime::{options::length, DateFormatter};
+    /// use icu::locid::locale;
+    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
+    /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let length = length::Date::Medium;
+    /// let locale = locale!("en-u-ca-gregory");
+    ///
+    /// let df = DateFormatter::try_new_with_length(
+    ///     &locale.into(),
+    ///     length,
+    /// )
+    /// .expect("Failed to create TypedDateFormatter instance.");
+    ///
+    /// let datetime =
+    ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// assert_writeable_eq!(
+    ///     df.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020"
+    /// );
+    /// ```
+    ///
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[inline(never)]
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_with_length(
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, DateTimeError> {
+        let calendar = AnyCalendar::new_for_locale(locale);
+        let kind = calendar.kind();
+
+        Ok(Self(
+            raw::DateFormatter::try_new(
+                calendar::load_lengths_for_any_calendar_kind(
+                    &crate::provider::Baked,
+                    locale,
+                    kind,
+                )?,
+                || {
+                    calendar::load_symbols_for_any_calendar_kind(
+                        &crate::provider::Baked,
+                        locale,
+                        kind,
+                    )
+                },
+                locale,
+                length,
+            )?,
+            calendar,
+        ))
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_length)]
+    #[inline]
+    pub fn try_new_with_length_with_any_provider(
+        provider: &impl AnyProvider,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, DateTimeError> {
+        let downcasting = provider.as_downcasting();
+        Self::try_new_with_length_unstable(&downcasting, locale, length)
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_length)]
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
     /// use icu::datetime::{options::length, DateFormatter};
@@ -134,60 +171,19 @@ impl DateFormatter {
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
-    pub fn try_new_with_length_with_buffer_provider<P>(
-        data_provider: &P,
+    pub fn try_new_with_length_with_buffer_provider(
+        provider: &impl BufferProvider,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeError>
-    where
-        P: BufferProvider,
-    {
-        let deserializing = data_provider.as_deserializing();
+    ) -> Result<Self, DateTimeError> {
+        let deserializing = provider.as_deserializing();
         Self::try_new_with_length_unstable(&deserializing, locale, length)
     }
 
-    /// Construct a new [`DateFormatter`] from a data provider that can provide all of the requested data.
-    ///
-    /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
-    /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
-    /// appropriate. The [`Self::try_new_with_length_with_buffer_provider()`], [`Self::try_new_with_length_with_any_provider()`]
-    /// constructors may also be used if compile stability is desired.
-    ///
-    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
-    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
-    /// use icu::datetime::{options::length, DateFormatter};
-    /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let length = length::Date::Medium;
-    /// let locale = locale!("en-u-ca-gregory");
-    ///
-    /// let df = DateFormatter::try_new_with_length_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale.into(),
-    ///     length,
-    /// )
-    /// .expect("Failed to create TypedDateFormatter instance.");
-    ///
-    /// let datetime =
-    ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
-    /// let any_datetime = datetime.to_any();
-    ///
-    /// assert_writeable_eq!(
-    ///     df.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020"
-    /// );
-    /// ```
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
     #[inline(never)]
     pub fn try_new_with_length_unstable<P>(
-        data_provider: &P,
+        provider: &P,
         locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeError>
@@ -215,14 +211,14 @@ impl DateFormatter {
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
     {
-        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, locale)?;
+        let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;
         let kind = calendar.kind();
 
         Ok(Self(
-            raw::DateFormatter::try_new(
-                data_provider,
-                calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
-                || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
+            raw::DateFormatter::try_new_unstable(
+                provider,
+                calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+                || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
                 locale,
                 length,
             )?,

@@ -9,8 +9,25 @@
         ]
     },
     "locales": {
-        "CldrSet": [
-            "modern"
+        "Explicit": [
+            "ar-001",
+            "ar-EG",
+            "bn-BN",
+            "ccp",
+            "en-001",
+            "en-ZA",
+            "es-ES",
+            "es-AR",
+            "fr-FR",
+            "fil",
+            "ja-JA",
+            "ru-RU",
+            "sr-SR",
+            "sr-Cyrl-SR",
+            "sr-Latn-SR",
+            "th-TH",
+            "tr-TR",
+            "und"
         ]
     },
     "cldr": "Latest",

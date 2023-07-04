@@ -39,7 +39,6 @@ use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 /// The number of years the Amete Alem epoch precedes the Amete Mihret epoch
@@ -147,7 +146,7 @@ impl Calendar for Ethiopian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(EthiopianDateInner)
+        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(EthiopianDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> EthiopianDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
@@ -292,18 +291,21 @@ impl Ethiopian {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "mundi")),
                 number: year + AMETE_ALEM_OFFSET,
+                cyclic: None,
                 related_iso: None,
             }
         } else if year > 0 {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "incar")),
                 number: year,
+                cyclic: None,
                 related_iso: None,
             }
         } else {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "pre-incar")),
                 number: 1 - year,
+                cyclic: None,
                 related_iso: None,
             }
         }
@@ -342,22 +344,9 @@ impl Date<Ethiopian> {
         if era_style == EthiopianEraStyle::AmeteAlem {
             year -= AMETE_ALEM_OFFSET;
         }
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        let bound = inner.days_in_month();
-        if day > bound {
-            return Err(CalendarError::OutOfRange);
-        }
-
-        Ok(Date::from_raw(
-            EthiopianDateInner(inner),
-            Ethiopian::new_with_era_style(era_style),
-        ))
+        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+            .map(EthiopianDateInner)
+            .map(|inner| Date::from_raw(inner, Ethiopian::new_with_era_style(era_style)))
     }
 }
 

@@ -16,10 +16,9 @@ use crate::{
     types, AsCalendar, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Ref,
 };
 
-use icu_locid::{
-    extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
-    subtags_language as language, Locale,
-};
+use icu_locid::extensions::unicode::{key, value, Value};
+use icu_locid::subtags::language;
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 use core::fmt;
@@ -384,10 +383,10 @@ impl AnyCalendar {
     /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
     /// fallbacking. If this is desired, use [`Self::new_for_locale()`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new(kind: AnyCalendarKind) -> Self {
         match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
@@ -504,10 +503,10 @@ impl AnyCalendar {
     /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
     /// calendar for the locale, falling back to gregorian.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn new_for_locale(locale: &DataLocale) -> Self {
         let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
         Self::new(kind)

@@ -159,6 +159,15 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     }
 }
 
+impl BidiAuxiliaryPropertiesBorrowed<'static> {
+    /// Cheaply converts a `BidiAuxiliaryPropertiesBorrowed<'static>` into a `BidiAuxiliaryProperties`.
+    pub fn static_to_owned(self) -> BidiAuxiliaryProperties {
+        BidiAuxiliaryProperties {
+            data: DataPayload::from_static_ref(self.data),
+        }
+    }
+}
+
 /// Returns a [`BidiAuxiliaryPropertiesV1`] struct that represents the data for certain
 /// Bidi properties.
 ///
@@ -173,8 +182,8 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 /// assert_eq!(open_paren.mirrored, true);
 /// ```
 ///
-/// ✨ **Enabled with the `"data"` feature.**
-#[cfg(feature = "data")]
+/// ✨ **Enabled with the `"compiled_data"` feature.**
+#[cfg(feature = "compiled_data")]
 pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'static> {
     BidiAuxiliaryPropertiesBorrowed {
         data: crate::provider::Baked::SINGLETON_PROPS_BIDIAUXILIARYPROPS_V1,

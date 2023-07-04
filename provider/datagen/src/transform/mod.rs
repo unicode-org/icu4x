@@ -20,11 +20,7 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .source
-            .options
-            .locales
-            .filter_by_langid_equality(HelloWorldProvider.supported_locales()?))
+        Ok(self.filter_data_locales(HelloWorldProvider.supported_locales()?))
     }
 }
 

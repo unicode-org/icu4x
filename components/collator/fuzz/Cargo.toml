@@ -19,8 +19,7 @@ rust_icu_sys = { version = "3", features = ["use-bindgen", "icu_config"] }
 rust_icu_ustring = { version = "3", features = ["use-bindgen", "icu_config"] }
 encoding_rs = "0.8.31"
 icu_locid = { path = "../../../components/locid" }
-icu_testdata = { path = "../../../provider/testdata" }
-icu_collator = { path = ".." }
+icu_collator = { path = "..", features = ["data"] }
 
 # Prevent this from interfering with workspaces
 [workspace]

@@ -75,7 +75,7 @@ impl Calendar for Buddhist {
         }
         let year = year - BUDDHIST_ERA_OFFSET;
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IsoDateInner)
+        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(IsoDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> IsoDateInner {
         *iso.inner()
@@ -216,6 +216,7 @@ fn iso_year_as_buddhist(year: i32) -> types::FormattableYear {
     types::FormattableYear {
         era: types::Era(tinystr!(16, "be")),
         number: buddhist_year,
+        cyclic: None,
         related_iso: None,
     }
 }

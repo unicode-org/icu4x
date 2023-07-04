@@ -46,7 +46,7 @@ criterion = "0.4"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 iai = "0.1.1"
 icu = { path = "../icu", default-features = false }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_properties", "icu_locid_transform"] }
+icu_properties = { path = "../properties", features = ["compiled_data"] }
 
 [features]
 std = []

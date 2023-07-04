@@ -37,16 +37,11 @@ use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
-use core::marker::PhantomData;
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4720
 // Book states that the Persian epoch is the date: 3/19/622 and since the Persian Calendar has no year 0, the best choice was to use the Julian function.
-const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian(ArithmeticDate {
-    year: (622),
-    month: (3),
-    day: (19),
-    marker: core::marker::PhantomData,
-});
+const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian_integers(622, 3, 19);
+
 /// The Persian Calendar
 ///
 /// The [Persian Calendar] is a solar calendar used officially by the countries of Iran and Afghanistan and many Persian-speaking regions.
@@ -127,7 +122,7 @@ impl Calendar for Persian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(PersianDateInner)
+        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(PersianDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> PersianDateInner {
@@ -298,6 +293,7 @@ impl Persian {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "ah")),
             number: year,
+            cyclic: None,
             related_iso: None,
         }
     }
@@ -323,29 +319,9 @@ impl Date<Persian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Persian>, CalendarError> {
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        let max_month = Persian::months_for_every_year(year);
-        if month > max_month {
-            return Err(CalendarError::Overflow {
-                field: "month",
-                max: max_month as usize,
-            });
-        }
-
-        let max_day = Persian::month_days(year, month);
-        if day > max_day {
-            return Err(CalendarError::Overflow {
-                field: "day",
-                max: max_day as usize,
-            });
-        }
-        Ok(Date::from_raw(PersianDateInner(inner), Persian))
+        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+            .map(PersianDateInner)
+            .map(|inner| Date::from_raw(inner, Persian))
     }
 }
 
@@ -636,14 +612,10 @@ mod tests {
     #[test]
     fn test_persian_year_from_fixed() {
         for (case, f_date) in CASES.iter().zip(TEST_FIXED_DATE.iter()) {
-            let date = PersianDateInner(ArithmeticDate {
-                year: (case.year),
-                month: (case.month),
-                day: (case.day),
-                marker: (PhantomData),
-            });
+            let date = Date::try_new_persian_date(case.year, case.month, case.day).unwrap();
+
             assert_eq!(
-                date.0.year as i64,
+                date.inner().0.year as i64,
                 Persian::arithmetic_persian_year_from_fixed(RataDie::new(*f_date)),
                 "{case:?}"
             );
@@ -652,15 +624,10 @@ mod tests {
     #[test]
     fn test_fixed_from_persian() {
         for (case, f_date) in CASES.iter().zip(TEST_FIXED_DATE.iter()) {
-            let date = PersianDateInner(ArithmeticDate {
-                year: (case.year),
-                month: (case.month),
-                day: (case.day),
-                marker: (PhantomData),
-            });
+            let date = Date::try_new_persian_date(case.year, case.month, case.day).unwrap();
 
             assert_eq!(
-                Persian::fixed_from_arithmetic_persian(date).to_i64_date(),
+                Persian::fixed_from_arithmetic_persian(*date.inner()).to_i64_date(),
                 *f_date,
                 "{case:?}"
             );
@@ -741,13 +708,8 @@ mod tests {
         ];
 
         for case in test_cases {
-            let date = PersianDateInner(ArithmeticDate {
-                year: (case.input),
-                month: 1,
-                day: 1,
-                marker: PhantomData,
-            });
-            let info = Persian::day_of_year_info(&Persian, &date);
+            let date = Date::try_new_persian_date(case.input, 1, 1).unwrap();
+            let info = Persian::day_of_year_info(&Persian, date.inner());
 
             assert_eq!(info.prev_year.number, case.expected_prev, "{:?}", case);
             assert_eq!(info.next_year.number, case.expected_next, "{:?}", case);

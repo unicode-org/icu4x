@@ -62,7 +62,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.source.options.locales.filter_by_langid_equality(
+        Ok(self.filter_data_locales(
             self.source
                 .cldr()?
                 .displaynames()
@@ -84,7 +84,7 @@ impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvid
 
 impl IterableDataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.source.options.locales.filter_by_langid_equality(
+        Ok(self.filter_data_locales(
             self.source
                 .cldr()?
                 .displaynames()
@@ -220,7 +220,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNamesV
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags_language as language};
+    use icu_locid::{locale, subtags::language};
 
     #[test]
     fn test_basic_lang_display_names() {

@@ -107,7 +107,7 @@ impl Calendar for Iso {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IsoDateInner)
+        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(IsoDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> IsoDateInner {
@@ -242,21 +242,14 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, CalendarError> {
-        if !(1..=12).contains(&month) {
-            return Err(CalendarError::OutOfRange);
-        }
-        if day == 0 || day > Iso::days_in_month(year, month) {
-            return Err(CalendarError::OutOfRange);
-        }
-        Ok(Date::from_raw(
-            IsoDateInner(ArithmeticDate::new(year, month, day)),
-            Iso,
-        ))
+        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+            .map(IsoDateInner)
+            .map(|inner| Date::from_raw(inner, Iso))
     }
 
     /// Constructs an ISO date representing the UNIX epoch on January 1, 1970.
     pub fn unix_epoch() -> Self {
-        Date::from_raw(IsoDateInner(ArithmeticDate::new(1970, 1, 1)), Iso)
+        Date::from_raw(IsoDateInner(ArithmeticDate::new_unchecked(1970, 1, 1)), Iso)
     }
 }
 
@@ -516,6 +509,7 @@ impl Iso {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "default")),
             number: year,
+            cyclic: None,
             related_iso: None,
         }
     }
@@ -523,10 +517,10 @@ impl Iso {
 
 impl IsoDateInner {
     pub(crate) fn jan_1(year: i32) -> Self {
-        Self(ArithmeticDate::new(year, 1, 1))
+        Self(ArithmeticDate::new_unchecked(year, 1, 1))
     }
     pub(crate) fn dec_31(year: i32) -> Self {
-        Self(ArithmeticDate::new(year, 12, 1))
+        Self(ArithmeticDate::new_unchecked(year, 12, 1))
     }
 }
 
