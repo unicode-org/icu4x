@@ -282,6 +282,7 @@ impl DatagenProvider {
                         supported_locales
                             .into_par_iter()
                             .try_for_each(|locale| {
+                                log::trace!("Generating for key/locale: {key} {locale:?}");
                                 let req = DataRequest {
                                     locale: &locale,
                                     metadata: Default::default(),
@@ -301,6 +302,7 @@ impl DatagenProvider {
                     options::FallbackMode::Runtime => {
                         let payloads = supported_locales.into_par_iter()
                             .map(|locale| {
+                                log::trace!("Generating for key/locale: {key} {locale:?}");
                                 let req = DataRequest {
                                     locale: &locale,
                                     metadata: Default::default(),
@@ -332,6 +334,7 @@ impl DatagenProvider {
                             supported_locales
                                 .into_par_iter()
                                 .try_for_each(|locale| {
+                                    log::trace!("Generating for key/locale: {key} {locale:?}");
                                     let req = DataRequest {
                                         locale: &locale,
                                         metadata: Default::default(),
