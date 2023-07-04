@@ -30,7 +30,7 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_calendar = { version = "1.2.0", path = "../../components/calendar" }
+icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false }
 icu_locid = { version = "1.2.0", path = "../../components/locid" }
 icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
@@ -45,6 +45,7 @@ icu_timezone_data = { version = "~1.3.0", path = "data", optional = true }
 icu = { path = "../../components/icu", default-features = false }
 
 [features]
+default = ["compiled_data"]
 std = ["icu_calendar/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
