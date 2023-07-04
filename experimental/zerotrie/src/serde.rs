@@ -120,7 +120,7 @@ where
 
 impl<Store> Serialize for ZeroTrieSimpleAscii<Store>
 where
-Store: AsRef<[u8]>,
+    Store: AsRef<[u8]>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
