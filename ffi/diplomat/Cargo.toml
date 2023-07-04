@@ -57,11 +57,10 @@ buffer_provider = [
     "icu_provider/serde",
     "icu_provider_adapters/serde",
     "icu_segmenter?/serde",
-    "icu_testdata?/buffer",
     "icu_timezone?/serde",
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider"]
-provider_test = ["dep:icu_testdata"]
+provider_test = []
 logging = ["icu_provider/log_error_context", "dep:log"]
 # Use the env_logger functionality to log based on environment variables
 simple_logger = ["dep:simple_logger"]
@@ -136,8 +135,6 @@ unicode-bidi = { version = "0.3.13", default-features = false, optional = true }
 # Optional ICU4X features (not components)
 icu_provider_blob = { version = "1.2.0", path = "../../provider/blob", optional = true }
 serde = { version = "1.0", default-features = false, optional = true }
-
-icu_testdata = { version = "1.2.0", path = "../../provider/testdata", optional = true, features = ["icu_segmenter"] }
 
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`

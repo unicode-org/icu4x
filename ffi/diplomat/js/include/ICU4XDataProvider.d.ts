@@ -34,8 +34,6 @@ export class ICU4XDataProvider {
    * Unconditionally panics.
 
    * It used to provide a test data provider, but has been superseded by `create_compiled`.
-
-   * See the {@link https://docs.rs/icu_testdata/latest/icu_testdata/index.html Rust documentation for `icu_testdata`} for more information.
    */
   static create_test(): ICU4XDataProvider;
 

@@ -78,7 +78,6 @@ pub mod ffi {
         /// Unconditionally panics.
         ///
         /// It used to provide a test data provider, but has been superseded by `create_compiled`.
-        #[diplomat::rust_link(icu_testdata, Mod)]
         #[cfg(all(
             feature = "provider_test",
             any(feature = "any_provider", feature = "buffer_provider")

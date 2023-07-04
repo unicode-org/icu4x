@@ -30,8 +30,6 @@
 
         It used to provide a test data provider, but has been superseded by ``create_compiled``.
 
-        See the `Rust documentation for icu_testdata <https://docs.rs/icu_testdata/latest/icu_testdata/index.html>`__ for more information.
-
 
     .. js:function:: create_from_byte_slice(blob)
 
