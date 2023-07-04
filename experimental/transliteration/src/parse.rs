@@ -137,7 +137,7 @@ mod missingapis {
                 }
             }
         }
-        dbg!(set.clone());
+        // dbg!(set.clone());
         Ok(set)
     }
 }
@@ -184,8 +184,8 @@ use ParseLocation as PL;
 
 #[derive(Debug, Clone)]
 pub(super) struct ParseError {
-    location: ParseLocation,
-    kind: ParseErrorKind,
+    pub(super) location: ParseLocation,
+    pub(super) kind: ParseErrorKind,
 }
 
 impl ParseError {
@@ -250,7 +250,7 @@ impl PatternElement {
 }
 
 fn parse_quoted_literal(it: &mut t!()) -> Result<Literal> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     // No escaping in quoted literals?
     let mut literal = String::new();
     match it.next() {
@@ -276,7 +276,7 @@ fn parse_quoted_literal(it: &mut t!()) -> Result<Literal> {
 }
 
 fn parse_unquoted_literal(it: &mut t!()) -> Result<Literal> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     let mut literal = String::new();
     // collect consecutive legal_top_level_chars and escaped any other chars
     while let Some(&c) = it.peek() {
@@ -299,7 +299,7 @@ fn parse_unquoted_literal(it: &mut t!()) -> Result<Literal> {
 }
 
 fn parse_literal(it: &mut t!()) -> Result<Literal> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     // a literal is either a sequence of characters that are not special or escaped,
     // or a quoted sequence of any chars
     match it.peek() {
@@ -310,12 +310,12 @@ fn parse_literal(it: &mut t!()) -> Result<Literal> {
 }
 
 fn parse_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     missingapis::parse_unicode_set(it)
 }
 
 fn parse_variable(it: &mut t!()) -> Result<String> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     let mut name = String::new();
     match it.next() {
         Some('$') => {}
@@ -349,7 +349,7 @@ fn parse_variable(it: &mut t!()) -> Result<String> {
 }
 
 fn parse_cursor(it: &mut t!()) -> Result<Cursor> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     let mut pre_spacing = 0;
     let mut post_spacing = 0;
     match it.peek() {
@@ -385,7 +385,7 @@ fn parse_cursor(it: &mut t!()) -> Result<Cursor> {
 }
 
 fn parse_pattern_element(it: &mut t!()) -> Result<PatternElement> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     match it.peek() {
         None => Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
         Some(&'$') => Ok(PatternElement::Variable(parse_variable(it)?)),
@@ -439,7 +439,7 @@ fn is_pattern_end(c: char) -> bool {
 }
 
 fn parse_pattern(it: &mut t!()) -> Result<Pattern> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     let mut elements = Vec::new();
     loop {
         skip_whitespace(it);
@@ -486,7 +486,7 @@ fn is_half_rule_end(c: char) -> bool {
 }
 
 fn parse_half_rule(it: &mut t!()) -> Result<HalfRule> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
 
     let pattern1 = parse_pattern(it)?;
     // ante and post are Option<Option<..>> to detect cases like "{ a { x > ;" (which are invalid)
@@ -548,7 +548,7 @@ impl Display for Direction {
 }
 
 fn parse_direction(it: &mut t!()) -> Result<Direction> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     match it.next() {
         None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
         Some('>') => Ok(Direction::Forward),
@@ -577,7 +577,7 @@ pub(super) enum RuleKind {
 }
 
 fn parse_rule_kind(it: &mut t!()) -> Result<RuleKind> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     match it.peek() {
         None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
         Some(&'=') => {
@@ -606,10 +606,10 @@ pub(super) enum Rule {
 }
 
 fn parse_rule(it: &mut t!()) -> Result<Rule> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     let half_rule1 = parse_half_rule(it)?;
     // stopped because a is_half_rule_end char appeared
-    dbg!(half_rule1.clone());
+    // dbg!(half_rule1.clone());
     skip_whitespace(it);
     let rule_kind = parse_rule_kind(it)?;
     // it should be one going in the middle
@@ -653,7 +653,7 @@ fn parse_rule(it: &mut t!()) -> Result<Rule> {
 }
 
 pub(super) fn parse_rules(it: &mut t!()) -> Result<Vec<Rule>> {
-    dbg!(it.peek());
+    // dbg!(it.peek());
     let mut rules = Vec::new();
     loop {
         skip_whitespace(it);
@@ -661,7 +661,7 @@ pub(super) fn parse_rules(it: &mut t!()) -> Result<Vec<Rule>> {
             break;
         }
         let rule = parse_rule(it)?;
-        dbg!(rule.clone());
+        // dbg!(rule.clone());
         rules.push(rule);
     }
     Ok(rules)
