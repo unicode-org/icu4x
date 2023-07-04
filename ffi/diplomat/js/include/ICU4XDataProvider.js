@@ -16,6 +16,10 @@ export class ICU4XDataProvider {
     }
   }
 
+  static create_compiled() {
+    return new ICU4XDataProvider(wasm.ICU4XDataProvider_create_compiled(), true, []);
+  }
+
   static create_fs(arg_path) {
     const buf_arg_path = diplomatRuntime.DiplomatBuf.str(wasm, arg_path);
     const diplomat_out = (() => {

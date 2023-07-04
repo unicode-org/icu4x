@@ -51,7 +51,7 @@ int test_map_8_property(ICU4XCodePointMapData8 data, char32_t sample, uint32_t e
 
 int main() {
     ICU4XLogger::init_simple_logger();
-    ICU4XDataProvider dp = ICU4XDataProvider::create_test();
+    ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
     int result;
 
     result = test_set_property(

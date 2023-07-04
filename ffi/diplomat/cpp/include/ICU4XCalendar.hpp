@@ -37,14 +37,14 @@ class ICU4XCalendar {
   /**
    * Creates a new [`ICU4XCalendar`] from the specified date and time.
    * 
-   * See the [Rust documentation for `try_new_for_locale_unstable`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable) for more information.
+   * See the [Rust documentation for `new_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_locale) for more information.
    */
   static diplomat::result<ICU4XCalendar, ICU4XError> create_for_locale(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * Creates a new [`ICU4XCalendar`] from the specified date and time.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
    */
   static diplomat::result<ICU4XCalendar, ICU4XError> create_for_kind(const ICU4XDataProvider& provider, ICU4XAnyCalendarKind kind);
 

@@ -20,7 +20,7 @@ int main() {
     ICU4XLogger::init_simple_logger();
     ICU4XLocale locale = ICU4XLocale::create_from_string("es").ok().value();
     std::cout << "Running test for locale " << locale.to_string().ok().value() << std::endl;
-    ICU4XDataProvider dp = ICU4XDataProvider::create_test();
+    ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
 
     ICU4XIsoDateTime date = ICU4XIsoDateTime::create(2022, 07, 11, 13, 06, 42, 0).ok().value();
 

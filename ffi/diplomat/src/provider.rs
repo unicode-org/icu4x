@@ -16,8 +16,8 @@ use zerofrom::ZeroFrom;
 pub enum ICU4XDataProviderInner {
     Destroyed,
     Empty,
-    #[cfg(feature = "any_provider")]
-    Any(Box<dyn AnyProvider + 'static>),
+    #[cfg(feature = "compiled_data")]
+    Compiled,
     #[cfg(feature = "buffer_provider")]
     Buffer(Box<dyn BufferProvider + 'static>),
 }
@@ -37,11 +37,6 @@ pub mod ffi {
     #[diplomat::rust_link(icu_provider, Mod)]
     pub struct ICU4XDataProvider(pub ICU4XDataProviderInner);
 
-    #[cfg(feature = "any_provider")]
-    fn convert_any_provider<D: icu_provider::AnyProvider + 'static>(x: D) -> ICU4XDataProvider {
-        ICU4XDataProvider(super::ICU4XDataProviderInner::Any(Box::new(x)))
-    }
-
     #[cfg(feature = "buffer_provider")]
     fn convert_buffer_provider<D: icu_provider::BufferProvider + 'static>(
         x: D,
@@ -50,6 +45,17 @@ pub mod ffi {
     }
 
     impl ICU4XDataProvider {
+        /// Constructs an [`ICU4XDataProvider`] that uses compiled data.
+        ///
+        /// Requires the `compiled_data` feature.
+        ///
+        /// This provider cannot be modified or combined with other providers, so `enable_fallback`,
+        /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
+        #[cfg(feature = "compiled_data")]
+        pub fn create_compiled() -> Box<ICU4XDataProvider> {
+            Box::new(Self(ICU4XDataProviderInner::Compiled))
+        }
+
         /// Constructs an `FsDataProvider` and returns it as an [`ICU4XDataProvider`].
         /// Requires the `provider_fs` Cargo feature.
         /// Not supported in WASM.
@@ -69,19 +75,15 @@ pub mod ffi {
             )))
         }
 
-        /// Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].
-        /// Requires the `provider_test` and one of `any_provider` or `buffer_provider` Cargo features.
-        #[diplomat::rust_link(icu_testdata, Mod)]
+        /// Unconditionally panics.
+        ///
+        /// It used to provide a test data provider, but has been superseded by `create_compiled`.
         #[cfg(all(
             feature = "provider_test",
             any(feature = "any_provider", feature = "buffer_provider")
         ))]
         pub fn create_test() -> Box<ICU4XDataProvider> {
-            #[cfg(feature = "any_provider")]
-            return Box::new(convert_any_provider(icu_testdata::any()));
-
-            #[cfg(not(feature = "any_provider"))]
-            return Box::new(convert_buffer_provider(icu_testdata::buffer()));
+            unimplemented!()
         }
 
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
@@ -130,23 +132,17 @@ pub mod ffi {
                 (Destroyed, _) | (_, Destroyed) => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
+                #[cfg(feature = "compiled_data")]
+                (Compiled, _) | (_, Compiled) => Err(icu_provider::DataError::custom(
+                    "The compiled provider cannot be modified",
+                ))?,
                 (Empty, Empty) => ICU4XDataProvider(ICU4XDataProviderInner::Empty),
-                #[cfg(any(feature = "buffer_provider", feature = "any_provider"))]
+                #[cfg(feature = "buffer_provider")]
                 (Empty, b) | (b, Empty) => ICU4XDataProvider(b),
-                #[cfg(feature = "any_provider")]
-                (Any(a), Any(b)) => {
-                    convert_any_provider(icu_provider_adapters::fork::ForkByKeyProvider::new(a, b))
-                }
                 #[cfg(feature = "buffer_provider")]
                 (Buffer(a), Buffer(b)) => convert_buffer_provider(
                     icu_provider_adapters::fork::ForkByKeyProvider::new(a, b),
                 ),
-                #[cfg(all(feature = "buffer_provider", feature = "any_provider"))]
-                (Buffer(_), Any(_)) | (Any(_), Buffer(_)) => {
-                    Err(ICU4XError::DataMismatchedAnyBufferError.log_original(
-                        "fork_by_key must be passed the same type of provider (Any or Buffer)",
-                    ))?
-                }
             };
             Ok(())
         }
@@ -166,17 +162,13 @@ pub mod ffi {
                 (Destroyed, _) | (_, Destroyed) => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
+                #[cfg(feature = "compiled_data")]
+                (Compiled, _) | (_, Compiled) => Err(icu_provider::DataError::custom(
+                    "The compiled provider cannot be modified",
+                ))?,
                 (Empty, Empty) => ICU4XDataProvider(ICU4XDataProviderInner::Empty),
-                #[cfg(any(feature = "buffer_provider", feature = "any_provider"))]
+                #[cfg(feature = "buffer_provider")]
                 (Empty, b) | (b, Empty) => ICU4XDataProvider(b),
-                #[cfg(feature = "any_provider")]
-                (Any(a), Any(b)) => convert_any_provider(
-                    icu_provider_adapters::fork::ForkByErrorProvider::new_with_predicate(
-                        a,
-                        b,
-                        MissingLocalePredicate,
-                    ),
-                ),
                 #[cfg(feature = "buffer_provider")]
                 (Buffer(a), Buffer(b)) => convert_buffer_provider(
                     icu_provider_adapters::fork::ForkByErrorProvider::new_with_predicate(
@@ -185,12 +177,6 @@ pub mod ffi {
                         MissingLocalePredicate,
                     ),
                 ),
-                #[cfg(all(feature = "buffer_provider", feature = "any_provider"))]
-                (Buffer(_), Any(_)) | (Any(_), Buffer(_)) => {
-                    Err(ICU4XError::DataMismatchedAnyBufferError.log_original(
-                        "fork_by_locale must be passed the same type of provider (Any or Buffer)",
-                    ))?
-                }
             };
             Ok(())
         }
@@ -199,7 +185,7 @@ pub mod ffi {
         ///
         /// Note that the test provider (from `create_test`) already has fallbacking enabled.
         #[diplomat::rust_link(
-            icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable,
+            icu_provider_adapters::fallback::LocaleFallbackProvider::try_new,
             FnInStruct
         )]
         #[diplomat::rust_link(
@@ -213,11 +199,11 @@ pub mod ffi {
                 Destroyed => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
+                #[cfg(feature = "compiled_data")]
+                Compiled => Err(icu_provider::DataError::custom(
+                    "The compiled provider cannot be modified",
+                ))?,
                 Empty => Err(icu_provider::DataErrorKind::MissingDataKey.into_error())?,
-                #[cfg(feature = "any_provider")]
-                Any(inner) => {
-                    convert_any_provider(LocaleFallbackProvider::try_new_with_any_provider(inner)?)
-                }
                 #[cfg(feature = "buffer_provider")]
                 Buffer(inner) => convert_buffer_provider(
                     LocaleFallbackProvider::try_new_with_buffer_provider(inner)?,
@@ -246,12 +232,11 @@ pub mod ffi {
                 Destroyed => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
+                #[cfg(feature = "compiled_data")]
+                Compiled => Err(icu_provider::DataError::custom(
+                    "The compiled provider cannot be modified",
+                ))?,
                 Empty => Err(icu_provider::DataErrorKind::MissingDataKey.into_error())?,
-                #[cfg(feature = "any_provider")]
-                Any(inner) => convert_any_provider(LocaleFallbackProvider::new_with_fallbacker(
-                    inner,
-                    fallbacker.0.clone(),
-                )),
                 #[cfg(feature = "buffer_provider")]
                 Buffer(inner) => convert_buffer_provider(
                     LocaleFallbackProvider::new_with_fallbacker(inner, fallbacker.0.clone()),
@@ -271,16 +256,72 @@ macro_rules! load {
                     "This provider has been destroyed",
                 ))?,
                 Empty => EmptyDataProvider::new().load(req),
-                #[cfg(feature = "any_provider")]
-                Any(any_provider) => any_provider.as_downcasting().load(req),
                 #[cfg(feature = "buffer_provider")]
                 Buffer(buffer_provider) => buffer_provider.as_deserializing().load(req),
+                #[cfg(feature = "compiled_data")]
+                Compiled => unreachable!(),
             }
         }
     };
 }
 
-#[cfg(not(any(feature = "any_provider", feature = "buffer_provider")))]
+#[macro_export]
+macro_rules! call_constructor {
+    ($compiled:path [$pre_transform:ident => $transform:expr], $any:path, $buffer:path, $provider:expr $(, $args:expr)* $(,)?) => {
+        match &$provider.0 {
+            $crate::provider::ICU4XDataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+                "This provider has been destroyed",
+            ))?,
+            $crate::provider::ICU4XDataProviderInner::Empty => $any(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
+            #[cfg(feature = "buffer_provider")]
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $buffer(buffer_provider, $($args,)*),
+            #[cfg(feature = "compiled_data")]
+            $crate::provider::ICU4XDataProviderInner::Compiled => { let $pre_transform = $compiled($($args,)*); $transform },
+        }
+    };
+    ($compiled:path, $any:path, $buffer:path, $provider:expr $(, $args:expr)* $(,)?) => {
+        match &$provider.0 {
+            $crate::provider::ICU4XDataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+                "This provider has been destroyed",
+            ))?,
+            $crate::provider::ICU4XDataProviderInner::Empty => $any(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
+            #[cfg(feature = "buffer_provider")]
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $buffer(buffer_provider, $($args,)*),
+            #[cfg(feature = "compiled_data")]
+            $crate::provider::ICU4XDataProviderInner::Compiled => $compiled($($args,)*),
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! call_constructor_unstable {
+    ($compiled:path [$pre_transform:ident => $transform:expr], $unstable:path, $provider:expr $(, $args:expr)* $(,)?) => {
+        match &$provider.0 {
+            $crate::provider::ICU4XDataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+                "This provider has been destroyed",
+            ))?,
+            $crate::provider::ICU4XDataProviderInner::Empty => $unstable(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
+            #[cfg(feature = "buffer_provider")]
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
+            #[cfg(feature = "compiled_data")]
+            $crate::provider::ICU4XDataProviderInner::Compiled => { let $pre_transform = $compiled($($args,)*); $transform },
+        }
+    };
+    ($compiled:path, $unstable:path, $provider:expr $(, $args:expr)* $(,)?) => {
+        match &$provider.0 {
+            $crate::provider::ICU4XDataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+                "This provider has been destroyed",
+            ))?,
+            $crate::provider::ICU4XDataProviderInner::Empty => $unstable(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
+            #[cfg(feature = "buffer_provider")]
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
+            #[cfg(feature = "compiled_data")]
+            $crate::provider::ICU4XDataProviderInner::Compiled => $compiled($($args,)*),
+        }
+    };
+}
+
+#[cfg(not(feature = "buffer_provider"))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
     M: KeyedDataMarker,
@@ -288,36 +329,10 @@ where
     load!();
 }
 
-#[cfg(all(feature = "buffer_provider", not(feature = "any_provider")))]
+#[cfg(feature = "buffer_provider")]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
     M: KeyedDataMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::Deserialize<'de>,
-{
-    load!();
-}
-
-#[cfg(all(feature = "any_provider", not(feature = "buffer_provider")))]
-impl<M> DataProvider<M> for ICU4XDataProviderInner
-where
-    M: KeyedDataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: MaybeSendSync,
-{
-    load!();
-}
-
-#[cfg(all(feature = "buffer_provider", feature = "any_provider"))]
-impl<M> DataProvider<M> for ICU4XDataProviderInner
-where
-    M: KeyedDataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: MaybeSendSync,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):

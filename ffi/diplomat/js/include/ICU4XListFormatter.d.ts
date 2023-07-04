@@ -15,7 +15,7 @@ export class ICU4XListFormatter {
 
    * Construct a new ICU4XListFormatter instance for And patterns
 
-   * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_and_with_length_unstable Rust documentation for `try_new_and_with_length_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_and_with_length Rust documentation for `try_new_and_with_length`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_and_with_length(provider: ICU4XDataProvider, locale: ICU4XLocale, length: ICU4XListLength): ICU4XListFormatter | never;
@@ -24,7 +24,7 @@ export class ICU4XListFormatter {
 
    * Construct a new ICU4XListFormatter instance for And patterns
 
-   * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_or_with_length_unstable Rust documentation for `try_new_or_with_length_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_or_with_length Rust documentation for `try_new_or_with_length`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_or_with_length(provider: ICU4XDataProvider, locale: ICU4XLocale, length: ICU4XListLength): ICU4XListFormatter | never;
@@ -33,7 +33,7 @@ export class ICU4XListFormatter {
 
    * Construct a new ICU4XListFormatter instance for And patterns
 
-   * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_with_length_unstable Rust documentation for `try_new_unit_with_length_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_with_length Rust documentation for `try_new_unit_with_length`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_unit_with_length(provider: ICU4XDataProvider, locale: ICU4XLocale, length: ICU4XListLength): ICU4XListFormatter | never;

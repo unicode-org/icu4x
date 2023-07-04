@@ -100,17 +100,20 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
         }
     }
 
-    /// Construct a new one from loaded data
-    ///
-    /// Typically it is preferable to use methods on individual property value types
-    /// (like [`Script::get_name_to_enum_mapper()`]) instead.
-    #[doc(hidden)] // used for efficiency by FFI code
-    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
     {
         Self {
             map: data.cast(),
+            markers: PhantomData,
+        }
+    }
+
+    #[doc(hidden)] // used by FFI code
+    pub fn erase(self) -> PropertyValueNameToEnumMapper<u16> {
+        PropertyValueNameToEnumMapper {
+            map: self.map.cast(),
             markers: PhantomData,
         }
     }

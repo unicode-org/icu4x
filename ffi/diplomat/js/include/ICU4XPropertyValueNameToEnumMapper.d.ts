@@ -42,21 +42,21 @@ export class ICU4XPropertyValueNameToEnumMapper {
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_bidi_class(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_east_asian_width(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_line_break(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
@@ -70,21 +70,21 @@ export class ICU4XPropertyValueNameToEnumMapper {
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_word_break(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_sentence_break(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_script(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;

@@ -48,7 +48,7 @@
 
         Construct an :js:class:`ICU4XGraphemeClusterSegmenter`.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new>`__ for more information.
 
 
     .. js:method:: segment_utf8(input)
