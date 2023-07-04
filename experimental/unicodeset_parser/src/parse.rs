@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::HashMap;
 use std::fmt::Display;
 use std::{collections::HashSet, iter::Peekable, str::CharIndices};
 
@@ -167,6 +168,59 @@ impl ParseError {
             },
         }
     }
+}
+
+
+pub enum VariableValue<'a> {
+    UnicodeSet(CodePointInversionListAndStringList<'a>),
+    Char(char),
+    String(String),
+}
+
+pub type VariableMap<'a> = HashMap<String, VariableValue<'a>>;
+
+// struct Token<'a> {
+//     inner: TokenInner<'a>,
+//     // whether the token represents the element literally, or could be a syntax char.
+//     // e.g., Token{ '&', true } could come from \&, but Token{ '&', false } comes from &.
+//     // whether that is actually a literal '&' or a syntax character (set intersection) depends on the context
+//     // (inside a string, & means the literal '&').
+//     literal: bool,
+// }
+
+enum Token<'a> {
+    Element(Element),
+    UnicodeSet(CodePointInversionListAndStringList<'a>),
+    // the pass-through case 
+    Char(char),
+}
+
+struct Lexer<'a, 'b> {
+    variable_map: VariableMap<'a>,
+    iter: Peekable<CharIndices<'b>>,
+    // true if the previous passed char was a syntax \ . 
+    // Used to figure out if $abc is the variable abc, or \$ followed by abc.
+    escaped: bool,
+}
+
+impl<'a, 'b> Iterator for Lexer<'a, 'b> {
+    type Item = Token<'a>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.iter.peek() {
+            Some(&(_, '$')) if !self.escaped => {
+                todo!()
+            },
+            Some(&(_, c)) => Some(Token::Char(c)),
+            None => None,
+        }
+    }
+}
+
+// invariant: a one-codepoint-element is represented as a char, not a single-char String
+enum Element {
+    Char(char),
+    String(String),
 }
 
 // necessary helper because char::is_whitespace is not equivalent to [:Pattern_White_Space:]
