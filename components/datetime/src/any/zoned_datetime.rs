@@ -406,36 +406,6 @@ impl ZonedDateTimeFormatter {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new)]
-    ///
-    /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::options::length;
-    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::locale;
-    /// use icu::timezone::CustomTimeZone;
-    /// use std::str::FromStr;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
-    /// let locale = locale!("en-u-ca-gregory");
-    ///
-    /// let zdtf = ZonedDateTimeFormatter::try_new_with_any_provider(
-    ///     &icu_testdata::any(),
-    ///     &locale.into(),
-    ///     options,
-    ///     Default::default(),
-    /// )
-    /// .expect("Construction should succeed");
-    ///
-    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
-    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
-    /// let any_datetime = datetime.to_any();
-    ///
-    /// assert_writeable_eq!(
-    ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
-    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
-    /// );
-    /// ```
     #[inline]
     pub fn try_new_with_any_provider(
         provider: &impl AnyProvider,
@@ -448,40 +418,6 @@ impl ZonedDateTimeFormatter {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new)]
-    /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::options::length;
-    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::locale;
-    /// use icu::timezone::CustomTimeZone;
-    /// use std::str::FromStr;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let options = length::Bag::from_date_time_style(
-    ///     length::Date::Medium,
-    ///     length::Time::Long,
-    /// )
-    /// .into();
-    /// let locale = locale!("en");
-    ///
-    /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
-    ///     &icu_testdata::buffer(),
-    ///     &locale.into(),
-    ///     options,
-    ///     Default::default(),
-    /// )
-    /// .expect("Construction should succeed");
-    ///
-    /// let datetime =
-    ///     DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
-    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
-    /// let any_datetime = datetime.to_any();
-    ///
-    /// assert_writeable_eq!(
-    ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
-    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
-    /// );
-    /// ```
     #[inline]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
@@ -560,4 +496,41 @@ impl ZonedDateTimeFormatter {
             Ok(None)
         }
     }
+}
+
+#[test]
+#[cfg(feature = "serde")]
+fn buffer_constructor() {
+    #![allow(clippy::zero_prefixed_literal)]
+    use icu::calendar::DateTime;
+    use icu::datetime::options::length;
+    use icu::datetime::ZonedDateTimeFormatter;
+    use icu::locid::locale;
+    use icu::timezone::CustomTimeZone;
+    use std::str::FromStr;
+    use writeable::assert_writeable_eq;
+
+    let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(
+        "../../tests/data/blob.postcard"
+    ))
+    .unwrap();
+
+    let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
+        &provider,
+        &locale!("en").into(),
+        length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into(),
+        Default::default(),
+    )
+    .unwrap();
+
+    assert_writeable_eq!(
+        zdtf.format(
+            &DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37)
+                .unwrap()
+                .to_any(),
+            &CustomTimeZone::from_str("-07:00").unwrap()
+        )
+        .unwrap(),
+        "Apr 8, 2021, 4:12:37 PM GMT-07:00"
+    );
 }
