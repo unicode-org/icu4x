@@ -47,7 +47,7 @@ fn test_simple_mappings() {
     assert_eq!(case_mapping.simple_fold('\u{10414}'), '\u{1043c}');
 }
 
-// These tests are taken from StringCaseTest::TestCaseConversion in ICU4C.
+// These and the below tests are taken from StringCaseTest::TestCaseConversion in ICU4C.
 #[test]
 fn test_full_mappings() {
     let case_mapping = CaseMapper::new();
@@ -265,4 +265,86 @@ fn test_dutch() {
         cm.titlecase_segment_to_string("íjabc\u{1ABE}", &nl),
         "Íjabc\u{1ABE}"
     );
+}
+
+#[test]
+fn test_greek_upper() {
+    let cm = CaseMapper::new();
+    let modern_greek = &langid!("el");
+
+    // https://unicode-org.atlassian.net/browse/ICU-5456
+    assert_eq!(
+        cm.uppercase_to_string("άδικος, κείμενο, ίριδα", modern_greek),
+        "ΑΔΙΚΟΣ, ΚΕΙΜΕΝΟ, ΙΡΙΔΑ"
+    );
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=307039
+    // https://bug307039.bmoattachments.org/attachment.cgi?id=194893
+    assert_eq!(cm.uppercase_to_string("Πατάτα", modern_greek), "ΠΑΤΑΤΑ");
+    assert_eq!(
+        cm.uppercase_to_string("Αέρας, Μυστήριο, Ωραίο", modern_greek),
+        "ΑΕΡΑΣ, ΜΥΣΤΗΡΙΟ, ΩΡΑΙΟ"
+    );
+    assert_eq!(
+        cm.uppercase_to_string("Μαΐου, Πόρος, Ρύθμιση", modern_greek),
+        "ΜΑΪΟΥ, ΠΟΡΟΣ, ΡΥΘΜΙΣΗ"
+    );
+    assert_eq!(
+        cm.uppercase_to_string("ΰ, Τηρώ, Μάιος", modern_greek),
+        "Ϋ, ΤΗΡΩ, ΜΑΪΟΣ"
+    );
+    assert_eq!(cm.uppercase_to_string("άυλος", modern_greek), "ΑΫΛΟΣ");
+    assert_eq!(cm.uppercase_to_string("ΑΫΛΟΣ", modern_greek), "ΑΫΛΟΣ");
+    assert_eq!(
+        cm.uppercase_to_string("Άκλιτα ρήματα ή άκλιτες μετοχές", modern_greek),
+        "ΑΚΛΙΤΑ ΡΗΜΑΤΑ Ή ΑΚΛΙΤΕΣ ΜΕΤΟΧΕΣ"
+    );
+    // http://www.unicode.org/udhr/d/udhr_ell_monotonic.html
+    assert_eq!(
+        cm.uppercase_to_string("Επειδή η αναγνώριση της αξιοπρέπειας", modern_greek),
+        "ΕΠΕΙΔΗ Η ΑΝΑΓΝΩΡΙΣΗ ΤΗΣ ΑΞΙΟΠΡΕΠΕΙΑΣ"
+    );
+    assert_eq!(
+        cm.uppercase_to_string("νομικού ή διεθνούς", modern_greek),
+        "ΝΟΜΙΚΟΥ Ή ΔΙΕΘΝΟΥΣ"
+    );
+    // http://unicode.org/udhr/d/udhr_ell_polytonic.html
+    assert_eq!(
+        cm.uppercase_to_string("Ἐπειδὴ ἡ ἀναγνώριση", modern_greek),
+        "ΕΠΕΙΔΗ Η ΑΝΑΓΝΩΡΙΣΗ"
+    );
+    assert_eq!(
+        cm.uppercase_to_string("νομικοῦ ἢ διεθνοῦς", modern_greek),
+        "ΝΟΜΙΚΟΥ Ή ΔΙΕΘΝΟΥΣ"
+    );
+    // From Google bug report
+    assert_eq!(
+        cm.uppercase_to_string("Νέο, Δημιουργία", modern_greek),
+        "ΝΕΟ, ΔΗΜΙΟΥΡΓΙΑ"
+    );
+    // http://crbug.com/234797
+    assert_eq!(
+        cm.uppercase_to_string("Ελάτε να φάτε τα καλύτερα παϊδάκια!", modern_greek),
+        "ΕΛΑΤΕ ΝΑ ΦΑΤΕ ΤΑ ΚΑΛΥΤΕΡΑ ΠΑΪΔΑΚΙΑ!"
+    );
+    assert_eq!(
+        cm.uppercase_to_string("Μαΐου, τρόλεϊ", modern_greek),
+        "ΜΑΪΟΥ, ΤΡΟΛΕΪ"
+    );
+    assert_eq!(
+        cm.uppercase_to_string("Το ένα ή το άλλο.", modern_greek),
+        "ΤΟ ΕΝΑ Ή ΤΟ ΑΛΛΟ."
+    );
+    // http://multilingualtypesetting.co.uk/blog/greek-typesetting-tips/
+    assert_eq!(cm.uppercase_to_string("ρωμέικα", modern_greek), "ΡΩΜΕΪΚΑ");
+    assert_eq!(cm.uppercase_to_string("ή.", modern_greek), "Ή.");
+
+    assert_eq!(
+        cm.uppercase_to_string("ᾠδή, -ήν, -ῆς, -ῇ", modern_greek),
+        "ΩΙΔΗ, -ΗΝ, -ΗΣ, -ΗΙ"
+    );
+    assert_eq!(
+        cm.uppercase_to_string("ᾠδή, -ήν, -ῆς, -ῇ", modern_greek),
+        "ΩΙΔΗ, -ΗΝ, -ΗΣ, -ΗΙ"
+    );
+    assert_eq!(cm.uppercase_to_string("ᾍδης", modern_greek), "ΑΙΔΗΣ");
 }
