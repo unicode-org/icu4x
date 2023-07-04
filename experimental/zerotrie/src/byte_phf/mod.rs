@@ -12,8 +12,6 @@ pub use builder::find;
 #[cfg(feature = "alloc")]
 pub use cached_owned::PerfectByteHashMapCacheOwned;
 
-use ref_cast::RefCast;
-
 const P_FAST_MAX: u8 = 11;
 const Q_FAST_MAX: u8 = 95;
 
@@ -87,7 +85,7 @@ pub fn f2(byte: u8, q: u8, n: usize) -> usize {
 }
 
 // Standard layout: P, N bytes of Q, N bytes of expected keys
-#[derive(Debug, PartialEq, Eq, RefCast)]
+#[derive(Debug, PartialEq, Eq)]
 #[repr(transparent)]
 pub struct PerfectByteHashMap<S: ?Sized>(S);
 
@@ -166,12 +164,21 @@ where
     }
 }
 
+impl PerfectByteHashMap<[u8]> {
+    #[inline]
+    pub fn from_bytes(bytes: &[u8]) -> &Self {
+        // Safety: Self is repr(transparent) over [u8]
+        unsafe { core::mem::transmute(bytes) }
+    }
+}
+
 impl<S> PerfectByteHashMap<S>
 where
     S: AsRef<[u8]> + ?Sized,
 {
+    #[inline]
     pub fn as_borrowed(&self) -> &PerfectByteHashMap<[u8]> {
-        PerfectByteHashMap::ref_cast(self.0.as_ref())
+        PerfectByteHashMap::from_bytes(self.0.as_ref())
     }
 }
 

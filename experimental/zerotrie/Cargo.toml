@@ -32,7 +32,6 @@ denylist = ["bench"]
 [dependencies]
 zerovec = { path = "../../utils/zerovec", optional = true }
 litemap = { path = "../../utils/litemap", default-features = false, features = ["alloc"], optional = true }
-ref-cast = { version = "1.0.12" }
 serde = { version = "1.0", optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
 

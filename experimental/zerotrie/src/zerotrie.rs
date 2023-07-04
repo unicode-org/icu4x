@@ -5,7 +5,6 @@
 use crate::reader::*;
 
 use core::borrow::Borrow;
-use ref_cast::RefCast;
 
 #[cfg(feature = "alloc")]
 use crate::{builder::bytestr::ByteStr, builder::nonconst::ZeroTrieBuilder, error::Error};
@@ -96,7 +95,7 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 /// # Ok::<_, zerotrie::ZeroTrieError>(())
 /// ```
 #[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, ref_cast::RefCast)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
     pub(crate) store: Store,
 }
@@ -126,7 +125,7 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
 /// # Ok::<_, zerotrie::ZeroTrieError>(())
 /// ```
 #[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, ref_cast::RefCast)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct ZeroTriePerfectHash<Store: ?Sized> {
     pub(crate) store: Store,
 }
@@ -135,7 +134,7 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
 ///
 /// For more information, see [`ZeroTrie`].
 #[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, ref_cast::RefCast)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
     pub(crate) store: Store,
 }
@@ -251,7 +250,8 @@ macro_rules! impl_zerotrie_subtype {
             /// If the bytes are not a valid trie, unexpected behavior may occur.
             #[inline]
             pub fn from_bytes(trie: &[u8]) -> &Self {
-                Self::ref_cast(trie)
+                // Safety: Self is repr(transparent) over [u8]
+                unsafe { core::mem::transmute(trie) }
             }
         }
         #[cfg(feature = "alloc")]
