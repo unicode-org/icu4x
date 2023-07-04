@@ -1,6 +1,5 @@
 use super::parse as prs;
 use super::translit;
-use std::borrow::Cow;
 use std::collections::HashMap;
 
 macro_rules! sl {
@@ -24,10 +23,8 @@ impl core::fmt::Debug for SourceLocation {
 }
 
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_unicodeset_parser::ParseError;
 use icu_unicodeset_parser::UnicodeSetBuilderOptions;
 use CompileErrorKind as CEK;
-use SourceLocation as SL;
 
 // TODO: replicate unicodeset_parser error behavior?
 #[derive(Debug, Clone, Copy)]
@@ -36,6 +33,7 @@ pub enum CompileErrorKind {
     UnicodeSetParseError(icu_unicodeset_parser::ParseError),
 }
 
+#[allow(unused)]
 #[derive(Debug, Clone)]
 pub struct CompileError {
     location: SourceLocation,
@@ -81,7 +79,7 @@ impl<'a> Compiler<'a> {
     ) -> Result<translit::Replacer<'a>> {
         let mut replacement = String::new();
         let mut cursor_from_beginning = None;
-        for (idx, element) in parsed_pattern.into_iter().enumerate() {
+        for (idx, element) in parsed_pattern.iter().enumerate() {
             match element {
                 prs::PatternElement::Literal(s) => {
                     replacement.push_str(s);

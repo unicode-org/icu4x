@@ -74,9 +74,9 @@ fn main() {
     eprintln!("JSON-serialized forward transliterator:\n{json}\n--- end json forward ---");
 
     eprintln!("Forward transliteration:");
-    eprintln!("{}", fwd_translit.transliterate(&source));
+    eprintln!("{}", fwd_translit.transliterate(source));
     eprintln!("Backward translit:");
-    eprintln!("{}", bwd_translit.transliterate(&source));
+    eprintln!("{}", bwd_translit.transliterate(source));
 }
 
 #[cfg(test)]

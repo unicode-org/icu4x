@@ -1,10 +1,7 @@
 use std::borrow::Cow;
 use std::fmt::{Display, Formatter};
-use std::thread::sleep;
 
-use icu_collections::codepointinvliststringlist::{
-    CodePointInversionListAndStringList, CodePointInversionListAndStringListULE,
-};
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use serde::{Deserialize, Serialize};
 
 /*
@@ -241,9 +238,9 @@ pub struct Transliterator<'a> {
 
 impl<'a> Display for Transliterator<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[\n")?;
+        writeln!(f, "[")?;
         for rule in &self.rules {
-            write!(f, "  {}\n", rule)?;
+            writeln!(f, "  {}", rule)?;
         }
         write!(f, "]")
     }
@@ -270,7 +267,7 @@ impl<'a> Transliterator<'a> {
             // sleep(std::time::Duration::from_millis(1000));
 
             // step 1.
-            for (i, rule) in self.rules.iter().enumerate() {
+            for rule in self.rules.iter() {
                 // dbg!("checking rule {:?}", rule);
                 // TODO: factor out for loop body into Rule::matches
 
@@ -313,8 +310,8 @@ impl<'a> Transliterator<'a> {
                 // dbg!(rule);
                 // step 2a)
                 let mut replacement: Vec<_> = rule.target.replacement.chars().collect();
-                let mut new_chars = replacement.len();
-                chars.splice(cursor..key_end as usize, replacement.drain(..));
+                let new_chars = replacement.len();
+                chars.splice(cursor..key_end, replacement.drain(..));
                 // step 2b)
                 let new_cursor = cursor as i64 + new_chars as i64 + rule.target.cursor as i64;
                 cursor = new_cursor.clamp(0, chars.len() as i64) as usize;

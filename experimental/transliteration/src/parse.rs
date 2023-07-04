@@ -61,10 +61,7 @@ mod missingapis {
     use super::*;
 
     pub(super) fn unescapable(c: char) -> bool {
-        match c {
-            'n' | 'r' | 't' => true,
-            _ => false,
-        }
+        matches!(c, 'n' | 'r' | 't')
     }
 
     pub(super) fn unescape(c: char) -> char {
@@ -84,22 +81,6 @@ mod missingapis {
     // conform to ID_Continue property
     pub(super) fn is_id_continue(c: char) -> bool {
         c.is_ascii_alphanumeric()
-    }
-
-    // TODO: Note on UnicodeSet parsing: [:L:] _could_ be any of the following:
-    //  * [:L=true:]
-    //  * [:General_Category=L:]
-    //  * [:Script=L:]
-    //  Will need to disambiguate these cases.
-    // TODO: Continue parsing UnicodeSets. Figure out a good way to handle character escaping. Check the "quoted" rule in the syntax: https://www.unicode.org/reports/tr35/#Unicode_Sets
-
-    fn parse_perl_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
-        // parses perl-style \p{x=y} or \p{x} unicode sets
-        todo!()
-    }
-
-    fn parse_posix_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
-        todo!()
     }
 
     pub(super) fn parse_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
@@ -180,8 +161,8 @@ impl core::fmt::Debug for ParseLocation {
 }
 
 use ParseErrorKind as PEK;
-use ParseLocation as PL;
 
+#[allow(unused)]
 #[derive(Debug, Clone)]
 pub(super) struct ParseError {
     pub(super) location: ParseLocation,
@@ -259,7 +240,7 @@ fn parse_quoted_literal(it: &mut t!()) -> Result<Literal> {
         Some(c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
     }
 
-    while let Some(c) = it.next() {
+    for c in it.by_ref() {
         if c == '\'' {
             break;
         } else {
@@ -303,7 +284,7 @@ fn parse_literal(it: &mut t!()) -> Result<Literal> {
     // a literal is either a sequence of characters that are not special or escaped,
     // or a quoted sequence of any chars
     match it.peek() {
-        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+        None => Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
         Some(&'\'') => parse_quoted_literal(it),
         Some(_) => parse_unquoted_literal(it),
     }
@@ -550,23 +531,20 @@ impl Display for Direction {
 fn parse_direction(it: &mut t!()) -> Result<Direction> {
     // dbg!(it.peek());
     match it.next() {
-        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+        None => Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
         Some('>') => Ok(Direction::Forward),
         Some('<') => {
             // if <> then bidirectional
-            match it.peek() {
-                Some(&'>') => {
-                    it.next();
-                    return Ok(Direction::Bidirectional);
-                }
-                _ => {}
+            if let Some(&'>') = it.peek() {
+                it.next();
+                return Ok(Direction::Bidirectional);
             }
             Ok(Direction::Reverse)
         }
         Some('→') => Ok(Direction::Forward),
         Some('←') => Ok(Direction::Reverse),
         Some('↔') => Ok(Direction::Bidirectional),
-        Some(c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+        Some(c) => Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
     }
 }
 
@@ -579,7 +557,7 @@ pub(super) enum RuleKind {
 fn parse_rule_kind(it: &mut t!()) -> Result<RuleKind> {
     // dbg!(it.peek());
     match it.peek() {
-        None => return Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
+        None => Err(ParseError::new(pl!(), PEK::UnexpectedEof)),
         Some(&'=') => {
             it.next();
             Ok(RuleKind::VariableDef)
@@ -588,7 +566,7 @@ fn parse_rule_kind(it: &mut t!()) -> Result<RuleKind> {
             let dir = parse_direction(it)?;
             Ok(RuleKind::Conversion(dir))
         }
-        Some(&c) => return Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
+        Some(&c) => Err(ParseError::new(pl!(), PEK::UnexpectedChar(c))),
     }
 }
 
