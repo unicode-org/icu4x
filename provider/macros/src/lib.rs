@@ -38,6 +38,7 @@ use syn::{Ident, LitStr, Path, Token};
 mod tests;
 
 #[proc_macro_attribute]
+
 /// The `#[data_struct]` attribute should be applied to all types intended
 /// for use in a `DataStruct`.
 ///
@@ -82,6 +83,9 @@ mod tests;
 ///     BazV1Marker::KEY.metadata().fallback_priority,
 ///     icu_provider::FallbackPriority::Region
 /// );
+/// # pub mod icu { pub mod locid { pub mod extensions { pub mod unicode {
+/// # pub use icu_provider::_internal::extensions_unicode_key as key;
+/// # } } } }
 /// assert_eq!(
 ///     BazV1Marker::KEY.metadata().extension_key,
 ///     Some(icu::locid::extensions::unicode::key!("ca"))
