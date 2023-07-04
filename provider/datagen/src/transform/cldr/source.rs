@@ -45,28 +45,28 @@ impl CldrCache {
     }
 
     pub fn core(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(&self, "cldr-core".to_owned())
+        CldrDirNoLang(self, "cldr-core".to_owned())
     }
 
     pub fn numbers(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self, "cldr-numbers".to_owned())
+        CldrDirLang(self, "cldr-numbers".to_owned())
     }
 
     pub fn misc(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self, "cldr-misc".to_owned())
+        CldrDirLang(self, "cldr-misc".to_owned())
     }
 
     pub fn bcp47(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(&self, "cldr-bcp47/bcp47".to_string())
+        CldrDirNoLang(self, "cldr-bcp47/bcp47".to_string())
     }
 
     pub fn displaynames(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self, "cldr-localenames".to_owned())
+        CldrDirLang(self, "cldr-localenames".to_owned())
     }
 
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
-            &self,
+            self,
             if cal == "gregorian" {
                 "cldr-dates".to_owned()
             } else {
