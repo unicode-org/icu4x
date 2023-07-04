@@ -130,6 +130,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::maps::general_category, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_general_category, Fn, hidden)]
         pub fn load_general_category(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -141,6 +142,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::maps::bidi_class, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Fn, hidden)]
         pub fn load_bidi_class(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -152,6 +154,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::maps::east_asian_width, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_east_asian_width, Fn, hidden)]
         pub fn load_east_asian_width(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -163,6 +166,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::maps::line_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_line_break, Fn, hidden)]
         pub fn load_line_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -174,6 +178,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::maps::grapheme_cluster_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_grapheme_cluster_break, Fn, hidden)]
         pub fn try_grapheme_cluster_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -185,6 +190,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::maps::word_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_word_break, Fn, hidden)]
         pub fn load_word_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -196,6 +202,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::maps::sentence_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_sentence_break, Fn, hidden)]
         pub fn load_sentence_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -272,6 +279,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::maps::script, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_script, Fn, hidden)]
         pub fn load_script(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData16>, ICU4XError> {

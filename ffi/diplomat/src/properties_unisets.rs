@@ -51,6 +51,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::basic_emoji, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_basic_emoji, Fn, hidden)]
         pub fn load_basic_emoji(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
@@ -62,6 +63,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_main, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_main, Fn, hidden)]
         pub fn load_exemplars_main(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -76,6 +78,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_auxiliary, Fn)]
+        #[diplomat::rust_link(
+            icu::properties::exemplar_chars::load_exemplars_auxiliary,
+            Fn,
+            hidden
+        )]
         pub fn load_exemplars_auxiliary(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -90,6 +97,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_punctuation, Fn)]
+        #[diplomat::rust_link(
+            icu::properties::exemplar_chars::load_exemplars_punctuation,
+            Fn,
+            hidden
+        )]
         pub fn load_exemplars_punctuation(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -104,6 +116,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_numbers, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_numbers, Fn, hidden)]
         pub fn load_exemplars_numbers(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -118,6 +131,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_index, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_index, Fn, hidden)]
         pub fn load_exemplars_index(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,

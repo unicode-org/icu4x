@@ -63,6 +63,7 @@ pub mod ffi {
 
         /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
         #[diplomat::rust_link(icu::properties::sets::for_general_category_group, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_for_general_category_group, Fn, hidden)]
         pub fn load_for_general_category_group(
             provider: &ICU4XDataProvider,
             group: u32,
@@ -76,6 +77,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::ascii_hex_digit, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_ascii_hex_digit, Fn, hidden)]
         pub fn load_ascii_hex_digit(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -87,6 +89,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::alnum, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_alnum, Fn, hidden)]
         pub fn load_alnum(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -98,6 +101,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::alphabetic, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_alphabetic, Fn, hidden)]
         pub fn load_alphabetic(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -109,6 +113,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::bidi_control, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_bidi_control, Fn, hidden)]
         pub fn load_bidi_control(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -120,6 +125,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::bidi_mirrored, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_bidi_mirrored, Fn, hidden)]
         pub fn load_bidi_mirrored(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -131,6 +137,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::blank, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_blank, Fn, hidden)]
         pub fn load_blank(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -142,6 +149,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::cased, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_cased, Fn, hidden)]
         pub fn load_cased(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -153,6 +161,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::case_ignorable, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_case_ignorable, Fn, hidden)]
         pub fn load_case_ignorable(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -164,6 +173,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::full_composition_exclusion, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_full_composition_exclusion, Fn, hidden)]
         pub fn load_full_composition_exclusion(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -175,6 +185,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::changes_when_casefolded, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_changes_when_casefolded, Fn, hidden)]
         pub fn load_changes_when_casefolded(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -186,6 +197,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::changes_when_casemapped, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_changes_when_casemapped, Fn, hidden)]
         pub fn load_changes_when_casemapped(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -197,6 +209,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::changes_when_nfkc_casefolded, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_changes_when_nfkc_casefolded, Fn, hidden)]
         pub fn load_changes_when_nfkc_casefolded(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -208,6 +221,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::changes_when_lowercased, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_changes_when_lowercased, Fn, hidden)]
         pub fn load_changes_when_lowercased(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -219,6 +233,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::changes_when_titlecased, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_changes_when_titlecased, Fn, hidden)]
         pub fn load_changes_when_titlecased(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -230,6 +245,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::changes_when_uppercased, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_changes_when_uppercased, Fn, hidden)]
         pub fn load_changes_when_uppercased(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -241,6 +257,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::dash, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_dash, Fn, hidden)]
         pub fn load_dash(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -252,6 +269,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::deprecated, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_deprecated, Fn, hidden)]
         pub fn load_deprecated(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -263,6 +281,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::default_ignorable_code_point, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_default_ignorable_code_point, Fn, hidden)]
         pub fn load_default_ignorable_code_point(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -274,6 +293,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::diacritic, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_diacritic, Fn, hidden)]
         pub fn load_diacritic(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -285,6 +305,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::emoji_modifier_base, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_emoji_modifier_base, Fn, hidden)]
         pub fn load_emoji_modifier_base(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -296,6 +317,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::emoji_component, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_emoji_component, Fn, hidden)]
         pub fn load_emoji_component(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -307,6 +329,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::emoji_modifier, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_emoji_modifier, Fn, hidden)]
         pub fn load_emoji_modifier(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -318,6 +341,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::emoji, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_emoji, Fn, hidden)]
         pub fn load_emoji(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -329,6 +353,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::emoji_presentation, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_emoji_presentation, Fn, hidden)]
         pub fn load_emoji_presentation(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -340,6 +365,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::extender, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_extender, Fn, hidden)]
         pub fn load_extender(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -351,6 +377,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::extended_pictographic, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_extended_pictographic, Fn, hidden)]
         pub fn load_extended_pictographic(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -362,6 +389,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::graph, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_graph, Fn, hidden)]
         pub fn load_graph(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -373,6 +401,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::grapheme_base, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_grapheme_base, Fn, hidden)]
         pub fn load_grapheme_base(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -384,6 +413,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::grapheme_extend, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_grapheme_extend, Fn, hidden)]
         pub fn load_grapheme_extend(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -395,6 +425,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::grapheme_link, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_grapheme_link, Fn, hidden)]
         pub fn load_grapheme_link(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -406,6 +437,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::hex_digit, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_hex_digit, Fn, hidden)]
         pub fn load_hex_digit(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -417,6 +449,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::hyphen, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_hyphen, Fn, hidden)]
         pub fn load_hyphen(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -428,6 +461,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::id_continue, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_id_continue, Fn, hidden)]
         pub fn load_id_continue(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -439,6 +473,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::ideographic, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_ideographic, Fn, hidden)]
         pub fn load_ideographic(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -450,6 +485,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::id_start, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_id_start, Fn, hidden)]
         pub fn load_id_start(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -461,6 +497,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::ids_binary_operator, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_ids_binary_operator, Fn, hidden)]
         pub fn load_ids_binary_operator(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -472,6 +509,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::ids_trinary_operator, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_ids_trinary_operator, Fn, hidden)]
         pub fn load_ids_trinary_operator(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -483,6 +521,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::join_control, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_join_control, Fn, hidden)]
         pub fn load_join_control(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -494,6 +533,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::logical_order_exception, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_logical_order_exception, Fn, hidden)]
         pub fn load_logical_order_exception(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -505,6 +545,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::lowercase, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_lowercase, Fn, hidden)]
         pub fn load_lowercase(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -516,6 +557,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::math, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_math, Fn, hidden)]
         pub fn load_math(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -527,6 +569,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::noncharacter_code_point, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_noncharacter_code_point, Fn, hidden)]
         pub fn load_noncharacter_code_point(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -538,6 +581,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::nfc_inert, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_nfc_inert, Fn, hidden)]
         pub fn load_nfc_inert(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -549,6 +593,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::nfd_inert, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_nfd_inert, Fn, hidden)]
         pub fn load_nfd_inert(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -560,6 +605,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::nfkc_inert, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_nfkc_inert, Fn, hidden)]
         pub fn load_nfkc_inert(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -571,6 +617,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::nfkd_inert, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_nfkd_inert, Fn, hidden)]
         pub fn load_nfkd_inert(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -582,6 +629,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::pattern_syntax, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_pattern_syntax, Fn, hidden)]
         pub fn load_pattern_syntax(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -593,6 +641,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::pattern_white_space, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_pattern_white_space, Fn, hidden)]
         pub fn load_pattern_white_space(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -604,6 +653,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::prepended_concatenation_mark, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_prepended_concatenation_mark, Fn, hidden)]
         pub fn load_prepended_concatenation_mark(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -615,6 +665,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::print, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_print, Fn, hidden)]
         pub fn load_print(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -626,6 +677,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::quotation_mark, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_quotation_mark, Fn, hidden)]
         pub fn load_quotation_mark(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -637,6 +689,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::radical, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_radical, Fn, hidden)]
         pub fn load_radical(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -648,6 +701,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::regional_indicator, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_regional_indicator, Fn, hidden)]
         pub fn load_regional_indicator(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -659,6 +713,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::soft_dotted, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_soft_dotted, Fn, hidden)]
         pub fn load_soft_dotted(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -670,6 +725,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::segment_starter, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_segment_starter, Fn, hidden)]
         pub fn load_segment_starter(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -681,6 +737,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::case_sensitive, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_case_sensitive, Fn, hidden)]
         pub fn load_case_sensitive(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -692,6 +749,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::sentence_terminal, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_sentence_terminal, Fn, hidden)]
         pub fn load_sentence_terminal(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -703,6 +761,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::terminal_punctuation, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_terminal_punctuation, Fn, hidden)]
         pub fn load_terminal_punctuation(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -714,6 +773,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::unified_ideograph, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_unified_ideograph, Fn, hidden)]
         pub fn load_unified_ideograph(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -725,6 +785,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::uppercase, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_uppercase, Fn, hidden)]
         pub fn load_uppercase(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -736,6 +797,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::variation_selector, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_variation_selector, Fn, hidden)]
         pub fn load_variation_selector(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -747,6 +809,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::white_space, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_white_space, Fn, hidden)]
         pub fn load_white_space(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -758,6 +821,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::xdigit, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_xdigit, Fn, hidden)]
         pub fn load_xdigit(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -769,6 +833,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::xid_continue, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_xid_continue, Fn, hidden)]
         pub fn load_xid_continue(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -780,6 +845,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::sets::xid_start, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_xid_start, Fn, hidden)]
         pub fn load_xid_start(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
@@ -798,8 +864,7 @@ pub mod ffi {
         ///
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
         #[diplomat::rust_link(icu::properties::sets::for_ecma262, Fn)]
-        #[diplomat::rust_link(icu::properties::sets::for_ecma262_with_any_provider, Fn, hidden)]
-        #[diplomat::rust_link(icu::properties::sets::for_ecma262_with_buffer_provider, Fn, hidden)]
+        #[diplomat::rust_link(icu::properties::sets::load_for_ecma262, Fn, hidden)]
         pub fn load_for_ecma262(
             provider: &ICU4XDataProvider,
             property_name: &str,

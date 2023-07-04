@@ -122,6 +122,11 @@ pub mod ffi {
             icu::datetime::time_zone::TimeZoneFormatter::with_generic_non_location_long,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_generic_non_location_long,
+            FnInStruct,
+            hidden
+        )]
         pub fn load_generic_non_location_long(
             &mut self,
             provider: &ICU4XDataProvider,
@@ -139,6 +144,11 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::datetime::time_zone::TimeZoneFormatter::with_generic_non_location_short,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_generic_non_location_short,
+            FnInStruct,
+            hidden
         )]
         pub fn load_generic_non_location_short(
             &mut self,
@@ -158,6 +168,11 @@ pub mod ffi {
             icu::datetime::time_zone::TimeZoneFormatter::with_specific_non_location_long,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_specific_non_location_long,
+            FnInStruct,
+            hidden
+        )]
         pub fn load_specific_non_location_long(
             &mut self,
             provider: &ICU4XDataProvider,
@@ -176,6 +191,11 @@ pub mod ffi {
             icu::datetime::time_zone::TimeZoneFormatter::with_specific_non_location_short,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_specific_non_location_short,
+            FnInStruct,
+            hidden
+        )]
         pub fn load_specific_non_location_short(
             &mut self,
             provider: &ICU4XDataProvider,
@@ -193,6 +213,11 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::datetime::time_zone::TimeZoneFormatter::with_generic_location_format,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_generic_location_format,
+            FnInStruct,
+            hidden
         )]
         pub fn load_generic_location_format(
             &mut self,

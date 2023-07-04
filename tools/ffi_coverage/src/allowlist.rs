@@ -98,9 +98,6 @@ lazy_static::lazy_static! {
         "_with_any_provider",
         "_with_buffer_provider",
         "_unstable",
-
-        // compiled data constructors cover these
-        "load_",
     ];
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
@@ -209,6 +206,7 @@ lazy_static::lazy_static! {
 
         // Experimental
         "icu::properties::maps::canonical_combining_class",
+        "icu::properties::maps::load_canonical_combining_class",
 
         // Not planned for 1.0
         "icu::properties::maps::CodePointMapData::as_code_point_trie",
