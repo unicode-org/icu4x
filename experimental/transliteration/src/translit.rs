@@ -257,7 +257,7 @@ impl<'a> Transliterator<'a> {
         /* Basic algorithm:
            Until the cursor is at the end of the string and there are no more rules to apply:
             1. Find the first rule that matches the current cursor position
-                a) Find the rule by reverse-matching the ante context (i.e., s[0..cursor].rev())
+                a) Find the rule by backwards-matching the ante context
                 b) Then the key and post-context from s[cursor..]
             2. Apply the rule
                 a) Replace the matched part of the source string with the target
