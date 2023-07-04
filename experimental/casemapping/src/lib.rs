@@ -38,6 +38,8 @@ mod casemapping;
 pub mod provider;
 mod set;
 
+#[doc(hidden)]
+pub mod greek_to_me;
 mod internals;
 
 pub use casemapping::CaseMapper;
