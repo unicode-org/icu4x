@@ -330,6 +330,16 @@ macro_rules! impl_zerotrie_subtype {
                 self.iter().map(|(k, v)| ($cnv_fn(k), v)).collect()
             }
         }
+        #[cfg(feature = "alloc")]
+        impl<Store> From<&$name<Store>> for BTreeMap<$iter_ty, usize>
+        where
+            Store: AsRef<[u8]> + ?Sized,
+        {
+            #[inline]
+            fn from(other: &$name<Store>) -> Self {
+                other.to_btreemap()
+            }
+        }
         #[cfg(feature = "litemap")]
         impl<'a, K, S> TryFrom<&'a LiteMap<K, usize, S>> for $name<Vec<u8>>
         where
@@ -377,6 +387,16 @@ macro_rules! impl_zerotrie_subtype {
             }
             pub(crate) fn to_litemap_bytes(&self) -> LiteMap<Box<[u8]>, usize> {
                 self.iter().map(|(k, v)| ($cnv_fn(k), v)).collect()
+            }
+        }
+        #[cfg(feature = "litemap")]
+        impl<Store> From<&$name<Store>> for LiteMap<$iter_ty, usize>
+        where
+            Store: AsRef<[u8]> + ?Sized,
+        {
+            #[inline]
+            fn from(other: &$name<Store>) -> Self {
+                other.to_litemap()
             }
         }
         #[cfg(feature = "litemap")]
