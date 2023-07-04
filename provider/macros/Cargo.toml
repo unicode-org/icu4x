@@ -36,4 +36,3 @@ syn = { version = "2", features = ["full", "parsing"]}
 
 [dev-dependencies]
 icu_provider = { path = "../core", features = ["macros"] }
-icu = { path = "../../components/icu" }
