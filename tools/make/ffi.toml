@@ -41,12 +41,13 @@ install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make
 description = "Produces the list of ICU APIs that are not exported through Diplomat"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
+script_runner = "@duckscript"
 script = '''
 exit_on_error true
 if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
     echo "Skipping diplomat-coverage since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
 else
-    cargo run -p icu_ffi_coverage --all-features > ffi/diplomat/tests/missing_apis.txt
+    exec --fail-on-error cargo run -p icu_ffi_coverage --all-features > ffi/diplomat/tests/missing_apis.txt
 end
 '''
 

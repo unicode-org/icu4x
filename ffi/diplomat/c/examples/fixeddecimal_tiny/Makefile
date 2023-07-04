@@ -12,8 +12,8 @@ ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-08-25"
 $(ALL_HEADERS):
 
 GCC := gcc
-CLANG := clang-14
-LLD := lld-14
+CLANG := clang-15
+LLD := lld-15
 
 baked_data/macros.rs:
 	cargo run -p icu_datagen -- --locales en bn --keys all --fallback expand --format mod --use-separate-crates --out baked_data
