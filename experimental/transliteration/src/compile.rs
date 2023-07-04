@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 use std::collections::HashMap;
-use super::dfaparsing as prs;
+use super::parse as prs;
 use super::translit;
 
 macro_rules! sl {

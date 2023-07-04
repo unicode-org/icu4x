@@ -143,13 +143,13 @@ impl<'a> Display for Pattern<'a> {
                         // cannot escape in quoted literals, escape using \
                         let mut res = String::new();
                         for c in l.chars() {
-                            if !super::dfaparsing::legal_top_level_char(c) {
+                            if !super::parse::legal_top_level_char(c) {
                                 res.push('\\');
                             }
                             res.push(c);
                         }
                         res
-                    } else if !l.chars().all(super::dfaparsing::legal_top_level_char) {
+                    } else if !l.chars().all(super::parse::legal_top_level_char) {
                         // needs escaping, can be escaped with quotes
                         format!("'{}'", l)
                     } else {

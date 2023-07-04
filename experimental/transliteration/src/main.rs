@@ -14,10 +14,9 @@ use combine::{
 use std::fmt::Display;
 use std::io::Write;
 
-mod dfaparsing;
+mod parse;
 mod compile;
 mod translit;
-mod datastruct_design;
 
 const RULES: &str = r#"
 $AE = [Ä {A \u0308}];
@@ -272,13 +271,13 @@ fn main() {
     let rules = RULES_ORIGINAL;
     //let rules = RULES_PUBLISHING;
     let mut it = rules.chars().peekable();
-    let rules = dfaparsing::parse_rules(&mut it);
+    let rules = parse::parse_rules(&mut it);
     eprintln!("Remaining input: {:?}", it.collect::<String>());
     eprintln!("debug: {:?}", rules);
     let rules = match rules {
         Ok(rules) => {
             eprintln!("Parsed rules:");
-            dfaparsing::pretty_print_rules(&rules);
+            parse::pretty_print_rules(&rules);
             rules
         }
         Err(e) => {
