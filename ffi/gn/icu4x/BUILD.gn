@@ -196,7 +196,6 @@ rust_library("icu-v1_2_0") {
     "--edition=2021",
     "-Cmetadata=d0f231ec1945afb9",
     "-Cextra-filename=-d0f231ec1945afb9",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -461,7 +460,6 @@ rust_library("icu_locid_transform-v1_2_1") {
     "--edition=2021",
     "-Cmetadata=1b3d062f0eab94f7",
     "-Cextra-filename=-1b3d062f0eab94f7",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -642,7 +640,6 @@ rust_library("icu_segmenter-v1_2_1") {
     "-Cmetadata=9c67817750522b21",
     "-Cextra-filename=-9c67817750522b21",
     "--cfg=feature=\"auto\"",
-    "--cfg=feature=\"default\"",
     "--cfg=feature=\"lstm\"",
   ]
 
