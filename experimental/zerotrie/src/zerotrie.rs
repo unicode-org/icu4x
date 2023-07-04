@@ -267,28 +267,29 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         #[cfg(feature = "alloc")]
+        impl<'a, K> FromIterator<(K, usize)> for $name<Vec<u8>>
+        where
+            K: AsRef<[u8]>
+        {
+            fn from_iter<T: IntoIterator<Item = (K, usize)>>(iter: T) -> Self {
+                use crate::builder::nonconst::ZeroTrieBuilder;
+                ZeroTrieBuilder::<VecDeque<u8>>::from_bytes_iter(
+                    iter,
+                    Self::BUILDER_OPTIONS
+                )
+                .map(|s| Self {
+                    store: s.to_bytes(),
+                })
+                .unwrap()
+            }
+        }
+        #[cfg(feature = "alloc")]
         impl<'a, K> TryFrom<&'a BTreeMap<K, usize>> for $name<Vec<u8>>
         where
             K: Borrow<[u8]>
         {
             type Error = crate::error::Error;
             fn try_from(map: &'a BTreeMap<K, usize>) -> Result<Self, Self::Error> {
-                let tuples: Vec<(&[u8], usize)> = map
-                    .iter()
-                    .map(|(k, v)| (k.borrow(), *v))
-                    .collect();
-                let byte_str_slice = ByteStr::from_byte_slice_with_value(&tuples);
-                Self::try_from_tuple_slice(byte_str_slice)
-            }
-        }
-        #[cfg(feature = "litemap")]
-        impl<'a, K, S> TryFrom<&'a LiteMap<K, usize, S>> for $name<Vec<u8>>
-        where
-            K: Borrow<[u8]>,
-            S: litemap::store::StoreIterable<'a, K, usize>,
-        {
-            type Error = crate::error::Error;
-            fn try_from(map: &'a LiteMap<K, usize, S>) -> Result<Self, Self::Error> {
                 let tuples: Vec<(&[u8], usize)> = map
                     .iter()
                     .map(|(k, v)| (k.borrow(), *v))
@@ -327,6 +328,64 @@ macro_rules! impl_zerotrie_subtype {
             }
             pub(crate) fn to_btreemap_bytes(&self) -> BTreeMap<Box<[u8]>, usize> {
                 self.iter().map(|(k, v)| ($cnv_fn(k), v)).collect()
+            }
+        }
+        #[cfg(feature = "litemap")]
+        impl<'a, K, S> TryFrom<&'a LiteMap<K, usize, S>> for $name<Vec<u8>>
+        where
+            K: Borrow<[u8]>,
+            S: litemap::store::StoreIterable<'a, K, usize>,
+        {
+            type Error = crate::error::Error;
+            fn try_from(map: &'a LiteMap<K, usize, S>) -> Result<Self, Self::Error> {
+                let tuples: Vec<(&[u8], usize)> = map
+                    .iter()
+                    .map(|(k, v)| (k.borrow(), *v))
+                    .collect();
+                let byte_str_slice = ByteStr::from_byte_slice_with_value(&tuples);
+                Self::try_from_tuple_slice(byte_str_slice)
+            }
+        }
+        #[cfg(feature = "litemap")]
+        impl<Store> $name<Store>
+        where
+            Store: AsRef<[u8]> + ?Sized,
+        {
+            /// Exports the data from this ZeroTrie type into a LiteMap.
+            ///
+            /// ***Enable this function with the `"litemap"` feature.***
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use zerotrie::", stringify!($name), ";")]
+            /// use litemap::LiteMap;
+            ///
+            #[doc = concat!("let trie = ", stringify!($name), "::from_bytes(b\"abc\\x81def\\x82\");")]
+            ///
+            /// let items = trie.to_litemap();
+            /// assert_eq!(items.len(), 2);
+            ///
+            #[doc = concat!("let recovered_trie: ", stringify!($name), "<Vec<u8>> = items")]
+            ///     .iter()
+            ///     .map(|(k, v)| (k, *v))
+            ///     .collect();
+            /// assert_eq!(trie.as_bytes(), recovered_trie.as_bytes());
+            /// ```
+            pub fn to_litemap(&self) -> LiteMap<$iter_ty, usize> {
+                self.iter().collect()
+            }
+            pub(crate) fn to_litemap_bytes(&self) -> LiteMap<Box<[u8]>, usize> {
+                self.iter().map(|(k, v)| ($cnv_fn(k), v)).collect()
+            }
+        }
+        #[cfg(feature = "litemap")]
+        impl $name<Vec<u8>>
+        {
+            #[cfg(feature = "serde")]
+            pub(crate) fn try_from_serde_litemap(items: &LiteMap<Box<ByteStr>, usize>) -> Result<Self, Error> {
+                let lm_borrowed: LiteMap<&ByteStr, usize> = items.to_borrowed_keys();
+                Self::try_from_tuple_slice(lm_borrowed.as_slice())
             }
         }
         // Note: Can't generalize this impl due to the `core::borrow::Borrow` blanket impl.
@@ -375,65 +434,6 @@ macro_rules! impl_zerotrie_subtype {
                 $name::from_store(
                     Vec::from(bytes).into_boxed_slice(),
                 )
-            }
-        }
-        #[cfg(feature = "litemap")]
-        impl<Store> $name<Store>
-        where
-            Store: AsRef<[u8]> + ?Sized,
-        {
-            /// Exports the data from this ZeroTrie type into a LiteMap.
-            ///
-            /// ***Enable this function with the `"litemap"` feature.***
-            ///
-            /// # Examples
-            ///
-            /// ```
-            #[doc = concat!("use zerotrie::", stringify!($name), ";")]
-            /// use litemap::LiteMap;
-            ///
-            #[doc = concat!("let trie = ", stringify!($name), "::from_bytes(b\"abc\\x81def\\x82\");")]
-            ///
-            /// let items = trie.to_litemap();
-            /// assert_eq!(items.len(), 2);
-            ///
-            #[doc = concat!("let recovered_trie: ", stringify!($name), "<Vec<u8>> = items")]
-            ///     .iter()
-            ///     .map(|(k, v)| (k, *v))
-            ///     .collect();
-            /// assert_eq!(trie.as_bytes(), recovered_trie.as_bytes());
-            /// ```
-            pub fn to_litemap(&self) -> LiteMap<$iter_ty, usize> {
-                self.iter().collect()
-            }
-            pub(crate) fn to_litemap_bytes(&self) -> LiteMap<Box<[u8]>, usize> {
-                self.iter().map(|(k, v)| ($cnv_fn(k), v)).collect()
-            }
-        }
-        #[cfg(feature = "litemap")]
-        impl $name<Vec<u8>>
-        {
-            #[cfg(feature = "serde")]
-            pub(crate) fn try_from_serde_litemap(items: &LiteMap<Box<ByteStr>, usize>) -> Result<Self, Error> {
-                let lm_borrowed: LiteMap<&ByteStr, usize> = items.to_borrowed_keys();
-                Self::try_from_tuple_slice(lm_borrowed.as_slice())
-            }
-        }
-        #[cfg(feature = "alloc")]
-        impl<'a, K> FromIterator<(K, usize)> for $name<Vec<u8>>
-        where
-            K: AsRef<[u8]>
-        {
-            fn from_iter<T: IntoIterator<Item = (K, usize)>>(iter: T) -> Self {
-                use crate::builder::nonconst::ZeroTrieBuilder;
-                ZeroTrieBuilder::<VecDeque<u8>>::from_bytes_iter(
-                    iter,
-                    Self::BUILDER_OPTIONS
-                )
-                .map(|s| Self {
-                    store: s.to_bytes(),
-                })
-                .unwrap()
             }
         }
         // TODO(#2778): Auto-derive these impls based on the repr(transparent).
