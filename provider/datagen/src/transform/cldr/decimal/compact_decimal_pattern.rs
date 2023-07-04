@@ -299,7 +299,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                                 .map_or(Some(u8::MAX), |p| {
                                     u8::try_from(p.index)
                                         .ok()
-                                        .and_then(|i| (i < u8::MAX).then(|| i))
+                                        .and_then(|i| (i < u8::MAX).then_some(i))
                                 })
                                 .ok_or_else(|| {
                                     format!(
