@@ -8,11 +8,6 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
-    use icu_provider::DataProvider;
-    use icu_segmenter::provider::{
-        DictionaryForWordLineExtendedV1Marker, DictionaryForWordOnlyAutoV1Marker,
-        GraphemeClusterBreakDataV1Marker, LstmForWordLineAutoV1Marker, WordBreakDataV1Marker,
-    };
     use icu_segmenter::{
         WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
         WordSegmenter, WordType,
@@ -56,24 +51,16 @@ pub mod ffi {
         ///
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_auto, FnInStruct)]
         pub fn create_auto(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
-            Self::try_new_auto_impl(&provider.0)
-        }
-
-        fn try_new_auto_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
-        where
-            D: DataProvider<WordBreakDataV1Marker>
-                + DataProvider<DictionaryForWordOnlyAutoV1Marker>
-                + DataProvider<LstmForWordLineAutoV1Marker>
-                + DataProvider<GraphemeClusterBreakDataV1Marker>
-                + ?Sized,
-        {
-            Ok(Box::new(ICU4XWordSegmenter(
-                WordSegmenter::try_new_auto_unstable(provider)?,
-            )))
+            Ok(Box::new(ICU4XWordSegmenter(call_constructor!(
+                WordSegmenter::new_auto [r => Ok(r)],
+                WordSegmenter::try_new_auto_with_any_provider,
+                WordSegmenter::try_new_auto_with_buffer_provider,
+                provider
+            )?)))
         }
 
         /// Construct an [`ICU4XWordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
@@ -81,48 +68,30 @@ pub mod ffi {
         ///
         /// Warning: [`ICU4XWordSegmenter`] created by this function doesn't handle Chinese or
         /// Japanese.
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_lstm, FnInStruct)]
         pub fn create_lstm(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
-            Self::try_new_lstm_impl(&provider.0)
-        }
-
-        fn try_new_lstm_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
-        where
-            D: DataProvider<WordBreakDataV1Marker>
-                + DataProvider<LstmForWordLineAutoV1Marker>
-                + DataProvider<GraphemeClusterBreakDataV1Marker>
-                + ?Sized,
-        {
-            Ok(Box::new(ICU4XWordSegmenter(
-                WordSegmenter::try_new_lstm_unstable(provider)?,
-            )))
+            Ok(Box::new(ICU4XWordSegmenter(call_constructor!(
+                WordSegmenter::new_lstm [r => Ok(r)],
+                WordSegmenter::try_new_lstm_with_any_provider,
+                WordSegmenter::try_new_lstm_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Construct an [`ICU4XWordSegmenter`] with dictionary payload data for Chinese, Japanese,
         /// Burmese, Khmer, Lao, and Thai.
-        #[diplomat::rust_link(
-            icu::segmenter::WordSegmenter::try_new_dictionary_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_dictionary, FnInStruct)]
         pub fn create_dictionary(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
-            Self::try_new_dictionary_impl(&provider.0)
-        }
-
-        fn try_new_dictionary_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
-        where
-            D: DataProvider<WordBreakDataV1Marker>
-                + DataProvider<DictionaryForWordOnlyAutoV1Marker>
-                + DataProvider<DictionaryForWordLineExtendedV1Marker>
-                + DataProvider<GraphemeClusterBreakDataV1Marker>
-                + ?Sized,
-        {
-            Ok(Box::new(ICU4XWordSegmenter(
-                WordSegmenter::try_new_dictionary_unstable(provider)?,
-            )))
+            Ok(Box::new(ICU4XWordSegmenter(call_constructor!(
+                WordSegmenter::new_dictionary [r => Ok(r)],
+                WordSegmenter::try_new_dictionary_with_any_provider,
+                WordSegmenter::try_new_dictionary_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Segments a (potentially ill-formed) UTF-8 string.

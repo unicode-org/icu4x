@@ -11,6 +11,7 @@ pub mod ffi {
     #[cfg(feature = "icu_decimal")]
     use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
+    #[allow(unused_imports)]
     use icu_provider::{AnyPayload, DataPayload};
 
     #[diplomat::opaque]

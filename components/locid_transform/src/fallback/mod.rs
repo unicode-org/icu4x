@@ -414,6 +414,17 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
     }
 }
 
+impl LocaleFallbackerBorrowed<'static> {
+    /// Cheaply converts a `LocaleFallbackerBorrowed<'static>` into a `LocaleFallbacker`.
+    pub fn static_to_owned(self) -> LocaleFallbacker {
+        LocaleFallbacker {
+            likely_subtags: DataPayload::from_static_ref(self.likely_subtags),
+            parents: DataPayload::from_static_ref(self.parents),
+            collation_supplement: self.collation_supplement.map(DataPayload::from_static_ref),
+        }
+    }
+}
+
 impl<'a> LocaleFallbackerWithConfig<'a> {
     pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
         self.normalize(&mut locale);

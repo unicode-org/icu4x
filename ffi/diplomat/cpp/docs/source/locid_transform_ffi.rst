@@ -12,14 +12,14 @@
 
         Create a new :cpp:class:`ICU4XLocaleCanonicalizer`.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> create_extended(const ICU4XDataProvider& provider)
 
         Create a new :cpp:class:`ICU4XLocaleCanonicalizer` with extended data.
 
-        See the `Rust documentation for try_new_with_expander_unstable <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.try_new_with_expander_unstable>`__ for more information.
+        See the `Rust documentation for new_with_expander <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new_with_expander>`__ for more information.
 
 
     .. cpp:function:: ICU4XTransformResult canonicalize(ICU4XLocale& locale) const
@@ -40,14 +40,14 @@
 
         Create a new :cpp:class:`ICU4XLocaleExpander`.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XLocaleExpander, ICU4XError> create_extended(const ICU4XDataProvider& provider)
 
         Create a new :cpp:class:`ICU4XLocaleExpander` with extended data.
 
-        See the `Rust documentation for try_new_extended_unstable <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.try_new_extended_unstable>`__ for more information.
+        See the `Rust documentation for new_extended <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new_extended>`__ for more information.
 
 
     .. cpp:function:: ICU4XTransformResult maximize(ICU4XLocale& locale) const

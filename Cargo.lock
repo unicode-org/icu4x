@@ -1409,7 +1409,6 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_fs",
  "icu_segmenter",
- "icu_testdata",
  "icu_timezone",
  "log",
  "serde",
@@ -1862,7 +1861,6 @@ dependencies = [
  "icu_locid_transform",
  "icu_properties_data",
  "icu_provider",
- "icu_testdata",
  "serde",
  "tinystr",
  "unicode-bidi",
@@ -1951,7 +1949,6 @@ dependencies = [
 name = "icu_provider_macros"
 version = "1.2.0"
 dependencies = [
- "icu",
  "icu_provider",
  "proc-macro2",
  "quote",
@@ -1991,10 +1988,7 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_locid_transform",
- "icu_properties",
  "icu_provider",
- "icu_provider_adapters",
- "icu_provider_fs",
  "icu_segmenter_data",
  "itertools",
  "libm",
@@ -2664,9 +2658,9 @@ checksum = "dc375e1527247fe1a97d8b7156678dfe7c1af2fc075c9a4db3690ecd2a148068"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.56"
+version = "1.0.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b63bdb0cd06f1f4dedf69b254734f9b45af66e4a031e42a7480257d9898b435"
+checksum = "7b368fba921b0dce7e60f5e04ec15e565b3303972b42bcfde1d0713b881959eb"
 dependencies = [
  "unicode-ident",
 ]

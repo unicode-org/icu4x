@@ -65,9 +65,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
     ///
-    /// let data =
-    ///     maps::load_general_category(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
+    /// let data = maps::general_category().static_to_owned();
     ///
     /// let gc = data.try_into_converted::<u8>().unwrap();
     /// let gc = gc.as_borrowed();
@@ -259,6 +257,15 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
         predicate: impl FnMut(T) -> U + Copy + 'a,
     ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
         self.map.iter_ranges_mapped(predicate)
+    }
+}
+
+impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
+    /// Cheaply converts a `CodePointMapDataBorrowed<'static>` into a `CodePointMapData`.
+    pub fn static_to_owned(self) -> CodePointMapData<T> {
+        CodePointMapData {
+            data: DataPayload::from_static_ref(self.map),
+        }
     }
 }
 

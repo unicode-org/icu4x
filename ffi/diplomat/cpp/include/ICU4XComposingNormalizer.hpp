@@ -35,14 +35,14 @@ class ICU4XComposingNormalizer {
   /**
    * Construct a new ICU4XComposingNormalizer instance for NFC
    * 
-   * See the [Rust documentation for `try_new_nfc_unstable`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfc_unstable) for more information.
+   * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
    */
   static diplomat::result<ICU4XComposingNormalizer, ICU4XError> create_nfc(const ICU4XDataProvider& provider);
 
   /**
    * Construct a new ICU4XComposingNormalizer instance for NFKC
    * 
-   * See the [Rust documentation for `try_new_nfkc_unstable`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfkc_unstable) for more information.
+   * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
    */
   static diplomat::result<ICU4XComposingNormalizer, ICU4XError> create_nfkc(const ICU4XDataProvider& provider);
 

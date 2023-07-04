@@ -71,7 +71,7 @@ void iterate_word_breakpoints(Iterator& iterator) {
 }
 
 void test_line(const std::string_view& str) {
-    const auto provider = ICU4XDataProvider::create_test();
+    const auto provider = ICU4XDataProvider::create_compiled();
     const auto segmenter_auto =
         ICU4XLineSegmenter::create_auto(provider).ok().value();
     const auto segmenter_lstm =
@@ -92,7 +92,7 @@ void test_line(const std::string_view& str) {
 }
 
 void test_grapheme(const std::string_view& str) {
-    const auto provider = ICU4XDataProvider::create_test();
+    const auto provider = ICU4XDataProvider::create_compiled();
     const auto segmenter = ICU4XGraphemeClusterSegmenter::create(provider).ok().value();
     cout << "Finding grapheme cluster breakpoints in string:" << endl
          << str << endl;
@@ -104,7 +104,7 @@ void test_grapheme(const std::string_view& str) {
 }
 
 void test_word(const std::string_view& str) {
-    const auto provider = ICU4XDataProvider::create_test();
+    const auto provider = ICU4XDataProvider::create_compiled();
     const auto segmenter_auto =
         ICU4XWordSegmenter::create_auto(provider).ok().value();
     const auto segmenter_lstm =
@@ -125,7 +125,7 @@ void test_word(const std::string_view& str) {
 }
 
 void test_sentence(const std::string_view& str) {
-    const auto provider = ICU4XDataProvider::create_test();
+    const auto provider = ICU4XDataProvider::create_compiled();
     const auto segmenter = ICU4XSentenceSegmenter::create(provider).ok().value();
     cout << "Finding sentence breakpoints in string:" << endl
          << str << endl;

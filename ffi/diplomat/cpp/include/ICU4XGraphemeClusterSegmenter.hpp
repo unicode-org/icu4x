@@ -39,7 +39,7 @@ class ICU4XGraphemeClusterSegmenter {
   /**
    * Construct an [`ICU4XGraphemeClusterSegmenter`].
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
    */
   static diplomat::result<ICU4XGraphemeClusterSegmenter, ICU4XError> create(const ICU4XDataProvider& provider);
 

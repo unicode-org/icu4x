@@ -51,6 +51,7 @@ pub mod data_struct;
 pub mod errors;
 pub mod locale;
 pub mod logging;
+#[macro_use]
 pub mod provider;
 
 #[cfg(target_arch = "wasm32")]

@@ -19,11 +19,6 @@ pub mod ffi {
     /// For properties whose values fit into 8 bits.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapData, Struct)]
-    #[diplomat::rust_link(
-        icu::properties::maps::CodePointMapData::as_borrowed,
-        FnInStruct,
-        hidden
-    )]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapData::from_data, FnInStruct, hidden)]
     #[diplomat::rust_link(
         icu::properties::maps::CodePointMapData::try_into_converted,
@@ -134,53 +129,88 @@ pub mod ffi {
             ))
         }
 
-        #[diplomat::rust_link(icu::properties::maps::load_general_category, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::general_category, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_general_category, Fn, hidden)]
         pub fn load_general_category(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Ok(convert_8(maps::load_general_category(&provider.0)?))
+            Ok(convert_8(call_constructor_unstable!(
+                maps::general_category [r => Ok(r.static_to_owned())],
+                maps::load_general_category,
+                provider,
+            )?))
         }
 
-        #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::bidi_class, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Fn, hidden)]
         pub fn load_bidi_class(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Ok(convert_8(maps::load_bidi_class(&provider.0)?))
+            Ok(convert_8(call_constructor_unstable!(
+                maps::bidi_class [r => Ok(r.static_to_owned())],
+                maps::load_bidi_class,
+                provider,
+            )?))
         }
 
-        #[diplomat::rust_link(icu::properties::maps::load_east_asian_width, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::east_asian_width, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_east_asian_width, Fn, hidden)]
         pub fn load_east_asian_width(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Ok(convert_8(maps::load_east_asian_width(&provider.0)?))
+            Ok(convert_8(call_constructor_unstable!(
+                maps::east_asian_width [r => Ok(r.static_to_owned())],
+                maps::load_east_asian_width,
+                provider,
+            )?))
         }
 
-        #[diplomat::rust_link(icu::properties::maps::load_line_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::line_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_line_break, Fn, hidden)]
         pub fn load_line_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Ok(convert_8(maps::load_line_break(&provider.0)?))
+            Ok(convert_8(call_constructor_unstable!(
+                maps::line_break [r => Ok(r.static_to_owned())],
+                maps::load_line_break,
+                provider,
+            )?))
         }
 
-        #[diplomat::rust_link(icu::properties::maps::load_grapheme_cluster_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::grapheme_cluster_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_grapheme_cluster_break, Fn, hidden)]
         pub fn try_grapheme_cluster_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Ok(convert_8(maps::load_grapheme_cluster_break(&provider.0)?))
+            Ok(convert_8(call_constructor_unstable!(
+                maps::grapheme_cluster_break [r => Ok(r.static_to_owned())],
+                maps::load_grapheme_cluster_break,
+                provider,
+            )?))
         }
 
-        #[diplomat::rust_link(icu::properties::maps::load_word_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::word_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_word_break, Fn, hidden)]
         pub fn load_word_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Ok(convert_8(maps::load_word_break(&provider.0)?))
+            Ok(convert_8(call_constructor_unstable!(
+                maps::word_break [r => Ok(r.static_to_owned())],
+                maps::load_word_break,
+                provider,
+            )?))
         }
 
-        #[diplomat::rust_link(icu::properties::maps::load_sentence_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::sentence_break, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_sentence_break, Fn, hidden)]
         pub fn load_sentence_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Ok(convert_8(maps::load_sentence_break(&provider.0)?))
+            Ok(convert_8(call_constructor_unstable!(
+                maps::sentence_break [r => Ok(r.static_to_owned())],
+                maps::load_sentence_break,
+                provider,
+            )?))
         }
     }
 
@@ -248,15 +278,20 @@ pub mod ffi {
             ))
         }
 
-        #[diplomat::rust_link(icu::properties::maps::load_script, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::script, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_script, Fn, hidden)]
         pub fn load_script(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData16>, ICU4XError> {
             #[allow(clippy::expect_used)] // script is a 16-bit property
             Ok(Box::new(ICU4XCodePointMapData16(
-                maps::load_script(&provider.0)?
-                    .try_into_converted()
-                    .expect("try_into_converted to u16 must be infallible"),
+                call_constructor_unstable!(
+                    maps::script [r => Ok(r.static_to_owned())],
+                    maps::load_script,
+                    provider,
+                )?
+                .try_into_converted()
+                .expect("try_into_converted to u16 must be infallible"),
             )))
         }
     }

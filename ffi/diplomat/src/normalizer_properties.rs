@@ -18,14 +18,19 @@ pub mod ffi {
     impl ICU4XCanonicalCombiningClassMap {
         /// Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
         #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalCombiningClassMap::try_new_unstable,
+            icu::normalizer::properties::CanonicalCombiningClassMap::new,
             FnInStruct
         )]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCanonicalCombiningClassMap>, ICU4XError> {
             Ok(Box::new(ICU4XCanonicalCombiningClassMap(
-                CanonicalCombiningClassMap::try_new_unstable(&provider.0)?,
+                call_constructor!(
+                    CanonicalCombiningClassMap::new [r => Ok(r)],
+                    CanonicalCombiningClassMap::try_new_with_any_provider,
+                    CanonicalCombiningClassMap::try_new_with_buffer_provider,
+                    provider
+                )?,
             )))
         }
 
@@ -64,16 +69,16 @@ pub mod ffi {
 
     impl ICU4XCanonicalComposition {
         /// Construct a new ICU4XCanonicalComposition instance for NFC
-        #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalComposition::try_new_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCanonicalComposition>, ICU4XError> {
-            Ok(Box::new(ICU4XCanonicalComposition(
-                CanonicalComposition::try_new_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XCanonicalComposition(call_constructor!(
+                CanonicalComposition::new [r => Ok(r)],
+                CanonicalComposition::try_new_with_any_provider,
+                CanonicalComposition::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Performs canonical composition (including Hangul) on a pair of characters
@@ -105,16 +110,16 @@ pub mod ffi {
 
     impl ICU4XCanonicalDecomposition {
         /// Construct a new ICU4XCanonicalDecomposition instance for NFC
-        #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalDecomposition::try_new_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCanonicalDecomposition>, ICU4XError> {
-            Ok(Box::new(ICU4XCanonicalDecomposition(
-                CanonicalDecomposition::try_new_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XCanonicalDecomposition(call_constructor!(
+                CanonicalDecomposition::new [r => Ok(r)],
+                CanonicalDecomposition::try_new_with_any_provider,
+                CanonicalDecomposition::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Performs non-recursive canonical decomposition (including for Hangul).

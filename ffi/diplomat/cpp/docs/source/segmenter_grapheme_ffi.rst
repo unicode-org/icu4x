@@ -48,7 +48,7 @@
 
         Construct an :cpp:class:`ICU4XGraphemeClusterSegmenter`.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new>`__ for more information.
 
 
     .. cpp:function:: ICU4XGraphemeClusterBreakIteratorUtf8 segment_utf8(const std::string_view input) const
