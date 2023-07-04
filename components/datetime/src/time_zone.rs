@@ -97,8 +97,8 @@ where
 ///     Default::default(),
 /// )
 /// .unwrap();
-/// tzf.with_generic_non_location_short()?
-///     .with_generic_non_location_long()?;
+/// tzf.include_generic_non_location_short()?
+///     .include_generic_non_location_long()?;
 ///
 /// // "uschi" - has metazone symbol data for generic_non_location_short
 /// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
