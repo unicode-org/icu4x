@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_casemapping::CaseMapping;
+use icu_casemap::CaseMapper;
 use icu_locid::langid;
 
 #[test]
 fn test_simple_mappings() {
-    let case_mapping = CaseMapping::new();
+    let case_mapping = CaseMapper::new();
 
     // Basic case mapping
     assert_eq!(case_mapping.simple_uppercase('a'), 'A');
@@ -50,7 +50,7 @@ fn test_simple_mappings() {
 // These tests are taken from StringCaseTest::TestCaseConversion in ICU4C.
 #[test]
 fn test_full_mappings() {
-    let case_mapping = CaseMapping::new();
+    let case_mapping = CaseMapper::new();
     let root = langid!("und");
     let tr = langid!("tr");
     let lt = langid!("lt");
@@ -194,7 +194,7 @@ fn test_full_mappings() {
 
 #[test]
 fn test_armenian() {
-    let cm = CaseMapping::new();
+    let cm = CaseMapper::new();
     let root = langid!("und");
     let east = langid!("hy");
     let west = langid!("hyw");
@@ -217,7 +217,7 @@ fn test_armenian() {
 
 #[test]
 fn test_dutch() {
-    let cm = CaseMapping::new();
+    let cm = CaseMapper::new();
     let nl = langid!("nl");
 
     assert_eq!(cm.titlecase_segment_to_string("ijssel", &nl), "IJssel");

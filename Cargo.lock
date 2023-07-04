@@ -1305,7 +1305,7 @@ name = "icu"
 version = "1.2.0"
 dependencies = [
  "icu_calendar",
- "icu_casemapping",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_compactdecimal",
@@ -1435,12 +1435,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_casemapping"
+name = "icu_casemap"
 version = "0.7.2"
 dependencies = [
  "databake",
  "displaydoc",
- "icu_casemapping_data",
+ "icu_casemap_data",
  "icu_collections",
  "icu_locid",
  "icu_provider",
@@ -1451,7 +1451,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_casemapping_data"
+name = "icu_casemap_data"
 version = "1.3.0"
 
 [[package]]
@@ -1550,7 +1550,7 @@ dependencies = [
  "eyre",
  "icu",
  "icu_calendar",
- "icu_casemapping",
+ "icu_casemap",
  "icu_codepointtrie_builder",
  "icu_collator",
  "icu_collections",
@@ -2010,7 +2010,7 @@ dependencies = [
  "criterion",
  "icu",
  "icu_calendar",
- "icu_casemapping",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_compactdecimal",

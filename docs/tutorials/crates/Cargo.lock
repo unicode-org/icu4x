@@ -656,7 +656,7 @@ name = "icu"
 version = "1.2.0"
 dependencies = [
  "icu_calendar",
- "icu_casemapping",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_datetime",
@@ -690,7 +690,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_casemapping"
+name = "icu_casemap"
 version = "0.7.2"
 dependencies = [
  "databake",
@@ -771,7 +771,7 @@ dependencies = [
  "elsa",
  "eyre",
  "icu_calendar",
- "icu_casemapping",
+ "icu_casemap",
  "icu_codepointtrie_builder",
  "icu_collator",
  "icu_collections",
