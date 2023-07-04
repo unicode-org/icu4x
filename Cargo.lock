@@ -3594,7 +3594,6 @@ dependencies = [
 name = "transliteration"
 version = "0.1.0"
 dependencies = [
- "combine",
  "icu_collections",
  "icu_properties",
  "icu_testdata",

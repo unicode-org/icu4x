@@ -6,7 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-combine = "4.6.4"
 icu_properties = { version = "1.2.0", path = "../../components/properties" }
 icu_testdata = { version = "1.2.0", path = "../../provider/testdata" }
 icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde"] }
