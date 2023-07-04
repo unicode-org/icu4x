@@ -1,7 +1,7 @@
 extern crate core;
 
-mod parse;
 mod compile;
+mod parse;
 mod translit;
 
 const RULES: &str = r#"
@@ -79,7 +79,6 @@ fn main() {
     eprintln!("{}", bwd_translit.transliterate(&source));
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -118,8 +117,10 @@ mod tests {
             # ::Any-ASCII;
         "#;
 
-        const SOURCE: &str = "Über ältere Lügner lästern ist sehr \u{61}\u{0308}rgerlich. Ja, SEHR ÄRGERLICH!";
-        const EXPECTED: &str = "Ueber aeltere Luegner laestern ist sehr aergerlich. Ja, SEHR AERGERLICH!";
+        const SOURCE: &str =
+            "Über ältere Lügner lästern ist sehr \u{61}\u{0308}rgerlich. Ja, SEHR ÄRGERLICH!";
+        const EXPECTED: &str =
+            "Ueber aeltere Luegner laestern ist sehr aergerlich. Ja, SEHR AERGERLICH!";
 
         assert_eq!(EXPECTED, transliterate(RULES, SOURCE));
     }
@@ -203,10 +204,8 @@ mod tests {
         const EXPECTED: &str = r#"Wait — This should be 0-9.
  → Fix this soon. “Now”
  
- ¾ ⟺ 3 / 4"#; 
+ ¾ ⟺ 3 / 4"#;
 
         assert_eq!(EXPECTED, transliterate(RULES, SOURCE));
     }
-
-
 }
