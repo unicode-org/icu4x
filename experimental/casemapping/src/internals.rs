@@ -158,20 +158,40 @@ impl<'data> CaseMapV1<'data> {
             }
         }
 
+        // ICU4C's non-standard extension for Greek uppercasing
+        // https://icu.unicode.org/design/case/greek-upper
+        // Effectively removes Greek accents from Greek vowels during uppercasing,
+        // whilst attempting to preserve additional marks like the dialytika (diæresis)
+        // and ypogegrammeni (combining small iota)
         if !IS_TITLE_CONTEXT && locale == CaseMapLocale::Greek && kind == MappingKind::Upper {
+            // Remove all combining diacritics on a Greek letter
+            // Ypogegrammeni is not an accent mark and is handled by regular casemapping (it turns into
+            // a capital iota)
+            // The dialytika is removed here, but it may be added again when the base letter is being processed.
             if greek_to_me::is_greek_diacritic_except_ypogegrammeni(c)
                 && context.preceded_by_greek_letter()
             {
                 return FullMappingResult::Remove;
             }
             let data = greek_to_me::GREEK_DATA_TRIE.get(c);
+            // Check if the character is a Greek character with an associated uppercase base character
             if let Some(upper_base) = data.greek_base_uppercase() {
+                // Get the diacritics on the character itself, and add any further combining diacritics
+                // from the context
                 let mut diacritics = context.add_greek_diacritics(data.diacritics());
+                // If the previous vowel had an accent (which would be removed) but no dialytika,
+                // and this is an iota or upsilon, add a dialytika since it is necessary to disambiguate
+                // the now-unaccented adjacent vowels from a digraph/diphthong
                 diacritics.dialytika = diacritics.dialytika
                     || ((upper_base == 'Ι' || upper_base == 'Υ')
                         && context.preceded_by_greek_accented_vowel_with_no_dialytika());
+                // Calculate the letter it should be mapped to and a corresponding combining mark
+                // if any
+                // In most branches the letter is `upper_base`, i.e. the character with all accents removed
                 let (letter, combining) = match upper_base {
                     'Η' => {
+                        // Eta is allowed to retain a tonos when it is an only word to distinguish
+                        // the word for 'or' from the feminine marker
                         if diacritics.accented
                             && !context.followed_by_cased_letter(self)
                             && !context.preceded_by_cased_letter(self)
@@ -179,7 +199,7 @@ impl<'data> CaseMapV1<'data> {
                             && !diacritics.combining_ypogegrammeni
                         {
                             if diacritics.dialytika {
-                                ('Ή', Some('\u{0308}'))
+                                ('Ή', Some(greek_to_me::DIALYTIKA))
                             } else {
                                 ('Ή', None)
                             }
@@ -187,6 +207,7 @@ impl<'data> CaseMapV1<'data> {
                             (upper_base, None)
                         }
                     }
+                    // Iota and upsilon have precomposed dialytika variants which we can use
                     'Ι' => {
                         if diacritics.dialytika {
                             ('Ϊ', None)
@@ -201,15 +222,19 @@ impl<'data> CaseMapV1<'data> {
                             (upper_base, None)
                         }
                     }
+                    // For everyone else just remove the accents
                     _ => {
                         if diacritics.dialytika {
-                            (upper_base, Some('\u{0308}'))
+                            (upper_base, Some(greek_to_me::DIALYTIKA))
                         } else {
                             (upper_base, None)
                         }
                     }
                 };
                 if let Some(mark) = combining {
+                    // Ypogegrammeni casemaps to capital iota.
+                    // We ignore combining_ypogegrammeni because that will automatically
+                    // uppercase to iota anyway
                     if diacritics.precomposed_ypogegrammeni {
                         return FullMappingResult::ThreeCodePoints(letter, mark, 'Ι');
                     } else {
