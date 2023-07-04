@@ -83,9 +83,18 @@ mod tests;
 ///     BazV1Marker::KEY.metadata().fallback_priority,
 ///     icu_provider::FallbackPriority::Region
 /// );
-/// # pub mod icu { pub mod locid { pub mod extensions { pub mod unicode {
-/// # pub use icu_provider::_internal::extensions_unicode_key as key;
-/// # } } } }
+/// # // We DO NOT want to pull in the `icu` crate as a dev-dependency,
+/// # // because that will rebuild the whole tree in proc macro mode
+/// # // when using cargo test --all-features --all-targets.
+/// # pub mod icu {
+/// #   pub mod locid {
+/// #     pub mod extensions {
+/// #       pub mod unicode {
+/// #         pub use icu_provider::_internal::extensions_unicode_key as key;
+/// #       }
+/// #     }
+/// #   }
+/// # }
 /// assert_eq!(
 ///     BazV1Marker::KEY.metadata().extension_key,
 ///     Some(icu::locid::extensions::unicode::key!("ca"))
