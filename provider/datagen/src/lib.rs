@@ -336,11 +336,17 @@ impl DatagenProvider {
                                         locale: &locale,
                                         metadata: Default::default(),
                                     };
-                                    let payload = provider
+                                    match provider
                                         .load_data(key, req)
-                                        .and_then(DataResponse::take_payload)
-                                        .map_err(|e| e.with_req(key, req))?;
-                                    exporter.put_payload(key, &locale, &payload).map_err(|e| e.with_key(key))
+                                        .and_then(DataResponse::take_payload) {
+                                            Err(DataError { kind: DataErrorKind::MissingLocale, ..}) => {
+                                                // well, we tried
+                                                Ok(())
+                                            },
+                                            Ok(payload) => exporter.put_payload(key, &locale, &payload),
+                                            e => e.map(|_| ())
+                                        }
+                                        .map_err(|e| e.with_req(key, req))
                                 })?;
                                 exporter.flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
                                 .map_err(|e| e.with_key(key))
