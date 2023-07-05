@@ -73,35 +73,35 @@
 
         Loads generic non-location long format. Example: "Pacific Time"
 
-        See the `Rust documentation for with_generic_non_location_long <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.with_generic_non_location_long>`__ for more information.
+        See the `Rust documentation for include_generic_non_location_long <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_long>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_generic_non_location_short(const ICU4XDataProvider& provider)
 
         Loads generic non-location short format. Example: "PT"
 
-        See the `Rust documentation for with_generic_non_location_short <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.with_generic_non_location_short>`__ for more information.
+        See the `Rust documentation for include_generic_non_location_short <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_short>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_specific_non_location_long(const ICU4XDataProvider& provider)
 
         Loads specific non-location long format. Example: "Pacific Standard Time"
 
-        See the `Rust documentation for with_specific_non_location_long <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.with_specific_non_location_long>`__ for more information.
+        See the `Rust documentation for include_specific_non_location_long <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_long>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_specific_non_location_short(const ICU4XDataProvider& provider)
 
         Loads specific non-location short format. Example: "PST"
 
-        See the `Rust documentation for with_specific_non_location_short <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.with_specific_non_location_short>`__ for more information.
+        See the `Rust documentation for include_specific_non_location_short <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_short>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_generic_location_format(const ICU4XDataProvider& provider)
 
         Loads generic location format. Example: "Los Angeles Time"
 
-        See the `Rust documentation for with_generic_location_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.with_generic_location_format>`__ for more information.
+        See the `Rust documentation for include_generic_location_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_location_format>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_localized_gmt_format()
@@ -115,7 +115,7 @@
 
         Loads ISO-8601 format. Example: "-07:00"
 
-        See the `Rust documentation for load_iso_8601_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_iso_8601_format>`__ for more information.
+        See the `Rust documentation for include_iso_8601_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_iso_8601_format>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_custom_time_zone_to_writeable(const ICU4XCustomTimeZone& value, W& write) const
