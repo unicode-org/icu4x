@@ -165,8 +165,6 @@ fn main() {
     assert_zerovec::<VarTupleStructULE, VarTupleStruct, _>(vartuples, |stack, zero| {
         assert_eq!(stack, &VarTupleStruct::zero_from(zero))
     });
-
-    println!("successful");
 }
 
 const TEST_VARSTRUCTS: &[VarStruct<'static>] = &[
