@@ -4,9 +4,7 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 
-// TODO(#3275) Make this no_std again
-//#![cfg_attr(not(any(test, feature = "std")), no_std)]
-
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -49,6 +47,7 @@ mod error;
 
 use crate::error::HarfBuzzError;
 use alloc::boxed::Box;
+use core::ffi::{c_char, c_void};
 use harfbuzz_sys::*;
 use icu_normalizer::properties::CanonicalCombiningClassMap;
 use icu_normalizer::properties::CanonicalComposition;
@@ -67,7 +66,6 @@ use icu_properties::provider::{
 };
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
-use std::os::raw::{c_char, c_void};
 use tinystr::{tinystr, TinyStr4};
 
 /// The total number of General Category values is fixed per
