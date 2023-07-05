@@ -202,7 +202,8 @@ impl<P> LocaleFallbackProvider<P> {
         }
         let mut fallback_iterator = self
             .fallbacker
-            .fallback_for(key.into(), base_req.locale.clone());
+            .for_key(key)
+            .fallback_for(base_req.locale.clone());
         let base_silent = core::mem::replace(&mut base_req.metadata.silent, true);
         loop {
             let result = f1(DataRequest {
