@@ -92,8 +92,9 @@ const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
 /// years marking Chinese years before February 15, 2637 BCE.
 ///
 /// Because the Chinese calendar does not traditionally count years, era codes are not used in this calendar;
-/// internally, a single era code "chinese" is used, but this is never checked, so era code input can be anything.
-/// This Chinese calendar implementation does support a related ISO year, which marks the ISO year in which a
+/// this crate supports a single era code "chinese".
+///
+/// This Chinese calendar implementation also supports a related ISO year, which marks the ISO year in which a
 /// Chinese year begins, and a cyclic year corresponding to the year in the 60 year cycle as described above.
 ///
 /// For more information, suggested reading materials include:
@@ -163,7 +164,7 @@ impl Calendar for Chinese {
     // Construct a date from era/month codes and fields
     fn date_from_codes(
         &self,
-        _era: types::Era,
+        era: types::Era,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -190,6 +191,10 @@ impl Calendar for Chinese {
                 field: "day",
                 max: max_day as usize,
             });
+        }
+
+        if era.0 != tinystr!(16, "chinese") {
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
         Ok(ArithmeticDate::new_unchecked(year, month, day)).map(ChineseDateInner)
@@ -261,53 +266,66 @@ impl Calendar for Chinese {
             14
         };
         let code_inner = match ordinal.cmp(&leap_month) {
-            Ordering::Less => match ordinal {
-                1 => tinystr!(4, "M01"),
-                2 => tinystr!(4, "M02"),
-                3 => tinystr!(4, "M03"),
-                4 => tinystr!(4, "M04"),
-                5 => tinystr!(4, "M05"),
-                6 => tinystr!(4, "M06"),
-                7 => tinystr!(4, "M07"),
-                8 => tinystr!(4, "M08"),
-                9 => tinystr!(4, "M09"),
-                10 => tinystr!(4, "M10"),
-                11 => tinystr!(4, "M11"),
-                12 => tinystr!(4, "M12"),
-                _ => tinystr!(4, "und"), // maximum num of months in a non-leap year is 12
-            },
-            Ordering::Equal => match ordinal {
-                1 => tinystr!(4, "und"), // cannot have a leap month before the actual month
-                2 => tinystr!(4, "M01L"),
-                3 => tinystr!(4, "M02L"),
-                4 => tinystr!(4, "M03L"),
-                5 => tinystr!(4, "M04L"),
-                6 => tinystr!(4, "M05L"),
-                7 => tinystr!(4, "M06L"),
-                8 => tinystr!(4, "M07L"),
-                9 => tinystr!(4, "M08L"),
-                10 => tinystr!(4, "M09L"),
-                11 => tinystr!(4, "M10L"),
-                12 => tinystr!(4, "M11L"),
-                13 => tinystr!(4, "M12L"),
-                _ => tinystr!(4, "und"), // maximum num of months in a leap year is 13
-            },
-            Ordering::Greater => match ordinal {
-                1 => tinystr!(4, "und"), // this implies the leap month is < 1, which is impossible
-                2 => tinystr!(4, "und"), // this implies the leap month is = 1, which is impossible
-                3 => tinystr!(4, "M02"),
-                4 => tinystr!(4, "M03"),
-                5 => tinystr!(4, "M04"),
-                6 => tinystr!(4, "M05"),
-                7 => tinystr!(4, "M06"),
-                8 => tinystr!(4, "M07"),
-                9 => tinystr!(4, "M08"),
-                10 => tinystr!(4, "M09"),
-                11 => tinystr!(4, "M10"),
-                12 => tinystr!(4, "M11"),
-                13 => tinystr!(4, "M12"),
-                _ => tinystr!(4, "und"), // maximum number of months in a leap year is 13
-            },
+            Ordering::Less => {
+                // maximum num of months in a non-leap year or before a leap month is 12,
+                // and minimum possible month is month 1.
+                debug_assert!((1..=12).contains(&ordinal));
+                match ordinal {
+                    1 => tinystr!(4, "M01"),
+                    2 => tinystr!(4, "M02"),
+                    3 => tinystr!(4, "M03"),
+                    4 => tinystr!(4, "M04"),
+                    5 => tinystr!(4, "M05"),
+                    6 => tinystr!(4, "M06"),
+                    7 => tinystr!(4, "M07"),
+                    8 => tinystr!(4, "M08"),
+                    9 => tinystr!(4, "M09"),
+                    10 => tinystr!(4, "M10"),
+                    11 => tinystr!(4, "M11"),
+                    12 => tinystr!(4, "M12"),
+                    _ => tinystr!(4, "und"),
+                }
+            }
+            Ordering::Equal => {
+                // Month cannot be 1 because a year cannot have a leap month before the first actual month,
+                // and the maximum num of months in a leap year is 13.
+                debug_assert!((2..=13).contains(&ordinal));
+                match ordinal {
+                    2 => tinystr!(4, "M01L"),
+                    3 => tinystr!(4, "M02L"),
+                    4 => tinystr!(4, "M03L"),
+                    5 => tinystr!(4, "M04L"),
+                    6 => tinystr!(4, "M05L"),
+                    7 => tinystr!(4, "M06L"),
+                    8 => tinystr!(4, "M07L"),
+                    9 => tinystr!(4, "M08L"),
+                    10 => tinystr!(4, "M09L"),
+                    11 => tinystr!(4, "M10L"),
+                    12 => tinystr!(4, "M11L"),
+                    13 => tinystr!(4, "M12L"),
+                    _ => tinystr!(4, "und"),
+                }
+            }
+            Ordering::Greater => {
+                // The month cannot be 1 because this implies the leap month is < 1, which is impossible;
+                // cannot be 2 because that implies the leap month is = 1, which is impossible,
+                // and cannot be more than 13 because max number of months in a year is 13.
+                debug_assert!((3..=13).contains(&ordinal));
+                match ordinal {
+                    3 => tinystr!(4, "M02"),
+                    4 => tinystr!(4, "M03"),
+                    5 => tinystr!(4, "M04"),
+                    6 => tinystr!(4, "M05"),
+                    7 => tinystr!(4, "M06"),
+                    8 => tinystr!(4, "M07"),
+                    9 => tinystr!(4, "M08"),
+                    10 => tinystr!(4, "M09"),
+                    11 => tinystr!(4, "M10"),
+                    12 => tinystr!(4, "M11"),
+                    13 => tinystr!(4, "M12"),
+                    _ => tinystr!(4, "und"), // maximum number of months in a leap year is 13
+                }
+            }
         };
         let code = types::MonthCode(code_inner);
         types::FormattableMonth {
@@ -739,6 +757,8 @@ impl Chinese {
         let leap_month = if Self::is_leap_year(year) {
             Self::get_leap_month_in_year(mid_year)
         } else {
+            // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
+            // it is impossible to actually have 14 months in a year.
             14
         };
         let bytes = code.0.all_bytes();
