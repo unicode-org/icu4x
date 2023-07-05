@@ -15,7 +15,7 @@ export class ICU4XCollator {
 
    * Construct a new Collator instance.
 
-   * See the {@link https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new Rust documentation for `try_new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_v1(provider: ICU4XDataProvider, locale: ICU4XLocale, options: ICU4XCollatorOptionsV1): ICU4XCollator | never;

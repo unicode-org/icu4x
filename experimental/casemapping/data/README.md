@@ -1,6 +1,6 @@
-# icu_casemapping_data [![crates.io](https://img.shields.io/crates/v/icu_casemapping_data)](https://crates.io/crates/icu_casemapping_data)
+# icu_casemap_data [![crates.io](https://img.shields.io/crates/v/icu_casemap_data)](https://crates.io/crates/icu_casemap_data)
 
-Data for the icu_casemapping crate
+Data for the icu_casemap crate
 
 ## More Information
 

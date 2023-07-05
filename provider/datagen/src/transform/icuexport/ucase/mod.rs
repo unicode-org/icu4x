@@ -5,7 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
+use icu_casemap::provider::{CaseMapV1, CaseMapV1Marker};
 use icu_collections::codepointtrie::toml::CodePointDataSlice;
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
@@ -13,9 +13,9 @@ use std::convert::TryFrom;
 
 mod ucase_serde;
 
-impl DataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
-        self.check_req::<CaseMappingV1Marker>(req)?;
+impl DataProvider<CaseMapV1Marker> for crate::DatagenProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1Marker>, DataError> {
+        self.check_req::<CaseMapV1Marker>(req)?;
         let toml = &self
             .source
             .icuexport()?
@@ -41,7 +41,7 @@ impl DataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
         let unfold = &toml.unfold.unfold;
 
         let case_mapping =
-            CaseMappingV1::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)?;
+            CaseMapV1::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(case_mapping)),
@@ -49,7 +49,7 @@ impl DataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl icu_provider::datagen::IterableDataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
+impl icu_provider::datagen::IterableDataProvider<CaseMapV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }

@@ -17,7 +17,7 @@ export class ICU4XSentenceSegmenter {
 
    * Construct an {@link ICU4XSentenceSegmenter `ICU4XSentenceSegmenter`}.
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XSentenceSegmenter | never;

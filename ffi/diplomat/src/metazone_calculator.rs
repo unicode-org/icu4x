@@ -19,13 +19,16 @@ pub mod ffi {
     pub struct ICU4XMetazoneCalculator(pub MetazoneCalculator);
 
     impl ICU4XMetazoneCalculator {
-        #[diplomat::rust_link(icu::timezone::MetazoneCalculator::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::MetazoneCalculator::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XMetazoneCalculator>, ICU4XError> {
-            Ok(Box::new(ICU4XMetazoneCalculator(
-                MetazoneCalculator::try_new_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XMetazoneCalculator(call_constructor!(
+                MetazoneCalculator::new [r => Ok(r)],
+                MetazoneCalculator::try_new_with_any_provider,
+                MetazoneCalculator::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
     }
 }
