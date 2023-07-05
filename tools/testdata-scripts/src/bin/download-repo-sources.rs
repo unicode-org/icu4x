@@ -150,7 +150,11 @@ fn main() -> eyre::Result<()> {
             SourceData::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
         ))
         .with_context(|| "Failed to download ICU ZIP".to_owned())?,
-        ICUEXPORTDATA_SEGMENTER_GLOB.iter().copied().map(String::from).collect(),
+        ICUEXPORTDATA_SEGMENTER_GLOB
+            .iter()
+            .copied()
+            .map(String::from)
+            .collect(),
         out_root.join("data"),
     )?;
 
