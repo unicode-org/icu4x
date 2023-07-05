@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_decimal_symbols_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.64"]
+        #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_decimal::provider::DecimalSymbolsV1Marker>, icu_provider::DataError> {
                 static ES_AR: <icu_decimal::provider::DecimalSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu_decimal::provider::DecimalSymbolsV1 { minus_sign_affixes: icu_decimal::provider::AffixesV1 { prefix: alloc::borrow::Cow::Borrowed("-"), suffix: alloc::borrow::Cow::Borrowed("") }, plus_sign_affixes: icu_decimal::provider::AffixesV1 { prefix: alloc::borrow::Cow::Borrowed("+"), suffix: alloc::borrow::Cow::Borrowed("") }, decimal_separator: alloc::borrow::Cow::Borrowed(","), grouping_separator: alloc::borrow::Cow::Borrowed("."), grouping_sizes: icu_decimal::provider::GroupingSizesV1 { primary: 3u8, secondary: 3u8, min_grouping: 1u8 }, digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'] };
