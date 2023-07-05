@@ -41,11 +41,11 @@
     See the `Rust documentation for LocaleDisplayNamesFormatter <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html>`__ for more information.
 
 
-    .. js:function:: try_new_unstable(provider, locale, options)
+    .. js:function:: try_new(provider, locale, options)
 
         Creates a new ``LocaleDisplayNamesFormatter`` from locale data and an options bag.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new>`__ for more information.
 
 
     .. js:method:: of(locale)
@@ -60,11 +60,11 @@
     See the `Rust documentation for RegionDisplayNames <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html>`__ for more information.
 
 
-    .. js:function:: try_new_unstable(provider, locale)
+    .. js:function:: try_new(provider, locale)
 
         Creates a new ``RegionDisplayNames`` from locale data and an options bag.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new>`__ for more information.
 
 
     .. js:method:: of(region)

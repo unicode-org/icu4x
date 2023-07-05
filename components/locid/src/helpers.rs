@@ -290,8 +290,9 @@ macro_rules! impl_tinystr_subtag {
     (
         $(#[$doc:meta])*
         $name:ident,
-        $($full_name:ident)::+,
+        $($path:ident)::+,
         $macro_name:ident,
+        $legacy_macro_name:ident,
         $len_start:literal..=$len_end:literal,
         $tinystr_ident:ident,
         $validate:expr,
@@ -314,7 +315,7 @@ macro_rules! impl_tinystr_subtag {
             /// # Examples
             ///
             /// ```
-            #[doc = concat!("use icu_locid::", stringify!($($full_name)::+), ";")]
+            #[doc = concat!("use icu_locid::", stringify!($($path::)+), stringify!($name), ";")]
             ///
             #[doc = concat!("assert!(", stringify!($name), "::try_from_bytes(b", stringify!($good_example), ").is_ok());")]
             #[doc = concat!("assert!(", stringify!($name), "::try_from_bytes(b", stringify!($bad_example), ").is_err());")]
@@ -458,37 +459,40 @@ macro_rules! impl_tinystr_subtag {
         /// Parsing errors don't have to be handled at runtime:
         /// ```
         /// assert_eq!(
-        #[doc = concat!("  icu_locid::", stringify!($macro_name), "!(", stringify!($good_example) ,"),")]
-        #[doc = concat!("  ", stringify!($good_example), ".parse::<icu_locid::", stringify!($($full_name)::+),">().unwrap()")]
+        #[doc = concat!("  icu_locid::", $(stringify!($path), "::",)+ stringify!($macro_name), "!(", stringify!($good_example) ,"),")]
+        #[doc = concat!("  ", stringify!($good_example), ".parse::<icu_locid::", $(stringify!($path), "::",)+ stringify!($name), ">().unwrap()")]
         /// );
         /// ```
         ///
         /// Invalid input is a compile failure:
         /// ```compile_fail,E0080
-        #[doc = concat!("icu_locid::", stringify!($macro_name), "!(", stringify!($bad_example) ,");")]
+        #[doc = concat!("icu_locid::", $(stringify!($path), "::",)+ stringify!($macro_name), "!(", stringify!($bad_example) ,");")]
         /// ```
         ///
-        #[doc = concat!("[`", stringify!($name), "`]: crate::", stringify!($($full_name)::+))]
+        #[doc = concat!("[`", stringify!($name), "`]: crate::", $(stringify!($path), "::",)+ stringify!($name))]
         #[macro_export]
-        macro_rules! $macro_name {
+        #[doc(hidden)]
+        macro_rules! $legacy_macro_name {
             ($string:literal) => {{
-                use $crate::$($full_name)::+;
+                use $crate::$($path ::)+ $name;
                 const R: $name =
                     match $name::try_from_bytes($string.as_bytes()) {
                         Ok(r) => r,
                         #[allow(clippy::panic)] // const context
-                        _ => panic!(concat!("Invalid ", stringify!($name), ": ", $string)),
+                        _ => panic!(concat!("Invalid ", $(stringify!($path), "::",)+ stringify!($name), ": ", $string)),
                     };
                 R
             }};
         }
+        #[doc(inline)]
+        pub use $legacy_macro_name as $macro_name;
 
         #[cfg(feature = "databake")]
         impl databake::Bake for $name {
             fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                 env.insert("icu_locid");
                 let string = self.as_str();
-                databake::quote! { icu_locid::$macro_name!(#string) }
+                databake::quote! { icu_locid::$($path::)+ $macro_name!(#string) }
             }
         }
 

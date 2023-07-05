@@ -4,7 +4,7 @@
 
 use crate::transform::cldr::cldr_serde;
 use icu_compactdecimal::provider::*;
-use icu_locid::extensions_unicode_key as key;
+use icu_locid::extensions::unicode::key;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
@@ -14,6 +14,7 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvi
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<ShortCompactDecimalFormatDataV1Marker>, DataError> {
+        self.check_req::<ShortCompactDecimalFormatDataV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
@@ -67,6 +68,7 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvid
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LongCompactDecimalFormatDataV1Marker>, DataError> {
+        self.check_req::<LongCompactDecimalFormatDataV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self

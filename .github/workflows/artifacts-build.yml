@@ -158,11 +158,7 @@ jobs:
     - name: Init node package
       run: |
         cd ffi/diplomat/js/examples/node
-        make lib
-        make icu_capi.wasm
-        # Manually running datagen with the required keys
-        cargo run -p icu_datagen -- --key-file ../wasm-demo/required-keys.txt --locales full --format blob --out data.postcard
-        cd ../wasm-demo
+        make
         npm ci
 
     - name: Run Webpack

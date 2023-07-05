@@ -20,7 +20,8 @@ macro_rules! normalization_provider {
         use icu_normalizer::provider::$marker;
 
         impl DataProvider<$marker> for crate::DatagenProvider {
-            fn load(&self, _req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
                 let $toml_data: &normalizer_serde::$serde_struct =
                     self.source.icuexport()?.read_and_parse_toml(&format!(
                         "norm/{}/{}.toml",

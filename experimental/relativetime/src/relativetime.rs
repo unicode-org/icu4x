@@ -118,10 +118,10 @@ macro_rules! constructor {
 
         /// Create a new [`RelativeTimeFormatter`]
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         pub fn $baked(
             locale: &DataLocale,
             options: RelativeTimeFormatterOptions,

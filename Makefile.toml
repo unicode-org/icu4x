@@ -16,7 +16,7 @@ extend = [
 default_to_workspace = false
 
 [env]
-ICU4X_NIGHTLY_TOOLCHAIN = { value = "nightly-2022-04-18", condition = { env_not_set = ["ICU4X_NIGHTLY_TOOLCHAIN"] } }
+ICU4X_NIGHTLY_TOOLCHAIN = { value = "nightly-2022-09-26", condition = { env_not_set = ["ICU4X_NIGHTLY_TOOLCHAIN"] } }
 # To install a specific build of GN, set the ICU4X_GN_PACKAGE environment variable. Choices:
 # https://chrome-infra-packages.appspot.com/p/gn/gn
 # TODO: Choose the correct distribution of GN automatically.
@@ -61,8 +61,8 @@ description = "Run all tests for the CI 'check' job"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.61 --profile minimal
-exec --fail-on-error cargo +1.61 check --all-targets --all-features
+exec --fail-on-error rustup install 1.64 --profile minimal
+exec --fail-on-error cargo +1.64 check --all-targets --all-features
 '''
 
 [tasks.ci-job-test]
@@ -98,7 +98,6 @@ description = "Run full data generation on latest CLDR and ICU"
 category = "CI"
 dependencies = [
     "bakeddata-check",
-    "full-data",
 ]
 
 [tasks.ci-job-ffi]
@@ -134,8 +133,8 @@ description = "Run all tests for the CI 'features' job"
 category = "CI"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.61 --profile minimal
-exec --fail-on-error cargo +1.61 make check-all-features
+exec --fail-on-error rustup install 1.64 --profile minimal
+exec --fail-on-error cargo +1.64 make check-all-features
 '''
 
 [tasks.ci-job-fmt]

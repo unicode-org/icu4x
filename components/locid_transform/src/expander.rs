@@ -29,8 +29,7 @@ use crate::TransformResult;
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
-/// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-///     .expect("create failed");
+/// let lc = LocaleExpander::new();
 ///
 /// let mut locale = locale!("zh-CN");
 /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -47,8 +46,7 @@ use crate::TransformResult;
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
-/// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-///     .expect("create failed");
+/// let lc = LocaleExpander::new();
 ///
 /// let mut locale = locale!("zh-Hans-CN");
 /// assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
@@ -66,9 +64,7 @@ use crate::TransformResult;
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
-/// let lc =
-///     LocaleExpander::try_new_extended_unstable(&icu_testdata::unstable())
-///         .expect("create failed");
+/// let lc = LocaleExpander::new_extended();
 ///
 /// let mut locale = locale!("atj");
 /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -199,10 +195,10 @@ impl LocaleExpander {
     /// Use this constructor if you are using likely subtags for comprehensive support of all
     /// languages and regions, including ones that may not have CLDR data.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new_extended() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(
@@ -253,10 +249,10 @@ impl LocaleExpander {
     /// Use this constructor if you are using likely subtags for comprehensive support of all
     /// languages and regions, including ones that may not have CLDR data.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(
@@ -366,8 +362,7 @@ impl LocaleExpander {
     /// use icu_locid::locale;
     /// use icu_locid_transform::{LocaleExpander, TransformResult};
     ///
-    /// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("create failed");
+    /// let lc = LocaleExpander::new();
     ///
     /// let mut locale = locale!("zh-CN");
     /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -440,8 +435,7 @@ impl LocaleExpander {
     /// use icu_locid::locale;
     /// use icu_locid_transform::{LocaleExpander, TransformResult};
     ///
-    /// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("creation failed");
+    /// let lc = LocaleExpander::new();
     ///
     /// let mut locale = locale!("zh-Hans-CN");
     /// assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);

@@ -31,7 +31,7 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn load(
         &self,
-        _: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BidiAuxiliaryPropertiesV1Marker>, DataError> {
         use crate::transform::icuexport::uprops::{bin_cp_set, enum_codepointtrie};
         use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
@@ -41,6 +41,8 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
         use icu_properties::provider::bidi_data::{
             BidiAuxiliaryPropertiesV1, MirroredPairedBracketData,
         };
+
+        self.check_req::<BidiAuxiliaryPropertiesV1Marker>(req)?;
 
         // Bidi_M / Bidi_Mirrored
         let bidi_m_data = bin_cp_set::get_binary_prop_for_code_point_set(&self.source, "Bidi_M")?;
@@ -100,8 +102,9 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
     #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
     fn load(
         &self,
-        _: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BidiAuxiliaryPropertiesV1Marker>, DataError> {
+        self.check_req::<BidiAuxiliaryPropertiesV1Marker>(req)?;
         return Err(DataError::custom(
             "icu_datagen must be built with use_icu4c or use_wasm to build Bidi auxiliary properties data",
         ));

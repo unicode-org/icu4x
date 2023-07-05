@@ -160,9 +160,9 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     (locale: skip, options: skip, error: $error_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked() -> Result<Self, $error_ty> {
@@ -183,10 +183,10 @@ macro_rules! gen_any_buffer_data_constructors {
 
 
     (locale: skip, options: skip, result: $result_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked() -> $result_ty {
@@ -221,10 +221,10 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     (locale: skip, $options_arg:ident: $options_ty:ty, result: $result_ty:ty, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked($options_arg: $options_ty) -> $result_ty {
@@ -243,10 +243,10 @@ macro_rules! gen_any_buffer_data_constructors {
         }
     };
     (locale: skip, $options_arg:ident: $options_ty:ty, error: $error_ty:ty, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked($options_arg: $options_ty) -> Result<Self, $error_ty> {
@@ -280,10 +280,10 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     (locale: include, options: skip, error: $error_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
@@ -319,10 +319,10 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     (locale: include, $config_arg:ident: $config_ty:path, $options_arg:ident: $options_ty:path, error: $error_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
@@ -357,10 +357,10 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     (locale: include, $options_arg:ident: $options_ty:path, error: $error_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale, $options_arg: $options_ty) -> Result<Self, $error_ty> {

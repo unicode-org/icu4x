@@ -17,11 +17,13 @@
 //! use icu_locid_transform::fallback::LocaleFallbacker;
 //!
 //! // Set up a LocaleFallbacker with data.
-//! let fallbacker = LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).expect("data");
+//! let fallbacker = LocaleFallbacker::new();
 //!
 //! // Create a LocaleFallbackerIterator with a default configuration.
 //! // By default, uses language priority with no additional extension keywords.
-//! let mut fallback_iterator = fallbacker.fallback_for(Default::default(), locale!("hi-Latn-IN"));
+//! let mut fallback_iterator = fallbacker
+//!     .for_config(Default::default())
+//!     .fallback_for(locale!("hi-Latn-IN").into());
 //!
 //! // Run the algorithm and check the results.
 //! assert_eq!(fallback_iterator.get(), &locale!("hi-Latn-IN").into());
@@ -64,11 +66,12 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker =
-    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("data");
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Language;
-    /// let mut fallback_iterator = fallbacker.fallback_for(config, locale!("ca-ES-valencia"));
+    /// let mut fallback_iterator = fallbacker
+    ///     .for_config(config)
+    ///     .fallback_for(locale!("ca-ES-valencia").into());
     ///
     /// // Run the algorithm and check the results.
     /// assert_eq!(
@@ -77,6 +80,8 @@ pub struct LocaleFallbackConfig {
     /// );
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES").into());
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get(), &locale!("ca-valencia").into());
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("ca").into());
     /// fallback_iterator.step();
@@ -93,11 +98,12 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker =
-    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("data");
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Region;
-    /// let mut fallback_iterator = fallbacker.fallback_for(config, locale!("ca-ES-valencia"));
+    /// let mut fallback_iterator = fallbacker
+    ///     .for_config(config)
+    ///     .fallback_for(locale!("ca-ES-valencia").into());
     ///
     /// // Run the algorithm and check the results.
     /// assert_eq!(
@@ -131,12 +137,12 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker =
-    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("data");
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
-    /// config.extension_key = Some(icu_locid::extensions_unicode_key!("nu"));
+    /// config.extension_key = Some(icu_locid::extensions::unicode::key!("nu"));
     /// let mut fallback_iterator = fallbacker
-    ///     .fallback_for(config, locale!("ar-EG-u-nu-latn"));
+    ///     .for_config(config)
+    ///     .fallback_for(locale!("ar-EG-u-nu-latn").into());
     ///
     /// // Run the algorithm and check the results.
     /// assert_eq!(
@@ -145,6 +151,8 @@ pub struct LocaleFallbackConfig {
     /// );
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("ar-EG").into());
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get(), &locale!("ar-u-nu-latn").into());
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("ar").into());
     /// fallback_iterator.step();
@@ -171,12 +179,13 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker =
-    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("data");
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Collation;
     /// config.fallback_supplement = Some(FallbackSupplement::Collation);
-    /// let mut fallback_iterator = fallbacker.fallback_for(config, locale!("yue-HK"));
+    /// let mut fallback_iterator = fallbacker
+    ///     .for_config(config)
+    ///     .fallback_for(locale!("yue-HK").into());
     ///
     /// // Run the algorithm and check the results.
     /// // TODO(#1964): add "zh" as a target.
@@ -241,17 +250,13 @@ pub struct LocaleFallbacker {
 
 /// Borrowed version of [`LocaleFallbacker`].
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // TODO
 pub struct LocaleFallbackerBorrowed<'a> {
-    /// `LocaleFallbackLikelySubtagsV1Marker`
-    pub likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
-    /// `LocaleFallbackParentsV1Marker`
-    pub parents: &'a LocaleFallbackParentsV1<'a>,
-    /// `CollationFallbackSupplementV1Marker`
-    pub collation_supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
+    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
+    parents: &'a LocaleFallbackParentsV1<'a>,
+    collation_supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
 }
 
-#[doc(hidden)]
+/// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
@@ -286,17 +291,19 @@ pub struct LocaleFallbackIterator<'a, 'b> {
 impl LocaleFallbacker {
     /// Creates a [`LocaleFallbacker`] with fallback data (likely subtags and parent locales).
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)] // keeping constructors together
-    pub const fn new() -> LocaleFallbackerBorrowed<'static> {
-        LocaleFallbackerBorrowed {
+    pub const fn new<'a>() -> LocaleFallbackerBorrowed<'a> {
+        let tickstatic = LocaleFallbackerBorrowed {
             likely_subtags: crate::provider::Baked::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1,
             parents: crate::provider::Baked::SINGLETON_FALLBACK_PARENTS_V1,
             collation_supplement: Some(crate::provider::Baked::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1),
-        }
+        };
+        // Shitty covariance because the zeromaps confuse the compiler
+        unsafe { core::mem::transmute(tickstatic) }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
@@ -348,54 +355,34 @@ impl LocaleFallbacker {
         }
     }
 
-    /// Creates an iterator based on a [`Locale`].
-    ///
-    /// When first initialized, the locale is normalized according to the fallback algorithm.
-    ///
-    /// For performance reasons, internally an [`icu_provider::DataLocale`] is used.
-    ///
-    /// [`Locale`]: icu_locid::Locale
-    pub fn fallback_for(
-        &self,
-        config: LocaleFallbackConfig,
-        locale: impl Into<DataLocale>,
-    ) -> LocaleFallbackIterator {
-        self.for_config(config).fallback_for(locale.into())
+    /// Associates a configuration with this fallbacker.
+    #[inline]
+    pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
+        self.as_borrowed().for_config(config)
     }
 
-    #[doc(hidden)]
-    pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
+    /// Derives a configuration from a [`DataKey`] and associates it
+    /// with this fallbacker.
+    #[inline]
+    #[doc(hidden)] // will be removed in 2.0
+    pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
+        self.for_config(data_key.into())
+    }
+
+    /// Creates a borrowed version of this fallbacker for performance.
+    pub fn as_borrowed(&self) -> LocaleFallbackerBorrowed {
         LocaleFallbackerBorrowed {
             likely_subtags: self.likely_subtags.get(),
             parents: self.parents.get(),
             collation_supplement: self.collation_supplement.as_ref().map(|p| p.get()),
         }
-        .for_config(config)
-    }
-
-    #[doc(hidden)]
-    pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
-        self.for_config(data_key.into())
     }
 }
 
 impl<'a> LocaleFallbackerBorrowed<'a> {
-    /// Creates an iterator based on a [`Locale`].
-    ///
-    /// When first initialized, the locale is normalized according to the fallback algorithm.
-    ///
-    /// For performance reasons, internally an [`icu_provider::DataLocale`] is used.
-    ///
-    /// [`Locale`]: icu_locid::Locale
-    pub fn fallback_for(
-        self,
-        config: LocaleFallbackConfig,
-        locale: impl Into<DataLocale>,
-    ) -> LocaleFallbackIterator<'a, 'a> {
-        self.for_config(config).fallback_for(locale.into())
-    }
-
-    fn for_config(self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig<'a> {
+    /// Associates a configuration with this fallbacker.
+    #[inline]
+    pub const fn for_config(self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig<'a> {
         LocaleFallbackerWithConfig {
             likely_subtags: self.likely_subtags,
             parents: self.parents,
@@ -408,8 +395,24 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
     }
 }
 
+impl LocaleFallbackerBorrowed<'static> {
+    /// Cheaply converts a `LocaleFallbackerBorrowed<'static>` into a `LocaleFallbacker`.
+    pub fn static_to_owned(self) -> LocaleFallbacker {
+        LocaleFallbacker {
+            likely_subtags: DataPayload::from_static_ref(self.likely_subtags),
+            parents: DataPayload::from_static_ref(self.parents),
+            collation_supplement: self.collation_supplement.map(DataPayload::from_static_ref),
+        }
+    }
+}
+
 impl<'a> LocaleFallbackerWithConfig<'a> {
-    pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'a> {
+    /// Creates an iterator based on a [`DataLocale`].
+    ///
+    /// If you have a [`Locale`], call `.into()` to get a [`DataLocale`].
+    ///
+    /// When first initialized, the locale is normalized according to the fallback algorithm.
+    pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
         self.normalize(&mut locale);
         LocaleFallbackIterator {
             current: locale,

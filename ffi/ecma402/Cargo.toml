@@ -6,7 +6,7 @@
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
 version = "0.8.0"
-rust-version = "1.61.0"
+rust-version = "1.64.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -31,7 +31,7 @@ all-features = true
 
 [dependencies]
 ecma402_traits = "4"
-icu = { version = "1.2.0", path = "../../components/icu", features = ["std", "data"] }
+icu = { version = "1.2.0", path = "../../components/icu", features = ["std", "compiled_data"] }
 icu_provider = { version = "1.2.0", path = "../../provider/core" }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
 

@@ -59,7 +59,7 @@ export class ICU4XCodePointMapData16 {
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.load_script.html Rust documentation for `load_script`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.script.html Rust documentation for `script`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_script(provider: ICU4XDataProvider): ICU4XCodePointMapData16 | never;

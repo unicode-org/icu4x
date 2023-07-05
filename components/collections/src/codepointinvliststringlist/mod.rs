@@ -11,22 +11,27 @@
 
 use crate::codepointinvlist::{
     CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError,
+    CodePointInversionListULE,
 };
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use displaydoc::Display;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
-use zerovec::VarZeroVec;
+use zerovec::{VarZeroSlice, VarZeroVec};
 
 /// A data structure providing a concrete implementation of a `UnicodeSet`
 /// (which represents a set of code points and strings) using an inversion list for the code points and a simple
 /// list-like structure to store and iterate over the strings.
+#[zerovec::make_varule(CodePointInversionListAndStringListULE)]
+#[zerovec::skip_derive(Ord)]
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 // Valid to auto-derive Deserialize because the invariants are weakly held
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(feature = "serde", zerovec::derive(Serialize, Deserialize, Debug))]
 pub struct CodePointInversionListAndStringList<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
+    #[zerovec::varule(CodePointInversionListULE)]
     cp_inv_list: CodePointInversionList<'data>,
     // Invariants (weakly held):
     //   - no input string is length 1 (a length 1 string should be a single code point)
@@ -204,6 +209,16 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     /// assert!(!cpilsl.contains_char('🨫'));  // U+1FA2B NEUTRAL CHESS TURNED QUEEN
     pub fn contains_char(&self, ch: char) -> bool {
         self.contains32(ch as u32)
+    }
+
+    /// Access the underlying [`CodePointInversionList`].
+    pub fn code_points(&self) -> &CodePointInversionList<'data> {
+        &self.cp_inv_list
+    }
+
+    /// Access the contained strings.
+    pub fn strings(&self) -> &VarZeroSlice<str> {
+        &self.str_list
     }
 }
 

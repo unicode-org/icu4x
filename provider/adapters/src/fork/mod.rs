@@ -97,7 +97,7 @@ use predicates::MissingDataKeyPredicate;
 /// Stops at the first provider supporting a key, even if the locale is not supported:
 ///
 /// ```
-/// use icu_locid::{subtags_language as language, locale};
+/// use icu_locid::{subtags::language, locale};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::filter::Filterable;
@@ -166,7 +166,7 @@ impl<P0, P1> ForkByKeyProvider<P0, P1> {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::{subtags_language as language, locale};
+/// use icu_locid::{subtags::language, locale};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::filter::Filterable;

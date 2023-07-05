@@ -306,7 +306,7 @@ macro_rules! __impl_data_provider {
         impl_props_bidiauxiliaryprops_v1!($provider);
         #[cfg(feature = "icu_properties")]
         impl_props_blank_v1!($provider);
-        #[cfg(feature = "icu_casemapping")]
+        #[cfg(feature = "icu_casemap")]
         impl_props_casemap_v1!($provider);
         #[cfg(feature = "icu_properties")]
         impl_props_ccc_v1!($provider);
@@ -439,7 +439,7 @@ pub use __impl_data_provider as impl_data_provider;
 #[macro_export]
 macro_rules! __impl_any_provider {
     ($ provider : path) => {
-        #[clippy::msrv = "1.61"]
+        #[clippy::msrv = "1.64"]
         impl icu_provider::AnyProvider for $provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 #[cfg(feature = "icu_calendar")]
@@ -735,8 +735,8 @@ macro_rules! __impl_any_provider {
                 const PROPS_BIDIAUXILIARYPROPS_V1: icu_provider::DataKeyHash = <icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const PROPS_BLANK_V1: icu_provider::DataKeyHash = <icu_properties::provider::BlankV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                #[cfg(feature = "icu_casemapping")]
-                const PROPS_CASEMAP_V1: icu_provider::DataKeyHash = <icu_casemapping::provider::CaseMappingV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                #[cfg(feature = "icu_casemap")]
+                const PROPS_CASEMAP_V1: icu_provider::DataKeyHash = <icu_casemap::provider::CaseMapV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const PROPS_CCC_V1: icu_provider::DataKeyHash = <icu_properties::provider::CanonicalCombiningClassV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -1145,8 +1145,8 @@ macro_rules! __impl_any_provider {
                     PROPS_BIDIAUXILIARYPROPS_V1 => icu_provider::DataProvider::<icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_properties")]
                     PROPS_BLANK_V1 => icu_provider::DataProvider::<icu_properties::provider::BlankV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    #[cfg(feature = "icu_casemapping")]
-                    PROPS_CASEMAP_V1 => icu_provider::DataProvider::<icu_casemapping::provider::CaseMappingV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    #[cfg(feature = "icu_casemap")]
+                    PROPS_CASEMAP_V1 => icu_provider::DataProvider::<icu_casemap::provider::CaseMapV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_properties")]
                     PROPS_CCC_V1 => icu_provider::DataProvider::<icu_properties::provider::CanonicalCombiningClassV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     #[cfg(feature = "icu_properties")]
@@ -1269,6 +1269,6 @@ macro_rules! __impl_any_provider {
 }
 #[doc(inline)]
 pub use __impl_any_provider as impl_any_provider;
-#[clippy::msrv = "1.61"]
+#[clippy::msrv = "1.64"]
 pub struct BakedDataProvider;
 impl_data_provider!(BakedDataProvider);

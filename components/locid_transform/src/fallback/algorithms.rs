@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::extensions::unicode::Key;
-use icu_locid::extensions_unicode_key as key;
+use icu_locid::extensions::unicode::{key, Key};
 use icu_locid::subtags::Language;
 use icu_locid::LanguageIdentifier;
 use icu_provider::FallbackPriority;
@@ -143,6 +142,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         // 7. Remove region
         if locale.region().is_some() {
             locale.set_region(None);
+            self.restore_extensions_variants(locale);
             return;
         }
         // 8. Remove language+script
@@ -244,7 +244,7 @@ mod tests {
             requires_data: false,
             extension_key: None,
             fallback_supplement: None,
-            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
@@ -257,6 +257,9 @@ mod tests {
                 "en-US-fonipa-u-sd-usca",
                 "en-US-fonipa",
                 "en-US",
+                "en-fonipa-u-hc-h12-sd-usca",
+                "en-fonipa-u-sd-usca",
+                "en-fonipa",
                 "en",
             ],
             expected_region_chain: &[
@@ -291,7 +294,7 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
@@ -321,6 +324,7 @@ mod tests {
                 "sr-ME",
                 "sr-Latn-ME-fonipa",
                 "sr-Latn-ME",
+                "sr-Latn-fonipa",
                 "sr-Latn",
             ],
             expected_region_chain: &["sr-ME-fonipa", "sr-ME", "und-ME-fonipa", "und-ME"],
@@ -338,7 +342,7 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca"],
+            expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca-valencia", "ca"],
             expected_region_chain: &["ca-ES-valencia", "ca-ES", "und-ES-valencia", "und-ES"],
         },
         TestCase {
@@ -404,11 +408,10 @@ mod tests {
     ];
 
     #[test]
-    #[cfg(feature = "serde")]
     fn test_fallback() {
         let fallbacker_no_data = LocaleFallbacker::new_without_data();
-        let fallbacker_with_data =
-            LocaleFallbacker::try_new_with_buffer_provider(&icu_testdata::buffer()).unwrap();
+        let fallbacker_no_data = fallbacker_no_data.as_borrowed();
+        let fallbacker_with_data = LocaleFallbacker::new();
         for cas in TEST_CASES {
             for (priority, expected_chain) in [
                 (FallbackPriority::Language, cas.expected_language_chain),
@@ -420,11 +423,13 @@ mod tests {
                     fallback_supplement: cas.fallback_supplement,
                 };
                 let fallbacker = if cas.requires_data {
-                    &fallbacker_with_data
+                    fallbacker_with_data
                 } else {
-                    &fallbacker_no_data
+                    fallbacker_no_data
                 };
-                let mut it = fallbacker.fallback_for(config, Locale::from_str(cas.input).unwrap());
+                let mut it = fallbacker
+                    .for_config(config)
+                    .fallback_for(Locale::from_str(cas.input).unwrap().into());
                 for &expected in expected_chain {
                     assert_eq!(
                         expected,

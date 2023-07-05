@@ -7,7 +7,7 @@ import { ICU4XLocaleFallbackIterator } from "./ICU4XLocaleFallbackIterator";
 
  * See the {@link https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html Rust documentation for `LocaleFallbacker`} for more information.
 
- * See the {@link https://docs.rs/icu/latest/icu/locid/fallback/struct.LocaleFallbackerConfig.html Rust documentation for `LocaleFallbackerConfig`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackerWithConfig.html Rust documentation for `LocaleFallbackerWithConfig`} for more information.
  */
 export class ICU4XLocaleFallbackerWithConfig {
 

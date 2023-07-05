@@ -16,7 +16,6 @@ pub mod ffi {
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetData, Struct)]
-    #[diplomat::rust_link(icu::properties::sets::UnicodeSetData::as_borrowed, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetData::from_data, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed, Struct)]
     pub struct ICU4XUnicodeSetData(pub sets::UnicodeSetData);
@@ -51,68 +50,99 @@ pub mod ffi {
             self.0.as_borrowed().contains32(cp)
         }
 
-        #[diplomat::rust_link(icu::properties::sets::load_basic_emoji, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::basic_emoji, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_basic_emoji, Fn, hidden)]
         pub fn load_basic_emoji(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
-            Ok(Box::new(ICU4XUnicodeSetData(sets::load_basic_emoji(
-                &provider.0,
+            Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
+                sets::basic_emoji [r => Ok(r.static_to_owned())],
+                sets::load_basic_emoji,
+                provider,
             )?)))
         }
 
-        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_main, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_main, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_main, Fn, hidden)]
         pub fn load_exemplars_main(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XUnicodeSetData(
-                exemplar_chars::load_exemplars_main(&provider.0, &locale)?,
-            )))
+            Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
+                exemplar_chars::exemplars_main,
+                exemplar_chars::load_exemplars_main,
+                provider,
+                &locale
+            )?)))
         }
 
-        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_auxiliary, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_auxiliary, Fn)]
+        #[diplomat::rust_link(
+            icu::properties::exemplar_chars::load_exemplars_auxiliary,
+            Fn,
+            hidden
+        )]
         pub fn load_exemplars_auxiliary(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XUnicodeSetData(
-                exemplar_chars::load_exemplars_auxiliary(&provider.0, &locale)?,
-            )))
+            Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
+                exemplar_chars::exemplars_auxiliary,
+                exemplar_chars::load_exemplars_auxiliary,
+                provider,
+                &locale
+            )?)))
         }
 
-        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_punctuation, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_punctuation, Fn)]
+        #[diplomat::rust_link(
+            icu::properties::exemplar_chars::load_exemplars_punctuation,
+            Fn,
+            hidden
+        )]
         pub fn load_exemplars_punctuation(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XUnicodeSetData(
-                exemplar_chars::load_exemplars_punctuation(&provider.0, &locale)?,
-            )))
+            Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
+                exemplar_chars::exemplars_punctuation,
+                exemplar_chars::load_exemplars_punctuation,
+                provider,
+                &locale
+            )?)))
         }
 
-        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_numbers, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_numbers, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_numbers, Fn, hidden)]
         pub fn load_exemplars_numbers(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XUnicodeSetData(
-                exemplar_chars::load_exemplars_numbers(&provider.0, &locale)?,
-            )))
+            Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
+                exemplar_chars::exemplars_numbers,
+                exemplar_chars::load_exemplars_numbers,
+                provider,
+                &locale
+            )?)))
         }
 
-        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_index, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_index, Fn)]
+        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_index, Fn, hidden)]
         pub fn load_exemplars_index(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XUnicodeSetData(
-                exemplar_chars::load_exemplars_index(&provider.0, &locale)?,
-            )))
+            Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
+                exemplar_chars::exemplars_index,
+                exemplar_chars::load_exemplars_index,
+                provider,
+                &locale
+            )?)))
         }
     }
 }

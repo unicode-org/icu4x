@@ -186,6 +186,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LstmForWordLineAutoV1Marker>, DataError> {
+        self.check_req::<LstmForWordLineAutoV1Marker>(req)?;
         let model = if req.locale.language() == langid!("th").language {
             "Thai_codepoints_exclusive_model4_heavy"
         } else if req.locale.language() == langid!("my").language {
@@ -218,7 +219,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
 impl IterableDataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         // TODO(#3408): Do we actually want to filter these by the user-selected locales?
-        Ok(self.source.options.locales.filter_by_langid_equality(vec![
+        Ok(self.filter_data_locales(vec![
             langid!("km").into(),
             langid!("lo").into(),
             langid!("my").into(),

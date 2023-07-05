@@ -42,14 +42,14 @@
 
         Creates a new :js:class:`ICU4XCalendar` from the specified date and time.
 
-        See the `Rust documentation for try_new_for_locale_unstable <https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable>`__ for more information.
+        See the `Rust documentation for new_for_locale <https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_locale>`__ for more information.
 
 
     .. js:function:: create_for_kind(provider, kind)
 
         Creates a new :js:class:`ICU4XCalendar` from the specified date and time.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new>`__ for more information.
 
 
     .. js:method:: kind()

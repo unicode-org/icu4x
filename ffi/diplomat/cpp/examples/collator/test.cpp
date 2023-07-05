@@ -13,7 +13,7 @@
 
 int main() {
   ICU4XLogger::init_simple_logger();
-  ICU4XDataProvider dp = ICU4XDataProvider::create_test();
+  ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
 
   // test 01 - basic collation example, default CollatorOptions
 

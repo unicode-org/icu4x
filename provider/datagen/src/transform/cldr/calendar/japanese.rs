@@ -118,7 +118,8 @@ impl crate::DatagenProvider {
 }
 
 impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+        self.check_req::<JapaneseErasV1Marker>(req)?;
         self.load_japanese_eras(false)
     }
 }
@@ -126,8 +127,9 @@ impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
 impl DataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        _req: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<JapaneseExtendedErasV1Marker>, DataError> {
+        self.check_req::<JapaneseExtendedErasV1Marker>(req)?;
         let DataResponse { metadata, payload } = self.load_japanese_eras(true)?;
         Ok(DataResponse {
             metadata,
