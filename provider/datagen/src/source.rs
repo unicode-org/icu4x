@@ -92,7 +92,7 @@ impl SourceData {
     ) -> Result<Self, DataError> {
         let root = AbstractFs::new(root)?;
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(root)))),
+            cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(root)))),
             ..self
         })
     }
@@ -130,10 +130,10 @@ impl SourceData {
         _use_default_here: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(AbstractFs::new_from_url(format!(
+            cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::new_from_url(format!(
                     "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
-                )))
-            ))),
+                ))))
+            )),
             ..self
         })
     }
@@ -340,9 +340,14 @@ impl SerdeCache {
     }
 }
 
+pub(crate) struct ZipData {
+    archive: ZipArchive<Cursor<Vec<u8>>>,
+    file_list: HashSet<String>,
+}
+
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
-    Zip(RwLock<Result<ZipArchive<Cursor<Vec<u8>>>, String>>),
+    Zip(RwLock<Result<ZipData, String>>),
     Memory(BTreeMap<&'static str, &'static [u8]>),
 }
 
@@ -360,14 +365,13 @@ impl AbstractFs {
         {
             Ok(Self::Fs(root.as_ref().to_path_buf()))
         } else {
-            Ok(Self::Zip(RwLock::new(Ok(ZipArchive::new(Cursor::new(
-                std::fs::read(&root)?,
-            ))
-            .map_err(|e| {
+            let archive = ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
                 DataError::custom("Invalid ZIP file")
                     .with_display_context(&e)
                     .with_path_context(&root)
-            })?))))
+            })?;
+            let file_list = archive.file_names().map(String::from).collect();
+            Ok(Self::Zip(RwLock::new(Ok(ZipData { archive, file_list }))))
         }
     }
 
@@ -472,13 +476,15 @@ impl AbstractFs {
                 )?;
             }
 
-            *lock = Ok(
-                ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
-                    DataError::custom("Invalid ZIP file")
-                        .with_display_context(&e)
-                        .with_path_context(&root)
-                })?,
-            );
+            let archive = ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
+                DataError::custom("Invalid ZIP file")
+                    .with_display_context(&e)
+                    .with_path_context(&root)
+            })?;
+
+            let file_list = archive.file_names().map(String::from).collect();
+
+            *lock = Ok(ZipData { archive, file_list });
         }
         Ok(())
     }
@@ -499,6 +505,7 @@ impl AbstractFs {
                     .as_mut()
                     .ok()
                     .unwrap() // init called
+                    .archive
                     .by_name(path)
                     .map_err(|e| {
                         DataErrorKind::Io(std::io::ErrorKind::NotFound)
@@ -529,7 +536,8 @@ impl AbstractFs {
                 .as_ref()
                 .ok()
                 .unwrap() // init called
-                .file_names()
+                .file_list
+                .iter()
                 .filter_map(|p| p.strip_prefix(path))
                 .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
                 .map(String::from)
@@ -554,8 +562,8 @@ impl AbstractFs {
                 .as_ref()
                 .ok()
                 .unwrap() // init called
-                .file_names()
-                .any(|p| p == path),
+                .file_list
+                .contains(path),
             Self::Memory(map) => map.contains_key(path),
         })
     }
