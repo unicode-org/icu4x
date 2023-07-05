@@ -10,9 +10,9 @@ use icu_collections::{
     codepointinvliststringlist::CodePointInversionListAndStringList,
 };
 use icu_properties::maps::{load_general_category, load_script};
-use icu_properties::{provider::*, GeneralCategoryGroup};
 use icu_properties::script::load_script_with_extensions_unstable;
 use icu_properties::sets::{load_for_ecma262_unstable, load_for_general_category_group};
+use icu_properties::{provider::*, GeneralCategoryGroup};
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
 
@@ -904,8 +904,8 @@ where
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
-        let set =
-            load_for_general_category_group(self.property_provider, gc_value).map_err(|_| PEK::Internal)?;
+        let set = load_for_general_category_group(self.property_provider, gc_value)
+            .map_err(|_| PEK::Internal)?;
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
@@ -1301,7 +1301,12 @@ mod tests {
             (D, r"[[:lower case letter:]&[a-zA-Z]]", "az", vec![]),
             // general category groups
             // equivalence between L and the union of all the L* categories
-            (D, r"[[[:L:]-[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]][[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]-[:L:]]]", "", vec![]),
+            (
+                D,
+                r"[[[:L:]-[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]][[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]-[:L:]]]",
+                "",
+                vec![],
+            ),
             // script
             (D, r"[[:sc=latn:]&[a-zA-Z]]", "azAZ", vec![]),
             (D, r"[[:sc=Latin:]&[a-zA-Z]]", "azAZ", vec![]),
