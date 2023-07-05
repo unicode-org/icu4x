@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_time_zone_formats_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.61"]
+        #[clippy::msrv = "1.64"]
         impl icu_provider::DataProvider<icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>, icu_provider::DataError> {
                 static BN: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {

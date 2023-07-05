@@ -12,7 +12,7 @@ edition = "2021"
 diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "8d125999893fedfdf30595e97334c21ec4b18da9" }
 elsa = "1"
 lazy_static ="1"
-rustdoc-types = "0.14"
+rustdoc-types = "0.17"
 serde_json = "1"
 syn-inline-mod = "0.6.0"
 
