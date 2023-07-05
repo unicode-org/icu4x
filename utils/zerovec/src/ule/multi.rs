@@ -7,6 +7,8 @@ use crate::varzerovec::Index32;
 use crate::VarZeroSlice;
 use core::mem;
 
+extern crate std;
+
 /// This type is used by the custom derive to represent multiple [`VarULE`]
 /// fields packed into a single end-of-struct field. It is not recommended
 /// to use this type directly.
@@ -38,17 +40,21 @@ impl MultiFieldsULE {
         output: &'a mut [u8],
     ) -> &'a mut Self {
         unsafe {
+            std::println!("lengths: {lengths:?}");
             // safe since BlankSliceEncoder is transparent over usize
             let lengths = &*(lengths as *const [usize] as *const [BlankSliceEncoder]);
             crate::varzerovec::components::write_serializable_bytes::<_, _, Index32>(
                 lengths, output,
             );
+            std::println!("{:?}", <VarZeroSlice<[u8], Index32>>::validate_byte_slice(output));
+            std::println!("output: {output:?}");
             debug_assert!(
-                <VarZeroSlice<[u8]>>::validate_byte_slice(output).is_ok(),
+                <VarZeroSlice<[u8], Index32>>::validate_byte_slice(output).is_ok(),
                 "Encoded slice must be valid VarZeroSlice"
             );
             // Safe since write_serializable_bytes produces a valid VarZeroSlice buffer
             let slice = <VarZeroSlice<[u8], Index32>>::from_byte_slice_unchecked_mut(output);
+            std::println!("from_byte_slice");
             // safe since `Self` is transparent over VarZeroSlice
             mem::transmute::<&mut VarZeroSlice<_, Index32>, &mut Self>(slice)
         }
@@ -141,12 +147,12 @@ unsafe impl VarULE for MultiFieldsULE {
     /// This impl exists so that EncodeAsVarULE can work.
     #[inline]
     fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
-        <VarZeroSlice<[u8]>>::validate_byte_slice(slice)
+        <VarZeroSlice<[u8], Index32>>::validate_byte_slice(slice)
     }
 
     #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
         // &Self is transparent over &VZS<..>
-        mem::transmute(<VarZeroSlice<[u8]>>::from_byte_slice_unchecked(bytes))
+        mem::transmute(<VarZeroSlice<[u8], Index32>>::from_byte_slice_unchecked(bytes))
     }
 }

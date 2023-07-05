@@ -294,7 +294,7 @@ impl<'data> CodePointInversionList<'data> {
     ///     (expected[1] - expected[0]) as usize
     /// );
     /// ```
-    pub fn all() -> Self {
+    pub const fn all() -> Self {
         Self {
             inv_list: ALL_VEC,
             size: (char::MAX as u32) + 1,
@@ -323,7 +323,7 @@ impl<'data> CodePointInversionList<'data> {
     ///     (expected[1] - expected[0]) as usize
     /// );
     /// ```
-    pub fn bmp() -> Self {
+    pub const fn bmp() -> Self {
         Self {
             inv_list: BMP_INV_LIST_VEC,
             size: BMP_MAX + 1,

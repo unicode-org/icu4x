@@ -95,7 +95,7 @@ struct SimpleID<'a> {
 #[make_varule(RuleULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Serialize, Deserialize)]
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 struct Rule<'a> {
     // special case matchers (such as segments, quantifiers, unicodesets, variables...) are represented as chars in the PUA
     #[serde(borrow)]
@@ -153,4 +153,70 @@ struct FunctionCall<'a> {
     translit: SimpleID<'a>,
     #[serde(borrow)]
     arg: Cow<'a, str>,
+}
+
+#[cfg(test)]
+mod tests {
+    use icu_collections::codepointinvlist::CodePointInversionList;
+
+    use super::*;
+
+    const ALL: CodePointInversionList = CodePointInversionList::all();
+
+    #[test]
+    fn test_serialize() {
+        let all_filter = CodePointInversionListAndStringList::try_from(ALL, VarZeroVec::new()).unwrap();
+        
+        // filter
+        let filter = all_filter.clone();
+
+        // prefix
+        let prefix = VarZeroVec::new();
+
+        // groups
+        let simple_id = SimpleID {
+            filter: all_filter.clone(),
+            translit: "Latin-Greek/BGN".into(),
+        };
+        let rule = Rule {
+            ante: "prefix".into(),
+            key: "replace_me".into(),
+            post: "suffix".into(),
+            replacer: "X".into(),
+        };
+        let rules = VarZeroVec::from(&[rule.clone()]);
+        let group = TransliterationGroup {
+            inner: simple_id.clone(),
+            rules: rules,
+        };
+        let groups = VarZeroVec::from(&[group]); 
+
+        // vartable
+        let function_call = FunctionCall {
+            arg: "<assume this is a standing (PUA char) for some backref (aka segment)>".into(),
+            translit: simple_id.clone(),
+        };
+        let var_table = VarTable {
+            quantifiers_kleene_plus: VarZeroVec::from(&["help", "hello"]),
+            compounds: VarZeroVec::new(),
+            quantifiers_kleene: VarZeroVec::new(),
+            segments: VarZeroVec::new(),
+            quantifiers_opt: VarZeroVec::new(),
+            function_calls: VarZeroVec::from(&[function_call]),
+        };
+
+        let transliterator = Transliterator {
+            visibility: true,
+            filter: filter,
+            prefix_rule_set: prefix,
+            groups: groups,
+            variable_table: var_table,
+        };
+
+        let x: &VarZeroSlice<RuleULE> = unsafe {transliterator.groups.get(0).unwrap().unsized_fields.get_field(1)};
+        let post: &str = unsafe {x.get(0).unwrap().unsized_fields.get_field(2)};
+
+        assert_eq!(post, rule.post);
+        ()
+    }
 }
