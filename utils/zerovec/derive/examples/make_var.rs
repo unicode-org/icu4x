@@ -59,6 +59,20 @@ struct MultiFieldStruct<'a> {
     f: char,
 }
 
+#[make_varule(MultiFieldConsecutiveStructULE)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
+#[zerovec::derive(Serialize, Deserialize, Debug)]
+struct MultiFieldConsecutiveStruct<'a> {
+    #[serde(borrow)]
+    a: Cow<'a, str>,
+    #[serde(borrow)]
+    b: Cow<'a, str>,
+    #[serde(borrow)]
+    c: Cow<'a, str>,
+    #[serde(borrow)]
+    d: Cow<'a, str>,
+}
+
 #[make_varule(CustomVarFieldULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
 #[zerovec::derive(Serialize, Deserialize, Debug)]
@@ -139,6 +153,10 @@ fn main() {
         assert_eq!(stack, &MultiFieldStruct::zero_from(zero))
     });
 
+    assert_zerovec::<MultiFieldConsecutiveStructULE, MultiFieldConsecutiveStruct, _>(TEST_MULTICONSECUTIVE, |stack, zero| {
+        assert_eq!(stack, &MultiFieldConsecutiveStruct::zero_from(zero))
+    });
+
     let vartuples = &[
         VarTupleStruct(101, 'ø', TEST_STRINGS1.into()),
         VarTupleStruct(9499, '⸘', TEST_STRINGS2.into()),
@@ -147,6 +165,8 @@ fn main() {
     assert_zerovec::<VarTupleStructULE, VarTupleStruct, _>(vartuples, |stack, zero| {
         assert_eq!(stack, &VarTupleStruct::zero_from(zero))
     });
+
+    println!("successful");
 }
 
 const TEST_VARSTRUCTS: &[VarStruct<'static>] = &[
@@ -195,5 +215,14 @@ const TEST_MULTIFIELD: &[MultiFieldStruct<'static>] = &[
         d: 89,
         e: Cow::Borrowed("many 好多嘅 string"),
         f: 'ə',
+    },
+];
+
+const TEST_MULTICONSECUTIVE: &[MultiFieldConsecutiveStruct<'static>] = &[
+    MultiFieldConsecutiveStruct {
+        a: Cow::Borrowed("one"),
+        b: Cow::Borrowed("2"),
+        c: Cow::Borrowed("three"),
+        d: Cow::Borrowed("four"),
     },
 ];
