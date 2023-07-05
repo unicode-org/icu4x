@@ -263,14 +263,15 @@ impl Astronomical {
     }
 
     #[allow(dead_code)]
-    pub(crate) fn dusk(date: f64, location: Location, alpha: f64) -> Moment {
+    pub(crate) fn dusk(date: f64, location: Location, alpha: f64) -> Option<Moment> {
         let evening = false;
         let result =
             Self::moment_of_depression(Moment::new(date + (18.0 / 24.0)), location, alpha, evening);
 
-        match result {
-            Ok(m) => Location::standard_from_local(m, location),
-            Err(_) => Moment::new(date),
+        if result.is_none() {
+            return None;
+        } else {
+            Some(Location::standard_from_local(result.unwrap(), location))
         }
     }
 
@@ -330,7 +331,7 @@ impl Astronomical {
         location: Location,
         alpha: f64,
         early: bool,
-    ) -> Result<Moment, CalendarError> {
+    ) -> Option<Moment> {
         let mut t = Self::sine_offset(moment, location, alpha);
         let date = moment.as_rata_die().to_i64_date() as f64;
         let alt = if alpha >= 0.0 {
@@ -364,9 +365,9 @@ impl Astronomical {
                     (18.0 / 24.0) + offset
                 },
             );
-            Ok(Self::local_from_apparent(moment, location))
+            Some(Self::local_from_apparent(moment, location))
         } else {
-            return Err(CalendarError::DepressionAngleUnreachable);
+            return None;
         }
     }
 
@@ -375,12 +376,17 @@ impl Astronomical {
         location: Location,
         alpha: f64,
         early: bool,
-    ) -> Result<Moment, CalendarError> {
-        let moment = Self::approx_moment_of_depression(approx, location, alpha, early)?;
-        if (approx - moment).abs() < 30.0 {
-            Ok(moment)
+    ) -> Option<Moment> {
+        let moment = Self::approx_moment_of_depression(approx, location, alpha, early);
+
+        if moment.is_none() {
+            return None;
+        }
+
+        if (approx - moment.unwrap()).abs() < 30.0 {
+            Some(moment.unwrap())
         } else {
-            Self::moment_of_depression(moment, location, alpha, early)
+            Self::moment_of_depression(moment.unwrap(), location, alpha, early)
         }
     }
     // Refraction angle at given moment in given location
@@ -935,14 +941,32 @@ impl Astronomical {
     }
 
     #[allow(dead_code)]
-    fn sunset(date: Moment, location: Location) -> Moment {
+    fn sunset(date: Moment, location: Location) -> Option<Moment> {
         let alpha = Self::refraction(date + (18.0 / 24.0), location) + (16.0 / 60.0);
+        let dusk = Self::dusk(date.inner(), location, alpha);
 
-        Self::dusk(date.inner(), location, alpha)
+        if dusk.is_none() {
+            return None;
+        } else {
+            dusk
+        }
     }
 
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
-    fn moonlag(date: f64, location: Location) {}
+    fn moonlag(date: Moment, location: Location) -> Option<f64> {
+        let sun = Self::sunset(date, location);
+        let moon = Self::moonset(date, location);
+
+        // Sunset does not occur
+        if sun.is_none() {
+            return None;
+        }
+        if moon.is_none() {
+            return Some(24.0 / 24.0); // Arbitrary value as stated by lisp code
+        } else {
+            Some(moon.unwrap() - sun.unwrap())
+        }
+    }
 
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
     //
@@ -980,6 +1004,7 @@ impl Astronomical {
             a
         }
     }
+    #[allow(dead_code)]
     pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> f64 {
         let tau = moment.inner()
             - MEAN_SYNODIC_MONTH / (360.0 / phase) * ((Self::lunar_phase(moment) - phase) % 360.0);
@@ -1647,7 +1672,7 @@ mod tests {
 
         for (rd, expected_sunset_value) in rd_vals.iter().zip(expected_values.iter()) {
             let moment = Moment::new(*rd);
-            let sunset_value = Astronomical::sunset(moment, jerusalem);
+            let sunset_value = Astronomical::sunset(moment, jerusalem).unwrap();
             let expected_sunset_val = *expected_sunset_value;
             assert_eq_f64(expected_sunset_val, sunset_value.inner(), moment)
         }
