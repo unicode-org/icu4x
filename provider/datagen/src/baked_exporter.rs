@@ -509,7 +509,8 @@ impl DataExporter for BakedExporter {
                             payload
                         } else {
                             let mut fallback_iterator = icu_locid_transform::fallback::LocaleFallbacker::new()
-                                .fallback_for(<#marker as icu_provider::KeyedDataMarker>::KEY.into(), req.locale.clone());
+                                .for_key(<#marker as icu_provider::KeyedDataMarker>::KEY)
+                                .fallback_for(req.locale.clone());
                             loop {
                                 #maybe_err
 
