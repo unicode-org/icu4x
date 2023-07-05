@@ -1,0 +1,50 @@
+[
+  {
+    "default": {
+      "string": ", ",
+      "index_1": 2
+    },
+    "special_case": null
+  },
+  [
+    0
+  ],
+  {
+    "default": {
+      "string": ", বা ",
+      "index_1": 9
+    },
+    "special_case": null
+  },
+  {
+    "default": {
+      "string": " বা ",
+      "index_1": 8
+    },
+    "special_case": null
+  },
+  [
+    0
+  ],
+  [
+    0
+  ],
+  [
+    2
+  ],
+  [
+    3
+  ],
+  [
+    0
+  ],
+  [
+    0
+  ],
+  [
+    2
+  ],
+  [
+    3
+  ]
+]

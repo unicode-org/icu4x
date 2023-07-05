@@ -1,0 +1,45 @@
+{
+  "relatives": {
+    "0": "в этот час"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " ч назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": " ч назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": " ч назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": " ч назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "через  ч",
+      "index": 11
+    },
+    "two": null,
+    "few": {
+      "pattern": "через  ч",
+      "index": 11
+    },
+    "many": {
+      "pattern": "через  ч",
+      "index": 11
+    },
+    "other": {
+      "pattern": "через  ч",
+      "index": 11
+    }
+  }
+}

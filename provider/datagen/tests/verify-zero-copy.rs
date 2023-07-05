@@ -42,26 +42,25 @@ pub mod test {
         // don't drop to avoid dhat from printing stats at the end
         core::mem::forget(dhat::Profiler::new_heap());
 
+        let data_root = std::path::Path::new(std::env!("CARGO_MANIFEST_DIR")).join("tests/data");
+
         // Actual data is only needed to determine included locales.
         let locale_provider = DatagenProvider::try_new(
-            {
-                use icu_datagen::options::*;
-                let mut options = Options::default();
-                options.locales =
-                    LocaleInclude::Explicit(icu_testdata::locales().into_iter().collect());
-                options
-            },
+            Default::default(),
             SourceData::offline()
-                .with_cldr(repodata::paths::cldr(), Default::default())
+                .with_cldr(data_root.join("cldr"), Default::default())
                 .unwrap()
-                .with_icuexport(repodata::paths::icuexport())
+                .with_icuexport(data_root.join("icuexport"))
                 .unwrap()
-                .with_segmenter_lstm(repodata::paths::lstm())
+                .with_segmenter_lstm(data_root.join("lstm"))
                 .unwrap(),
         )
         .unwrap();
 
-        let postcard_provider = icu_testdata::buffer_no_fallback();
+        let postcard_provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(
+            include_bytes!("data/testdata.postcard"),
+        )
+        .unwrap();
 
         // violations for net_bytes_allocated
         let mut net_violations = BTreeSet::new();
@@ -73,17 +72,19 @@ pub mod test {
             let mut max_net_violation = 0;
 
             for locale in locale_provider.supported_locales_for_key(key).unwrap() {
-                let payload = postcard_provider
-                    .load_buffer(
-                        key,
-                        DataRequest {
-                            locale: &locale,
-                            metadata: Default::default(),
-                        },
-                    )
-                    .unwrap()
-                    .take_payload()
-                    .unwrap();
+                let payload = match postcard_provider.load_buffer(
+                    key,
+                    DataRequest {
+                        locale: &locale,
+                        metadata: Default::default(),
+                    },
+                ) {
+                    Err(DataError {
+                        kind: DataErrorKind::MissingLocale,
+                        ..
+                    }) => continue,
+                    r => r.unwrap().take_payload().unwrap(),
+                };
 
                 let stats_before = dhat::HeapStats::get();
 

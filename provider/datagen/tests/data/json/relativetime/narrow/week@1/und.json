@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "-1": "last week",
+    "0": "this week",
+    "1": "next week"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "- w",
+      "index": 1
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "+ w",
+      "index": 1
+    }
+  }
+}

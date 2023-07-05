@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "গত মাস",
+    "0": "এই মাস",
+    "1": "পরের মাস"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " মাস আগে",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " মাস আগে",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " মাসে",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " মাসে",
+      "index": 0
+    }
+  }
+}

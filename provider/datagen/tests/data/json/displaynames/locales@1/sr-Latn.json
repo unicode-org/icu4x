@@ -1,0 +1,27 @@
+{
+  "names": {
+    "ar-001": "savremeni standardni arapski",
+    "de-AT": "austrijski nemački",
+    "de-CH": "švajcarski visoki nemački",
+    "en-GB": "engleski (Velika Britanija)",
+    "en-US": "engleski (Sjedinjene Američke Države)",
+    "es-ES": "španski (Evropa)",
+    "fa-AF": "dari",
+    "nds-NL": "niskosaksonski",
+    "nl-BE": "flamanski",
+    "pt-PT": "portugalski (Portugal)",
+    "ro-MD": "moldavski",
+    "sw-CD": "kisvahili",
+    "zh-Hans": "pojednostavljeni kineski",
+    "zh-Hant": "tradicionalni kineski"
+  },
+  "short_names": {
+    "en-GB": "engleski (UK)",
+    "en-US": "engleski (SAD)"
+  },
+  "long_names": {
+    "zh-Hans": "pojednostavljeni mandarinski kineski",
+    "zh-Hant": "tradicionalni mandarinski kineski"
+  },
+  "menu_names": {}
+}

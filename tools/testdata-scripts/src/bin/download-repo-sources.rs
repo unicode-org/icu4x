@@ -24,12 +24,6 @@ include!("../../locales.rs.data");
 struct Args {
     #[arg(short, long, help = "Sets the level of verbosity (-v, -vv, or -vvv)", action = ArgAction::Count)]
     verbose: u8,
-    #[arg(
-        short,
-        long,
-        help = "Path to output data directory. The subdirectories 'cldr' and 'icuexport' will be overwritten. Omit this option to write data into the package tree"
-    )]
-    out: PathBuf,
 }
 
 fn main() -> eyre::Result<()> {
@@ -56,7 +50,8 @@ fn main() -> eyre::Result<()> {
         _ => eyre::bail!("Only -v, -vv, and -vvv are supported"),
     }
 
-    let output_path = &args.out;
+    let out_root =
+        std::path::Path::new(std::env!("CARGO_MANIFEST_DIR")).join("../../provider/datagen");
 
     fn cached(resource: &str) -> Result<PathBuf, DataError> {
         let root = std::env::var_os("ICU4X_SOURCE_CACHE")
@@ -133,7 +128,7 @@ fn main() -> eyre::Result<()> {
         ))
         .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
         expand_paths(CLDR_JSON_GLOB, false),
-        output_path.join("cldr"),
+        out_root.join("tests/data/cldr"),
     )?;
 
     extract(
@@ -144,7 +139,7 @@ fn main() -> eyre::Result<()> {
         ))
         .with_context(|| "Failed to download ICU ZIP".to_owned())?,
         expand_paths(ICUEXPORTDATA_GLOB, true),
-        output_path.join("icuexport"),
+        out_root.join("tests/data/icuexport"),
     )?;
 
     for file in [
@@ -155,12 +150,10 @@ fn main() -> eyre::Result<()> {
         "thaidict.toml",
     ] {
         std::fs::copy(
-            output_path
-                .join("icuexport/segmenter/dictionary")
+            out_root
+                .join("tests/data/icuexport/segmenter/dictionary")
                 .join(file),
-            output_path
-                .join("../../datagen/data/segmenter/dictionary")
-                .join(file),
+            out_root.join("data/segmenter/dictionary").join(file),
         )
         .unwrap();
     }
@@ -172,13 +165,13 @@ fn main() -> eyre::Result<()> {
         ))
         .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
         LSTM_GLOB.iter().copied().map(String::from).collect(),
-        output_path.join("lstm"),
+        out_root.join("tests/data/lstm"),
     )?;
 
     for path in &LSTM_GLOB[..4] {
         std::fs::copy(
-            output_path.join("lstm").join(path),
-            output_path.join("../../datagen/data/lstm").join(path),
+            out_root.join("tests/data/lstm").join(path),
+            out_root.join("data/lstm").join(path),
         )?;
     }
 

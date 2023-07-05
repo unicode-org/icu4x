@@ -1,0 +1,108 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "chaitra",
+          "vaisakha",
+          "jyaistha",
+          "asadha",
+          "sravana",
+          "bhadra",
+          "asvina",
+          "kartika",
+          "agrahayana",
+          "pausa",
+          "magha",
+          "phalguna"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "chaitra",
+          "vaisakha",
+          "jyaistha",
+          "asadha",
+          "sravana",
+          "bhadra",
+          "asvina",
+          "kartika",
+          "agrahayana",
+          "pausa",
+          "magha",
+          "phalguna"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dom",
+        "lun",
+        "mar",
+        "mié",
+        "jue",
+        "vie",
+        "sáb"
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "X",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "DO",
+        "LU",
+        "MA",
+        "MI",
+        "JU",
+        "VI",
+        "SA"
+      ],
+      "wide": [
+        "domingo",
+        "lunes",
+        "martes",
+        "miércoles",
+        "jueves",
+        "viernes",
+        "sábado"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "saka": "saka"
+    },
+    "abbr": {
+      "saka": "saka"
+    },
+    "narrow": {
+      "saka": "saka"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "last mo.",
+    "0": "this mo.",
+    "1": "next mo."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "mo ago",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "mo ago",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "in mo",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "in mo",
+      "index": 3
+    }
+  }
+}

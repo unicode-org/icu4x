@@ -37,7 +37,7 @@ The following are goals that ICU4X's data versioning system should achieve:
 
 In order to guarantee that data files created with older ICU4X versions continue to be readable by newer versions, the serialization format must remain stable over time.
 
-This is achieved by using the stable Postcard 1.0 format and enforcing Postcard stability by explicitly incorporating [postcard/fingerprints.csv](https://github.com/unicode-org/icu4x/blob/main/provider/testdata/data/postcard/fingerprints.csv) into code reviews.
+This is achieved by using the stable Postcard 1.0 format and enforcing Postcard stability by explicitly incorporating [postcard/fingerprints.csv](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/tests/data/postcard/fingerprints.csv) into code reviews.
 
 ### II. Retain Old Keys When Possible
 

@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "-1": "先月",
+    "0": "今月",
+    "1": "来月"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " か月前",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " か月後",
+      "index": 0
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "relatives": {
+    "-1": "последний кв.",
+    "0": "текущий кв.",
+    "1": "следующий кв."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " кв. назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": " кв. назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": " кв. назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": " кв. назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "через  кв.",
+      "index": 11
+    },
+    "two": null,
+    "few": {
+      "pattern": "через  кв.",
+      "index": 11
+    },
+    "many": {
+      "pattern": "через  кв.",
+      "index": 11
+    },
+    "other": {
+      "pattern": "через  кв.",
+      "index": 11
+    }
+  }
+}

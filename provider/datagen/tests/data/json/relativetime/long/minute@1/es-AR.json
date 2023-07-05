@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "este minuto"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "hace  minuto",
+      "index": 5
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "hace  minutos",
+      "index": 5
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "dentro de  minuto",
+      "index": 10
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "dentro de  minutos",
+      "index": 10
+    }
+  }
+}

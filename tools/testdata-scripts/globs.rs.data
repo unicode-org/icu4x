@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// Paths from CLDR JSON to copy into testdata. Uses gitignore-like syntax.
+// Paths from CLDR JSON to copy into test data. Uses gitignore-like syntax.
 // The variable "$LOCALES" is replaced with the list of locales from above.
 const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-core/coverageLevels.json",

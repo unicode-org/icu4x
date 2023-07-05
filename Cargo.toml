@@ -54,8 +54,6 @@ members = [
     "provider/datagen",
     "provider/fs",
     "provider/macros",
-    "provider/repodata",
-    "provider/testdata",
     "tools/benchmark/binsize",
     "tools/benchmark/macros",
     "tools/benchmark/memory",

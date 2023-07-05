@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "nakaraang taon",
+    "0": "ngayong taon",
+    "1": "susunod na taon"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " taon ang nakalipas",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " taon ang nakalipas",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "sa  taon",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "sa  taon",
+      "index": 3
+    }
+  }
+}

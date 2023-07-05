@@ -1,0 +1,16 @@
+{
+  "CPInversionListStrList": {
+    "cp_inv_list": [
+      "a-p",
+      "r-v",
+      "y-z",
+      "ç",
+      "ö",
+      "ü",
+      "ğ",
+      "İ-ı",
+      "ş"
+    ],
+    "str_list": []
+  }
+}

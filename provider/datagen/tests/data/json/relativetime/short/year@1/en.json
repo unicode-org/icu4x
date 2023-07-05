@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "last yr.",
+    "0": "this yr.",
+    "1": "next yr."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " yr. ago",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " yr. ago",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "in  yr.",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "in  yr.",
+      "index": 3
+    }
+  }
+}

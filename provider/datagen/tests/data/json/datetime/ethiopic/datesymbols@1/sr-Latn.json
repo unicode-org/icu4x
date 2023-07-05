@@ -1,0 +1,117 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "Meskerem",
+          "M02": "Tekemt",
+          "M03": "Hedar",
+          "M04": "Tahsas",
+          "M05": "Ter",
+          "M06": "Jekatit",
+          "M07": "Megabit",
+          "M08": "Miazia",
+          "M09": "Genbot",
+          "M10": "Sene",
+          "M11": "Hamle",
+          "M12": "Nehase",
+          "M13": "Pagumen"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M06": "6",
+          "M07": "7",
+          "M08": "8",
+          "M09": "9",
+          "M10": "10",
+          "M11": "11",
+          "M12": "12",
+          "M13": "13"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "Meskerem",
+          "M02": "Tekemt",
+          "M03": "Hedar",
+          "M04": "Tahsas",
+          "M05": "Ter",
+          "M06": "Jekatit",
+          "M07": "Megabit",
+          "M08": "Miazia",
+          "M09": "Genbot",
+          "M10": "Sene",
+          "M11": "Hamle",
+          "M12": "Nehase",
+          "M13": "Pagumen"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "ned",
+        "pon",
+        "uto",
+        "sre",
+        "čet",
+        "pet",
+        "sub"
+      ],
+      "narrow": [
+        "n",
+        "p",
+        "u",
+        "s",
+        "č",
+        "p",
+        "s"
+      ],
+      "short": [
+        "ne",
+        "po",
+        "ut",
+        "sr",
+        "če",
+        "pe",
+        "su"
+      ],
+      "wide": [
+        "nedelja",
+        "ponedeljak",
+        "utorak",
+        "sreda",
+        "četvrtak",
+        "petak",
+        "subota"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
+    },
+    "abbr": {
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
+    },
+    "narrow": {
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
+    }
+  }
+}

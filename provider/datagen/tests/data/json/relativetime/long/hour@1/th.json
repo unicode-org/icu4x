@@ -1,0 +1,27 @@
+{
+  "relatives": {
+    "0": "ชั่วโมงนี้"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " ชั่วโมงที่ผ่านมา",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "ในอีก  ชั่วโมง",
+      "index": 16
+    }
+  }
+}

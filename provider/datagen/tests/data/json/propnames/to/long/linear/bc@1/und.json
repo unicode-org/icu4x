@@ -1,0 +1,26 @@
+{
+  "map": [
+    "Left_To_Right",
+    "Right_To_Left",
+    "European_Number",
+    "European_Separator",
+    "European_Terminator",
+    "Arabic_Number",
+    "Common_Separator",
+    "Paragraph_Separator",
+    "Segment_Separator",
+    "White_Space",
+    "Other_Neutral",
+    "Left_To_Right_Embedding",
+    "Left_To_Right_Override",
+    "Arabic_Letter",
+    "Right_To_Left_Embedding",
+    "Right_To_Left_Override",
+    "Pop_Directional_Format",
+    "Nonspacing_Mark",
+    "Boundary_Neutral",
+    "First_Strong_Isolate",
+    "Left_To_Right_Isolate",
+    "Right_To_Left_Isolate"
+  ]
+}

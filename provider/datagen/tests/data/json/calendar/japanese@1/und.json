@@ -1,0 +1,44 @@
+{
+  "dates_to_eras": [
+    [
+      {
+        "year": 1868,
+        "month": 9,
+        "day": 8
+      },
+      "meiji"
+    ],
+    [
+      {
+        "year": 1912,
+        "month": 7,
+        "day": 30
+      },
+      "taisho"
+    ],
+    [
+      {
+        "year": 1926,
+        "month": 12,
+        "day": 25
+      },
+      "showa"
+    ],
+    [
+      {
+        "year": 1989,
+        "month": 1,
+        "day": 8
+      },
+      "heisei"
+    ],
+    [
+      {
+        "year": 2019,
+        "month": 5,
+        "day": 1
+      },
+      "reiwa"
+    ]
+  ]
+}

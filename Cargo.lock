@@ -1571,7 +1571,6 @@ dependencies = [
  "icu_provider_fs",
  "icu_relativetime",
  "icu_segmenter",
- "icu_testdata",
  "icu_timezone",
  "itertools",
  "lazy_static",
@@ -1579,7 +1578,6 @@ dependencies = [
  "memchr",
  "ndarray",
  "rayon",
- "repodata",
  "serde",
  "serde-aux",
  "serde_json",
@@ -1613,7 +1611,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "icu_provider_adapters",
- "icu_testdata",
+ "icu_provider_blob",
  "icu_timezone",
  "litemap",
  "serde",
@@ -1710,7 +1708,6 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "icu_testdata",
  "tinystr",
 ]
 
@@ -1767,7 +1764,6 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform_data",
  "icu_provider",
- "icu_testdata",
  "serde",
  "serde_json",
  "tinystr",
@@ -1902,8 +1898,8 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_provider",
+ "icu_provider_blob",
  "icu_provider_fs",
- "icu_testdata",
  "serde",
  "tinystr",
  "writeable",
@@ -2045,8 +2041,6 @@ dependencies = [
  "icu_provider",
  "log",
  "quote",
- "repodata",
- "rust-format",
  "simple_logger",
  "ureq",
  "zip",
@@ -2079,7 +2073,6 @@ dependencies = [
  "icu_collections",
  "icu_properties",
  "icu_provider",
- "icu_testdata",
  "log",
  "tinystr",
  "zerovec",
@@ -2170,7 +2163,6 @@ name = "ixdtf"
 version = "0.1.0"
 dependencies = [
  "criterion",
- "icu_testdata",
  "serde-json-core",
 ]
 
@@ -2837,13 +2829,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "repodata"
-version = "0.0.0"
-dependencies = [
- "icu_provider_fs",
-]
-
-[[package]]
 name = "ring"
 version = "0.16.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2881,15 +2866,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "rust-format"
-version = "0.3.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60e7c00b6c3bf5e38a880eec01d7e829d12ca682079f8238a464def3c4b31627"
-dependencies = [
- "proc-macro2",
 ]
 
 [[package]]

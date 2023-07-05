@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "nakaraang buwan",
+    "0": "ngayong buwan",
+    "1": "susunod na buwan"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " buwan ang nakalipas",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " buwan ang nakalipas",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "sa  buwan",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "sa  buwan",
+      "index": 3
+    }
+  }
+}

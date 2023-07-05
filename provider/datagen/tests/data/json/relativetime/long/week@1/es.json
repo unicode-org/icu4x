@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "la semana pasada",
+    "0": "esta semana",
+    "1": "la próxima semana"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "hace  semana",
+      "index": 5
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "hace  semanas",
+      "index": 5
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "dentro de  semana",
+      "index": 10
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "dentro de  semanas",
+      "index": 10
+    }
+  }
+}

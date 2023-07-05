@@ -1,0 +1,41 @@
+{
+  "relatives": {
+    "-1": "прошле н.",
+    "0": "ове н.",
+    "1": "следеће н."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "пре  н.",
+      "index": 7
+    },
+    "two": null,
+    "few": {
+      "pattern": "пре  н.",
+      "index": 7
+    },
+    "many": null,
+    "other": {
+      "pattern": "пре  н.",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "за  н.",
+      "index": 5
+    },
+    "two": null,
+    "few": {
+      "pattern": "за  н.",
+      "index": 5
+    },
+    "many": null,
+    "other": {
+      "pattern": "за  н.",
+      "index": 5
+    }
+  }
+}

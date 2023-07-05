@@ -1,0 +1,114 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "Taut",
+          "M02": "Baba",
+          "M03": "Hator",
+          "M04": "Kiahk",
+          "M05": "Toba",
+          "M06": "Amšir",
+          "M07": "Baramhat",
+          "M08": "Baramuda",
+          "M09": "Bašans",
+          "M10": "Paona",
+          "M11": "Epep",
+          "M12": "Mesra",
+          "M13": "Nasi"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M06": "6",
+          "M07": "7",
+          "M08": "8",
+          "M09": "9",
+          "M10": "10",
+          "M11": "11",
+          "M12": "12",
+          "M13": "13"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "Taut",
+          "M02": "Baba",
+          "M03": "Hator",
+          "M04": "Kiahk",
+          "M05": "Toba",
+          "M06": "Amšir",
+          "M07": "Baramhat",
+          "M08": "Baramuda",
+          "M09": "Bašans",
+          "M10": "Paona",
+          "M11": "Epep",
+          "M12": "Mesra",
+          "M13": "Nasi"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "ned",
+        "pon",
+        "uto",
+        "sre",
+        "čet",
+        "pet",
+        "sub"
+      ],
+      "narrow": [
+        "n",
+        "p",
+        "u",
+        "s",
+        "č",
+        "p",
+        "s"
+      ],
+      "short": [
+        "ne",
+        "po",
+        "ut",
+        "sr",
+        "če",
+        "pe",
+        "su"
+      ],
+      "wide": [
+        "nedelja",
+        "ponedeljak",
+        "utorak",
+        "sreda",
+        "četvrtak",
+        "petak",
+        "subota"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "ad": "ERA1",
+      "bd": "ERA0"
+    },
+    "abbr": {
+      "ad": "ERA1",
+      "bd": "ERA0"
+    },
+    "narrow": {
+      "ad": "ERA1",
+      "bd": "ERA0"
+    }
+  }
+}

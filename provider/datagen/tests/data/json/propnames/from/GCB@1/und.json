@@ -1,0 +1,32 @@
+{
+  "map": {
+    "CN": 1,
+    "Control": 1,
+    "CR": 2,
+    "EB": 13,
+    "E_Base": 13,
+    "E_Base_GAZ": 14,
+    "EBG": 14,
+    "EM": 15,
+    "E_Modifier": 15,
+    "EX": 3,
+    "Extend": 3,
+    "GAZ": 16,
+    "Glue_After_Zwj": 16,
+    "L": 4,
+    "LF": 5,
+    "LV": 6,
+    "LVT": 7,
+    "Other": 0,
+    "PP": 11,
+    "Prepend": 11,
+    "Regional_Indicator": 12,
+    "RI": 12,
+    "SM": 10,
+    "SpacingMark": 10,
+    "T": 8,
+    "V": 9,
+    "XX": 0,
+    "ZWJ": 17
+  }
+}

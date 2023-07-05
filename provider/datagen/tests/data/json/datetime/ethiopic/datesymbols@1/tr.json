@@ -1,0 +1,117 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "Meskerem",
+          "M02": "Tikimt",
+          "M03": "Hidar",
+          "M04": "Tahsas",
+          "M05": "Tir",
+          "M06": "Yakatit",
+          "M07": "Magabit",
+          "M08": "Miyazya",
+          "M09": "Ginbot",
+          "M10": "Sene",
+          "M11": "Hamle",
+          "M12": "Nehasa",
+          "M13": "Pagumiene"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M06": "6",
+          "M07": "7",
+          "M08": "8",
+          "M09": "9",
+          "M10": "10",
+          "M11": "11",
+          "M12": "12",
+          "M13": "13"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "Meskerem",
+          "M02": "Tikimt",
+          "M03": "Hidar",
+          "M04": "Tahsas",
+          "M05": "Tir",
+          "M06": "Yakatit",
+          "M07": "Magabit",
+          "M08": "Miyazya",
+          "M09": "Ginbot",
+          "M10": "Sene",
+          "M11": "Hamle",
+          "M12": "Nehasa",
+          "M13": "Pagumiene"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Paz",
+        "Pzt",
+        "Sal",
+        "Çar",
+        "Per",
+        "Cum",
+        "Cmt"
+      ],
+      "narrow": [
+        "P",
+        "P",
+        "S",
+        "Ç",
+        "P",
+        "C",
+        "C"
+      ],
+      "short": [
+        "Pa",
+        "Pt",
+        "Sa",
+        "Ça",
+        "Pe",
+        "Cu",
+        "Ct"
+      ],
+      "wide": [
+        "Pazar",
+        "Pazartesi",
+        "Salı",
+        "Çarşamba",
+        "Perşembe",
+        "Cuma",
+        "Cumartesi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
+    },
+    "abbr": {
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
+    },
+    "narrow": {
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
+    }
+  }
+}

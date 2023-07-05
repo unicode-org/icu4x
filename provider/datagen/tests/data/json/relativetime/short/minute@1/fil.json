@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "sa minutong ito"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " min. ang nakalipas",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " min. ang nakalipas",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "sa  min.",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "sa  min.",
+      "index": 3
+    }
+  }
+}

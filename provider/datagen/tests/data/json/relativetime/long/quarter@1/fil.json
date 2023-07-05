@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "nakaraang quarter",
+    "0": "ngayong quarter",
+    "1": "susunod na quarter"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " quarter ang nakalipas",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " quarter ang nakalipas",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "sa  quarter",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "sa  quarter",
+      "index": 3
+    }
+  }
+}

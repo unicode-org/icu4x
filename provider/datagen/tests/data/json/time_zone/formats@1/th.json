@@ -1,0 +1,15 @@
+{
+  "hour_format": [
+    "+HH:mm",
+    "-HH:mm"
+  ],
+  "gmt_format": "GMT{0}",
+  "gmt_zero_format": "GMT",
+  "region_format": "เวลา{0}",
+  "region_format_variants": {
+    "daylight": "เวลาออมแสง{0}",
+    "standard": "เวลามาตรฐาน{0}"
+  },
+  "fallback_format": "{1} ({0})",
+  "gmt_offset_fallback": "GMT+?"
+}

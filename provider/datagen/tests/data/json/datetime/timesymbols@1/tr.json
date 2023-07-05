@@ -1,0 +1,36 @@
+{
+  "day_periods": {
+    "format": {
+      "abbreviated": {
+        "am": "ÖÖ",
+        "pm": "ÖS",
+        "noon": "öğle",
+        "midnight": "gece yarısı"
+      },
+      "narrow": {
+        "am": "öö",
+        "pm": "ös",
+        "noon": "ö",
+        "midnight": "gece"
+      },
+      "short": null,
+      "wide": {
+        "am": "ÖÖ",
+        "pm": "ÖS",
+        "noon": "öğle",
+        "midnight": "gece yarısı"
+      }
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": {
+        "am": "ÖÖ",
+        "pm": "ÖS",
+        "noon": "öğle",
+        "midnight": "gece yarısı"
+      },
+      "short": null,
+      "wide": null
+    }
+  }
+}

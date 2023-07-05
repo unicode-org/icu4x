@@ -1,0 +1,15 @@
+{
+  "hour_format": [
+    "+HH:mm",
+    "-HH:mm"
+  ],
+  "gmt_format": "GMT{0}",
+  "gmt_zero_format": "GMT",
+  "region_format": "{0}時間",
+  "region_format_variants": {
+    "daylight": "{0}夏時間",
+    "standard": "{0}標準時"
+  },
+  "fallback_format": "{1}（{0}）",
+  "gmt_offset_fallback": "GMT+?"
+}

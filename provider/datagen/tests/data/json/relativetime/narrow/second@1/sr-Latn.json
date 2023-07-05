@@ -1,0 +1,39 @@
+{
+  "relatives": {
+    "0": "sada"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre  s.",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre  s.",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre  s.",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "za  s.",
+      "index": 3
+    },
+    "two": null,
+    "few": {
+      "pattern": "za  s.",
+      "index": 3
+    },
+    "many": null,
+    "other": {
+      "pattern": "za  s.",
+      "index": 3
+    }
+  }
+}

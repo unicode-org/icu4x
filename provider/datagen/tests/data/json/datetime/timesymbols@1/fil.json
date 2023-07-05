@@ -1,0 +1,36 @@
+{
+  "day_periods": {
+    "format": {
+      "abbreviated": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "tanghaling-tapat",
+        "midnight": "hatinggabi"
+      },
+      "narrow": {
+        "am": "am",
+        "pm": "pm",
+        "noon": "tanghaling-tapat",
+        "midnight": "hatinggabi"
+      },
+      "short": null,
+      "wide": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "tanghaling-tapat",
+        "midnight": "hatinggabi"
+      }
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "tanghaling-tapat",
+        "midnight": "hatinggabi"
+      },
+      "short": null,
+      "wide": null
+    }
+  }
+}

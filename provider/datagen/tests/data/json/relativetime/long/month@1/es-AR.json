@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "el mes pasado",
+    "0": "este mes",
+    "1": "el próximo mes"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "hace  mes",
+      "index": 5
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "hace  meses",
+      "index": 5
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "dentro de  mes",
+      "index": 10
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "dentro de  meses",
+      "index": 10
+    }
+  }
+}
