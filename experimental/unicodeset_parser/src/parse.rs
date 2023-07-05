@@ -10,9 +10,9 @@ use icu_collections::{
     codepointinvliststringlist::CodePointInversionListAndStringList,
 };
 use icu_properties::maps::{load_general_category, load_script};
-use icu_properties::provider::*;
+use icu_properties::{provider::*, GeneralCategoryGroup};
 use icu_properties::script::load_script_with_extensions_unstable;
-use icu_properties::sets::load_for_ecma262_unstable;
+use icu_properties::sets::{load_for_ecma262_unstable, load_for_general_category_group};
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
 
@@ -279,7 +279,8 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryNameToValueV1Marker>
+        // + DataProvider<GeneralCategoryNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
         + DataProvider<ScriptNameToValueV1Marker>
         + DataProvider<ScriptV1Marker>
@@ -896,16 +897,15 @@ where
 
     fn try_load_general_category_set(&mut self, name: &str) -> Result<()> {
         // TODO(#3550): This could be cached; does not depend on name.
-        let name_map = GeneralCategory::get_name_to_enum_mapper(self.property_provider)
+        let name_map = GeneralCategoryGroup::get_name_to_enum_mapper(self.property_provider)
             .map_err(|_| PEK::Internal)?;
         let gc_value = name_map
             .as_borrowed()
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
-        let property_map =
-            load_general_category(self.property_provider).map_err(|_| PEK::Internal)?;
-        let set = property_map.as_borrowed().get_set_for_value(gc_value);
+        let set =
+            load_for_general_category_group(self.property_provider, gc_value).map_err(|_| PEK::Internal)?;
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
@@ -1078,7 +1078,8 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryNameToValueV1Marker>
+        // + DataProvider<GeneralCategoryNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
         + DataProvider<ScriptNameToValueV1Marker>
         + DataProvider<ScriptV1Marker>
@@ -1299,6 +1300,7 @@ mod tests {
             (D, r"[[:gc=lower-case-letter:]&[a-zA-Z]]", "az", vec![]),
             (D, r"[[:lower case letter:]&[a-zA-Z]]", "az", vec![]),
             // general category groups
+            // equivalence between L and the union of all the L* categories
             (D, r"[[[:L:]-[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]][[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]-[:L:]]]", "", vec![]),
             // script
             (D, r"[[:sc=latn:]&[a-zA-Z]]", "azAZ", vec![]),
