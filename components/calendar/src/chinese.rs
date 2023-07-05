@@ -34,8 +34,6 @@
 //! assert_eq!(chinese_datetime.time.second.number(), 0);
 //! ```
 
-use core::cmp::Ordering;
-
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Astronomical, Location, MEAN_TROPICAL_YEAR};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
@@ -265,66 +263,50 @@ impl Calendar for Chinese {
         } else {
             14
         };
-        let code_inner = match ordinal.cmp(&leap_month) {
-            Ordering::Less => {
-                // maximum num of months in a non-leap year or before a leap month is 12,
-                // and minimum possible month is month 1.
-                debug_assert!((1..=12).contains(&ordinal));
-                match ordinal {
-                    1 => tinystr!(4, "M01"),
-                    2 => tinystr!(4, "M02"),
-                    3 => tinystr!(4, "M03"),
-                    4 => tinystr!(4, "M04"),
-                    5 => tinystr!(4, "M05"),
-                    6 => tinystr!(4, "M06"),
-                    7 => tinystr!(4, "M07"),
-                    8 => tinystr!(4, "M08"),
-                    9 => tinystr!(4, "M09"),
-                    10 => tinystr!(4, "M10"),
-                    11 => tinystr!(4, "M11"),
-                    12 => tinystr!(4, "M12"),
-                    _ => tinystr!(4, "und"),
-                }
+        let code_inner = if leap_month == ordinal {
+            // Month cannot be 1 because a year cannot have a leap month before the first actual month,
+            // and the maximum num of months ina leap year is 13.
+            debug_assert!((2..=13).contains(&ordinal));
+            match ordinal {
+                2 => tinystr!(4, "M01L"),
+                3 => tinystr!(4, "M02L"),
+                4 => tinystr!(4, "M03L"),
+                5 => tinystr!(4, "M04L"),
+                6 => tinystr!(4, "M05L"),
+                7 => tinystr!(4, "M06L"),
+                8 => tinystr!(4, "M07L"),
+                9 => tinystr!(4, "M08L"),
+                10 => tinystr!(4, "M09L"),
+                11 => tinystr!(4, "M10L"),
+                12 => tinystr!(4, "M11L"),
+                13 => tinystr!(4, "M12L"),
+                _ => tinystr!(4, "und"),
             }
-            Ordering::Equal => {
-                // Month cannot be 1 because a year cannot have a leap month before the first actual month,
-                // and the maximum num of months in a leap year is 13.
-                debug_assert!((2..=13).contains(&ordinal));
-                match ordinal {
-                    2 => tinystr!(4, "M01L"),
-                    3 => tinystr!(4, "M02L"),
-                    4 => tinystr!(4, "M03L"),
-                    5 => tinystr!(4, "M04L"),
-                    6 => tinystr!(4, "M05L"),
-                    7 => tinystr!(4, "M06L"),
-                    8 => tinystr!(4, "M07L"),
-                    9 => tinystr!(4, "M08L"),
-                    10 => tinystr!(4, "M09L"),
-                    11 => tinystr!(4, "M10L"),
-                    12 => tinystr!(4, "M11L"),
-                    13 => tinystr!(4, "M12L"),
-                    _ => tinystr!(4, "und"),
-                }
-            }
-            Ordering::Greater => {
-                // The month cannot be 1 because this implies the leap month is < 1, which is impossible;
+        } else {
+            let mut adjusted_ordinal = ordinal;
+            if ordinal > leap_month {
+                // Before adjusting for leap month, if ordinal > leap_month,
+                // the month cannot be 1 because this implies the leap month is < 1, which is impossible;
                 // cannot be 2 because that implies the leap month is = 1, which is impossible,
                 // and cannot be more than 13 because max number of months in a year is 13.
-                debug_assert!((3..=13).contains(&ordinal));
-                match ordinal {
-                    3 => tinystr!(4, "M02"),
-                    4 => tinystr!(4, "M03"),
-                    5 => tinystr!(4, "M04"),
-                    6 => tinystr!(4, "M05"),
-                    7 => tinystr!(4, "M06"),
-                    8 => tinystr!(4, "M07"),
-                    9 => tinystr!(4, "M08"),
-                    10 => tinystr!(4, "M09"),
-                    11 => tinystr!(4, "M10"),
-                    12 => tinystr!(4, "M11"),
-                    13 => tinystr!(4, "M12"),
-                    _ => tinystr!(4, "und"), // maximum number of months in a leap year is 13
-                }
+                debug_assert!((2..=13).contains(&ordinal));
+                adjusted_ordinal -= 1;
+            }
+            debug_assert!((1..=12).contains(&adjusted_ordinal));
+            match adjusted_ordinal {
+                1 => tinystr!(4, "M01"),
+                2 => tinystr!(4, "M02"),
+                3 => tinystr!(4, "M03"),
+                4 => tinystr!(4, "M04"),
+                5 => tinystr!(4, "M05"),
+                6 => tinystr!(4, "M06"),
+                7 => tinystr!(4, "M07"),
+                8 => tinystr!(4, "M08"),
+                9 => tinystr!(4, "M09"),
+                10 => tinystr!(4, "M10"),
+                11 => tinystr!(4, "M11"),
+                12 => tinystr!(4, "M12"),
+                _ => tinystr!(4, "und"),
             }
         };
         let code = types::MonthCode(code_inner);
