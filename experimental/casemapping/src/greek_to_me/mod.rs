@@ -179,11 +179,11 @@ macro_rules! accent_marks {
 /// to be used with Greek but do not need to be removed
 ///
 /// This is a macro to make it easy to keep the lists of accents in sync
-pub use crate::accent_marks;
+pub use crate::diacritics;
 
 impl GreekDiacritics {
     /// Whilst forwards-iterating from an existing character,
-    /// consume all further greek diacritics and store their existence into this string
+    /// consume all further greek diacritics and store their existence into this struct
     pub(crate) fn consume_greek_diacritics(&mut self, context_after: &str) {
         for c in context_after.chars() {
             match c {

@@ -50,7 +50,7 @@ fn main() {
                     greek_to_me::DIALYTIKA => {
                         data.dialytika = true;
                     }
-                    // precomposed_yprog: [:toNFD=/[\u0345]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
+                    // precomposed_ypogegrammeni [:toNFD=/[\u0345]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
                     greek_to_me::YPOGEGRAMMENI => {
                         data.ypogegrammeni = true;
                     }
