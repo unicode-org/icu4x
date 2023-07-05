@@ -371,7 +371,7 @@ impl Astronomical {
         }
     }
     // Refraction angle at given moment in given location
-    pub(crate) fn refraction(moment: Moment, location: Location) -> f64 {
+    pub(crate) fn refraction(location: Location) -> f64 {
         // The moment is not used.
         let h = location.elevation.max(0.0);
         let earth_r = 6.372e6; // Radius of Earth.
@@ -678,7 +678,6 @@ impl Astronomical {
         let alpha = Self::right_ascension(moment, beta, lambda).unwrap(); // Safe value
         let delta = Self::declination(moment, beta, lambda);
         let theta0 = Self::sidereal_from_moment(moment);
-        let c = -alpha + theta0 + psi;
         let cap_h: f64 = div_rem_euclid_f64(theta0 + psi - alpha, 360.0).1;
 
         let altitude = arcsin_degrees(
@@ -824,7 +823,7 @@ impl Astronomical {
     /// as a small positive/negative angle in degrees.
     fn observed_lunar_altitude(moment: Moment, location: Location) -> f64 {
         let r = Self::topocentric_lunar_altitude(moment, location);
-        let y = Self::refraction(moment, location);
+        let y = Self::refraction(location);
         let z = 16.0 / 60.0;
 
         r + y + z
@@ -913,7 +912,7 @@ impl Astronomical {
 
     #[allow(dead_code)]
     fn sunset(date: Moment, location: Location) -> Option<Moment> {
-        let alpha = Self::refraction(date + (18.0 / 24.0), location) + (16.0 / 60.0);
+        let alpha = Self::refraction(location) + (16.0 / 60.0);
 
         Self::dusk(date.inner(), location, alpha)
     }
