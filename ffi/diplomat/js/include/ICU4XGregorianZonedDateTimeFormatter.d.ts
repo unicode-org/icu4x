@@ -22,7 +22,7 @@ export class ICU4XGregorianZonedDateTimeFormatter {
 
    * This function has `date_length` and `time_length` arguments and uses default options for the time zone.
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new Rust documentation for `try_new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_with_lengths(provider: ICU4XDataProvider, locale: ICU4XLocale, date_length: ICU4XDateLength, time_length: ICU4XTimeLength): ICU4XGregorianZonedDateTimeFormatter | never;
@@ -33,7 +33,7 @@ export class ICU4XGregorianZonedDateTimeFormatter {
 
    * This function has `date_length` and `time_length` arguments and uses an ISO-8601 style fallback for the time zone with the given configurations.
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new Rust documentation for `try_new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_with_lengths_and_iso_8601_time_zone_fallback(provider: ICU4XDataProvider, locale: ICU4XLocale, date_length: ICU4XDateLength, time_length: ICU4XTimeLength, zone_options: ICU4XIsoTimeZoneOptions): ICU4XGregorianZonedDateTimeFormatter | never;

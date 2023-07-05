@@ -958,16 +958,16 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 /// use zerovec::{ZeroSlice, zeroslice, ule::AsULE};
 /// use zerovec::ule::UnvalidatedChar;
 ///
-/// const SIGNATURE: &ZeroSlice<char> = zeroslice![char; <char as AsULE>::ULE::from_aligned; 'b', 'y', 'e', '✌'];
+/// const SIGNATURE: &ZeroSlice<char> = zeroslice!(char; <char as AsULE>::ULE::from_aligned; ['b', 'y', 'e', '✌']);
 /// const EMPTY: &ZeroSlice<u32> = zeroslice![];
 /// const UC: &ZeroSlice<UnvalidatedChar> =
-///     zeroslice![
+///     zeroslice!(
 ///         UnvalidatedChar;
 ///         <UnvalidatedChar as AsULE>::ULE::from_unvalidated_char;
-///         UnvalidatedChar::from_char('a'),
-///     ];
+///         [UnvalidatedChar::from_char('a')]
+///     );
 /// let empty: &ZeroSlice<u32> = zeroslice![];
-/// let nums = zeroslice![u32; <u32 as AsULE>::ULE::from_unsigned; 1, 2, 3, 4, 5];
+/// let nums = zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [1, 2, 3, 4, 5]);
 /// assert_eq!(nums.last().unwrap(), 5);
 /// ```
 ///
@@ -980,14 +980,14 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///     RawBytesULE(num.to_be_bytes())
 /// }
 ///
-/// const NUMBERS_BE: &ZeroSlice<i16> = zeroslice![i16; be_convert; 1, -2, 3, -4, 5];
+/// const NUMBERS_BE: &ZeroSlice<i16> = zeroslice!(i16; be_convert; [1, -2, 3, -4, 5]);
 /// ```
 #[macro_export]
 macro_rules! zeroslice {
     () => (
         $crate::ZeroSlice::new_empty()
     );
-    ($aligned:ty; $convert:expr; $($x:expr),+ $(,)?) => (
+    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => (
         $crate::ZeroSlice::<$aligned>::from_ule_slice(
             {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &[
                 $($convert($x)),*
@@ -996,7 +996,7 @@ macro_rules! zeroslice {
     );
 }
 
-/// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice![...].as_zerovec()`. The value
+/// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice!(...).as_zerovec()`. The value
 /// will be created at compile-time, meaning that all arguments must also be constant.
 ///
 /// See [`zeroslice!`](crate::zeroslice) for more information.
@@ -1006,7 +1006,7 @@ macro_rules! zeroslice {
 /// ```
 /// use zerovec::{ZeroVec, zerovec, ule::AsULE};
 ///
-/// const SIGNATURE: ZeroVec<char> = zerovec![char; <char as AsULE>::ULE::from_aligned; 'a', 'y', 'e', '✌'];
+/// const SIGNATURE: ZeroVec<char> = zerovec!(char; <char as AsULE>::ULE::from_aligned; ['a', 'y', 'e', '✌']);
 /// assert!(!SIGNATURE.is_owned());
 ///
 /// const EMPTY: ZeroVec<u32> = zerovec![];
@@ -1017,8 +1017,8 @@ macro_rules! zerovec {
     () => (
         $crate::ZeroVec::new()
     );
-    ($aligned:ty; $convert:expr; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![$aligned; $convert; $($x),+].as_zerovec()
+    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => (
+        $crate::zeroslice![$aligned; $convert; [$($x),+]].as_zerovec()
     );
 }
 

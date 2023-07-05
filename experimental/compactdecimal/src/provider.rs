@@ -16,12 +16,12 @@ use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap2d;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
     use crate as icu_compactdecimal;
     icu_compactdecimal_data::impl_compactdecimal_long_v1!(Baked);

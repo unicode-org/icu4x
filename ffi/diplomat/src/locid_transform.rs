@@ -26,30 +26,39 @@ pub mod ffi {
 
     impl ICU4XLocaleCanonicalizer {
         /// Create a new [`ICU4XLocaleCanonicalizer`].
-        #[diplomat::rust_link(
-            icu::locid_transform::LocaleCanonicalizer::try_new_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::locid_transform::LocaleCanonicalizer::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
-            Ok(Box::new(ICU4XLocaleCanonicalizer(
-                LocaleCanonicalizer::try_new_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XLocaleCanonicalizer(call_constructor!(
+                LocaleCanonicalizer::new [r => Ok(r)],
+                LocaleCanonicalizer::try_new_with_any_provider,
+                LocaleCanonicalizer::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Create a new [`ICU4XLocaleCanonicalizer`] with extended data.
         #[diplomat::rust_link(
-            icu::locid_transform::LocaleCanonicalizer::try_new_with_expander_unstable,
+            icu::locid_transform::LocaleCanonicalizer::new_with_expander,
             FnInStruct
         )]
         pub fn create_extended(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
-            let expander = LocaleExpander::try_new_extended_unstable(&provider.0)?;
-            Ok(Box::new(ICU4XLocaleCanonicalizer(
-                LocaleCanonicalizer::try_new_with_expander_unstable(&provider.0, expander)?,
-            )))
+            let expander = call_constructor!(
+                LocaleExpander::new_extended [r => Ok(r)],
+                LocaleExpander::try_new_with_any_provider,
+                LocaleExpander::try_new_with_buffer_provider,
+                provider,
+            )?;
+            Ok(Box::new(ICU4XLocaleCanonicalizer(call_constructor!(
+                LocaleCanonicalizer::new_with_expander [r => Ok(r)],
+                LocaleCanonicalizer::try_new_with_expander_with_any_provider,
+                LocaleCanonicalizer::try_new_with_expander_with_buffer_provider,
+                provider,
+                expander
+            )?)))
         }
 
         /// FFI version of `LocaleCanonicalizer::canonicalize()`.
@@ -66,26 +75,29 @@ pub mod ffi {
 
     impl ICU4XLocaleExpander {
         /// Create a new [`ICU4XLocaleExpander`].
-        #[diplomat::rust_link(icu::locid_transform::LocaleExpander::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::locid_transform::LocaleExpander::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleExpander>, ICU4XError> {
-            Ok(Box::new(ICU4XLocaleExpander(
-                LocaleExpander::try_new_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XLocaleExpander(call_constructor!(
+                LocaleExpander::new [r => Ok(r)],
+                LocaleExpander::try_new_with_any_provider,
+                LocaleExpander::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Create a new [`ICU4XLocaleExpander`] with extended data.
-        #[diplomat::rust_link(
-            icu::locid_transform::LocaleExpander::try_new_extended_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::locid_transform::LocaleExpander::new_extended, FnInStruct)]
         pub fn create_extended(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleExpander>, ICU4XError> {
-            Ok(Box::new(ICU4XLocaleExpander(
-                LocaleExpander::try_new_extended_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XLocaleExpander(call_constructor!(
+                LocaleExpander::new_extended [r => Ok(r)],
+                LocaleExpander::try_new_with_any_provider,
+                LocaleExpander::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// FFI version of `LocaleExpander::maximize()`.

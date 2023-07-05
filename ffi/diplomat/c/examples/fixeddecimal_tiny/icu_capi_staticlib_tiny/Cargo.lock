@@ -94,6 +94,7 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
+ "libm",
  "serde",
  "tinystr",
  "writeable",
@@ -122,7 +123,6 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_segmenter",
- "icu_testdata",
  "icu_timezone",
  "log",
  "serde",
@@ -309,6 +309,7 @@ name = "icu_provider_adapters"
 version = "1.2.0"
 dependencies = [
  "icu_locid",
+ "icu_locid_transform",
  "icu_provider",
  "serde",
  "tinystr",
@@ -348,29 +349,6 @@ dependencies = [
  "libm",
  "serde",
  "utf8_iter",
- "zerovec",
-]
-
-[[package]]
-name = "icu_testdata"
-version = "1.2.0"
-dependencies = [
- "icu_calendar",
- "icu_collator",
- "icu_collections",
- "icu_datetime",
- "icu_decimal",
- "icu_list",
- "icu_locid",
- "icu_locid_transform",
- "icu_normalizer",
- "icu_plurals",
- "icu_properties",
- "icu_provider",
- "icu_provider_adapters",
- "icu_provider_blob",
- "icu_segmenter",
- "icu_timezone",
  "zerovec",
 ]
 

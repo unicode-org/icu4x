@@ -18,7 +18,7 @@ export class ICU4XFixedDecimalFormatter {
 
    * Creates a new {@link ICU4XFixedDecimalFormatter `ICU4XFixedDecimalFormatter`} from locale data.
 
-   * See the {@link https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new Rust documentation for `try_new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_with_grouping_strategy(provider: ICU4XDataProvider, locale: ICU4XLocale, grouping_strategy: ICU4XFixedDecimalGroupingStrategy): ICU4XFixedDecimalFormatter | never;

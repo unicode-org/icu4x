@@ -17,7 +17,7 @@ export class ICU4XGraphemeClusterSegmenter {
 
    * Construct an {@link ICU4XGraphemeClusterSegmenter `ICU4XGraphemeClusterSegmenter`}.
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XGraphemeClusterSegmenter | never;

@@ -9,7 +9,7 @@
 #include <iostream>
 
 int main() {
-    ICU4XDataProvider dp = ICU4XDataProvider::create_test();
+    ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
     auto bidi = ICU4XBidi::create(dp).ok().value();
 
     // Written char-by-char to avoid messing up certain text editors.

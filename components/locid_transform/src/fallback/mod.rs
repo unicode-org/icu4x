@@ -286,10 +286,10 @@ pub struct LocaleFallbackIterator<'a, 'b> {
 impl LocaleFallbacker {
     /// Creates a [`LocaleFallbacker`] with fallback data (likely subtags and parent locales).
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)] // keeping constructors together
     pub const fn new<'a>() -> LocaleFallbackerBorrowed<'a> {
         let tickstatic = LocaleFallbackerBorrowed {
@@ -410,6 +410,17 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
                 _ => None,
             },
             config,
+        }
+    }
+}
+
+impl LocaleFallbackerBorrowed<'static> {
+    /// Cheaply converts a `LocaleFallbackerBorrowed<'static>` into a `LocaleFallbacker`.
+    pub fn static_to_owned(self) -> LocaleFallbacker {
+        LocaleFallbacker {
+            likely_subtags: DataPayload::from_static_ref(self.likely_subtags),
+            parents: DataPayload::from_static_ref(self.parents),
+            collation_supplement: self.collation_supplement.map(DataPayload::from_static_ref),
         }
     }
 }

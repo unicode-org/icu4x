@@ -44,7 +44,7 @@ icu_segmenter = { version = "1.2.0", path = "../segmenter", default-features = f
 icu_timezone = { version = "1.2.0", path = "../timezone", default-features = false }
 
 # Experimental components
-icu_casemapping = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, optional = true }
+icu_casemap = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, optional = true }
 icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
 icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", default-features = false, optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
@@ -57,11 +57,25 @@ writeable = { path = "../../utils/writeable" }
 
 [features]
 default = [
+    "icu_calendar/default",
+    "icu_casemap?/default",
+    "icu_collator/default",
+    "icu_compactdecimal?/default",
+    "icu_datetime/default",
+    "icu_decimal/default",
+    "icu_displaynames?/default",
+    "icu_list/default",
+    "icu_locid_transform/default",
+    "icu_normalizer/default",
+    "icu_plurals/default",
+    "icu_properties/default",
+    "icu_relativetime?/default",
     "icu_segmenter/default",
+    "icu_timezone/default",
 ]
 std = [
     "icu_calendar/std",
-    "icu_casemapping?/std",
+    "icu_casemap?/std",
     "icu_collator/std",
     "icu_collections/std",
     "icu_datetime/std",
@@ -79,7 +93,7 @@ std = [
 ]
 serde = [
     "icu_calendar/serde",
-    "icu_casemapping?/serde",
+    "icu_casemap?/serde",
     "icu_collator/serde",
     "icu_collections/serde",
     "icu_datetime/serde",
@@ -95,22 +109,22 @@ serde = [
     "icu_segmenter/serde",
     "icu_timezone/serde",
 ]
-data = [
-    "icu_calendar/data",
-    "icu_casemapping?/data",
-    "icu_collator/data",
-    "icu_compactdecimal?/data",
-    "icu_datetime/data",
-    "icu_decimal/data",
-    "icu_displaynames?/data",
-    "icu_list/data",
-    "icu_locid_transform/data",
-    "icu_normalizer/data",
-    "icu_plurals/data",
-    "icu_properties/data",
-    "icu_relativetime?/data",
-    "icu_segmenter/data",
-    "icu_timezone/data",
+compiled_data = [
+    "icu_calendar/compiled_data",
+    "icu_casemap?/compiled_data",
+    "icu_collator/compiled_data",
+    "icu_compactdecimal?/compiled_data",
+    "icu_datetime/compiled_data",
+    "icu_decimal/compiled_data",
+    "icu_displaynames?/compiled_data",
+    "icu_list/compiled_data",
+    "icu_locid_transform/compiled_data",
+    "icu_normalizer/compiled_data",
+    "icu_plurals/compiled_data",
+    "icu_properties/compiled_data",
+    "icu_relativetime?/compiled_data",
+    "icu_segmenter/compiled_data",
+    "icu_timezone/compiled_data",
 ]
 serde_human = [
     "icu_list/serde_human"
@@ -119,7 +133,7 @@ icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
 experimental = [
-    "icu_casemapping",
+    "icu_casemap",
     "icu_compactdecimal",
     "icu_datetime_experimental",
     "icu_displaynames",

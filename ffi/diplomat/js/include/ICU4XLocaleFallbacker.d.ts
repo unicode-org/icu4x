@@ -16,7 +16,7 @@ export class ICU4XLocaleFallbacker {
 
    * Creates a new `ICU4XLocaleFallbacker` from a data provider.
 
-   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XLocaleFallbacker | never;

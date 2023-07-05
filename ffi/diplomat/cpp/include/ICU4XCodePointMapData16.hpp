@@ -80,7 +80,7 @@ class ICU4XCodePointMapData16 {
   /**
    * 
    * 
-   * See the [Rust documentation for `load_script`](https://docs.rs/icu/latest/icu/properties/maps/fn.load_script.html) for more information.
+   * See the [Rust documentation for `script`](https://docs.rs/icu/latest/icu/properties/maps/fn.script.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData16, ICU4XError> load_script(const ICU4XDataProvider& provider);
   inline const capi::ICU4XCodePointMapData16* AsFFI() const { return this->inner.get(); }

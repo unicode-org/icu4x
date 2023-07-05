@@ -106,6 +106,15 @@ pub struct CodePointSetDataBorrowed<'a> {
     set: &'a PropertyCodePointSetV1<'a>,
 }
 
+impl CodePointSetDataBorrowed<'static> {
+    /// Cheaply converts a `CodePointSetDataBorrowed<'static>` into a `CodePointSetData`.
+    pub fn static_to_owned(self) -> CodePointSetData {
+        CodePointSetData {
+            data: DataPayload::from_static_ref(self.set),
+        }
+    }
+}
+
 impl<'a> CodePointSetDataBorrowed<'a> {
     /// Check if the set contains a character
     ///
@@ -294,6 +303,15 @@ impl<'a> UnicodeSetDataBorrowed<'a> {
     }
 }
 
+impl UnicodeSetDataBorrowed<'static> {
+    /// Cheaply converts a `UnicodeSetDataBorrowed<'static>` into a `UnicodeSetData`.
+    pub fn static_to_owned(self) -> UnicodeSetData {
+        UnicodeSetData {
+            data: DataPayload::from_static_ref(self.set),
+        }
+    }
+}
+
 pub(crate) fn load_set_data<M, P>(provider: &P) -> Result<CodePointSetData, PropertiesError>
 where
     M: KeyedDataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
@@ -334,8 +352,8 @@ macro_rules! make_code_point_set_property {
 
         $(#[$doc])*
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
-        #[cfg(feature = "data")]
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
+        #[cfg(feature = "compiled_data")]
         $cvis const fn $constname() -> CodePointSetDataBorrowed<'static> {
             CodePointSetDataBorrowed {
                 set: crate::provider::Baked::$singleton_name,
@@ -1718,8 +1736,8 @@ macro_rules! make_unicode_set_property {
         }
         $(#[$doc])*
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
-        #[cfg(feature = "data")]
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
+        #[cfg(feature = "compiled_data")]
         $cvis const fn $constname() -> UnicodeSetDataBorrowed<'static> {
             UnicodeSetDataBorrowed {
                 set: crate::provider::Baked::$singleton
@@ -1775,7 +1793,7 @@ pub fn load_for_general_category_group(
 }
 
 /// Return a [`CodePointSetData`] for a value or a grouping of values of the General_Category property. See [`GeneralCategoryGroup`].
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 pub fn for_general_category_group(enum_val: GeneralCategoryGroup) -> CodePointSetData {
     let matching_gc_ranges = maps::general_category()
         .iter_ranges()
@@ -1815,8 +1833,8 @@ pub fn for_general_category_group(enum_val: GeneralCategoryGroup) -> CodePointSe
 /// ```
 ///
 /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
-#[cfg(feature = "data")]
-pub fn load_for_ecma262(name: &str) -> Result<CodePointSetDataBorrowed, PropertiesError> {
+#[cfg(feature = "compiled_data")]
+pub fn load_for_ecma262(name: &str) -> Result<CodePointSetDataBorrowed<'static>, PropertiesError> {
     use crate::runtime::UnicodeProperty;
 
     let prop = if let Some(prop) = UnicodeProperty::parse_ecma262_name(name) {

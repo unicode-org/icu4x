@@ -47,7 +47,7 @@ pub struct CanonicalComposition {
     canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,
 }
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 impl Default for CanonicalComposition {
     fn default() -> Self {
         Self::new()
@@ -85,7 +85,7 @@ impl CanonicalComposition {
     }
 
     /// Constructs a new `CanonicalComposition`.
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
             canonical_compositions: DataPayload::from_static_ref(
@@ -339,7 +339,7 @@ impl CanonicalDecomposition {
     }
 
     /// Construct from built-in data.
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         const _: () = assert!(
             crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
@@ -453,7 +453,7 @@ impl CanonicalCombiningClassMap {
     }
 
     /// Construct from built-in data.
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         CanonicalCombiningClassMap {
             decompositions: DataPayload::from_static_ref(

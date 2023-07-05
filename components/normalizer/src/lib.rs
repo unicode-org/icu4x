@@ -1526,10 +1526,10 @@ pub struct DecomposingNormalizer {
 impl DecomposingNormalizer {
     /// NFD constructor.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new_nfd() -> Self {
         const _: () = assert!(
             crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
@@ -1604,10 +1604,10 @@ impl DecomposingNormalizer {
 
     /// NFKD constructor.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new_nfkd() -> Self {
         const _: () = assert!(
             crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
@@ -1730,7 +1730,7 @@ impl DecomposingNormalizer {
     }
 
     #[doc(hidden)]
-    #[cfg(all(feature = "experimental", feature = "data"))]
+    #[cfg(all(feature = "experimental", feature = "compiled_data"))]
     pub const fn new_uts46_decomposed_without_ignored_and_disallowed() -> Self {
         const _: () = assert!(
             crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
@@ -2145,10 +2145,10 @@ pub struct ComposingNormalizer {
 impl ComposingNormalizer {
     /// NFC constructor.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new_nfc() -> Self {
         ComposingNormalizer {
             decomposing_normalizer: DecomposingNormalizer::new_nfd(),
@@ -2193,10 +2193,10 @@ impl ComposingNormalizer {
 
     /// NFKC constructor.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new_nfkc() -> Self {
         ComposingNormalizer {
             decomposing_normalizer: DecomposingNormalizer::new_nfkd(),
@@ -2242,7 +2242,7 @@ impl ComposingNormalizer {
     }
 
     /// See [`try_new_uts46_without_ignored_and_disallowed_unstable`].
-    #[cfg(all(feature = "experimental", feature = "data"))]
+    #[cfg(all(feature = "experimental", feature = "compiled_data"))]
     pub const fn new_uts46_without_ignored_and_disallowed() -> Self {
         ComposingNormalizer {
             decomposing_normalizer:

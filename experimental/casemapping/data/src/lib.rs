@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data for the icu_casemapping crate
+//! Data for the icu_casemap crate
+
+#![no_std]
 
 #[cfg(icu4x_custom_data)]
 include!(concat!(core::env!("ICU4X_DATA_DIR"), "/macros.rs"));

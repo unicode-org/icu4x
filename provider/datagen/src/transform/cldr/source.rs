@@ -7,6 +7,7 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::DataError;
 use std::fmt::Debug;
 use std::str::FromStr;
+use std::sync::RwLock;
 
 /// A language's CLDR coverage level.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
@@ -30,32 +31,42 @@ pub enum CoverageLevel {
 }
 
 #[derive(Debug)]
-pub(crate) struct CldrCache(pub SerdeCache);
+pub(crate) struct CldrCache {
+    serde_cache: SerdeCache,
+    is_full: RwLock<Option<bool>>,
+}
 
 impl CldrCache {
+    pub fn from_serde_cache(serde_cache: SerdeCache) -> Self {
+        CldrCache {
+            serde_cache,
+            is_full: Default::default(),
+        }
+    }
+
     pub fn core(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(&self.0, "cldr-core".to_owned())
+        CldrDirNoLang(self, "cldr-core".to_owned())
     }
 
     pub fn numbers(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self.0, "cldr-numbers".to_owned())
+        CldrDirLang(self, "cldr-numbers".to_owned())
     }
 
     pub fn misc(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self.0, "cldr-misc".to_owned())
+        CldrDirLang(self, "cldr-misc".to_owned())
     }
 
     pub fn bcp47(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(&self.0, "cldr-bcp47/bcp47".to_string())
+        CldrDirNoLang(self, "cldr-bcp47/bcp47".to_string())
     }
 
     pub fn displaynames(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self.0, "cldr-localenames".to_owned())
+        CldrDirLang(self, "cldr-localenames".to_owned())
     }
 
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
-            &self.0,
+            self,
             if cal == "gregorian" {
                 "cldr-dates".to_owned()
             } else {
@@ -69,7 +80,7 @@ impl CldrCache {
         levels: &[CoverageLevel],
     ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
         Ok(self
-            .0
+            .serde_cache
             .read_and_parse_json::<crate::transform::cldr::cldr_serde::coverage_levels::Resource>(
                 "cldr-core/coverageLevels.json",
             )?
@@ -79,9 +90,26 @@ impl CldrCache {
             .cloned()
             .collect())
     }
+
+    fn dir_suffix(&self) -> Result<&'static str, DataError> {
+        let maybe_is_full = *self.is_full.read().expect("poison");
+        let is_full = match maybe_is_full {
+            Some(x) => x,
+            None => {
+                let is_full = self.serde_cache.list("cldr-misc-full")?.next().is_some();
+                let _ = self.is_full.write().expect("poison").insert(is_full);
+                is_full
+            }
+        };
+        if is_full {
+            Ok("full")
+        } else {
+            Ok("modern")
+        }
+    }
 }
 
-pub(crate) struct CldrDirNoLang<'a>(&'a SerdeCache, String);
+pub(crate) struct CldrDirNoLang<'a>(&'a CldrCache, String);
 
 impl<'a> CldrDirNoLang<'a> {
     pub fn read_and_parse<S>(&self, file_name: &str) -> Result<&'a S, DataError>
@@ -89,11 +117,12 @@ impl<'a> CldrDirNoLang<'a> {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.0
+            .serde_cache
             .read_and_parse_json(&format!("{}/{}", self.1, file_name))
     }
 }
 
-pub(crate) struct CldrDirLang<'a>(&'a SerdeCache, String);
+pub(crate) struct CldrDirLang<'a>(&'a CldrCache, String);
 
 impl<'a> CldrDirLang<'a> {
     pub fn read_and_parse<S>(
@@ -104,25 +133,19 @@ impl<'a> CldrDirLang<'a> {
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
+        let dir_suffix = self.0.dir_suffix()?;
         self.0
-            .read_and_parse_json(&format!("{}/{}/{}", self.dir()?, lang, file_name))
+            .serde_cache
+            .read_and_parse_json(&format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1))
     }
 
     pub fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier>, DataError> {
+        let dir_suffix = self.0.dir_suffix()?;
         Ok(self
             .0
-            .list(&self.dir()?)?
+            .serde_cache
+            .list(&format!("{}-{dir_suffix}/main", self.1))?
             .map(|path| LanguageIdentifier::from_str(&path).unwrap()))
-    }
-
-    fn dir(&self) -> Result<String, DataError> {
-        let mut dir = self
-            .0
-            .list("")?
-            .find(|dir| dir.starts_with(self.1.as_str()))
-            .unwrap_or_else(|| format!("{}-full", self.1));
-        dir.push_str("/main");
-        Ok(dir)
     }
 
     pub fn file_exists(
@@ -130,7 +153,9 @@ impl<'a> CldrDirLang<'a> {
         lang: &LanguageIdentifier,
         file_name: &str,
     ) -> Result<bool, DataError> {
+        let dir_suffix = self.0.dir_suffix()?;
         self.0
-            .file_exists(&format!("{}/{lang}/{file_name}", self.dir()?))
+            .serde_cache
+            .file_exists(&format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1))
     }
 }

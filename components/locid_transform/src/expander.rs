@@ -195,10 +195,10 @@ impl LocaleExpander {
     /// Use this constructor if you are using likely subtags for comprehensive support of all
     /// languages and regions, including ones that may not have CLDR data.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new_extended() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(
@@ -249,10 +249,10 @@ impl LocaleExpander {
     /// Use this constructor if you are using likely subtags for comprehensive support of all
     /// languages and regions, including ones that may not have CLDR data.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(
