@@ -593,7 +593,7 @@ impl LocaleExpander {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::subtags::{region, script};
+    use icu_locid::locale;
 
     struct RejectByKeyProvider {
         keys: Vec<DataKey>,
@@ -605,46 +605,42 @@ mod tests {
                 return Err(DataErrorKind::MissingDataKey.with_str_context("rejected"));
             }
 
+            let l = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1;
+            let ext = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1;
+            let sr = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1;
+
             let payload = if key.hashed() == LikelySubtagsV1Marker::KEY.hashed() {
                 DataPayload::<LikelySubtagsV1Marker>::from_owned(LikelySubtagsV1 {
-                    language_script: Default::default(),
-                    language_region: Default::default(),
-                    language: Default::default(),
-                    script_region: Default::default(),
-                    script: Default::default(),
-                    region: Default::default(),
-                    und: (Language::UND, script!("Zzzz"), region!("ZZ")),
+                    language_script: l
+                        .language_script
+                        .iter_copied()
+                        .chain(ext.language_script.iter_copied())
+                        .collect(),
+                    language_region: l
+                        .language_region
+                        .iter_copied()
+                        .chain(ext.language_region.iter_copied())
+                        .collect(),
+                    language: l
+                        .language
+                        .iter_copied()
+                        .chain(ext.language.iter_copied())
+                        .collect(),
+                    script_region: ext.script_region.clone(),
+                    script: ext.script.clone(),
+                    region: ext.region.clone(),
+                    und: l.und,
                 })
                 .wrap_into_any_payload()
             } else if key.hashed() == LikelySubtagsForLanguageV1Marker::KEY.hashed() {
-                DataPayload::<LikelySubtagsForLanguageV1Marker>::from_owned(
-                    LikelySubtagsForLanguageV1 {
-                        language_script: Default::default(),
-                        language_region: Default::default(),
-                        language: Default::default(),
-                        und: (Language::UND, script!("Zzzz"), region!("ZZ")),
-                    },
-                )
-                .wrap_into_any_payload()
+                DataPayload::<LikelySubtagsForLanguageV1Marker>::from_static_ref(l)
+                    .wrap_into_any_payload()
             } else if key.hashed() == LikelySubtagsExtendedV1Marker::KEY.hashed() {
-                DataPayload::<LikelySubtagsExtendedV1Marker>::from_owned(LikelySubtagsExtendedV1 {
-                    language_script: Default::default(),
-                    language_region: Default::default(),
-                    language: Default::default(),
-                    script_region: Default::default(),
-                    script: Default::default(),
-                    region: Default::default(),
-                })
-                .wrap_into_any_payload()
+                DataPayload::<LikelySubtagsExtendedV1Marker>::from_static_ref(ext)
+                    .wrap_into_any_payload()
             } else if key.hashed() == LikelySubtagsForScriptRegionV1Marker::KEY.hashed() {
-                DataPayload::<LikelySubtagsForScriptRegionV1Marker>::from_owned(
-                    LikelySubtagsForScriptRegionV1 {
-                        script_region: Default::default(),
-                        script: Default::default(),
-                        region: Default::default(),
-                    },
-                )
-                .wrap_into_any_payload()
+                DataPayload::<LikelySubtagsForScriptRegionV1Marker>::from_static_ref(sr)
+                    .wrap_into_any_payload()
             } else {
                 return Err(DataErrorKind::MissingDataKey.into_error());
             };
@@ -664,7 +660,11 @@ mod tests {
                 LikelySubtagsForScriptRegionV1Marker::KEY,
             ],
         };
-        LocaleExpander::try_new_with_any_provider(&provider).expect("should create with old keys");
+        let lc = LocaleExpander::try_new_with_any_provider(&provider)
+            .expect("should create with old keys");
+        let mut locale = locale!("zh-CN");
+        assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+        assert_eq!(locale, locale!("zh-Hans-CN"));
     }
 
     #[test]
@@ -672,7 +672,11 @@ mod tests {
         let provider = RejectByKeyProvider {
             keys: vec![LikelySubtagsV1Marker::KEY],
         };
-        LocaleExpander::try_new_with_any_provider(&provider).expect("should create with new keys");
+        let lc = LocaleExpander::try_new_with_any_provider(&provider)
+            .expect("should create with new keys");
+        let mut locale = locale!("zh-CN");
+        assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+        assert_eq!(locale, locale!("zh-Hans-CN"));
     }
 
     #[test]
@@ -682,8 +686,11 @@ mod tests {
         let provider = RejectByKeyProvider {
             keys: vec![LikelySubtagsForScriptRegionV1Marker::KEY],
         };
-        LocaleExpander::try_new_with_any_provider(&provider)
+        let lc = LocaleExpander::try_new_with_any_provider(&provider)
             .expect("should create with mixed keys");
+        let mut locale = locale!("zh-CN");
+        assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+        assert_eq!(locale, locale!("zh-Hans-CN"));
     }
 
     #[test]
