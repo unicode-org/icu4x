@@ -279,7 +279,6 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<XidContinueV1Marker>
-        // + DataProvider<GeneralCategoryNameToValueV1Marker>
         + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
         + DataProvider<ScriptNameToValueV1Marker>
@@ -1078,7 +1077,6 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<XidContinueV1Marker>
-        // + DataProvider<GeneralCategoryNameToValueV1Marker>
         + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
         + DataProvider<ScriptNameToValueV1Marker>
