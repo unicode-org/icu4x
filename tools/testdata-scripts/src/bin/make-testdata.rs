@@ -30,8 +30,6 @@ fn main() {
         .with_cldr(data_root.join("cldr"), Default::default())
         .unwrap()
         .with_icuexport(data_root.join("icuexport"))
-        .unwrap()
-        .with_segmenter_lstm(data_root.join("lstm"))
         .unwrap();
 
     let json_out = Box::new(
