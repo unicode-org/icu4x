@@ -508,9 +508,10 @@ impl DataExporter for BakedExporter {
                         let payload =  if let Ok(payload) = #search_direct {
                             payload
                         } else {
-                            let mut fallback_iterator = icu_locid_transform::fallback::LocaleFallbacker::new()
-                                .for_key(<#marker as icu_provider::KeyedDataMarker>::KEY)
-                                .fallback_for(req.locale.clone());
+                            const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> =
+                                icu_locid_transform::fallback::LocaleFallbacker::new()
+                                    .for_key(<#marker as icu_provider::KeyedDataMarker>::KEY);
+                            let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
                                 #maybe_err
 

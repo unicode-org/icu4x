@@ -1143,7 +1143,8 @@ macro_rules! __impl_relativetime_short_day_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    let mut fallback_iterator = icu_locid_transform::fallback::LocaleFallbacker::new().for_key(<icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY).fallback_for(req.locale.clone());
+                    const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu_locid_transform::fallback::LocaleFallbacker::new().for_key(<icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             metadata.locale = Some(fallback_iterator.take());

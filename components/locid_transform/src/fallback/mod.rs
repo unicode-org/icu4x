@@ -381,7 +381,7 @@ impl LocaleFallbacker {
 impl<'a> LocaleFallbackerBorrowed<'a> {
     /// Associates a configuration with this fallbacker.
     #[inline]
-    pub fn for_config(self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig<'a> {
+    pub const fn for_config(self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig<'a> {
         LocaleFallbackerWithConfig {
             likely_subtags: self.likely_subtags,
             parents: self.parents,
@@ -396,8 +396,8 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
     /// Derives a configuration from a [`DataKey`] and associates it
     /// with this fallbacker.
     #[inline]
-    pub fn for_key(self, data_key: DataKey) -> LocaleFallbackerWithConfig<'a> {
-        self.for_config(data_key.into())
+    pub const fn for_key(self, data_key: DataKey) -> LocaleFallbackerWithConfig<'a> {
+        self.for_config(LocaleFallbackConfig::from_key(data_key))
     }
 }
 
