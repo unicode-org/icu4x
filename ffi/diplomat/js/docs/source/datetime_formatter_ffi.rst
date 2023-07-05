@@ -12,7 +12,7 @@
 
         Creates a new :js:class:`ICU4XDateFormatter` from locale data.
 
-        See the `Rust documentation for try_new_with_length_unstable <https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.try_new_with_length_unstable>`__ for more information.
+        See the `Rust documentation for try_new_with_length <https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.try_new_with_length>`__ for more information.
 
 
     .. js:method:: format_date(value)
@@ -63,7 +63,7 @@
 
         Creates a new :js:class:`ICU4XDateTimeFormatter` from locale data.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new>`__ for more information.
 
 
     .. js:method:: format_datetime(value)
@@ -93,7 +93,7 @@
 
         Creates a new :js:class:`ICU4XGregorianDateFormatter` from locale data.
 
-        See the `Rust documentation for try_new_with_length_unstable <https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length_unstable>`__ for more information.
+        See the `Rust documentation for try_new_with_length <https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length>`__ for more information.
 
 
     .. js:method:: format_iso_date(value)
@@ -121,7 +121,7 @@
 
         Creates a new :js:class:`ICU4XGregorianDateFormatter` from locale data.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.try_new>`__ for more information.
 
 
     .. js:method:: format_iso_datetime(value)
@@ -142,7 +142,7 @@
 
         Creates a new :js:class:`ICU4XTimeFormatter` from locale data.
 
-        See the `Rust documentation for try_new_with_length_unstable <https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length_unstable>`__ for more information.
+        See the `Rust documentation for try_new_with_length <https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length>`__ for more information.
 
 
     .. js:method:: format_time(value)

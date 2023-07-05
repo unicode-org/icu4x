@@ -39,7 +39,7 @@ class ICU4XFixedDecimalFormatter {
   /**
    * Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
    */
   static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> create_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
 

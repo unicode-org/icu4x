@@ -12,7 +12,7 @@ export class ICU4XDecomposingNormalizer {
 
    * Construct a new ICU4XDecomposingNormalizer instance for NFC
 
-   * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfd_unstable Rust documentation for `try_new_nfd_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd Rust documentation for `new_nfd`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_nfd(provider: ICU4XDataProvider): ICU4XDecomposingNormalizer | never;
@@ -21,7 +21,7 @@ export class ICU4XDecomposingNormalizer {
 
    * Construct a new ICU4XDecomposingNormalizer instance for NFKC
 
-   * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfkd_unstable Rust documentation for `try_new_nfkd_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd Rust documentation for `new_nfkd`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_nfkd(provider: ICU4XDataProvider): ICU4XDecomposingNormalizer | never;

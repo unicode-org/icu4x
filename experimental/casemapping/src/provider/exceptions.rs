@@ -26,7 +26,7 @@ const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
 
 /// This represents case mapping exceptions that can't be represented as a delta applied to
 /// the original code point. The codepoint
-/// trie in CaseMapping stores indices into this VarZeroVec.
+/// trie in CaseMapper stores indices into this VarZeroVec.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -37,19 +37,19 @@ const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_casemapping::provider::exceptions),
+    databake(path = icu_casemap::provider::exceptions),
 )]
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-pub struct CaseMappingExceptions<'data> {
+pub struct CaseMapExceptions<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The list of exceptions
     pub exceptions: VarZeroVec<'data, ExceptionULE>,
 }
 
-impl<'data> CaseMappingExceptions<'data> {
+impl<'data> CaseMapExceptions<'data> {
     /// Obtain the exception at index `idx`. Will
     /// return a default value if not present (GIGO behavior),
-    /// as these indices should come from a paired CaseMappingData object
+    /// as these indices should come from a paired CaseMapData object
     ///
     /// Will also panic in debug mode
     pub fn get(&self, idx: u16) -> &ExceptionULE {

@@ -9,11 +9,11 @@ use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
     codepointinvliststringlist::CodePointInversionListAndStringList,
 };
-use icu_properties::maps::{load_general_category, load_script};
-use icu_properties::provider::*;
+use icu_properties::maps::load_script;
 use icu_properties::script::load_script_with_extensions_unstable;
-use icu_properties::sets::load_for_ecma262_unstable;
-use icu_properties::{GeneralCategory, Script};
+use icu_properties::sets::{load_for_ecma262_unstable, load_for_general_category_group};
+use icu_properties::Script;
+use icu_properties::{provider::*, GeneralCategoryGroup};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
@@ -279,7 +279,7 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
         + DataProvider<ScriptNameToValueV1Marker>
         + DataProvider<ScriptV1Marker>
@@ -896,16 +896,15 @@ where
 
     fn try_load_general_category_set(&mut self, name: &str) -> Result<()> {
         // TODO(#3550): This could be cached; does not depend on name.
-        let name_map = GeneralCategory::get_name_to_enum_mapper(self.property_provider)
+        let name_map = GeneralCategoryGroup::get_name_to_enum_mapper(self.property_provider)
             .map_err(|_| PEK::Internal)?;
         let gc_value = name_map
             .as_borrowed()
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
-        let property_map =
-            load_general_category(self.property_provider).map_err(|_| PEK::Internal)?;
-        let set = property_map.as_borrowed().get_set_for_value(gc_value);
+        let set = load_for_general_category_group(self.property_provider, gc_value)
+            .map_err(|_| PEK::Internal)?;
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
@@ -974,9 +973,9 @@ where
 ///
 /// Parse ranges
 /// ```
-/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
 ///
-/// let set = parse_unstable("[a-zA-Z0-9]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let set = parse("[a-zA-Z0-9]", Default::default()).unwrap();
 /// let code_points = set.code_points();
 ///
 /// assert!(code_points.contains_range(&('a'..='z')));
@@ -986,9 +985,9 @@ where
 ///
 /// Parse properties, set operations, inner sets
 /// ```
-/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
 ///
-/// let set = parse_unstable("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let set = parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]", Default::default()).unwrap();
 /// let elements = 'a'..='z';
 /// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(elements.count(), set.size());
@@ -996,9 +995,9 @@ where
 ///
 /// Inversions remove strings
 /// ```
-/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
 ///
-/// let set = parse_unstable(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let set = parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]", Default::default()).unwrap();
 /// assert!(set.contains_char('z'));
 /// assert_eq!(set.size(), 1);
 /// assert!(!set.has_strings());
@@ -1006,13 +1005,22 @@ where
 ///
 /// Set operators (including the implicit union) have the same precedence and are left-associative
 /// ```
-/// use icu_unicodeset_parser::{parse_unstable, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
 ///
-/// let set = parse_unstable("[[ace][bdf] - [abc][def]]", Default::default(), &icu_testdata::unstable()).unwrap();
+/// let set = parse("[[ace][bdf] - [abc][def]]", Default::default()).unwrap();
 /// let elements = 'd'..='f';
 /// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(set.size(), elements.count());
 /// ```
+#[cfg(feature = "compiled_data")]
+pub fn parse(
+    source: &str,
+    options: UnicodeSetBuilderOptions,
+) -> Result<CodePointInversionListAndStringList<'static>> {
+    parse_unstable(source, options, &icu_properties::provider::Baked)
+}
+
+#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse)]
 pub fn parse_unstable<P>(
     source: &str,
     options: UnicodeSetBuilderOptions,
@@ -1069,7 +1077,7 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
         + DataProvider<ScriptNameToValueV1Marker>
         + DataProvider<ScriptV1Marker>
@@ -1289,6 +1297,14 @@ mod tests {
             // general category
             (D, r"[[:gc=lower-case-letter:]&[a-zA-Z]]", "az", vec![]),
             (D, r"[[:lower case letter:]&[a-zA-Z]]", "az", vec![]),
+            // general category groups
+            // equivalence between L and the union of all the L* categories
+            (
+                D,
+                r"[[[:L:]-[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]][[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]-[:L:]]]",
+                "",
+                vec![],
+            ),
             // script
             (D, r"[[:sc=latn:]&[a-zA-Z]]", "azAZ", vec![]),
             (D, r"[[:sc=Latin:]&[a-zA-Z]]", "azAZ", vec![]),

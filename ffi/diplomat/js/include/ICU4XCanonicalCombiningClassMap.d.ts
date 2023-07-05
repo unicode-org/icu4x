@@ -15,7 +15,7 @@ export class ICU4XCanonicalCombiningClassMap {
 
    * Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
 
-   * See the {@link https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XCanonicalCombiningClassMap | never;

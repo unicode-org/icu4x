@@ -5,7 +5,7 @@
 This crate provides parsing functionality for [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
 Parses into [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList).
 
-See [`parse_unstable`](crate::parse_unstable) for more information.
+See [`parse`](crate::parse) for more information.
 
 ## More Information
 

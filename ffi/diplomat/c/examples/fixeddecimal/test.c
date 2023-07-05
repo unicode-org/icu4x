@@ -14,7 +14,7 @@ int main() {
         return 1;
     }
     ICU4XLocale* locale = locale_result.ok;
-    ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
+    ICU4XDataProvider* provider = ICU4XDataProvider_create_compiled();
 
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create_from_u64(1000007);
 

@@ -4,7 +4,7 @@
 
 use crate::internals::{CaseMapLocale, FoldOptions};
 use crate::provider::data::MappingKind;
-use crate::provider::CaseMappingV1Marker;
+use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSet;
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
@@ -21,27 +21,27 @@ use writeable::Writeable;
 /// <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
 /// </div>
 #[derive(Clone, Debug)]
-pub struct CaseMapping {
-    data: DataPayload<CaseMappingV1Marker>,
+pub struct CaseMapper {
+    data: DataPayload<CaseMapV1Marker>,
 }
 
 #[cfg(feature = "compiled_data")]
-impl Default for CaseMapping {
+impl Default for CaseMapper {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl CaseMapping {
-    /// A constructor which creates a [`CaseMapping`].
+impl CaseMapper {
+    /// A constructor which creates a [`CaseMapper`].
     ///
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     /// use icu_locid::langid;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     ///
     /// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
     /// ```
@@ -67,9 +67,9 @@ impl CaseMapping {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapping, DataError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapper, DataError>
     where
-        P: DataProvider<CaseMappingV1Marker> + ?Sized,
+        P: DataProvider<CaseMapV1Marker> + ?Sized,
     {
         let data = provider.load(Default::default())?.take_payload()?;
         Ok(Self { data })
@@ -178,10 +178,10 @@ impl CaseMapping {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     /// use icu_locid::langid;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     /// let root = langid!("und");
     ///
     /// assert_eq!(cm.lowercase_to_string("hEllO WorLd", &root), "hello world");
@@ -216,10 +216,10 @@ impl CaseMapping {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     /// use icu_locid::langid;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     /// let root = langid!("und");
     ///
     /// assert_eq!(cm.uppercase_to_string("hEllO WorLd", &root), "HELLO WORLD");
@@ -262,10 +262,10 @@ impl CaseMapping {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     /// use icu_locid::langid;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     /// let root = langid!("und");
     ///
     /// // note that the subsequent words are not titlecased, this function assumes
@@ -307,9 +307,9 @@ impl CaseMapping {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     ///
     /// // Check if two strings are equivalent case insensitively
     /// assert_eq!(cm.fold_string("hEllO WorLd"), cm.fold_string("HELLO worlD"));
@@ -338,9 +338,9 @@ impl CaseMapping {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     ///
     /// // Check if two strings are equivalent case insensitively
     /// assert_eq!(cm.fold_turkic_string("İstanbul"), cm.fold_turkic_string("iSTANBUL"));
@@ -377,10 +377,10 @@ impl CaseMapping {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     /// let mut builder = CodePointInversionListBuilder::new();
     /// cm.add_case_closure('s', &mut builder);
     ///
@@ -408,10 +408,10 @@ impl CaseMapping {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     /// let mut builder = CodePointInversionListBuilder::new();
     /// let found = cm.add_string_case_closure("ffi", &mut builder);
     /// assert!(found);
@@ -434,14 +434,14 @@ impl CaseMapping {
     /// Returns the lowercase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
-    /// For full mappings, use [`CaseMapping::lowercase`].
+    /// For full mappings, use [`CaseMapper::lowercase`].
     ///
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     ///
     /// assert_eq!(cm.simple_lowercase('C'), 'c');
     /// assert_eq!(cm.simple_lowercase('c'), 'c');
@@ -455,14 +455,14 @@ impl CaseMapping {
     /// Returns the uppercase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
-    /// For full mappings, use [`CaseMapping::uppercase`].
+    /// For full mappings, use [`CaseMapper::uppercase`].
     ///
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     ///
     /// assert_eq!(cm.simple_uppercase('c'), 'C');
     /// assert_eq!(cm.simple_uppercase('C'), 'C');
@@ -482,9 +482,9 @@ impl CaseMapping {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     ///
     /// assert_eq!(cm.simple_titlecase('ǳ'), 'ǲ');
     ///
@@ -498,21 +498,21 @@ impl CaseMapping {
     }
 
     /// Returns the simple case folding of the given char.
-    /// For full mappings, use [`CaseMapping::fold`].
+    /// For full mappings, use [`CaseMapper::fold`].
     ///
     /// This function can be used to perform caseless matches on
     /// individual characters.
     /// > *Note:* With Unicode 15.0 data, there are three
     /// > pairs of characters for which equivalence under this
     /// > function is inconsistent with equivalence of the
-    /// > one-character strings under [`CaseMapping::fold`].
+    /// > one-character strings under [`CaseMapper::fold`].
     /// > This is resolved in Unicode 15.1 and later.
     ///
     /// For compatibility applications where simple case folding
     /// of strings is required, this function can be applied to
     /// each character of a string.  Note that the resulting
     /// equivalence relation is different from that obtained
-    /// by [`CaseMapping::fold`]:
+    /// by [`CaseMapper::fold`]:
     /// The strings "Straße" and "STRASSE" are distinct
     /// under simple case folding, but are equivalent under
     /// default (full) case folding.
@@ -520,9 +520,9 @@ impl CaseMapping {
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     ///
     /// // perform case insensitive checks
     /// assert_eq!(cm.simple_fold('σ'), cm.simple_fold('ς'));
@@ -545,19 +545,19 @@ impl CaseMapping {
     /// Returns the simple case folding of the given char, using Turkic (T) mappings for
     /// dotted/dotless i. This function does not fold `i` and `I` to the same character. Instead,
     /// `I` will fold to `ı`, and `İ` will fold to `i`. Otherwise, this is the same as
-    /// [`CaseMapping::fold()`].
+    /// [`CaseMapper::fold()`].
     ///
     /// You can use the case folding to perform Turkic caseless matches on characters
     /// provided they don't full-casefold to strings. To avoid that situation,
-    /// convert to a string and use [`CaseMapping::fold_turkic`].
+    /// convert to a string and use [`CaseMapper::fold_turkic`].
     ///
     ///
     /// # Example
     ///
     /// ```rust
-    /// use icu_casemapping::CaseMapping;
+    /// use icu_casemap::CaseMapper;
     ///
-    /// let cm = CaseMapping::new();
+    /// let cm = CaseMapper::new();
     ///
     /// assert_eq!(cm.simple_fold_turkic('I'), 'ı');
     /// assert_eq!(cm.simple_fold_turkic('İ'), 'i');
@@ -578,7 +578,7 @@ mod tests {
     #[test]
     /// Tests for SpecialCasing.txt. Some of the special cases are data-driven, some are code-driven
     fn test_special_cases() {
-        let cm = CaseMapping::new();
+        let cm = CaseMapper::new();
         let root = langid!("und");
 
         // Ligatures

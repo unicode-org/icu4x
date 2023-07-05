@@ -43,12 +43,14 @@ icu_provider = { version = "1.2.0", path = "../../provider/core", default-featur
 default = ["icu_capi/default"]
 any_provider = ["icu_capi/any_provider"]
 buffer_provider = ["icu_capi/buffer_provider"]
+compiled_data = ["icu_capi/compiled_data"]
 provider_fs = ["icu_capi/provider_fs"] # Indirectly implies buffer_provider
 provider_test = ["icu_capi/provider_test"]
 logging = ["icu_capi/logging"]
 simple_logger = ["icu_capi/simple_logger"]
 wasm_default = ["icu_capi/wasm_default"]
 cpp_default = ["icu_capi/cpp_default"]
+default_components = ["icu_capi/default_components"]
 
 [package.metadata.cargo-all-features]
 # Tested by icu_capi

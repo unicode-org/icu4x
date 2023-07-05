@@ -5,9 +5,9 @@
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 
 /// A setlike object that can hold characters and/or strings
-/// to be used with [`CaseMapping::add_string_case_closure()`]
+/// to be used with [`CaseMapper::add_string_case_closure()`]
 ///
-/// [`CaseMapping::add_string_case_closure()`]: crate::CaseMapping::add_string_case_closure
+/// [`CaseMapper::add_string_case_closure()`]: crate::CaseMapper::add_string_case_closure
 pub trait ClosureSet {
     /// Add a character to the set
     fn add_char(&mut self, c: char);

@@ -5,7 +5,7 @@
 use crate::provider::exception_helpers::{
     ExceptionBits, ExceptionBitsULE, ExceptionSlot, SlotPresence,
 };
-use crate::provider::exceptions::{CaseMappingExceptions, DecodedException};
+use crate::provider::exceptions::{CaseMapExceptions, DecodedException};
 use alloc::borrow::Cow;
 use alloc::collections::BTreeMap;
 use alloc::string::String;
@@ -98,20 +98,20 @@ impl AsULE for ExceptionHeader {
         }
     }
 }
-// CaseMappingExceptionsBuilder consumes the exceptions data produced by
-// casepropsbuilder.cpp in ICU4C. It generates an instance of CaseMappingExceptions. The
+// CaseMapExceptionsBuilder consumes the exceptions data produced by
+// casepropsbuilder.cpp in ICU4C. It generates an instance of CaseMapExceptions. The
 // primary difference is that the ICU4C representation stores full mapping and closure
-// strings inline in the data, while CaseMappingExceptions uses a side table. As a result,
-// the starting index of each exception in the resulting CaseMappingExceptions may have
+// strings inline in the data, while CaseMapExceptions uses a side table. As a result,
+// the starting index of each exception in the resulting CaseMapExceptions may have
 // changed, so we also produce a map from old indices to new indices that will be used to
 // update the data stored in the code point trie.
-pub struct CaseMappingExceptionsBuilder<'a> {
+pub struct CaseMapExceptionsBuilder<'a> {
     raw_data: &'a [u16],
     raw_data_idx: usize,
     double_slots: bool,
 }
 
-impl<'a> CaseMappingExceptionsBuilder<'a> {
+impl<'a> CaseMapExceptionsBuilder<'a> {
     const MAPPINGS_ALL_LENGTHS_MASK: u32 = 0xffff;
     const FULL_MAPPINGS_LENGTH_MASK: u32 = 0xf;
     const FULL_MAPPINGS_LENGTH_SHIFT: u32 = 4;
@@ -157,14 +157,14 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
 
     pub(crate) fn build(
         mut self,
-    ) -> Result<(CaseMappingExceptions<'static>, BTreeMap<u16, u16>), DataError> {
+    ) -> Result<(CaseMapExceptions<'static>, BTreeMap<u16, u16>), DataError> {
         let mut exceptions = Vec::new();
         let mut idx_map = BTreeMap::new();
         // The format of the raw data from ICU4C is the same as the format described in
         // exceptions.rs, with the exception of full mapping and closure strings. The
         // header and non-string slots can be copied over without modification. For string
         // slots, we read the length information from the ICU4C slot (described below),
-        // read the strings, add the strings to the CaseMappingExceptions string table,
+        // read the strings, add the strings to the CaseMapExceptions string table,
         // and write an updated slot value containing the index of the string in the
         // table. In the case of full mappings, we store the index of the lowercase
         // mapping; the remaining mappings are stored at sequential indices.
@@ -281,7 +281,7 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
         }
 
         Ok((
-            CaseMappingExceptions {
+            CaseMapExceptions {
                 exceptions: (&exceptions).into(),
             },
             idx_map,
