@@ -177,6 +177,17 @@ where
         }
     }
 }
+// Returns a number that represents the sign of `self`.
+// - `1.0` if the number is positive, `+0.0` or `INFINITY`
+// - `-1.0` if the number is negative, `-0.0` or `NEG_INFINITY`
+// - NaN if the number is NaN
+pub fn signum(x: f64) -> f64 {
+    if x.is_nan() { return f64::NAN; }
+
+    if x.is_sign_positive() { 1.0 }
+
+    else { -1.0 }
+}
 
 pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     let varepsilon = 1.0 / 100000.0; // Desired accuracy
@@ -454,6 +465,17 @@ pub const fn i64_to_i32(input: i64) -> I32Result {
 #[inline]
 pub const fn i64_to_saturated_i32(input: i64) -> i32 {
     i64_to_i32(input).saturate()
+}
+
+#[test]
+fn test_signum_i64() {
+    assert_eq!(signum(5.0), 1.0);
+    assert_eq!(signum(-5.0), -1.0);
+    assert_eq!(signum(0.0), 1.0);
+    assert_eq!(signum(-0.0), -1.0);
+    assert_eq!(signum(f64::INFINITY), 1.0);
+    assert_eq!(signum(f64::NEG_INFINITY), -1.0);
+    assert!(signum(f64::NAN).is_nan());
 }
 
 #[test]
