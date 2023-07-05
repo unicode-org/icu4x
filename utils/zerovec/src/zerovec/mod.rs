@@ -359,10 +359,10 @@ where
     /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
-        Self::new_borrowed(core::mem::transmute((
-            bytes.as_ptr(),
+        Self::new_borrowed(core::slice::from_raw_parts(
+            bytes.as_ptr() as *const T::ULE,
             bytes.len() / core::mem::size_of::<T::ULE>(),
-        )))
+        ))
     }
 
     /// Converts a `ZeroVec<T>` into a `ZeroVec<u8>`, retaining the current ownership model.
