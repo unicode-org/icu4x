@@ -95,9 +95,9 @@ class ICU4XTimeZoneFormatter {
   /**
    * Loads localized GMT format. Example: "GMT-07:00"
    * 
-   * See the [Rust documentation for `load_localized_gmt_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_localized_gmt_format) for more information.
+   * See the [Rust documentation for `include_localized_gmt_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_localized_gmt_format) for more information.
    */
-  diplomat::result<std::monostate, ICU4XError> load_localized_gmt_format();
+  diplomat::result<std::monostate, ICU4XError> include_localized_gmt_format();
 
   /**
    * Loads ISO-8601 format. Example: "-07:00"
@@ -209,8 +209,8 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load_localized_gmt_format() {
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_localized_gmt_format(this->inner.get());
+inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::include_localized_gmt_format() {
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_include_localized_gmt_format(this->inner.get());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());

@@ -139,7 +139,7 @@ impl TimeZoneFormatterConfig {
             TimeZoneFormatterConfig::SpecificNonLocationShort => {
                 tzf.include_specific_non_location_short()
             }
-            TimeZoneFormatterConfig::LocalizedGMT => tzf.load_localized_gmt_format(),
+            TimeZoneFormatterConfig::LocalizedGMT => tzf.include_localized_gmt_format(),
             TimeZoneFormatterConfig::Iso8601(format, minutes, seconds) => {
                 tzf.include_iso_8601_format(format.into(), minutes.into(), seconds.into())
             }

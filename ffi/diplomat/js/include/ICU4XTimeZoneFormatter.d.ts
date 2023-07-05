@@ -88,10 +88,10 @@ export class ICU4XTimeZoneFormatter {
 
    * Loads localized GMT format. Example: "GMT-07:00"
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_localized_gmt_format Rust documentation for `load_localized_gmt_format`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_localized_gmt_format Rust documentation for `include_localized_gmt_format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  load_localized_gmt_format(): void | never;
+  include_localized_gmt_format(): void | never;
 
   /**
 

@@ -234,11 +234,16 @@ pub mod ffi {
 
         /// Loads localized GMT format. Example: "GMT-07:00"
         #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::load_localized_gmt_format,
+            icu::datetime::time_zone::TimeZoneFormatter::include_localized_gmt_format,
             FnInStruct
         )]
-        pub fn load_localized_gmt_format(&mut self) -> Result<(), ICU4XError> {
-            self.0.load_localized_gmt_format()?;
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_localized_gmt_format,
+            FnInStruct,
+            hidden
+        )]
+        pub fn include_localized_gmt_format(&mut self) -> Result<(), ICU4XError> {
+            self.0.include_localized_gmt_format()?;
             Ok(())
         }
 

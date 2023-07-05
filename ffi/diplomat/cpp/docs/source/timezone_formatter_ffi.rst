@@ -104,11 +104,11 @@
         See the `Rust documentation for include_generic_location_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_location_format>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_localized_gmt_format()
+    .. cpp:function:: diplomat::result<std::monostate, ICU4XError> include_localized_gmt_format()
 
         Loads localized GMT format. Example: "GMT-07:00"
 
-        See the `Rust documentation for load_localized_gmt_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_localized_gmt_format>`__ for more information.
+        See the `Rust documentation for include_localized_gmt_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_localized_gmt_format>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_iso_8601_format(ICU4XIsoTimeZoneOptions options)
