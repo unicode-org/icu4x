@@ -191,7 +191,11 @@ impl<'data> CaseMapV1<'data> {
                 let (letter, combining) = match upper_base {
                     'Η' => {
                         // Eta is allowed to retain a tonos when it is an only word to distinguish
-                        // the word for 'or' from the feminine marker
+                        // the word for 'or' from the feminine marker.
+                        //
+                        // This implementation accepts polytonic accents, but only produces accents using the
+                        // monotonic system (which is the norm in Modern Greek), so the identity of the accent
+                        // is not tracked and all accents map to a tonos.
                         if diacritics.accented
                             && !context.followed_by_cased_letter(self)
                             && !context.preceded_by_cased_letter(self)

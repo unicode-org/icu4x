@@ -39,19 +39,18 @@ fn main() {
             let s = ch.encode_utf8(&mut encode_scratch);
             let nfd = decomposer.normalize_utf8(s.as_bytes());
 
-            // accented: [:toNFD=/[\u0300\u0301\u0342\u0302\u0303\u0311]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
-
             for nfd_ch in nfd.chars() {
                 match nfd_ch {
-                    greek_to_me::accent_marks!() => {
+                    // accented: [:toNFD=/[\u0300\u0301\u0342\u0302\u0303\u0311]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
+                    greek_to_me::diacritics!(ACCENTS) => {
                         data.accented = true;
                     }
                     // dialytika: [:toNFD=/[\u0308]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
-                    greek_to_me::DIALYTIKA => {
+                    greek_to_me::diacritics!(DIALYTIKA) => {
                         data.dialytika = true;
                     }
                     // precomposed_ypogegrammeni [:toNFD=/[\u0345]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
-                    greek_to_me::YPOGEGRAMMENI => {
+                    greek_to_me::diacritics!(YPOGEGRAMMENI) => {
                         data.ypogegrammeni = true;
                     }
                     // Ignore all small letters

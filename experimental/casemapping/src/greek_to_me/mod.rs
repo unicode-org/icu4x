@@ -160,23 +160,39 @@ pub const YPOGEGRAMMENI: char = '\u{0345}';
 
 #[macro_export]
 #[doc(hidden)]
-macro_rules! accent_marks {
-    () => {
-        // Accent marks that map to a tonos when found with a lone eta
+macro_rules! diacritics {
+
+    // Accent marks.
+    // These get removed, and also consecutive vowels with accent marks need to get a dialytika
+    // when uppercased. Furthermore an accented lone eta should retain the accent (which we )
+    (ACCENTS) => {
         // https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5B%5Cu0300+%5Cu0301+%5Cu0342+%5Cu0302+%5Cu0303+%5Cu0311%5D&g=&i=
+        // This is basically tonos (acute accent), perispomeni (circumflex/tilde), and lookalikes
         '\u{0300}' | '\u{0301}' | '\u{0342}' | '\u{0302}' | '\u{0303}' | '\u{0311}'
     };
-    (extra) => {
-        // Other combining marks that are expected to be used with Greek
+    // Breathing and length marks
+    // These also get removed but have no special impact on dialytikas or etas
+    (BREATHING_AND_LENGTH) => {
         // https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5B%5Cu0304+%5Cu0306+%5Cu0313+%5Cu0314+%5Cu0343%5D&g=&i=
+        // This is other accent marks that get used with Greek not covered by other branches here
         '\u{0304}' | '\u{0306}' | '\u{0313}' | '\u{0314}' | '\u{0343}'
     };
+    // All diacritics containing a dialytika
+    (DIALYTIKA_ALL) => { crate::greek_to_me::DIALYTIKA | crate::greek_to_me::DIALYTIKA_TONOS };
+    (DIALYTIKA) => { crate::greek_to_me::DIALYTIKA };
+    (DIALYTIKA_TONOS) => { crate::greek_to_me::DIALYTIKA_TONOS };
+    (YPOGEGRAMMENI) => { crate::greek_to_me::YPOGEGRAMMENI };
+    ($($i:ident)|+) => { $(diacritics!($i))|+};
 }
 
-/// All Greek accent marks that need to be removed during uppercasing
+/// Macro that generates match arms for various diacritic groupings.
 ///
-/// Call with `accent_marks!(extra)` to get extra accent marks that are expected
-/// to be used with Greek but do not need to be removed
+/// Groupings supported:
+///
+/// - ACCENTS
+/// - BREATHING_AND_LENGTH
+/// - DIALYTIKA, DIALYTIKA_TONOS, and DIALITYKA_ALL
+/// - YPOGEGRAMMENI
 ///
 /// This is a macro to make it easy to keep the lists of accents in sync
 pub use crate::diacritics;
@@ -187,7 +203,7 @@ impl GreekDiacritics {
     pub(crate) fn consume_greek_diacritics(&mut self, context_after: &str) {
         for c in context_after.chars() {
             match c {
-                accent_marks!() => self.accented = true,
+                diacritics!(ACCENTS) => self.accented = true,
                 DIALYTIKA_TONOS => {
                     self.dialytika = true;
                     self.accented = true;
@@ -195,7 +211,7 @@ impl GreekDiacritics {
                 DIALYTIKA => self.dialytika = true,
                 YPOGEGRAMMENI => self.combining_ypogegrammeni = true,
                 // Ignore other accent marks that are expected to co-occur with Greek
-                accent_marks!(extra) => (),
+                diacritics!(BREATHING_AND_LENGTH) => (),
                 _ => break,
             }
         }
@@ -206,11 +222,7 @@ impl GreekDiacritics {
 pub(crate) fn preceded_by_greek_letter(context_before: &str) -> bool {
     for c in context_before.chars().rev() {
         match c {
-            accent_marks!()
-            | accent_marks!(extra)
-            | DIALYTIKA
-            | DIALYTIKA_TONOS
-            | YPOGEGRAMMENI => continue,
+            diacritics!(ACCENTS | BREATHING_AND_LENGTH | DIALYTIKA_ALL | YPOGEGRAMMENI) => continue,
             _ => return GREEK_DATA_TRIE.get(c).is_greek_letter(),
         }
     }
@@ -223,9 +235,9 @@ pub(crate) fn preceded_by_greek_accented_vowel_with_no_dialytika(context_before:
     let mut accented = false;
     for c in context_before.chars().rev() {
         match c {
-            accent_marks!() => accented = true,
-            DIALYTIKA | DIALYTIKA_TONOS => return false,
-            accent_marks!(extra) => continue,
+            diacritics!(ACCENTS) => accented = true,
+            diacritics!(DIALYTIKA_ALL) => return false,
+            diacritics!(BREATHING_AND_LENGTH) => continue,
             _ => {
                 let data = GREEK_DATA_TRIE.get(c);
                 if let Some(uppercase) = data.greek_base_uppercase() {
@@ -248,6 +260,6 @@ pub(crate) fn preceded_by_greek_accented_vowel_with_no_dialytika(context_before:
 pub(crate) fn is_greek_diacritic_except_ypogegrammeni(c: char) -> bool {
     matches!(
         c,
-        accent_marks!() | accent_marks!(extra) | DIALYTIKA | DIALYTIKA_TONOS
+        diacritics!(ACCENTS | BREATHING_AND_LENGTH | DIALYTIKA_ALL)
     )
 }
