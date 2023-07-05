@@ -147,6 +147,8 @@ unsafe impl VarULE for MultiFieldsULE {
     #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
         // &Self is transparent over &VZS<..>
-        mem::transmute(<VarZeroSlice<[u8], Index32>>::from_byte_slice_unchecked(bytes))
+        mem::transmute(<VarZeroSlice<[u8], Index32>>::from_byte_slice_unchecked(
+            bytes,
+        ))
     }
 }

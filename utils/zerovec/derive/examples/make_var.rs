@@ -153,9 +153,10 @@ fn main() {
         assert_eq!(stack, &MultiFieldStruct::zero_from(zero))
     });
 
-    assert_zerovec::<MultiFieldConsecutiveStructULE, MultiFieldConsecutiveStruct, _>(TEST_MULTICONSECUTIVE, |stack, zero| {
-        assert_eq!(stack, &MultiFieldConsecutiveStruct::zero_from(zero))
-    });
+    assert_zerovec::<MultiFieldConsecutiveStructULE, MultiFieldConsecutiveStruct, _>(
+        TEST_MULTICONSECUTIVE,
+        |stack, zero| assert_eq!(stack, &MultiFieldConsecutiveStruct::zero_from(zero)),
+    );
 
     let vartuples = &[
         VarTupleStruct(101, 'ø', TEST_STRINGS1.into()),
@@ -216,11 +217,10 @@ const TEST_MULTIFIELD: &[MultiFieldStruct<'static>] = &[
     },
 ];
 
-const TEST_MULTICONSECUTIVE: &[MultiFieldConsecutiveStruct<'static>] = &[
-    MultiFieldConsecutiveStruct {
+const TEST_MULTICONSECUTIVE: &[MultiFieldConsecutiveStruct<'static>] =
+    &[MultiFieldConsecutiveStruct {
         a: Cow::Borrowed("one"),
         b: Cow::Borrowed("2"),
         c: Cow::Borrowed("three"),
         d: Cow::Borrowed("four"),
-    },
-];
+    }];
