@@ -123,7 +123,7 @@ fn mod_degrees(x: f64) -> f64 {
 pub fn mod3(x: f64, a: f64, b: f64) -> f64 {
     // The value of x shifted into the range [a..b).
     // Returns x if a=b.
-    if (a - b).abs() < f64::EPSILON {
+    if libm::fabs(a - b) < f64::EPSILON {
         x
     } else {
         let (_, rem) = div_rem_euclid_f64(x - a, b - a);
@@ -182,11 +182,15 @@ where
 // - `-1.0` if the number is negative, `-0.0` or `NEG_INFINITY`
 // - NaN if the number is NaN
 pub fn signum(x: f64) -> f64 {
-    if x.is_nan() { return f64::NAN; }
+    if x.is_nan() {
+        return f64::NAN;
+    }
 
-    if x.is_sign_positive() { 1.0 }
-
-    else { -1.0 }
+    if x.is_sign_positive() {
+        1.0
+    } else {
+        -1.0
+    }
 }
 
 pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {

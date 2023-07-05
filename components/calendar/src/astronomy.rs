@@ -5,7 +5,7 @@
 //! This file contains important structs and functions relating to location,
 //! time, and astronomy; these are intended for calender calculations and based off
 //! _Calendrical Calculations_ by Reingold & Dershowitz.
-use crate::error::{CalendarError, LocationError};
+use crate::error::LocationError;
 use crate::helpers::*;
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
@@ -25,7 +25,7 @@ pub(crate) struct Location {
     elevation: f64, // elevation in meters
     zone: f64,      // UTC timezone offset
 }
-
+#[allow(clippy::excessive_precision)]
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
 /// The mean synodic month in days of 86400 atomic seconds
@@ -252,27 +252,24 @@ impl Astronomical {
         let anomaly = poly(c, vec![357.52910, 35999.05030, -0.0001559, -0.00000048]);
         let eccentricity = poly(c, vec![0.016708617, -0.000042037, -0.0000001236]);
         let varepsilon = Self::obliquity(moment);
-        let y = tan_degrees(varepsilon / 2.0).powi(2);
+        let y = libm::pow(tan_degrees(varepsilon / 2.0), 2.0);
         let equation = 1.0 / (2.0 * PI)
             * (y * sin_degrees(2.0 * lambda) - 2.0 * eccentricity * sin_degrees(anomaly)
                 + 4.0 * eccentricity * y * sin_degrees(anomaly) * cos_degrees(2.0 * lambda)
-                - 0.5 * y.powi(2) * sin_degrees(4.0 * lambda)
-                - 1.25 * eccentricity.powi(2) * sin_degrees(2.0 * anomaly));
+                - 0.5 * libm::pow(y, 2.0) * sin_degrees(4.0 * lambda)
+                - 1.25 * libm::pow(eccentricity, 2.0) * sin_degrees(2.0 * anomaly));
 
-        equation.signum() * equation.abs().min(12.0 / 24.0)
+        signum(equation) * libm::fabs(equation).min(12.0 / 24.0)
     }
 
-    #[allow(dead_code)]
+    #[allow(dead_code, clippy::unwrap_used)]
     pub(crate) fn dusk(date: f64, location: Location, alpha: f64) -> Option<Moment> {
         let evening = false;
         let result =
             Self::moment_of_depression(Moment::new(date + (18.0 / 24.0)), location, alpha, evening);
 
-        if result.is_none() {
-            return None;
-        } else {
-            Some(Location::standard_from_local(result.unwrap(), location))
-        }
+        result?;
+        Some(Location::standard_from_local(result.unwrap(), location))
     }
 
     // Calculates the obliquity of the ecliptic at a given moment
@@ -292,18 +289,6 @@ impl Astronomical {
     // Calculates declination at a given Moment of UTC time for the latitude and longitude of an object lambda
     pub(crate) fn declination(moment: Moment, beta: f64, lambda: f64) -> f64 {
         let varepsilon = Self::obliquity(moment);
-
-        let sin_beta = sin_degrees(beta);
-        let sin_var = sin_degrees(varepsilon);
-        let cos_var = cos_degrees(varepsilon);
-        let cos_beta = cos_degrees(beta);
-        let sin_lambda = sin_degrees(lambda);
-
-        let add_1 = sin_beta * cos_var;
-        let add_2 = cos_beta * sin_var * sin_lambda;
-
-        let r = add_1 + add_2;
-
         arcsin_degrees(
             sin_degrees(beta) * cos_degrees(varepsilon)
                 + cos_degrees(beta) * sin_degrees(varepsilon) * sin_degrees(lambda),
@@ -344,18 +329,18 @@ impl Astronomical {
             date + 12.0 / 24.0
         };
 
-        let value = if t.abs() > 1.0 {
+        let value = if libm::fabs(t) > 1.0 {
             t = Self::sine_offset(Moment::new(alt), location, alpha);
             t
         } else {
             t
         };
 
-        if value.abs() <= 1.0 {
+        if libm::fabs(value) <= 1.0 {
             let offset = mod3(
-                (div_rem_euclid_f64(arcsin_degrees(value), 360.0).0),
-                (-12.0 / 24.0),
-                (12.0 / 24.0),
+                div_rem_euclid_f64(arcsin_degrees(value), 360.0).0,
+                -12.0 / 24.0,
+                12.0 / 24.0,
             );
 
             let moment = Moment::new(
@@ -367,10 +352,10 @@ impl Astronomical {
             );
             Some(Self::local_from_apparent(moment, location))
         } else {
-            return None;
+            None
         }
     }
-
+    #[allow(clippy::unwrap_used)]
     pub(crate) fn moment_of_depression(
         approx: Moment,
         location: Location,
@@ -378,12 +363,8 @@ impl Astronomical {
         early: bool,
     ) -> Option<Moment> {
         let moment = Self::approx_moment_of_depression(approx, location, alpha, early);
-
-        if moment.is_none() {
-            return None;
-        }
-
-        if (approx - moment.unwrap()).abs() < 30.0 {
+        moment?;
+        if libm::fabs(approx - moment.unwrap()) < 30.0 {
             Some(moment.unwrap())
         } else {
             Self::moment_of_depression(moment.unwrap(), location, alpha, early)
@@ -396,9 +377,7 @@ impl Astronomical {
         let earth_r = 6.372e6; // Radius of Earth.
         let dip = arccos_degrees(earth_r / (earth_r + h));
 
-        let result = (34.0 / 60.0) + dip + ((19.0 / 3600.0) * f64::sqrt(h));
-
-        result
+        (34.0 / 60.0) + dip + ((19.0 / 3600.0) * libm::sqrt(h))
     }
 
     /// The moment (in universal time) of the nth new moon after
@@ -564,7 +543,7 @@ impl Astronomical {
 
         let mut correction = 0.0;
         let len = sine_coeff.len();
-
+        #[allow(clippy::indexing_slicing)]
         for i in 0..len {
             let v = sine_coeff[i];
             let w = args_lunar_elongation[i];
@@ -572,7 +551,8 @@ impl Astronomical {
             let y = args_lunar_anomaly[i];
             let z = args_moon_node[i];
 
-            correction += v * libm::pow(e, x.abs()) * sin_degrees(w * d + x * ms + y * ml + z * f);
+            correction +=
+                v * libm::pow(e, libm::fabs(x)) * sin_degrees(w * d + x * ms + y * ml + z * f);
         }
         correction /= 1_000_000.0;
 
@@ -689,7 +669,7 @@ impl Astronomical {
     ///
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4537
 
-    #[allow(dead_code)]
+    #[allow(dead_code, clippy::unwrap_used)]
     pub(crate) fn lunar_altitude(moment: Moment, location: Location) -> f64 {
         let phi = location.latitude;
         let psi = location.longitude;
@@ -711,11 +691,11 @@ impl Astronomical {
 
     pub(crate) fn lunar_distance(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
-        let cap_D = Self::lunar_elongation(c);
-        let cap_M = Self::solar_anomaly(c);
-        let cap_M_prime = Self::lunar_anomaly(c);
-        let cap_F = Self::moon_node(c);
-        let cap_E = 1.0 - (0.002516 * c) - (0.0000074 * libm::pow(c, 2.0));
+        let cap_d = Self::lunar_elongation(c);
+        let cap_m = Self::solar_anomaly(c);
+        let cap_m_prime = Self::lunar_anomaly(c);
+        let cap_f = Self::moon_node(c);
+        let cap_e = 1.0 - (0.002516 * c) - (0.0000074 * libm::pow(c, 2.0));
 
         let args_lunar_elongation = [
             0.0, 2.0, 2.0, 0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 4.0,
@@ -815,8 +795,8 @@ impl Astronomical {
             .zip(args_lunar_anomaly.iter())
             .zip(args_moon_node.iter())
             .map(|((((&v, &w), &x), &y), &z)| {
-                v * libm::pow(cap_E, (x as f64).abs())
-                    * libm::cos((w * cap_D + x * cap_M + y * cap_M_prime + z * cap_F).to_radians())
+                v * libm::pow(cap_e, libm::fabs(x))
+                    * libm::cos((w * cap_d + x * cap_m + y * cap_m_prime + z * cap_f).to_radians())
             })
             .sum();
 
@@ -837,13 +817,7 @@ impl Astronomical {
     /// Topocentric altitude of moon at moment at location,
     /// as a small positive/negative angle in degrees.
     fn topocentric_lunar_altitude(moment: Moment, location: Location) -> f64 {
-        let m = moment;
-        let l = location;
-
-        let lp = Self::lunar_parallax(moment, location);
-        let la = Self::lunar_altitude(moment, location);
-
-        la - lp
+        Self::lunar_altitude(moment, location) - Self::lunar_parallax(moment, location)
     }
 
     /// Observed altitude of upper limb of moon at moment at location,
@@ -852,11 +826,8 @@ impl Astronomical {
         let r = Self::topocentric_lunar_altitude(moment, location);
         let y = Self::refraction(moment, location);
         let z = 16.0 / 60.0;
-        let result = Self::topocentric_lunar_altitude(moment, location)
-            + Self::refraction(moment, location)
-            + 16.0 / 60.0;
 
-        result
+        r + y + z
     }
 
     // Average anomaly of the sun (in degrees) at a given Moment in Julian centuries
@@ -907,7 +878,7 @@ impl Astronomical {
         let waxing = Self::lunar_phase(date) < 180.0;
         let alt = Self::observed_lunar_altitude(moment, location);
         let lat = location.latitude;
-        let offset = alt / (4.0 * (90.0 - lat.abs()));
+        let offset = alt / (4.0 * (90.0 - libm::fabs(lat)));
 
         let approx = if waxing {
             if offset > 0.0 {
@@ -936,34 +907,28 @@ impl Astronomical {
             }
             Some(std)
         } else {
-            return None;
+            None
         }
     }
 
     #[allow(dead_code)]
     fn sunset(date: Moment, location: Location) -> Option<Moment> {
         let alpha = Self::refraction(date + (18.0 / 24.0), location) + (16.0 / 60.0);
-        let dusk = Self::dusk(date.inner(), location, alpha);
 
-        if dusk.is_none() {
-            return None;
-        } else {
-            dusk
-        }
+        Self::dusk(date.inner(), location, alpha)
     }
 
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
+    #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
     fn moonlag(date: Moment, location: Location) -> Option<f64> {
         let sun = Self::sunset(date, location);
         let moon = Self::moonset(date, location);
 
         // Sunset does not occur
-        if sun.is_none() {
-            return None;
-        }
+        sun?;
         if moon.is_none() {
-            return Some(24.0 / 24.0); // Arbitrary value as stated by lisp code
+            Some(24.0 / 24.0) // Arbitrary value as stated by lisp code
         } else {
+            #[allow(clippy::unnecessary_unwrap)]
             Some(moon.unwrap() - sun.unwrap())
         }
     }
