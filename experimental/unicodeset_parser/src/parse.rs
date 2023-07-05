@@ -1298,6 +1298,8 @@ mod tests {
             // general category
             (D, r"[[:gc=lower-case-letter:]&[a-zA-Z]]", "az", vec![]),
             (D, r"[[:lower case letter:]&[a-zA-Z]]", "az", vec![]),
+            // general category groups
+            (D, r"[[[:L:]-[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]][[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]-[:L:]]]", "", vec![]),
             // script
             (D, r"[[:sc=latn:]&[a-zA-Z]]", "azAZ", vec![]),
             (D, r"[[:sc=Latin:]&[a-zA-Z]]", "azAZ", vec![]),
