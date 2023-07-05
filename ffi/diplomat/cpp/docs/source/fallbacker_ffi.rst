@@ -88,7 +88,7 @@
 
     See the `Rust documentation for LocaleFallbacker <https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html>`__ for more information.
 
-    See the `Rust documentation for LocaleFallbackerConfig <https://docs.rs/icu/latest/icu/locid/fallback/struct.LocaleFallbackerConfig.html>`__ for more information.
+    See the `Rust documentation for LocaleFallbackerWithConfig <https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackerWithConfig.html>`__ for more information.
 
 
     .. cpp:function:: ICU4XLocaleFallbackIterator fallback_for_locale(const ICU4XLocale& locale) const

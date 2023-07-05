@@ -28,7 +28,7 @@ struct ICU4XLocaleFallbackerWithConfigDeleter {
  * 
  * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html) for more information.
  * 
- * See the [Rust documentation for `LocaleFallbackerConfig`](https://docs.rs/icu/latest/icu/locid/fallback/struct.LocaleFallbackerConfig.html) for more information.
+ * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
  */
 class ICU4XLocaleFallbackerWithConfig {
  public:
