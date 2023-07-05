@@ -512,7 +512,7 @@ impl TimeZoneFormatter {
         Ok(self)
     }
 
-    /// Include Iso8601 format for timezone. For example, "-07:00".
+    /// Include ISO-8601 format for timezone. For example, "-07:00".
     pub fn include_iso_8601_format(
         &mut self,
         format: IsoFormat,
@@ -659,15 +659,13 @@ impl TimeZoneFormatter {
     }
 
     /// Alias to [`TimeZoneFormatter::include_localized_gmt_format`].
-    #[deprecated = "This function was renamed to: `include_localized_gmt_format`"]
-    pub fn include_localized_gmt_format(
-        &mut self,
-    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
+    #[deprecated(since = "1.3.0", note = "renamed to `include_localized_gmt_format`")]
+    pub fn load_localized_gmt_format(&mut self) -> Result<&mut TimeZoneFormatter, DateTimeError> {
         self.include_localized_gmt_format()
     }
 
     /// Alias to [`TimeZoneFormatter::include_iso_8601_format`].
-    #[deprecated = "This function was renamed to: `include_iso_8601_format`"]
+    #[deprecated(since = "1.3.0", note = "renamed to `include_iso_8601_format`")]
     pub fn load_iso_8601_format(
         &mut self,
         format: IsoFormat,
