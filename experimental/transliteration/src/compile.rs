@@ -96,7 +96,10 @@ impl<'a> Compiler<'a> {
                         .0;
                     // this variable is being used as the target, it must only contain literals
                     // due to the concatenation rule, that means it must only contain a single literal
-                    let [translit::PatternElement::Literal(ref s)] = variable_pattern[..] else {
+                    let s = if let [translit::PatternElement::Literal(ref s)] = variable_pattern[..]
+                    {
+                        s
+                    } else {
                         return Err(CompileError::default(sl!()));
                     };
                     replacement.push_str(s);

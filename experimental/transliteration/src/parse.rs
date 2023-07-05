@@ -89,9 +89,9 @@ mod missingapis {
 
     pub(super) fn parse_unicode_set(it: &mut t!()) -> Result<UnicodeSet> {
         let mut set = String::new();
-        let Some('[') = it.next() else {
+        if !matches!(it.next(), Some('[')) {
             return Err(ParseError::new(pl!(), PEK::Legacy));
-        };
+        }
         set.push('[');
 
         let mut depth = 1;
@@ -617,7 +617,9 @@ fn parse_rule(it: &mut t!()) -> Result<Rule> {
                 return Err(ParseError::new(pl!(), PEK::Legacy));
             }
 
-            let PatternElement::Variable(name) = half_rule1.key.0[0].clone() else {
+            let name = if let PatternElement::Variable(name) = half_rule1.key.0[0].clone() {
+                name
+            } else {
                 return Err(ParseError::new(pl!(), PEK::Legacy));
             };
 
