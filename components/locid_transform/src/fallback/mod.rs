@@ -409,6 +409,8 @@ impl LocaleFallbackerBorrowed<'static> {
 impl<'a> LocaleFallbackerWithConfig<'a> {
     /// Creates an iterator based on a [`DataLocale`].
     ///
+    /// If you have a [`Locale`], call `.into()` to get a [`DataLocale`].
+    ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
     pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
         self.normalize(&mut locale);
