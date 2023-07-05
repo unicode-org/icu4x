@@ -23,7 +23,7 @@ pub(crate) struct Location {
     latitude: f64,  // latitude from -90 to 90
     longitude: f64, // longitude from -180 to 180
     elevation: f64, // elevation in meters
-    zone: f64 // UTC timezone offset
+    zone: f64,      // UTC timezone offset
 }
 
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
@@ -84,7 +84,7 @@ impl Location {
     pub(crate) fn elevation(&self) -> f64 {
         self.elevation
     }
-    
+
     /// Get the utc-offset of a Location
     #[allow(dead_code)]
     pub(crate) fn zone(&self) -> f64 {
@@ -101,13 +101,10 @@ impl Location {
     }
     // Convert standard time to local mean time given a location and a time zone with given offset
     #[allow(dead_code)]
-    pub(crate) fn standard_from_local(
-        standard_time: Moment,
-        location: Location,
-    ) -> Moment {
+    pub(crate) fn standard_from_local(standard_time: Moment, location: Location) -> Moment {
         Self::standard_from_universal(
             Self::universal_from_local(standard_time, location),
-            location
+            location,
         )
     }
 
@@ -354,20 +351,17 @@ impl Astronomical {
         };
 
         if value.abs() <= 1.0 {
-            let offset = div_rem_euclid_f64(arcsin_degrees(value) / 360.0, 1.0 / 2.0).1;
-            let offset = if offset < -12.0 / 24.0 {
-                offset + 1.0
-            } else if offset >= 12.0 / 24.0 {
-                offset - 1.0
-            } else {
-                offset
-            };
+            let offset = mod3(
+                (div_rem_euclid_f64(arcsin_degrees(value), 360.0).0),
+                (-12.0 / 24.0),
+                (12.0 / 24.0),
+            );
 
             let moment = Moment::new(
                 date + if early {
-                    6.0 / 24.0 - offset
+                    (6.0 / 24.0) - offset
                 } else {
-                    18.0 / 24.0 + offset
+                    (18.0 / 24.0) + offset
                 },
             );
             Ok(Self::local_from_apparent(moment, location))
@@ -942,13 +936,14 @@ impl Astronomical {
 
     #[allow(dead_code)]
     fn sunset(date: Moment, location: Location) -> Moment {
-        let alpha = Self::refraction(date + (18.0 / 24.0), location);
+        let alpha = Self::refraction(date + (18.0 / 24.0), location) + (16.0 / 60.0);
 
         Self::dusk(date.inner(), location, alpha)
     }
 
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn moonlag(date: f64, location: Location) {}
+
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4037-L4047
@@ -1152,7 +1147,7 @@ mod tests {
         latitude: 6427.0 / 300.0,
         longitude: 11947.0 / 300.0,
         elevation: 298.0,
-        zone: (1_f64/8_f64),
+        zone: (1_f64 / 8_f64),
     };
 
     fn assert_eq_f64(expected_value: f64, value: f64, moment: Moment) {
@@ -1549,7 +1544,7 @@ mod tests {
             764652.0,
         ];
 
-        let expected_time_of_day = [
+        let expected_values = [
             -214192.91577491348,
             -61386.372392431986,
             25469.842646633304,
@@ -1585,7 +1580,7 @@ mod tests {
             764652.9631741203,
         ];
 
-        for (rd, expected_val) in rd_vals.iter().zip(expected_time_of_day.iter()) {
+        for (rd, expected_val) in rd_vals.iter().zip(expected_values.iter()) {
             let moment: Moment = Moment::new(*rd as f64);
             let moonset_val = Astronomical::moonset(moment, MECCA);
             let expected_moonset_val = *expected_val;
@@ -1607,7 +1602,7 @@ mod tests {
             764652.0,
         ];
 
-        let expected_sunset_values = [
+        let expected_values = [
             -214192.2194436165,
             -61386.30267524347,
             25469.734889564967,
@@ -1647,10 +1642,10 @@ mod tests {
             latitude: 31.78,
             longitude: 35.24,
             elevation: 740.0,
-            zone: (1_f64/12_f64)
+            zone: (1_f64 / 12_f64),
         };
 
-        for (rd, expected_sunset_value) in rd_vals.iter().zip(expected_sunset_values.iter()) {
+        for (rd, expected_sunset_value) in rd_vals.iter().zip(expected_values.iter()) {
             let moment = Moment::new(*rd);
             let sunset_value = Astronomical::sunset(moment, jerusalem);
             let expected_sunset_val = *expected_sunset_value;
