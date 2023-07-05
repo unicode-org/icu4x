@@ -364,6 +364,7 @@ impl LocaleFallbacker {
     /// Derives a configuration from a [`DataKey`] and associates it
     /// with this fallbacker.
     #[inline]
+    #[doc(hidden)] // will be removed in 2.0
     pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
         self.for_config(data_key.into())
     }
@@ -391,13 +392,6 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
             },
             config,
         }
-    }
-
-    /// Derives a configuration from a [`DataKey`] and associates it
-    /// with this fallbacker.
-    #[inline]
-    pub const fn for_key(self, data_key: DataKey) -> LocaleFallbackerWithConfig<'a> {
-        self.for_config(LocaleFallbackConfig::from_key(data_key))
     }
 }
 
