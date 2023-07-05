@@ -20,8 +20,8 @@ use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::*;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_relativetime::provider::*;
-use icu_singlenumberformatter::provider::*;
 use icu_segmenter::provider::*;
+use icu_singlenumberformatter::provider::*;
 use icu_timezone::provider::*;
 
 macro_rules! registry {

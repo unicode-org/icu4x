@@ -41,7 +41,7 @@ pub struct Fractions {
     default: RoundingModes,
 
     #[serde(flatten)]
-    pub currencies: HashMap<ISOCode, RoundingModes>, /*change it to RoundingModes later */
+    pub currencies: HashMap<ISOCode, RoundingModes>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

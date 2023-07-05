@@ -29,8 +29,10 @@ pub struct CurrencyEssentialV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub indices_map: ZeroMap<'data, TinyAsciiStr<3>, PatternsIndices>,
 
-    // #[cfg_attr(feature = "serde", serde(borrow))]
-    // pub currencies_meta_data: VarZeroVec<'data, CurrencyPatternWithMetaDataULE>,
+    // // #[cfg_attr(feature = "serde", serde(borrow))]
+    // pub currencies_patterns: VarZeroVec<'data, CurrencyPatternsULE>,
+    pub standard: Cow<'data, str>,
+    pub standard_alpha_next_to_number: Cow<'data, str>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub place_holders: VarZeroVec<'data, str>,
@@ -45,26 +47,28 @@ pub struct CurrencyEssentialV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
 pub struct PatternsIndices {
-    pub short_pattern: u16,
-    pub narrow_pattern: u16,
+    /// If it is true, then use the standard pattern.
+    /// Otherwise, use the standard_alpha_next_to_number pattern.
+    pub pattern_standard: bool,
+
     pub short_place_holder: u16,
+
     pub narrow_place_holder: u16,
 }
 
-#[zerovec::make_varule(CurrencyPatternWithMetaDataULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_singlenumberformatter::provider),
-)]
-#[zerovec::derive(Serialize, Deserialize, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[derive(Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
-pub struct CurrencyPatternWithMetaData<'data> {
-    pub standard_rounding: u16,
-    pub cash_rounding: u16,
-    pub place_holder: Cow<'data, str>,
-}
+// #[zerovec::make_varule(CurrencyPatternsULE)]
+// #[cfg_attr(
+//     feature = "datagen",
+//     derive(serde::Serialize, databake::Bake),
+//     databake(path = icu_singlenumberformatter::provider),
+// )]
+// #[zerovec::derive(Serialize, Deserialize, Debug)]
+// #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+// #[derive(Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
+// pub struct CurrencyPatterns<'data> {
+//     pub standard: Cow<'data, str>,
+//     pub standard_alpha_next_to_number: Cow<'data, str>,
+// }
 
 ///
 ///

@@ -5,9 +5,9 @@ use icu_locid::LanguageIdentifier;
 use icu_normalizer::DecomposingNormalizer;
 use icu_provider::DataProvider;
 use tinystr::TinyStr8;
+use zerovec::maps::MutableZeroVecLike;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
-use zerovec::maps::MutableZeroVecLike;
 
 use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::decimal::decimal_pattern::DecimalPattern;
@@ -47,7 +47,12 @@ impl DataProvider<CurrencyEssentialV1Maker> for crate::DatagenProvider {
             .core()
             .read_and_parse("supplemental/currencyData.json")?;
 
-        let result = extract_currency_essential(&currencies_resource, &numbers_resource, &currency_data,&langid);
+        let result = extract_currency_essential(
+            &currencies_resource,
+            &numbers_resource,
+            &currency_data,
+            &langid,
+        );
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -99,39 +104,50 @@ fn extract_currency_essential<'data>(
         .get(&tinystr!(8, "latn"))
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 
-    let mut indices_map: ZeroMap<'_, TinyAsciiStr<3>, PatternsIndices> = ZeroMap::<TinyAsciiStr<3>, PatternsIndices>::new();
-    // let mut currencies_meta_data = VarZeroVec::<CurrencyPatternWithMetaDataULE>::new();
+    let standard = &currency_formats.standard;
+    let standard_alpha_next_to_number = match &currency_formats.standard_alpha_next_to_number {
+        Some(standard_alpha_next_to_number) => standard_alpha_next_to_number,
+        None => "",
+    };
+
+    let mut indices_map: ZeroMap<'_, TinyAsciiStr<3>, PatternsIndices> =
+        ZeroMap::<TinyAsciiStr<3>, PatternsIndices>::new();
     let mut place_holders = VarZeroVec::<str>::new();
     for (iso, currency_pattern) in currencies {
-        let mut short_pattern_index = u16::MAX;
-        let mut narrow_pattern_index = u16::MAX;
-        let mut short_place_holder_index: u16;
-        let mut narrow_place_holder_index: u16;
+        let short_place_holder_index: u16;
+        let narrow_place_holder_index: u16;
 
-       let short_option= &currency_pattern.short;
-       match short_option {
-        Some(short_place_holder) => {
-            short_place_holder_index = place_holders.len() as u16;
-            place_holders.zvl_push(&short_place_holder);
-        },
-        None => short_place_holder_index = u16::MAX,
-       }
+        let short_option = &currency_pattern.short;
+        match short_option {
+            Some(short_place_holder) => {
+                short_place_holder_index = place_holders.len() as u16;
+                place_holders.zvl_push(&short_place_holder);
+            }
+            None => short_place_holder_index = u16::MAX,
+        }
 
-       let narrow_option = &currency_pattern.narrow;
-       match narrow_option {
-        Some(narrow_place_holder) => {
-            narrow_place_holder_index = place_holders.len() as u16;
-            place_holders.zvl_push(&narrow_place_holder);
-        },
-        None => narrow_place_holder_index = u16::MAX,
-       }
+        let narrow_option = &currency_pattern.narrow;
+        match narrow_option {
+            Some(narrow_place_holder) => {
+                narrow_place_holder_index = place_holders.len() as u16;
+                place_holders.zvl_push(&narrow_place_holder);
+            }
+            None => narrow_place_holder_index = u16::MAX,
+        }
 
-       indices_map.insert(iso, &PatternsIndices {
-        short_pattern: short_pattern_index,
-        narrow_pattern: narrow_pattern_index,
-        short_place_holder: short_place_holder_index,
-        narrow_place_holder: narrow_place_holder_index,
-       });
+        let pattern_standard: bool = {
+            // TODO: implement this block.
+            !standard_alpha_next_to_number.is_empty()
+        };
+
+        indices_map.insert(
+            iso,
+            &PatternsIndices {
+                pattern_standard,
+                short_place_holder: short_place_holder_index,
+                narrow_place_holder: narrow_place_holder_index,
+            },
+        );
     }
 
     // let patterns = currencies_patterns.get()
@@ -155,7 +171,8 @@ fn extract_currency_essential<'data>(
 
     let result = CurrencyEssentialV1 {
         indices_map,
-        //    currencies_meta_data,
+        standard: standard.to_owned().into(),
+        standard_alpha_next_to_number: standard_alpha_next_to_number.to_owned().into(),
         place_holders,
     };
 
