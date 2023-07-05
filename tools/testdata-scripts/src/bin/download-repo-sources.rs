@@ -80,8 +80,6 @@ fn main() -> eyre::Result<()> {
         ))
         .with_context(|| format!("Failed to read zip file {:?}", &zip))?;
 
-        let _ = fs::remove_dir_all(&root);
-
         for path in paths {
             if let Ok(mut file) = zip.by_name(&path) {
                 let path = root.join(&path);
@@ -120,6 +118,7 @@ fn main() -> eyre::Result<()> {
         paths
     }
 
+    std::fs::remove_dir_all(out_root.join("tests/data/cldr"))?;
     extract(
         cached(&format!(
             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
@@ -131,6 +130,7 @@ fn main() -> eyre::Result<()> {
         out_root.join("tests/data/cldr"),
     )?;
 
+    std::fs::remove_dir_all(out_root.join("tests/data/icuexport"))?;
     extract(
         cached(&format!(
             "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
@@ -142,22 +142,19 @@ fn main() -> eyre::Result<()> {
         out_root.join("tests/data/icuexport"),
     )?;
 
-    for file in [
-        "burmesedict.toml",
-        "cjdict.toml",
-        "khmerdict.toml",
-        "laodict.toml",
-        "thaidict.toml",
-    ] {
-        std::fs::copy(
-            out_root
-                .join("tests/data/icuexport/segmenter/dictionary")
-                .join(file),
-            out_root.join("data/segmenter/dictionary").join(file),
-        )
-        .unwrap();
-    }
+    std::fs::remove_dir_all(out_root.join("data/segmenter/dictionary"))?;
+    extract(
+        cached(&format!(
+            "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
+            SourceData::LATEST_TESTED_ICUEXPORT_TAG,
+            SourceData::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
+        ))
+        .with_context(|| "Failed to download ICU ZIP".to_owned())?,
+        ICUEXPORTDATA_SEGMENTER_GLOB.iter().copied().map(String::from).collect(),
+        out_root.join("data"),
+    )?;
 
+    std::fs::remove_dir_all(out_root.join("data/lstm"))?;
     extract(
         cached(&format!(
             "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
@@ -165,15 +162,8 @@ fn main() -> eyre::Result<()> {
         ))
         .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
         LSTM_GLOB.iter().copied().map(String::from).collect(),
-        out_root.join("tests/data/lstm"),
+        out_root.join("data/lstm"),
     )?;
-
-    for path in &LSTM_GLOB[..4] {
-        std::fs::copy(
-            out_root.join("tests/data/lstm").join(path),
-            out_root.join("data/lstm").join(path),
-        )?;
-    }
 
     Ok(())
 }

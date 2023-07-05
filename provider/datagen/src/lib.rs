@@ -200,8 +200,7 @@ impl DatagenProvider {
                     // `tools/testdata-scripts/globs.rs.data`.
                     source: SourceData::offline()
                         .with_cldr(data_root.join("cldr"), Default::default()).unwrap()
-                        .with_icuexport(data_root.join("icuexport")).unwrap()
-                        .with_segmenter_lstm(data_root.join("lstm")).unwrap(),
+                        .with_icuexport(data_root.join("icuexport")).unwrap(),
                 }
             };
         }
