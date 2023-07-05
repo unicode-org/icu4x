@@ -2,41 +2,142 @@
 
 use std::borrow::Cow;
 
+use icu_collections::codepointinvliststringlist::{CodePointInversionListAndStringList, CodePointInversionListAndStringListULE};
 use zerovec::*;
 
-struct Transliterator {
-    filter: Option<UnicodeSet>,
-    // required for the case where the first RuleSet appears before the first recursive ID
-    prefix_rule_set: Option<RuleSet>,
-    groups: Vec<TransliterationGroup>,
-}
+type UnicodeSet<'a> = CodePointInversionListAndStringList<'a>;
 
+
+// The datastruct for a full rule file (modulo naming and direction, direction is assumed forward)
 /*
+# Valid syntax is as such:
+filter?       
+(recursive_simple_id | conversion_rule)*
 
-optional filter
-conversionrule?
-(recursive id, conversion rule*)*
+# because of semantics, I want to represent contiguous conversion_rules as a single block.
+# the following "parsed" syntax enforces this:
+# note that the prefix conversion_rule_list can be empty, as can the other conversion_rule_lists
+
+filter?
+conversion_rule_list
+(recursive_simple_id conversion_rule_list)*
 
 
+
+
+LEGEND:
+<filter> ::=                '::' <unicode-set> ';'
+<recursive_simple_id> ::=   '::' <unicode-set>? (<source-name> '-')<target-name>('/' <variant-name>)? ';'
+<conversion_rule> ::=       <source_matcher>+ '>' <replacer>* ';'
+<conversion_rule_list> ::=  <conversion_rule>*
  */
+#[derive(serde::Serialize, serde::Deserialize)]
+struct Transliterator<'a> {
+    // `false` for transliterators that should not be exposed to clients, such as using some InterIndic source/target as root
+    visibility: bool,
+    variable_table: VarTable<'a>,
+
+    // only characters in this set are affected by the transliterator. None is equivalent to the full set
+    // because of ULE things, removing the Option<> and adopting full = None semantics might be easier. 
+    // filter?
+    filter: UnicodeSet<'a>,
+    // required for the case where the first RuleSet appears before the first recursive ID
+    // conversion_rule_list
+    prefix_rule_set: RuleSet<'a>,
+    // (recursive_simple_id conversion_rule_list)*
+    groups: VarZeroVec<'a, TransliterationGroupULE>,
+}
 
 // exactly one of:    :: Any-Any ;
 // zero or more of:   x > b ; a > b ; ...
-struct TransliterationGroup {
+#[make_varule(TransliterationGroupULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Serialize, Deserialize)]
+struct TransliterationGroup<'a> {
     // :: Any-Any ;
     // exactly one
-    inner: SimpleID,
+    #[zerovec::varule(SimpleIDULE)]
+    inner: SimpleID<'a>,
     // x > b ; a > b ; ...
     // zero or more
-    rules: RuleSet,
+    #[zerovec::varule(RuleSetULE)]
+    rules: RuleSet<'a>,
 }
 
-struct RuleSet(Vec<Rule>);
+// replaced directly by the inner vec
+#[make_varule(RuleSetULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Serialize, Deserialize)]
+struct RuleSet<'a>(VarZeroVec<'a, RuleULE>);
 
 // e.g.: [a-z] Any-Remove/BGN;
 // but actually, in BCP47: [a-z] und
-struct SimpleID {
-    filter: Option<UnicodeSet>,
+#[derive(Debug, Clone)]
+#[make_varule(SimpleIDULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Serialize, Deserialize)]
+struct SimpleID<'a> {
+    #[zerovec::varule(CodePointInversionListAndStringListULE)]
+    filter: UnicodeSet<'a>,
     // TODO: Discuss if this should be in auxiliary
     translit: Cow<'a, str>,
+}
+
+#[make_varule(RuleULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Serialize, Deserialize)]
+struct Rule<'a> {
+    // special case matchers (such as segments, quantifiers, unicodesets, variables...) are represented as chars in the PUA
+    ante: Cow<'a, str>,
+    key: Cow<'a, str>,
+    post: Cow<'a, str>,
+
+    // special case replacers (such as variables, backrefs, function calls)
+    replacer: Cow<'a, str>,
+}
+
+
+
+// struct MatcherTable<'a> {
+    
+// }
+
+// struct ReplacerTable<'a> {
+    
+// }
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct VarTable<'a> {
+    // Examples:
+    // $a = hello ;
+    // $b = $a ' ' world ;
+    //
+    // is: $a => PUA_offset + 0, $b => PUA_offset + 1
+    // and compounds: ["hello", "<PUA_offset + 0> world"]
+    compounds: VarZeroVec<'a, str>,
+
+    // having quantifiers_opt: ["<PUA_offset + 5> world"] is the representation of
+    // "(?:<some special matcher that has ID 5> ' ' world)?" in the rules  (if ?: was valid non-capturing syntax)
+    //
+    //
+    quantifiers_opt: VarZeroVec<'a, str>, 
+    // zero or more
+    quantifiers_kleene: VarZeroVec<'a, str>, 
+    // one or more
+    quantifiers_kleene_plus: VarZeroVec<'a, str>, 
+
+    segments: VarZeroVec<'a, str>,
+
+
+    function_calls: VarZeroVec<'a, FunctionCallULE>,
+}
+
+#[derive(Debug, Clone)]
+#[make_varule(FunctionCallULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Serialize, Deserialize)]
+struct FunctionCall<'a> {
+    #[zerovec::varule(SimpleIDULE)]
+    translit: SimpleID<'a>,
+    arg: Cow<'a, str>,
 }
