@@ -7,7 +7,7 @@
 FORCE:
 
 ALL_HEADERS := $(wildcard ../../include/*.h)
-ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-08-25"
+ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-09-26"
 
 $(ALL_HEADERS):
 
