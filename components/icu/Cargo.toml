@@ -6,7 +6,7 @@
 name = "icu"
 description = "International Components for Unicode"
 version = "1.2.0"
-rust-version = "1.64.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

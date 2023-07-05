@@ -5,7 +5,7 @@
 [package]
 name = "litemap"
 version = "0.7.0"
-rust-version = "1.64.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
 edition = "2021"
