@@ -1125,7 +1125,6 @@ impl Astronomical {
 mod tests {
 
     use super::*;
-    use alloc::vec;
 
     // Constants applied to provide a margin of error when comparing floating-point values in tests.
     const TEST_LOWER_BOUND_FACTOR: f64 = 0.9999999;
@@ -1570,9 +1569,10 @@ mod tests {
         ];
 
         for (rd, expected_val) in rd_vals.iter().zip(expected_values.iter()) {
-            let moment: Moment = Moment::new(*rd as f64);
+            let moment: Moment = Moment::new(*rd);
             let moonset_val = Astronomical::moonset(moment, MECCA);
             let expected_moonset_val = *expected_val;
+            #[allow(clippy::unnecessary_unwrap)]
             if moonset_val.is_none() {
                 assert_eq!(expected_moonset_val, 0.0);
             } else {
