@@ -9,11 +9,11 @@ use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
     codepointinvliststringlist::CodePointInversionListAndStringList,
 };
-use icu_properties::maps::{load_general_category, load_script};
+use icu_properties::maps::load_script;
 use icu_properties::script::load_script_with_extensions_unstable;
 use icu_properties::sets::{load_for_ecma262_unstable, load_for_general_category_group};
+use icu_properties::Script;
 use icu_properties::{provider::*, GeneralCategoryGroup};
-use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
