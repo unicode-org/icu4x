@@ -132,13 +132,14 @@ impl<'data> CaseMapV1<'data> {
     // IS_TITLE_CONTEXT must be true if kind is MappingKind::Title
     // The kind may be a different kind with IS_TITLE_CONTEXT still true because
     // titlecasing a segment involves switching to lowercase later
-    fn full_helper<const IS_TITLE_CONTEXT: bool>(
+    fn full_helper<const IS_TITLE_CONTEXT: bool, W: fmt::Write + ?Sized>(
         &self,
         c: char,
         context: ContextIterator,
         locale: CaseMapLocale,
         kind: MappingKind,
-    ) -> FullMappingResult {
+        sink: &mut W,
+    ) -> fmt::Result {
         // If using a title mapping IS_TITLE_CONTEXT must be true
         debug_assert!(kind != MappingKind::Title || IS_TITLE_CONTEXT);
         // In a title context, kind MUST be Title or Lower
@@ -154,7 +155,7 @@ impl<'data> CaseMapV1<'data> {
             // should also uppercase. They are both allowed to have an acute accent but it must
             // be present on both letters or neither. They may not have any other combining marks.
             if (c == 'j' || c == 'J') && context.is_dutch_ij_pair_at_beginning(self) {
-                return FullMappingResult::CodePoint('J');
+                return sink.write_char('J')
             }
         }
 
@@ -171,7 +172,7 @@ impl<'data> CaseMapV1<'data> {
             if greek_to_me::is_greek_diacritic_except_ypogegrammeni(c)
                 && context.preceded_by_greek_letter()
             {
-                return FullMappingResult::Remove;
+                return Ok(());
             }
             let data = greek_to_me::GREEK_DATA_TRIE.get(c);
             // Check if the character is a Greek character with an associated uppercase base character
@@ -200,7 +201,7 @@ impl<'data> CaseMapV1<'data> {
                 // Calculate the letter it should be mapped to and a corresponding combining mark
                 // if any
                 // In most branches the letter is `upper_base`, i.e. the character with all accents removed
-                return match upper_base {
+                match upper_base {
                     'Η' => {
                         // Eta is allowed to retain a tonos when it is an only word to distinguish
                         // the word for 'or' from the feminine marker.
@@ -214,75 +215,38 @@ impl<'data> CaseMapV1<'data> {
                             && !diacritics.ypogegrammeni
                         {
                             if precomposed_diacritics.accented {
-                                if diacritics.dialytika {
-                                    FullMappingResult::TwoCodePoints('Ή', greek_to_me::DIALYTIKA)
-                                } else {
-                                    FullMappingResult::CodePoint('Ή')
-                                }
+                                sink.write_char('Ή')?;
                             } else {
-                                if diacritics.dialytika {
-                                    FullMappingResult::ThreeCodePoints(
-                                        'Η',
-                                        greek_to_me::TONOS,
-                                        greek_to_me::DIALYTIKA,
-                                    )
-                                } else {
-                                    FullMappingResult::TwoCodePoints('Η', greek_to_me::TONOS)
-                                }
+                                sink.write_char('Η')?;
+                                sink.write_char(greek_to_me::TONOS)?;
                             }
                         } else {
-                            FullMappingResult::CodePoint('Η')
+                            sink.write_char('Η')?;
                         }
                     }
                     // Iota and upsilon have precomposed dialytika variants which we can use
-                    'Ι' | 'Υ' => {
-                        if precomposed_diacritics.dialytika || !diacritics.dialytika {
-                            let base = if precomposed_diacritics.dialytika {
-                                match upper_base {
-                                    'Ι' => 'Ϊ',
-                                    'Υ' => 'Ϋ',
-                                    _ => unreachable!("meow")
-                                }
-                            } else {
-                                upper_base
-                            };
-                            if precomposed_diacritics.ypogegrammeni {
-                                FullMappingResult::TwoCodePoints(base, 'Ι')
-                            } else {
-                                FullMappingResult::CodePoint(base)
-                            }
-                        } else {
-                            if precomposed_diacritics.ypogegrammeni {
-                                FullMappingResult::ThreeCodePoints(
-                                    upper_base,
-                                    greek_to_me::DIALYTIKA,
-                                    'Ι',
-                                )
-                            } else {
-                                FullMappingResult::TwoCodePoints(upper_base, greek_to_me::DIALYTIKA)
-                            }
-                        }
-                    }
-                    _ => {
-                        if diacritics.dialytika {
-                            if precomposed_diacritics.ypogegrammeni {
-                                FullMappingResult::ThreeCodePoints(
-                                    upper_base,
-                                    greek_to_me::DIALYTIKA,
-                                    'Ι',
-                                )
-                            } else {
-                                FullMappingResult::TwoCodePoints(upper_base, greek_to_me::DIALYTIKA)
-                            }
-                        } else {
-                            if precomposed_diacritics.ypogegrammeni {
-                                FullMappingResult::TwoCodePoints(upper_base, 'Ι')
-                            } else {
-                                FullMappingResult::CodePoint(upper_base)
-                            }
-                        }
-                    }
+                    'Ι' => sink.write_char(if precomposed_diacritics.dialytika {
+                        diacritics.dialytika = false;
+                        'Ϊ'
+                    } else {
+                        upper_base
+                    })?,
+                    'Υ' => sink.write_char(if precomposed_diacritics.dialytika {
+                        diacritics.dialytika = false;
+                        'Ϋ'
+                    } else {
+                        upper_base
+                    })?,
+                    _ => sink.write_char(upper_base)?,
                 };
+
+                if diacritics.dialytika {
+                    sink.write_char(greek_to_me::DIALYTIKA)?;
+                }
+                if precomposed_diacritics.ypogegrammeni {
+                    sink.write_char('Ι')?;
+                }
+                return Ok(());
             }
         }
 
@@ -292,9 +256,9 @@ impl<'data> CaseMapV1<'data> {
                 let mapped = c as i32 + data.delta() as i32;
                 // GIGO: delta should be valid
                 let mapped = char::from_u32(mapped as u32).unwrap_or(c);
-                FullMappingResult::CodePoint(mapped)
+                sink.write_char(mapped)
             } else {
-                FullMappingResult::CodePoint(c)
+                sink.write_char(c)
             }
         } else {
             let idx = data.exception_index();
@@ -308,27 +272,27 @@ impl<'data> CaseMapV1<'data> {
                     MappingKind::Upper | MappingKind::Title => self
                         .full_upper_or_title_special_case::<IS_TITLE_CONTEXT>(c, context, locale),
                 } {
-                    return special;
+                    return special.write_to(sink);
                 }
             }
             if let Some(mapped_string) = exception.get_fullmappings_slot_for_kind(kind) {
                 if !mapped_string.is_empty() {
-                    return FullMappingResult::String(mapped_string);
+                    return sink.write_str(mapped_string);
                 }
             }
             if data.is_relevant_to(kind) {
                 if let Some(simple) = exception.get_simple_case_slot_for(c) {
-                    return FullMappingResult::CodePoint(simple);
+                    return sink.write_char(simple);
                 }
             }
             if kind == MappingKind::Fold && exception.bits.no_simple_case_folding() {
-                return FullMappingResult::CodePoint(c);
+                return sink.write_char(c);
             }
 
             if let Some(slot_char) = exception.slot_char_for_kind(kind) {
-                FullMappingResult::CodePoint(slot_char)
+                sink.write_char(slot_char)
             } else {
-                FullMappingResult::CodePoint(c)
+                sink.write_char(c)
             }
         }
     }
@@ -500,60 +464,20 @@ impl<'data> CaseMapV1<'data> {
         impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
             #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
             fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-                // To speed up the copying of long runs where nothing changes, we keep track
-                // of the start of the uncopied chunk, and don't copy it until we have to.
-                let mut last_uncopied_idx = 0;
-
                 let src = self.src;
                 let mut mapping = self.mapping;
                 for (i, c) in src.char_indices() {
                     let context = ContextIterator::new(&src[..i], &src[i..]);
-                    match self.data.full_helper::<IS_TITLE_CONTEXT>(
+                    self.data.full_helper::<IS_TITLE_CONTEXT, W>(
                         c,
                         context,
                         self.locale,
                         mapping,
-                    ) {
-                        FullMappingResult::CodePoint(c2) => {
-                            if c == c2 {
-                                if IS_TITLE_CONTEXT {
-                                    mapping = MappingKind::Lower;
-                                }
-                                continue;
-                            }
-                            sink.write_str(&src[last_uncopied_idx..i])?;
-                            sink.write_char(c2)?;
-                            last_uncopied_idx = i + c.len_utf8();
-                        }
-                        FullMappingResult::TwoCodePoints(c2, c3) => {
-                            sink.write_str(&src[last_uncopied_idx..i])?;
-                            sink.write_char(c2)?;
-                            sink.write_char(c3)?;
-                            last_uncopied_idx = i + c.len_utf8();
-                        }
-                        FullMappingResult::ThreeCodePoints(c2, c3, c4) => {
-                            sink.write_str(&src[last_uncopied_idx..i])?;
-                            sink.write_char(c2)?;
-                            sink.write_char(c3)?;
-                            sink.write_char(c4)?;
-                            last_uncopied_idx = i + c.len_utf8();
-                        }
-                        FullMappingResult::Remove => {
-                            sink.write_str(&src[last_uncopied_idx..i])?;
-                            last_uncopied_idx = i + c.len_utf8();
-                        }
-                        FullMappingResult::String(s) => {
-                            sink.write_str(&src[last_uncopied_idx..i])?;
-                            sink.write_str(s)?;
-                            last_uncopied_idx = i + c.len_utf8();
-                        }
-                    }
+                        sink,
+                    )?;
                     if IS_TITLE_CONTEXT {
                         mapping = MappingKind::Lower;
                     }
-                }
-                if last_uncopied_idx < src.len() {
-                    sink.write_str(&src[last_uncopied_idx..])?;
                 }
                 Ok(())
             }
@@ -704,8 +628,6 @@ pub enum FullMappingResult<'a> {
     Remove,
     CodePoint(char),
     String(&'a str),
-    TwoCodePoints(char, char),
-    ThreeCodePoints(char, char, char),
 }
 
 impl<'a> FullMappingResult<'a> {
@@ -713,17 +635,18 @@ impl<'a> FullMappingResult<'a> {
     fn add_to_set<S: ClosureSet>(&self, set: &mut S) {
         match self {
             FullMappingResult::CodePoint(c) => set.add_char(*c),
-            FullMappingResult::TwoCodePoints(c1, c2) => {
-                set.add_char(*c1);
-                set.add_char(*c2)
-            }
-            FullMappingResult::ThreeCodePoints(c1, c2, c3) => {
-                set.add_char(*c1);
-                set.add_char(*c2);
-                set.add_char(*c3)
-            }
             FullMappingResult::String(s) => set.add_string(s),
             FullMappingResult::Remove => {}
+        }
+    }
+}
+
+impl Writeable for FullMappingResult<'_> {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        match self {
+            FullMappingResult::CodePoint(c) => sink.write_char(*c),
+            FullMappingResult::String(s) => sink.write_str(s),
+            FullMappingResult::Remove => Ok(()),
         }
     }
 }
