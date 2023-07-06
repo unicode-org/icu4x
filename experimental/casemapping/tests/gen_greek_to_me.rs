@@ -7,7 +7,6 @@ use icu_casemap::greek_to_me::{self, GreekPrecomposedLetterData};
 use icu_casemap::CaseMapper;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_collections::codepointtrie::{CodePointTrie, TrieType};
-use icu_locid::langid;
 use icu_normalizer::DecomposingNormalizer;
 use icu_properties::{maps, GeneralCategoryGroup, Script};
 use std::fs;
@@ -58,7 +57,7 @@ fn main() {
                             panic!("Found multiple letters within decomposition of {ch}");
                         }
                         let uppercased = cm.uppercase_to_string(
-                            &letter.encode_utf8(&mut [0; 4]),
+                            letter.encode_utf8(&mut [0; 4]),
                             &Default::default(),
                         );
                         let mut iter = uppercased.chars();
