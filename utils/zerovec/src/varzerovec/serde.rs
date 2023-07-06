@@ -172,7 +172,7 @@ where
                 "&VarZeroSlice cannot be deserialized from human-readable formats",
             ))
         } else {
-            let visitor = VarZeroSliceRefVisitor::default();
+            let visitor: VarZeroSliceRefVisitor<T, F> = VarZeroSliceRefVisitor::default();
             let deserialized: &'a VarZeroSlice<_, _> = deserializer.deserialize_bytes(visitor)?;
             Ok(deserialized)
         }

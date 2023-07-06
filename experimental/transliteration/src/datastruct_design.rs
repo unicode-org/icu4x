@@ -50,23 +50,23 @@ struct Transliterator<'a> {
     rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
 }
 
-// exactly one of:    :: Any-Any ;
-// zero or more of:   x > b ; a > b ; ...
-#[make_varule(TransliterationGroupULE)]
-#[zerovec::skip_derive(Ord)]
-#[zerovec::derive(Serialize, Deserialize)]
-#[derive(serde::Serialize, serde::Deserialize)]
-struct TransliterationGroup<'a> {
-    // :: Any-Any ;
-    // exactly one
-    #[zerovec::varule(SimpleIDULE)]
-    #[serde(borrow)]
-    inner: SimpleID<'a>,
-    // x > b ; a > b ; ...
-    // zero or more
-    #[serde(borrow)]
-    rules: VarZeroVec<'a, RuleULE>,
-}
+// // exactly one of:    :: Any-Any ;
+// // zero or more of:   x > b ; a > b ; ...
+// #[make_varule(TransliterationGroupULE)]
+// #[zerovec::skip_derive(Ord)]
+// #[zerovec::derive(Serialize, Deserialize)]
+// #[derive(serde::Serialize, serde::Deserialize)]
+// struct TransliterationGroup<'a> {
+//     // :: Any-Any ;
+//     // exactly one
+//     #[zerovec::varule(SimpleIDULE)]
+//     #[serde(borrow)]
+//     inner: SimpleID<'a>,
+//     // x > b ; a > b ; ...
+//     // zero or more
+//     #[serde(borrow)]
+//     rules: VarZeroVec<'a, RuleULE>,
+// }
 
 // replaced directly by the inner vec
 // #[make_varule(RuleSetULE)]
@@ -161,6 +161,7 @@ struct FunctionCall<'a> {
 #[cfg(test)]
 mod tests {
     use icu_collections::codepointinvlist::CodePointInversionList;
+    use zerofrom::ZeroFrom;
 
     use super::*;
 
@@ -172,9 +173,6 @@ mod tests {
         
         // filter
         let filter = all_filter.clone();
-
-        // prefix
-        let prefix = VarZeroVec::new();
 
         // groups
         let simple_id = SimpleID {
@@ -188,11 +186,7 @@ mod tests {
             replacer: "X".into(),
         };
         let rules = VarZeroVec::from(&[rule.clone()]);
-        let group = TransliterationGroup {
-            inner: simple_id.clone(),
-            rules: rules,
-        };
-        let groups = VarZeroVec::from(&[group]); 
+        let ids = VarZeroVec::from(&[simple_id.clone()]);
 
         // vartable
         let function_call = FunctionCall {
@@ -205,21 +199,28 @@ mod tests {
             quantifiers_kleene: VarZeroVec::new(),
             segments: VarZeroVec::new(),
             quantifiers_opt: VarZeroVec::new(),
+            unicode_sets: VarZeroVec::from(&[all_filter.clone()]),
             function_calls: VarZeroVec::from(&[function_call]),
         };
 
         let transliterator = Transliterator {
             visibility: true,
             filter: filter,
-            prefix_rule_set: prefix,
-            groups: groups,
             variable_table: var_table,
+            id_group_list: VarZeroVec::from(&[ids]),
+            rule_group_list: VarZeroVec::from(&[rules]),
         };
 
-        let x: &VarZeroSlice<RuleULE> = unsafe {transliterator.groups.get(0).unwrap().unsized_fields.get_field(1)};
+        let x: &VarZeroSlice<RuleULE> = transliterator.rule_group_list.get(0).unwrap();
         let post: &str = unsafe {x.get(0).unwrap().unsized_fields.get_field(2)};
-
         assert_eq!(post, rule.post);
+
+        let post_zero = x.get(0).unwrap();
+        let post_zero: Rule = ZeroFrom::zero_from(post_zero);
+        let post_zero = post_zero.post;
+        assert_eq!(post_zero, rule.post);
+
+
 
         
 

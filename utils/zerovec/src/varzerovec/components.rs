@@ -208,8 +208,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             marker: PhantomData,
         };
 
-        std::dbg!("reached");
-
         borrowed.check_indices_and_things()?;
 
         Ok(borrowed)
@@ -335,8 +333,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 return Ok(());
             }
         }
-        std::dbg!(self.indices);
-        std::dbg!(self.things);
         // Safety: i is in bounds (assertion above)
         let mut start = F::rawbytes_to_usize(unsafe { *self.indices_slice().get_unchecked(0) });
         if start != 0 {

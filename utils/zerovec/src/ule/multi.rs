@@ -40,21 +40,17 @@ impl MultiFieldsULE {
         output: &'a mut [u8],
     ) -> &'a mut Self {
         unsafe {
-            std::println!("lengths: {lengths:?}");
             // safe since BlankSliceEncoder is transparent over usize
             let lengths = &*(lengths as *const [usize] as *const [BlankSliceEncoder]);
             crate::varzerovec::components::write_serializable_bytes::<_, _, Index32>(
                 lengths, output,
             );
-            std::println!("{:?}", <VarZeroSlice<[u8], Index32>>::validate_byte_slice(output));
-            std::println!("output: {output:?}");
             debug_assert!(
                 <VarZeroSlice<[u8], Index32>>::validate_byte_slice(output).is_ok(),
                 "Encoded slice must be valid VarZeroSlice"
             );
             // Safe since write_serializable_bytes produces a valid VarZeroSlice buffer
             let slice = <VarZeroSlice<[u8], Index32>>::from_byte_slice_unchecked_mut(output);
-            std::println!("from_byte_slice");
             // safe since `Self` is transparent over VarZeroSlice
             mem::transmute::<&mut VarZeroSlice<_, Index32>, &mut Self>(slice)
         }
