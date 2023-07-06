@@ -119,7 +119,7 @@ impl FromStr for EraStartDate {
     "datetime/week_data@1",
     fallback_by = "region"
 ))]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
