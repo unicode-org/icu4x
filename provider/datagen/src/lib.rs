@@ -332,7 +332,6 @@ impl DatagenProvider {
                                 let payload = get_payload(provider, key, &locale)?;
                                 let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                                 loop {
-                                    iter.step();
                                     if payloads.read().expect("poison").get(iter.get())
                                         == Some(&payload)
                                     {
@@ -342,6 +341,7 @@ impl DatagenProvider {
                                     if iter.get().is_empty() {
                                         break;
                                     }
+                                    iter.step();
                                 }
                                 payloads
                                     .write()
