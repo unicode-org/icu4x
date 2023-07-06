@@ -17,11 +17,9 @@ filter?
 
 # because of semantics, I want to represent contiguous conversion_rules as a single block.
 # the following "parsed" syntax enforces this:
-# note that the prefix conversion_rule_list can be empty, as can the other conversion_rule_lists
 
 filter?
-conversion_rule_list
-(recursive_simple_id conversion_rule_list)*
+(recursive_simple_id_list conversion_rule_list)*
 
 
 
@@ -31,6 +29,7 @@ LEGEND:
 <recursive_simple_id> ::=   '::' <unicode-set>? (<source-name> '-')<target-name>('/' <variant-name>)? ';'
 <conversion_rule> ::=       <source_matcher>+ '>' <replacer>* ';'
 <conversion_rule_list> ::=  <conversion_rule>*
+<recursive_simple_id_list> ::=  <recursive_simple_id>*
  */
 #[derive(serde::Serialize, serde::Deserialize)]
 struct Transliterator<'a> {
@@ -43,13 +42,12 @@ struct Transliterator<'a> {
     // filter?
     #[serde(borrow)]
     filter: UnicodeSet<'a>,
-    // required for the case where the first RuleSet appears before the first recursive ID
-    // conversion_rule_list
+    // (recursive_simple_id_list conversion_rule_list)* is represented as a VZV of IDs and a VZV of conversion_rules, with the (weak) invariant
+    // that IDs_list[i] is before CRULEs_list[i], eg <id> <id> <rule> <rule> <rule> <id> is represented as ids: [[<id>, <id>], [<id>]], rules: [[<rule>, <rule>, <rule>], []] 
     #[serde(borrow)]
-    prefix_rule_set: VarZeroVec<'a, RuleULE>,
-    // (recursive_simple_id conversion_rule_list)*
+    id_group_list: VarZeroVec<'a, VarZeroSlice<SimpleID>>,
     #[serde(borrow)]
-    groups: VarZeroVec<'a, TransliterationGroupULE>,
+    rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
 }
 
 // exactly one of:    :: Any-Any ;
@@ -139,6 +137,9 @@ struct VarTable<'a> {
 
     #[serde(borrow)]
     segments: VarZeroVec<'a, str>,
+
+    #[serde(borrow)]
+    unicode_sets: VarZeroVec<'a, UnicodeSet<'a>>,
 
     #[serde(borrow)]
     function_calls: VarZeroVec<'a, FunctionCallULE>,
