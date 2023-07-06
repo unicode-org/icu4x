@@ -425,7 +425,9 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
 
-    // TODO: Implement last fn for this trait
+    fn new_chinese_based_date<Chinese>(year: i32, month: u8, day: u8) -> Date<Chinese> {
+        Date::try_new_chinese_date(year, month, day).unwrap()
+    }
 }
 
 impl Chinese {

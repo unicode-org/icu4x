@@ -4,7 +4,7 @@
 
 //! TODO: Documentation
 
-use crate::{rata_die::RataDie, astronomy::{Location, Astronomical, MEAN_TROPICAL_YEAR, MEAN_SYNODIC_MONTH}, helpers::{i64_to_i32, adjusted_rem_euclid, quotient, I32Result}, types::{Moment, Era}, Calendar, Date, calendar_arithmetic::{CalendarArithmetic, ArithmeticDate}};
+use crate::{rata_die::RataDie, astronomy::{Location, Astronomical, MEAN_TROPICAL_YEAR, MEAN_SYNODIC_MONTH}, helpers::{i64_to_i32, adjusted_rem_euclid, quotient, I32Result}, types::{Moment, Era}, Calendar, Date, calendar_arithmetic::{CalendarArithmetic, ArithmeticDate}, AsCalendar};
 
 pub(crate) struct ChineseBasedDateInner<C: ChineseBased + CalendarArithmetic>(ArithmeticDate<C>);
 
@@ -186,7 +186,7 @@ pub(crate) trait ChineseBased {
     /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
     /// 
     /// This function should just call try_new_C_date where C is the name of the calendar.
-    fn new_chinese_based_date<C: CalendarArithmetic + ChineseBased>(year: i32, month: u8, day: u8) -> Date<C>;
+    fn new_chinese_based_date<C: CalendarArithmetic + ChineseBased + AsCalendar>(year: i32, month: u8, day: u8) -> Date<C>;
 
     /// Get a RataDie from a ChineseBasedDateInner
     /// 
