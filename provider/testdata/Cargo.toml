@@ -2,10 +2,15 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+# This crate is slated for deletion. It is kept around to keep the crates tutorials working,
+# as we need the in-repo version to have baked data compatible with in-repo changes (due to
+# changes in provider modules).
+
 [package]
 name = "icu_testdata"
 description = "Pre-built test data for ICU4X"
 version = "1.2.0"
+publish = false
 rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
