@@ -45,7 +45,7 @@ struct Transliterator<'a> {
     // (recursive_simple_id_list conversion_rule_list)* is represented as a VZV of IDs and a VZV of conversion_rules, with the (weak) invariant
     // that IDs_list[i] is before CRULEs_list[i], eg <id> <id> <rule> <rule> <rule> <id> is represented as ids: [[<id>, <id>], [<id>]], rules: [[<rule>, <rule>, <rule>], []] 
     #[serde(borrow)]
-    id_group_list: VarZeroVec<'a, VarZeroSlice<SimpleID>>,
+    id_group_list: VarZeroVec<'a, VarZeroSlice<SimpleIDULE>>,
     #[serde(borrow)]
     rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
 }
@@ -139,7 +139,7 @@ struct VarTable<'a> {
     segments: VarZeroVec<'a, str>,
 
     #[serde(borrow)]
-    unicode_sets: VarZeroVec<'a, UnicodeSet<'a>>,
+    unicode_sets: VarZeroVec<'a, CodePointInversionListAndStringListULE>,
 
     #[serde(borrow)]
     function_calls: VarZeroVec<'a, FunctionCallULE>,
@@ -220,6 +220,9 @@ mod tests {
         let post: &str = unsafe {x.get(0).unwrap().unsized_fields.get_field(2)};
 
         assert_eq!(post, rule.post);
+
+        
+
         ()
     }
 }

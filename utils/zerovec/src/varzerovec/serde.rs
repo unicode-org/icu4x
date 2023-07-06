@@ -88,52 +88,52 @@ where
     }
 }
 
-// impl<'de, T, F> Visitor<'de> for VarZeroSliceBoxVisitor<T, F>
-// where
-//     T: VarULE + ?Sized,
-//     Box<T>: Deserialize<'de>,
-//     F: VarZeroVecFormat,
-// {
-//     type Value = Box<VarZeroSlice<T, F>>;
+impl<'de, T, F> Visitor<'de> for VarZeroSliceBoxVisitor<T, F>
+where
+    T: VarULE + ?Sized,
+    Box<T>: Deserialize<'de>,
+    F: VarZeroVecFormat,
+{
+    type Value = Box<VarZeroSlice<T, F>>;
 
-//     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-//         formatter.write_str("a sequence or borrowed buffer of bytes")
-//     }
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a sequence or borrowed buffer of bytes")
+    }
 
-//     fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-//     where
-//         A: SeqAccess<'de>,
-//     {
-//         let mut vec: Vec<Box<T>> = if let Some(capacity) = seq.size_hint() {
-//             Vec::with_capacity(capacity)
-//         } else {
-//             Vec::new()
-//         };
-//         while let Some(value) = seq.next_element::<Box<T>>()? {
-//             vec.push(value);
-//         }
-//         Ok(VarZeroVec::from(&vec).to_boxed())
-//     }
-// }
+    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+    where
+        A: SeqAccess<'de>,
+    {
+        let mut vec: Vec<Box<T>> = if let Some(capacity) = seq.size_hint() {
+            Vec::with_capacity(capacity)
+        } else {
+            Vec::new()
+        };
+        while let Some(value) = seq.next_element::<Box<T>>()? {
+            vec.push(value);
+        }
+        Ok(VarZeroVec::from(&vec).to_boxed())
+    }
+}
 
-// impl<'de, T, F> Visitor<'de> for VarZeroSliceRefVisitor<T, F>
-// where
-//     T: VarULE + ?Sized,
-//     F: VarZeroVecFormat,
-// {
-//     type Value = &'de VarZeroSlice<T, F>;
+impl<'de, T, F> Visitor<'de> for VarZeroSliceRefVisitor<T, F>
+where
+    T: VarULE + ?Sized,
+    F: VarZeroVecFormat,
+{
+    type Value = &'de VarZeroSlice<T, F>;
 
-//     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-//         formatter.write_str("a sequence or borrowed buffer of bytes")
-//     }
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a sequence or borrowed buffer of bytes")
+    }
 
-//     fn visit_borrowed_bytes<E>(self, bytes: &'de [u8]) -> Result<Self::Value, E>
-//     where
-//         E: de::Error,
-//     {
-//         VarZeroSlice::parse_byte_slice(bytes).map_err(de::Error::custom)
-//     }
-// }
+    fn visit_borrowed_bytes<E>(self, bytes: &'de [u8]) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        VarZeroSlice::parse_byte_slice(bytes).map_err(de::Error::custom)
+    }
+}
 
 /// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
 impl<'de, 'a, T, F> Deserialize<'de> for VarZeroVec<'a, T, F>
@@ -147,7 +147,7 @@ where
     where
         D: Deserializer<'de>,
     {
-        let visitor = VarZeroVecVisitor::default();
+        let visitor: VarZeroVecVisitor<T, F> = VarZeroVecVisitor::default();
         if deserializer.is_human_readable() {
             deserializer.deserialize_seq(visitor)
         } else {
@@ -167,16 +167,15 @@ where
     where
         D: Deserializer<'de>,
     {
-        // if deserializer.is_human_readable() {
-        //     Err(de::Error::custom(
-        //         "&VarZeroSlice cannot be deserialized from human-readable formats",
-        //     ))
-        // } else {
-        //     let visitor = VarZeroSliceRefVisitor::default();
-        //     let deserialized: &'a VarZeroSlice<_, _> = deserializer.deserialize_bytes(visitor)?;
-        //     Ok(deserialized)
-        // }
-        panic!()
+        if deserializer.is_human_readable() {
+            Err(de::Error::custom(
+                "&VarZeroSlice cannot be deserialized from human-readable formats",
+            ))
+        } else {
+            let visitor = VarZeroSliceRefVisitor::default();
+            let deserialized: &'a VarZeroSlice<_, _> = deserializer.deserialize_bytes(visitor)?;
+            Ok(deserialized)
+        }
     }
 }
 
@@ -192,8 +191,15 @@ where
     where
         D: Deserializer<'de>,
     {
-        // duplicate VZSlice visitor
-        panic!()
+        if deserializer.is_human_readable() {
+            let visitor: VarZeroSliceBoxVisitor<T, F> = VarZeroSliceBoxVisitor::default();
+            let deserialized: Box<VarZeroSlice<_, _>> = deserializer.deserialize_seq(visitor)?;
+            Ok(deserialized)
+        } else {
+            Err(de::Error::custom(
+                "Box<VarZeroSlice> should not be deserialized from byte-slice formats",
+            ))
+        }
     }
 }
 
@@ -252,11 +258,11 @@ mod test {
         _data: VarZeroVec<'data, VarZeroSlice<str>>,
     }
 
-    // #[derive(serde::Serialize, serde::Deserialize)]
-    // struct DeriveTest_VarZeroSlice<'data> {
-    //     #[serde(borrow)]
-    //     _data: &'data VarZeroSlice<str>,
-    // }
+    #[derive(serde::Serialize, serde::Deserialize)]
+    struct DeriveTest_VarZeroSlice<'data> {
+        #[serde(borrow)]
+        _data: &'data VarZeroSlice<str>,
+    }
 
     // ["foo", "bar", "baz", "dolor", "quux", "lorem ipsum"];
     const BYTES: &[u8] = &[
