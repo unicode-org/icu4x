@@ -192,9 +192,9 @@ macro_rules! diacritics {
     };
     // All diacritics containing a dialytika
     (DIALYTIKA_ALL) => { $crate::greek_to_me::DIALYTIKA | $crate::greek_to_me::DIALYTIKA_TONOS };
-    (DIALYTIKA) => { crate::greek_to_me::DIALYTIKA };
-    (DIALYTIKA_TONOS) => { crate::greek_to_me::DIALYTIKA_TONOS };
-    (YPOGEGRAMMENI) => { crate::greek_to_me::YPOGEGRAMMENI };
+    (DIALYTIKA) => { $crate::greek_to_me::DIALYTIKA };
+    (DIALYTIKA_TONOS) => { $crate::greek_to_me::DIALYTIKA_TONOS };
+    (YPOGEGRAMMENI) => { $crate::greek_to_me::YPOGEGRAMMENI };
     ($($i:ident)|+) => { $(diacritics!($i))|+};
 }
 

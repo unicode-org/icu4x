@@ -39,6 +39,7 @@ pub mod provider;
 mod set;
 
 #[doc(hidden)]
+#[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 pub mod greek_to_me;
 mod internals;
 
