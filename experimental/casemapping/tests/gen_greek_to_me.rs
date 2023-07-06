@@ -36,8 +36,7 @@ fn main() {
                 continue;
             }
 
-            let s = ch.encode_utf8(&mut encode_scratch);
-            let nfd = decomposer.normalize_utf8(s.as_bytes());
+            let nfd = decomposer.normalize_utf8(ch.encode_utf8(&mut [0; 4]).as_bytes());
 
             for nfd_ch in nfd.chars() {
                 match nfd_ch {
@@ -61,7 +60,7 @@ fn main() {
                             panic!("Found multiple letters within decomposition of {ch}");
                         }
                         let letter = letter.encode_utf8(&mut encode_scratch);
-                        let uppercased = cm.uppercase_to_string(&letter, &und);
+                        let uppercased = cm.uppercase_to_string(&letter, &Default::default());
                         let mut iter = uppercased.chars();
                         let uppercased = iter.next().unwrap();
                         assert!(
@@ -78,11 +77,10 @@ fn main() {
         vec.push(data)
     }
 
-    let data = CodePointTrieBuilderData::ValuesByCodePoint(&vec);
     let trie: CodePointTrie<GreekPrecomposedLetterData> = CodePointTrieBuilder {
-        data,
-        default_value: GreekPrecomposedLetterData::default(),
-        error_value: GreekPrecomposedLetterData::default(),
+        data: CodePointTrieBuilderData::ValuesByCodePoint(&vec),
+        default_value: Default::default(),
+        error_value: Default::default(),
         trie_type: TrieType::Small,
     }
     .build();
@@ -125,14 +123,9 @@ pub(crate) const GREEK_DATA_TRIE: CodePointTrie<'static, GreekPrecomposedLetterD
     }
     let output = String::from_utf8(output.stdout).expect("rustfmt output not utf-8");
 
-    let local = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR set");
-    let mut local = PathBuf::from(local);
-    local.push("src");
-    local.push("greek_to_me");
-    local.push("data.rs");
+    let local = Path::new(std::env!("CARGO_MANIFEST_DIR")).join("src/greek_to_me/data.rs");
 
-    let local = fs::read(local).expect("src/greek_to_me/data.rs should exist");
-    let local = str::from_utf8(&local).expect("src/greek_to_me/data.rs should be UTF-8");
+    let local = fs::read_to_string(local).expect("src/greek_to_me/data.rs should be a UTF-8 file");
 
     if local.trim() != output.trim() {
         println!(

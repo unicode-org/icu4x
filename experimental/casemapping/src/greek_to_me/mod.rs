@@ -173,7 +173,7 @@ macro_rules! diacritics {
     (ACCENTS) => {
         // https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5B%5Cu0300+%5Cu0301+%5Cu0342+%5Cu0302+%5Cu0303+%5Cu0311%5D&g=&i=
         '\u{0300}' // Polytonic βαρεία (varia), grave accent.
-        | crate::greek_to_me::TONOS // Polytonic οξεία (oxia) unified with monotonic τόνος (tonos), acute accent.
+        | $crate::greek_to_me::TONOS // Polytonic οξεία (oxia) unified with monotonic τόνος (tonos), acute accent.
         | '\u{0342}' // Polytonic περισπωμένη (perispomeni), often translated to circumflex.
         | '\u{0302}' // Circumflex accent, sometimes a lookalike of the περισπωμένη.
         | '\u{0303}' // Tilde, sometimes a lookalike of the περισπωμένη.
