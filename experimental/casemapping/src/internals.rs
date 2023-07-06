@@ -6,7 +6,7 @@
 //!
 //! Primarily, it implements methods on `CaseMapV1`, which contains the data model.
 
-use crate::greek_to_me::{self, GreekDiacritics};
+use crate::greek_to_me::{self, GreekCombiningCharacterSequenceDiacritics, GreekDiacritics};
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::CaseMapV1;
@@ -178,17 +178,29 @@ impl<'data> CaseMapV1<'data> {
             if let Some(upper_base) = data.greek_base_uppercase() {
                 // Get the diacritics on the character itself, and add any further combining diacritics
                 // from the context
-                let mut diacritics = context.add_greek_diacritics(data.diacritics());
+                let mut precomposed_diacritics = data.diacritics();
+                let mut diacritics = context.add_greek_diacritics(precomposed_diacritics);
                 // If the previous vowel had an accent (which would be removed) but no dialytika,
                 // and this is an iota or upsilon, add a dialytika since it is necessary to disambiguate
                 // the now-unaccented adjacent vowels from a digraph/diphthong
-                diacritics.dialytika = diacritics.dialytika
-                    || ((upper_base == 'Ι' || upper_base == 'Υ')
-                        && context.preceded_by_greek_accented_vowel_with_no_dialytika());
+                if !diacritics.dialytika && (upper_base == 'Ι' || upper_base == 'Υ') {
+                    if let Some(preceding_vowel) = context.preceding_greek_vowel_diacritics() {
+                        if !preceding_vowel.combining.dialytika
+                            && !preceding_vowel.precomposed.dialytika
+                        {
+                            if preceding_vowel.combining.accented {
+                                diacritics.dialytika = true;
+                            } else {
+                                precomposed_diacritics.dialytika =
+                                    preceding_vowel.precomposed.accented;
+                            }
+                        }
+                    }
+                }
                 // Calculate the letter it should be mapped to and a corresponding combining mark
                 // if any
                 // In most branches the letter is `upper_base`, i.e. the character with all accents removed
-                let (letter, combining) = match upper_base {
+                return match upper_base {
                     'Η' => {
                         // Eta is allowed to retain a tonos when it is an only word to distinguish
                         // the word for 'or' from the feminine marker.
@@ -199,58 +211,78 @@ impl<'data> CaseMapV1<'data> {
                         if diacritics.accented
                             && !context.followed_by_cased_letter(self)
                             && !context.preceded_by_cased_letter(self)
-                            && !diacritics.precomposed_ypogegrammeni
-                            && !diacritics.combining_ypogegrammeni
+                            && !diacritics.ypogegrammeni
                         {
-                            if diacritics.dialytika {
-                                ('Ή', Some(greek_to_me::DIALYTIKA))
+                            if precomposed_diacritics.accented {
+                                if diacritics.dialytika {
+                                    FullMappingResult::TwoCodePoints('Ή', greek_to_me::DIALYTIKA)
+                                } else {
+                                    FullMappingResult::CodePoint('Ή')
+                                }
                             } else {
-                                ('Ή', None)
+                                if diacritics.dialytika {
+                                    FullMappingResult::ThreeCodePoints(
+                                        'Η',
+                                        greek_to_me::TONOS,
+                                        greek_to_me::DIALYTIKA,
+                                    )
+                                } else {
+                                    FullMappingResult::TwoCodePoints('Η', greek_to_me::TONOS)
+                                }
                             }
                         } else {
-                            (upper_base, None)
+                            FullMappingResult::CodePoint('Η')
                         }
                     }
                     // Iota and upsilon have precomposed dialytika variants which we can use
-                    'Ι' => {
-                        if diacritics.dialytika {
-                            ('Ϊ', None)
+                    'Ι' | 'Υ' => {
+                        if precomposed_diacritics.dialytika || !diacritics.dialytika {
+                            let base = if precomposed_diacritics.dialytika {
+                                match upper_base {
+                                    'Ι' => 'Ϊ',
+                                    'Υ' => 'Ϋ',
+                                    _ => unreachable!("meow")
+                                }
+                            } else {
+                                upper_base
+                            };
+                            if precomposed_diacritics.ypogegrammeni {
+                                FullMappingResult::TwoCodePoints(base, 'Ι')
+                            } else {
+                                FullMappingResult::CodePoint(base)
+                            }
                         } else {
-                            (upper_base, None)
+                            if precomposed_diacritics.ypogegrammeni {
+                                FullMappingResult::ThreeCodePoints(
+                                    upper_base,
+                                    greek_to_me::DIALYTIKA,
+                                    'Ι',
+                                )
+                            } else {
+                                FullMappingResult::TwoCodePoints(upper_base, greek_to_me::DIALYTIKA)
+                            }
                         }
                     }
-                    'Υ' => {
-                        if diacritics.dialytika {
-                            ('Ϋ', None)
-                        } else {
-                            (upper_base, None)
-                        }
-                    }
-                    // For everyone else just remove the accents
                     _ => {
                         if diacritics.dialytika {
-                            (upper_base, Some(greek_to_me::DIALYTIKA))
+                            if precomposed_diacritics.ypogegrammeni {
+                                FullMappingResult::ThreeCodePoints(
+                                    upper_base,
+                                    greek_to_me::DIALYTIKA,
+                                    'Ι',
+                                )
+                            } else {
+                                FullMappingResult::TwoCodePoints(upper_base, greek_to_me::DIALYTIKA)
+                            }
                         } else {
-                            (upper_base, None)
+                            if precomposed_diacritics.ypogegrammeni {
+                                FullMappingResult::TwoCodePoints(upper_base, 'Ι')
+                            } else {
+                                FullMappingResult::CodePoint(upper_base)
+                            }
                         }
                     }
                 };
-                if let Some(mark) = combining {
-                    // Ypogegrammeni casemaps to capital iota.
-                    // We ignore combining_ypogegrammeni because that will automatically
-                    // uppercase to iota anyway
-                    if diacritics.precomposed_ypogegrammeni {
-                        return FullMappingResult::ThreeCodePoints(letter, mark, 'Ι');
-                    } else {
-                        return FullMappingResult::TwoCodePoints(letter, mark);
-                    }
-                } else {
-                    if diacritics.precomposed_ypogegrammeni {
-                        return FullMappingResult::TwoCodePoints(letter, 'Ι');
-                    } else {
-                        return FullMappingResult::CodePoint(letter);
-                    }
-                }
             }
         }
 
@@ -721,8 +753,10 @@ impl<'a> ContextIterator<'a> {
         greek_to_me::preceded_by_greek_letter(self.before)
     }
 
-    fn preceded_by_greek_accented_vowel_with_no_dialytika(&self) -> bool {
-        greek_to_me::preceded_by_greek_accented_vowel_with_no_dialytika(self.before)
+    fn preceding_greek_vowel_diacritics(
+        &self,
+    ) -> Option<GreekCombiningCharacterSequenceDiacritics> {
+        greek_to_me::preceding_greek_vowel_diacritics(self.before)
     }
 
     fn preceded_by_soft_dotted(&self, mapping: &CaseMapV1) -> bool {

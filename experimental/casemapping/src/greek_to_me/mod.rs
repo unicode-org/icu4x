@@ -71,10 +71,7 @@ impl GreekPrecomposedLetterData {
         GreekDiacritics {
             accented: self.accented,
             dialytika: self.dialytika,
-            precomposed_ypogegrammeni: self.ypogegrammeni,
-            // This is a single character, there is no way for it
-            // to have a combining ypogegrammeni just yet
-            combining_ypogegrammeni: false,
+            ypogegrammeni: self.ypogegrammeni,
         }
     }
     /// The base greek letter in this character, uppercased (if any)
@@ -141,19 +138,28 @@ impl From<GreekPrecomposedLetterData> for u32 {
     }
 }
 
-/// General diacritic information for a character or string
+/// General diacritic information about a character or combining character sequence.
 #[derive(Copy, Clone, Default, PartialEq, Eq, Debug)]
 pub struct GreekDiacritics {
-    /// Whether it has an accent
+    /// Whether it has an accent.
     pub accented: bool,
-    /// Whether it has a dialytika
+    /// Whether it has a dialytika.
     pub dialytika: bool,
-    /// Whether it contains an ypogegrammeni (precomposed)
-    pub precomposed_ypogegrammeni: bool,
-    /// Whether it contains an ypogegrammeni (combining)
-    pub combining_ypogegrammeni: bool,
+    /// Whether it has a ypogegrammeni.
+    pub ypogegrammeni: bool,
 }
 
+/// General diacritic information about a combining character sequence,
+/// identifying the source of the diacritics.
+#[derive(Copy, Clone, Default, PartialEq, Eq, Debug)]
+pub struct GreekCombiningCharacterSequenceDiacritics {
+    // Diacritics precomposed on the base.
+    pub precomposed: GreekDiacritics,
+    // Combining diacritics.
+    pub combining: GreekDiacritics,
+}
+
+pub const TONOS: char = '\u{0301}';
 pub const DIALYTIKA: char = '\u{0308}';
 pub const DIALYTIKA_TONOS: char = '\u{0344}';
 pub const YPOGEGRAMMENI: char = '\u{0345}';
@@ -161,21 +167,28 @@ pub const YPOGEGRAMMENI: char = '\u{0345}';
 #[macro_export]
 #[doc(hidden)]
 macro_rules! diacritics {
-
-    // Accent marks.
-    // These get removed, and also consecutive vowels with accent marks need to get a dialytika
-    // when uppercased. Furthermore an accented lone eta should retain the accent (which we )
+    // Accents.
+    // These are mostly removed when uppercasing, but their presence may require
+    // adding a διαλυτικά to a following vowel.
     (ACCENTS) => {
         // https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5B%5Cu0300+%5Cu0301+%5Cu0342+%5Cu0302+%5Cu0303+%5Cu0311%5D&g=&i=
-        // This is basically tonos (acute accent), perispomeni (circumflex/tilde), and lookalikes
-        '\u{0300}' | '\u{0301}' | '\u{0342}' | '\u{0302}' | '\u{0303}' | '\u{0311}'
+        '\u{0300}' // Polytonic βαρεία (varia), grave accent.
+        | crate::greek_to_me::TONOS // Polytonic οξεία (oxia) unified with monotonic τόνος (tonos), acute accent.
+        | '\u{0342}' // Polytonic περισπωμένη (perispomeni), often translated to circumflex.
+        | '\u{0302}' // Circumflex accent, sometimes a lookalike of the περισπωμένη.
+        | '\u{0303}' // Tilde, sometimes a lookalike of the περισπωμένη.
+        | '\u{0311}' // Inverted breve, sometimes a lookalike of the περισπωμένη.
     };
-    // Breathing and length marks
-    // These also get removed but have no special impact on dialytikas or etas
+    // Breathings and length marks.
+    // These expected to occur in Greek combining sequences, and are removed when uppercasing.
+    // This removal has no other effect.
     (BREATHING_AND_LENGTH) => {
         // https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5B%5Cu0304+%5Cu0306+%5Cu0313+%5Cu0314+%5Cu0343%5D&g=&i=
-        // This is other accent marks that get used with Greek not covered by other branches here
-        '\u{0304}' | '\u{0306}' | '\u{0313}' | '\u{0314}' | '\u{0343}'
+        '\u{0304}'  // Macron, marking long vowels.
+        | '\u{0306}'  // Breve, marking short vowels.
+        | '\u{0313}'  // Comma above, smooth breathing or κορωνίς marking crasis.
+        | '\u{0314}'  // Reversed comma above, rough breathing.
+        | '\u{0343}'  // κορωνίς (koronis), canonically decomposes to comma above.
     };
     // All diacritics containing a dialytika
     (DIALYTIKA_ALL) => { crate::greek_to_me::DIALYTIKA | crate::greek_to_me::DIALYTIKA_TONOS };
@@ -194,12 +207,12 @@ macro_rules! diacritics {
 /// - DIALYTIKA, DIALYTIKA_TONOS, and DIALITYKA_ALL
 /// - YPOGEGRAMMENI
 ///
-/// This is a macro to make it easy to keep the lists of accents in sync
+/// This is a macro to make it easy to keep the lists of accents in sync.
 pub use crate::diacritics;
 
 impl GreekDiacritics {
     /// Whilst forwards-iterating from an existing character,
-    /// consume all further greek diacritics and store their existence into this struct
+    /// consume all further greek diacritics and store their existence into this struct.
     pub(crate) fn consume_greek_diacritics(&mut self, context_after: &str) {
         for c in context_after.chars() {
             match c {
@@ -209,8 +222,8 @@ impl GreekDiacritics {
                     self.accented = true;
                 }
                 DIALYTIKA => self.dialytika = true,
-                YPOGEGRAMMENI => self.combining_ypogegrammeni = true,
-                // Ignore other accent marks that are expected to co-occur with Greek
+                YPOGEGRAMMENI => self.ypogegrammeni = true,
+                // Ignore other accent marks that are expected to co-occur with Greek.
                 diacritics!(BREATHING_AND_LENGTH) => (),
                 _ => break,
             }
@@ -218,7 +231,7 @@ impl GreekDiacritics {
     }
 }
 
-/// Given the context before a character, check if it is preceded by a Greek letter
+/// Given the context before a character, check if it is preceded by a Greek letter.
 pub(crate) fn preceded_by_greek_letter(context_before: &str) -> bool {
     for c in context_before.chars().rev() {
         match c {
@@ -229,34 +242,44 @@ pub(crate) fn preceded_by_greek_letter(context_before: &str) -> bool {
     return false;
 }
 
-/// Given the context before a character, check if is preceded by a Greek accented vowel
-/// that does not have a dialytika
-pub(crate) fn preceded_by_greek_accented_vowel_with_no_dialytika(context_before: &str) -> bool {
-    let mut accented = false;
+/// Returns diacritic information for the combining character sequence preceding the current character
+/// if it that preceding combining character sequence is a greek vowel.
+pub(crate) fn preceding_greek_vowel_diacritics(
+    context_before: &str,
+) -> Option<GreekCombiningCharacterSequenceDiacritics> {
+    let mut combining: GreekDiacritics = Default::default();
     for c in context_before.chars().rev() {
         match c {
-            diacritics!(ACCENTS) => accented = true,
-            diacritics!(DIALYTIKA_ALL) => return false,
+            diacritics!(ACCENTS) => combining.accented = true,
+            diacritics!(DIALYTIKA_TONOS) => {
+                combining.dialytika = true;
+                combining.accented = true;
+            }
+            diacritics!(DIALYTIKA) => combining.dialytika = true,
             diacritics!(BREATHING_AND_LENGTH) => continue,
             _ => {
                 let data = GREEK_DATA_TRIE.get(c);
                 if let Some(uppercase) = data.greek_base_uppercase() {
                     let is_vowel = matches!(uppercase, 'Α' | 'Ε' | 'Η' | 'Ι' | 'Ο' | 'Υ' | 'Ω');
+                    if !is_vowel {
+                        return None;
+                    }
                     let base_diacritics = data.diacritics();
-                    return is_vowel
-                        && (accented || base_diacritics.accented)
-                        && !base_diacritics.dialytika;
+                    return Some(GreekCombiningCharacterSequenceDiacritics {
+                        precomposed: base_diacritics,
+                        combining: combining,
+                    });
                 } else {
-                    // Not a greek letter
-                    return false;
+                    // Not a greek letter.
+                    return None;
                 }
             }
         }
     }
-    return false;
+    return None;
 }
 
-/// Is the character a diacritic expected to be used with greek (except ypogegrammeni)
+/// Is the character a diacritic expected to be used with greek (except ypogegrammeni).
 pub(crate) fn is_greek_diacritic_except_ypogegrammeni(c: char) -> bool {
     matches!(
         c,
