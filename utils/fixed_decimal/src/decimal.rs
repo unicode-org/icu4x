@@ -934,63 +934,6 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Increments the digits by 1. if the digits are empty, it will add
-    /// an element with value 1. If there are some trailing zeros,
-    /// it will be reomved from `self.digits`.
-    fn increment_abs_by_one(&mut self) -> Result<(), Error> {
-        for (zero_count, digit) in self.digits.iter_mut().rev().enumerate() {
-            *digit += 1;
-            if *digit < 10 {
-                self.digits.truncate(self.digits.len() - zero_count);
-                #[cfg(debug_assertions)]
-                self.check_invariants();
-                return Ok(());
-            }
-        }
-
-        self.digits.clear();
-
-        if self.magnitude == i16::MAX {
-            self.magnitude = 0;
-
-            #[cfg(debug_assertions)]
-            self.check_invariants();
-            return Err(Error::Limit);
-        }
-
-        // Still a carry, carry one to the next magnitude.
-        self.digits.push(1);
-        self.magnitude += 1;
-
-        if self.upper_magnitude < self.magnitude {
-            self.upper_magnitude = self.magnitude;
-        }
-
-        #[cfg(debug_assertions)]
-        self.check_invariants();
-        Ok(())
-    }
-
-    /// Removes the trailing zeros in `self.digits`
-    fn remove_trailing_zeros_from_digits_list(&mut self) {
-        let no_of_trailing_zeros = self
-            .digits
-            .iter()
-            .rev()
-            .take_while(|&digit| *digit == 0)
-            .count();
-
-        self.digits
-            .truncate(self.digits.len() - no_of_trailing_zeros);
-
-        if self.digits.is_empty() {
-            self.magnitude = 0;
-        }
-
-        #[cfg(debug_assertions)]
-        self.check_invariants();
-    }
-
     /// Truncate the number on the right to a particular position, deleting
     /// digits if necessary.
     ///
@@ -1057,9 +1000,18 @@ impl FixedDecimal {
         self.upper_magnitude = cmp::max(self.upper_magnitude, magnitude);
 
         if magnitude <= self.magnitude {
-            self.digits
-                .truncate(crate::ops::i16_abs_sub(self.magnitude, magnitude) as usize);
-            self.remove_trailing_zeros_from_digits_list();
+            let digits_to_retain = crate::ops::i16_abs_sub(self.magnitude, magnitude);
+            self.digits.truncate(digits_to_retain as usize);
+            let position_past_last_nonzero_digit = self
+                .digits
+                .iter()
+                .rposition(|x| *x != 0)
+                .map(|x| x + 1)
+                .unwrap_or(0);
+            self.digits.truncate(position_past_last_nonzero_digit);
+            if self.digits.is_empty() {
+                self.magnitude = 0;
+            }
         } else {
             self.digits.clear();
             self.magnitude = 0;
@@ -1189,13 +1141,23 @@ impl FixedDecimal {
         }
 
         if position <= before_truncate_magnitude {
-            self.digits
-                .truncate(crate::ops::i16_abs_sub(self.magnitude, magnitude) as usize);
-            let result = self.increment_abs_by_one();
-            if result.is_err() {
-                // Do nothing for now.
+            let digits_to_retain = crate::ops::i16_abs_sub(self.magnitude, magnitude);
+            self.digits.truncate(digits_to_retain as usize);
+            for (zero_count, digit) in self.digits.iter_mut().rev().enumerate() {
+                *digit += 1;
+                if *digit < 10 {
+                    self.digits.truncate(self.digits.len() - zero_count);
+                    #[cfg(debug_assertions)]
+                    self.check_invariants();
+                    return;
+                }
             }
+        }
 
+        if self.magnitude == i16::MAX {
+            // TODO(#2297): Decide on behavior here
+            self.magnitude = 0;
+            self.digits.clear();
             #[cfg(debug_assertions)]
             self.check_invariants();
             return;
@@ -1203,8 +1165,8 @@ impl FixedDecimal {
 
         self.digits.clear();
         self.digits.push(1);
-        self.magnitude = position;
-        self.upper_magnitude = cmp::max(self.upper_magnitude, position);
+        self.magnitude = cmp::max(self.magnitude + 1, position);
+        self.upper_magnitude = cmp::max(self.upper_magnitude, self.magnitude);
 
         #[cfg(debug_assertions)]
         self.check_invariants();
