@@ -80,7 +80,7 @@
 
     See the `Rust documentation for LocaleFallbacker <https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html>`__ for more information.
 
-    See the `Rust documentation for LocaleFallbackerConfig <https://docs.rs/icu/latest/icu/locid/fallback/struct.LocaleFallbackerConfig.html>`__ for more information.
+    See the `Rust documentation for LocaleFallbackerWithConfig <https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackerWithConfig.html>`__ for more information.
 
 
     .. js:method:: fallback_for_locale(locale)

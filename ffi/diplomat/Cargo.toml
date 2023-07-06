@@ -69,7 +69,7 @@ simple_logger = ["dep:simple_logger"]
 cpp_default = ["logging", "simple_logger"]
 
 # meta feature for things we enable by default in wasm
-wasm_default = ["buffer_provider", "logging"]
+wasm_default = ["logging"]
 
 # Components
 default_components = ["icu_calendar", "icu_collator", "icu_datetime", "icu_decimal",
