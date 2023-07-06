@@ -2000,35 +2000,6 @@ name = "icu_segmenter_data"
 version = "1.3.0"
 
 [[package]]
-name = "icu_testdata"
-version = "1.2.0"
-dependencies = [
- "criterion",
- "icu",
- "icu_calendar",
- "icu_casemap",
- "icu_collator",
- "icu_collections",
- "icu_compactdecimal",
- "icu_datetime",
- "icu_decimal",
- "icu_displaynames",
- "icu_list",
- "icu_locid",
- "icu_locid_transform",
- "icu_normalizer",
- "icu_plurals",
- "icu_properties",
- "icu_provider",
- "icu_provider_adapters",
- "icu_provider_blob",
- "icu_relativetime",
- "icu_segmenter",
- "icu_timezone",
- "zerovec",
-]
-
-[[package]]
 name = "icu_testdata_scripts"
 version = "0.0.0"
 dependencies = [
@@ -3573,7 +3544,6 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
- "icu_testdata",
  "itertools",
  "litemap",
  "lru",
