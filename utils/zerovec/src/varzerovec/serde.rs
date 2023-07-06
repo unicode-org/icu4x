@@ -51,8 +51,6 @@ impl<T: ?Sized, F: VarZeroVecFormat> Default for VarZeroSliceRefVisitor<T, F> {
     }
 }
 
-// duplicate visitor for VZSlice
-
 impl<'de, T, F> Visitor<'de> for VarZeroVecVisitor<T, F>
 where
     T: VarULE + ?Sized,
