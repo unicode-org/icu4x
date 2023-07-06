@@ -67,6 +67,12 @@ pub struct ExportBox {
     payload: Box<dyn ExportableDataPayload + Sync + Send>,
 }
 
+impl PartialEq for ExportBox {
+    fn eq(&self, other: &Self) -> bool {
+        self.payload.eq_dyn(&*other.payload)
+    }
+}
+
 impl core::fmt::Debug for ExportBox {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("ExportBox")
@@ -159,42 +165,6 @@ impl DataPayload<ExportMarker> {
     pub fn tokenize(&self, env: &CrateEnv) -> TokenStream {
         self.get().payload.bake_yoke(env)
     }
-
-    /// Compares this [`DataPayload`] with another.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider::dynutil::UpcastDataPayload;
-    /// use icu_provider::datagen::ExportMarker;
-    ///
-    /// let payload1: DataPayload<ExportMarker> = UpcastDataPayload::upcast(
-    ///     DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 {
-    ///         message: "abc".into(),
-    ///     })
-    /// );
-    /// let payload2: DataPayload<ExportMarker> = UpcastDataPayload::upcast(
-    ///     DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 {
-    ///         message: "abc".into(),
-    ///     })
-    /// );
-    /// let payload3: DataPayload<ExportMarker> = UpcastDataPayload::upcast(
-    ///     DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 {
-    ///         message: "def".into(),
-    ///     })
-    /// );
-    ///
-    /// assert!(payload1.eq_exportable(&payload2));
-    /// assert!(payload2.eq_exportable(&payload1));
-    ///
-    /// assert!(!payload1.eq_exportable(&payload3));
-    /// assert!(!payload3.eq_exportable(&payload1));
-    /// ```
-    pub fn eq_exportable(&self, other: &DataPayload<ExportMarker>) -> bool {
-        self.get().payload.eq_dyn(&*other.get().payload)
-    }
 }
 
 /// Marker type for [`ExportBox`].
@@ -228,5 +198,32 @@ mod tests {
 
         assert!(!payload1.eq_dyn(&payload3));
         assert!(!payload3.eq_dyn(&payload1));
+    }
+
+    #[test]
+    fn test_export_marker_partial_eq() {
+        let payload1: DataPayload<ExportMarker> =
+            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1Marker>::from_owned(
+                HelloWorldV1 {
+                    message: "abc".into(),
+                },
+            ));
+        let payload2: DataPayload<ExportMarker> =
+            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1Marker>::from_owned(
+                HelloWorldV1 {
+                    message: "abc".into(),
+                },
+            ));
+        let payload3: DataPayload<ExportMarker> =
+            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1Marker>::from_owned(
+                HelloWorldV1 {
+                    message: "def".into(),
+                },
+            ));
+
+        assert_eq!(payload1, payload2);
+        assert_eq!(payload2, payload1);
+        assert_ne!(payload1, payload3);
+        assert_ne!(payload3, payload1);
     }
 }
