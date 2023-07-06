@@ -155,7 +155,7 @@ impl<'data> CaseMapV1<'data> {
             // should also uppercase. They are both allowed to have an acute accent but it must
             // be present on both letters or neither. They may not have any other combining marks.
             if (c == 'j' || c == 'J') && context.is_dutch_ij_pair_at_beginning(self) {
-                return sink.write_char('J')
+                return sink.write_char('J');
             }
         }
 
