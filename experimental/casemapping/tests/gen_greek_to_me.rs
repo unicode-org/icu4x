@@ -10,10 +10,10 @@ use icu_collections::codepointtrie::{CodePointTrie, TrieType};
 use icu_locid::langid;
 use icu_normalizer::DecomposingNormalizer;
 use icu_properties::{maps, GeneralCategoryGroup, Script};
+use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::{Command, Stdio};
-use std::fs;
 
 fn main() {
     let size = u32::from(char::MAX);
@@ -57,7 +57,10 @@ fn main() {
                         if data.uppercase.is_some() {
                             panic!("Found multiple letters within decomposition of {ch}");
                         }
-                        let uppercased = cm.uppercase_to_string(&letter.encode_utf8(&mut [0; 4]), &Default::default());
+                        let uppercased = cm.uppercase_to_string(
+                            &letter.encode_utf8(&mut [0; 4]),
+                            &Default::default(),
+                        );
                         let mut iter = uppercased.chars();
                         let uppercased = iter.next().unwrap();
                         assert!(
