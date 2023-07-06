@@ -82,6 +82,10 @@ members = [
 exclude = [
     # GNaw needs to be run from outside the workspace for features to work
     "ffi/gn",
+    # Testdata will still be published in the 1.x stream, but is deprecated
+    # and we don't use it anymore. As we don't want to keep the actual data
+    # in the repo it doesn't build without running `cargo make testdata` first.
+    "provider/testdata",
 ]
 
 # LTO is needed for WASM and other size-optimized builds,
