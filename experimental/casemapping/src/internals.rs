@@ -633,8 +633,8 @@ pub enum FullMappingResult<'a> {
 impl<'a> FullMappingResult<'a> {
     #[allow(dead_code)]
     fn add_to_set<S: ClosureSet>(&self, set: &mut S) {
-        match self {
-            FullMappingResult::CodePoint(c) => set.add_char(*c),
+        match *self {
+            FullMappingResult::CodePoint(c) => set.add_char(c),
             FullMappingResult::String(s) => set.add_string(s),
             FullMappingResult::Remove => {}
         }
@@ -643,8 +643,8 @@ impl<'a> FullMappingResult<'a> {
 
 impl Writeable for FullMappingResult<'_> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        match self {
-            FullMappingResult::CodePoint(c) => sink.write_char(*c),
+        match *self {
+            FullMappingResult::CodePoint(c) => sink.write_char(c),
             FullMappingResult::String(s) => sink.write_str(s),
             FullMappingResult::Remove => Ok(()),
         }
