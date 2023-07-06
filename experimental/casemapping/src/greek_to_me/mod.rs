@@ -191,7 +191,7 @@ macro_rules! diacritics {
         | '\u{0343}'  // κορωνίς (koronis), canonically decomposes to comma above.
     };
     // All diacritics containing a dialytika
-    (DIALYTIKA_ALL) => { crate::greek_to_me::DIALYTIKA | crate::greek_to_me::DIALYTIKA_TONOS };
+    (DIALYTIKA_ALL) => { $crate::greek_to_me::DIALYTIKA | $crate::greek_to_me::DIALYTIKA_TONOS };
     (DIALYTIKA) => { crate::greek_to_me::DIALYTIKA };
     (DIALYTIKA_TONOS) => { crate::greek_to_me::DIALYTIKA_TONOS };
     (YPOGEGRAMMENI) => { crate::greek_to_me::YPOGEGRAMMENI };
@@ -239,7 +239,7 @@ pub(crate) fn preceded_by_greek_letter(context_before: &str) -> bool {
             _ => return GREEK_DATA_TRIE.get(c).is_greek_letter(),
         }
     }
-    return false;
+    false
 }
 
 /// Returns diacritic information for the combining character sequence preceding the current character
@@ -267,7 +267,7 @@ pub(crate) fn preceding_greek_vowel_diacritics(
                     let base_diacritics = data.diacritics();
                     return Some(GreekCombiningCharacterSequenceDiacritics {
                         precomposed: base_diacritics,
-                        combining: combining,
+                        combining,
                     });
                 } else {
                     // Not a greek letter.
@@ -276,7 +276,7 @@ pub(crate) fn preceding_greek_vowel_diacritics(
             }
         }
     }
-    return None;
+    None
 }
 
 /// Is the character a diacritic expected to be used with greek (except ypogegrammeni).
