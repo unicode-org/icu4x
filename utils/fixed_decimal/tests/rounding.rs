@@ -178,7 +178,11 @@ pub fn test_within_ranges() {
             assert_eq!(fd.write_to_string(), "-2000", "{rounding_mode}: {n}");
             let mut fd = FixedDecimal::from(n - 1000000).multiplied_pow10(-5);
             f(&mut fd, -2);
-            assert_eq!(fd.write_to_string(), "-10.02", "{rounding_mode}: {n} ÷ 10^5 ± 10");
+            assert_eq!(
+                fd.write_to_string(),
+                "-10.02",
+                "{rounding_mode}: {n} ÷ 10^5 ± 10"
+            );
         }
         for n in range_n1000 {
             let mut fd = FixedDecimal::from(n);
@@ -186,7 +190,11 @@ pub fn test_within_ranges() {
             assert_eq!(fd.write_to_string(), "-1000", "{rounding_mode}: {n}");
             let mut fd = FixedDecimal::from(n - 1000000).multiplied_pow10(-5);
             f(&mut fd, -2);
-            assert_eq!(fd.write_to_string(), "-10.01", "{rounding_mode}: {n} ÷ 10^5 ± 10");
+            assert_eq!(
+                fd.write_to_string(),
+                "-10.01",
+                "{rounding_mode}: {n} ÷ 10^5 ± 10"
+            );
         }
         for n in range_0 {
             let mut fd = FixedDecimal::from(n);
@@ -194,12 +202,22 @@ pub fn test_within_ranges() {
             fd.set_sign(Sign::None); // get rid of -0
             assert_eq!(fd.write_to_string(), "000", "{rounding_mode}: {n}");
             let (mut fd, expected) = if n < 0 {
-                (FixedDecimal::from(n - 1000000).multiplied_pow10(-5), "-10.00")
+                (
+                    FixedDecimal::from(n - 1000000).multiplied_pow10(-5),
+                    "-10.00",
+                )
             } else {
-                (FixedDecimal::from(n + 1000000).multiplied_pow10(-5), "10.00")
+                (
+                    FixedDecimal::from(n + 1000000).multiplied_pow10(-5),
+                    "10.00",
+                )
             };
             f(&mut fd, -2);
-            assert_eq!(fd.write_to_string(), expected, "{rounding_mode}: {n} ÷ 10^5 ± 10");
+            assert_eq!(
+                fd.write_to_string(),
+                expected,
+                "{rounding_mode}: {n} ÷ 10^5 ± 10"
+            );
         }
         for n in range_1000 {
             let mut fd = FixedDecimal::from(n);
@@ -207,7 +225,11 @@ pub fn test_within_ranges() {
             assert_eq!(fd.write_to_string(), "1000", "{rounding_mode}: {n}");
             let mut fd = FixedDecimal::from(n + 1000000).multiplied_pow10(-5);
             f(&mut fd, -2);
-            assert_eq!(fd.write_to_string(), "10.01", "{rounding_mode}: {n} ÷ 10^5 ± 10");
+            assert_eq!(
+                fd.write_to_string(),
+                "10.01",
+                "{rounding_mode}: {n} ÷ 10^5 ± 10"
+            );
         }
         for n in range_2000 {
             let mut fd = FixedDecimal::from(n);
@@ -215,7 +237,11 @@ pub fn test_within_ranges() {
             assert_eq!(fd.write_to_string(), "2000", "{rounding_mode}: {n}");
             let mut fd = FixedDecimal::from(n + 1000000).multiplied_pow10(-5);
             f(&mut fd, -2);
-            assert_eq!(fd.write_to_string(), "10.02", "{rounding_mode}: {n} ÷ 10^5 ± 10");
+            assert_eq!(
+                fd.write_to_string(),
+                "10.02",
+                "{rounding_mode}: {n} ÷ 10^5 ± 10"
+            );
         }
     }
 }
