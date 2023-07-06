@@ -110,6 +110,8 @@ struct Rule<'a> {
     replacer: Cow<'a, str>,
 }
 
+// Shanes suggestion: VarTable = VarZeroVec<Uset | Quantifier | Variable | ..>
+
 
 #[derive(serde::Serialize, serde::Deserialize)]
 struct VarTable<'a> {
@@ -122,7 +124,7 @@ struct VarTable<'a> {
     #[serde(borrow)]
     compounds: VarZeroVec<'a, str>,
 
-    // having quantifiers_opt: ["<PUA_offset + 5> world"] is the representation of
+    // having quantifiers_opt: [42 => "<PUA_offset + 5> world"] is the representation of
     // "(?:<some special matcher that has ID 5> ' ' world)?" in the rules  (if ?: was valid non-capturing syntax)
     //
     //
