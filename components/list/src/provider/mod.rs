@@ -116,10 +116,10 @@ impl<'data> ListFormatterPatternsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(PartialEq, serde::Serialize, databake::Bake),
+    derive(serde::Serialize, databake::Bake),
     databake(path = icu_list::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -142,10 +142,10 @@ pub struct ConditionalListJoinerPattern<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(PartialEq, serde::Serialize, databake::Bake),
+    derive(serde::Serialize, databake::Bake),
     databake(path = icu_list::provider),
 )]
 pub struct SpecialCasePattern<'data> {
