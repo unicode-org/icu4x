@@ -1046,6 +1046,12 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn trunc(&mut self, position: i16) {
+        self.trunc_internal(position, true);
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
+    fn trunc_internal(&mut self, position: i16, strip_trailing_zeros: bool) {
         self.lower_magnitude = cmp::min(position, 0);
         if position == i16::MIN {
             // Nothing more to do
@@ -1059,14 +1065,13 @@ impl FixedDecimal {
         if magnitude <= self.magnitude {
             self.digits
                 .truncate(crate::ops::i16_abs_sub(self.magnitude, magnitude) as usize);
-            self.remove_trailing_zeros_from_digits_list();
+            if strip_trailing_zeros {
+                self.remove_trailing_zeros_from_digits_list();
+            }
         } else {
             self.digits.clear();
             self.magnitude = 0;
         }
-
-        #[cfg(debug_assertions)]
-        self.check_invariants();
     }
 
     /// Half Truncates the number on the right to a particular position, deleting
@@ -1171,7 +1176,7 @@ impl FixedDecimal {
         let before_truncate_is_zero = self.is_zero();
         let before_truncate_bottom_magnitude = self.nonzero_magnitude_end();
         let before_truncate_magnitude = self.magnitude;
-        self.trunc(position);
+        self.trunc_internal(position, false);
 
         if before_truncate_is_zero || position <= before_truncate_bottom_magnitude {
             #[cfg(debug_assertions)]
@@ -3338,6 +3343,19 @@ fn test_rounding() {
     let mut dec = FixedDecimal::from_str("-0.009").unwrap();
     dec.half_expand(-1);
     assert_eq!("-0.0", dec.to_string());
+
+    // // Test specific cases
+    let mut dec = FixedDecimal::from_str("1.108").unwrap();
+    dec.half_even(-2);
+    assert_eq!("1.11", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("1.108").unwrap();
+    dec.expand(-2);
+    assert_eq!("1.11", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("1.108").unwrap();
+    dec.trunc(-2);
+    assert_eq!("1.10", dec.to_string());
 }
 
 #[test]
