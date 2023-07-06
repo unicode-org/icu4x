@@ -11,20 +11,18 @@ use icu_locid::langid;
 use icu_normalizer::DecomposingNormalizer;
 use icu_properties::{maps, GeneralCategoryGroup, Script};
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::Path;
 use std::process::{Command, Stdio};
-use std::{env, fs, str};
+use std::fs;
 
 fn main() {
     let size = u32::from(char::MAX);
     let mut vec = Vec::with_capacity(size as usize);
-    let mut encode_scratch = [0; 4];
 
     let decomposer = DecomposingNormalizer::new_nfd();
     let script = maps::script();
     let gc = maps::general_category();
     let cm = CaseMapper::new();
-    let und = langid!("und");
 
     for ch in 0..=size {
         let mut data = GreekPrecomposedLetterData::default();
@@ -59,8 +57,7 @@ fn main() {
                         if data.uppercase.is_some() {
                             panic!("Found multiple letters within decomposition of {ch}");
                         }
-                        let letter = letter.encode_utf8(&mut encode_scratch);
-                        let uppercased = cm.uppercase_to_string(&letter, &Default::default());
+                        let uppercased = cm.uppercase_to_string(&letter.encode_utf8(&mut [0; 4]), &Default::default());
                         let mut iter = uppercased.chars();
                         let uppercased = iter.next().unwrap();
                         assert!(
