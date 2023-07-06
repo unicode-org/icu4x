@@ -1046,12 +1046,6 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn trunc(&mut self, position: i16) {
-        self.trunc_internal(position, true);
-        #[cfg(debug_assertions)]
-        self.check_invariants();
-    }
-
-    fn trunc_internal(&mut self, position: i16, strip_trailing_zeros: bool) {
         self.lower_magnitude = cmp::min(position, 0);
         if position == i16::MIN {
             // Nothing more to do
@@ -1065,13 +1059,14 @@ impl FixedDecimal {
         if magnitude <= self.magnitude {
             self.digits
                 .truncate(crate::ops::i16_abs_sub(self.magnitude, magnitude) as usize);
-            if strip_trailing_zeros {
-                self.remove_trailing_zeros_from_digits_list();
-            }
+            self.remove_trailing_zeros_from_digits_list();
         } else {
             self.digits.clear();
             self.magnitude = 0;
         }
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Half Truncates the number on the right to a particular position, deleting
@@ -1176,7 +1171,16 @@ impl FixedDecimal {
         let before_truncate_is_zero = self.is_zero();
         let before_truncate_bottom_magnitude = self.nonzero_magnitude_end();
         let before_truncate_magnitude = self.magnitude;
-        self.trunc_internal(position, false);
+
+        self.lower_magnitude = cmp::min(position, 0);
+        if position == i16::MIN {
+            // Nothing more to do
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+        let magnitude = position - 1;
+        self.upper_magnitude = cmp::max(self.upper_magnitude, magnitude);
 
         if before_truncate_is_zero || position <= before_truncate_bottom_magnitude {
             #[cfg(debug_assertions)]
@@ -1185,6 +1189,8 @@ impl FixedDecimal {
         }
 
         if position <= before_truncate_magnitude {
+            self.digits
+                .truncate(crate::ops::i16_abs_sub(self.magnitude, magnitude) as usize);
             let result = self.increment_abs_by_one();
             if result.is_err() {
                 // Do nothing for now.
@@ -1195,7 +1201,7 @@ impl FixedDecimal {
             return;
         }
 
-        debug_assert!(self.digits.is_empty());
+        self.digits.clear();
         self.digits.push(1);
         self.magnitude = position;
         self.upper_magnitude = cmp::max(self.upper_magnitude, position);
