@@ -72,6 +72,8 @@ mod testutil;
 mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
+use icu_locid_transform::fallback::LocaleFallbackConfig;
+use icu_locid_transform::fallback::LocaleFallbacker;
 pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_discard};
 pub use source::SourceData;
 
@@ -107,8 +109,10 @@ use icu_locid::subtags::Language;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use memchr::memmem;
+use std::collections::HashMap;
 use std::collections::HashSet;
 use std::path::Path;
+use std::sync::RwLock;
 
 #[cfg(feature = "rayon")]
 pub(crate) use rayon::prelude as rayon_prelude;
@@ -205,6 +209,7 @@ impl DatagenProvider {
         TEST_PROVIDER.clone()
     }
 
+    // TODO: Get rid of this function and do all filtering in a centralized location
     pub(crate) fn filter_data_locales(
         &self,
         supported: Vec<icu_provider::DataLocale>,
@@ -261,6 +266,9 @@ impl DatagenProvider {
         ) -> Result<(), DataError> {
             use rayon_prelude::*;
 
+            // TODO: Lazy-initialize the fallbacker?
+            let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
+
             keys.into_par_iter().try_for_each(|key| {
                 log::info!("Generating key {key}");
 
@@ -270,93 +278,118 @@ impl DatagenProvider {
                         .and_then(DataResponse::take_payload)
                         .map_err(|e| e.with_req(key, Default::default()))?;
 
-                    return exporter.flush_singleton(key, &payload).map_err(|e| e.with_req(key, Default::default()));
+                    return exporter
+                        .flush_singleton(key, &payload)
+                        .map_err(|e| e.with_req(key, Default::default()));
                 }
 
-                let mut supported_locales: HashSet<DataLocale> = provider
+                let supported_locales: HashSet<DataLocale> = provider
                     .supported_locales_for_key(key)
-                    .map_err(|e| e.with_key(key))?.into_iter().collect();
+                    .map_err(|e| e.with_key(key))?
+                    .into_iter()
+                    .collect();
+
+                let fallbacker_with_config =
+                    fallbacker.for_config(LocaleFallbackConfig::from_key(key));
+                // TODO: Don't use .cloned()
+                let locale_groups = fallbacker_with_config
+                    .sort_locales_into_groups(supported_locales.iter().cloned());
+
+                fn get_payload(
+                    provider: &DatagenProvider,
+                    key: DataKey,
+                    locale: &DataLocale,
+                ) -> Result<DataPayload<ExportMarker>, DataError> {
+                    log::trace!("Generating for key/locale: {key} {locale:?}");
+                    let req = DataRequest {
+                        locale: &locale,
+                        metadata: Default::default(),
+                    };
+                    provider
+                        .load_data(key, req)
+                        .and_then(DataResponse::take_payload)
+                        .map_err(|e| e.with_req(key, req))
+                }
+
+                let resolved_fallback_mode;
 
                 match provider.source.options.fallback {
                     options::FallbackMode::Legacy => {
                         supported_locales
                             .into_par_iter()
                             .try_for_each(|locale| {
-                                log::trace!("Generating for key/locale: {key} {locale:?}");
-                                let req = DataRequest {
-                                    locale: &locale,
-                                    metadata: Default::default(),
-                                };
-                                let payload = provider
-                                    .load_data(key, req)
-                                    .and_then(DataResponse::take_payload)
-                                    .map_err(|e| e.with_req(key, req))?;
+                                let payload = get_payload(provider, key, &locale)?;
                                 exporter.put_payload(key, &locale, &payload)
                             })
                             .map_err(|e| e.with_key(key))?;
-
-                        exporter
-                            .flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
-                            .map_err(|e| e.with_key(key))
+                        resolved_fallback_mode = icu_provider::datagen::FallbackMode::None;
                     }
                     options::FallbackMode::Runtime => {
-                        let payloads = supported_locales.into_par_iter()
-                            .map(|locale| {
-                                log::trace!("Generating for key/locale: {key} {locale:?}");
-                                let req = DataRequest {
-                                    locale: &locale,
-                                    metadata: Default::default(),
-                                };
-                                let payload = provider
-                                    .load_data(key, req)
-                                    .and_then(DataResponse::take_payload)
-                                    .map_err(|e| e.with_req(key, req))?;
-                                Ok::<_, DataError>((locale, payload))
+                        let payloads =
+                            RwLock::new(HashMap::<DataLocale, DataPayload<ExportMarker>>::new());
+                        locale_groups.into_par_iter().try_for_each(|group| {
+                            group.into_par_iter().try_for_each(|locale| {
+                                let payload = get_payload(provider, key, &locale)?;
+                                let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                                loop {
+                                    iter.step();
+                                    if payloads.read().expect("poison").get(iter.get())
+                                        == Some(&payload)
+                                    {
+                                        // Found a match: don't need to write anything
+                                        return Ok(());
+                                    }
+                                    if iter.get().is_empty() {
+                                        break;
+                                    }
+                                }
+                                payloads
+                                    .write()
+                                    .expect("poison")
+                                    .insert(locale.clone(), payload);
+                                Ok::<(), DataError>(())
                             })
-                            .collect::<Result<std::collections::HashMap<_, _>, _>>().map_err(|e| e.with_key(key))?;
-
-                        // TODO(#2683): Figure out how to compare `DataPayload<ExportMarker>` for equality
-                        // to actually dedupe payloads
-
-                        payloads
-                            .into_par_iter()
-                            .try_for_each(|(locale, payload)| {
-                                exporter.put_payload(key, &locale, &payload).map_err(|e| e.with_key(key))
-                            })?;
-                        exporter
-                            .flush_with_fallback(key, icu_provider::datagen::FallbackMode::Full)
-                            .map_err(|e| e.with_key(key))
+                        })?;
+                        for (locale, payload) in payloads.into_inner().expect("poison").into_iter()
+                        {
+                            exporter.put_payload(key, &locale, &payload)?;
+                        }
+                        resolved_fallback_mode = icu_provider::datagen::FallbackMode::Full;
                     }
                     options::FallbackMode::Expand => match &provider.source.options.locales {
                         options::LocaleInclude::Explicit(requested_locales) => {
-                            let provider = icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable(provider.clone())?;
-                            supported_locales.extend(requested_locales.iter().map(Into::into));
-                            supported_locales
-                                .into_par_iter()
-                                .try_for_each(|locale| {
-                                    log::trace!("Generating for key/locale: {key} {locale:?}");
-                                    let req = DataRequest {
-                                        locale: &locale,
-                                        metadata: Default::default(),
-                                    };
-                                    match provider
-                                        .load_data(key, req)
-                                        .and_then(DataResponse::take_payload) {
-                                            Err(DataError { kind: DataErrorKind::MissingLocale, ..}) => {
-                                                // well, we tried
-                                                Ok(())
-                                            },
-                                            Ok(payload) => exporter.put_payload(key, &locale, &payload),
-                                            e => e.map(|_| ())
+                            requested_locales.into_par_iter().try_for_each(|locale| {
+                                let mut iter = fallbacker_with_config.fallback_for(locale.into());
+                                loop {
+                                    match get_payload(provider, key, iter.get()) {
+                                        Ok(payload) => {
+                                            return exporter.put_payload(key, iter.get(), &payload);
                                         }
-                                        .map_err(|e| e.with_req(key, req))
-                                })?;
-                                exporter.flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
-                                .map_err(|e| e.with_key(key))
+                                        Err(DataError {
+                                            kind: DataErrorKind::MissingLocale,
+                                            ..
+                                        }) => {
+                                            // continue out of the match statement
+                                        }
+                                        Err(e) => return Err(e),
+                                    };
+                                    if iter.get().is_empty() {
+                                        // could not find anything
+                                        return Err(DataError::custom(
+                                            "Couldn't find anything in Explicit fallback mode",
+                                        ));
+                                    }
+                                    iter.step();
+                                }
+                            })?;
+                            resolved_fallback_mode = icu_provider::datagen::FallbackMode::None;
                         }
                         _ => unreachable!("checked in constructor"),
                     },
-                }
+                };
+                exporter
+                    .flush_with_fallback(key, resolved_fallback_mode)
+                    .map_err(|e| e.with_key(key))
             })?;
 
             exporter.close()
