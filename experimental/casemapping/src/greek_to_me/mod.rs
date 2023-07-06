@@ -21,7 +21,7 @@ use zerovec::ule::AsULE;
 
 /// The per-precomposed letter data stored in the hardcoded trie from `mod data`
 #[derive(Copy, Clone, Default, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "datagen", derive(databake::Bake), databake(path = self))] // the `super` makes this bakeable within the same crate
+#[cfg_attr(feature = "datagen", derive(databake::Bake), databake(path = self))] // the `self` makes this bakeable within the same crate
 pub struct GreekPrecomposedLetterData {
     /// Whether it has an accent
     pub accented: bool,
