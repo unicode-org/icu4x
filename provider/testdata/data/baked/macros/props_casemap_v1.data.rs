@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_props_casemap_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.64"]
+        #[clippy::msrv = "1.61"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_PROPS_CASEMAP_V1: &'static <icu_casemap::provider::CaseMapV1Marker as icu_provider::DataMarker>::Yokeable = &icu_casemap::provider::CaseMapV1 {
@@ -20,7 +20,7 @@ macro_rules! __impl_props_casemap_v1 {
                 },
             };
         }
-        #[clippy::msrv = "1.64"]
+        #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_casemap::provider::CaseMapV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_casemap::provider::CaseMapV1Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {

@@ -6,7 +6,7 @@
 name = "writeable"
 description = "A more efficient alternative to fmt::Display"
 version = "0.5.2"
-rust-version = "1.64.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

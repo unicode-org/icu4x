@@ -13,12 +13,17 @@ pub struct RelativeTimeFormatterOptions {
 }
 
 /// Configures whether to always use numeric formatting even when special formatting is available.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Numeric {
     /// Always use numeric formatting.
-    #[default]
     Always,
 
     /// Automatically select special formatting if available else fallback to numeric formatting.
     Auto,
+}
+
+impl Default for Numeric {
+    fn default() -> Self {
+        Numeric::Always
+    }
 }
