@@ -98,6 +98,13 @@ where
         formatter.write_str("a sequence or borrowed buffer of bytes")
     }
 
+    fn visit_borrowed_bytes<E>(self, bytes: &'de [u8]) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        VarZeroSlice::parse_byte_slice(bytes).map(VarULE::to_boxed).map_err(de::Error::custom)
+    }
+
     fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
     where
         A: SeqAccess<'de>,
@@ -189,14 +196,11 @@ where
     where
         D: Deserializer<'de>,
     {
+        let visitor: VarZeroSliceBoxVisitor<T, F> = VarZeroSliceBoxVisitor::default();
         if deserializer.is_human_readable() {
-            let visitor: VarZeroSliceBoxVisitor<T, F> = VarZeroSliceBoxVisitor::default();
-            let deserialized: Box<VarZeroSlice<_, _>> = deserializer.deserialize_seq(visitor)?;
-            Ok(deserialized)
+            deserializer.deserialize_seq(visitor)
         } else {
-            Err(de::Error::custom(
-                "Box<VarZeroSlice> should not be deserialized from byte-slice formats",
-            ))
+            deserializer.deserialize_bytes(visitor)
         }
     }
 }
