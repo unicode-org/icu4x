@@ -141,10 +141,10 @@ export class ICU4XTimeZoneFormatter {
     })();
   }
 
-  load_localized_gmt_format() {
+  include_localized_gmt_format() {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XTimeZoneFormatter_load_localized_gmt_format(diplomat_receive_buffer, this.underlying);
+      wasm.ICU4XTimeZoneFormatter_include_localized_gmt_format(diplomat_receive_buffer, this.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = {};
