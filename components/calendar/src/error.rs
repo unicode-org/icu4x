@@ -68,6 +68,10 @@ pub enum LocationError {
     /// Longitude value was out of bounds
     #[displaydoc("Longitude {0} outside bounds of -180 to 180")]
     LongitudeOutOfBounds(f64),
+
+    /// Offset value was out of bounds
+    #[displaydoc("Offset {0} outside bounds of {1} to {2}")]
+    OffsetOutOfBounds(f64, f64, f64),
 }
 
 impl From<core::num::ParseIntError> for CalendarError {

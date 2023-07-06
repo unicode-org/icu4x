@@ -22,6 +22,7 @@ pub(crate) struct Location {
     latitude: f64,  // latitude from -90 to 90
     longitude: f64, // longitude from -180 to 180
     elevation: f64, // elevation in meters
+    offset: f64,    // time offset in fractional days
 }
 
 /// The mean synodic month in days of 86400 atomic seconds
@@ -48,6 +49,7 @@ impl Location {
         latitude: f64,
         longitude: f64,
         elevation: f64,
+        offset: f64,
     ) -> Result<Location, LocationError> {
         if !(-90.0..=90.0).contains(&latitude) {
             return Err(LocationError::LatitudeOutOfBounds(latitude));
@@ -55,10 +57,14 @@ impl Location {
         if !(-180.0..=180.0).contains(&longitude) {
             return Err(LocationError::LongitudeOutOfBounds(longitude));
         }
+        if !(MIN_UTC_OFFSET..=MAX_UTC_OFFSET).contains(&offset) {
+            return Err(LocationError::OffsetOutOfBounds(offset, MIN_UTC_OFFSET, MAX_UTC_OFFSET));
+        }
         Ok(Location {
             latitude,
             longitude,
             elevation,
+            offset,
         })
     }
 
@@ -78,6 +84,11 @@ impl Location {
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn elevation(&self) -> f64 {
         self.elevation
+    }
+
+    /// Get the offset of a Location
+    pub(crate) fn offset(&self) -> f64 {
+        self.offset
     }
 
     /// Convert a longitude into a mean time zone;
@@ -101,23 +112,17 @@ impl Location {
         universal_time + Self::zone_from_longitude(location.longitude)
     }
 
-    /// Given a UTC-offset in hours and a Moment in universal time,
+    /// Given a location with a UTC-offset and a Moment in universal time,
     /// return the Moment in standard time in the time zone with the given offset.
-    /// The field utc_offset should be within the range of possible offsets given by
-    /// the constant fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
-    pub(crate) fn standard_from_universal(universal_moment: Moment, utc_offset: f64) -> Moment {
-        debug_assert!(utc_offset > MIN_UTC_OFFSET && utc_offset < MAX_UTC_OFFSET, "UTC offset {utc_offset} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)");
-        universal_moment + utc_offset
+    pub(crate) fn standard_from_universal(universal_moment: Moment, location: Location) -> Moment {
+        universal_moment + location.offset()
     }
 
-    /// Given a UTC-offset in hours and a Moment in standard time,
+    /// Given a location with a UTC-offset and a Moment in standard time,
     /// return the Moment in universal time from the time zone with the given offset.
-    /// The field utc_offset should be within the range of possible offsets given by
-    /// the constand fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
-    pub(crate) fn universal_from_standard(standard_moment: Moment, utc_offset: f64) -> Moment {
-        debug_assert!(utc_offset > MIN_UTC_OFFSET && utc_offset < MAX_UTC_OFFSET, "UTC offset {utc_offset} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)");
-        standard_moment - utc_offset
+    pub(crate) fn universal_from_standard(standard_moment: Moment, location: Location) -> Moment {
+        standard_moment - location.offset()
     }
 }
 
@@ -910,7 +915,7 @@ mod tests {
         let mut lat = -90.0;
         while long <= 180.0 {
             while lat <= 90.0 {
-                let location: Location = Location::try_new(lat, long, 1000.0).unwrap();
+                let location: Location = Location::try_new(lat, long, 1000.0, 0).unwrap();
                 assert_eq!(lat, location.latitude());
                 assert_eq!(long, location.longitude());
 
@@ -922,13 +927,13 @@ mod tests {
 
     #[test]
     fn check_location_errors() {
-        let lat_too_small = Location::try_new(-90.1, 15.0, 1000.0).unwrap_err();
+        let lat_too_small = Location::try_new(-90.1, 15.0, 1000.0, 0).unwrap_err();
         assert_eq!(lat_too_small, LocationError::LatitudeOutOfBounds(-90.1));
-        let lat_too_large = Location::try_new(90.1, -15.0, 1000.0).unwrap_err();
+        let lat_too_large = Location::try_new(90.1, -15.0, 1000.0, 0).unwrap_err();
         assert_eq!(lat_too_large, LocationError::LatitudeOutOfBounds(90.1));
-        let long_too_small = Location::try_new(15.0, 180.1, 1000.0).unwrap_err();
+        let long_too_small = Location::try_new(15.0, 180.1, 1000.0, 0).unwrap_err();
         assert_eq!(long_too_small, LocationError::LongitudeOutOfBounds(180.1));
-        let long_too_large = Location::try_new(-15.0, -180.1, 1000.0).unwrap_err();
+        let long_too_large = Location::try_new(-15.0, -180.1, 1000.0, 0).unwrap_err();
         assert_eq!(long_too_large, LocationError::LongitudeOutOfBounds(-180.1));
     }
 }
