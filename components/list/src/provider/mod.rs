@@ -48,7 +48,7 @@ const _: () = {
     OrListV1Marker = "list/or@1",
     UnitListV1Marker = "list/unit@1"
 )]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
