@@ -214,7 +214,7 @@ impl Calendar for Chinese {
 
     // Obtain an ISO date from a Chinese date
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed = Inner::fixed_from_chinese_based_date_inner((*date).0);
+        let fixed = Inner::fixed_from_chinese_based_date_inner(date.0);
         Iso::iso_from_fixed(fixed)
     }
 
@@ -428,6 +428,7 @@ impl ChineseBased<Chinese> for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
 
+    #[allow(clippy::unwrap_used)]
     fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<Chinese> {
         Date::try_new_chinese_date(year, month, day).unwrap()
     }
