@@ -79,7 +79,7 @@ impl ParseError {
     /// use icu_unicodeset_parser::*;
     ///
     /// let source = "[[abc]-x]";
-    /// let set = parse_unstable(source, Default::default(), &icu_testdata::unstable());
+    /// let set = parse(source, Default::default());
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
     /// assert_eq!(err.fmt_with_source(source).to_string(), "[[abc]-x← error: unexpected character 'x'");
@@ -89,7 +89,7 @@ impl ParseError {
     /// use icu_unicodeset_parser::*;
     ///
     /// let source = r"[\N{LATIN CAPITAL LETTER A}]";
-    /// let set = parse_unstable(source, Default::default(), &icu_testdata::unstable());
+    /// let set = parse(source, Default::default());
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
     /// assert_eq!(err.fmt_with_source(source).to_string(), r"[\N← error: unimplemented");
@@ -1111,12 +1111,6 @@ mod tests {
 
     use super::*;
 
-    macro_rules! td {
-        () => {
-            icu_testdata::unstable()
-        };
-    }
-
     const OPTIONS_ANCHOR: UnicodeSetBuilderOptions = UnicodeSetBuilderOptions {
         dollar_is_anchor: true,
     };
@@ -1190,7 +1184,7 @@ mod tests {
         source: &str,
         expected_err: &str,
     ) {
-        let result = parse_unstable(source, options, &td!());
+        let result = parse(source, options);
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert_eq!(err.fmt_with_source(source).to_string(), expected_err);
@@ -1321,7 +1315,7 @@ mod tests {
             // TODO(#3556): Add more tests (specifically conformance tests if they exist)
         ];
         for (options, source, single, multi) in cases {
-            let parsed = parse_unstable(source, options, &td!()).unwrap();
+            let parsed = parse(source, options).unwrap();
             assert_set_equality(
                 source,
                 &parsed,

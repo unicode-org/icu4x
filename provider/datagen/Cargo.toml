@@ -21,6 +21,8 @@ include = [
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
+    "!tests/data/json/**/*",
+    "!tests/data/postcard/**/*",
     "Cargo.toml",
     "LICENSE",
     "README.md",
@@ -91,9 +93,7 @@ simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu" }
-icu_testdata = { path = "../testdata", features = ["buffer"] }
-repodata = { path = "../../provider/repodata" }
-
+icu_provider_blob = { path = "../blob" }
 
 [target.'cfg(not(target_os = "windows"))'.dev-dependencies]
 # The verify-zero-copy test is causing problems on Windows

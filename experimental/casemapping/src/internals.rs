@@ -6,6 +6,7 @@
 //!
 //! Primarily, it implements methods on `CaseMapV1`, which contains the data model.
 
+use crate::greek_to_me::{self, GreekCombiningCharacterSequenceDiacritics, GreekDiacritics};
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::CaseMapV1;
@@ -131,13 +132,14 @@ impl<'data> CaseMapV1<'data> {
     // IS_TITLE_CONTEXT must be true if kind is MappingKind::Title
     // The kind may be a different kind with IS_TITLE_CONTEXT still true because
     // titlecasing a segment involves switching to lowercase later
-    fn full_helper<const IS_TITLE_CONTEXT: bool>(
+    fn full_helper<const IS_TITLE_CONTEXT: bool, W: fmt::Write + ?Sized>(
         &self,
         c: char,
         context: ContextIterator,
         locale: CaseMapLocale,
         kind: MappingKind,
-    ) -> FullMappingResult {
+        sink: &mut W,
+    ) -> fmt::Result {
         // If using a title mapping IS_TITLE_CONTEXT must be true
         debug_assert!(kind != MappingKind::Title || IS_TITLE_CONTEXT);
         // In a title context, kind MUST be Title or Lower
@@ -153,7 +155,101 @@ impl<'data> CaseMapV1<'data> {
             // should also uppercase. They are both allowed to have an acute accent but it must
             // be present on both letters or neither. They may not have any other combining marks.
             if (c == 'j' || c == 'J') && context.is_dutch_ij_pair_at_beginning(self) {
-                return FullMappingResult::CodePoint('J');
+                return sink.write_char('J');
+            }
+        }
+
+        // ICU4C's non-standard extension for Greek uppercasing:
+        // https://icu.unicode.org/design/case/greek-upper.
+        // Effectively removes Greek accents from Greek vowels during uppercasing,
+        // whilst attempting to preserve additional marks like the dialytika (diæresis)
+        // and ypogegrammeni (combining small iota).
+        if !IS_TITLE_CONTEXT && locale == CaseMapLocale::Greek && kind == MappingKind::Upper {
+            // Remove all combining diacritics on a Greek letter.
+            // Ypogegrammeni is not an accent mark and is handled by regular casemapping (it turns into
+            // a capital iota).
+            // The dialytika is removed here, but it may be added again when the base letter is being processed.
+            if greek_to_me::is_greek_diacritic_except_ypogegrammeni(c)
+                && context.preceded_by_greek_letter()
+            {
+                return Ok(());
+            }
+            let data = greek_to_me::GREEK_DATA_TRIE.get(c);
+            // Check if the character is a Greek character with an associated uppercase base character.
+            if let Some(upper_base) = data.greek_base_uppercase() {
+                // Get the diacritics on the character itself, and add any further combining diacritics
+                // from the context.
+                let mut precomposed_diacritics = data.diacritics();
+                let mut diacritics = context.add_greek_diacritics(precomposed_diacritics);
+                // If the previous vowel had an accent (which would be removed) but no dialytika,
+                // and this is an iota or upsilon, add a dialytika since it is necessary to disambiguate
+                // the now-unaccented adjacent vowels from a digraph/diphthong.
+                // Use a precomposed dialytika if the accent was precomposed, and a combining dialytika
+                // if the accent was combining, so as to map NFD to NFD and NFC to NFC.
+                if !diacritics.dialytika && (upper_base == 'Ι' || upper_base == 'Υ') {
+                    if let Some(preceding_vowel) = context.preceding_greek_vowel_diacritics() {
+                        if !preceding_vowel.combining.dialytika
+                            && !preceding_vowel.precomposed.dialytika
+                        {
+                            if preceding_vowel.combining.accented {
+                                diacritics.dialytika = true;
+                            } else {
+                                precomposed_diacritics.dialytika =
+                                    preceding_vowel.precomposed.accented;
+                            }
+                        }
+                    }
+                }
+                // Write the base of the uppercased combining character sequence.
+                // In most branches this is [`upper_base`], i.e., the uppercase letter with all accents removed.
+                // In some branches the base has a precomposed diacritic.
+                // In the case of the Greek disjunctive "or", a combining tonos may also be written.
+                match upper_base {
+                    'Η' => {
+                        // The letter η (eta) is allowed to retain a tonos when it is form a single-letter word to distinguish
+                        // the feminine definite article ἡ (monotonic η) from the disjunctive "or" ἤ (monotonic ή).
+                        //
+                        // A lone η with an accent other than the oxia/tonos is not expected,
+                        // so there is no need to special-case the oxia/tonos.
+                        // The ancient ᾖ (exist.PRS.SUBJ.3s) has a iota subscript as well as the circumflex,
+                        // so it would not be given an oxia/tonos under this rule, and the subjunctive is formed with a particle
+                        // (e.g. να είναι) since Byzantine times anyway.
+                        if diacritics.accented
+                            && !context.followed_by_cased_letter(self)
+                            && !context.preceded_by_cased_letter(self)
+                            && !diacritics.ypogegrammeni
+                        {
+                            if precomposed_diacritics.accented {
+                                sink.write_char('Ή')?;
+                            } else {
+                                sink.write_char('Η')?;
+                                sink.write_char(greek_to_me::TONOS)?;
+                            }
+                        } else {
+                            sink.write_char('Η')?;
+                        }
+                    }
+                    'Ι' => sink.write_char(if precomposed_diacritics.dialytika {
+                        diacritics.dialytika = false;
+                        'Ϊ'
+                    } else {
+                        upper_base
+                    })?,
+                    'Υ' => sink.write_char(if precomposed_diacritics.dialytika {
+                        diacritics.dialytika = false;
+                        'Ϋ'
+                    } else {
+                        upper_base
+                    })?,
+                    _ => sink.write_char(upper_base)?,
+                };
+                if diacritics.dialytika {
+                    sink.write_char(greek_to_me::DIALYTIKA)?;
+                }
+                if precomposed_diacritics.ypogegrammeni {
+                    sink.write_char('Ι')?;
+                }
+                return Ok(());
             }
         }
 
@@ -163,9 +259,9 @@ impl<'data> CaseMapV1<'data> {
                 let mapped = c as i32 + data.delta() as i32;
                 // GIGO: delta should be valid
                 let mapped = char::from_u32(mapped as u32).unwrap_or(c);
-                FullMappingResult::CodePoint(mapped)
+                sink.write_char(mapped)
             } else {
-                FullMappingResult::CodePoint(c)
+                sink.write_char(c)
             }
         } else {
             let idx = data.exception_index();
@@ -179,27 +275,27 @@ impl<'data> CaseMapV1<'data> {
                     MappingKind::Upper | MappingKind::Title => self
                         .full_upper_or_title_special_case::<IS_TITLE_CONTEXT>(c, context, locale),
                 } {
-                    return special;
+                    return special.write_to(sink);
                 }
             }
             if let Some(mapped_string) = exception.get_fullmappings_slot_for_kind(kind) {
                 if !mapped_string.is_empty() {
-                    return FullMappingResult::String(mapped_string);
+                    return sink.write_str(mapped_string);
                 }
             }
             if data.is_relevant_to(kind) {
                 if let Some(simple) = exception.get_simple_case_slot_for(c) {
-                    return FullMappingResult::CodePoint(simple);
+                    return sink.write_char(simple);
                 }
             }
             if kind == MappingKind::Fold && exception.bits.no_simple_case_folding() {
-                return FullMappingResult::CodePoint(c);
+                return sink.write_char(c);
             }
 
             if let Some(slot_char) = exception.slot_char_for_kind(kind) {
-                FullMappingResult::CodePoint(slot_char)
+                sink.write_char(slot_char)
             } else {
-                FullMappingResult::CodePoint(c)
+                sink.write_char(c)
             }
         }
     }
@@ -371,47 +467,20 @@ impl<'data> CaseMapV1<'data> {
         impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
             #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
             fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-                // To speed up the copying of long runs where nothing changes, we keep track
-                // of the start of the uncopied chunk, and don't copy it until we have to.
-                let mut last_uncopied_idx = 0;
-
                 let src = self.src;
                 let mut mapping = self.mapping;
                 for (i, c) in src.char_indices() {
                     let context = ContextIterator::new(&src[..i], &src[i..]);
-                    match self.data.full_helper::<IS_TITLE_CONTEXT>(
+                    self.data.full_helper::<IS_TITLE_CONTEXT, W>(
                         c,
                         context,
                         self.locale,
                         mapping,
-                    ) {
-                        FullMappingResult::CodePoint(c2) => {
-                            if c == c2 {
-                                if IS_TITLE_CONTEXT {
-                                    mapping = MappingKind::Lower;
-                                }
-                                continue;
-                            }
-                            sink.write_str(&src[last_uncopied_idx..i])?;
-                            sink.write_char(c2)?;
-                            last_uncopied_idx = i + c.len_utf8();
-                        }
-                        FullMappingResult::Remove => {
-                            sink.write_str(&src[last_uncopied_idx..i])?;
-                            last_uncopied_idx = i + c.len_utf8();
-                        }
-                        FullMappingResult::String(s) => {
-                            sink.write_str(&src[last_uncopied_idx..i])?;
-                            sink.write_str(s)?;
-                            last_uncopied_idx = i + c.len_utf8();
-                        }
-                    }
+                        sink,
+                    )?;
                     if IS_TITLE_CONTEXT {
                         mapping = MappingKind::Lower;
                     }
-                }
-                if last_uncopied_idx < src.len() {
-                    sink.write_str(&src[last_uncopied_idx..])?;
                 }
                 Ok(())
             }
@@ -567,10 +636,20 @@ pub enum FullMappingResult<'a> {
 impl<'a> FullMappingResult<'a> {
     #[allow(dead_code)]
     fn add_to_set<S: ClosureSet>(&self, set: &mut S) {
-        match self {
-            FullMappingResult::CodePoint(c) => set.add_char(*c),
+        match *self {
+            FullMappingResult::CodePoint(c) => set.add_char(c),
             FullMappingResult::String(s) => set.add_string(s),
             FullMappingResult::Remove => {}
+        }
+    }
+}
+
+impl Writeable for FullMappingResult<'_> {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        match *self {
+            FullMappingResult::CodePoint(c) => sink.write_char(c),
+            FullMappingResult::String(s) => sink.write_str(s),
+            FullMappingResult::Remove => Ok(()),
         }
     }
 }
@@ -589,6 +668,21 @@ impl<'a> ContextIterator<'a> {
         char_and_after.next(); // skip the character itself
         let after = char_and_after.as_str();
         Self { before, after }
+    }
+
+    fn add_greek_diacritics(&self, mut diacritics: GreekDiacritics) -> GreekDiacritics {
+        diacritics.consume_greek_diacritics(self.after);
+        diacritics
+    }
+
+    fn preceded_by_greek_letter(&self) -> bool {
+        greek_to_me::preceded_by_greek_letter(self.before)
+    }
+
+    fn preceding_greek_vowel_diacritics(
+        &self,
+    ) -> Option<GreekCombiningCharacterSequenceDiacritics> {
+        greek_to_me::preceding_greek_vowel_diacritics(self.before)
     }
 
     fn preceded_by_soft_dotted(&self, mapping: &CaseMapV1) -> bool {

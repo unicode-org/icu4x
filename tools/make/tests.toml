@@ -68,7 +68,7 @@ cd docs/tutorials/crates
 # Build the postcard file
 # Copy our own icu4x-datagen and tutorial_buffer to speed up the task
 exec --fail-on-error cargo --config patch.toml build -p tutorial_buffer
-mkdir -p buffer/bin
+mkdir buffer/bin
 cp ${project_dir}/target/debug/icu4x-datagen buffer/bin/icu4x-datagen
 cp ${project_dir}/target/debug/tutorial_buffer buffer/bin/tutorial_buffer
 exec --fail-on-error make -C buffer buffer_data.postcard

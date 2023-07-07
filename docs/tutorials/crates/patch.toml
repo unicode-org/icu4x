@@ -18,11 +18,12 @@ icu_locid_transform = { path = "../../components/locid_transform" }
 icu_normalizer = { path = "../../components/normalizer" }
 icu_plurals = { path = "../../components/plurals" }
 icu_properties = { path = "../../components/properties" }
+icu_displaynames = { path = "../../experimental/displaynames" }
 icu_provider = { path = "../../provider/core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
 icu_segmenter = { path = "../../components/segmenter" }
-icu_testdata = { path = "../../provider/testdata" }
+icu_testdata = { path = "crates/not_a_tutorial_legacy_testdata" }
 icu_timezone = { path = "../../components/timezone" }
 litemap = { path = "../../utils/litemap" }
 tinystr = { path = "../../utils/tinystr" }
