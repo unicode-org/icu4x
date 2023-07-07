@@ -325,7 +325,7 @@ mod test {
         let buddhist1 = iso1.to_calendar(Buddhist);
         assert_eq!(
             buddhist1.year().number,
-            buddhist_year as i32,
+            buddhist_year,
             "Iso -> Buddhist year check failed for case: {case:?}"
         );
         assert_eq!(
@@ -344,7 +344,7 @@ mod test {
         let iso2 = buddhist2.to_calendar(Iso);
         assert_eq!(
             iso2.year().number,
-            iso_year as i32,
+            iso_year,
             "Buddhist -> Iso year check failed for case: {case:?}"
         );
         assert_eq!(
