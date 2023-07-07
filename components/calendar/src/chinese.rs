@@ -37,7 +37,7 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::{Location};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::chinese_based::ChineseBased;
+use crate::chinese_based::{ChineseBased, ChineseBasedDateInner};
 use crate::helpers::{div_rem_euclid,};
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
@@ -112,7 +112,7 @@ pub struct Chinese;
 
 /// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub struct ChineseDateInner(ArithmeticDate<Chinese>);
+pub struct ChineseDateInner(ChineseBasedDateInner<Chinese>);
 
 impl CalendarArithmetic for Chinese {
     /// Returns the number of days in the given (year, month). In the Chinese calendar, months start at each
@@ -201,34 +201,34 @@ impl Calendar for Chinese {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        Ok(ArithmeticDate::new_unchecked(year, month, day)).map(ChineseDateInner)
+        Ok(ArithmeticDate::new_unchecked(year, month, day)).map(ChineseDateInner) // TODO: Fix??
     }
 
     // Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
         let fixed = Iso::fixed_from_iso(iso.inner);
-        Self::chinese_based_date_from_fixed<Chinese>(fixed).inner
+        Self::chinese_based_date_from_fixed(fixed).inner
     }
 
     // Obtain an ISO date from a Chinese date
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed = Self::fixed_from_chinese_based_date_inner<Chinese>(*date);
+        let fixed = Self::fixed_from_chinese_based_date_inner((*date).0);
         Iso::iso_from_fixed(fixed)
     }
 
     //Count the number of months in a given year, specified by providing a date
     // from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u32 {
-        Self::days_in_provided_year(date.0.year)
+        Self::days_in_provided_year(date.0.0.year)
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::month_days(date.0.year, date.0.month)
+        Self::month_days(date.0.0.year, date.0.0.month)
     }
 
     #[doc(hidden)] // unstable
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset)
+        date.0.0.offset_date(offset)
     }
 
     #[doc(hidden)] // unstable
@@ -245,7 +245,7 @@ impl Calendar for Chinese {
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        date1.0.until(date2.0, _largest_unit, _smallest_unit)
+        date1.0.0.until(date2.0.0, _largest_unit, _smallest_unit)
     }
 
     /// Obtain a name for the calendar for debug printing
@@ -255,7 +255,7 @@ impl Calendar for Chinese {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::format_chinese_year(date.0.year)
+        Self::format_chinese_year(date.0.0.year)
     }
 
     /// The calendar-specific month code represented by `date`;
@@ -263,9 +263,9 @@ impl Calendar for Chinese {
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal monts 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        let ordinal = date.0.month;
-        let leap_month = if Self::is_leap_year(date.0.year) {
-            Self::get_leap_month_in_year(Self::fixed_mid_year_from_year(date.0.year))
+        let ordinal = date.0.0.month;
+        let leap_month = if Self::is_leap_year(date.0.0.year) {
+            Self::get_leap_month_in_year(Self::fixed_mid_year_from_year(date.0.0.year))
         } else {
             14
         };
@@ -324,16 +324,16 @@ impl Calendar for Chinese {
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0.day as u32)
+        types::DayOfMonth(date.0.0.day as u32)
     }
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year.saturating_sub(1);
-        let next_year = date.0.year.saturating_add(1);
+        let prev_year = date.0.0.year.saturating_sub(1);
+        let next_year = date.0.0.year.saturating_add(1);
         types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
+            day_of_year: date.0.0.day_of_year(),
+            days_in_year: date.0.0.days_in_year(),
             prev_year: Self::format_chinese_year(prev_year),
             days_in_prev_year: Self::days_in_provided_year(prev_year),
             next_year: Self::format_chinese_year(next_year),
@@ -346,7 +346,7 @@ impl Calendar for Chinese {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_for_every_year(date.0.year)
+        Self::months_for_every_year(date.0.0.year)
     }
 }
 
@@ -374,7 +374,7 @@ impl Date<Chinese> {
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
         ArithmeticDate::new_from_lunar_ordinals(year, month, day)
-            .map(ChineseDateInner)
+            .map(ChineseDateInner) //TODO: Fix??
             .map(|inner| Date::from_raw(inner, Chinese))
     }
 }
@@ -413,7 +413,7 @@ impl DateTime<Chinese> {
     }
 }
 
-impl ChineseBased for Chinese {
+impl ChineseBased<Chinese> for Chinese {
     fn location(fixed: RataDie) -> Location {
         let year = Iso::iso_from_fixed(fixed).year().number;
         if year < 1929 {
@@ -425,7 +425,7 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
 
-    fn new_chinese_based_date<Chinese>(year: i32, month: u8, day: u8) -> Date<Chinese> {
+    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<Chinese> {
         Date::try_new_chinese_date(year, month, day).unwrap()
     }
 }

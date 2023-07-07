@@ -6,9 +6,10 @@
 
 use crate::{rata_die::RataDie, astronomy::{Location, Astronomical, MEAN_TROPICAL_YEAR, MEAN_SYNODIC_MONTH}, helpers::{i64_to_i32, adjusted_rem_euclid, quotient, I32Result}, types::{Moment, Era}, Calendar, Date, calendar_arithmetic::{CalendarArithmetic, ArithmeticDate}, AsCalendar};
 
-pub(crate) struct ChineseBasedDateInner<C: ChineseBased + CalendarArithmetic>(ArithmeticDate<C>);
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+pub(crate) struct ChineseBasedDateInner<C: ChineseBased<C> + CalendarArithmetic>(pub(crate) ArithmeticDate<C>);
 
-pub(crate) trait ChineseBased {
+pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
     /// Given a fixed date, the location used for observations of the new moon in order to
     /// calculate the beginning of months. For multiple Chinese-based lunar calendars, this has
     /// changed over the years, and can cause differences in calendar date.
@@ -159,7 +160,7 @@ pub(crate) trait ChineseBased {
     ///
     /// The calculation for `elapsed_years` in this function is based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
-    fn chinese_based_date_from_fixed<C: CalendarArithmetic + ChineseBased>(date: RataDie) -> Date<C> {
+    fn chinese_based_date_from_fixed(date: RataDie) -> Date<C> {
         let new_year = Self::new_year_on_or_before_fixed_date(date);
         let elapsed_years = libm::floor(
             1.5 - 1.0 / 12.0 + ((new_year - Self::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
@@ -186,13 +187,13 @@ pub(crate) trait ChineseBased {
     /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
     /// 
     /// This function should just call try_new_C_date where C is the name of the calendar.
-    fn new_chinese_based_date<C: CalendarArithmetic + ChineseBased + AsCalendar>(year: i32, month: u8, day: u8) -> Date<C>;
+    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<C>;
 
     /// Get a RataDie from a ChineseBasedDateInner
     /// 
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
     /// (beginning of the month) of the month given, then adds the necessary number of days.
-    fn fixed_from_chinese_based_date_inner<C: CalendarArithmetic + ChineseBased>(date: ChineseBasedDateInner<C>) -> RataDie {
+    fn fixed_from_chinese_based_date_inner(date: ChineseBasedDateInner<C>) -> RataDie {
         let year = date.0.year;
         let month = date.0.month as i64;
         let day = date.0.day as i64;
