@@ -245,3 +245,100 @@ pub fn test_within_ranges() {
         }
     }
 }
+
+#[test]
+pub fn extra_rounding_mode_cases() {
+    struct TestCase {
+        input: &'static str,
+        position: i16,
+        // ceil, floor, expand, trunc, half_ceil, half_floor, half_expand, half_trunc, half_even
+        all_expected: [&'static str; 9],
+    }
+    let cases: [TestCase; 8] = [
+        TestCase {
+            input: "505.050",
+            position: -3,
+            all_expected: [
+                "505.050", "505.050", "505.050", "505.050", "505.050", "505.050", "505.050",
+                "505.050", "505.050",
+            ],
+        },
+        TestCase {
+            input: "505.050",
+            position: -2,
+            all_expected: [
+                "505.05", "505.05", "505.05", "505.05", "505.05", "505.05", "505.05", "505.05",
+                "505.05",
+            ],
+        },
+        TestCase {
+            input: "505.050",
+            position: -1,
+            all_expected: [
+                "505.1", "505.0", "505.1", "505.0", "505.1", "505.0", "505.1", "505.0", "505.0",
+            ],
+        },
+        TestCase {
+            input: "505.050",
+            position: 0,
+            all_expected: [
+                "506", "505", "506", "505", "505", "505", "505", "505", "505",
+            ],
+        },
+        TestCase {
+            input: "505.050",
+            position: 1,
+            all_expected: [
+                "510", "500", "510", "500", "510", "510", "510", "510", "510",
+            ],
+        },
+        TestCase {
+            input: "505.050",
+            position: 2,
+            all_expected: [
+                "600", "500", "600", "500", "500", "500", "500", "500", "500",
+            ],
+        },
+        TestCase {
+            input: "505.050",
+            position: 3,
+            all_expected: [
+                "1000", "000", "1000", "000", "1000", "1000", "1000", "1000", "1000",
+            ],
+        },
+        TestCase {
+            input: "505.050",
+            position: 4,
+            all_expected: [
+                "10000", "0000", "10000", "0000", "0000", "0000", "0000", "0000", "0000",
+            ],
+        },
+    ];
+    let rounding_modes: [(&'static str, fn(&mut FixedDecimal, i16)); 9] = [
+        ("ceil", FixedDecimal::ceil),
+        ("floor", FixedDecimal::floor),
+        ("expand", FixedDecimal::expand),
+        ("trunc", FixedDecimal::trunc),
+        ("half_ceil", FixedDecimal::half_ceil),
+        ("half_floor", FixedDecimal::half_floor),
+        ("half_expand", FixedDecimal::half_expand),
+        ("half_trunc", FixedDecimal::half_trunc),
+        ("half_even", FixedDecimal::half_even),
+    ];
+    for TestCase {
+        input,
+        position,
+        all_expected,
+    } in cases
+    {
+        for ((rounding_mode, f), expected) in rounding_modes.iter().zip(all_expected.iter()) {
+            let mut fd: FixedDecimal = input.parse().unwrap();
+            f(&mut fd, position);
+            assert_eq!(
+                &*fd.write_to_string(),
+                *expected,
+                "{input}: {rounding_mode} @ {position}"
+            )
+        }
+    }
+}
