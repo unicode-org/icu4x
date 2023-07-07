@@ -123,7 +123,7 @@ where
         D: Deserializer<'de>,
     {
         let deserialized = VarZeroVec::<T, F>::deserialize(deserializer)?;
-        Ok(crate::ule::encode_varule_to_box(&deserialized))
+        Ok(deserialized.to_boxed())
     }
 }
 
