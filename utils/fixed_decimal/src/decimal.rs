@@ -989,6 +989,7 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn trunc(&mut self, position: i16) {
+        // 1. Set upper and lower magnitude
         self.lower_magnitude = cmp::min(position, 0);
         if position == i16::MIN {
             // Nothing more to do
@@ -999,9 +1000,21 @@ impl FixedDecimal {
         let magnitude = position - 1;
         self.upper_magnitude = cmp::max(self.upper_magnitude, magnitude);
 
-        if magnitude <= self.magnitude {
+        // 2. If the rounding position is *lower than* the rightmost nonzero digit, exit early
+        if self.is_zero() || magnitude < self.nonzero_magnitude_end() {
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        // 3. If the rounding position is *in the middle* of the nonzero digits
+        if magnitude < self.magnitude {
+            // 3a. Calculate the number of digits to retain and remove the rest
             let digits_to_retain = crate::ops::i16_abs_sub(self.magnitude, magnitude);
             self.digits.truncate(digits_to_retain as usize);
+            // 3b. Remove trailing zeros from self.digits to retain invariants
+            // Note: this does not affect visible trailing zeros,
+            // which is tracked by self.lower_magnitude
             let position_past_last_nonzero_digit = self
                 .digits
                 .iter()
@@ -1009,10 +1022,10 @@ impl FixedDecimal {
                 .map(|x| x + 1)
                 .unwrap_or(0);
             self.digits.truncate(position_past_last_nonzero_digit);
-            if self.digits.is_empty() {
-                self.magnitude = 0;
-            }
+            // 3c. By the invariant, there should still be at least 1 nonzero digit
+            debug_assert!(!self.digits.is_empty());
         } else {
+            // 4. If the rounding position is *above* the leftmost nonzero digit, set to zero
             self.digits.clear();
             self.magnitude = 0;
         }
@@ -1120,10 +1133,7 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn expand(&mut self, position: i16) {
-        let before_truncate_is_zero = self.is_zero();
-        let before_truncate_bottom_magnitude = self.nonzero_magnitude_end();
-        let before_truncate_magnitude = self.magnitude;
-
+        // 1. Set upper and lower magnitude
         self.lower_magnitude = cmp::min(position, 0);
         if position == i16::MIN {
             // Nothing more to do
@@ -1134,15 +1144,20 @@ impl FixedDecimal {
         let magnitude = position - 1;
         self.upper_magnitude = cmp::max(self.upper_magnitude, magnitude);
 
-        if before_truncate_is_zero || position <= before_truncate_bottom_magnitude {
+        // 2. If the rounding position is *lower than* the rightmost nonzero digit, exit early
+        if self.is_zero() || magnitude < self.nonzero_magnitude_end() {
             #[cfg(debug_assertions)]
             self.check_invariants();
             return;
         }
 
-        if position <= before_truncate_magnitude {
+        // 3. If the rounding position is *in the middle* of the nonzero digits
+        if magnitude < self.magnitude {
+            // 3a. Calculate the number of digits to retain and remove the rest
             let digits_to_retain = crate::ops::i16_abs_sub(self.magnitude, magnitude);
             self.digits.truncate(digits_to_retain as usize);
+            // 3b. Increment the rightmost remaining digit since we are rounding up; this might
+            // require bubbling the addition to higher magnitudes, like 199 + 1 = 200
             for (zero_count, digit) in self.digits.iter_mut().rev().enumerate() {
                 *digit += 1;
                 if *digit < 10 {
@@ -1152,8 +1167,11 @@ impl FixedDecimal {
                     return;
                 }
             }
+            // 3c. If we get here, the mantissa is fully saturated, and we continue into case 4
         }
 
+        // 4. If the rounding position is *above* the leftmost nonzero digit, OR if we saturated,
+        // set the value to a single digit 1 at the appropriate position
         if self.magnitude == i16::MAX {
             // TODO(#2297): Decide on behavior here
             self.magnitude = 0;
@@ -1162,10 +1180,12 @@ impl FixedDecimal {
             self.check_invariants();
             return;
         }
-
         self.digits.clear();
         self.digits.push(1);
-        self.magnitude = cmp::max(self.magnitude + 1, position);
+        // If we got here from case 3, we should use self.magnitude + 1
+        // If we got here directly from case 4, we should use magnitude + 1
+        // We can use cmp::max to pick the right one
+        self.magnitude = cmp::max(self.magnitude, magnitude) + 1;
         self.upper_magnitude = cmp::max(self.upper_magnitude, self.magnitude);
 
         #[cfg(debug_assertions)]
