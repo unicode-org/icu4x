@@ -7,6 +7,7 @@
 //! _Calendrical Calculations_ by Reingold & Dershowitz.
 use crate::error::LocationError;
 use crate::helpers::*;
+use crate::islamic;
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
@@ -25,6 +26,15 @@ pub(crate) struct Location {
     elevation: f64, // elevation in meters
     zone: f64,      // UTC timezone offset
 }
+
+// Location of mecca from the lisp code
+pub(crate) const MECCA: Location = Location {
+    latitude: 6427.0 / 300.0,
+    longitude: 11947.0 / 300.0,
+    elevation: 298.0,
+    zone: (1_f64 / 8_f64),
+};
+
 #[allow(clippy::excessive_precision)]
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
@@ -652,6 +662,38 @@ impl Astronomical {
         div_rem_euclid_f64(n, 360.0).1
     }
 
+    #[allow(dead_code)]
+    pub fn phasis_on_or_after(date: RataDie, location:Location) -> RataDie {
+        let moon = Self::lunar_phase_at_or_before(0.0, date.to_moment());
+        let age = date - moon.as_rata_die();
+        let tau = if age <= 4 || Self::visible_crescent((date-1).to_moment(), location) {
+            moon + 29.0  // Next new moon
+        } else {
+            date.to_moment()
+        };
+        next(tau,location,Self::visible_crescent)   
+    }
+
+    #[allow(dead_code)]
+    pub fn phasis_on_or_before(date: RataDie, location: Location) -> RataDie {
+        let moon = Self::lunar_phase_at_or_before(0.0, date.to_moment());
+        let age = date - moon.as_rata_die();
+        let tau = if age <= 3 || !Self::visible_crescent((date).to_moment(), location) {
+            moon - 30.0  // Next new moon
+        } else {
+            moon
+        };
+        next(tau,location,Self::visible_crescent)   
+    }
+
+    #[allow(dead_code)]
+    pub fn month_length(date: RataDie, location: Location) -> u8 {
+        let moon = Self::phasis_on_or_after(date-1, location);
+        let prev = Self::phasis_on_or_before(date, location);
+
+        (moon - prev).try_into().unwrap() 
+    }
+
     // Lunar elongation (the moon's angular distance east of the Sun) at a given Moment in Julian centuries
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4160-L4170
@@ -911,14 +953,14 @@ impl Astronomical {
     }
 
     #[allow(dead_code)]
-    fn sunset(date: Moment, location: Location) -> Option<Moment> {
+    pub(crate) fn sunset(date: Moment, location: Location) -> Option<Moment> {
         let alpha = Self::refraction(location) + (16.0 / 60.0);
 
         Self::dusk(date.inner(), location, alpha)
     }
 
     #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
-    fn moonlag(date: Moment, location: Location) -> Option<f64> {
+    pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
         let sun = Self::sunset(date, location);
         let moon = Self::moonset(date, location);
 
@@ -969,7 +1011,7 @@ impl Astronomical {
         }
     }
     #[allow(dead_code)]
-    pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> f64 {
+    pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> Moment {
         let tau = moment.inner()
             - MEAN_SYNODIC_MONTH / (360.0 / phase) * ((Self::lunar_phase(moment) - phase) % 360.0);
         let a = tau - 2.0;
@@ -981,7 +1023,7 @@ impl Astronomical {
 
         let lunar_phase_f64 = |x: f64| -> f64 { Self::lunar_phase(Moment::new(x)) };
 
-        invert_angular(lunar_phase_f64, phase, (a, b))
+        Moment::new(invert_angular(lunar_phase_f64, phase, (a, b)))
     }
 
     /// The longitude of the Sun at a given Moment in degrees
@@ -1065,6 +1107,43 @@ impl Astronomical {
         div_rem_euclid_f64(lambda + Self::aberration(c) + Self::nutation(moment), 360.0).1
     }
 
+    // Best viewing time (UT) in evening.
+    fn simple_best_view(date: RataDie, location: Location) -> Moment {
+        let dark = Self::dusk(date.to_f64_date(),location,4.5);
+        let best = if dark.is_none() {
+            (date + 1).to_moment()
+        } else {
+            dark.unwrap()
+        };
+
+        Location::universal_from_standard(best, location)
+
+    }
+    // Angular separation of sun and moon at a specific moment
+    fn arc_of_light(moment: Moment) -> f64 {
+        arccos_degrees(cos_degrees(Self::lunar_latitude(moment)) * cos_degrees(Self::lunar_phase(moment)))
+    }
+
+    fn shaukat_criterion(date: Moment, location: Location) -> bool {
+        let tee = Self::simple_best_view((date - 1.0).as_rata_die(), location);
+        let phase = Self::lunar_phase(tee);
+        let h = Self::lunar_altitude(tee, location);
+        let cap_arcl = Self::arc_of_light(tee);
+    
+        let new = 0.0;
+        let first_quarter = 90.0;
+        let deg_10_6 = 10.6;
+        let deg_90 = 90.0;
+        let deg_4_1 = 4.1;
+    
+        new < phase && deg_10_6 <= cap_arcl && cap_arcl <= deg_90 && h > deg_4_1
+    }
+    
+    // Only for use in Islamic calendar
+    pub(crate) fn visible_crescent(date: Moment, location: Location) -> bool {
+        Self::shaukat_criterion(date, location)
+    }
+
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
                         // This code differs from the lisp/book code by taking in a julian centuries value instead of
                         // a Moment; this is because aberration is only ever called in the fn solar_longitude, which
@@ -1129,14 +1208,6 @@ mod tests {
     // Constants applied to provide a margin of error when comparing floating-point values in tests.
     const TEST_LOWER_BOUND_FACTOR: f64 = 0.9999999;
     const TEST_UPPER_BOUND_FACTOR: f64 = 1.0000001;
-
-    // Location of mecca from the lisp code
-    const MECCA: Location = Location {
-        latitude: 6427.0 / 300.0,
-        longitude: 11947.0 / 300.0,
-        elevation: 298.0,
-        zone: (1_f64 / 8_f64),
-    };
 
     fn assert_eq_f64(expected_value: f64, value: f64, moment: Moment) {
         if expected_value > 0.0 {
