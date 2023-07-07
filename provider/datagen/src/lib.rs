@@ -197,13 +197,15 @@ impl DatagenProvider {
     pub fn for_test() -> Self {
         // Singleton so that all instantiations share the same cache.
         lazy_static::lazy_static! {
-            static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                // This is equivalent to `latest_tested` for the files defined in
-                // `tools/testdata-scripts/globs.rs.data`.
-                source: SourceData::offline()
-                    .with_cldr(repodata::paths::cldr(), Default::default()).unwrap()
-                    .with_icuexport(repodata::paths::icuexport()).unwrap()
-                    .with_segmenter_lstm(repodata::paths::lstm()).unwrap(),
+            static ref TEST_PROVIDER: DatagenProvider = {
+                let data_root = std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
+                DatagenProvider {
+                    // This is equivalent to `latest_tested` for the files defined in
+                    // `tools/testdata-scripts/globs.rs.data`.
+                    source: SourceData::offline()
+                        .with_cldr(data_root.join("cldr"), Default::default()).unwrap()
+                        .with_icuexport(data_root.join("icuexport")).unwrap(),
+                }
             };
         }
         TEST_PROVIDER.clone()

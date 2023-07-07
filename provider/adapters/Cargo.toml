@@ -39,7 +39,8 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 [dev-dependencies]
 icu_provider = { path = "../core", features = ["macros", "deserialize_json"] }
 icu_provider_fs = { path = "../fs" }
-icu_testdata = { path = "../testdata", default-features = false, features = ["buffer"] }
+icu_provider_blob = { path = "../blob" }
+icu_locid_transform = { path = "../../components/locid_transform" }
 writeable = { path = "../../utils/writeable" }
 
 [features]

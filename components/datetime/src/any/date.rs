@@ -142,33 +142,6 @@ impl DateFormatter {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_length)]
-    /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
-    /// use icu::datetime::{options::length, DateFormatter};
-    /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let length = length::Date::Medium;
-    /// let locale = locale!("en-u-ca-gregory");
-    ///
-    /// let df = DateFormatter::try_new_with_length_with_buffer_provider(
-    ///     &icu_testdata::buffer(),
-    ///     &locale.into(),
-    ///     length,
-    /// )
-    /// .expect("Failed to create TypedDateFormatter instance.");
-    ///
-    /// let datetime =
-    ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
-    /// let any_datetime = datetime.to_any();
-    ///
-    /// assert_writeable_eq!(
-    ///     df.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020"
-    /// );
-    /// ```
     #[inline]
     #[cfg(feature = "serde")]
     pub fn try_new_with_length_with_buffer_provider(
@@ -282,4 +255,31 @@ impl DateFormatter {
             Ok(None)
         }
     }
+}
+
+#[test]
+#[cfg(feature = "serde")]
+fn serde_constructor() {
+    use icu::calendar::Date;
+    use icu::datetime::{options::length, DateFormatter};
+    use icu::locid::locale;
+    use writeable::assert_writeable_eq;
+
+    let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(
+        "../../tests/data/blob.postcard"
+    ))
+    .unwrap();
+
+    let df = DateFormatter::try_new_with_length_with_buffer_provider(
+        &provider,
+        &locale!("en").into(),
+        length::Date::Medium,
+    )
+    .unwrap();
+
+    assert_writeable_eq!(
+        df.format(&Date::try_new_iso_date(2020, 9, 1).unwrap().to_any())
+            .unwrap(),
+        "Sep 1, 2020"
+    );
 }
