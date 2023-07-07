@@ -112,16 +112,18 @@ pub struct Chinese;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct ChineseDateInner(ChineseBasedDateInner<Chinese>);
 
+type Inner = ChineseBasedDateInner<Chinese>;
+
 impl CalendarArithmetic for Chinese {
     /// Returns the number of days in the given (year, month). In the Chinese calendar, months start at each
     /// new moon, so this function finds the number of days between the new moon at the beginning of the given
     /// month and the new moon at the beginning of the next month.
     fn month_days(year: i32, month: u8) -> u8 {
-        let mid_year = Self::fixed_mid_year_from_year(year);
-        let new_year = Self::new_year_on_or_before_fixed_date(mid_year);
+        let mid_year = Inner::fixed_mid_year_from_year(year);
+        let new_year = Inner::new_year_on_or_before_fixed_date(mid_year);
         let approx = new_year + ((month - 1) as i64 * 29);
-        let prev_new_moon = Self::new_moon_before((approx + 15).as_moment());
-        let next_new_moon = Self::new_moon_on_or_after((approx + 15).as_moment());
+        let prev_new_moon = Inner::new_moon_before((approx + 15).as_moment());
+        let next_new_moon = Inner::new_moon_on_or_after((approx + 15).as_moment());
         let result = (next_new_moon - prev_new_moon) as u8;
         debug_assert!(result == 29 || result == 30);
         result
@@ -138,8 +140,8 @@ impl CalendarArithmetic for Chinese {
 
     /// Returns true if the given year is a leap year, and false if not.
     fn is_leap_year(year: i32) -> bool {
-        let mid_year = Self::fixed_mid_year_from_year(year);
-        Self::fixed_date_is_in_leap_year(mid_year)
+        let mid_year = Inner::fixed_mid_year_from_year(year);
+        Inner::fixed_date_is_in_leap_year(mid_year)
     }
 
     /// Returns the (month, day) of the last day in a Chinese year (the day before Chinese New Year).
@@ -147,15 +149,15 @@ impl CalendarArithmetic for Chinese {
     /// determined by finding the day immediately before the next new year and calculating the number
     /// of days since the last new moon (beginning of the last month in the year).
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        let mid_year = Self::fixed_mid_year_from_year(year);
-        let next_new_year = Self::new_year_on_or_before_fixed_date(mid_year + 370);
+        let mid_year = Inner::fixed_mid_year_from_year(year);
+        let next_new_year = Inner::new_year_on_or_before_fixed_date(mid_year + 370);
         let last_day = next_new_year - 1;
-        let month = if Self::fixed_date_is_in_leap_year(last_day) {
+        let month = if Inner::fixed_date_is_in_leap_year(last_day) {
             13
         } else {
             12
         };
-        let day = last_day - Self::new_moon_before(last_day.as_moment()) + 1;
+        let day = last_day - Inner::new_moon_before(last_day.as_moment()) + 1;
         (month, day as u8)
     }
 }
@@ -207,12 +209,12 @@ impl Calendar for Chinese {
     // Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
         let fixed = Iso::fixed_from_iso(iso.inner);
-        Self::chinese_based_date_from_fixed(fixed).inner
+        Inner::chinese_based_date_from_fixed(fixed).inner
     }
 
     // Obtain an ISO date from a Chinese date
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed = Self::fixed_from_chinese_based_date_inner((*date).0);
+        let fixed = Inner::fixed_from_chinese_based_date_inner((*date).0);
         Iso::iso_from_fixed(fixed)
     }
 
@@ -265,7 +267,7 @@ impl Calendar for Chinese {
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.0 .0.month;
         let leap_month = if Self::is_leap_year(date.0 .0.year) {
-            Self::get_leap_month_in_year(Self::fixed_mid_year_from_year(date.0 .0.year))
+            Inner::get_leap_month_in_year(Inner::fixed_mid_year_from_year(date.0 .0.year))
         } else {
             14
         };
@@ -445,7 +447,7 @@ impl Chinese {
     /// ```
     pub fn major_solar_term_from_iso(iso: IsoDateInner) -> i32 {
         let fixed: RataDie = Iso::fixed_from_iso(iso);
-        Self::major_solar_term_from_fixed(fixed)
+        Inner::major_solar_term_from_fixed(fixed)
     }
 
     /// Get the current major solar term of an ISO date
@@ -461,7 +463,7 @@ impl Chinese {
     /// ```
     pub fn minor_solar_term_from_iso(iso: IsoDateInner) -> i32 {
         let fixed: RataDie = Iso::fixed_from_iso(iso);
-        Self::minor_solar_term_from_fixed(fixed)
+        Inner::minor_solar_term_from_fixed(fixed)
     }
 
     /// Get the ISO date of the nearest Chinese New Year on or before a given ISO date
@@ -478,7 +480,7 @@ impl Chinese {
     pub fn chinese_new_year_on_or_before_iso(iso: Date<Iso>) -> Date<Iso> {
         let iso_inner = iso.inner;
         let fixed = Iso::fixed_from_iso(iso_inner);
-        let result_fixed = Self::new_year_on_or_before_fixed_date(fixed);
+        let result_fixed = Inner::new_year_on_or_before_fixed_date(fixed);
         Iso::iso_from_fixed(result_fixed)
     }
 
@@ -492,7 +494,7 @@ impl Chinese {
         let era = Era(tinystr!(16, "chinese"));
         let number = year;
         let cyclic = Some(div_rem_euclid(number - 1, 60).1 + 1);
-        let mid_year = Self::fixed_mid_year_from_year(number);
+        let mid_year = Inner::fixed_mid_year_from_year(number);
         let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
         let related_iso = Some(iso_formattable_year.number);
         types::FormattableYear {
@@ -511,9 +513,9 @@ impl Chinese {
         if code.0.len() < 3 {
             return None;
         }
-        let mid_year = Self::fixed_mid_year_from_year(year);
+        let mid_year = Inner::fixed_mid_year_from_year(year);
         let leap_month = if Self::is_leap_year(year) {
-            Self::get_leap_month_in_year(mid_year)
+            Inner::get_leap_month_in_year(mid_year)
         } else {
             // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
             // it is impossible to actually have 14 months in a year.
@@ -562,8 +564,8 @@ mod test {
     fn test_chinese_new_moon_directionality() {
         for i in (-1000..1000).step_by(31) {
             let moment = Moment::new(i as f64);
-            let before = Chinese::new_moon_before(moment);
-            let after = Chinese::new_moon_on_or_after(moment);
+            let before = Inner::new_moon_before(moment);
+            let after = Inner::new_moon_on_or_after(moment);
             assert!(before < after, "Chinese new moon directionality failed for Moment: {moment:?}, with:\n\tBefore: {before:?}\n\tAfter: {after:?}");
         }
     }
@@ -639,7 +641,7 @@ mod test {
         ];
 
         for case in cases {
-            let chinese = Chinese::chinese_based_date_from_fixed(RataDie::new(case.fixed));
+            let chinese = Inner::chinese_based_date_from_fixed(RataDie::new(case.fixed));
             assert_eq!(
                 case.expected_year,
                 chinese.year().number,
@@ -685,7 +687,7 @@ mod test {
 
         for case in cases {
             let date = Date::try_new_chinese_date(case.year, case.month, case.day).unwrap();
-            let fixed = Chinese::fixed_from_chinese_based_date_inner(date.inner.0).to_i64_date();
+            let fixed = Inner::fixed_from_chinese_based_date_inner(date.inner.0).to_i64_date();
             let expected = case.expected;
             assert_eq!(fixed, expected, "Fixed from Chinese failed with expected: {fixed} and calculated: {expected}, for test case: {case:?}");
         }
@@ -699,8 +701,8 @@ mod test {
         let max_iters = 560;
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
-            let chinese = Chinese::chinese_based_date_from_fixed(rata_die);
-            let result = Chinese::fixed_from_chinese_based_date_inner(chinese.inner.0);
+            let chinese = Inner::chinese_based_date_from_fixed(rata_die);
+            let result = Inner::fixed_from_chinese_based_date_inner(chinese.inner.0);
             let result_debug = result.to_i64_date();
             assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
             fixed += 7043;
@@ -789,7 +791,7 @@ mod test {
             let chinese_year = iso.to_calendar(Chinese).year().number;
             let rata_die = Iso::fixed_from_iso(*iso.inner());
             assert!(Chinese::is_leap_year(chinese_year));
-            assert_eq!(expected_month, Chinese::get_leap_month_in_year(rata_die));
+            assert_eq!(expected_month, Inner::get_leap_month_in_year(rata_die));
         }
     }
 
