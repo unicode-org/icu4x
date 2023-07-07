@@ -23,8 +23,8 @@ dhat-heap.json
 /benchmarks
 
 # Do not check-in binary file tree test data
-provider/testdata/data/postcard/*
-!provider/testdata/data/postcard/fingerprints.csv
+provider/datagen/tests/data/postcard/*
+!provider/datagen/tests/data/postcard/fingerprints.csv
 
 # Ignore irrelevant files that get generated on macOS
 **/.DS_Store

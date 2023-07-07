@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// Locales to include in testdata. Keep this list somewhat short, but cover all features.
+// Locales to include in test data. Keep this list somewhat short, but cover all features.
 // We use 12 base languages with a small number of variants to allow for 12 languages to be
 // used in microbenchmarks.
 const LOCALES: &[LanguageIdentifier] = &[

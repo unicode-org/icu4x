@@ -11,13 +11,12 @@ edition = "2021"
 [dev-dependencies]
 databake = { path = "../../utils/databake", features = ["derive"] }
 displaydoc = "0.2.3"
-icu = { path = "../../components/icu", default-features = false }
+icu = { path = "../../components/icu" }
 icu_datagen = { path = "../../provider/datagen", default-features = false}
-icu_provider = { path = "../../provider/core", default-features = false }
+icu_provider = { path = "../../provider/core", features = ["deserialize_json"] }
 icu_provider_adapters = { path = "../../provider/adapters", default-features = false }
 icu_provider_blob = { path = "../../provider/blob" }
 icu_provider_fs = { path = "../../provider/fs" }
-icu_testdata = { path = "../../provider/testdata", features = ["buffer"] }
 itertools = "0.10"
 litemap = { path = "../../utils/litemap" }
 lru = "0.8.1"

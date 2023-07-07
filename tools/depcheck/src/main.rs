@@ -148,7 +148,6 @@ fn main() {
     let logging: BTreeSet<_> = EXTRA_LOGGING_DEPS.iter().copied().collect();
     let blob: BTreeSet<_> = EXTRA_BLOB_DEPS.iter().copied().collect();
     let fs: BTreeSet<_> = EXTRA_FS_DEPS.iter().copied().collect();
-    let test: BTreeSet<_> = EXTRA_TEST_DEPS.iter().copied().collect();
     let zip: BTreeSet<_> = EXTRA_ZIP_DEPS.iter().copied().collect();
     let rayon: BTreeSet<_> = EXTRA_RAYON_DEPS.iter().copied().collect();
     let datagen: BTreeSet<_> = EXTRA_DATAGEN_DEPS.iter().copied().collect();
@@ -264,9 +263,9 @@ fn main() {
     test_dep_list(
         "icu_capi",
         "normal",
-        "--features provider_test",
-        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &test],
-        "`EXTRA_TEST_DEPS`",
+        "--features compiled_data",
+        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &data],
+        "`EXTRA_DATA_DEPS`",
     );
     test_dep_list(
         "icu_capi",

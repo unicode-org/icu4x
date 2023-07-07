@@ -595,22 +595,60 @@ mod tests {
     use super::*;
     use icu_locid::locale;
 
-    struct RejectByKeyProvider<P> {
+    struct RejectByKeyProvider {
         keys: Vec<DataKey>,
-        inner: P,
     }
 
-    impl<P: BufferProvider> BufferProvider for RejectByKeyProvider<P> {
-        fn load_buffer(
-            &self,
-            key: DataKey,
-            req: DataRequest,
-        ) -> Result<DataResponse<BufferMarker>, DataError> {
+    impl AnyProvider for RejectByKeyProvider {
+        fn load_any(&self, key: DataKey, _: DataRequest) -> Result<AnyResponse, DataError> {
             if self.keys.contains(&key) {
-                Err(DataErrorKind::MissingDataKey.with_str_context("rejected"))
-            } else {
-                self.inner.load_buffer(key, req)
+                return Err(DataErrorKind::MissingDataKey.with_str_context("rejected"));
             }
+
+            let l = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1;
+            let ext = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1;
+            let sr = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1;
+
+            let payload = if key.hashed() == LikelySubtagsV1Marker::KEY.hashed() {
+                DataPayload::<LikelySubtagsV1Marker>::from_owned(LikelySubtagsV1 {
+                    language_script: l
+                        .language_script
+                        .iter_copied()
+                        .chain(ext.language_script.iter_copied())
+                        .collect(),
+                    language_region: l
+                        .language_region
+                        .iter_copied()
+                        .chain(ext.language_region.iter_copied())
+                        .collect(),
+                    language: l
+                        .language
+                        .iter_copied()
+                        .chain(ext.language.iter_copied())
+                        .collect(),
+                    script_region: ext.script_region.clone(),
+                    script: ext.script.clone(),
+                    region: ext.region.clone(),
+                    und: l.und,
+                })
+                .wrap_into_any_payload()
+            } else if key.hashed() == LikelySubtagsForLanguageV1Marker::KEY.hashed() {
+                DataPayload::<LikelySubtagsForLanguageV1Marker>::from_static_ref(l)
+                    .wrap_into_any_payload()
+            } else if key.hashed() == LikelySubtagsExtendedV1Marker::KEY.hashed() {
+                DataPayload::<LikelySubtagsExtendedV1Marker>::from_static_ref(ext)
+                    .wrap_into_any_payload()
+            } else if key.hashed() == LikelySubtagsForScriptRegionV1Marker::KEY.hashed() {
+                DataPayload::<LikelySubtagsForScriptRegionV1Marker>::from_static_ref(sr)
+                    .wrap_into_any_payload()
+            } else {
+                return Err(DataErrorKind::MissingDataKey.into_error());
+            };
+
+            Ok(AnyResponse {
+                payload: Some(payload),
+                metadata: Default::default(),
+            })
         }
     }
 
@@ -621,9 +659,8 @@ mod tests {
                 LikelySubtagsForLanguageV1Marker::KEY,
                 LikelySubtagsForScriptRegionV1Marker::KEY,
             ],
-            inner: icu_testdata::buffer(),
         };
-        let lc = LocaleExpander::try_new_with_buffer_provider(&provider)
+        let lc = LocaleExpander::try_new_with_any_provider(&provider)
             .expect("should create with old keys");
         let mut locale = locale!("zh-CN");
         assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -634,9 +671,8 @@ mod tests {
     fn test_new_keys() {
         let provider = RejectByKeyProvider {
             keys: vec![LikelySubtagsV1Marker::KEY],
-            inner: icu_testdata::buffer(),
         };
-        let lc = LocaleExpander::try_new_with_buffer_provider(&provider)
+        let lc = LocaleExpander::try_new_with_any_provider(&provider)
             .expect("should create with new keys");
         let mut locale = locale!("zh-CN");
         assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -649,9 +685,8 @@ mod tests {
         // Not sure if this is a useful test.
         let provider = RejectByKeyProvider {
             keys: vec![LikelySubtagsForScriptRegionV1Marker::KEY],
-            inner: icu_testdata::buffer(),
         };
-        let lc = LocaleExpander::try_new_with_buffer_provider(&provider)
+        let lc = LocaleExpander::try_new_with_any_provider(&provider)
             .expect("should create with mixed keys");
         let mut locale = locale!("zh-CN");
         assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -666,9 +701,8 @@ mod tests {
                 LikelySubtagsForScriptRegionV1Marker::KEY,
                 LikelySubtagsV1Marker::KEY,
             ],
-            inner: icu_testdata::buffer(),
         };
-        if LocaleExpander::try_new_with_buffer_provider(&provider).is_ok() {
+        if LocaleExpander::try_new_with_any_provider(&provider).is_ok() {
             panic!("should not create: no data present")
         };
     }
