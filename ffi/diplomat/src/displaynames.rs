@@ -65,11 +65,8 @@ pub mod ffi {
 
     impl ICU4XLocaleDisplayNamesFormatter {
         /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
-        #[diplomat::rust_link(
-            icu::displaynames::LocaleDisplayNamesFormatter::try_new_unstable,
-            FnInStruct
-        )]
-        pub fn try_new_unstable(
+        #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::try_new, FnInStruct)]
+        pub fn try_new(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             options: ICU4XDisplayNamesOptionsV1,
@@ -78,7 +75,14 @@ pub mod ffi {
             let options = DisplayNamesOptions::from(options);
 
             Ok(Box::new(ICU4XLocaleDisplayNamesFormatter(
-                LocaleDisplayNamesFormatter::try_new_unstable(&provider.0, &locale, options)?,
+                call_constructor!(
+                    LocaleDisplayNamesFormatter::try_new,
+                    LocaleDisplayNamesFormatter::try_new_with_any_provider,
+                    LocaleDisplayNamesFormatter::try_new_with_buffer_provider,
+                    provider,
+                    &locale,
+                    options,
+                )?,
             )))
         }
 
@@ -96,15 +100,20 @@ pub mod ffi {
 
     impl ICU4XRegionDisplayNames {
         /// Creates a new `RegionDisplayNames` from locale data and an options bag.
-        #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::try_new_unstable, FnInStruct)]
-        pub fn try_new_unstable(
+        #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::try_new, FnInStruct)]
+        pub fn try_new(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XRegionDisplayNames>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XRegionDisplayNames(
-                RegionDisplayNames::try_new_unstable(&provider.0, &locale, Default::default())?,
-            )))
+            Ok(Box::new(ICU4XRegionDisplayNames(call_constructor!(
+                RegionDisplayNames::try_new,
+                RegionDisplayNames::try_new_with_any_provider,
+                RegionDisplayNames::try_new_with_buffer_provider,
+                provider,
+                &locale,
+                Default::default()
+            )?)))
         }
 
         /// Returns the locale specific display name of a region.

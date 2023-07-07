@@ -20,7 +20,7 @@ export class ICU4XDateFormatter {
 
    * Creates a new {@link ICU4XDateFormatter `ICU4XDateFormatter`} from locale data.
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.try_new_with_length_unstable Rust documentation for `try_new_with_length_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.try_new_with_length Rust documentation for `try_new_with_length`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_with_length(provider: ICU4XDataProvider, locale: ICU4XLocale, date_length: ICU4XDateLength): ICU4XDateFormatter | never;

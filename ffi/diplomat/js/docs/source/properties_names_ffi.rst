@@ -63,17 +63,17 @@
 
     .. js:function:: load_bidi_class(provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper>`__ for more information.
 
 
     .. js:function:: load_east_asian_width(provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper>`__ for more information.
 
 
     .. js:function:: load_line_break(provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper>`__ for more information.
 
 
     .. js:function:: load_grapheme_cluster_break(provider)
@@ -83,15 +83,15 @@
 
     .. js:function:: load_word_break(provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.name_to_enum_mapper>`__ for more information.
 
 
     .. js:function:: load_sentence_break(provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.name_to_enum_mapper>`__ for more information.
 
 
     .. js:function:: load_script(provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.name_to_enum_mapper>`__ for more information.
 

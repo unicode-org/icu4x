@@ -18,7 +18,7 @@ export class ICU4XPluralRules {
 
    * Construct an {@link ICU4XPluralRules `ICU4XPluralRules`} for the given locale, for cardinal numbers
 
-   * See the {@link https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal_unstable Rust documentation for `try_new_cardinal_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal Rust documentation for `try_new_cardinal`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_cardinal(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XPluralRules | never;
@@ -27,7 +27,7 @@ export class ICU4XPluralRules {
 
    * Construct an {@link ICU4XPluralRules `ICU4XPluralRules`} for the given locale, for ordinal numbers
 
-   * See the {@link https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal_unstable Rust documentation for `try_new_ordinal_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal Rust documentation for `try_new_ordinal`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_ordinal(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XPluralRules | never;

@@ -12,7 +12,7 @@
 
         Creates a new :js:class:`ICU4XWeekCalculator` from locale data.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new>`__ for more information.
 
 
     .. js:function:: create_from_first_day_of_week_and_min_week_days(first_weekday, min_week_days)

@@ -33,22 +33,22 @@ all-features = true
 [dependencies]
 
 # ICU components
-icu_calendar = { version = "1.2.0", path = "../../components/calendar", features = ["datagen"] }
-icu_casemapping = { version = "0.7.1", path = "../../experimental/casemapping", features = ["datagen"] }
-icu_collator = { version = "1.2.0", path = "../../components/collator", features = ["datagen"] }
-icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", features = ["datagen"] }
-icu_datetime = { version = "1.2.0", path = "../../components/datetime", features = ["datagen"] }
-icu_decimal = { version = "1.2.0", path = "../../components/decimal", features = ["datagen"] }
-icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", features = ["datagen"] }
-icu_list = { version = "1.2.0", path = "../../components/list", features = ["datagen"]}
-icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform", features = ["datagen"] }
-icu_normalizer = { version = "1.2.0", path = "../../components/normalizer", features = ["datagen"] }
-icu_personnames = { version = "0.1.0", path = "../../experimental/personnames", features = ["datagen"] }
-icu_plurals = { version = "1.2.0", path = "../../components/plurals", features = ["datagen"] }
-icu_properties = { version = "1.2.0", path = "../../components/properties", features = ["datagen"]}
-icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", features = ["datagen"] }
-icu_segmenter = { version = "1.2.0", path = "../../components/segmenter", features = ["datagen", "lstm"] }
-icu_timezone = { version = "1.2.0", path = "../../components/timezone", features = ["datagen"] }
+icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, features = ["datagen"] }
+icu_casemap = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, features = ["datagen"] }
+icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, features = ["datagen"] }
+icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, features = ["datagen"] }
+icu_datetime = { version = "1.2.0", path = "../../components/datetime", default-features = false, features = ["datagen"] }
+icu_decimal = { version = "1.2.0", path = "../../components/decimal", default-features = false, features = ["datagen"] }
+icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", default-features = false, features = ["datagen"] }
+icu_list = { version = "1.2.0", path = "../../components/list", default-features = false, features = ["datagen"]}
+icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform", default-features = false, features = ["datagen"] }
+icu_normalizer = { version = "1.2.0", path = "../../components/normalizer", default-features = false, features = ["datagen"] }
+icu_personnames = { version = "0.1.0", path = "../../experimental/personnames", default-features = false, features = ["datagen"] }
+icu_plurals = { version = "1.2.0", path = "../../components/plurals", default-features = false, features = ["datagen"] }
+icu_properties = { version = "1.2.0", path = "../../components/properties", default-features = false, features = ["datagen"]}
+icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, features = ["datagen"] }
+icu_segmenter = { version = "1.2.0", path = "../../components/segmenter", default-features = false, features = ["datagen", "lstm"] }
+icu_timezone = { version = "1.2.0", path = "../../components/timezone", default-features = false, features = ["datagen"] }
 
 # ICU infrastructure
 icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder", default-features = false }

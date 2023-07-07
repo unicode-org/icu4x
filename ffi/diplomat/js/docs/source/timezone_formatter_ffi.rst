@@ -37,7 +37,7 @@
 
         Uses localized GMT as the fallback format.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new>`__ for more information.
 
         Additional information: `1 <https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html>`__
 
@@ -48,7 +48,7 @@
 
         Uses ISO-8601 as the fallback format.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new>`__ for more information.
 
         Additional information: `1 <https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html>`__
 
@@ -57,49 +57,49 @@
 
         Loads generic non-location long format. Example: "Pacific Time"
 
-        See the `Rust documentation for load_generic_non_location_long <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_generic_non_location_long>`__ for more information.
+        See the `Rust documentation for include_generic_non_location_long <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_long>`__ for more information.
 
 
     .. js:method:: load_generic_non_location_short(provider)
 
         Loads generic non-location short format. Example: "PT"
 
-        See the `Rust documentation for load_generic_non_location_short <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_generic_non_location_short>`__ for more information.
+        See the `Rust documentation for include_generic_non_location_short <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_short>`__ for more information.
 
 
     .. js:method:: load_specific_non_location_long(provider)
 
         Loads specific non-location long format. Example: "Pacific Standard Time"
 
-        See the `Rust documentation for load_specific_non_location_long <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_specific_non_location_long>`__ for more information.
+        See the `Rust documentation for include_specific_non_location_long <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_long>`__ for more information.
 
 
     .. js:method:: load_specific_non_location_short(provider)
 
         Loads specific non-location short format. Example: "PST"
 
-        See the `Rust documentation for load_specific_non_location_short <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_specific_non_location_short>`__ for more information.
+        See the `Rust documentation for include_specific_non_location_short <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_short>`__ for more information.
 
 
     .. js:method:: load_generic_location_format(provider)
 
         Loads generic location format. Example: "Los Angeles Time"
 
-        See the `Rust documentation for load_generic_location_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_generic_location_format>`__ for more information.
+        See the `Rust documentation for include_generic_location_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_location_format>`__ for more information.
 
 
-    .. js:method:: load_localized_gmt_format()
+    .. js:method:: include_localized_gmt_format()
 
         Loads localized GMT format. Example: "GMT-07:00"
 
-        See the `Rust documentation for load_localized_gmt_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_localized_gmt_format>`__ for more information.
+        See the `Rust documentation for include_localized_gmt_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_localized_gmt_format>`__ for more information.
 
 
     .. js:method:: load_iso_8601_format(options)
 
         Loads ISO-8601 format. Example: "-07:00"
 
-        See the `Rust documentation for load_iso_8601_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_iso_8601_format>`__ for more information.
+        See the `Rust documentation for include_iso_8601_format <https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_iso_8601_format>`__ for more information.
 
 
     .. js:method:: format_custom_time_zone(value)

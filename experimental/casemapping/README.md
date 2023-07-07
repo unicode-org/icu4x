@@ -1,8 +1,8 @@
-# icu_casemapping [![crates.io](https://img.shields.io/crates/v/icu_casemapping)](https://crates.io/crates/icu_casemapping)
+# icu_casemap [![crates.io](https://img.shields.io/crates/v/icu_casemap)](https://crates.io/crates/icu_casemap)
 
 🚧 \[Experimental\] Case mapping for Unicode characters and strings.
 
-This module is published as its own crate ([`icu_casemapping`](https://docs.rs/icu_casemapping/latest/icu_casemapping/))
+This module is published as its own crate ([`icu_casemap`](https://docs.rs/icu_casemap/latest/icu_casemap/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
 <div class="stab unstable">

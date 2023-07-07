@@ -103,7 +103,7 @@ where
     /// assert!(buf.is_empty());
     ///
     /// // Enable a non-fallback format:
-    /// tzf.with_generic_location_format().unwrap();
+    /// tzf.include_generic_location_format().unwrap();
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
     ///     Ok(Ok(_))

@@ -81,49 +81,49 @@ export class ICU4XCodePointMapData8 {
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.load_general_category.html Rust documentation for `load_general_category`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.general_category.html Rust documentation for `general_category`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_general_category(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.load_bidi_class.html Rust documentation for `load_bidi_class`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.bidi_class.html Rust documentation for `bidi_class`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_bidi_class(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.load_east_asian_width.html Rust documentation for `load_east_asian_width`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html Rust documentation for `east_asian_width`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_east_asian_width(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.load_line_break.html Rust documentation for `load_line_break`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html Rust documentation for `line_break`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_line_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.load_grapheme_cluster_break.html Rust documentation for `load_grapheme_cluster_break`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html Rust documentation for `grapheme_cluster_break`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_grapheme_cluster_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.load_word_break.html Rust documentation for `load_word_break`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.word_break.html Rust documentation for `word_break`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_word_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.load_sentence_break.html Rust documentation for `load_sentence_break`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html Rust documentation for `sentence_break`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_sentence_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
