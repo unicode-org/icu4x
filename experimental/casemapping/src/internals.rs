@@ -159,15 +159,15 @@ impl<'data> CaseMapV1<'data> {
             }
         }
 
-        // ICU4C's non-standard extension for Greek uppercasing
-        // https://icu.unicode.org/design/case/greek-upper
+        // ICU4C's non-standard extension for Greek uppercasing:
+        // https://icu.unicode.org/design/case/greek-upper.
         // Effectively removes Greek accents from Greek vowels during uppercasing,
         // whilst attempting to preserve additional marks like the dialytika (diæresis)
-        // and ypogegrammeni (combining small iota)
+        // and ypogegrammeni (combining small iota).
         if !IS_TITLE_CONTEXT && locale == CaseMapLocale::Greek && kind == MappingKind::Upper {
-            // Remove all combining diacritics on a Greek letter
+            // Remove all combining diacritics on a Greek letter.
             // Ypogegrammeni is not an accent mark and is handled by regular casemapping (it turns into
-            // a capital iota)
+            // a capital iota).
             // The dialytika is removed here, but it may be added again when the base letter is being processed.
             if greek_to_me::is_greek_diacritic_except_ypogegrammeni(c)
                 && context.preceded_by_greek_letter()
@@ -175,15 +175,17 @@ impl<'data> CaseMapV1<'data> {
                 return Ok(());
             }
             let data = greek_to_me::GREEK_DATA_TRIE.get(c);
-            // Check if the character is a Greek character with an associated uppercase base character
+            // Check if the character is a Greek character with an associated uppercase base character.
             if let Some(upper_base) = data.greek_base_uppercase() {
                 // Get the diacritics on the character itself, and add any further combining diacritics
-                // from the context
+                // from the context.
                 let mut precomposed_diacritics = data.diacritics();
                 let mut diacritics = context.add_greek_diacritics(precomposed_diacritics);
                 // If the previous vowel had an accent (which would be removed) but no dialytika,
                 // and this is an iota or upsilon, add a dialytika since it is necessary to disambiguate
-                // the now-unaccented adjacent vowels from a digraph/diphthong
+                // the now-unaccented adjacent vowels from a digraph/diphthong.
+                // Use a precomposed dialytika if the accent was precomposed, and a combining dialytika
+                // if the accent was combining, so as to map NFD to NFD and NFC to NFC.
                 if !diacritics.dialytika && (upper_base == 'Ι' || upper_base == 'Υ') {
                     if let Some(preceding_vowel) = context.preceding_greek_vowel_diacritics() {
                         if !preceding_vowel.combining.dialytika
@@ -198,17 +200,20 @@ impl<'data> CaseMapV1<'data> {
                         }
                     }
                 }
-                // Calculate the letter it should be mapped to and a corresponding combining mark
-                // if any
-                // In most branches the letter is `upper_base`, i.e. the character with all accents removed
+                // Write the base of the uppercased combining character sequence.
+                // In most branches this is [`upper_base`], i.e., the uppercase letter with all accents removed.
+                // In some branches the base has a precomposed diacritic.
+                // In the case of the Greek disjunctive "or", a combining tonos may also be written.
                 match upper_base {
                     'Η' => {
-                        // Eta is allowed to retain a tonos when it is an only word to distinguish
-                        // the word for 'or' from the feminine marker.
+                        // The letter η (eta) is allowed to retain a tonos when it is form a single-letter word to distinguish
+                        // the feminine definite article ἡ (monotonic η) from the disjunctive "or" ἤ (monotonic ή).
                         //
-                        // This implementation accepts polytonic accents, but only produces accents using the
-                        // monotonic system (which is the norm in Modern Greek), so the identity of the accent
-                        // is not tracked and all accents map to a tonos.
+                        // A lone η with an accent other than the oxia/tonos is not expected,
+                        // so there is no need to special-case the oxia/tonos.
+                        // The ancient ᾖ (exist.PRS.SUBJ.3s) has a iota subscript as well as the circumflex,
+                        // so it would not be given an oxia/tonos under this rule, and the subjunctive is formed with a particle
+                        // (e.g. να είναι) since Byzantine times anyway.
                         if diacritics.accented
                             && !context.followed_by_cased_letter(self)
                             && !context.preceded_by_cased_letter(self)
@@ -224,7 +229,6 @@ impl<'data> CaseMapV1<'data> {
                             sink.write_char('Η')?;
                         }
                     }
-                    // Iota and upsilon have precomposed dialytika variants which we can use
                     'Ι' => sink.write_char(if precomposed_diacritics.dialytika {
                         diacritics.dialytika = false;
                         'Ϊ'
@@ -239,7 +243,6 @@ impl<'data> CaseMapV1<'data> {
                     })?,
                     _ => sink.write_char(upper_base)?,
                 };
-
                 if diacritics.dialytika {
                     sink.write_char(greek_to_me::DIALYTIKA)?;
                 }
