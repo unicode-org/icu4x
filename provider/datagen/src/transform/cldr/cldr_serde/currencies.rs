@@ -8,8 +8,6 @@
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/currencies.json>
 
 use icu_locid::LanguageIdentifier;
-use itertools::Itertools;
-use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
 use std::collections::HashMap;
 use tinystr::TinyAsciiStr;

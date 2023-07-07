@@ -7,9 +7,6 @@
 //! Sample file:
 //! <https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/currencyData.json>
 
-use icu_locid::LanguageIdentifier;
-use itertools::Itertools;
-use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
 use std::collections::HashMap;
 use tinystr::TinyAsciiStr;

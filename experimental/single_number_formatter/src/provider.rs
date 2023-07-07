@@ -10,9 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use databake::Bake;
 use icu_provider::{yoke, zerofrom};
-use serde::{Deserialize, Serialize};
 use tinystr::TinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
@@ -27,7 +25,7 @@ use zerovec::{VarZeroVec, ZeroMap};
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentialV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub indices_map: ZeroMap<'data, TinyAsciiStr<3>, PatternsIndices>,
+    pub indices_map: ZeroMap<'data, TinyAsciiStr<3>, CurrencyPatterns>,
 
     // // #[cfg_attr(feature = "serde", serde(borrow))]
     // pub currencies_patterns: VarZeroVec<'data, CurrencyPatternsULE>,
@@ -46,10 +44,14 @@ pub struct CurrencyEssentialV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
-pub struct PatternsIndices {
+pub struct CurrencyPatterns {
     /// If it is true, then use the standard pattern.
     /// Otherwise, use the standard_alpha_next_to_number pattern.
-    pub pattern_standard: bool,
+    pub short_pattern_standard: bool,
+
+    /// If it is true, then use the standard pattern.
+    /// Otherwise, use the standard_alpha_next_to_number pattern.
+    pub narrow_pattern_standard: bool,
 
     pub short_place_holder: u16,
 

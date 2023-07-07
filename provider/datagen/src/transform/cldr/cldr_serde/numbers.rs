@@ -12,7 +12,7 @@ use itertools::Itertools;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
 use std::collections::HashMap;
-use tinystr::{TinyAsciiStr, TinyStr8};
+use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Symbols {
