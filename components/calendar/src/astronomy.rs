@@ -58,7 +58,11 @@ impl Location {
             return Err(LocationError::LongitudeOutOfBounds(longitude));
         }
         if !(MIN_UTC_OFFSET..=MAX_UTC_OFFSET).contains(&offset) {
-            return Err(LocationError::OffsetOutOfBounds(offset, MIN_UTC_OFFSET, MAX_UTC_OFFSET));
+            return Err(LocationError::OffsetOutOfBounds(
+                offset,
+                MIN_UTC_OFFSET,
+                MAX_UTC_OFFSET,
+            ));
         }
         Ok(Location {
             latitude,
@@ -66,6 +70,20 @@ impl Location {
             elevation,
             offset,
         })
+    }
+
+    pub(crate) const fn new_unchecked(
+        latitude: f64,
+        longitude: f64,
+        elevation: f64,
+        offset: f64,
+    ) -> Location {
+        Location {
+            latitude,
+            longitude,
+            elevation,
+            offset,
+        }
     }
 
     /// Get the longitude of a Location
@@ -915,7 +933,7 @@ mod tests {
         let mut lat = -90.0;
         while long <= 180.0 {
             while lat <= 90.0 {
-                let location: Location = Location::try_new(lat, long, 1000.0, 0).unwrap();
+                let location: Location = Location::try_new(lat, long, 1000.0, 0.0).unwrap();
                 assert_eq!(lat, location.latitude());
                 assert_eq!(long, location.longitude());
 
@@ -927,13 +945,13 @@ mod tests {
 
     #[test]
     fn check_location_errors() {
-        let lat_too_small = Location::try_new(-90.1, 15.0, 1000.0, 0).unwrap_err();
+        let lat_too_small = Location::try_new(-90.1, 15.0, 1000.0, 0.0).unwrap_err();
         assert_eq!(lat_too_small, LocationError::LatitudeOutOfBounds(-90.1));
-        let lat_too_large = Location::try_new(90.1, -15.0, 1000.0, 0).unwrap_err();
+        let lat_too_large = Location::try_new(90.1, -15.0, 1000.0, 0.0).unwrap_err();
         assert_eq!(lat_too_large, LocationError::LatitudeOutOfBounds(90.1));
-        let long_too_small = Location::try_new(15.0, 180.1, 1000.0, 0).unwrap_err();
+        let long_too_small = Location::try_new(15.0, 180.1, 1000.0, 0.0).unwrap_err();
         assert_eq!(long_too_small, LocationError::LongitudeOutOfBounds(180.1));
-        let long_too_large = Location::try_new(-15.0, -180.1, 1000.0, 0).unwrap_err();
+        let long_too_large = Location::try_new(-15.0, -180.1, 1000.0, 0.0).unwrap_err();
         assert_eq!(long_too_large, LocationError::LongitudeOutOfBounds(-180.1));
     }
 }

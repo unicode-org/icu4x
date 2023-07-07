@@ -4,17 +4,26 @@
 
 //! TODO: Documentation
 
-use crate::{rata_die::RataDie, astronomy::{Location, Astronomical, MEAN_TROPICAL_YEAR, MEAN_SYNODIC_MONTH}, helpers::{i64_to_i32, adjusted_rem_euclid, quotient, I32Result}, types::{Moment, Era}, Calendar, Date, calendar_arithmetic::{CalendarArithmetic, ArithmeticDate}, AsCalendar};
+use crate::{
+    astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
+    calendar_arithmetic::{ArithmeticDate, CalendarArithmetic},
+    helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
+    rata_die::RataDie,
+    types::Moment,
+    Date,
+};
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct ChineseBasedDateInner<C: ChineseBased<C> + CalendarArithmetic>(pub(crate) ArithmeticDate<C>);
+pub(crate) struct ChineseBasedDateInner<C: ChineseBased<C> + CalendarArithmetic>(
+    pub(crate) ArithmeticDate<C>,
+);
 
 pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
     /// Given a fixed date, the location used for observations of the new moon in order to
     /// calculate the beginning of months. For multiple Chinese-based lunar calendars, this has
     /// changed over the years, and can cause differences in calendar date.
     fn location(fixed: RataDie) -> Location;
-    
+
     /// The RataDie of the beginning of the epoch used for internal computation; this may not
     /// reflect traditional methods of year-tracking or eras, since Chinese-based calendars
     /// may not track years ordinally in the same way many western calendars do.
@@ -44,9 +53,8 @@ pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5345-L5351
     fn no_major_solar_term(date: RataDie) -> bool {
         Self::major_solar_term_from_fixed(date)
-        == Self::major_solar_term_from_fixed(Self::new_moon_on_or_after(
-            (date + 1).as_moment(),
-        ))    }
+            == Self::major_solar_term_from_fixed(Self::new_moon_on_or_after((date + 1).as_moment()))
+    }
 
     /// Get the current minor solar term of a fixed date, output as an integer from 1..=12.
     ///
@@ -102,12 +110,16 @@ pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
         let prior_solstice = Self::winter_solstice_on_or_before(date); // s1
         let following_solstice = Self::winter_solstice_on_or_before(prior_solstice + 370); // s2
         let month_after_eleventh = Self::new_moon_on_or_after((prior_solstice + 1).as_moment()); // m12
-        let month_after_twelfth = Self::new_moon_on_or_after((month_after_eleventh + 1).as_moment()); // m13
+        let month_after_twelfth =
+            Self::new_moon_on_or_after((month_after_eleventh + 1).as_moment()); // m13
         let next_eleventh_month = Self::new_moon_before((following_solstice + 1).as_moment()); // next-m11
         let m12_float = month_after_eleventh.as_moment().inner();
         let next_m11_float = next_eleventh_month.as_moment().inner();
         let lhs_argument = libm::round((next_m11_float - m12_float) / MEAN_SYNODIC_MONTH) as i64;
-        if lhs_argument == 12 && (Self::no_major_solar_term(month_after_eleventh) || Self::no_major_solar_term(month_after_twelfth)) {
+        if lhs_argument == 12
+            && (Self::no_major_solar_term(month_after_eleventh)
+                || Self::no_major_solar_term(month_after_twelfth))
+        {
             Self::new_moon_on_or_after((month_after_twelfth + 1).as_moment())
         } else {
             month_after_twelfth
@@ -126,8 +138,7 @@ pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
         let mut iters = 0;
         let max_iters = 367;
         let mut day = Moment::new(libm::floor(approx.inner() - 1.0));
-        while iters < max_iters
-            && 270.0 >= Astronomical::solar_longitude(Self::midnight(day + 1.0))
+        while iters < max_iters && 270.0 >= Astronomical::solar_longitude(Self::midnight(day + 1.0))
         {
             iters += 1;
             day += 1.0;
@@ -153,7 +164,7 @@ pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
     }
 
     /// Get a Date<C> from a fixed date
-    /// 
+    ///
     /// Months are calculated by iterating through the dates of new moons until finding the last month which
     /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
     /// from the fixed date of the beginning of the month.
@@ -162,12 +173,12 @@ pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
     fn chinese_based_date_from_fixed(date: RataDie) -> Date<C> {
         let new_year = Self::new_year_on_or_before_fixed_date(date);
-        let elapsed_years = libm::floor(
-            1.5 - 1.0 / 12.0 + ((new_year - Self::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
-        );
+        let elapsed_years =
+            libm::floor(1.5 - 1.0 / 12.0 + ((new_year - Self::EPOCH) as f64) / MEAN_TROPICAL_YEAR);
         let elapsed_years_int = i64_to_i32(elapsed_years as i64);
         debug_assert!(
-            matches!(elapsed_years_int, I32Result::WithinRange(_)), "Year should be in range of i32"
+            matches!(elapsed_years_int, I32Result::WithinRange(_)),
+            "Year should be in range of i32"
         );
         let year = elapsed_years_int.saturate();
         let mut month = 1;
@@ -185,12 +196,12 @@ pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
     }
 
     /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
-    /// 
+    ///
     /// This function should just call try_new_C_date where C is the name of the calendar.
     fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<C>;
 
     /// Get a RataDie from a ChineseBasedDateInner
-    /// 
+    ///
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
     /// (beginning of the month) of the month given, then adds the necessary number of days.
     fn fixed_from_chinese_based_date_inner(date: ChineseBasedDateInner<C>) -> RataDie {
@@ -207,7 +218,7 @@ pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
     /// Get a RataDie in the middle of a year; this is not necessarily meant for direct use in
     /// calculations; rather, it is useful for getting a RataDie guaranteed to be in a given year
     /// as input for other calculations like [`get_leap_month_in_year`].
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5469-L5475
     fn fixed_mid_year_from_year(elapsed_years: i32) -> RataDie {
@@ -244,5 +255,4 @@ pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
         debug_assert!(result < max_iters, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
         result
     }
-
 }

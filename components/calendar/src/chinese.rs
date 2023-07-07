@@ -35,16 +35,14 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::astronomy::{Location};
+use crate::astronomy::Location;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::chinese_based::{ChineseBased, ChineseBasedDateInner};
-use crate::helpers::{div_rem_euclid,};
+use crate::helpers::div_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
 use crate::types::{Era, FormattableYear, MonthCode};
-use crate::{
-    types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
-};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
@@ -60,10 +58,10 @@ const CHINESE_EPOCH: RataDie = RataDie::new(-963099); // Feb. 15, 2637 BCE (-263
 const UTC_OFFSET_PRE_1929: f64 = (1397.0 / 180.0) / 24.0;
 const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
 
-#[allow(clippy::unwrap_used)]
-const CHINESE_LOCATION_PRE_1929: Location = Location::try_new(39.0, 116.0, 43.5, UTC_OFFSET_PRE_1929).unwrap();
-#[allow(clippy::unwrap_used)]
-const CHINESE_LOCATION_POST_1929: Location = Location::try_new(39.0, 116.0, 43.5, UTC_OFFSET_POST_1929).unwrap();
+const CHINESE_LOCATION_PRE_1929: Location =
+    Location::new_unchecked(39.0, 116.0, 43.5, UTC_OFFSET_PRE_1929);
+const CHINESE_LOCATION_POST_1929: Location =
+    Location::new_unchecked(39.0, 116.0, 43.5, UTC_OFFSET_POST_1929);
 
 /// The Chinese Calendar
 ///
@@ -110,7 +108,7 @@ const CHINESE_LOCATION_POST_1929: Location = Location::try_new(39.0, 116.0, 43.5
 #[non_exhaustive]
 pub struct Chinese;
 
-/// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
+/// TODO: Add old documentation back
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct ChineseDateInner(ChineseBasedDateInner<Chinese>);
 
@@ -201,7 +199,9 @@ impl Calendar for Chinese {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        Ok(ArithmeticDate::new_unchecked(year, month, day)).map(ChineseDateInner) // TODO: Fix??
+        Ok(ArithmeticDate::new_unchecked(year, month, day))
+            .map(ChineseBasedDateInner)
+            .map(ChineseDateInner)
     }
 
     // Construct the date from an ISO date
@@ -219,16 +219,16 @@ impl Calendar for Chinese {
     //Count the number of months in a given year, specified by providing a date
     // from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u32 {
-        Self::days_in_provided_year(date.0.0.year)
+        Self::days_in_provided_year(date.0 .0.year)
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::month_days(date.0.0.year, date.0.0.month)
+        Self::month_days(date.0 .0.year, date.0 .0.month)
     }
 
     #[doc(hidden)] // unstable
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.0.offset_date(offset)
+        date.0 .0.offset_date(offset)
     }
 
     #[doc(hidden)] // unstable
@@ -245,7 +245,7 @@ impl Calendar for Chinese {
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        date1.0.0.until(date2.0.0, _largest_unit, _smallest_unit)
+        date1.0 .0.until(date2.0 .0, _largest_unit, _smallest_unit)
     }
 
     /// Obtain a name for the calendar for debug printing
@@ -255,7 +255,7 @@ impl Calendar for Chinese {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::format_chinese_year(date.0.0.year)
+        Self::format_chinese_year(date.0 .0.year)
     }
 
     /// The calendar-specific month code represented by `date`;
@@ -263,9 +263,9 @@ impl Calendar for Chinese {
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal monts 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        let ordinal = date.0.0.month;
-        let leap_month = if Self::is_leap_year(date.0.0.year) {
-            Self::get_leap_month_in_year(Self::fixed_mid_year_from_year(date.0.0.year))
+        let ordinal = date.0 .0.month;
+        let leap_month = if Self::is_leap_year(date.0 .0.year) {
+            Self::get_leap_month_in_year(Self::fixed_mid_year_from_year(date.0 .0.year))
         } else {
             14
         };
@@ -324,16 +324,16 @@ impl Calendar for Chinese {
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0.0.day as u32)
+        types::DayOfMonth(date.0 .0.day as u32)
     }
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.0.year.saturating_sub(1);
-        let next_year = date.0.0.year.saturating_add(1);
+        let prev_year = date.0 .0.year.saturating_sub(1);
+        let next_year = date.0 .0.year.saturating_add(1);
         types::DayOfYearInfo {
-            day_of_year: date.0.0.day_of_year(),
-            days_in_year: date.0.0.days_in_year(),
+            day_of_year: date.0 .0.day_of_year(),
+            days_in_year: date.0 .0.days_in_year(),
             prev_year: Self::format_chinese_year(prev_year),
             days_in_prev_year: Self::days_in_provided_year(prev_year),
             next_year: Self::format_chinese_year(next_year),
@@ -346,7 +346,7 @@ impl Calendar for Chinese {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_for_every_year(date.0.0.year)
+        Self::months_for_every_year(date.0 .0.year)
     }
 }
 
@@ -374,7 +374,8 @@ impl Date<Chinese> {
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
         ArithmeticDate::new_from_lunar_ordinals(year, month, day)
-            .map(ChineseDateInner) //TODO: Fix??
+            .map(ChineseBasedDateInner)
+            .map(ChineseDateInner)
             .map(|inner| Date::from_raw(inner, Chinese))
     }
 }
@@ -559,14 +560,16 @@ impl Chinese {
 
 #[cfg(test)]
 mod test {
+    use crate::types::Moment;
+
     use super::*;
 
     #[test]
     fn test_chinese_new_moon_directionality() {
         for i in (-1000..1000).step_by(31) {
             let moment = Moment::new(i as f64);
-            let before = Chinese::chinese_new_moon_before(moment);
-            let after = Chinese::chinese_new_moon_on_or_after(moment);
+            let before = Chinese::new_moon_before(moment);
+            let after = Chinese::new_moon_on_or_after(moment);
             assert!(before < after, "Chinese new moon directionality failed for Moment: {moment:?}, with:\n\tBefore: {before:?}\n\tAfter: {after:?}");
         }
     }
@@ -642,7 +645,7 @@ mod test {
         ];
 
         for case in cases {
-            let chinese = Chinese::chinese_date_from_fixed(RataDie::new(case.fixed));
+            let chinese = Chinese::chinese_based_date_from_fixed(RataDie::new(case.fixed));
             assert_eq!(
                 case.expected_year,
                 chinese.year().number,
@@ -688,7 +691,7 @@ mod test {
 
         for case in cases {
             let date = Date::try_new_chinese_date(case.year, case.month, case.day).unwrap();
-            let fixed = Chinese::fixed_from_chinese_date_inner(date.inner).to_i64_date();
+            let fixed = Chinese::fixed_from_chinese_based_date_inner(date.inner.0).to_i64_date();
             let expected = case.expected;
             assert_eq!(fixed, expected, "Fixed from Chinese failed with expected: {fixed} and calculated: {expected}, for test case: {case:?}");
         }
@@ -702,8 +705,8 @@ mod test {
         let max_iters = 560;
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
-            let chinese = Chinese::chinese_date_from_fixed(rata_die);
-            let result = Chinese::fixed_from_chinese_date_inner(chinese.inner);
+            let chinese = Chinese::chinese_based_date_from_fixed(rata_die);
+            let result = Chinese::fixed_from_chinese_based_date_inner(chinese.inner.0);
             let result_debug = result.to_i64_date();
             assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
             fixed += 7043;
