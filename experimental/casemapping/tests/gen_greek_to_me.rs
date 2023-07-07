@@ -15,14 +15,15 @@ use std::path::Path;
 use std::process::{Command, Stdio};
 
 fn main() {
-    let size = u32::from(char::MAX);
-    let mut vec = Vec::with_capacity(size as usize);
-
     let decomposer = DecomposingNormalizer::new_nfd();
     let script = maps::script();
     let gc = maps::general_category();
     let cm = CaseMapper::new();
 
+    // Create a vector for all codepoints (including surrogates); as this is the format needed by CodePointTrieBuilder
+    // push to it in a loop
+    let size = u32::from(char::MAX);
+    let mut vec = Vec::with_capacity(size as usize);
     for ch in 0..=size {
         let mut data = GreekPrecomposedLetterData::default();
         if let Ok(ch) = char::try_from(ch) {
