@@ -61,7 +61,7 @@ buffer_provider = [
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider"]
 provider_test = []
-logging = ["icu_provider/log_error_context", "dep:log"]
+logging = ["icu_provider/logging", "dep:log"]
 # Use the env_logger functionality to log based on environment variables
 simple_logger = ["dep:simple_logger"]
 
