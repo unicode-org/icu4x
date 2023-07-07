@@ -10,6 +10,7 @@ use writeable::Writeable;
 #[test]
 pub fn test_ecma402_table() {
     // Source: <https://tc39.es/ecma402/#table-intl-rounding-modes>
+    #[allow(clippy::type_complexity)] // best way to make it render like a table
     let cases: [(
         &'static str,
         fn(&mut FixedDecimal, i16),
@@ -314,6 +315,7 @@ pub fn extra_rounding_mode_cases() {
             ],
         },
     ];
+    #[allow(clippy::type_complexity)] // most compact representation in code
     let rounding_modes: [(&'static str, fn(&mut FixedDecimal, i16)); 9] = [
         ("ceil", FixedDecimal::ceil),
         ("floor", FixedDecimal::floor),
