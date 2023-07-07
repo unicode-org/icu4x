@@ -108,7 +108,7 @@ const CHINESE_LOCATION_POST_1929: Location =
 #[non_exhaustive]
 pub struct Chinese;
 
-/// TODO: Add old documentation back
+/// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct ChineseDateInner(ChineseBasedDateInner<Chinese>);
 
@@ -432,12 +432,6 @@ impl ChineseBased<Chinese> for Chinese {
 }
 
 impl Chinese {
-    // TODO: A lot of the functions used here require converting between Moment and RataDie frequently.
-    // This can quickly become tedious and annoying, so once the code works, we should consider making
-    // some of these functions take generic types and then implementing them for Moment and RataDie,
-    // or otherwise figure out the optimal way to rewrite these functions to improve consistency and
-    // decrease the amount of times as_rata_die() and as_moment() need to be called.
-
     /// Get the current major solar term of an ISO date
     ///
     /// ```rust
