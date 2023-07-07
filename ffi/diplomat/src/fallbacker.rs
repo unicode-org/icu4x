@@ -5,8 +5,8 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_locid_transform::fallback::FallbackPriority;
-    use icu_locid_transform::fallback::LocaleFallbackConfig;
+    use icu_locid::fallback::FallbackPriority;
+    use icu_locid::fallback::LocaleFallbackConfig;
     use icu_locid_transform::fallback::LocaleFallbackIterator;
     use icu_locid_transform::fallback::LocaleFallbacker;
     use icu_locid_transform::fallback::LocaleFallbackerWithConfig;
@@ -27,9 +27,9 @@ pub mod ffi {
 
     /// Priority mode for the ICU4X fallback algorithm.
     #[diplomat::enum_convert(FallbackPriority, needs_wildcard)]
-    #[diplomat::rust_link(icu::locid_transform::fallback::FallbackPriority, Enum)]
+    #[diplomat::rust_link(icu::locid::fallback::FallbackPriority, Enum)]
     #[diplomat::rust_link(
-        icu::locid_transform::fallback::FallbackPriority::const_default,
+        icu::locid::fallback::FallbackPriority::const_default,
         FnInEnum,
         hidden
     )]
@@ -40,9 +40,9 @@ pub mod ffi {
     }
 
     /// Collection of configurations for the ICU4X fallback algorithm.
-    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackConfig, Struct)]
+    #[diplomat::rust_link(icu::locid::fallback::LocaleFallbackConfig, Struct)]
     #[diplomat::rust_link(
-        icu::locid_transform::fallback::LocaleFallbackConfig::const_default,
+        icu::locid::fallback::LocaleFallbackConfig::const_default,
         FnInStruct,
         hidden
     )]
@@ -159,9 +159,7 @@ pub mod ffi {
     }
 }
 
-impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>>
-    for icu_locid_transform::fallback::LocaleFallbackConfig
-{
+impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>> for icu_locid::fallback::LocaleFallbackConfig {
     type Error = crate::errors::ffi::ICU4XError;
     fn try_from(other: ffi::ICU4XLocaleFallbackConfig) -> Result<Self, Self::Error> {
         let mut result = Self::default();

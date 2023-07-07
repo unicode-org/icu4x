@@ -5,7 +5,7 @@
 
     Collection of configurations for the ICU4X fallback algorithm.
 
-    See the `Rust documentation for LocaleFallbackConfig <https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackConfig.html>`__ for more information.
+    See the `Rust documentation for LocaleFallbackConfig <https://docs.rs/icu/latest/icu/locid/fallback/struct.LocaleFallbackConfig.html>`__ for more information.
 
 
     .. cpp:member:: ICU4XLocaleFallbackPriority priority
@@ -43,7 +43,7 @@
 
     Priority mode for the ICU4X fallback algorithm.
 
-    See the `Rust documentation for FallbackPriority <https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.FallbackPriority.html>`__ for more information.
+    See the `Rust documentation for FallbackPriority <https://docs.rs/icu/latest/icu/locid/fallback/enum.FallbackPriority.html>`__ for more information.
 
 
     .. cpp:enumerator:: Language

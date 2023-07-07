@@ -510,8 +510,7 @@ impl DataExporter for BakedExporter {
                         } else {
                             const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> =
                                 icu_locid_transform::fallback::LocaleFallbacker::new()
-                                    .for_config(icu_locid_transform::fallback::LocaleFallbackConfig::from_key(
-                                        <#marker as icu_provider::KeyedDataMarker>::KEY));
+                                    .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                             let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
                                 #maybe_err

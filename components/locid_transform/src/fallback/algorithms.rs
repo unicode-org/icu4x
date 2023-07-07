@@ -417,11 +417,10 @@ mod tests {
                 (FallbackPriority::Language, cas.expected_language_chain),
                 (FallbackPriority::Region, cas.expected_region_chain),
             ] {
-                let config = LocaleFallbackConfig {
-                    priority,
-                    extension_key: cas.extension_key,
-                    fallback_supplement: cas.fallback_supplement,
-                };
+                let mut config = LocaleFallbackConfig::default();
+                config.priority = priority;
+                config.extension_key = cas.extension_key;
+                config.fallback_supplement = cas.fallback_supplement;
                 let fallbacker = if cas.requires_data {
                     fallbacker_with_data
                 } else {

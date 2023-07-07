@@ -163,8 +163,6 @@ pub use crate::key::DataKey;
 pub use crate::key::DataKeyHash;
 pub use crate::key::DataKeyMetadata;
 pub use crate::key::DataKeyPath;
-pub use crate::key::FallbackPriority;
-pub use crate::key::FallbackSupplement;
 pub use crate::request::DataLocale;
 pub use crate::request::DataRequest;
 pub use crate::request::DataRequestMetadata;
@@ -250,6 +248,10 @@ pub mod prelude {
 
 // Additional crate re-exports for compatibility
 #[doc(hidden)]
+pub use icu_locid::fallback::FallbackPriority;
+#[doc(hidden)]
+pub use icu_locid::fallback::FallbackSupplement;
+#[doc(hidden)]
 pub use yoke;
 #[doc(hidden)]
 pub use zerofrom;
@@ -257,5 +259,5 @@ pub use zerofrom;
 // For macros
 #[doc(hidden)]
 pub mod _internal {
-    pub use icu_locid::extensions_unicode_key;
+    pub use icu_locid as locid;
 }

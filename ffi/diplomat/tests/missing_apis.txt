@@ -19,6 +19,7 @@ icu::calendar::DateTime::try_new_persian_datetime#FnInStruct
 icu::calendar::persian::Persian#Struct
 icu::calendar::persian::Persian::new#FnInStruct
 icu::calendar::persian::PersianDateInner#Struct
+icu::locid::fallback::FallbackSupplement#Enum
 icu::locid_transform::Direction#Enum
 icu::locid_transform::LocaleDirectionality#Struct
 icu::locid_transform::LocaleDirectionality::get#FnInStruct
@@ -26,7 +27,6 @@ icu::locid_transform::LocaleDirectionality::is_left_to_right#FnInStruct
 icu::locid_transform::LocaleDirectionality::is_right_to_left#FnInStruct
 icu::locid_transform::LocaleDirectionality::new#FnInStruct
 icu::locid_transform::LocaleDirectionality::new_with_expander#FnInStruct
-icu::locid_transform::fallback::FallbackSupplement#Enum
 icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
 icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed#Struct
