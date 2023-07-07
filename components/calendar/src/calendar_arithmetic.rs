@@ -126,7 +126,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         &self,
         date2: ArithmeticDate<C>,
         _largest_unit: DateDurationUnit,
-        _smaller_unti: DateDurationUnit,
+        _smaller_unit: DateDurationUnit,
     ) -> DateDuration<C> {
         DateDuration::new(
             self.year - date2.year,
@@ -278,6 +278,12 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         }
 
         Ok(Self::new_unchecked(year, month, day))
+    }
+
+    /// This fn currently just calls [`new_from_solar_ordinals`], but exists separately for
+    /// lunar calendars in case different logic needs to be implemented later.
+    pub fn new_from_lunar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
+        Self::new_from_solar_ordinals(year, month, day)
     }
 }
 
