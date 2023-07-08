@@ -2,7 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{astronomy::{PI, Location}, types::Moment, rata_die::RataDie};
+use crate::{
+    astronomy::{Location, PI},
+    rata_die::RataDie,
+    types::Moment,
+};
 use alloc::vec::Vec;
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
@@ -203,18 +207,17 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     )
 }
 // Used for Umm-Al-Qura calculations
-pub(crate) fn next<F>(mut index: Moment, location: Location, condition: F) -> RataDie 
+pub(crate) fn next<F>(mut index: Moment, location: Location, condition: F) -> RataDie
 where
-    F: Fn(Moment,Location) -> bool,
+    F: Fn(Moment, Location) -> bool,
 {
     loop {
-        if condition(index,location) {
+        if condition(index, location) {
             return index.as_rata_die();
         }
         index += 1.0;
     }
 }
-
 
 #[test]
 fn test_binary_search() {

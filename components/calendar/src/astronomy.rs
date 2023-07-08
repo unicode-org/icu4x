@@ -663,15 +663,15 @@ impl Astronomical {
     }
 
     #[allow(dead_code)]
-    pub fn phasis_on_or_after(date: RataDie, location:Location) -> RataDie {
+    pub fn phasis_on_or_after(date: RataDie, location: Location) -> RataDie {
         let moon = Self::lunar_phase_at_or_before(0.0, date.to_moment());
         let age = date - moon.as_rata_die();
-        let tau = if age <= 4 || Self::visible_crescent((date-1).to_moment(), location) {
-            moon + 29.0  // Next new moon
+        let tau = if age <= 4 || Self::visible_crescent((date - 1).to_moment(), location) {
+            moon + 29.0 // Next new moon
         } else {
             date.to_moment()
         };
-        next(tau,location,Self::visible_crescent)   
+        next(tau, location, Self::visible_crescent)
     }
 
     #[allow(dead_code)]
@@ -679,19 +679,19 @@ impl Astronomical {
         let moon = Self::lunar_phase_at_or_before(0.0, date.to_moment());
         let age = date - moon.as_rata_die();
         let tau = if age <= 3 || !Self::visible_crescent((date).to_moment(), location) {
-            moon - 30.0  // Next new moon
+            moon - 30.0 // Next new moon
         } else {
             moon
         };
-        next(tau,location,Self::visible_crescent)   
+        next(tau, location, Self::visible_crescent)
     }
 
     #[allow(dead_code)]
     pub fn month_length(date: RataDie, location: Location) -> u8 {
-        let moon = Self::phasis_on_or_after(date-1, location);
+        let moon = Self::phasis_on_or_after(date - 1, location);
         let prev = Self::phasis_on_or_before(date, location);
 
-        (moon - prev).try_into().unwrap() 
+        (moon - prev).try_into().unwrap()
     }
 
     // Lunar elongation (the moon's angular distance east of the Sun) at a given Moment in Julian centuries
@@ -1109,7 +1109,7 @@ impl Astronomical {
 
     // Best viewing time (UT) in evening.
     fn simple_best_view(date: RataDie, location: Location) -> Moment {
-        let dark = Self::dusk(date.to_f64_date(),location,4.5);
+        let dark = Self::dusk(date.to_f64_date(), location, 4.5);
         let best = if dark.is_none() {
             (date + 1).to_moment()
         } else {
@@ -1117,11 +1117,12 @@ impl Astronomical {
         };
 
         Location::universal_from_standard(best, location)
-
     }
     // Angular separation of sun and moon at a specific moment
     fn arc_of_light(moment: Moment) -> f64 {
-        arccos_degrees(cos_degrees(Self::lunar_latitude(moment)) * cos_degrees(Self::lunar_phase(moment)))
+        arccos_degrees(
+            cos_degrees(Self::lunar_latitude(moment)) * cos_degrees(Self::lunar_phase(moment)),
+        )
     }
 
     fn shaukat_criterion(date: Moment, location: Location) -> bool {
@@ -1129,16 +1130,16 @@ impl Astronomical {
         let phase = Self::lunar_phase(tee);
         let h = Self::lunar_altitude(tee, location);
         let cap_arcl = Self::arc_of_light(tee);
-    
+
         let new = 0.0;
         let first_quarter = 90.0;
         let deg_10_6 = 10.6;
         let deg_90 = 90.0;
         let deg_4_1 = 4.1;
-    
+
         new < phase && deg_10_6 <= cap_arcl && cap_arcl <= deg_90 && h > deg_4_1
     }
-    
+
     // Only for use in Islamic calendar
     pub(crate) fn visible_crescent(date: Moment, location: Location) -> bool {
         Self::shaukat_criterion(date, location)
