@@ -3332,7 +3332,7 @@ fn test_rounding() {
     dec.half_expand(-1);
     assert_eq!("-0.0", dec.to_string());
 
-    // // Test specific cases
+    // Test specific cases
     let mut dec = FixedDecimal::from_str("1.108").unwrap();
     dec.half_even(-2);
     assert_eq!("1.11", dec.to_string());
@@ -3344,6 +3344,10 @@ fn test_rounding() {
     let mut dec = FixedDecimal::from_str("1.108").unwrap();
     dec.trunc(-2);
     assert_eq!("1.10", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("2.78536913177").unwrap();
+    dec.half_even(-2);
+    assert_eq!("2.79", dec.to_string());
 }
 
 #[test]
