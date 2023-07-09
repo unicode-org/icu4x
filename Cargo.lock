@@ -2767,13 +2767,9 @@ dependencies = [
 
 [[package]]
 name = "regex-automata"
-version = "0.2.0"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9368763f5a9b804326f3af749e16f9abf378d227bcdee7634b13d8f17793782"
-dependencies = [
- "memchr",
- "regex-syntax",
-]
+checksum = "83d3daa6976cffb758ec878f108ba0e062a45b2d6ca3a2cca965338855476caf"
 
 [[package]]
 name = "regex-syntax"

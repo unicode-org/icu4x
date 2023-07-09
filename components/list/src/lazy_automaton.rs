@@ -4,7 +4,8 @@
 
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
-use regex_automata::util::id::StateID;
+use regex_automata::util::primitives::StateID;
+use regex_automata::Input;
 use writeable::Writeable;
 
 pub trait LazyAutomaton: Automaton {
@@ -35,7 +36,7 @@ impl<T: AsRef<[u8]>> LazyAutomaton for DFA<T> {
         let mut stepper = DFAStepper {
             // If start == 0 the start state does not depend on the actual string, so
             // we can just pass an empty slice.
-            state: self.start_state_forward(None, &[], 0, 0),
+            state: self.start_state_forward(&Input::new(&[])),
             dfa: &self.as_ref(),
         };
 
