@@ -6,7 +6,7 @@
 //! as well as in related and derived calendars such as the Korean and Vietnamese lunar calendars.
 
 use crate::{
-    astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR, self},
+    astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic},
     helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
@@ -157,7 +157,8 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
         let mut iters = 0;
         let max_iters = 367;
         let mut day = Moment::new(libm::floor(approx.inner() - 1.0));
-        while iters < max_iters && astronomy::WINTER >= Astronomical::solar_longitude(Self::midnight(day + 1.0))
+        while iters < max_iters
+            && astronomy::WINTER >= Astronomical::solar_longitude(Self::midnight(day + 1.0))
         {
             iters += 1;
             day += 1.0;

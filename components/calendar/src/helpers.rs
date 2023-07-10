@@ -107,37 +107,40 @@ fn test_adjusted_rem_euclid() {
         TestCase {
             x: 3,
             y: 7,
-            expected: 3
+            expected: 3,
         },
         TestCase {
             x: 7,
             y: 3,
-            expected: 1
+            expected: 1,
         },
         TestCase {
             x: -11,
             y: 9,
-            expected: 7
+            expected: 7,
         },
         TestCase {
             x: 11,
             y: 9,
-            expected: 2
+            expected: 2,
         },
         TestCase {
             x: 11,
             y: 11,
-            expected: 11
+            expected: 11,
         },
         TestCase {
             x: -22,
             y: 11,
-            expected: 11
+            expected: 11,
         },
     ];
     for case in cases {
         let result = adjusted_rem_euclid(case.x, case.y);
-        assert_eq!(case.expected, result, "Adjusted rem euclid failed for case: {case:?}");
+        assert_eq!(
+            case.expected, result,
+            "Adjusted rem euclid failed for case: {case:?}"
+        );
     }
 }
 
@@ -152,8 +155,66 @@ pub fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
 
 #[test]
 fn test_interval_mod() {
-    assert_eq!(interval_mod_f64(5.0, 10.0, 20.0), 15.0);
-    assert_eq!(interval_mod_f64(-5.0, 10.0, 20.0), 15.0);
+    #[derive(Debug)]
+    struct TestCase {
+        x: f64,
+        a: f64,
+        b: f64,
+        expected: f64,
+    }
+
+    let cases = [
+        TestCase {
+            x: 5.0,
+            a: 10.0,
+            b: 20.0,
+            expected: 15.0,
+        },
+        TestCase {
+            x: -5.0,
+            a: 10.0,
+            b: 20.0,
+            expected: 15.0,
+        },
+        TestCase {
+            x: 2.0,
+            a: 12.0,
+            b: 17.0,
+            expected: 12.0,
+        },
+        TestCase {
+            x: 9.0,
+            a: 9.0,
+            b: 10.0,
+            expected: 9.0,
+        },
+        TestCase {
+            x: 16.5,
+            a: 13.5,
+            b: 20.0,
+            expected: 16.5,
+        },
+        TestCase {
+            x: 9.0,
+            a: 3.0,
+            b: 9.0,
+            expected: 3.0,
+        },
+        TestCase {
+            x: 17.0,
+            a: 1.0,
+            b: 5.5,
+            expected: 3.5,
+        },
+    ];
+
+    for case in cases {
+        let result = interval_mod_f64(case.x, case.a, case.b);
+        assert_eq!(
+            case.expected, result,
+            "Interval mod test failed for case: {case:?}"
+        );
+    }
 }
 
 #[test]
