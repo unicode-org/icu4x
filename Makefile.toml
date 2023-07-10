@@ -72,11 +72,11 @@ dependencies = [
     "test-all-features",
 ]
 
-[tasks.ci-job-test-cargo-tutorial]
-description = "Run all checks for the CI 'test-cargo-tutorial' job"
+[tasks.ci-job-test-tutorials]
+description = "Run all checks for the CI 'test-tutorials' job"
 category = "CI"
 dependencies = [
-    "test-cargo-tutorial-local",
+    "test-tutorials-local",
 ]
 
 [tasks.ci-job-testdata]

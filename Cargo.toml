@@ -60,7 +60,6 @@ members = [
     "tools/depcheck",
     "tools/ffi_coverage",
     "tools/testdata-scripts",
-    "tools/tutorials-test",
     "utils/databake",
     "utils/databake/derive",
     "utils/deduplicating_array",
@@ -86,6 +85,9 @@ exclude = [
     # and we don't use it anymore. As we don't want to keep the actual data
     # in the repo it doesn't build without running `cargo make testdata` first.
     "provider/testdata",
+    # Tutorials are tested in their own cargo workspace against released and
+    # local crates
+    "docs",
 ]
 
 # LTO is needed for WASM and other size-optimized builds,

@@ -15,8 +15,8 @@ on:
     - cron:  '0 12 * * *'
 
 jobs:
-  test-cargo-tutorial-cratesio:
-    name: "Test crates.io versions of ICU4X via the Cargo tutorials"
+  test-tutorials-cratesio:
+    name: "Test tutorials with crates.io versions of ICU4X"
     strategy:
       matrix:
         # TODO(#3109): Enable windows-latest.
@@ -57,5 +57,5 @@ jobs:
         path: /tmp/icu4x
 
     # Actual job
-    - name: Run `cargo make test-cargo-tutorial`
-      run: cargo make test-cargo-tutorial-cratesio
+    - name: Run `cargo make test-tutorials`
+      run: cargo make test-tutorials-cratesio

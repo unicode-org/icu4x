@@ -2,12 +2,14 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+# Not part of a tutorial. This workspace is for testing only.
+
 [workspace]
-resolver = "2"
 members = [
-    "baked",
-    "buffer",
-    "experimental",
-    "lazy_static",
-    "testdata",
+    "crates/baked",
+    "crates/buffer",
+    "crates/experimental",
+    "crates/lazy_static",
+    "crates/testdata",
+    "testing",
 ]
