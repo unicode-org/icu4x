@@ -11,7 +11,7 @@ use crate::{
     helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
     types::Moment,
-    Date, Calendar,
+    Calendar, Date,
 };
 
 /// For an example of how to use this trait, see `impl ChineseBased<Chinese>` in [`Chinese`].
@@ -40,7 +40,6 @@ pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
     /// This function should just call try_new_C_date where C is the name of the calendar.
     fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<C>;
 }
-
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
@@ -281,7 +280,8 @@ impl<C: ChineseBased<C> + Calendar> CalendarArithmetic for C {
         let new_year = ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year);
         let approx = new_year + ((month - 1) as i64 * 29);
         let prev_new_moon = ChineseBasedDateInner::<C>::new_moon_before((approx + 15).as_moment());
-        let next_new_moon = ChineseBasedDateInner::<C>::new_moon_on_or_after((approx + 15).as_moment());
+        let next_new_moon =
+            ChineseBasedDateInner::<C>::new_moon_on_or_after((approx + 15).as_moment());
         let result = (next_new_moon - prev_new_moon) as u8;
         debug_assert!(result == 29 || result == 30);
         result
@@ -308,7 +308,8 @@ impl<C: ChineseBased<C> + Calendar> CalendarArithmetic for C {
     /// of days since the last new moon (beginning of the last month in the year).
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
         let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
-        let next_new_year = ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year + 370);
+        let next_new_year =
+            ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year + 370);
         let last_day = next_new_year - 1;
         let month = if ChineseBasedDateInner::<C>::fixed_date_is_in_leap_year(last_day) {
             13
