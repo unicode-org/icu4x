@@ -14,8 +14,15 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::calendar::Date::try_new_chinese_date#FnInStruct
 icu::calendar::Date::try_new_persian_date#FnInStruct
+icu::calendar::DateTime::try_new_chinese_datetime#FnInStruct
 icu::calendar::DateTime::try_new_persian_datetime#FnInStruct
+icu::calendar::chinese::Chinese#Struct
+icu::calendar::chinese::Chinese::chinese_new_year_on_or_before_iso#FnInStruct
+icu::calendar::chinese::Chinese::major_solar_term_from_iso#FnInStruct
+icu::calendar::chinese::Chinese::minor_solar_term_from_iso#FnInStruct
+icu::calendar::chinese::ChineseDateInner#Struct
 icu::calendar::persian::Persian#Struct
 icu::calendar::persian::Persian::new#FnInStruct
 icu::calendar::persian::PersianDateInner#Struct

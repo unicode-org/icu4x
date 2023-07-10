@@ -86,7 +86,7 @@ impl CldrCache {
             )?
             .coverage_levels
             .iter()
-            .filter_map(|(locale, c)| levels.contains(c).then_some(locale))
+            .filter_map(|(locale, c)| levels.contains(c).then(|| locale))
             .cloned()
             .collect())
     }

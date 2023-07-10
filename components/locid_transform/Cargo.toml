@@ -6,7 +6,7 @@
 name = "icu_locid_transform"
 description = "API for Unicode Language and Locale Identifiers canonicalization"
 version = "1.2.1"
-rust-version = "1.64.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
@@ -45,7 +45,6 @@ icu_locid_transform_data = { version = "~1.3.0", path = "data", optional = true 
 
 [dev-dependencies]
 criterion = "0.4"
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 icu = { path = "../icu" }

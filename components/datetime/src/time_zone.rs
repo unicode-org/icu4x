@@ -97,8 +97,8 @@ where
 ///     Default::default(),
 /// )
 /// .unwrap();
-/// tzf.with_generic_non_location_short()?
-///     .with_generic_non_location_long()?;
+/// tzf.include_generic_non_location_short()?
+///     .include_generic_non_location_long()?;
 ///
 /// // "uschi" - has metazone symbol data for generic_non_location_short
 /// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
@@ -278,17 +278,17 @@ impl TimeZoneFormatter {
                 },
                 TimeZone::UpperZ => match length {
                     1..=3 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::Basic,
                             IsoMinutes::Required,
                             IsoSeconds::Optional,
                         )?;
                     }
                     4 => {
-                        tz_format.load_localized_gmt_format()?;
+                        tz_format.include_localized_gmt_format()?;
                     }
                     5 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::UtcExtended,
                             IsoMinutes::Required,
                             IsoSeconds::Optional,
@@ -302,35 +302,35 @@ impl TimeZoneFormatter {
                 },
                 TimeZone::LowerX => match length {
                     1 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::UtcBasic,
                             IsoMinutes::Optional,
                             IsoSeconds::Never,
                         )?;
                     }
                     2 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::UtcBasic,
                             IsoMinutes::Required,
                             IsoSeconds::Never,
                         )?;
                     }
                     3 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::UtcExtended,
                             IsoMinutes::Required,
                             IsoSeconds::Never,
                         )?;
                     }
                     4 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::UtcBasic,
                             IsoMinutes::Required,
                             IsoSeconds::Optional,
                         )?;
                     }
                     5 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::UtcExtended,
                             IsoMinutes::Required,
                             IsoSeconds::Optional,
@@ -344,35 +344,35 @@ impl TimeZoneFormatter {
                 },
                 TimeZone::UpperX => match length {
                     1 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::Basic,
                             IsoMinutes::Optional,
                             IsoSeconds::Never,
                         )?;
                     }
                     2 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::Basic,
                             IsoMinutes::Required,
                             IsoSeconds::Never,
                         )?;
                     }
                     3 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::Extended,
                             IsoMinutes::Required,
                             IsoSeconds::Never,
                         )?;
                     }
                     4 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::Basic,
                             IsoMinutes::Required,
                             IsoSeconds::Optional,
                         )?;
                     }
                     5 => {
-                        tz_format.load_iso_8601_format(
+                        tz_format.include_iso_8601_format(
                             IsoFormat::Extended,
                             IsoMinutes::Required,
                             IsoSeconds::Optional,
@@ -386,7 +386,7 @@ impl TimeZoneFormatter {
                 },
                 TimeZone::UpperO => match length {
                     1..=4 => {
-                        tz_format.load_localized_gmt_format()?;
+                        tz_format.include_localized_gmt_format()?;
                     }
                     _ => {
                         return Err(DateTimeError::Pattern(PatternError::FieldLengthInvalid(
@@ -463,47 +463,72 @@ impl TimeZoneFormatter {
         })
     }
 
-    /// Load generic non location long format for timezone from compiled data. For example, Pacific Time.
+    /// Include generic-non-location-long format for timezone from compiled data. For example, "Pacific Time".
     #[cfg(feature = "compiled_data")]
-    pub fn with_generic_non_location_long(
+    pub fn include_generic_non_location_long(
         &mut self,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
         self.load_generic_non_location_long(&crate::provider::Baked)
     }
 
-    /// Load generic non location short format for timezone from compiled data. For example, PT.
+    /// Include generic-non-location-short format for timezone from compiled data. For example, "PT".
     #[cfg(feature = "compiled_data")]
-    pub fn with_generic_non_location_short(
+    pub fn include_generic_non_location_short(
         &mut self,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
         self.load_generic_non_location_short(&crate::provider::Baked)
     }
 
-    /// Load specific non location long format for timezone from compiled data. For example, Pacific Standard Time.
+    /// Include specific-non-location-long format for timezone from compiled data. For example, "Pacific Standard Time".
     #[cfg(feature = "compiled_data")]
-    pub fn with_specific_non_location_long(
+    pub fn include_specific_non_location_long(
         &mut self,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
         self.load_specific_non_location_long(&crate::provider::Baked)
     }
 
-    /// Load specific non location short format for timezone from compiled data. For example, PDT.
+    /// Include specific-non-location-short format for timezone from compiled data. For example, "PDT".
     #[cfg(feature = "compiled_data")]
-    pub fn with_specific_non_location_short(
+    pub fn include_specific_non_location_short(
         &mut self,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
         self.load_specific_non_location_short(&crate::provider::Baked)
     }
 
-    /// Load generic location format for timezone. For example, Los Angeles Time.
+    /// Include generic-location format for timezone from compiled data. For example, "Los Angeles Time".
     #[cfg(feature = "compiled_data")]
-    pub fn with_generic_location_format(
+    pub fn include_generic_location_format(
         &mut self,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
         self.load_generic_location_format(&crate::provider::Baked)
     }
 
-    /// Load generic non location long format for timezone. For example, Pacific Time.
+    /// Include localized-GMT format for timezone. For example, "GMT-07:00".
+    pub fn include_localized_gmt_format(
+        &mut self,
+    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
+        self.format_units
+            .push(TimeZoneFormatterUnit::LocalizedGmt(LocalizedGmtFormat {}));
+        Ok(self)
+    }
+
+    /// Include ISO-8601 format for timezone. For example, "-07:00".
+    pub fn include_iso_8601_format(
+        &mut self,
+        format: IsoFormat,
+        minutes: IsoMinutes,
+        seconds: IsoSeconds,
+    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
+        self.format_units
+            .push(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format,
+                minutes,
+                seconds,
+            }));
+        Ok(self)
+    }
+
+    /// Load generic-non-location-long format for timezone. For example, "Pacific Time".
     pub fn load_generic_non_location_long<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -525,7 +550,7 @@ impl TimeZoneFormatter {
         Ok(self)
     }
 
-    /// Load generic non location short format for timezone. For example, PT.
+    /// Load generic-non-location-short format for timezone. For example, "PT".
     pub fn load_generic_non_location_short<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -547,7 +572,7 @@ impl TimeZoneFormatter {
         Ok(self)
     }
 
-    /// Load specific non location long format for timezone. For example, Pacific Standard Time.
+    /// Load specific-non-location-long format for timezone. For example, "Pacific Standard Time".
     pub fn load_specific_non_location_long<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -569,7 +594,7 @@ impl TimeZoneFormatter {
         Ok(self)
     }
 
-    /// Load specific non location short format for timezone. For example, PDT.
+    /// Load specific-non-location-short format for timezone. For example, "PDT".
     pub fn load_specific_non_location_short<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -591,7 +616,7 @@ impl TimeZoneFormatter {
         Ok(self)
     }
 
-    /// Load generic location format for timezone. For example, Los Angeles Time.
+    /// Load generic-location format for timezone. For example, "Los Angeles Time".
     pub fn load_generic_location_format<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -613,7 +638,7 @@ impl TimeZoneFormatter {
         Ok(self)
     }
 
-    /// Load exemplar city format for timezone. For example, Los Angeles.
+    /// Load exemplar-city format for timezone. For example, "Los Angeles".
     fn load_exemplar_city_format<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -633,27 +658,21 @@ impl TimeZoneFormatter {
         Ok(self)
     }
 
-    /// Load localized GMT format for timezone. For example, GMT-07:00.
+    /// Alias to [`TimeZoneFormatter::include_localized_gmt_format`].
+    #[deprecated(since = "1.3.0", note = "renamed to `include_localized_gmt_format`")]
     pub fn load_localized_gmt_format(&mut self) -> Result<&mut TimeZoneFormatter, DateTimeError> {
-        self.format_units
-            .push(TimeZoneFormatterUnit::LocalizedGmt(LocalizedGmtFormat {}));
-        Ok(self)
+        self.include_localized_gmt_format()
     }
 
-    /// Load Iso8601 format for timezone. For example, -07:00.
+    /// Alias to [`TimeZoneFormatter::include_iso_8601_format`].
+    #[deprecated(since = "1.3.0", note = "renamed to `include_iso_8601_format`")]
     pub fn load_iso_8601_format(
         &mut self,
         format: IsoFormat,
         minutes: IsoMinutes,
         seconds: IsoSeconds,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
-        self.format_units
-            .push(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format,
-                minutes,
-                seconds,
-            }));
-        Ok(self)
+        self.include_iso_8601_format(format, minutes, seconds)
     }
 
     /// Load a fallback format for timezone. The fallback format will be executed if there are no
@@ -824,15 +843,19 @@ pub(crate) enum ZeroPadding {
 /// An enum for time zone fallback formats.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[non_exhaustive]
-#[derive(Default)]
 pub enum FallbackFormat {
     /// The ISO 8601 format for time zone format fallback.
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
     /// The localized GMT format for time zone format fallback.
     ///
     /// See [UTS 35 on Dates](https://unicode.org/reports/tr35/tr35-dates.html#71-time-zone-format-terminology) for more information.
-    #[default]
     LocalizedGmt,
+}
+
+impl Default for FallbackFormat {
+    fn default() -> Self {
+        FallbackFormat::LocalizedGmt
+    }
 }
 
 /// A bag of options to define how time zone will be formatted.

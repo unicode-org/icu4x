@@ -308,6 +308,31 @@ fn test_invert_angular() {
     }
 }
 
+/// Return y if x.rem_euclid(y) == 0, x.rem_euclid(y) otherwise
+pub fn adjusted_rem_euclid(x: i32, y: i32) -> i32 {
+    let remainder = div_rem_euclid(x, y).1;
+    if remainder == 0 {
+        y
+    } else {
+        remainder
+    }
+}
+
+/// The value of x shifted into the range (a..b); returns x if a == b; for f64 types
+pub fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
+    if a == b {
+        x
+    } else {
+        a + div_rem_euclid_f64(x - a, b - a).1
+    }
+}
+
+#[test]
+fn test_interval_mod() {
+    assert_eq!(interval_mod_f64(5.0, 10.0, 20.0), 15.0);
+    assert_eq!(interval_mod_f64(-5.0, 10.0, 20.0), 15.0);
+}
+
 #[test]
 fn test_div_rem_euclid() {
     assert_eq!(div_rem_euclid(i32::MIN, 1), (-2147483648, 0));

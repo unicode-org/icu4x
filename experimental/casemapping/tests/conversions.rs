@@ -47,7 +47,7 @@ fn test_simple_mappings() {
     assert_eq!(case_mapping.simple_fold('\u{10414}'), '\u{1043c}');
 }
 
-// These tests are taken from StringCaseTest::TestCaseConversion in ICU4C.
+// These and the below tests are taken from StringCaseTest::TestCaseConversion in ICU4C.
 #[test]
 fn test_full_mappings() {
     let case_mapping = CaseMapper::new();
@@ -265,4 +265,65 @@ fn test_dutch() {
         cm.titlecase_segment_to_string("íjabc\u{1ABE}", &nl),
         "Íjabc\u{1ABE}"
     );
+}
+
+#[test]
+fn test_greek_upper() {
+    let nfc = icu_normalizer::ComposingNormalizer::new_nfc();
+    let nfd = icu_normalizer::DecomposingNormalizer::new_nfd();
+
+    let cm = CaseMapper::new();
+    let modern_greek = &langid!("el");
+
+    let assert_greek_uppercase = |input: &str, expected: &str| {
+        assert_eq!(
+            cm.uppercase_to_string(nfc.normalize(input).as_str(), modern_greek),
+            nfc.normalize(expected)
+        );
+        assert_eq!(
+            cm.uppercase_to_string(nfd.normalize(input).as_str(), modern_greek),
+            nfd.normalize(expected)
+        );
+    };
+
+    // https://unicode-org.atlassian.net/browse/ICU-5456
+    assert_greek_uppercase("άδικος, κείμενο, ίριδα", "ΑΔΙΚΟΣ, ΚΕΙΜΕΝΟ, ΙΡΙΔΑ");
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=307039
+    // https://bug307039.bmoattachments.org/attachment.cgi?id=194893
+    assert_greek_uppercase("Πατάτα", "ΠΑΤΑΤΑ");
+    assert_greek_uppercase("Αέρας, Μυστήριο, Ωραίο", "ΑΕΡΑΣ, ΜΥΣΤΗΡΙΟ, ΩΡΑΙΟ");
+    assert_greek_uppercase("Μαΐου, Πόρος, Ρύθμιση", "ΜΑΪΟΥ, ΠΟΡΟΣ, ΡΥΘΜΙΣΗ");
+    assert_greek_uppercase("ΰ, Τηρώ, Μάιος", "Ϋ, ΤΗΡΩ, ΜΑΪΟΣ");
+    assert_greek_uppercase("άυλος", "ΑΫΛΟΣ");
+    assert_greek_uppercase("ΑΫΛΟΣ", "ΑΫΛΟΣ");
+    assert_greek_uppercase(
+        "Άκλιτα ρήματα ή άκλιτες μετοχές",
+        "ΑΚΛΙΤΑ ΡΗΜΑΤΑ Ή ΑΚΛΙΤΕΣ ΜΕΤΟΧΕΣ",
+    );
+    // http://www.unicode.org/udhr/d/udhr_ell_monotonic.html
+    assert_greek_uppercase(
+        "Επειδή η αναγνώριση της αξιοπρέπειας",
+        "ΕΠΕΙΔΗ Η ΑΝΑΓΝΩΡΙΣΗ ΤΗΣ ΑΞΙΟΠΡΕΠΕΙΑΣ",
+    );
+    assert_greek_uppercase("νομικού ή διεθνούς", "ΝΟΜΙΚΟΥ Ή ΔΙΕΘΝΟΥΣ");
+    // http://unicode.org/udhr/d/udhr_ell_polytonic.html
+    assert_greek_uppercase("Ἐπειδὴ ἡ ἀναγνώριση", "ΕΠΕΙΔΗ Η ΑΝΑΓΝΩΡΙΣΗ");
+    assert_greek_uppercase("νομικοῦ ἢ διεθνοῦς", "ΝΟΜΙΚΟΥ Ή ΔΙΕΘΝΟΥΣ");
+    // From Google bug report
+    assert_greek_uppercase("Νέο, Δημιουργία", "ΝΕΟ, ΔΗΜΙΟΥΡΓΙΑ");
+    // http://crbug.com/234797
+    assert_greek_uppercase(
+        "Ελάτε να φάτε τα καλύτερα παϊδάκια!",
+        "ΕΛΑΤΕ ΝΑ ΦΑΤΕ ΤΑ ΚΑΛΥΤΕΡΑ ΠΑΪΔΑΚΙΑ!",
+    );
+    assert_greek_uppercase("Μαΐου, τρόλεϊ", "ΜΑΪΟΥ, ΤΡΟΛΕΪ");
+    assert_greek_uppercase("Το ένα ή το άλλο.", "ΤΟ ΕΝΑ Ή ΤΟ ΑΛΛΟ.");
+    // http://multilingualtypesetting.co.uk/blog/greek-typesetting-tips/
+    assert_greek_uppercase("ρωμέικα", "ΡΩΜΕΪΚΑ");
+    assert_greek_uppercase("ή.", "Ή.");
+
+    // The ὑπογεγραμμέναι become Ι as in default case conversion, but they are
+    // specially handled by the implementation.
+    assert_greek_uppercase("ᾠδή, -ήν, -ῆς, -ῇ", "ΩΙΔΗ, -ΗΝ, -ΗΣ, -ΗΙ");
+    assert_greek_uppercase("ᾍδης", "ΑΙΔΗΣ");
 }

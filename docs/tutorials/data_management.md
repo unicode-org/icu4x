@@ -1,8 +1,8 @@
 # Data management in ICU4X
 
-Unless you're happy shipping your app with the ~10 locales supported by `icu_testdata` (and with the size impact of all keys), you will need generate your own data that is customized to suit your needs.
+This tutorial introduces data providers as well as the `icu_datagen` tool.
 
-This tutorial introduces data providers beyond `icu_testdata`, as well as the `icu_datagen` tool.
+If you're happy shipping your app with the recommended set of locales included by the `compiled_data` default feature, you can stop reading now. If you want to reduce code size, do runtime data loading, or build your own complex data pipelines, this tutorial is for you.
 
 # 1. Prerequisites
 
