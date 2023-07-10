@@ -114,54 +114,6 @@ pub struct ChineseDateInner(ChineseBasedDateInner<Chinese>);
 
 type Inner = ChineseBasedDateInner<Chinese>;
 
-impl CalendarArithmetic for Chinese {
-    /// Returns the number of days in the given (year, month). In the Chinese calendar, months start at each
-    /// new moon, so this function finds the number of days between the new moon at the beginning of the given
-    /// month and the new moon at the beginning of the next month.
-    fn month_days(year: i32, month: u8) -> u8 {
-        let mid_year = Inner::fixed_mid_year_from_year(year);
-        let new_year = Inner::new_year_on_or_before_fixed_date(mid_year);
-        let approx = new_year + ((month - 1) as i64 * 29);
-        let prev_new_moon = Inner::new_moon_before((approx + 15).as_moment());
-        let next_new_moon = Inner::new_moon_on_or_after((approx + 15).as_moment());
-        let result = (next_new_moon - prev_new_moon) as u8;
-        debug_assert!(result == 29 || result == 30);
-        result
-    }
-
-    /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    fn months_for_every_year(year: i32) -> u8 {
-        if Self::is_leap_year(year) {
-            13
-        } else {
-            12
-        }
-    }
-
-    /// Returns true if the given year is a leap year, and false if not.
-    fn is_leap_year(year: i32) -> bool {
-        let mid_year = Inner::fixed_mid_year_from_year(year);
-        Inner::fixed_date_is_in_leap_year(mid_year)
-    }
-
-    /// Returns the (month, day) of the last day in a Chinese year (the day before Chinese New Year).
-    /// The last month in a year will always be 12 in a common year or 13 in a leap year. The day is
-    /// determined by finding the day immediately before the next new year and calculating the number
-    /// of days since the last new moon (beginning of the last month in the year).
-    fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        let mid_year = Inner::fixed_mid_year_from_year(year);
-        let next_new_year = Inner::new_year_on_or_before_fixed_date(mid_year + 370);
-        let last_day = next_new_year - 1;
-        let month = if Inner::fixed_date_is_in_leap_year(last_day) {
-            13
-        } else {
-            12
-        };
-        let day = last_day - Inner::new_moon_before(last_day.as_moment()) + 1;
-        (month, day as u8)
-    }
-}
-
 impl Calendar for Chinese {
     type DateInner = ChineseDateInner;
 

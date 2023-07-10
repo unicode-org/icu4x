@@ -11,7 +11,7 @@ use crate::{
     helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
     types::Moment,
-    Date,
+    Date, Calendar,
 };
 
 /// For an example of how to use this trait, see `impl ChineseBased<Chinese>` in [`Chinese`].
@@ -269,5 +269,62 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
         debug_assert!(result < max_iters, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
         result
+    }
+}
+
+impl<C: ChineseBased<C> + Calendar> CalendarArithmetic for C {
+    /// Returns the number of days in the given (year, month). In the Chinese calendar, months start at each
+    /// new moon, so this function finds the number of days between the new moon at the beginning of the given
+    /// month and the new moon at the beginning of the next month.
+    fn month_days(year: i32, month: u8) -> u8 {
+        let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
+        let new_year = ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year);
+        let approx = new_year + ((month - 1) as i64 * 29);
+        let prev_new_moon = ChineseBasedDateInner::<C>::new_moon_before((approx + 15).as_moment());
+        let next_new_moon = ChineseBasedDateInner::<C>::new_moon_on_or_after((approx + 15).as_moment());
+        let result = (next_new_moon - prev_new_moon) as u8;
+        debug_assert!(result == 29 || result == 30);
+        result
+    }
+
+    /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
+    fn months_for_every_year(year: i32) -> u8 {
+        if Self::is_leap_year(year) {
+            13
+        } else {
+            12
+        }
+    }
+
+    /// Returns true if the given year is a leap year, and false if not.
+    fn is_leap_year(year: i32) -> bool {
+        let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
+        ChineseBasedDateInner::<C>::fixed_date_is_in_leap_year(mid_year)
+    }
+
+    /// Returns the (month, day) of the last day in a Chinese year (the day before Chinese New Year).
+    /// The last month in a year will always be 12 in a common year or 13 in a leap year. The day is
+    /// determined by finding the day immediately before the next new year and calculating the number
+    /// of days since the last new moon (beginning of the last month in the year).
+    fn last_month_day_in_year(year: i32) -> (u8, u8) {
+        let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
+        let next_new_year = ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year + 370);
+        let last_day = next_new_year - 1;
+        let month = if ChineseBasedDateInner::<C>::fixed_date_is_in_leap_year(last_day) {
+            13
+        } else {
+            12
+        };
+        let day = last_day - ChineseBasedDateInner::<C>::new_moon_before(last_day.as_moment()) + 1;
+        (month, day as u8)
+    }
+
+    fn days_in_provided_year(year: i32) -> u32 {
+        let months_in_year = Self::months_for_every_year(year);
+        let mut days: u32 = 0;
+        for month in 1..=months_in_year {
+            days += Self::month_days(year, month) as u32;
+        }
+        days
     }
 }
