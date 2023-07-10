@@ -116,7 +116,7 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5353-L5357
-    pub(crate) fn midnight(date: Moment) -> Moment {
+    pub(crate) fn midnight(moment: Moment) -> Moment {
         Location::universal_from_standard(date, C::location(date.as_rata_die()))
     }
 
