@@ -553,13 +553,13 @@ mod test {
                 fixed: -963838,
                 expected_year: -1,
                 expected_month: 1,
-                expected_day: 1
+                expected_day: 1,
             },
             TestCase {
                 fixed: -963129,
                 expected_year: 0,
                 expected_month: 13,
-                expected_day: 1
+                expected_day: 1,
             },
             TestCase {
                 fixed: -963100,

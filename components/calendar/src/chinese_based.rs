@@ -193,13 +193,17 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
     pub(crate) fn chinese_based_date_from_fixed(date: RataDie) -> Date<C> {
         let new_year = Self::new_year_on_or_before_fixed_date(date);
         let elapsed_years =
-            libm::floor(1.5 - 1.0 / 12.0 + ((new_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR);
-        let elapsed_years_int = i64_to_i32(elapsed_years as i64);
-        debug_assert!(
-            matches!(elapsed_years_int, I32Result::WithinRange(_)),
-            "Year should be in range of i32"
-        );
-        let year = elapsed_years_int.saturate();
+            libm::floor(1.5 - 1.0 / 12.0 + ((new_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR)
+                as i64;
+        let year = match i64_to_i32(elapsed_years) {
+            I32Result::BelowMin(_) => {
+                return Self::min_chinese_based_date();
+            }
+            I32Result::AboveMax(_) => {
+                return Self::max_chinese_based_date();
+            }
+            I32Result::WithinRange(y) => y,
+        };
         let mut month = 1;
         let max_months = 14;
         let mut cur_month = new_year;
@@ -211,6 +215,26 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
         debug_assert!(month < max_months, "Unexpectedly large number of months");
         let day = (date - cur_month + 1) as u8;
+        C::new_chinese_based_date(year, month, day)
+    }
+
+    /// The minimum possible ChineseBasedDate given the minimum values of
+    /// year, month, and day fields in ArithmeticDate
+    fn min_chinese_based_date() -> Date<C> {
+        let min_arithmetic: ArithmeticDate<C> = ArithmeticDate::min_date();
+        let year = min_arithmetic.year;
+        let month = min_arithmetic.month;
+        let day = min_arithmetic.day;
+        C::new_chinese_based_date(year, month, day)
+    }
+
+    /// The maximum possible ChineseBasedDate given the maximum values of
+    /// year, month, and day fields in ArithmeticDate
+    fn max_chinese_based_date() -> Date<C> {
+        let max_arithmetic: ArithmeticDate<C> = ArithmeticDate::max_date();
+        let year = max_arithmetic.year;
+        let month = max_arithmetic.month;
+        let day = max_arithmetic.day;
         C::new_chinese_based_date(year, month, day)
     }
 
