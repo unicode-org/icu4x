@@ -13,8 +13,6 @@ edition = "2021"
 publish = false
 
 [dependencies]
-icu = "1.2"
-icu_testdata = "1.2"
-icu_provider = { version = "1.2", features = ["sync"] }
+icu = { version = "1.2", features = ["sync"] }
 
 lazy_static = "1.4"

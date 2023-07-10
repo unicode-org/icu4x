@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This is a demo project using test data and a lazy_static.
+//! This is a demo project using a lazy_static.
 //!
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
@@ -13,12 +13,11 @@ use lazy_static::lazy_static;
 
 lazy_static! {
     static ref SPANISH_LIST_FORMATTER: ListFormatter =
-        ListFormatter::try_new_and_with_length_unstable(
-            &icu_testdata::unstable(),
+        ListFormatter::try_new_and_with_length(
             &locale!("es").into(),
             ListLength::Wide
         )
-        .expect("Locale 'es' should be present in testdata");
+        .expect("locale 'es' should be present in compiled data");
 }
 
 fn main() {

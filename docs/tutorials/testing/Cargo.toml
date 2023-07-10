@@ -17,7 +17,6 @@ icu_provider = { version = "1.2", features = ["deserialize_json"] }
 icu_provider_adapters = "1.2"
 icu_provider_blob = "1.2"
 icu_provider_fs = "1.2"
-icu_testdata = "1.2"
 itertools = "0.10"
 litemap = "0.7"
 lru = "0.8.1"

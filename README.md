@@ -32,8 +32,7 @@ An example `ICU4X` powered application in Rust may look like below...
 
 ```toml
 [dependencies]
-icu = "1.0.0"
-icu_testdata = "1.0.0"
+icu = "1.2.0"
 ```
 
 `src/main.rs`:
@@ -46,13 +45,13 @@ use icu::locid::locale;
 let options =
     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("es").into(), options)
-    .expect("Failed to create DateTimeFormatter instance.");
+let dtf = DateTimeFormatter::try_new(&locale!("es").into(), options)
+    .expect("locale should be present in compiled data");
 
-let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("Failed to parse date.");
+let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("datetime should be valid");
 let date = date.to_any();
 
-let formatted_date = dtf.format(&date).expect("Formatting failed");
+let formatted_date = dtf.format(&date).expect("formatting should succeed");
 assert_eq!(
     formatted_date.to_string(),
     "12 de septiembre de 2020, 12:35:00"

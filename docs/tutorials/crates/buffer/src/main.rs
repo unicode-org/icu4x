@@ -20,24 +20,24 @@ use icu_provider_blob::BlobDataProvider;
 
 fn main() {
     let blob = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/buffer_data.postcard",))
-        .expect("Pre-computed postcard buffer should exist");
+        .expect("pre-computed postcard buffer should exist");
 
     let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
-        .expect("Deserialization should succeed");
+        .expect("deserialization should succeed");
 
     let formatter = DateTimeFormatter::try_new_with_buffer_provider(
         &provider,
         &locale!("my").into(),
         Default::default(),
     )
-    .expect("Locale 'my' should be present in testdata");
+    .expect("locale 'my' should be present in compiled data");
 
     let datetime = DateTime::try_new_iso_datetime(2022, 12, 23, 12, 54, 29)
-        .expect("Valid constant ISO datetime");
+        .expect("constant should be valid ISO datetime");
 
     let result = formatter
         .format_to_string(&datetime.to_any())
-        .expect("Calendar matches formatter");
+        .expect("calendar should match formatter");
 
     assert_eq!(result, "၂၀၂၂၊ ဒီ ၂၃ ၁၂:၅၄:၂၉");
     println!("{}", result);

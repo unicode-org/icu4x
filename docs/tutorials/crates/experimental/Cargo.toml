@@ -14,4 +14,3 @@ publish = false
 
 [dependencies]
 icu = { version = "1.2", features = ["icu_displaynames"] }
-icu_testdata = { version = "1.2", features = ["icu_displaynames"] }

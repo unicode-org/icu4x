@@ -52,7 +52,6 @@ icu_provider = { path = "../../provider/core" }
 icu_datagen = { path = "../../provider/datagen" }
 icu_provider_fs = { path = "../../provider/fs" }
 icu_provider_macros = { path = "../../provider/macros" }
-icu_testdata = { path = "testing/legacy_testdata" }
 databake = { path = "../../utils/databake" }
 databake-derive = { path = "../../utils/databake/derive" }
 deduplicating_array = { path = "../../utils/deduplicating_array" }

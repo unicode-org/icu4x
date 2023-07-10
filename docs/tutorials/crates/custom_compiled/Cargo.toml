@@ -7,16 +7,10 @@
 ##########################################
 
 [package]
-name = "tutorial_baked"
+name = "tutorial_custom_compiled"
 version = "0.0.0"
 edition = "2021"
 publish = false
 
 [dependencies]
 icu = "1.2"
-icu_provider = "1.2" # for databake
-zerovec = "0.9" # for databake
-
-[build-dependencies]
-icu = "1.2"
-icu_datagen = "1.2"
