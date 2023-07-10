@@ -141,7 +141,7 @@ fn test_adjusted_rem_euclid() {
     }
 }
 
-/// The value of x shifted into the range (a..b); returns x if a == b; for f64 types
+/// The value of x shifted into the range [a..b); returns x if a == b; for f64 types
 pub fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
     if a == b {
         x
