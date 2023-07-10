@@ -114,6 +114,10 @@ jobs:
   # ci-job-test-tutorials
   test-tutorials:
     runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        behavior: [local, cratesio]
+      fail-fast: true
     steps:
     - uses: actions/checkout@v3
 
@@ -150,8 +154,8 @@ jobs:
         path: /tmp/icu4x-source-cache
 
     # Actual job
-    - name: Run `cargo make ci-job-test-tutorials`
-      run: cargo make ci-job-test-tutorials
+    - name: Run `cargo make ci-job-test-tutorials-${{ matrix.behavior }}`
+      run: cargo make ci-job-test-tutorials-${{ matrix.behavior }}
 
   # ci-job-testdata
   testdata:
