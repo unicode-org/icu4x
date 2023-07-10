@@ -242,7 +242,7 @@ mod test {
     #[test]
     fn test_buddhist_roundtrip_near_epoch() {
         // Buddhist epoch start RD: -198326
-        for i in 188326..=208326 {
+        for i in -208326..=-188326 {
             let rd = RataDie::new(i);
             let iso1 = Iso::iso_from_fixed(rd);
             let buddhist = iso1.to_calendar(Buddhist);
@@ -280,8 +280,8 @@ mod test {
     #[test]
     fn test_buddhist_directionality_near_epoch() {
         // Buddhist epoch start RD: -198326
-        for i in 198226..=198426 {
-            for j in 198226..=198426 {
+        for i in -198426..=-198226 {
+            for j in -198426..=-198226 {
                 let iso_i = Iso::iso_from_fixed(RataDie::new(i));
                 let iso_j = Iso::iso_from_fixed(RataDie::new(j));
 
@@ -413,6 +413,30 @@ mod test {
     fn test_buddhist_cases_near_epoch() {
         // 1 BE = 543 BCE = -542 ISO
         let cases = [
+            TestCase {
+                iso_year: -554,
+                iso_month: 12,
+                iso_day: 31,
+                buddhist_year: -11,
+                buddhist_month: 12,
+                buddhist_day: 31,
+            },
+            TestCase {
+                iso_year: -553,
+                iso_month: 1,
+                iso_day: 1,
+                buddhist_year: -10,
+                buddhist_month: 1,
+                buddhist_day: 1,
+            },
+            TestCase {
+                iso_year: -544,
+                iso_month: 8,
+                iso_day: 31,
+                buddhist_year: -1,
+                buddhist_month: 8,
+                buddhist_day: 31,
+            },
             TestCase {
                 iso_year: -543,
                 iso_month: 5,
