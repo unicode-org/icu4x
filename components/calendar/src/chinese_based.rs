@@ -78,7 +78,7 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Get the current minor solar term of a fixed date, output as an integer from 1..=12.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5303-L5316
     pub(crate) fn minor_solar_term_from_fixed(date: RataDie) -> i32 {
         let moment: Moment = date.as_moment();
         let location = C::location(date);
