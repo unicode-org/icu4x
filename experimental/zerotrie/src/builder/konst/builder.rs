@@ -44,7 +44,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     #[must_use]
     const fn prepend_value(self, value: usize) -> (Self, usize) {
         let mut data = self.data;
-        let varint_array = varint::write_extended_varint(value);
+        let varint_array = varint::write_varint_meta3(value);
         data = data.const_extend_front_or_panic(varint_array.as_const_slice());
         data = data.const_bitor_assign(0, 0b10000000);
         (Self { data }, varint_array.len())
@@ -53,7 +53,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     #[must_use]
     const fn prepend_branch(self, value: usize) -> (Self, usize) {
         let mut data = self.data;
-        let varint_array = varint::write_varint(value);
+        let varint_array = varint::write_varint_meta2(value);
         data = data.const_extend_front_or_panic(varint_array.as_const_slice());
         data = data.const_bitor_assign(0, 0b11000000);
         (Self { data }, varint_array.len())

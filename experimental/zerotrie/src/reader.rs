@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::byte_phf::PerfectByteHashMap;
-use crate::varint::read_extended_varint;
-use crate::varint::read_varint;
+use crate::varint::read_varint_meta2;
+use crate::varint::read_varint_meta3;
 use core::ops::Range;
 
 #[cfg(feature = "alloc")]
@@ -154,8 +154,8 @@ pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
         let byte_type = byte_type(*b);
         (x, trie) = match byte_type {
             ByteType::Ascii => (0, trie),
-            ByteType::Span | ByteType::Value => read_extended_varint(*b, trie)?,
-            ByteType::Match => read_varint(*b, trie)?,
+            ByteType::Span | ByteType::Value => read_varint_meta3(*b, trie)?,
+            ByteType::Match => read_varint_meta2(*b, trie)?,
         };
         if let Some((c, temp)) = ascii.split_first() {
             if matches!(byte_type, ByteType::Ascii) {
@@ -218,8 +218,8 @@ pub fn get_phf_limited(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
         let byte_type = byte_type(*b);
         (x, trie) = match byte_type {
             ByteType::Ascii => (0, trie),
-            ByteType::Span | ByteType::Value => read_extended_varint(*b, trie)?,
-            ByteType::Match => read_varint(*b, trie)?,
+            ByteType::Span | ByteType::Value => read_varint_meta3(*b, trie)?,
+            ByteType::Match => read_varint_meta2(*b, trie)?,
         };
         if let Some((c, temp)) = ascii.split_first() {
             if matches!(byte_type, ByteType::Ascii) {
@@ -288,8 +288,8 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
         let byte_type = byte_type(*b);
         (x, trie) = match byte_type {
             ByteType::Ascii => (0, trie),
-            ByteType::Span | ByteType::Value => read_extended_varint(*b, trie)?,
-            ByteType::Match => read_varint(*b, trie)?,
+            ByteType::Span | ByteType::Value => read_varint_meta3(*b, trie)?,
+            ByteType::Match => read_varint_meta2(*b, trie)?,
         };
         if let Some((c, temp)) = ascii.split_first() {
             if matches!(byte_type, ByteType::Ascii) {
@@ -391,8 +391,8 @@ impl<'a> Iterator for ZeroTrieIterator<'a> {
             }
             (x, trie) = match byte_type {
                 ByteType::Ascii => (0, trie),
-                ByteType::Span | ByteType::Value => read_extended_varint(*b, trie)?,
-                ByteType::Match => read_varint(*b, trie)?,
+                ByteType::Span | ByteType::Value => read_varint_meta3(*b, trie)?,
+                ByteType::Match => read_varint_meta2(*b, trie)?,
             };
             if matches!(byte_type, ByteType::Span) {
                 (span, trie) = debug_split_at(trie, x)?;

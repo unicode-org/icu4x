@@ -65,10 +65,10 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     // Unwrap OK: there is a varint at this location in the buffer
                     #[allow(clippy::unwrap_used)]
                     let old_span_size =
-                        varint::try_read_extended_varint_from_tstore(old_front, &mut self.data)
+                        varint::try_read_varint_meta3_from_tstore(old_front, &mut self.data)
                             .unwrap();
                     self.data.atbs_push_front(ascii);
-                    let varint_array = varint::write_extended_varint(old_span_size + 1);
+                    let varint_array = varint::write_varint_meta3(old_span_size + 1);
                     self.data.atbs_extend_front(varint_array.as_slice());
                     self.data.atbs_bitor_assign(0, 0b10100000);
                     let new_byte_len = self.data.atbs_len();
@@ -88,7 +88,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
 
     #[must_use]
     fn prepend_value(&mut self, value: usize) -> usize {
-        let varint_array = varint::write_extended_varint(value);
+        let varint_array = varint::write_varint_meta3(value);
         self.data.atbs_extend_front(varint_array.as_slice());
         self.data.atbs_bitor_assign(0, 0b10000000);
         varint_array.len()
@@ -96,7 +96,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
 
     #[must_use]
     fn prepend_branch(&mut self, value: usize) -> usize {
-        let varint_array = varint::write_varint(value);
+        let varint_array = varint::write_varint_meta2(value);
         self.data.atbs_extend_front(varint_array.as_slice());
         self.data.atbs_bitor_assign(0, 0b11000000);
         varint_array.len()
