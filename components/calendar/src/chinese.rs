@@ -544,6 +544,30 @@ mod test {
 
         let cases = [
             TestCase {
+                fixed: -964192,
+                expected_year: -2,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            TestCase {
+                fixed: -963838,
+                expected_year: -1,
+                expected_month: 1,
+                expected_day: 1
+            },
+            TestCase {
+                fixed: -963129,
+                expected_year: 0,
+                expected_month: 13,
+                expected_day: 1
+            },
+            TestCase {
+                fixed: -963100,
+                expected_year: 0,
+                expected_month: 13,
+                expected_day: 30,
+            },
+            TestCase {
                 fixed: -963099,
                 expected_year: 1,
                 expected_month: 1,
@@ -598,17 +622,17 @@ mod test {
             assert_eq!(
                 case.expected_year,
                 chinese.year().number,
-                "Chinese from fixed failed for case: {case:?}"
+                "Chinese year from fixed failed for case: {case:?}"
             );
             assert_eq!(
                 case.expected_month,
                 chinese.month().ordinal,
-                "Chinese from fixed failed for case: {case:?}"
+                "Chinese month from fixed failed for case: {case:?}"
             );
             assert_eq!(
                 case.expected_day,
                 chinese.day_of_month().0,
-                "Chinese from fixed failed for case: {case:?}"
+                "Chinese day_of_month from fixed failed for case: {case:?}"
             );
         }
     }
