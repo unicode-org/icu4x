@@ -14,6 +14,34 @@ use crate::{
     Date,
 };
 
+/// For an example of how to use this trait, see `impl ChineseBased<Chinese>` in [`Chinese`].
+///
+/// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendars.
+/// To do so, calendars should implement `fn location` by providing a location at which observations of the
+/// new moon are recorded (which may change over time), with the most important part being the time zone
+/// offset (longitude, latitude, and elevation are not relevant for these particular calculations);
+/// define `const EPOCH` as a `RataDie` marking the start date of the era of the Calendar for internal use,
+/// which may not accurately reflect how years or eras are marked traditionally or how they will be seen
+/// by end-users; and implement `fn new_chinese_based_date` by taking a year, month, and day, and
+/// returning a Date of the relevant Calendar type.
+pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
+    /// Given a fixed date, the location used for observations of the new moon in order to
+    /// calculate the beginning of months. For multiple Chinese-based lunar calendars, this has
+    /// changed over the years, and can cause differences in calendar date.
+    fn location(fixed: RataDie) -> Location;
+
+    /// The RataDie of the beginning of the epoch used for internal computation; this may not
+    /// reflect traditional methods of year-tracking or eras, since Chinese-based calendars
+    /// may not track years ordinally in the same way many western calendars do.
+    const EPOCH: RataDie;
+
+    /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
+    ///
+    /// This function should just call try_new_C_date where C is the name of the calendar.
+    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<C>;
+}
+
+
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub(crate) struct ChineseBasedDateInner<C: ChineseBased<C> + CalendarArithmetic>(
@@ -242,31 +270,4 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
         debug_assert!(result < max_iters, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
         result
     }
-}
-
-/// For an example of how to use this trait, see `impl ChineseBased<Chinese>` in [`Chinese`].
-///
-/// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendars.
-/// To do so, calendars should implement `fn location` by providing a location at which observations of the
-/// new moon are recorded (which may change over time), with the most important part being the time zone
-/// offset (longitude, latitude, and elevation are not relevant for these particular calculations);
-/// define `const EPOCH` as a `RataDie` marking the start date of the era of the Calendar for internal use,
-/// which may not accurately reflect how years or eras are marked traditionally or how they will be seen
-/// by end-users; and implement `fn new_chinese_based_date` by taking a year, month, and day, and
-/// returning a Date of the relevant Calendar type.
-pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
-    /// Given a fixed date, the location used for observations of the new moon in order to
-    /// calculate the beginning of months. For multiple Chinese-based lunar calendars, this has
-    /// changed over the years, and can cause differences in calendar date.
-    fn location(fixed: RataDie) -> Location;
-
-    /// The RataDie of the beginning of the epoch used for internal computation; this may not
-    /// reflect traditional methods of year-tracking or eras, since Chinese-based calendars
-    /// may not track years ordinally in the same way many western calendars do.
-    const EPOCH: RataDie;
-
-    /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
-    ///
-    /// This function should just call try_new_C_date where C is the name of the calendar.
-    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<C>;
 }

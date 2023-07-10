@@ -60,7 +60,7 @@ pub enum CalendarError {
 
 /// A list of error outcomes for exceeding location bounds
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
-pub enum LocationOutOfBoundsError {
+pub(crate) enum LocationOutOfBoundsError {
     /// Latitude value was out of bounds
     #[displaydoc("Latitude {0} outside bounds of -90 to 90")]
     Latitude(f64),
