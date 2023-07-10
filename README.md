@@ -38,7 +38,7 @@ icu_testdata = "1.0.0"
 
 `src/main.rs`:
 
-```rust
+```rust,ignore
 use icu::calendar::DateTime;
 use icu::datetime::{options::length, DateTimeFormatter};
 use icu::locid::locale;
