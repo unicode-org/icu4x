@@ -2,6 +2,49 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! # Internal layout of ZeroTrie
+//!
+//! A ZeroTrie is composed of a series of nodes stored in sequence in a byte slice.
+//!
+//! There are 4 types of nodes:
+//!
+//! 1. ASCII (`0xxxxxxx`): matches a literal ASCII byte.
+//! 2. Span (`101xxxxx`): matches a span of non-ASCII bytes.
+//! 3. Value (`100xxxxx`): associates a value with a string
+//! 4. Branch (`11xxxxxx`): matches one of a set of bytes.
+//!
+//! Span, Value, and Branch nodes contain a varint, which has different semantics for each:
+//!
+//! - Span varint: length of the span
+//! - Value varint: value associated with the string
+//! - Branch varint: number of edges in the branch and width of the offset table
+//!
+//! The exact structure of the Branch node is what varies between ZeroTrie types.
+//!
+//! Here is an example ZeroTrie without branch nodes:
+//!
+//! ```
+//! use zerotrie::ZeroTrieSimpleAscii;
+//!
+//! let bytes = [
+//!     b'a', // ASCII literal
+//!     0b10001010, // value 10
+//!     b'b', // ASCII literal
+//!     0b10100010, // span of 3
+//!     0x81, // first byte in span
+//!     0x91, // second byte in span
+//!     0xA1, // third and final byte in span
+//!     0b1000100, // value 4
+//! ];
+//!
+//! let trie = ZeroTrieSimpleAscii::from_bytes(&bytes);
+//!
+//! assert_eq!(trie.get(b"a"), Some(10));
+//! assert_eq!(trie.get(b"ab"), None);
+//! assert_eq!(trie.get(b"b"), None);
+//! assert_eq!(trie.get(b"ab\x81\x91\xA1"), Some(4));
+//! ```
+
 use crate::byte_phf::PerfectByteHashMap;
 use crate::varint::read_varint_meta2;
 use crate::varint::read_varint_meta3;
