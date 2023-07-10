@@ -68,6 +68,20 @@ impl Location {
         })
     }
 
+    pub(crate) const fn new_unchecked(
+        latitude: f64,
+        longitude: f64,
+        elevation: f64,
+        zone: f64,
+    ) -> Location {
+        Location {
+            latitude,
+            longitude,
+            elevation,
+            zone,
+        }
+    }
+
     /// Get the longitude of a Location
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn longitude(&self) -> f64 {
