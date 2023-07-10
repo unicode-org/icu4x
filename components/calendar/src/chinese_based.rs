@@ -6,7 +6,7 @@
 //! as well as in related and derived calendars such as the Korean and Vietnamese lunar calendars.
 
 use crate::{
-    astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
+    astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR, self},
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic},
     helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
@@ -117,7 +117,7 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5353-L5357
     pub(crate) fn midnight(moment: Moment) -> Moment {
-        Location::universal_from_standard(date, C::location(date.as_rata_die()))
+        Location::universal_from_standard(moment, C::location(moment.as_rata_die()))
     }
 
     /// Determines the fixed date of the lunar new year in the sui4 (solar year based on the winter solstice)
@@ -151,13 +151,13 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5359-L5368
     pub(crate) fn winter_solstice_on_or_before(date: RataDie) -> RataDie {
         let approx = Astronomical::estimate_prior_solar_longitude(
-            270.0,
+            astronomy::WINTER,
             Self::midnight((date + 1).as_moment()),
         );
         let mut iters = 0;
         let max_iters = 367;
         let mut day = Moment::new(libm::floor(approx.inner() - 1.0));
-        while iters < max_iters && 270.0 >= Astronomical::solar_longitude(Self::midnight(day + 1.0))
+        while iters < max_iters && astronomy::WINTER >= Astronomical::solar_longitude(Self::midnight(day + 1.0))
         {
             iters += 1;
             day += 1.0;
