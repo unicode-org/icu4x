@@ -142,4 +142,24 @@ export class ICU4XCaseMapper {
     buf_arg_s.free();
     return diplomat_out;
   }
+
+  simple_lowercase(arg_ch) {
+    return wasm.ICU4XCaseMapper_simple_lowercase(this.underlying, diplomatRuntime.extractCodePoint(arg_ch, 'arg_ch'));
+  }
+
+  simple_uppercase(arg_ch) {
+    return wasm.ICU4XCaseMapper_simple_uppercase(this.underlying, diplomatRuntime.extractCodePoint(arg_ch, 'arg_ch'));
+  }
+
+  simple_titlecase(arg_ch) {
+    return wasm.ICU4XCaseMapper_simple_titlecase(this.underlying, diplomatRuntime.extractCodePoint(arg_ch, 'arg_ch'));
+  }
+
+  simple_fold(arg_ch) {
+    return wasm.ICU4XCaseMapper_simple_fold(this.underlying, diplomatRuntime.extractCodePoint(arg_ch, 'arg_ch'));
+  }
+
+  simple_fold_turkic(arg_ch) {
+    return wasm.ICU4XCaseMapper_simple_fold_turkic(this.underlying, diplomatRuntime.extractCodePoint(arg_ch, 'arg_ch'));
+  }
 }

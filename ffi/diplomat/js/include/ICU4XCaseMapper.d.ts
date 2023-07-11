@@ -1,3 +1,4 @@
+import { char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
@@ -22,7 +23,7 @@ export class ICU4XCaseMapper {
 
    * Returns the full lowercase mapping of the given string
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.ComposingNormalizer.html#method.lowercase Rust documentation for `lowercase`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.lowercase Rust documentation for `lowercase`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   lowercase(s: string, locale: ICU4XLocale): string | never;
@@ -31,7 +32,7 @@ export class ICU4XCaseMapper {
 
    * Returns the full uppercase mapping of the given string
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.ComposingNormalizer.html#method.uppercase Rust documentation for `uppercase`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase Rust documentation for `uppercase`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   uppercase(s: string, locale: ICU4XLocale): string | never;
@@ -40,7 +41,7 @@ export class ICU4XCaseMapper {
 
    * Returns the full titlecase mapping of the given string
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.ComposingNormalizer.html#method.titlecase_segment Rust documentation for `titlecase_segment`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment Rust documentation for `titlecase_segment`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   titlecase_segment(s: string, locale: ICU4XLocale): string | never;
@@ -49,7 +50,7 @@ export class ICU4XCaseMapper {
 
    * Case-folds the characters in the given string
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.ComposingNormalizer.html#method.fold Rust documentation for `fold`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold Rust documentation for `fold`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   fold(s: string): string | never;
@@ -58,8 +59,58 @@ export class ICU4XCaseMapper {
 
    * Case-folds the characters in the given string using Turkic (T) mappings for dotted/dotless I.
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.ComposingNormalizer.html#method.fold_turkic Rust documentation for `fold_turkic`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic Rust documentation for `fold_turkic`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   fold_turkic(s: string): string | never;
+
+  /**
+
+   * Returns the simple lowercase mapping of the given character.
+
+   * This function only implements simple and common mappings. Full mappings, which can map one char to a string, are not included. For full mappings, use `ICU4XCaseMapper::lowercase`.
+
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_lowercase Rust documentation for `simple_lowercase`} for more information.
+   */
+  simple_lowercase(ch: char): char;
+
+  /**
+
+   * Returns the simple uppercase mapping of the given character.
+
+   * This function only implements simple and common mappings. Full mappings, which can map one char to a string, are not included. For full mappings, use `ICU4XCaseMapper::uppercase`.
+
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_uppercase Rust documentation for `simple_uppercase`} for more information.
+   */
+  simple_uppercase(ch: char): char;
+
+  /**
+
+   * Returns the simple titlecase mapping of the given character.
+
+   * This function only implements simple and common mappings. Full mappings, which can map one char to a string, are not included. For full mappings, use `ICU4XCaseMapper::titlecase_segment`.
+
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_titlecase Rust documentation for `simple_titlecase`} for more information.
+   */
+  simple_titlecase(ch: char): char;
+
+  /**
+
+   * Returns the simple casefolding of the given character.
+
+   * This function only implements simple folding. For full folding, use `ICU4XCaseMapper::fold`.
+
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold Rust documentation for `simple_fold`} for more information.
+   */
+  simple_fold(ch: char): char;
+
+  /**
+
+   * Returns the simple casefolding of the given character in the Turkic locale
+
+   * This function only implements simple folding. For full folding, use `ICU4XCaseMapper::fold_turkic`.
+
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold_turkic Rust documentation for `simple_fold_turkic`} for more information.
+   */
+  simple_fold_turkic(ch: char): char;
 }

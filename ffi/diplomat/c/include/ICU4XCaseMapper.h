@@ -34,6 +34,16 @@ diplomat_result_void_ICU4XError ICU4XCaseMapper_titlecase_segment(const ICU4XCas
 diplomat_result_void_ICU4XError ICU4XCaseMapper_fold(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, DiplomatWriteable* write);
 
 diplomat_result_void_ICU4XError ICU4XCaseMapper_fold_turkic(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, DiplomatWriteable* write);
+
+char32_t ICU4XCaseMapper_simple_lowercase(const ICU4XCaseMapper* self, char32_t ch);
+
+char32_t ICU4XCaseMapper_simple_uppercase(const ICU4XCaseMapper* self, char32_t ch);
+
+char32_t ICU4XCaseMapper_simple_titlecase(const ICU4XCaseMapper* self, char32_t ch);
+
+char32_t ICU4XCaseMapper_simple_fold(const ICU4XCaseMapper* self, char32_t ch);
+
+char32_t ICU4XCaseMapper_simple_fold_turkic(const ICU4XCaseMapper* self, char32_t ch);
 void ICU4XCaseMapper_destroy(ICU4XCaseMapper* self);
 
 #ifdef __cplusplus
