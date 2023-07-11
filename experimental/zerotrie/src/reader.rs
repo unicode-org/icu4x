@@ -19,7 +19,12 @@
 //! - Value varint: value associated with the string
 //! - Branch varint: number of edges in the branch and width of the offset table
 //!
-//! The exact structure of the Branch node is what varies between ZeroTrie types.
+//! If reading an ASCII, Span, or Branch node, one or more bytes are consumed from the input
+//! string. If the next byte(s) in the input string do not match the node, we return `None`.
+//! If reading a Value node, if the string is empty, return `Some(value)`; otherwise, we skip
+//! the Value node and continue on to the next node.
+//!
+//! When a node is consumed, a shorter, well-formed ZeroTrie remains.
 //!
 //! Here is an example ZeroTrie without branch nodes:
 //!
@@ -30,20 +35,51 @@
 //!     b'a', // ASCII literal
 //!     0b10001010, // value 10
 //!     b'b', // ASCII literal
-//!     0b10100010, // span of 3
+//!     0b10100011, // span of 3
 //!     0x81, // first byte in span
 //!     0x91, // second byte in span
 //!     0xA1, // third and final byte in span
-//!     0b1000100, // value 4
+//!     0b10000100, // value 4
 //! ];
 //!
 //! let trie = ZeroTrieSimpleAscii::from_bytes(&bytes);
 //!
+//! // First value: "a" → 10
 //! assert_eq!(trie.get(b"a"), Some(10));
+//!
+//! // Second value: "ab\x81\x91\xA1" → 4
+//! assert_eq!(trie.get(b"ab\x81\x91\xA1"), Some(4));
+//!
+//! // A few examples of strings that do NOT have values in the trie:
 //! assert_eq!(trie.get(b"ab"), None);
 //! assert_eq!(trie.get(b"b"), None);
-//! assert_eq!(trie.get(b"ab\x81\x91\xA1"), Some(4));
+//! assert_eq!(trie.get(b"b\x81\x91\xA1"), None);
 //! ```
+//!
+//! ## Branch Nodes
+//!
+//! There are two types of branch nodes: binary search and perfect hash. `ZeroTrieSimpleAscii`
+//! contains only binary search nodes, whereas `ZeroTriePerfectHash` can contain either.
+//!
+//! The head node of the branch has a varint that encodes two things:
+//!
+//! - Bottom 8 bits: number of edges in the branch (`N`); if N = 0, set N to 256
+//! - Bits 9 and 10: width of the offset table (`W`)
+//!
+//! A few examples of the head node of the branch:
+//!
+//! - `0b11000000`: varint bits `0`: N = 0 which means N = 256; W = 0
+//! - `0b11000110`: varint bits `110`: N = 6; W = 0
+//! - `0b11100000 0b00000101`: varint bits `1000101`: N = 69; W = 0
+//! - `0b11100010 0b00000000`: varint bits `101000000`: N = 64; W = 1
+//!
+//! In `ZeroTriePerfectHash`, if N <= 15, the branch is assumed to be a binary search, and if
+//! N > 15, the branch is assumed to be a perfect hash.
+//!
+//! ### Binary Search Branch Nodes
+//!
+//! Here, the head branch node is followed by N sorted bytes and then (W+1)*(N-1) bytes
+//! for the offset table.
 
 use crate::byte_phf::PerfectByteHashMap;
 use crate::varint::read_varint_meta2;
