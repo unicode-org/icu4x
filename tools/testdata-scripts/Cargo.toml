@@ -16,8 +16,10 @@ icu_locid = { path = "../../components/locid", features = ["databake"] }
 icu_provider = { path = "../../provider/core" }
 
 clap = {version = "4", features = ["derive"] }
+dhat = "0.3.0"
 eyre = "0.6"
 log = "0.4"
+postcard = { version = "1.0.0", default-features = false, features = ["alloc"] }
 quote = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 ureq = "2"
