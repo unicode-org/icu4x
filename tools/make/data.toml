@@ -120,7 +120,7 @@ exit_on_error true
 
 if array_is_empty ${@}
     mode = set "--release"
-    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemapping experimental/compactdecimal experimental/displaynames experimental/relativetime
+    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemap experimental/compactdecimal experimental/displaynames experimental/relativetime
 else
     mode = set "--bin=icu4x-datagen" # need some valid argument
     components = set ${@}

@@ -34,7 +34,7 @@
 
 extern crate alloc;
 
-mod casemapping;
+mod casemapper;
 pub mod provider;
 mod set;
 
@@ -43,5 +43,5 @@ mod set;
 pub mod greek_to_me;
 mod internals;
 
-pub use casemapping::CaseMapper;
+pub use casemapper::CaseMapper;
 pub use set::ClosureSet;
