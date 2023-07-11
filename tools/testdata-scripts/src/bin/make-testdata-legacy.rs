@@ -4,8 +4,8 @@
 
 use icu_datagen::prelude::*;
 use std::fs::File;
-use std::path::Path;
 use std::io::Write;
+use std::path::Path;
 
 include!("../../locales.rs.data");
 
@@ -25,7 +25,11 @@ fn main() {
 
     std::fs::create_dir_all(&data_root).unwrap();
 
-    let source = SourceData::offline().with_cldr_latest(Default::default()).unwrap().with_icuexport_latest().unwrap();
+    let source = SourceData::offline()
+        .with_cldr_latest(Default::default())
+        .unwrap()
+        .with_icuexport_latest()
+        .unwrap();
 
     let blob_out = Out::Blob(Box::new(
         File::create(data_root.join("testdata.postcard")).unwrap(),
