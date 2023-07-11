@@ -6,7 +6,7 @@
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
 version = "1.2.5"
-rust-version = "1.64.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -21,6 +21,8 @@ include = [
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
+    "!tests/data/json/**/*",
+    "!tests/data/postcard/**/*",
     "Cargo.toml",
     "LICENSE",
     "README.md",
@@ -34,7 +36,7 @@ all-features = true
 
 # ICU components
 icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, features = ["datagen"] }
-icu_casemap = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, features = ["datagen"] }
+icu_casemap = { version = "0.7.1", path = "../../experimental/casemap", default-features = false, features = ["datagen"] }
 icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, features = ["datagen"] }
 icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, features = ["datagen"] }
 icu_datetime = { version = "1.2.0", path = "../../components/datetime", default-features = false, features = ["datagen"] }
@@ -91,9 +93,7 @@ simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu" }
-icu_testdata = { path = "../testdata", features = ["buffer"] }
-repodata = { path = "../../provider/repodata" }
-
+icu_provider_blob = { path = "../blob" }
 
 [target.'cfg(not(target_os = "windows"))'.dev-dependencies]
 # The verify-zero-copy test is causing problems on Windows

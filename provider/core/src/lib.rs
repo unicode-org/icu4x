@@ -80,9 +80,6 @@
 //!
 //! - [`HelloWorldProvider`] returns "hello world" strings in several languages.
 //!
-//! If you need a testing provider that contains the actual resource keys used by ICU4X features,
-//! see the [`icu_testdata`] crate.
-//!
 //! ## Types and Lifetimes
 //!
 //! Types compatible with [`Yokeable`] can be passed through the data provider, so long as they are
@@ -116,7 +113,6 @@
 //! [`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
-//! [`icu_testdata`]: ../icu_testdata/index.html
 //! [`icu_datagen`]: ../icu_datagen/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations

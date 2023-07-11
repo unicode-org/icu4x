@@ -6,7 +6,7 @@
 name = "ixdtf"
 description = "Parser for Internet eXtended DateTime Format"
 version = "0.1.0"
-rust-version = "1.64.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -35,5 +35,4 @@ all-features = true
 
 [dev-dependencies]
 criterion = "0.4"
-icu_testdata = { path = "../../provider/testdata" }
 serde-json-core = { version = "0.4", features = ["std"] }

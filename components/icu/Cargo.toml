@@ -6,7 +6,7 @@
 name = "icu"
 description = "International Components for Unicode"
 version = "1.2.0"
-rust-version = "1.64.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -44,7 +44,7 @@ icu_segmenter = { version = "1.2.0", path = "../segmenter", default-features = f
 icu_timezone = { version = "1.2.0", path = "../timezone", default-features = false }
 
 # Experimental components
-icu_casemap = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, optional = true }
+icu_casemap = { version = "0.7.1", path = "../../experimental/casemap", default-features = false, optional = true }
 icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
 icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", default-features = false, optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }

@@ -435,6 +435,11 @@ impl AbstractFs {
                     )
                     .as_slice(),
                 ),
+                (
+                    "Thai_graphclust_model4_heavy/weights.json",
+                    include_bytes!("../data/lstm/Thai_graphclust_model4_heavy/weights.json")
+                        .as_slice(),
+                ),
             ]
             .into_iter()
             .collect(),

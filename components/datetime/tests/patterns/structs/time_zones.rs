@@ -126,20 +126,22 @@ pub enum TimeZoneFormatterConfig {
 impl TimeZoneFormatterConfig {
     pub fn set_on_formatter(self, tzf: &mut TimeZoneFormatter) -> Result<(), DateTimeError> {
         match self {
-            TimeZoneFormatterConfig::GenericNonLocationLong => tzf.with_generic_non_location_long(),
-            TimeZoneFormatterConfig::GenericNonLocationShort => {
-                tzf.with_generic_non_location_short()
+            TimeZoneFormatterConfig::GenericNonLocationLong => {
+                tzf.include_generic_non_location_long()
             }
-            TimeZoneFormatterConfig::GenericLocation => tzf.with_generic_location_format(),
+            TimeZoneFormatterConfig::GenericNonLocationShort => {
+                tzf.include_generic_non_location_short()
+            }
+            TimeZoneFormatterConfig::GenericLocation => tzf.include_generic_location_format(),
             TimeZoneFormatterConfig::SpecificNonLocationLong => {
-                tzf.with_specific_non_location_long()
+                tzf.include_specific_non_location_long()
             }
             TimeZoneFormatterConfig::SpecificNonLocationShort => {
-                tzf.with_specific_non_location_short()
+                tzf.include_specific_non_location_short()
             }
-            TimeZoneFormatterConfig::LocalizedGMT => tzf.load_localized_gmt_format(),
+            TimeZoneFormatterConfig::LocalizedGMT => tzf.include_localized_gmt_format(),
             TimeZoneFormatterConfig::Iso8601(format, minutes, seconds) => {
-                tzf.load_iso_8601_format(format.into(), minutes.into(), seconds.into())
+                tzf.include_iso_8601_format(format.into(), minutes.into(), seconds.into())
             }
         }
         .map(|_| ())
