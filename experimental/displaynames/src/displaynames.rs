@@ -412,26 +412,19 @@ impl LocaleDisplayNamesFormatter {
     /// 
     // TODO: Make this return a writeable instead of using alloc
     pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, locale: &'c Locale) -> Cow<'a, str> {
-        // Step - 1: Construct the canonical locale from a given locale.
-        let cannonical_locale = Locale::canonicalize(locale.to_string()).unwrap();
-
         let longest_prefix =
-            match find_longest_matching_prefix(&cannonical_locale, &self.locale_data.get().names) {
+            match find_longest_matching_prefix(&locale, &self.locale_data.get().names) {
                 Some(prefix) => prefix,
-                None => cannonical_locale
-                    .split_once("-")
-                    .unwrap_or((&cannonical_locale, ""))
-                    .0
-                    .to_string(),
+                None => locale.id.language.to_string(),
             };
 
-        // Step - 2: Construct a locale display name string (LDN).
+        // Step - 1: Construct a locale display name string (LDN).
         let ldn = get_locale_display_name(&longest_prefix, &self);
 
-        // Step - 3: Construct a vector of longest qualifying substrings (LQS).
-        let lqs = get_longest_qualifying_substrings(&cannonical_locale, &longest_prefix, &self);
+        // Step - 2: Construct a vector of longest qualifying substrings (LQS).
+        let lqs = get_longest_qualifying_substrings(&locale, &longest_prefix, &self);
 
-        // Step - 4: Return the displayname based on the size of LQS.
+        // Step - 3: Return the displayname based on the size of LQS.
         if lqs.len() == 0 {
             return ldn.to_string().into();
         } else {
@@ -440,15 +433,16 @@ impl LocaleDisplayNamesFormatter {
     }
 }
 
-/// For a given string and the local data, find the longest prefix of the string that exists as a key in the data.
+/// For a given string and the local data, find the longest prefix of the string that exists as a key in the locale data.
 /// Note: this function implements a naive algorithm to find the longest matching prefix and this can be improved by either using
 /// Binary Search algorithm or by implementing an intermediate Trie structure if needed.
 /// The time complexity for this algorithm is o(n): where n is the number of words separated by "-" in "s".
 fn find_longest_matching_prefix<'data>(
-    s: &str,
+    locale: &Locale,
     data: &ZeroMap<'data, UnvalidatedStr, str>,
 ) -> Option<String> {
-    let vector = s.split("-").collect::<Vec<&str>>();
+    let binding = locale.to_string();
+    let vector = &binding.split("-").collect::<Vec<&str>>();
     let mut end = vector.len();
 
     while end > 0 {
@@ -533,7 +527,7 @@ fn get_locale_display_name<'a>(
 }
 
 fn get_longest_qualifying_substrings<'a>(
-    cannonical_locale: &'a str,
+    cannonical_locale: &Locale,
     language_prefix: &'a str,
     locale_dn_formatter: &'a LocaleDisplayNamesFormatter,
 ) -> Vec<&'a str> {
@@ -552,7 +546,7 @@ fn get_longest_qualifying_substrings<'a>(
     // This step is required because locale!("en-GB-Latn") would return locale { id { language: "en", region: "GB", Script: "Latn" }, .. }.
     // However, because "en-GB" is a dialect and was included as part of LDN, it should ideally be locale { id { language: "en-GB", script: "Latn" }, .. }.
     // To resolve this case, the "language_prefix" used to compute LDN is removed first from the locale string.    
-    let str = cannonical_locale.replace(language_prefix, "");
+    let str = cannonical_locale.to_string().replace(language_prefix, "");
 
     if str.len() == 0 {
         return lqs;
