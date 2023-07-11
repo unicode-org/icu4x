@@ -53,7 +53,7 @@ Changes to data often need to happen at runtime because:
 ICU4C/ICU4J exposes certain pieces of data through user-facing APIs such as DateFormatSymbols. ICU4X departs from this approach (making the data resources modifiable when being loaded) to solve the following problems:
 
 1. User-facing APIs do not cover all data that users may need to mutate; those APIs must be perpetually maintained and updated
-2. Mutating data is a power-user feature; putting it front and center temps users to mutate it in ways they shouldn't
+2. Mutating data is a power-user feature; putting it front and center tempts users to mutate it in ways they shouldn't
 3. Mutable symbols objects does not lend itself well to internal immutability of formatters (this has been a problem in the past)
 
 Runtime customizability of locale data can sometimes come at a performance or memory cost.
