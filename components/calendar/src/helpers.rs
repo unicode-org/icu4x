@@ -193,6 +193,7 @@ pub fn signum(x: f64) -> f64 {
     }
 }
 
+#[allow(dead_code)] // TODO: Remove dead_code tag after use
 pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     let varepsilon = 1.0 / 100000.0; // Desired accuracy
     binary_search(

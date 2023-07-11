@@ -599,7 +599,6 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4466
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn lunar_latitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let l = Self::mean_lunar_longitude(c);
@@ -1113,7 +1112,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4416-L4427
-    #[allow(dead_code)] // TODO: Remove dead code tag after use
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> f64 {
         let tau = moment.inner()
             - MEAN_SYNODIC_MONTH / (360.0 / phase) * ((Self::lunar_phase(moment) - phase) % 360.0);
@@ -1235,7 +1234,6 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4049-L4057
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn aberration(c: f64) -> f64 {
         // This code differs from the lisp/book code by taking in a julian centuries value instead of
         // a Moment; this is because aberration is only ever called in the fn solar_longitude, which
@@ -1294,7 +1292,6 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3590-L3605
-    #[allow(dead_code)] // TODO: Remove dead code tag after use
     pub(crate) fn sine_offset(moment: Moment, location: Location, alpha: f64) -> f64 {
         let phi = location.latitude;
         let tee_prime = Location::universal_from_local(moment, location);
