@@ -7,13 +7,13 @@
 pub mod calendar;
 pub mod characters;
 pub mod cldr_serde;
+pub mod currency;
 pub mod datetime;
 pub mod decimal;
 pub mod displaynames;
 pub mod fallback;
 pub mod list;
 pub mod locale_canonicalizer;
-pub mod number_formatter;
 pub mod plurals;
 pub mod relativetime;
 pub mod source;
