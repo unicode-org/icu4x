@@ -21,10 +21,10 @@ use alloc::vec;
 /// and elevation in meters.
 #[allow(dead_code)] // TODO: Remove dead_code tag after use
 pub(crate) struct Location {
-    latitude: f64,  // latitude from -90 to 90
-    longitude: f64, // longitude from -180 to 180
-    elevation: f64, // elevation in meters
-    zone: f64,      // UTC timezone offset
+    pub(crate) latitude: f64,  // latitude from -90 to 90
+    pub(crate) longitude: f64, // longitude from -180 to 180
+    pub(crate) elevation: f64, // elevation in meters
+    pub(crate) zone: f64,      // UTC timezone offset
 }
 
 // Location of mecca from the lisp code
@@ -900,6 +900,8 @@ impl Astronomical {
         .1
     }
 
+    
+
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4196-L4206
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn moon_node(c: f64) -> f64 {
@@ -1592,6 +1594,11 @@ mod tests {
 
             assert_eq_f64(expected_parallax_val, parallax_val, moment);
         }
+    }
+
+    #[test]
+    fn check_lunar_phase() {
+        
     }
 
     #[test]
