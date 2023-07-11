@@ -10,7 +10,7 @@
 
         Construct a new ICU4XCaseMapper instance for NFC
 
-        See the `Rust documentation for try_new_nfc_unstable <https://docs.rs/icu/latest/icu/casemap/struct.ComposingNormalizer.html#method.try_new_nfc_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> lowercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const

@@ -13,7 +13,7 @@ export class ICU4XCaseMapper {
 
    * Construct a new ICU4XCaseMapper instance for NFC
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.ComposingNormalizer.html#method.try_new_nfc_unstable Rust documentation for `try_new_nfc_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XCaseMapper | never;

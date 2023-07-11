@@ -36,7 +36,7 @@ class ICU4XCaseMapper {
   /**
    * Construct a new ICU4XCaseMapper instance for NFC
    * 
-   * See the [Rust documentation for `try_new_nfc_unstable`](https://docs.rs/icu/latest/icu/casemap/struct.ComposingNormalizer.html#method.try_new_nfc_unstable) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
    */
   static diplomat::result<ICU4XCaseMapper, ICU4XError> create(const ICU4XDataProvider& provider);
 
