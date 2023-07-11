@@ -7,7 +7,7 @@
 
 use crate::{
     astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
-    calendar_arithmetic::{ArithmeticDate, CalendarArithmetic},
+    calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, MAX_ITERS_FOR_MONTHS_OF_YEAR, MAX_ITERS_FOR_DAYS_OF_YEAR},
     helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
     types::Moment,
@@ -155,16 +155,15 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
             Self::midnight((date + 1).as_moment()),
         );
         let mut iters = 0;
-        let max_iters = 367;
         let mut day = Moment::new(libm::floor(approx.inner() - 1.0));
-        while iters < max_iters
+        while iters < MAX_ITERS_FOR_DAYS_OF_YEAR
             && astronomy::WINTER >= Astronomical::solar_longitude(Self::midnight(day + 1.0))
         {
             iters += 1;
             day += 1.0;
         }
         debug_assert!(
-            iters < max_iters,
+            iters < MAX_ITERS_FOR_DAYS_OF_YEAR,
             "Number of iterations was higher than expected"
         );
         day.as_rata_die()
@@ -286,12 +285,11 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
     pub(crate) fn get_leap_month_in_year(date: RataDie) -> u8 {
         let mut cur = Self::new_year_on_or_before_fixed_date(date);
         let mut result = 1;
-        let max_iters = 13;
-        while result < max_iters && !Self::no_major_solar_term(cur) {
+        while result < MAX_ITERS_FOR_MONTHS_OF_YEAR && !Self::no_major_solar_term(cur) {
             cur = Self::new_moon_on_or_after((cur + 1).as_moment());
             result += 1;
         }
-        debug_assert!(result < max_iters, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
+        debug_assert!(result < MAX_ITERS_FOR_MONTHS_OF_YEAR, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
         result
     }
 }
