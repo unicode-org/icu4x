@@ -30,11 +30,7 @@ pub mod ffi {
 
         /// Returns the full lowercase mapping of the given string
         #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::casemap::CaseMapper::lowercase_to_string,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase_to_string, FnInStruct, hidden)]
         pub fn lowercase(
             &self,
             s: &str,
@@ -52,11 +48,7 @@ pub mod ffi {
 
         /// Returns the full uppercase mapping of the given string
         #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::casemap::CaseMapper::uppercase_to_string,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase_to_string, FnInStruct, hidden)]
         pub fn uppercase(
             &self,
             s: &str,
@@ -109,11 +101,7 @@ pub mod ffi {
         /// Case-folds the characters in the given string
         /// using Turkic (T) mappings for dotted/dotless I.
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::casemap::CaseMapper::fold_turkic_string,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic_string, FnInStruct, hidden)]
         pub fn fold_turkic(
             &self,
             s: &str,
@@ -128,17 +116,13 @@ pub mod ffi {
             Ok(())
         }
 
-
         /// Returns the simple lowercase mapping of the given character.
         ///
         /// This function only implements simple and common mappings.
         /// Full mappings, which can map one char to a string, are not included.
         /// For full mappings, use `ICU4XCaseMapper::lowercase`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_lowercase, FnInStruct)]
-        pub fn simple_lowercase(
-            &self,
-            ch: char,
-        ) -> char {
+        pub fn simple_lowercase(&self, ch: char) -> char {
             self.0.simple_lowercase(ch)
         }
 
@@ -148,10 +132,7 @@ pub mod ffi {
         /// Full mappings, which can map one char to a string, are not included.
         /// For full mappings, use `ICU4XCaseMapper::uppercase`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_uppercase, FnInStruct)]
-        pub fn simple_uppercase(
-            &self,
-            ch: char,
-        ) -> char {
+        pub fn simple_uppercase(&self, ch: char) -> char {
             self.0.simple_uppercase(ch)
         }
 
@@ -161,10 +142,7 @@ pub mod ffi {
         /// Full mappings, which can map one char to a string, are not included.
         /// For full mappings, use `ICU4XCaseMapper::titlecase_segment`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_titlecase, FnInStruct)]
-        pub fn simple_titlecase(
-            &self,
-            ch: char,
-        ) -> char {
+        pub fn simple_titlecase(&self, ch: char) -> char {
             self.0.simple_titlecase(ch)
         }
 
@@ -173,10 +151,7 @@ pub mod ffi {
         /// This function only implements simple folding.
         /// For full folding, use `ICU4XCaseMapper::fold`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold, FnInStruct)]
-        pub fn simple_fold(
-            &self,
-            ch: char,
-        ) -> char {
+        pub fn simple_fold(&self, ch: char) -> char {
             self.0.simple_fold(ch)
         }
         /// Returns the simple casefolding of the given character in the Turkic locale
@@ -184,10 +159,7 @@ pub mod ffi {
         /// This function only implements simple folding.
         /// For full folding, use `ICU4XCaseMapper::fold_turkic`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold_turkic, FnInStruct)]
-        pub fn simple_fold_turkic(
-            &self,
-            ch: char,
-        ) -> char {
+        pub fn simple_fold_turkic(&self, ch: char) -> char {
             self.0.simple_fold_turkic(ch)
         }
     }
