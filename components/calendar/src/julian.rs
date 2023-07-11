@@ -33,11 +33,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-<<<<<<< HEAD
-use crate::helpers::{quotient, div_rem_euclid};
-=======
-use crate::helpers::{i64_to_i32, quotient64, I32Result};
->>>>>>> main
+use crate::helpers::{i64_to_i32, quotient64, I32Result, div_rem_euclid};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
@@ -259,13 +255,8 @@ impl Julian {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738
-<<<<<<< HEAD
-    fn julian_from_fixed(date: i32) -> JulianDateInner {
-        let approx = quotient((4 * (date - JULIAN_EPOCH)) + 1464, 1461);
-=======
     fn julian_from_fixed(date: RataDie) -> JulianDateInner {
         let approx = quotient64((4 * date.to_i64_date()) + 1464, 1461);
->>>>>>> main
         let year = if approx <= 0 { approx - 1 } else { approx };
         let year = match i64_to_i32(year) {
             I32Result::BelowMin(_) => return JulianDateInner(ArithmeticDate::min_date()),
@@ -433,7 +424,7 @@ mod test {
 
         #[derive(Debug)]
         struct TestCase {
-            fixed_date: i32,
+            fixed_date: i64,
             iso_year: i32,
             iso_month: u8,
             iso_day: u8,
@@ -537,7 +528,7 @@ mod test {
         ];
 
         for case in cases {
-            let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(case.fixed_date);
+            let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(RataDie::new(case.fixed_date));
             let julian_from_fixed: Date<Julian> = Date::new_from_iso(iso_from_fixed, Julian);
             assert_eq!(julian_from_fixed.year().number, case.expected_year,
                 "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
@@ -563,7 +554,8 @@ mod test {
     fn test_julian_fixed_date_conversion() {
         // Tests that converting from fixed date to Julian then
         // back to fixed date yields the same fixed date
-        for fixed in -10000..=10000 {
+        for i in -10000..=10000 {
+            let fixed = RataDie::new(i);
             let julian = Julian::julian_from_fixed(fixed);
             let new_fixed = Julian::fixed_from_julian(julian.0);
             assert_eq!(fixed, new_fixed);
@@ -577,8 +569,8 @@ mod test {
         // than the other, without exception.
         for i in -100..=100 {
             for j in -100..=100 {
-                let julian_i = Julian::julian_from_fixed(i).0;
-                let julian_j = Julian::julian_from_fixed(j).0;
+                let julian_i = Julian::julian_from_fixed(RataDie::new(i)).0;
+                let julian_j = Julian::julian_from_fixed(RataDie::new(j)).0;
 
                 assert_eq!(
                     i.cmp(&j),
