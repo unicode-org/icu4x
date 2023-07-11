@@ -59,6 +59,11 @@ const CHINESE_EPOCH: RataDie = RataDie::new(-963099); // Feb. 15, 2637 BCE (-263
 const UTC_OFFSET_PRE_1929: f64 = (1397.0 / 180.0) / 24.0;
 const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
 
+const CHINESE_LOCATION_PRE_1929: Location =
+    Location::new_unchecked(39.0, 116.0, 43.5, UTC_OFFSET_PRE_1929);
+const CHINESE_LOCATION_POST_1929: Location =
+    Location::new_unchecked(39.0, 116.0, 43.5, UTC_OFFSET_POST_1929);
+
 /// The Chinese Calendar
 ///
 /// The [Chinese Calendar] is a lunisolar calendar used traditionally in China as well as in other
@@ -495,12 +500,12 @@ impl Chinese {
     /// Returns the UTC time offset in China based on the date. The Chinese calendar determines the month based on
     /// observations from China, so this function is necessary to discern the time offset in China, which changed in
     /// 1929 when China adopted a standard time zone set at 120 degrees longitude.
-    fn chinese_offset(date: RataDie) -> f64 {
+    fn chinese_offset(date: RataDie) -> Location {
         let year = Iso::iso_from_fixed(date).year().number;
         if year < 1929 {
-            UTC_OFFSET_PRE_1929
+            CHINESE_LOCATION_PRE_1929
         } else {
-            UTC_OFFSET_POST_1929
+            CHINESE_LOCATION_POST_1929
         }
     }
 
