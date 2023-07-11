@@ -5,7 +5,10 @@
 use crate::transform::cldr::cldr_serde;
 use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
+use icu_locid::{
+    extensions::unicode::{key, value},
+    Locale,
+};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use lazy_static::lazy_static;
@@ -37,6 +40,7 @@ macro_rules! impl_data_provider {
     ($marker:ident, $expr:expr, calendared = $calendared:expr) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
                 if $calendared == "locale" && req.locale.is_empty() {
                     return Err(DataErrorKind::NeedsLocale.into_error());
                 }
@@ -273,7 +277,7 @@ macro_rules! impl_data_provider {
                     r.retain(|l| l.get_langid() != icu_locid::langid!("byn") && l.get_langid() != icu_locid::langid!("ssy"));
                 }
 
-                Ok(self.source.options.locales.filter_by_langid_equality(r))
+                Ok(self.filter_data_locales(r))
             }
         }
     };

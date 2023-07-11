@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
+use icu_locid::extensions::unicode::key;
 use icu_locid::extensions::unicode::Value;
-use icu_locid::extensions_unicode_key as key;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -78,7 +78,7 @@ impl crate::DatagenProvider {
     }
 
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.source.options.locales.filter_by_langid_equality(
+        Ok(self.filter_data_locales(
             self.source
                 .cldr()?
                 .numbers()

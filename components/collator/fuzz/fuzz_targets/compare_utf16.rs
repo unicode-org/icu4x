@@ -44,7 +44,7 @@ fn compare_icu4x(
 ) -> Ordering {
     let locale: Locale = locale_str.parse().unwrap();
 
-    let collator: Collator = Collator::try_new_unstable(locale, &icu_testdata::unstable(), options).unwrap();
+    let collator: Collator = Collator::try_new(locale, options).unwrap();
     collator.compare_utf16(left, right)
 }
 

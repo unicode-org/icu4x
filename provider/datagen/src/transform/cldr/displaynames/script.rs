@@ -16,6 +16,7 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<ScriptDisplayNamesV1Marker>, DataError> {
+        self.check_req::<ScriptDisplayNamesV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::displaynames::script::Resource = self
@@ -37,7 +38,7 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.source.options.locales.filter_by_langid_equality(
+        Ok(self.filter_data_locales(
             self.source
                 .cldr()?
                 .displaynames()
@@ -97,7 +98,7 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags_script as script};
+    use icu_locid::{locale, subtags::script};
 
     #[test]
     fn test_basic_script_display_names() {

@@ -31,13 +31,16 @@ pub mod ffi {
     pub struct ICU4XScriptExtensionsSet<'a>(pub script::ScriptExtensionsSet<'a>);
 
     impl ICU4XScriptWithExtensions {
-        #[diplomat::rust_link(icu::properties::script::load_script_with_extensions_unstable, Fn)]
+        #[diplomat::rust_link(icu::properties::script::script_with_extensions, Fn)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XScriptWithExtensions>, ICU4XError> {
-            Ok(Box::new(ICU4XScriptWithExtensions(
-                script::load_script_with_extensions_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XScriptWithExtensions(call_constructor!(
+                script::script_with_extensions [r => Ok(r.static_to_owned())],
+                script::load_script_with_extensions_with_any_provider,
+                script::load_script_with_extensions_with_buffer_provider,
+                provider
+            )?)))
         }
 
         /// Get the Script property value for a code point

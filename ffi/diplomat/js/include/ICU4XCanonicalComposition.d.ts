@@ -17,7 +17,7 @@ export class ICU4XCanonicalComposition {
 
    * Construct a new ICU4XCanonicalComposition instance for NFC
 
-   * See the {@link https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XCanonicalComposition | never;

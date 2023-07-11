@@ -40,7 +40,7 @@ class ICU4XLineSegmenter {
    * Construct a [`ICU4XLineSegmenter`] with default options. It automatically loads the best
    * available payload data for Burmese, Khmer, Lao, and Thai.
    * 
-   * See the [Rust documentation for `try_new_auto_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_unstable) for more information.
+   * See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
    */
   static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_auto(const ICU4XDataProvider& provider);
 
@@ -48,7 +48,7 @@ class ICU4XLineSegmenter {
    * Construct a [`ICU4XLineSegmenter`] with default options and LSTM payload data for
    * Burmese, Khmer, Lao, and Thai.
    * 
-   * See the [Rust documentation for `try_new_lstm_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_unstable) for more information.
+   * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
    */
   static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_lstm(const ICU4XDataProvider& provider);
 
@@ -56,7 +56,7 @@ class ICU4XLineSegmenter {
    * Construct a [`ICU4XLineSegmenter`] with default options and dictionary payload data for
    * Burmese, Khmer, Lao, and Thai..
    * 
-   * See the [Rust documentation for `try_new_dictionary_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_unstable) for more information.
+   * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
    */
   static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_dictionary(const ICU4XDataProvider& provider);
 
@@ -64,7 +64,7 @@ class ICU4XLineSegmenter {
    * Construct a [`ICU4XLineSegmenter`] with custom options. It automatically loads the best
    * available payload data for Burmese, Khmer, Lao, and Thai.
    * 
-   * See the [Rust documentation for `try_new_auto_with_options_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_with_options_unstable) for more information.
+   * See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
    */
   static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_auto_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
 
@@ -72,7 +72,7 @@ class ICU4XLineSegmenter {
    * Construct a [`ICU4XLineSegmenter`] with custom options and LSTM payload data for
    * Burmese, Khmer, Lao, and Thai.
    * 
-   * See the [Rust documentation for `try_new_lstm_with_options_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_with_options_unstable) for more information.
+   * See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
    */
   static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_lstm_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
 
@@ -80,7 +80,7 @@ class ICU4XLineSegmenter {
    * Construct a [`ICU4XLineSegmenter`] with custom options and dictionary payload data for
    * Burmese, Khmer, Lao, and Thai.
    * 
-   * See the [Rust documentation for `try_new_dictionary_with_options_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_with_options_unstable) for more information.
+   * See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
    */
   static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
 

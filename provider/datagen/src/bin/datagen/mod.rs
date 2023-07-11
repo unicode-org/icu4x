@@ -31,17 +31,14 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    let config = if let Some(ref path) = matches.config {
-        serde_json::from_str(&std::fs::read_to_string(path)?)?
-    } else {
-        matches.as_config()?
-    };
+    let config = matches.as_config()?;
 
     let mut options = options::Options::default();
     options.locales = config.locales;
     options.trie_type = config.trie_type;
     options.collation_han_database = config.collation_han_database;
     options.collations = config.collations;
+    options.fallback = config.fallback;
 
     let mut source_data = SourceData::offline();
     source_data = match config.cldr {
@@ -85,9 +82,6 @@ fn main() -> eyre::Result<()> {
     let keys = match config.keys {
         config::KeyInclude::None => Default::default(),
         config::KeyInclude::All => icu_datagen::all_keys().into_iter().collect(),
-        config::KeyInclude::AllWithExperimental => icu_datagen::all_keys_with_experimental()
-            .into_iter()
-            .collect(),
         config::KeyInclude::Explicit(set) => set,
         config::KeyInclude::ForBinary(path) => {
             icu_datagen::keys_from_bin(path)?.into_iter().collect()

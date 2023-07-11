@@ -19,7 +19,8 @@ impl_tinystr_subtag!(
     ///
     /// [`unicode_script_id`]: https://unicode.org/reports/tr35/#unicode_script_id
     Script,
-    subtags::Script,
+    subtags,
+    script,
     subtags_script,
     4..=4,
     s,

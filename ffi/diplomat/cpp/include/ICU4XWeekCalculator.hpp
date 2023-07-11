@@ -37,7 +37,7 @@ class ICU4XWeekCalculator {
   /**
    * Creates a new [`ICU4XWeekCalculator`] from locale data.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
    */
   static diplomat::result<ICU4XWeekCalculator, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 

@@ -30,8 +30,9 @@ macro_rules! expand {
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(
                     &self,
-                    _: DataRequest,
+                    req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
+                    self.check_req::<$marker>(req)?;
                     let data = get_binary_prop_for_code_point_set(&self.source, $prop_name)?;
 
                     let mut builder = CodePointInversionListBuilder::new();

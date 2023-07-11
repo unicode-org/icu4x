@@ -183,7 +183,7 @@ int main() {
     ICU4XLocale_destroy(locale);
 
     // Create a LocaleCanonicalizer and LocaleExpander.
-    ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
+    ICU4XDataProvider* provider = ICU4XDataProvider_create_compiled();
     diplomat_result_box_ICU4XLocaleCanonicalizer_ICU4XError result2 = ICU4XLocaleCanonicalizer_create(provider);
     if (!result2.is_ok) {
         printf("Could not construct Locale Canonicalizer");

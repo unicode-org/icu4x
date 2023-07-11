@@ -34,14 +34,7 @@ lib: $(ALL_HEADERS)
 icu_capi.wasm: ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm
 	cp ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm icu_capi.wasm
 
-data.postcard: icu_capi.wasm
-	cargo run -p icu_datagen -- \
-		--keys-for-bin icu_capi.wasm \
-		--locales full \
-		--format blob \
-		--out data.postcard
-
-build: icu_capi.wasm data.postcard lib
+build: icu_capi.wasm lib
 
 clean:
 	git clean -xf *

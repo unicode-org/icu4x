@@ -27,11 +27,10 @@
 //!
 //! ```
 //! use harfbuzz::{Buffer, Direction, sys};
-//! use icu_harfbuzz::new_hb_unicode_funcs_unstable;
 //!
 //! let mut b = Buffer::with("مساء الخير");
 //!
-//! let unicode_funcs = new_hb_unicode_funcs_unstable(&icu_testdata::unstable()).unwrap();
+//! let unicode_funcs = icu_harfbuzz::new_hb_unicode_funcs().unwrap();
 //!
 //! // NOTE: This currently requires `unsafe` code. For progress toward a safe abstraction, see:
 //! // <https://github.com/servo/rust-harfbuzz/pull/197>
@@ -280,6 +279,12 @@ unsafe extern "C" fn icu4x_hb_unicode_decompose_destroy(user_data: *mut c_void) 
 }
 
 /// RAII holder for `*mut hb_unicode_funcs_t`.
+// TODO(#2838): Document the conditions under which multithreaded lookups via the
+// `*mut hb_unicode_funcs_t` are OK. HarfBuzz itself takes care of atomic
+// refcounting of the `hb_unicode_funcs_t`, but if `DataPayload` is built
+// without the `sync` feature, do bad things still happen if the freeing
+// thread doesn't match the allocation thread? At least the trait bounds
+// are violated in principle.
 #[derive(Debug)]
 pub struct UnicodeFuncs {
     raw: *mut hb_unicode_funcs_t,
@@ -325,12 +330,20 @@ impl Drop for UnicodeFuncs {
 /// Sets up a `hb_unicode_funcs_t` with ICU4X as the back end as the Unicode
 /// Database operations that HarfBuzz needs. The `hb_unicode_funcs_t` held
 /// by the returned `UnicodeFuncs` is marked immutable.
-// TODO(#2838): Document the conditions under which multithreaded lookups via the
-// `*mut hb_unicode_funcs_t` are OK. HarfBuzz itself takes care of atomic
-// refcounting of the `hb_unicode_funcs_t`, but if `DataPayload` is built
-// without the `sync` feature, do bad things still happen if the freeing
-// thread doesn't match the allocation thread? At least the trait bounds
-// are violated in principle.
+#[cfg(feature = "compiled_data")]
+pub fn new_hb_unicode_funcs() -> Result<UnicodeFuncs, HarfBuzzError> {
+    create_ufuncs(
+        CanonicalCombiningClassMap::new(),
+        icu_properties::maps::general_category().static_to_owned(),
+        icu_properties::bidi_data::bidi_auxiliary_properties().static_to_owned(),
+        icu_properties::maps::script().static_to_owned(),
+        Script::enum_to_short_name_mapper().static_to_owned(),
+        CanonicalComposition::new(),
+        CanonicalDecomposition::new(),
+    )
+}
+
+#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, new_hb_unicode_funcs)]
 pub fn new_hb_unicode_funcs_unstable<D>(data_provider: &D) -> Result<UnicodeFuncs, HarfBuzzError>
 where
     D: DataProvider<BidiAuxiliaryPropertiesV1Marker>
@@ -343,25 +356,26 @@ where
         + DataProvider<ScriptV1Marker>
         + ?Sized,
 {
-    // Let's do all the provider operations up front so that if there's
-    // a provider failure we can return early without having to clean up
-    // an already-allocated `ufuncs`.
-    let canonical_combining_class_map =
-        Box::new(CanonicalCombiningClassMap::try_new_unstable(data_provider)?);
-    let general_category_map =
-        Box::new(icu_properties::maps::load_general_category(data_provider)?);
-    let bidi_auxiliary_props_map = Box::new(
+    create_ufuncs(
+        CanonicalCombiningClassMap::try_new_unstable(data_provider)?,
+        icu_properties::maps::load_general_category(data_provider)?,
         icu_properties::bidi_data::load_bidi_auxiliary_properties_unstable(data_provider)?,
-    );
-    let script_map = icu_properties::maps::load_script(data_provider)?;
-    let script_enum_to_short_name_lookup = Script::get_enum_to_short_name_mapper(data_provider)?;
-    let script_data = Box::new(ScriptDataForHarfBuzz {
-        script_map,
-        enum_to_name_mapper: script_enum_to_short_name_lookup,
-    });
-    let canonical_composition = Box::new(CanonicalComposition::try_new_unstable(data_provider)?);
-    let canonical_decomposition =
-        Box::new(CanonicalDecomposition::try_new_unstable(data_provider)?);
+        icu_properties::maps::load_script(data_provider)?,
+        Script::get_enum_to_short_name_mapper(data_provider)?,
+        CanonicalComposition::try_new_unstable(data_provider)?,
+        CanonicalDecomposition::try_new_unstable(data_provider)?,
+    )
+}
+
+fn create_ufuncs(
+    canonical_combining_class_map: CanonicalCombiningClassMap,
+    general_category_map: CodePointMapData<GeneralCategory>,
+    bidi_auxiliary_props_map: BidiAuxiliaryProperties,
+    script_map: CodePointMapData<Script>,
+    script_enum_to_short_name_lookup: PropertyEnumToValueNameLinearTiny4Mapper<Script>,
+    canonical_composition: CanonicalComposition,
+    canonical_decomposition: CanonicalDecomposition,
+) -> Result<UnicodeFuncs, HarfBuzzError> {
     unsafe {
         let empty = hb_unicode_funcs_get_empty();
         // The HarfBuzz refcounting convention is that "create"
@@ -371,57 +385,44 @@ where
         if ufuncs == empty {
             return Err(HarfBuzzError::Alloc);
         }
-        // Below this point, the only return is upon success. Now we
-        // can turn the `Box`es into raw pointers. Let's do that
-        // as an intermediate step with explicit types to be convinced
-        // that the types before casting to `*mut c_void` are the same
-        // ones that we'll cast back to in the callbacks.
-        let canonical_combining_class_map_ptr: *mut CanonicalCombiningClassMap =
-            Box::into_raw(canonical_combining_class_map);
-        let general_category_map_ptr: *mut CodePointMapData<GeneralCategory> =
-            Box::into_raw(general_category_map);
-        let bidi_auxiliary_props_map_ptr: *mut BidiAuxiliaryProperties =
-            Box::into_raw(bidi_auxiliary_props_map);
-        let script_map_ptr: *mut ScriptDataForHarfBuzz = Box::into_raw(script_data);
-        let canonical_composition_ptr: *mut CanonicalComposition =
-            Box::into_raw(canonical_composition);
-        let canonical_decomposition_ptr: *mut CanonicalDecomposition =
-            Box::into_raw(canonical_decomposition);
-
+        // Below this point, the only return is upon success.
         hb_unicode_funcs_set_combining_class_func(
             ufuncs,
             Some(icu4x_hb_unicode_combining_class),
-            canonical_combining_class_map_ptr as *mut c_void,
+            Box::into_raw(Box::new(canonical_combining_class_map)) as *mut c_void,
             Some(icu4x_hb_unicode_combining_class_destroy),
         );
         hb_unicode_funcs_set_general_category_func(
             ufuncs,
             Some(icu4x_hb_unicode_general_category),
-            general_category_map_ptr as *mut c_void,
+            Box::into_raw(Box::new(general_category_map)) as *mut c_void,
             Some(icu4x_hb_unicode_general_category_destroy),
         );
         hb_unicode_funcs_set_mirroring_func(
             ufuncs,
             Some(icu4x_hb_unicode_mirroring),
-            bidi_auxiliary_props_map_ptr as *mut c_void,
+            Box::into_raw(Box::new(bidi_auxiliary_props_map)) as *mut c_void,
             Some(icu4x_hb_unicode_mirroring_destroy),
         );
         hb_unicode_funcs_set_script_func(
             ufuncs,
             Some(icu4x_hb_unicode_script),
-            script_map_ptr as *mut c_void,
+            Box::into_raw(Box::new(ScriptDataForHarfBuzz {
+                script_map,
+                enum_to_name_mapper: script_enum_to_short_name_lookup,
+            })) as *mut c_void,
             Some(icu4x_hb_unicode_script_destroy),
         );
         hb_unicode_funcs_set_compose_func(
             ufuncs,
             Some(icu4x_hb_unicode_compose),
-            canonical_composition_ptr as *mut c_void,
+            Box::into_raw(Box::new(canonical_composition)) as *mut c_void,
             Some(icu4x_hb_unicode_compose_destroy),
         );
         hb_unicode_funcs_set_decompose_func(
             ufuncs,
             Some(icu4x_hb_unicode_decompose),
-            canonical_decomposition_ptr as *mut c_void,
+            Box::into_raw(Box::new(canonical_decomposition)) as *mut c_void,
             Some(icu4x_hb_unicode_decompose_destroy),
         );
 

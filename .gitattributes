@@ -1,8 +1,8 @@
 *.postcard  binary
-provider/testdata/data/baked/** linguist-generated=true
-provider/repodata/data/json/** linguist-generated=true
-provider/repodata/data/cldr/** linguist-generated=true
-provider/repodata/data/icuexport/** linguist-generated=true
+provider/datagen/data/** linguist-generated=true
+provider/datagen/tests/data/json/** linguist-generated=true
+provider/datagen/tests/data/cldr/** linguist-generated=true
+provider/datagen/tests/data/icuexport/** linguist-generated=true
 ffi/diplomat/c/include/** linguist-generated=true
 ffi/diplomat/cpp/include/** linguist-generated=true
 ffi/diplomat/cpp/docs/** linguist-generated=true
@@ -10,3 +10,5 @@ ffi/diplomat/js/include/** linguist-generated=true
 ffi/diplomat/js/docs/** linguist-generated=true
 *.rs.data linguist-language=Rust
 */**/README.md linguist-generated=true
+**/data/data/** linguist-generated=true
+experimental/casemap/src/greek_to_me/data.rs linguist-generated=true

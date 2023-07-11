@@ -35,9 +35,6 @@
 //! The data that is required by these providers (in `BakedDataProvider`'s case, the provider itself) can be
 //! generated and customized using the [`icu_datagen`] crate.
 //!
-//! The following example uses the [`icu_testdata`] crate, which contains prepackaged data providers
-//! for a small set of locales.
-//!
 //! # Example
 //!
 //! ```
@@ -52,8 +49,7 @@
 //! )
 //! .into();
 //!
-//! let dtf = DateTimeFormatter::try_new_unstable(
-//!     &icu_testdata::unstable(),
+//! let dtf = DateTimeFormatter::try_new(
 //!     &locale!("es").into(),
 //!     options,
 //! )
@@ -103,7 +99,6 @@
 //! [`DataPayload`]: icu_provider::DataPayload
 //! [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
-//! [`icu_testdata`]: https://docs.rs/icu_testdata/latest/icu_testdata/
 //! [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
 //! [`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 //! [`Locale`]: crate::locid::Locale
@@ -132,9 +127,9 @@ extern crate icu_provider;
 #[doc(inline)]
 pub use icu_calendar as calendar;
 
-#[cfg(feature = "icu_casemapping")]
+#[cfg(feature = "icu_casemap")]
 #[doc(inline)]
-pub use icu_casemapping as casemapping;
+pub use icu_casemap as casemap;
 
 #[doc(inline)]
 pub use icu_collator as collator;

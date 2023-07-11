@@ -19,6 +19,17 @@
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    use crate as icu_decimal;
+    icu_decimal_data::impl_decimal_symbols_v1!(Baked);
+};
+
 /// A collection of strings to affix to a decimal number.
 ///
 /// <div class="stab unstable">

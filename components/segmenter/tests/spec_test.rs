@@ -103,11 +103,9 @@ impl Iterator for TestContentIterator {
     }
 }
 
-#[test]
-fn run_line_break_test() {
-    let test_iter = TestContentIterator::new("./tests/testdata/LineBreakTest.txt");
-    let segmenter =
-        LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
+fn line_break_test(filename: &str) {
+    let test_iter = TestContentIterator::new(filename);
+    let segmenter = LineSegmenter::new_dictionary();
     for mut test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -141,10 +139,19 @@ fn run_line_break_test() {
 }
 
 #[test]
+fn run_line_break_test() {
+    line_break_test("./tests/testdata/LineBreakTest.txt");
+}
+
+#[test]
+fn run_line_break_extra_test() {
+    line_break_test("./tests/testdata/LineBreakExtraTest.txt");
+}
+
+#[test]
 fn run_word_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/WordBreakTest.txt");
-    let segmenter =
-        WordSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter = WordSegmenter::new_dictionary();
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -175,8 +182,7 @@ fn run_word_break_test() {
 #[test]
 fn run_grapheme_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/GraphemeBreakTest.txt");
-    let segmenter =
-        GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter = GraphemeClusterSegmenter::new();
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -206,8 +212,7 @@ fn run_grapheme_break_test() {
 
 fn sentence_break_test(filename: &str) {
     let test_iter = TestContentIterator::new(filename);
-    let segmenter =
-        SentenceSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter = SentenceSegmenter::new();
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);

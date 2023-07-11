@@ -29,8 +29,7 @@ use crate::TransformResult;
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
-/// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-///     .expect("create failed");
+/// let lc = LocaleExpander::new();
 ///
 /// let mut locale = locale!("zh-CN");
 /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -47,8 +46,7 @@ use crate::TransformResult;
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
-/// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-///     .expect("create failed");
+/// let lc = LocaleExpander::new();
 ///
 /// let mut locale = locale!("zh-Hans-CN");
 /// assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
@@ -66,9 +64,7 @@ use crate::TransformResult;
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
-/// let lc =
-///     LocaleExpander::try_new_extended_unstable(&icu_testdata::unstable())
-///         .expect("create failed");
+/// let lc = LocaleExpander::new_extended();
 ///
 /// let mut locale = locale!("atj");
 /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -194,39 +190,30 @@ fn update_langid(
 }
 
 impl LocaleExpander {
-    /// Creates a [`LocaleExpander`] with data for CLDR locales with Basic or higher coverage.
-    ///
-    /// Use this contructor if you are using likely subtags for data lookup.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
-    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleExpander, LocaleTransformError>
-    where
-        P: DataProvider<LikelySubtagsForLanguageV1Marker>
-            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
-            + ?Sized,
-    {
-        let likely_subtags_l = provider.load(Default::default())?.take_payload()?;
-        let likely_subtags_sr = provider.load(Default::default())?.take_payload()?;
-
-        Ok(LocaleExpander {
-            likely_subtags_l,
-            likely_subtags_sr,
-            likely_subtags_ext: None,
-        })
-    }
-
     /// Creates a [`LocaleExpander`] with data for all locales.
     ///
     /// Use this constructor if you are using likely subtags for comprehensive support of all
     /// languages and regions, including ones that may not have CLDR data.
     ///
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[cfg(feature = "compiled_data")]
+    pub const fn new_extended() -> Self {
+        LocaleExpander {
+            likely_subtags_l: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1,
+            ),
+            likely_subtags_sr: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1,
+            ),
+            likely_subtags_ext: Some(DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1,
+            )),
+        }
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
     pub fn try_new_extended_unstable<P>(
         provider: &P,
     ) -> Result<LocaleExpander, LocaleTransformError>
@@ -247,11 +234,68 @@ impl LocaleExpander {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: LocaleTransformError, functions: [
-        Self::try_new_extended_unstable,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: LocaleTransformError,
+        #[cfg(skip)]
+        functions: [
+        new_extended,
         try_new_extended_with_any_provider,
-        try_new_extended_with_buffer_provider
+        try_new_extended_with_buffer_provider,
+        try_new_extended_unstable,
+        Self
     ]);
+
+    /// Creates a [`LocaleExpander`] with data for CLDR locales with Basic or higher coverage.
+    ///
+    /// Use this constructor if you are using likely subtags for comprehensive support of all
+    /// languages and regions, including ones that may not have CLDR data.
+    ///
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        LocaleExpander {
+            likely_subtags_l: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1,
+            ),
+            likely_subtags_sr: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1,
+            ),
+            likely_subtags_ext: None,
+        }
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl AnyProvider + ?Sized),
+    ) -> Result<LocaleExpander, LocaleTransformError> {
+        Self::try_new_compat(&provider.as_downcasting())
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_unstable)]
+    #[cfg(feature = "serde")]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<LocaleExpander, LocaleTransformError> {
+        Self::try_new_compat(&provider.as_deserializing())
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleExpander, LocaleTransformError>
+    where
+        P: DataProvider<LikelySubtagsForLanguageV1Marker>
+            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+            + ?Sized,
+    {
+        let likely_subtags_l = provider.load(Default::default())?.take_payload()?;
+        let likely_subtags_sr = provider.load(Default::default())?.take_payload()?;
+
+        Ok(LocaleExpander {
+            likely_subtags_l,
+            likely_subtags_sr,
+            likely_subtags_ext: None,
+        })
+    }
 
     fn try_new_compat<P>(provider: &P) -> Result<LocaleExpander, LocaleTransformError>
     where
@@ -294,21 +338,6 @@ impl LocaleExpander {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_docs!(ANY, icu_provider, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<LocaleExpander, LocaleTransformError> {
-        Self::try_new_compat(&provider.as_downcasting())
-    }
-
-    #[doc = icu_provider::gen_any_buffer_docs!(BUFFER, icu_provider, Self::try_new_unstable)]
-    #[cfg(feature = "serde")]
-    pub fn try_new_with_buffer_provider(
-        provider: &(impl BufferProvider + ?Sized),
-    ) -> Result<LocaleExpander, LocaleTransformError> {
-        Self::try_new_compat(&provider.as_deserializing())
-    }
-
     fn as_borrowed(&self) -> LocaleExpanderBorrowed {
         LocaleExpanderBorrowed {
             likely_subtags_l: self.likely_subtags_l.get(),
@@ -333,8 +362,7 @@ impl LocaleExpander {
     /// use icu_locid::locale;
     /// use icu_locid_transform::{LocaleExpander, TransformResult};
     ///
-    /// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("create failed");
+    /// let lc = LocaleExpander::new();
     ///
     /// let mut locale = locale!("zh-CN");
     /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -407,8 +435,7 @@ impl LocaleExpander {
     /// use icu_locid::locale;
     /// use icu_locid_transform::{LocaleExpander, TransformResult};
     ///
-    /// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("creation failed");
+    /// let lc = LocaleExpander::new();
     ///
     /// let mut locale = locale!("zh-Hans-CN");
     /// assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
@@ -515,6 +542,51 @@ impl LocaleExpander {
             TransformResult::Unmodified
         }
     }
+
+    // TODO(3492): consider turning this and a future get_likely_region/get_likely_language public
+    #[allow(dead_code)]
+    #[inline]
+    pub(crate) fn get_likely_script<T: AsRef<LanguageIdentifier>>(
+        &self,
+        langid: T,
+    ) -> Option<Script> {
+        let langid = langid.as_ref();
+        langid
+            .script
+            .or_else(|| self.infer_likely_script(langid.language, langid.region))
+    }
+
+    fn infer_likely_script(&self, language: Language, region: Option<Region>) -> Option<Script> {
+        let data = self.as_borrowed();
+
+        // proceed through _all possible cases_ in order of specificity
+        // (borrowed from LocaleExpander::maximize):
+        // 1. language + region
+        // 2. language
+        // 3. region
+        // we need to check all cases, because e.g. for "en-US" the default script is associated
+        // with "en" but not "en-US"
+        if language != Language::UND {
+            if let Some(region) = region {
+                // 1. we know both language and region
+                if let Some(script) = data.get_lr(language, region) {
+                    return Some(script);
+                }
+            }
+            // 2. we know language, but we either do not know region or knowing region did not help
+            if let Some((script, _)) = data.get_l(language) {
+                return Some(script);
+            }
+        }
+        if let Some(region) = region {
+            // 3. we know region, but we either do not know language or knowing language did not help
+            if let Some((_, script)) = data.get_r(region) {
+                return Some(script);
+            }
+        }
+        // we could not figure out the script from the given locale
+        None
+    }
 }
 
 #[cfg(feature = "serde")]
@@ -523,22 +595,60 @@ mod tests {
     use super::*;
     use icu_locid::locale;
 
-    struct RejectByKeyProvider<P> {
+    struct RejectByKeyProvider {
         keys: Vec<DataKey>,
-        inner: P,
     }
 
-    impl<P: BufferProvider> BufferProvider for RejectByKeyProvider<P> {
-        fn load_buffer(
-            &self,
-            key: DataKey,
-            req: DataRequest,
-        ) -> Result<DataResponse<BufferMarker>, DataError> {
+    impl AnyProvider for RejectByKeyProvider {
+        fn load_any(&self, key: DataKey, _: DataRequest) -> Result<AnyResponse, DataError> {
             if self.keys.contains(&key) {
-                Err(DataErrorKind::MissingDataKey.with_str_context("rejected"))
-            } else {
-                self.inner.load_buffer(key, req)
+                return Err(DataErrorKind::MissingDataKey.with_str_context("rejected"));
             }
+
+            let l = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1;
+            let ext = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1;
+            let sr = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1;
+
+            let payload = if key.hashed() == LikelySubtagsV1Marker::KEY.hashed() {
+                DataPayload::<LikelySubtagsV1Marker>::from_owned(LikelySubtagsV1 {
+                    language_script: l
+                        .language_script
+                        .iter_copied()
+                        .chain(ext.language_script.iter_copied())
+                        .collect(),
+                    language_region: l
+                        .language_region
+                        .iter_copied()
+                        .chain(ext.language_region.iter_copied())
+                        .collect(),
+                    language: l
+                        .language
+                        .iter_copied()
+                        .chain(ext.language.iter_copied())
+                        .collect(),
+                    script_region: ext.script_region.clone(),
+                    script: ext.script.clone(),
+                    region: ext.region.clone(),
+                    und: l.und,
+                })
+                .wrap_into_any_payload()
+            } else if key.hashed() == LikelySubtagsForLanguageV1Marker::KEY.hashed() {
+                DataPayload::<LikelySubtagsForLanguageV1Marker>::from_static_ref(l)
+                    .wrap_into_any_payload()
+            } else if key.hashed() == LikelySubtagsExtendedV1Marker::KEY.hashed() {
+                DataPayload::<LikelySubtagsExtendedV1Marker>::from_static_ref(ext)
+                    .wrap_into_any_payload()
+            } else if key.hashed() == LikelySubtagsForScriptRegionV1Marker::KEY.hashed() {
+                DataPayload::<LikelySubtagsForScriptRegionV1Marker>::from_static_ref(sr)
+                    .wrap_into_any_payload()
+            } else {
+                return Err(DataErrorKind::MissingDataKey.into_error());
+            };
+
+            Ok(AnyResponse {
+                payload: Some(payload),
+                metadata: Default::default(),
+            })
         }
     }
 
@@ -549,9 +659,8 @@ mod tests {
                 LikelySubtagsForLanguageV1Marker::KEY,
                 LikelySubtagsForScriptRegionV1Marker::KEY,
             ],
-            inner: icu_testdata::buffer(),
         };
-        let lc = LocaleExpander::try_new_with_buffer_provider(&provider)
+        let lc = LocaleExpander::try_new_with_any_provider(&provider)
             .expect("should create with old keys");
         let mut locale = locale!("zh-CN");
         assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -562,9 +671,8 @@ mod tests {
     fn test_new_keys() {
         let provider = RejectByKeyProvider {
             keys: vec![LikelySubtagsV1Marker::KEY],
-            inner: icu_testdata::buffer(),
         };
-        let lc = LocaleExpander::try_new_with_buffer_provider(&provider)
+        let lc = LocaleExpander::try_new_with_any_provider(&provider)
             .expect("should create with new keys");
         let mut locale = locale!("zh-CN");
         assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -577,9 +685,8 @@ mod tests {
         // Not sure if this is a useful test.
         let provider = RejectByKeyProvider {
             keys: vec![LikelySubtagsForScriptRegionV1Marker::KEY],
-            inner: icu_testdata::buffer(),
         };
-        let lc = LocaleExpander::try_new_with_buffer_provider(&provider)
+        let lc = LocaleExpander::try_new_with_any_provider(&provider)
             .expect("should create with mixed keys");
         let mut locale = locale!("zh-CN");
         assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -594,9 +701,8 @@ mod tests {
                 LikelySubtagsForScriptRegionV1Marker::KEY,
                 LikelySubtagsV1Marker::KEY,
             ],
-            inner: icu_testdata::buffer(),
         };
-        if LocaleExpander::try_new_with_buffer_provider(&provider).is_ok() {
+        if LocaleExpander::try_new_with_any_provider(&provider).is_ok() {
             panic!("should not create: no data present")
         };
     }

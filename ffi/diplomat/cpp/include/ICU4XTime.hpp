@@ -39,6 +39,13 @@ class ICU4XTime {
   static diplomat::result<ICU4XTime, ICU4XError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
   /**
+   * Creates a new [`ICU4XTime`] representing midnight (00:00.000).
+   * 
+   * See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
+   */
+  static diplomat::result<ICU4XTime, ICU4XError> create_midnight();
+
+  /**
    * Returns the hour in this time
    * 
    * See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
@@ -78,6 +85,16 @@ class ICU4XTime {
 
 inline diplomat::result<ICU4XTime, ICU4XError> ICU4XTime::create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
   auto diplomat_result_raw_out_value = capi::ICU4XTime_create(hour, minute, second, nanosecond);
+  diplomat::result<ICU4XTime, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XTime>(std::move(ICU4XTime(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XTime, ICU4XError> ICU4XTime::create_midnight() {
+  auto diplomat_result_raw_out_value = capi::ICU4XTime_create_midnight();
   diplomat::result<ICU4XTime, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XTime>(std::move(ICU4XTime(diplomat_result_raw_out_value.ok)));

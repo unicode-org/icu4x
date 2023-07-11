@@ -30,14 +30,10 @@ include = [
 all-features = true
 
 [dependencies]
-ecma402_traits = "0.2.0"
-icu = { version = "1.2.0", path = "../../components/icu", features = ["std"] }
+ecma402_traits = "4"
+icu = { version = "1.2.0", path = "../../components/icu", features = ["std", "compiled_data"] }
 icu_provider = { version = "1.2.0", path = "../../provider/core" }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
 
-# Bake dependencies
-zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
-
-[build-dependencies]
-icu = { version = "1.2.0", path = "../../components/icu", features = ["std"] }
-icu_datagen = { version = "1.2.0", path = "../../provider/datagen", default-features = false}
+[dev-dependencies]
+icu = { path = "../../components/icu", features = ["experimental"] }

@@ -22,6 +22,7 @@ use core::marker::PhantomData;
 use core::mem;
 use core::num::NonZeroUsize;
 use core::ops::Deref;
+use core::ptr;
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
 ///
@@ -139,8 +140,8 @@ impl<U> EyepatchHackVector<U> {
     }
     // Return a slice to the inner data
     #[inline]
-    fn as_slice<'a>(&'a self) -> &'a [U] {
-        unsafe { &*self.buf }
+    const fn as_slice<'a>(&'a self) -> &'a [U] {
+        unsafe { &*(self.buf as *const [U]) }
     }
 
     /// Return this type as a vector
@@ -275,6 +276,11 @@ where
         Self::new_borrowed(&[])
     }
 
+    /// Same as `ZeroSlice::len`, which is available through `Deref` and not `const`.
+    pub const fn const_len(&self) -> usize {
+        self.vector.as_slice().len()
+    }
+
     /// Creates a new owned `ZeroVec` using an existing
     /// allocated backing buffer
     ///
@@ -285,10 +291,10 @@ where
         // Deconstruct the vector into parts
         // This is the only part of the code that goes from Vec
         // to ZeroVec, all other such operations should use this function
-        let slice: &[T::ULE] = &vec;
-        let slice = slice as *const [_] as *mut [_];
         let capacity = vec.capacity();
-        mem::forget(vec);
+        let len = vec.len();
+        let ptr = mem::ManuallyDrop::new(vec).as_mut_ptr();
+        let slice = ptr::slice_from_raw_parts_mut(ptr, len);
         Self {
             vector: EyepatchHackVector {
                 buf: slice,
@@ -889,21 +895,18 @@ where
     /// the logical equivalent of this type's internal representation
     #[inline]
     pub fn into_cow(self) -> Cow<'a, [T::ULE]> {
-        if self.is_owned() {
+        let this = mem::ManuallyDrop::new(self);
+        if this.is_owned() {
             let vec = unsafe {
                 // safe to call: we know it's owned,
-                // and we mem::forget self immediately afterwards
-                self.vector.get_vec()
+                // and `self`/`this` are thenceforth no longer used or dropped
+                { this }.vector.get_vec()
             };
-            mem::forget(self);
             Cow::Owned(vec)
         } else {
             // We can extend the lifetime of the slice to 'a
             // since we know it is borrowed
-            let slice = unsafe { self.vector.as_arbitrary_slice() };
-            // The borrowed destructor is a no-op, but we want to prevent
-            // the check being run
-            mem::forget(self);
+            let slice = unsafe { { this }.vector.as_arbitrary_slice() };
             Cow::Borrowed(slice)
         }
     }
@@ -937,16 +940,16 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 /// use zerovec::{ZeroSlice, zeroslice, ule::AsULE};
 /// use zerovec::ule::UnvalidatedChar;
 ///
-/// const SIGNATURE: &ZeroSlice<char> = zeroslice![char; <char as AsULE>::ULE::from_aligned; 'b', 'y', 'e', '✌'];
+/// const SIGNATURE: &ZeroSlice<char> = zeroslice!(char; <char as AsULE>::ULE::from_aligned; ['b', 'y', 'e', '✌']);
 /// const EMPTY: &ZeroSlice<u32> = zeroslice![];
 /// const UC: &ZeroSlice<UnvalidatedChar> =
-///     zeroslice![
+///     zeroslice!(
 ///         UnvalidatedChar;
 ///         <UnvalidatedChar as AsULE>::ULE::from_unvalidated_char;
-///         UnvalidatedChar::from_char('a'),
-///     ];
+///         [UnvalidatedChar::from_char('a')]
+///     );
 /// let empty: &ZeroSlice<u32> = zeroslice![];
-/// let nums = zeroslice![u32; <u32 as AsULE>::ULE::from_unsigned; 1, 2, 3, 4, 5];
+/// let nums = zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [1, 2, 3, 4, 5]);
 /// assert_eq!(nums.last().unwrap(), 5);
 /// ```
 ///
@@ -959,14 +962,14 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///     RawBytesULE(num.to_be_bytes())
 /// }
 ///
-/// const NUMBERS_BE: &ZeroSlice<i16> = zeroslice![i16; be_convert; 1, -2, 3, -4, 5];
+/// const NUMBERS_BE: &ZeroSlice<i16> = zeroslice!(i16; be_convert; [1, -2, 3, -4, 5]);
 /// ```
 #[macro_export]
 macro_rules! zeroslice {
     () => (
         $crate::ZeroSlice::new_empty()
     );
-    ($aligned:ty; $convert:expr; $($x:expr),+ $(,)?) => (
+    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => (
         $crate::ZeroSlice::<$aligned>::from_ule_slice(
             {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &[
                 $($convert($x)),*
@@ -975,7 +978,7 @@ macro_rules! zeroslice {
     );
 }
 
-/// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice![...].as_zerovec()`. The value
+/// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice!(...).as_zerovec()`. The value
 /// will be created at compile-time, meaning that all arguments must also be constant.
 ///
 /// See [`zeroslice!`](crate::zeroslice) for more information.
@@ -985,7 +988,7 @@ macro_rules! zeroslice {
 /// ```
 /// use zerovec::{ZeroVec, zerovec, ule::AsULE};
 ///
-/// const SIGNATURE: ZeroVec<char> = zerovec![char; <char as AsULE>::ULE::from_aligned; 'a', 'y', 'e', '✌'];
+/// const SIGNATURE: ZeroVec<char> = zerovec!(char; <char as AsULE>::ULE::from_aligned; ['a', 'y', 'e', '✌']);
 /// assert!(!SIGNATURE.is_owned());
 ///
 /// const EMPTY: ZeroVec<u32> = zerovec![];
@@ -996,8 +999,8 @@ macro_rules! zerovec {
     () => (
         $crate::ZeroVec::new()
     );
-    ($aligned:ty; $convert:expr; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![$aligned; $convert; $($x),+].as_zerovec()
+    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => (
+        $crate::zeroslice![$aligned; $convert; [$($x),+]].as_zerovec()
     );
 }
 

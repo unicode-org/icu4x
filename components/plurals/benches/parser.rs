@@ -18,7 +18,7 @@ fn parser(c: &mut Criterion) {
 
     for langid in fixture_data.langs {
         let data_payload: DataPayload<icu_plurals::provider::CardinalV1Marker> =
-            icu_testdata::unstable()
+            icu_plurals::provider::Baked
                 .load(DataRequest {
                     locale: &langid.into(),
                     metadata: Default::default(),

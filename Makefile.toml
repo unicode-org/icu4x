@@ -72,11 +72,18 @@ dependencies = [
     "test-all-features",
 ]
 
-[tasks.ci-job-test-cargo-tutorial]
-description = "Run all checks for the CI 'test-cargo-tutorial' job"
+[tasks.ci-job-test-tutorials-local]
+description = "Run all checks for the CI 'test-tutorials' job"
 category = "CI"
 dependencies = [
-    "test-cargo-tutorial-local",
+    "test-tutorials-local",
+]
+
+[tasks.ci-job-test-tutorials-cratesio]
+description = "Run all checks for the CI 'test-tutorials' job"
+category = "CI"
+dependencies = [
+    "test-tutorials-cratesio",
 ]
 
 [tasks.ci-job-testdata]
@@ -97,7 +104,7 @@ dependencies = [
 description = "Run full data generation on latest CLDR and ICU"
 category = "CI"
 dependencies = [
-    "full-data",
+    "bakeddata-check",
 ]
 
 [tasks.ci-job-ffi]

@@ -21,14 +21,13 @@ category = "ICU4X Data"
 dependencies = [
     "testdata",
     "testdata-hello-world",
-    "testdata-segmenter",
     "download-repo-sources",
 ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/testdata/data provider/fs/tests/data provider/blob/tests/data provider/repodata
+output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
@@ -112,40 +111,48 @@ dependencies = [
     "testdata-hello-world-blob",
 ]
 
-[tasks.testdata-segmenter]
-description = "Build JSON testdata for the segmenter crate."
+[tasks.bakeddata]
+description = "Builds full baked data"
 category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys",
-    "segmenter/lstm/wl_auto@1",
-    "segmenter/dictionary/w_auto@1",
-    "segmenter/dictionary/wl_ext@1",
-    "--locales=full",
-    "--format=dir",
-    "--syntax=postcard",
-    "--icuexport-root=provider/repodata/data/icuexport",
-    "--out=components/segmenter/tests/testdata/provider",
-    "--overwrite",
-]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
 
-[tasks.full-data]
-description = "Builds a complete postcard file from latest CLDR and icu_exportdata."
+if array_is_empty ${@}
+    mode = set "--release"
+    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemap experimental/compactdecimal experimental/displaynames experimental/relativetime
+else
+    mode = set "--bin=icu4x-datagen" # need some valid argument
+    components = set ${@}
+end
+
+root = pwd
+for component in ${components}
+    cd "${component}/data"
+    exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking ${mode} -- --config config.json
+    cd "${root}"
+end
+'''
+
+[tasks.bakeddata-check]
+description = "Rebuild baked data and ensure that the working copy is clean"
 category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys=experimental-all",
-    "--locales=full",
-    "--format=blob",
-    "--out=/dev/null",
-    "--overwrite",
-]
+dependencies = ["bakeddata"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    msg = array "" ""
+    array_push ${msg} "Baked data needs to be updated. Please run `cargo make bakeddata`"
+    array_push ${msg} ""
+    array_push ${msg} "${output.stdout}"
+    msg = array_join ${msg} "\n"
+    trigger_error ${msg}
+end
+'''
 
 [tasks.download-repo-sources]
 description = "Download fresh CLDR JSON and icuexportdata, overwriting the existing CLDR JSON/icuexportdata."
@@ -155,7 +162,6 @@ args = [
     "run",
     "--bin=download-repo-sources",
     "--",
-    "--out=provider/repodata/data",
     "-v",
 ]
 

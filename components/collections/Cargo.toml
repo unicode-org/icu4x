@@ -32,7 +32,7 @@ all-features = true
 displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.7.1", path = "../../utils/yoke", features = ["derive"] }
 zerofrom = { version = "0.1.1", path = "../../utils/zerofrom", features = ["derive"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive", "yoke"] }
 
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true }
@@ -46,7 +46,7 @@ criterion = "0.4"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 iai = "0.1.1"
 icu = { path = "../icu", default-features = false }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_properties"] }
+icu_properties = { path = "../properties" }
 
 [features]
 std = []

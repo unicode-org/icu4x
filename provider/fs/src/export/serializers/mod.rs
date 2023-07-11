@@ -8,9 +8,16 @@
 //!
 //! [`FilesystemExporter`]: super::FilesystemExporter
 
+#[doc(hidden)]
 pub mod bincode;
+#[doc(hidden)]
 pub mod json;
+#[doc(hidden)]
 pub mod postcard;
+
+pub use self::bincode::Serializer as Bincode;
+pub use self::json::Serializer as Json;
+pub use self::postcard::Serializer as Postcard;
 
 use icu_provider::buf::BufferFormat;
 use icu_provider::datagen::*;

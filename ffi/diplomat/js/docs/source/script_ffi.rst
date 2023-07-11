@@ -38,7 +38,7 @@
 
     .. js:function:: create(provider)
 
-        See the `Rust documentation for load_script_with_extensions_unstable <https://docs.rs/icu/latest/icu/properties/script/fn.load_script_with_extensions_unstable.html>`__ for more information.
+        See the `Rust documentation for script_with_extensions <https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html>`__ for more information.
 
 
     .. js:method:: get_script_val(code_point)

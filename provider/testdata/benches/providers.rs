@@ -17,12 +17,11 @@ static POSTCARD_BYTES: &[u8] = include_bytes!(concat!(
 ));
 
 struct BakedDataProvider;
-struct BakedAnyProvider;
 
 mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
     impl_data_provider!(super::BakedDataProvider);
-    impl_any_provider!(super::BakedAnyProvider);
+    impl_any_provider!(super::BakedDataProvider);
 }
 
 #[inline(never)]
@@ -42,8 +41,8 @@ fn create_baked_data_provider() -> BakedDataProvider {
 }
 
 #[inline(never)]
-fn create_baked_any_provider() -> BakedAnyProvider {
-    BakedAnyProvider
+fn create_baked_any_provider() -> BakedDataProvider {
+    BakedDataProvider
 }
 
 fn providers_bench(c: &mut Criterion) {

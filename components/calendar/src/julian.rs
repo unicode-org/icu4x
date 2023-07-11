@@ -33,15 +33,19 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+<<<<<<< HEAD
 use crate::helpers::{quotient, div_rem_euclid};
+=======
+use crate::helpers::{i64_to_i32, quotient64, I32Result};
+>>>>>>> main
 use crate::iso::Iso;
+use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
 // 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
-const JULIAN_EPOCH: i32 = -1;
+const JULIAN_EPOCH: RataDie = RataDie::new(-1);
 
 /// The [Julian Calendar]
 ///
@@ -82,6 +86,10 @@ impl CalendarArithmetic for Julian {
         Self::is_leap_year_const(year)
     }
 
+    fn last_month_day_in_year(_year: i32) -> (u8, u8) {
+        (12, 31)
+    }
+
     fn days_in_provided_year(year: i32) -> u32 {
         if Self::is_leap_year(year) {
             366
@@ -114,7 +122,7 @@ impl Calendar for Julian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(JulianDateInner)
+        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(JulianDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> JulianDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
@@ -214,14 +222,16 @@ impl Julian {
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1709
-    pub(crate) const fn fixed_from_julian(date: ArithmeticDate<Julian>) -> i32 {
+    pub(crate) const fn fixed_from_julian(date: ArithmeticDate<Julian>) -> RataDie {
         let year = if date.year < 0 {
             date.year + 1
         } else {
             date.year
         };
-        let mut fixed: i32 = JULIAN_EPOCH - 1 + 365 * (year - 1) + quotient(year - 1, 4);
-        fixed += quotient(367 * (date.month as i32) - 362, 12);
+        let mut fixed: i64 = JULIAN_EPOCH.to_i64_date() - 1
+            + 365 * (year as i64 - 1)
+            + quotient64(year as i64 - 1, 4);
+        fixed += quotient64(367 * (date.month as i64) - 362, 12);
         fixed += if date.month <= 2 {
             0
         } else if Self::is_leap_year_const(date.year) {
@@ -230,16 +240,12 @@ impl Julian {
             -2
         };
 
-        fixed + (date.day as i32)
+        RataDie::new(fixed + (date.day as i64))
     }
 
-    pub(crate) const fn fixed_from_julian_integers(year: i32, month: u8, day: u8) -> i32 {
-        Self::fixed_from_julian(ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        })
+    pub(crate) const fn fixed_from_julian_integers(year: i32, month: u8, day: u8) -> RataDie {
+        // TODO: Should we check bounds here?
+        Self::fixed_from_julian(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     /// Convenience function so we can call days_in_year without
@@ -253,9 +259,19 @@ impl Julian {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738
+<<<<<<< HEAD
     fn julian_from_fixed(date: i32) -> JulianDateInner {
         let approx = quotient((4 * (date - JULIAN_EPOCH)) + 1464, 1461);
+=======
+    fn julian_from_fixed(date: RataDie) -> JulianDateInner {
+        let approx = quotient64((4 * date.to_i64_date()) + 1464, 1461);
+>>>>>>> main
         let year = if approx <= 0 { approx - 1 } else { approx };
+        let year = match i64_to_i32(year) {
+            I32Result::BelowMin(_) => return JulianDateInner(ArithmeticDate::min_date()),
+            I32Result::AboveMax(_) => return JulianDateInner(ArithmeticDate::max_date()),
+            I32Result::WithinRange(y) => y,
+        };
         let prior_days = date - Self::fixed_from_julian_integers(year, 1, 1);
         let correction = if date < Self::fixed_from_julian_integers(year, 3, 1) {
             0
@@ -264,7 +280,7 @@ impl Julian {
         } else {
             2
         };
-        let month = quotient(12 * (prior_days + correction) + 373, 367) as u8; // this expression is in 1..=12
+        let month = quotient64(12 * (prior_days + correction) + 373, 367) as u8; // this expression is in 1..=12
         let day = (date - Self::fixed_from_julian_integers(year, month, 1) + 1) as u8; // as days_in_month is < u8::MAX
 
         #[allow(clippy::unwrap_used)] // day and month have the correct bounds
@@ -292,21 +308,9 @@ impl Date<Julian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Julian>, CalendarError> {
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        if day > 28 {
-            let bound = inner.days_in_month();
-            if day > bound {
-                return Err(CalendarError::OutOfRange);
-            }
-        }
-
-        Ok(Date::from_raw(JulianDateInner(inner), Julian))
+        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+            .map(JulianDateInner)
+            .map(|inner| Date::from_raw(inner, Julian))
     }
 }
 

@@ -45,6 +45,14 @@ enum CollationTable {
     SearchAll,
 }
 
+// Mirrors crate::options::FallbackMode
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+enum Fallback {
+    Legacy,
+    Runtime,
+    Expand,
+}
+
 impl CollationTable {
     fn to_datagen_value(self) -> &'static str {
         match self {
@@ -63,8 +71,8 @@ impl CollationTable {
 #[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
 #[command(group(
             ArgGroup::new("key_mode")
-                // .required(true)
-                .args(["keys", "key_file", "keys_for_bin", "all_keys"]),
+                .required(true)
+                .args(["keys", "key_file", "keys_for_bin", "all_keys", "config"]),
         ))]
 pub struct Cli {
     #[arg(short, long)]
@@ -187,10 +195,11 @@ pub struct Cli {
     #[arg(help = "Deprecated: alias for --keys all")]
     all_keys: bool,
 
-    #[arg(long, short, num_args = 0..)]
+    #[arg(long, short, num_args = 0.., default_value = "recommended")]
     #[arg(
         help = "Include this locale in the output. Accepts multiple arguments. \
-                  Set to 'full' or 'modern' for the respective CLDR locale sets, or 'none' for no locales."
+                  Set to 'full' or 'modern' for the respective CLDR locale sets, 'none' for no locales, \
+                  or 'recommended' for the recommended set of locales."
     )]
     locales: Vec<String>,
 
@@ -221,40 +230,52 @@ pub struct Cli {
 
     #[arg(long)]
     #[arg(help = "Load a TOML config")]
-    pub config: Option<PathBuf>,
+    config: Option<PathBuf>,
+
+    #[arg(short, long, value_enum, default_value_t = Fallback::Legacy)]
+    fallback: Fallback,
 }
 
 impl Cli {
     pub fn as_config(&self) -> eyre::Result<config::Config> {
-        Ok(config::Config {
-            keys: self.make_keys()?,
-            locales: self.make_locales()?,
-            cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
-            icu_export: self.make_path(
-                &self.icuexport_root,
-                &self.icuexport_tag,
-                "icuexport-root",
-            )?,
-            segmenter_lstm: self.make_path(
-                &self.segmenter_lstm_root,
-                &self.segmenter_lstm_tag,
-                "segmenter-lstm",
-            )?,
-            trie_type: match self.trie_type {
-                TrieType::Fast => config::TrieType::Fast,
-                TrieType::Small => config::TrieType::Small,
-            },
-            collation_han_database: match self.collation_han_database {
-                CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
-                CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
-            },
-            collations: self
-                .include_collations
-                .iter()
-                .map(|c| c.to_datagen_value().to_owned())
-                .collect(),
-            export: self.make_exporter()?,
-            overwrite: self.overwrite,
+        Ok(if let Some(ref path) = self.config {
+            serde_json::from_str(&std::fs::read_to_string(path)?)?
+        } else {
+            config::Config {
+                keys: self.make_keys()?,
+                locales: self.make_locales()?,
+                cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
+                icu_export: self.make_path(
+                    &self.icuexport_root,
+                    &self.icuexport_tag,
+                    "icuexport-root",
+                )?,
+                segmenter_lstm: self.make_path(
+                    &self.segmenter_lstm_root,
+                    &self.segmenter_lstm_tag,
+                    "segmenter-lstm",
+                )?,
+                trie_type: match self.trie_type {
+                    TrieType::Fast => config::TrieType::Fast,
+                    TrieType::Small => config::TrieType::Small,
+                },
+                collation_han_database: match self.collation_han_database {
+                    CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
+                    CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
+                },
+                collations: self
+                    .include_collations
+                    .iter()
+                    .map(|c| c.to_datagen_value().to_owned())
+                    .collect(),
+                export: self.make_exporter()?,
+                fallback: match self.fallback {
+                    Fallback::Legacy => config::FallbackMode::Legacy,
+                    Fallback::Runtime => config::FallbackMode::Runtime,
+                    Fallback::Expand => config::FallbackMode::Expand,
+                },
+                overwrite: self.overwrite,
+            }
         })
     }
 
@@ -265,7 +286,12 @@ impl Cli {
             match self.keys.as_slice() {
                 [x] if x == "none" => config::KeyInclude::None,
                 [x] if x == "all" => config::KeyInclude::All,
-                [x] if x == "experimental-all" => config::KeyInclude::AllWithExperimental,
+                [x] if x == "experimental-all" => {
+                    log::warn!("--keys=experimental-all is deprecated, using --keys=all.");
+                    log::warn!("--keys=all behavior is dependent on activated Cargo features, so");
+                    log::warn!("building with experimental features includes experimental keys");
+                    config::KeyInclude::All
+                }
                 keys => config::KeyInclude::Explicit(
                     keys.iter()
                         .map(|k| icu_datagen::key(k).ok_or(eyre::eyre!(k.to_string())))
@@ -291,6 +317,8 @@ impl Cli {
     fn make_locales(&self) -> eyre::Result<config::LocaleInclude> {
         Ok(if self.locales.as_slice() == ["none"] {
             config::LocaleInclude::None
+        } else if self.locales.as_slice() == ["recommended"] {
+            config::LocaleInclude::Recommended
         } else if self.locales.as_slice() == ["full"] || self.all_locales {
             config::LocaleInclude::All
         } else if let Some(locale_subsets) = self

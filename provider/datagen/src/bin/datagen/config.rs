@@ -25,6 +25,8 @@ pub struct Config {
     pub collations: HashSet<String>,
     pub export: Export,
     #[serde(default, skip_serializing_if = "is_default")]
+    pub fallback: FallbackMode,
+    #[serde(default, skip_serializing_if = "is_default")]
     pub overwrite: bool,
 }
 
@@ -37,7 +39,6 @@ fn is_default<T: Default + PartialEq>(value: &T) -> bool {
 pub enum KeyInclude {
     None,
     All,
-    AllWithExperimental,
     Explicit(#[serde(with = "data_key_as_str")] HashSet<DataKey>),
     ForBinary(PathBuf),
 }

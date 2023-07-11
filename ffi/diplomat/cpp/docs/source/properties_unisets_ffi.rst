@@ -33,30 +33,30 @@
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_basic_emoji(const ICU4XDataProvider& provider)
 
-        See the `Rust documentation for load_basic_emoji <https://docs.rs/icu/latest/icu/properties/sets/fn.load_basic_emoji.html>`__ for more information.
+        See the `Rust documentation for basic_emoji <https://docs.rs/icu/latest/icu/properties/sets/fn.basic_emoji.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_main(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        See the `Rust documentation for load_exemplars_main <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_main.html>`__ for more information.
+        See the `Rust documentation for exemplars_main <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_main.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_auxiliary(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        See the `Rust documentation for load_exemplars_auxiliary <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html>`__ for more information.
+        See the `Rust documentation for exemplars_auxiliary <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_auxiliary.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_punctuation(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        See the `Rust documentation for load_exemplars_punctuation <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html>`__ for more information.
+        See the `Rust documentation for exemplars_punctuation <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_punctuation.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_numbers(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        See the `Rust documentation for load_exemplars_numbers <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html>`__ for more information.
+        See the `Rust documentation for exemplars_numbers <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_numbers.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_index(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        See the `Rust documentation for load_exemplars_index <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_index.html>`__ for more information.
+        See the `Rust documentation for exemplars_index <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_index.html>`__ for more information.
 

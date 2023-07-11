@@ -42,7 +42,7 @@ pub struct DataRequestMetadata {
     pub silent: bool,
 }
 
-/// The main locale type used by the ICU4X data provider.
+/// A locale type optimized for use in fallbacking and the ICU4X data pipeline.
 ///
 /// [`DataLocale`] contains less functionality than [`Locale`] but more than
 /// [`LanguageIdentifier`] for better size and performance while still meeting
@@ -339,7 +339,7 @@ impl DataLocale {
     ///
     /// ```
     /// use icu_locid::{
-    ///     langid, locale, subtags_language as language, subtags_region as region,
+    ///     langid, locale, subtags::{language, region},
     ///     Locale,
     /// };
     /// use icu_provider::prelude::*;
@@ -441,10 +441,7 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{
-    ///     extensions_unicode_key as key, extensions_unicode_value as value,
-    ///     Locale,
-    /// };
+    /// use icu_locid::{Locale, extensions::unicode::{key, value}};
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");

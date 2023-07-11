@@ -72,11 +72,17 @@ mod testutil;
 mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
-pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_discard};
+#[allow(deprecated)] // ugh
+pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_discard, key};
 pub use source::SourceData;
 
 #[cfg(feature = "provider_baked")]
 pub mod baked_exporter;
+#[cfg(feature = "provider_blob")]
+pub use icu_provider_blob::export as blob_exporter;
+#[cfg(feature = "provider_fs")]
+pub use icu_provider_fs::export as fs_exporter;
+
 pub mod options;
 
 /// A prelude for using the datagen API
@@ -98,6 +104,7 @@ pub mod prelude {
     pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out};
 }
 
+use icu_locid::subtags::Language;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use memchr::memmem;
@@ -143,6 +150,14 @@ impl DatagenProvider {
 
         source.options = options;
 
+        if matches!(source.options.fallback, options::FallbackMode::Expand)
+            && !matches!(source.options.locales, options::LocaleInclude::Explicit(_))
+        {
+            return Err(DataError::custom(
+                "FallbackMode::Expand requires LocaleInclude::Explicit",
+            ));
+        }
+
         source.options.locales = match core::mem::take(&mut source.options.locales) {
             options::LocaleInclude::None => options::LocaleInclude::Explicit(Default::default()),
             options::LocaleInclude::CldrSet(levels) => options::LocaleInclude::Explicit(
@@ -151,26 +166,79 @@ impl DatagenProvider {
                     .into_iter()
                     .collect(),
             ),
-            s => s,
+            options::LocaleInclude::Explicit(set) => options::LocaleInclude::Explicit(set),
+            options::LocaleInclude::All => options::LocaleInclude::All,
+            options::LocaleInclude::Recommended => options::LocaleInclude::Explicit(
+                source
+                    .locales(&[
+                        options::CoverageLevel::Modern,
+                        options::CoverageLevel::Moderate,
+                        options::CoverageLevel::Basic,
+                    ])?
+                    .into_iter()
+                    .collect(),
+            ),
         };
 
-        Ok(Self { source })
+        let mut provider = Self { source };
+
+        if provider.source.options.fallback == options::FallbackMode::Runtime {
+            provider.source.fallbacker =
+                Some(icu_locid_transform::fallback::LocaleFallbacker::try_new_unstable(&provider)?);
+        }
+
+        Ok(provider)
     }
 
     #[cfg(test)]
     pub fn for_test() -> Self {
         // Singleton so that all instantiations share the same cache.
         lazy_static::lazy_static! {
-            static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                // This is equivalent to `latest_tested` for the files defined in
-                // `tools/testdata-scripts/globs.rs.data`.
-                source: SourceData::offline()
-                    .with_cldr(repodata::paths::cldr(), Default::default()).unwrap()
-                    .with_icuexport(repodata::paths::icuexport()).unwrap()
-                    .with_segmenter_lstm(repodata::paths::lstm()).unwrap(),
+            static ref TEST_PROVIDER: DatagenProvider = {
+                let data_root = std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
+                DatagenProvider {
+                    // This is equivalent to `latest_tested` for the files defined in
+                    // `tools/testdata-scripts/globs.rs.data`.
+                    source: SourceData::offline()
+                        .with_cldr(data_root.join("cldr"), Default::default()).unwrap()
+                        .with_icuexport(data_root.join("icuexport")).unwrap(),
+                }
             };
         }
         TEST_PROVIDER.clone()
+    }
+
+    pub(crate) fn filter_data_locales(
+        &self,
+        supported: Vec<icu_provider::DataLocale>,
+    ) -> Vec<icu_provider::DataLocale> {
+        match &self.source.options.locales {
+            options::LocaleInclude::All => supported,
+            options::LocaleInclude::Explicit(set) => supported
+                .into_iter()
+                .filter(|l| {
+                    if let Some(fallbacker) = &self.source.fallbacker {
+                        // Include any UND-*
+                        if l.get_langid().language == Language::UND {
+                            return true;
+                        }
+                        let mut chain = fallbacker
+                            .for_config(Default::default())
+                            .fallback_for(l.clone());
+                        while !chain.get().is_empty() {
+                            if set.contains(&chain.get().get_langid()) {
+                                return true;
+                            }
+                            chain.step();
+                        }
+                        false
+                    } else {
+                        set.contains(&l.get_langid())
+                    }
+                })
+                .collect(),
+            _ => unreachable!("resolved"),
+        }
     }
 
     /// Exports data for the set of keys to the given exporter.
@@ -197,54 +265,107 @@ impl DatagenProvider {
             use rayon_prelude::*;
 
             keys.into_par_iter().try_for_each(|key| {
-                provider
-                    .supported_locales_for_key(key)
-                    .map_err(|e| e.with_key(key))?
-                    .into_par_iter()
-                    .try_for_each(|locale| {
-                        let req = DataRequest {
-                            locale: &locale,
-                            metadata: Default::default(),
-                        };
-                        let payload = provider
-                            .load_data(key, req)
-                            .and_then(DataResponse::take_payload)
-                            .map_err(|e| e.with_req(key, req))?;
-                        log::trace!("Writing payload: {key}/{locale}");
-                        exporter
-                            .put_payload(key, &locale, &payload)
-                            .map_err(|e| e.with_req(key, req))
-                    })?;
+                log::info!("Generating key {key}");
 
-                log::info!("Writing key: {key}");
-                exporter.flush(key).map_err(|e| e.with_key(key))
+                if key.metadata().singleton {
+                    let payload = provider
+                        .load_data(key, Default::default())
+                        .and_then(DataResponse::take_payload)
+                        .map_err(|e| e.with_req(key, Default::default()))?;
+
+                    return exporter.flush_singleton(key, &payload).map_err(|e| e.with_req(key, Default::default()));
+                }
+
+                let mut supported_locales: HashSet<DataLocale> = provider
+                    .supported_locales_for_key(key)
+                    .map_err(|e| e.with_key(key))?.into_iter().collect();
+
+                match provider.source.options.fallback {
+                    options::FallbackMode::Legacy => {
+                        supported_locales
+                            .into_par_iter()
+                            .try_for_each(|locale| {
+                                log::trace!("Generating for key/locale: {key} {locale:?}");
+                                let req = DataRequest {
+                                    locale: &locale,
+                                    metadata: Default::default(),
+                                };
+                                let payload = provider
+                                    .load_data(key, req)
+                                    .and_then(DataResponse::take_payload)
+                                    .map_err(|e| e.with_req(key, req))?;
+                                exporter.put_payload(key, &locale, &payload)
+                            })
+                            .map_err(|e| e.with_key(key))?;
+
+                        exporter
+                            .flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
+                            .map_err(|e| e.with_key(key))
+                    }
+                    options::FallbackMode::Runtime => {
+                        let payloads = supported_locales.into_par_iter()
+                            .map(|locale| {
+                                log::trace!("Generating for key/locale: {key} {locale:?}");
+                                let req = DataRequest {
+                                    locale: &locale,
+                                    metadata: Default::default(),
+                                };
+                                let payload = provider
+                                    .load_data(key, req)
+                                    .and_then(DataResponse::take_payload)
+                                    .map_err(|e| e.with_req(key, req))?;
+                                Ok::<_, DataError>((locale, payload))
+                            })
+                            .collect::<Result<std::collections::HashMap<_, _>, _>>().map_err(|e| e.with_key(key))?;
+
+                        // TODO(#2683): Figure out how to compare `DataPayload<ExportMarker>` for equality
+                        // to actually dedupe payloads
+
+                        payloads
+                            .into_par_iter()
+                            .try_for_each(|(locale, payload)| {
+                                exporter.put_payload(key, &locale, &payload).map_err(|e| e.with_key(key))
+                            })?;
+                        exporter
+                            .flush_with_fallback(key, icu_provider::datagen::FallbackMode::Full)
+                            .map_err(|e| e.with_key(key))
+                    }
+                    options::FallbackMode::Expand => match &provider.source.options.locales {
+                        options::LocaleInclude::Explicit(requested_locales) => {
+                            let provider = icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable(provider.clone())?;
+                            supported_locales.extend(requested_locales.iter().map(Into::into));
+                            supported_locales
+                                .into_par_iter()
+                                .try_for_each(|locale| {
+                                    log::trace!("Generating for key/locale: {key} {locale:?}");
+                                    let req = DataRequest {
+                                        locale: &locale,
+                                        metadata: Default::default(),
+                                    };
+                                    match provider
+                                        .load_data(key, req)
+                                        .and_then(DataResponse::take_payload) {
+                                            Err(DataError { kind: DataErrorKind::MissingLocale, ..}) => {
+                                                // well, we tried
+                                                Ok(())
+                                            },
+                                            Ok(payload) => exporter.put_payload(key, &locale, &payload),
+                                            e => e.map(|_| ())
+                                        }
+                                        .map_err(|e| e.with_req(key, req))
+                                })?;
+                                exporter.flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
+                                .map_err(|e| e.with_key(key))
+                        }
+                        _ => unreachable!("checked in constructor"),
+                    },
+                }
             })?;
 
             exporter.close()
         }
         internal(self, keys, &mut exporter)
     }
-}
-
-/// Parses a human-readable key identifier into a [`DataKey`].
-//  Supports the hello world key
-/// # Example
-/// ```
-/// # use icu_provider::KeyedDataMarker;
-/// assert_eq!(
-///     icu_datagen::key("list/and@1"),
-///     Some(icu::list::provider::AndListV1Marker::KEY),
-/// );
-/// ```
-pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
-    lazy_static::lazy_static! {
-        static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys_with_experimental()
-                    .into_iter()
-                    .chain([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-                    .map(|k| (k.path().get(), k))
-                    .collect();
-    }
-    LOOKUP.get(string.as_ref()).copied()
 }
 
 /// Parses a list of human-readable key identifiers and returns a
@@ -477,32 +598,9 @@ pub fn datagen(
         },
     )?;
 
-    struct MultiExporter(Vec<Box<dyn DataExporter>>);
-
-    impl DataExporter for MultiExporter {
-        fn put_payload(
-            &self,
-            key: DataKey,
-            locale: &DataLocale,
-            payload: &DataPayload<ExportMarker>,
-        ) -> Result<(), DataError> {
-            self.0
-                .iter()
-                .try_for_each(|e| e.put_payload(key, locale, payload))
-        }
-
-        fn flush(&self, key: DataKey) -> Result<(), DataError> {
-            self.0.iter().try_for_each(|e| e.flush(key))
-        }
-
-        fn close(&mut self) -> Result<(), DataError> {
-            self.0.iter_mut().try_for_each(|e| e.close())
-        }
-    }
-
     provider.export(
         keys.iter().cloned().collect(),
-        MultiExporter(
+        MultiExporter::new(
             outs.into_iter()
                 .map(|out| -> Result<Box<dyn DataExporter>, DataError> {
                     use baked_exporter::*;
@@ -644,11 +742,7 @@ impl CldrLocaleSubset {
 
 #[cfg(feature = "legacy_api")]
 #[doc(hidden)]
-pub mod syntax {
-    pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
-    pub use icu_provider_fs::export::serializers::json::Serializer as Json;
-    pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
-}
+pub use icu_provider_fs::export::serializers as syntax;
 
 impl AnyProvider for DatagenProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
