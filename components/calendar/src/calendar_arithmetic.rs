@@ -20,13 +20,14 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
 }
 
 /// Maximum number of iterations when iterating through the days of a month; can be increased if necessary
+#[allow(dead_code)] // TODO: Remove dead code tag after use
 pub(crate) const MAX_ITERS_FOR_DAYS_OF_MONTH: u8 = 33;
 
 /// Maximum number of iterations when iterating through the days of a year; can be increased if necessary
 pub(crate) const MAX_ITERS_FOR_DAYS_OF_YEAR: u16 = 370;
 
 /// Maximum number of iterations when iterating through months of a year; can be increased if necessary
-pub(crate) const MAX_ITERS_FOR_MONTHS_OF_YEAR: u8 = 14; 
+pub(crate) const MAX_ITERS_FOR_MONTHS_OF_YEAR: u8 = 14;
 
 pub trait CalendarArithmetic: Calendar {
     fn month_days(year: i32, month: u8) -> u8;

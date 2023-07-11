@@ -7,7 +7,10 @@
 
 use crate::{
     astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
-    calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, MAX_ITERS_FOR_MONTHS_OF_YEAR, MAX_ITERS_FOR_DAYS_OF_YEAR},
+    calendar_arithmetic::{
+        ArithmeticDate, CalendarArithmetic, MAX_ITERS_FOR_DAYS_OF_YEAR,
+        MAX_ITERS_FOR_MONTHS_OF_YEAR,
+    },
     helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
     types::Moment,
