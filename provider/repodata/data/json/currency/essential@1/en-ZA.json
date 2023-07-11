@@ -109,7 +109,7 @@
       "narrow_place_holder": 65535
     },
     "AUD": {
-      "short_pattern_standard": false,
+      "short_pattern_standard": true,
       "narrow_pattern_standard": true,
       "short_place_holder": 4,
       "narrow_place_holder": 3
@@ -271,8 +271,8 @@
       "narrow_place_holder": 65535
     },
     "BRL": {
-      "short_pattern_standard": false,
-      "narrow_pattern_standard": false,
+      "short_pattern_standard": true,
+      "narrow_pattern_standard": true,
       "short_place_holder": 9,
       "narrow_place_holder": 9
     },
@@ -343,7 +343,7 @@
       "narrow_place_holder": 3
     },
     "CAD": {
-      "short_pattern_standard": false,
+      "short_pattern_standard": true,
       "narrow_pattern_standard": true,
       "short_place_holder": 11,
       "narrow_place_holder": 3
@@ -403,7 +403,7 @@
       "narrow_place_holder": 65535
     },
     "CNY": {
-      "short_pattern_standard": false,
+      "short_pattern_standard": true,
       "narrow_pattern_standard": true,
       "short_place_holder": 12,
       "narrow_place_holder": 13
@@ -524,7 +524,7 @@
     },
     "EGP": {
       "short_pattern_standard": false,
-      "narrow_pattern_standard": false,
+      "narrow_pattern_standard": true,
       "short_place_holder": 65535,
       "narrow_place_holder": 17
     },
@@ -614,7 +614,7 @@
     },
     "GHS": {
       "short_pattern_standard": false,
-      "narrow_pattern_standard": false,
+      "narrow_pattern_standard": true,
       "short_place_holder": 65535,
       "narrow_place_holder": 22
     },
@@ -679,7 +679,7 @@
       "narrow_place_holder": 3
     },
     "HKD": {
-      "short_pattern_standard": false,
+      "short_pattern_standard": true,
       "narrow_pattern_standard": true,
       "short_place_holder": 25,
       "narrow_place_holder": 3
@@ -793,7 +793,7 @@
       "narrow_place_holder": 65535
     },
     "JPY": {
-      "short_pattern_standard": false,
+      "short_pattern_standard": true,
       "narrow_pattern_standard": true,
       "short_place_holder": 32,
       "narrow_place_holder": 13
@@ -872,7 +872,7 @@
     },
     "LBP": {
       "short_pattern_standard": false,
-      "narrow_pattern_standard": false,
+      "narrow_pattern_standard": true,
       "short_place_holder": 65535,
       "narrow_place_holder": 38
     },
@@ -1069,7 +1069,7 @@
       "narrow_place_holder": 65535
     },
     "MXN": {
-      "short_pattern_standard": false,
+      "short_pattern_standard": true,
       "narrow_pattern_standard": true,
       "short_place_holder": 45,
       "narrow_place_holder": 3
@@ -1130,7 +1130,7 @@
     },
     "NIO": {
       "short_pattern_standard": false,
-      "narrow_pattern_standard": false,
+      "narrow_pattern_standard": true,
       "short_place_holder": 65535,
       "narrow_place_holder": 48
     },
@@ -1153,7 +1153,7 @@
       "narrow_place_holder": 39
     },
     "NZD": {
-      "short_pattern_standard": false,
+      "short_pattern_standard": true,
       "narrow_pattern_standard": true,
       "short_place_holder": 49,
       "narrow_place_holder": 3
@@ -1454,7 +1454,7 @@
     },
     "TOP": {
       "short_pattern_standard": false,
-      "narrow_pattern_standard": false,
+      "narrow_pattern_standard": true,
       "short_place_holder": 65535,
       "narrow_place_holder": 58
     },
@@ -1483,7 +1483,7 @@
       "narrow_place_holder": 3
     },
     "TWD": {
-      "short_pattern_standard": false,
+      "short_pattern_standard": true,
       "narrow_pattern_standard": true,
       "short_place_holder": 60,
       "narrow_place_holder": 3
@@ -1519,7 +1519,7 @@
       "narrow_place_holder": 65535
     },
     "USD": {
-      "short_pattern_standard": false,
+      "short_pattern_standard": true,
       "narrow_pattern_standard": true,
       "short_place_holder": 62,
       "narrow_place_holder": 3
@@ -1657,7 +1657,7 @@
       "narrow_place_holder": 65535
     },
     "XCD": {
-      "short_pattern_standard": false,
+      "short_pattern_standard": true,
       "narrow_pattern_standard": true,
       "short_place_holder": 65,
       "narrow_place_holder": 3

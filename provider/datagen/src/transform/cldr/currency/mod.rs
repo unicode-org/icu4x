@@ -46,15 +46,7 @@ fn which_currency_pattern(
             .unwrap()
             .0
         - 1;
-    let right_letter_test_position = {
-        if currency_sign_ind < first_num_ind && currency_sign_ind < last_num_ind {
-            true
-        } else if currency_sign_ind > first_num_ind && currency_sign_ind > last_num_ind {
-            false
-        } else {
-            panic!("The currency sign is in the middle of the pattern.")
-        }
-    };
+
     let letters_set = match load_for_general_category_group(provider, GeneralCategoryGroup::Letter)
     {
         Ok(letters_set) => letters_set,
@@ -64,16 +56,26 @@ fn which_currency_pattern(
         Err(_) => unreachable!(),
     };
 
+    let right_letter_test_position = {
+        if currency_sign_ind < first_num_ind && currency_sign_ind < last_num_ind {
+            true
+        } else if currency_sign_ind > first_num_ind && currency_sign_ind > last_num_ind {
+            false
+        } else {
+            panic!("The currency sign is in the middle of the pattern.")
+        }
+    };
+
     if right_letter_test_position {
-        // Check if the first character has the property of letter (L).
-        return Ok(!letters_set
-            .as_borrowed()
-            .contains(place_holder.chars().next().unwrap()));
-    } else {
         // Check if the last character has the property of letter (L).
         return Ok(!letters_set
             .as_borrowed()
             .contains(place_holder.chars().last().unwrap()));
+    } else {
+        // Check if the first character has the property of letter (L).
+        return Ok(!letters_set
+            .as_borrowed()
+            .contains(place_holder.chars().next().unwrap()));
     }
 }
 
