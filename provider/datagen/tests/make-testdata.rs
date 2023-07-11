@@ -92,7 +92,8 @@ fn generate_fs_and_verify_zero_copy() {
                 .parent()
                 .unwrap()
                 .display()
-                .to_string(),
+                .to_string()
+                .replace('\\', '/'),
         )
         .unwrap();
 
