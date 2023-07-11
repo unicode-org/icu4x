@@ -274,7 +274,7 @@ lazy_static::lazy_static! {
         "icu::list::FormattedList",
 
         // Experimental
-        "icu::casemapping",
+        "icu::casemap",
         "icu::compactdecimal",
         "icu::relativetime",
         "icu::displaynames",

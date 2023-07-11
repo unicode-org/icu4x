@@ -30,8 +30,8 @@ icu_segmenter_data = { path = "../../components/segmenter/data" }
 icu_timezone = { path = "../../components/timezone" }
 icu_timezone_data = { path = "../../components/timezone/data" }
 bies = { path = "../../experimental/bies" }
-icu_casemap = { path = "../../experimental/casemapping" }
-icu_casemap_data = { path = "../../experimental/casemapping/data" }
+icu_casemap = { path = "../../experimental/casemap" }
+icu_casemap_data = { path = "../../experimental/casemap/data" }
 icu_compactdecimal = { path = "../../experimental/compactdecimal" }
 icu_compactdecimal_data = { path = "../../experimental/compactdecimal/data" }
 icu_displaynames = { path = "../../experimental/displaynames" }

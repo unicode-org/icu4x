@@ -36,7 +36,7 @@ all-features = true
 
 # ICU components
 icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, features = ["datagen"] }
-icu_casemap = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, features = ["datagen"] }
+icu_casemap = { version = "0.7.1", path = "../../experimental/casemap", default-features = false, features = ["datagen"] }
 icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, features = ["datagen"] }
 icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, features = ["datagen"] }
 icu_datetime = { version = "1.2.0", path = "../../components/datetime", default-features = false, features = ["datagen"] }
