@@ -18,10 +18,13 @@ pub mod ffi {
 
     impl ICU4XCaseMapper {
         /// Construct a new ICU4XCaseMapper instance for NFC
-        #[diplomat::rust_link(icu::casemap::ComposingNormalizer::try_new_nfc_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
         pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XCaseMapper>, ICU4XError> {
-            Ok(Box::new(ICU4XCaseMapper(CaseMapper::try_new_unstable(
-                &provider.0,
+            Ok(Box::new(ICU4XCaseMapper(call_constructor!(
+                CaseMapper::new [r => Ok(r)],
+                CaseMapper::try_new_with_any_provider,
+                CaseMapper::try_new_with_buffer_provider,
+                provider,
             )?)))
         }
 
