@@ -94,9 +94,6 @@ simple_logger = { version = "4.1.0", default-features = false, optional = true }
 [dev-dependencies]
 icu = { path = "../../components/icu" }
 glob = "0.3.1"
-
-[target.'cfg(not(target_os = "windows"))'.dev-dependencies]
-# The verify-zero-copy test is causing problems on Windows
 dhat = "0.3.0"
 
 [features]
