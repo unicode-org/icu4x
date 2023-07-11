@@ -29,9 +29,9 @@ pub mod ffi {
         }
 
         /// Returns the full lowercase mapping of the given string
-        #[diplomat::rust_link(icu::casemap::ComposingNormalizer::lowercase, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase, FnInStruct)]
         #[diplomat::rust_link(
-            icu::casemap::ComposingNormalizer::lowercase_to_string,
+            icu::casemap::CaseMapper::lowercase_to_string,
             FnInStruct,
             hidden
         )]
@@ -51,9 +51,9 @@ pub mod ffi {
         }
 
         /// Returns the full uppercase mapping of the given string
-        #[diplomat::rust_link(icu::casemap::ComposingNormalizer::uppercase, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase, FnInStruct)]
         #[diplomat::rust_link(
-            icu::casemap::ComposingNormalizer::uppercase_to_string,
+            icu::casemap::CaseMapper::uppercase_to_string,
             FnInStruct,
             hidden
         )]
@@ -73,9 +73,9 @@ pub mod ffi {
         }
 
         /// Returns the full titlecase mapping of the given string
-        #[diplomat::rust_link(icu::casemap::ComposingNormalizer::titlecase_segment, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapper::titlecase_segment, FnInStruct)]
         #[diplomat::rust_link(
-            icu::casemap::ComposingNormalizer::titlecase_segment_to_string,
+            icu::casemap::CaseMapper::titlecase_segment_to_string,
             FnInStruct,
             hidden
         )]
@@ -95,8 +95,8 @@ pub mod ffi {
         }
 
         /// Case-folds the characters in the given string
-        #[diplomat::rust_link(icu::casemap::ComposingNormalizer::fold, FnInStruct)]
-        #[diplomat::rust_link(icu::casemap::ComposingNormalizer::fold_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::casemap::CaseMapper::fold, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapper::fold_string, FnInStruct, hidden)]
         pub fn fold(&self, s: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
             // #2520
             // In the future we should be able to make assumptions based on backend
@@ -108,9 +108,9 @@ pub mod ffi {
         }
         /// Case-folds the characters in the given string
         /// using Turkic (T) mappings for dotted/dotless I.
-        #[diplomat::rust_link(icu::casemap::ComposingNormalizer::fold_turkic, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic, FnInStruct)]
         #[diplomat::rust_link(
-            icu::casemap::ComposingNormalizer::fold_turkic_string,
+            icu::casemap::CaseMapper::fold_turkic_string,
             FnInStruct,
             hidden
         )]
@@ -126,6 +126,69 @@ pub mod ffi {
             self.0.fold_turkic(s).write_to(write)?;
 
             Ok(())
+        }
+
+
+        /// Returns the simple lowercase mapping of the given character.
+        ///
+        /// This function only implements simple and common mappings.
+        /// Full mappings, which can map one char to a string, are not included.
+        /// For full mappings, use `ICU4XCaseMapper::lowercase`.
+        #[diplomat::rust_link(icu::casemap::CaseMapper::simple_lowercase, FnInStruct)]
+        pub fn simple_lowercase(
+            &self,
+            ch: char,
+        ) -> char {
+            self.0.simple_lowercase(ch)
+        }
+
+        /// Returns the simple uppercase mapping of the given character.
+        ///
+        /// This function only implements simple and common mappings.
+        /// Full mappings, which can map one char to a string, are not included.
+        /// For full mappings, use `ICU4XCaseMapper::uppercase`.
+        #[diplomat::rust_link(icu::casemap::CaseMapper::simple_uppercase, FnInStruct)]
+        pub fn simple_uppercase(
+            &self,
+            ch: char,
+        ) -> char {
+            self.0.simple_uppercase(ch)
+        }
+
+        /// Returns the simple titlecase mapping of the given character.
+        ///
+        /// This function only implements simple and common mappings.
+        /// Full mappings, which can map one char to a string, are not included.
+        /// For full mappings, use `ICU4XCaseMapper::titlecase_segment`.
+        #[diplomat::rust_link(icu::casemap::CaseMapper::simple_titlecase, FnInStruct)]
+        pub fn simple_titlecase(
+            &self,
+            ch: char,
+        ) -> char {
+            self.0.simple_titlecase(ch)
+        }
+
+        /// Returns the simple casefolding of the given character.
+        ///
+        /// This function only implements simple folding.
+        /// For full folding, use `ICU4XCaseMapper::fold`.
+        #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold, FnInStruct)]
+        pub fn simple_fold(
+            &self,
+            ch: char,
+        ) -> char {
+            self.0.simple_fold(ch)
+        }
+        /// Returns the simple casefolding of the given character in the Turkic locale
+        ///
+        /// This function only implements simple folding.
+        /// For full folding, use `ICU4XCaseMapper::fold_turkic`.
+        #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold_turkic, FnInStruct)]
+        pub fn simple_fold_turkic(
+            &self,
+            ch: char,
+        ) -> char {
+            self.0.simple_fold_turkic(ch)
         }
     }
 }
