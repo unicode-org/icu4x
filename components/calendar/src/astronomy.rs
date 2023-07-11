@@ -453,7 +453,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3633-L3647
-    #[allow(clippy::unwrap_used)]
+    #[allow(clippy::unwrap_used)] // TODO: Remove dead code tag after use
     pub(crate) fn moment_of_depression(
         approx: Moment,
         location: Location,
