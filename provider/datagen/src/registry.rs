@@ -61,7 +61,7 @@ macro_rules! registry {
             match LOOKUP.get(path).copied() {
                 None => {
                     log::warn!("Unknown key {path:?}");
-                     None
+                    None
                 },
                 Some(Err(feature)) => {
                     log::warn!("Key {path:?} requires {feature}");
