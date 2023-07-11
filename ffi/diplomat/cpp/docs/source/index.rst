@@ -7,6 +7,7 @@ Documentation
 
    bidi_ffi
    calendar_ffi
+   casemap_ffi
    collator_ffi
    common_ffi
    data_struct_ffi
