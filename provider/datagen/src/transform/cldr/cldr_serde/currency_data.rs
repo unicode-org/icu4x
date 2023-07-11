@@ -8,7 +8,7 @@
 //! <https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/currencyData.json>
 
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 
 type ISOCode = TinyAsciiStr<3>;
@@ -38,7 +38,7 @@ pub struct Fractions {
     default: RoundingModes,
 
     #[serde(flatten)]
-    pub currencies: HashMap<ISOCode, RoundingModes>,
+    pub currencies: BTreeMap<ISOCode, RoundingModes>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
