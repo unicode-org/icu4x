@@ -11,23 +11,14 @@ edition = "2021"
 [dependencies]
 crlify = { path = "../../utils/crlify" }
 databake = { path = "../../utils/databake" }
-icu_datagen = { path = "../../provider/datagen", default-features = false, features = ["provider_baked", "provider_fs", "provider_blob", "use_wasm", "rayon"] }
+icu_datagen = { path = "../../provider/datagen", default-features = false, features = ["legacy_api", "networking"] }
 icu_locid = { path = "../../components/locid", features = ["databake"] }
 icu_provider = { path = "../../provider/core" }
 
 clap = {version = "4", features = ["derive"] }
-dhat = "0.3.0"
 eyre = "0.6"
 log = "0.4"
-postcard = { version = "1.0.0", default-features = false, features = ["alloc"] }
 quote = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 ureq = "2"
 zip = ">=0.5, <0.7"
-
-[features]
-make-testdata-legacy = ["icu_datagen/legacy_api"]
-
-[[bin]]
-name = "make-testdata-legacy"
-required-features = ["make-testdata-legacy"]

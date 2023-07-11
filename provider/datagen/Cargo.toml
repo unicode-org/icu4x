@@ -93,6 +93,11 @@ simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu" }
+glob = "0.3.1"
+
+[target.'cfg(not(target_os = "windows"))'.dev-dependencies]
+# The verify-zero-copy test is causing problems on Windows
+dhat = "0.3.0"
 
 [features]
 default = ["bin", "use_wasm", "networking", "legacy_api", "rayon"]
@@ -114,6 +119,10 @@ networking = ["dep:ureq"]
 name = "icu4x-datagen"
 path = "src/bin/datagen/mod.rs"
 required-features = ["bin"]
+
+[[test]]
+name = "make-testdata"
+path = "tests/make-testdata.rs"
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
