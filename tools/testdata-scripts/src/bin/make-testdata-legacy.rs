@@ -23,7 +23,7 @@ fn main() {
         "/../../provider/testdata/data/"
     ));
 
-    std::fs::create_dir_all(&data_root).unwrap();
+    std::fs::create_dir_all(data_root).unwrap();
 
     let source = SourceData::offline()
         .with_cldr_latest(Default::default())
