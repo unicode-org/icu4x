@@ -274,7 +274,6 @@ lazy_static::lazy_static! {
         "icu::list::FormattedList",
 
         // Experimental
-        "icu::casemapping",
         "icu::compactdecimal",
         "icu::relativetime",
         "icu::displaynames",
@@ -288,6 +287,7 @@ lazy_static::lazy_static! {
         // We could potentially expose them later, but it's hard to expose them
         // uniformly especially for complex types
         "icu::calendar::provider",
+        "icu::casemap::provider",
         "icu::collator::provider",
         "icu::datetime::provider",
         "icu::decimal::provider",

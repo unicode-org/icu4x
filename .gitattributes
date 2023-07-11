@@ -11,4 +11,4 @@ ffi/diplomat/js/docs/** linguist-generated=true
 *.rs.data linguist-language=Rust
 */**/README.md linguist-generated=true
 **/data/data/** linguist-generated=true
-experimental/casemapping/src/greek_to_me/data.rs linguist-generated=true
+experimental/casemap/src/greek_to_me/data.rs linguist-generated=true

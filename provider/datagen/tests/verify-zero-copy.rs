@@ -9,7 +9,7 @@ static ALLOC: dhat::Alloc = dhat::Alloc;
 // Something is broken wrt Windows and this test on CI. Disable for now.
 #[cfg(not(target_os = "windows"))]
 pub mod test {
-    use icu_datagen::{all_keys_with_experimental, DatagenProvider, SourceData};
+    use icu_datagen::{all_keys, DatagenProvider, SourceData};
     use icu_provider::datagen::IterableDynamicDataProvider;
     use icu_provider::prelude::*;
     use std::cmp;
@@ -65,7 +65,7 @@ pub mod test {
         // violations for total_bytes_allocated (but not net_bytes_allocated)
         let mut total_violations = BTreeSet::new();
 
-        for key in all_keys_with_experimental().into_iter() {
+        for key in all_keys().into_iter() {
             let mut max_total_violation = 0;
             let mut max_net_violation = 0;
 

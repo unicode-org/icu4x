@@ -24,13 +24,16 @@ More information about the project can be found in [the docs subdirectory](docs/
 
 ## Quick Start
 
+### Current version (1.2)
+
 An example `ICU4X` powered application in Rust may look like below...
 
 `Cargo.toml`:
 
 ```toml
 [dependencies]
-icu = "1.3.0"
+icu = "1.0.0"
+icu_testdata = "1.0.0"
 ```
 
 `src/main.rs`:
@@ -43,8 +46,8 @@ use icu::locid::locale;
 let options =
     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-let dtf = DateTimeFormatter::try_new(&locale!("es").into(), options)
-    .expect("locale should be present");
+let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("es").into(), options)
+    .expect("Failed to create DateTimeFormatter instance.");
 
 let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("Failed to parse date.");
 let date = date.to_any();
