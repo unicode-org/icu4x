@@ -287,8 +287,8 @@ impl Cli {
                 [x] if x == "none" => config::KeyInclude::None,
                 [x] if x == "all" => config::KeyInclude::All,
                 [x] if x == "experimental-all" => {
-                    log::warn!("--keys=experimental-all is deprecated, using --keys=all");
-                    log::warn!("--keys=all behabior is dependent on activated Cargo features:");
+                    log::warn!("--keys=experimental-all is deprecated, using --keys=all.");
+                    log::warn!("--keys=all behavior is dependent on activated Cargo features, so");
                     log::warn!("building with experimental features includes experimental keys");
                     config::KeyInclude::All
                 }

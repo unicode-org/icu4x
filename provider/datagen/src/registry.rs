@@ -59,9 +59,12 @@ macro_rules! registry {
             }
             let path = string.as_ref();
             match LOOKUP.get(path).copied() {
-                None => None,
+                None => {
+                    log::warn!("Unknown key {path:?}");
+                     None
+                },
                 Some(Err(feature)) => {
-                    log::warn!("{path} requires {feature}");
+                    log::warn!("Key {path:?} requires {feature}");
                     None
                 },
                 Some(Ok(key)) => Some(key)
