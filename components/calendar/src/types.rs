@@ -766,7 +766,6 @@ impl Moment {
     pub const fn inner(&self) -> f64 {
         self.0
     }
-
     /// Get the RataDie of a Moment
     pub fn as_rata_die(&self) -> RataDie {
         RataDie::new(libm::floor(self.0) as i64)
