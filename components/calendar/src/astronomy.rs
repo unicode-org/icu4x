@@ -28,6 +28,13 @@ pub(crate) struct Location {
 #[allow(clippy::excessive_precision)]
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
+ pub(crate) const MECCA: Location = Location {
+    latitude: 6427.0 / 300.0,
+    longitude: 11947.0 / 300.0,
+    elevation: 298.0,
+    zone: (1_f64 / 8_f64),
+};
+
 /// The mean synodic month in days of 86400 atomic seconds
 /// (86400 seconds = 24 hours * 60 minutes/hour * 60 seconds/minute)
 pub(crate) const MEAN_SYNODIC_MONTH: f64 = 29.530588861;
@@ -1221,14 +1228,6 @@ mod tests {
     // Constants applied to provide a margin of error when comparing floating-point values in tests.
     const TEST_LOWER_BOUND_FACTOR: f64 = 0.9999999;
     const TEST_UPPER_BOUND_FACTOR: f64 = 1.0000001;
-
-    // Move outside of test module when implementing Umm-Al-Qura calendar
-    pub(crate) const MECCA: Location = Location {
-        latitude: 6427.0 / 300.0,
-        longitude: 11947.0 / 300.0,
-        elevation: 298.0,
-        zone: (1_f64 / 8_f64),
-    };
 
     fn assert_eq_f64(expected_value: f64, value: f64, moment: Moment) {
         if expected_value > 0.0 {

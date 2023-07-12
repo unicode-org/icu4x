@@ -207,15 +207,15 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     )
 }
 // Used for Umm-Al-Qura calculations
-pub(crate) fn next<F>(mut index: Moment, location: Location, condition: F) -> RataDie
+pub(crate) fn next<F>(mut index: RataDie, location: Location, condition: F) -> RataDie
 where
-    F: Fn(Moment, Location) -> bool,
+    F: Fn(RataDie) -> bool,
 {
     loop {
-        if condition(index, location) {
-            return index.as_rata_die();
+        if condition(index) {
+            return index
         }
-        index += 1.0;
+        index += 1;
     }
 }
 
