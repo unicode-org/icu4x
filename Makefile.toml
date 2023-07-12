@@ -31,7 +31,7 @@ dependencies = [
     "check-no-features",
     "ci-job-fmt",
     "ci-job-clippy",
-    "check-cargo-tutorial-local",
+    "check-tutorials-local",
     "ci-job-tidy",
     "ci-job-doc",
 ]
