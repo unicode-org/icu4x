@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
-use core::ops::Add;
 use crate::{
     astronomy::{Location, PI},
     rata_die::RataDie,
     types::Moment,
 };
+use alloc::vec::Vec;
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///

@@ -2,29 +2,63 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::any_calendar::AnyCalendarKind;
+//! This module contains types and implementations for the Islamic calendars.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime};
+//!
+//! // `Date` type
+//! let islamic_date = Date::try_new_observational_islamic_date(1348, 10, 11)
+//!     .expect("Failed to initialize islamic Date instance.");
+//!
+//! // `DateTime` type
+//! let islamic_datetime = DateTime::try_new_observational_islamic_datetime(1348, 10, 11, 13, 1, 0)
+//!     .expect("Failed to initialize islamic DateTime instance.");
+//!
+//! // `Date` checks
+//! assert_eq!(islamic_date.year().number, 1348);
+//! assert_eq!(islamic_date.month().ordinal, 10);
+//! assert_eq!(islamic_date.day_of_month().0, 11);
+//!
+//! // `DateTime` checks
+//! assert_eq!(islamic_datetime.date.year().number, 1348);
+//! assert_eq!(islamic_datetime.date.month().ordinal, 10);
+//! assert_eq!(islamic_datetime.date.day_of_month().0, 11);
+//! assert_eq!(islamic_datetime.time.hour.number(), 13);
+//! assert_eq!(islamic_datetime.time.minute.number(), 1);
+//! assert_eq!(islamic_datetime.time.second.number(), 0);
+//! ```
+
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{div_rem_euclid, div_rem_euclid_f64, next};
+use crate::helpers::div_rem_euclid;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
-use crate::types::Moment;
-use crate::{astronomy::*, helpers, Iso};
+use crate::{astronomy::*, Iso};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
-use libm::floor;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)]
+/// Islamic Observational Calendar (Default)
 pub struct IslamicObservational;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)]
+/// Civil / Arithmetical Islamic Calendar (Used for administrative purposes)
 pub struct IslamicCivil;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)]
+/// Umm-al-Qura Hijri Calendar (Used in Saudi Arabia)
 pub struct UmmalQura;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)]
+/// A Tabular version of the Arithmetical Islamic Calendar
 pub struct IslamicTabular;
 
+// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2066
 const FIXED_ISLAMIC_EPOCH_FRIDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 16);
-const FIXED_ISLAMIC_EPOCH_THURSDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 15);
+// const FIXED_ISLAMIC_EPOCH_THURSDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 15);
 
+// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6898
 const CAIRO: Location = Location {
     latitude: 30.1,
     longitude: 31.3,
@@ -40,7 +74,6 @@ pub struct IslamicDateInner(ArithmeticDate<IslamicObservational>);
 
 impl CalendarArithmetic for IslamicObservational {
     fn month_days(year: i32, month: u8) -> u8 {
-
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
 
@@ -49,16 +82,16 @@ impl CalendarArithmetic for IslamicObservational {
         Astronomical::month_length(f_date, CAIRO)
     }
 
-    fn months_for_every_year(_: i32) -> u8 {
+    fn months_for_every_year(_year: i32) -> u8 {
         12
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(_year: i32) -> u32 {
         355
     }
 
     // As an observational-lunar calendar, it does not have leap years.
-    fn is_leap_year(year: i32) -> bool {
+    fn is_leap_year(_year: i32) -> bool {
         false
     }
 
@@ -73,7 +106,6 @@ impl CalendarArithmetic for IslamicObservational {
 
 impl Calendar for IslamicObservational {
     type DateInner = IslamicDateInner;
-
     fn date_from_codes(
         &self,
         era: types::Era,
@@ -138,7 +170,7 @@ impl Calendar for IslamicObservational {
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         Self::year_as_islamic(date.0.year)
     }
-    // Change later: Islamic uses lunar months
+
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         date.0.solar_month()
     }
@@ -165,10 +197,16 @@ impl Calendar for IslamicObservational {
 }
 
 impl IslamicObservational {
+    /// Constructs a new Islamic Observational Calendar
     pub fn new() -> Self {
         Self
     }
 
+    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
+    // The fixed date algorithms are from
+    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
+    //
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6904
     fn fixed_from_islamic(i_date: IslamicDateInner) -> RataDie {
         let year = i64::from(i_date.0.year);
         let month = i64::from(i_date.0.month);
@@ -176,30 +214,30 @@ impl IslamicObservational {
 
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
-        let date = Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO)
-            + day.into()
-            - 1;
 
-        date
+        Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO) + day - 1
     }
 
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6920
+    #[allow(clippy::unwrap_used)]
     fn islamic_from_fixed(date: RataDie) -> Date<IslamicObservational> {
         let crescent = Astronomical::phasis_on_or_before(date, CAIRO);
-        let elapsed_months = (crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH;
-
-        let year = libm::floor((elapsed_months / 12.0) + 1.0) as i32;
-        let month = ((elapsed_months % 12.0) + 1.0) as u8;
+        let elapsed_months =
+            (libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH))
+                as i32;
+        let year = div_rem_euclid(elapsed_months, 12).0 + 1;
+        let month = div_rem_euclid(elapsed_months, 12).1 + 1;
         let day = (date - crescent + 1) as u8;
 
-        Date::try_new_islamic_date(year, month, day).unwrap()
+        Date::try_new_observational_islamic_date(year, month as u8, day).unwrap()
     }
 
-    pub(crate) fn fixed_from_islamic_integers(year: i32, month: u8, day: u8) -> Option<RataDie> {
-        Date::try_new_islamic_date(year, month, day)
-        .ok()
-        .map(|d| *d.inner())
-        .map(Self::fixed_from_islamic)
-    }
+    // pub(crate) fn fixed_from_islamic_integers(year: i32, month: u8, day: u8) -> Option<RataDie> {
+    //     Date::try_new_observational_islamic_date(year, month, day)
+    //     .ok()
+    //     .map(|d| *d.inner())
+    //     .map(Self::fixed_from_islamic)
+    // }
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
@@ -219,14 +257,14 @@ impl Date<IslamicObservational> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_islamic = Date::try_new_islamic_date(1392, 4, 25)
+    /// let date_islamic = Date::try_new_observational_islamic_date(1392, 4, 25)
     ///     .expect("Failed to initialize Islamic Date instance.");
     ///
     /// assert_eq!(date_islamic.year().number, 1392);
     /// assert_eq!(date_islamic.month().ordinal, 4);
     /// assert_eq!(date_islamic.day_of_month().0, 25);
     /// ```
-    pub fn try_new_islamic_date(
+    pub fn try_new_observational_islamic_date(
         year: i32,
         month: u8,
         day: u8,
@@ -238,7 +276,22 @@ impl Date<IslamicObservational> {
 }
 
 impl DateTime<IslamicObservational> {
-    pub fn try_new_islamic_datetime(
+    /// Construct a new Islamic Observational datetime from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let datetime_islamic = DateTime::try_new_observational_islamic_datetime(474, 10, 11, 13, 1, 0)
+    ///     .expect("Failed to initialize Islamic DateTime instance.");
+    ///
+    /// assert_eq!(datetime_islamic.date.year().number, 474);
+    /// assert_eq!(datetime_islamic.date.month().ordinal, 10);
+    /// assert_eq!(datetime_islamic.date.day_of_month().0, 11);
+    /// assert_eq!(datetime_islamic.time.hour.number(), 13);
+    /// assert_eq!(datetime_islamic.time.minute.number(), 1);
+    /// assert_eq!(datetime_islamic.time.second.number(), 0);
+    /// ```
+    pub fn try_new_observational_islamic_datetime(
         year: i32,
         month: u8,
         day: u8,
@@ -247,191 +300,11 @@ impl DateTime<IslamicObservational> {
         second: u8,
     ) -> Result<DateTime<IslamicObservational>, CalendarError> {
         Ok(DateTime {
-            date: Date::try_new_islamic_date(year, month, day)?,
+            date: Date::try_new_observational_islamic_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
-
-// // UMM AL QURA CALENDAR
-
-// #[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-// /// The inner date type used for representing [`Date`]s of [`Islamic`]. See [`Date`] and [`Islamic`] for more details.
-// pub struct UmmalQuraDateInner(ArithmeticDate<UmmalQura>);
-
-// impl CalendarArithmetic for UmmalQura {
-//     fn month_days(year: i32, month: u8) -> u8 {
-//         let fixed_date = Self::fixed_from_saudi_islamic(UmmalQuraDateInner(
-//             (ArithmeticDate::new_from_solar_ordinals(year, month, 1)).unwrap(),
-//         ));
-//         u8::default()
-//     }
-
-//     fn months_for_every_year(year: i32) -> u8 {
-//         todo!()
-//     }
-
-//     fn is_leap_year(year: i32) -> bool {
-//         todo!()
-//     }
-
-//     fn last_month_day_in_year(year: i32) -> (u8, u8) {
-//         todo!()
-//     }
-
-//     fn days_in_provided_year(year: i32) -> u32 {
-//         let months_in_year = Self::months_for_every_year(year);
-//         let mut days: u32 = 0;
-//         for month in 1..=months_in_year {
-//             days += Self::month_days(year, month) as u32;
-//         }
-//         days
-//     }
-// }
-
-// impl Calendar for UmmalQura {
-//     type DateInner = UmmalQuraDateInner;
-
-//     fn date_from_codes(
-//         &self,
-//         era: types::Era,
-//         year: i32,
-//         month_code: types::MonthCode,
-//         day: u8,
-//     ) -> Result<Self::DateInner, CalendarError> {
-//         todo!()
-//     }
-
-//     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
-//         todo!()
-//     }
-
-//     fn date_to_iso(&self, date: &Self::DateInner) -> Date<crate::Iso> {
-//         todo!()
-//     }
-
-//     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-//         todo!()
-//     }
-
-//     fn days_in_year(&self, date: &Self::DateInner) -> u32 {
-//         todo!()
-//     }
-
-//     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-//         todo!()
-//     }
-
-//     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-//         todo!()
-//     }
-
-//     fn until(
-//         &self,
-//         date1: &Self::DateInner,
-//         date2: &Self::DateInner,
-//         calendar2: &Self,
-//         largest_unit: DateDurationUnit,
-//         smallest_unit: DateDurationUnit,
-//     ) -> DateDuration<Self> {
-//         todo!()
-//     }
-
-//     fn debug_name(&self) -> &'static str {
-//         todo!()
-//     }
-
-//     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-//         todo!()
-//     }
-
-//     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-//         todo!()
-//     }
-
-//     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-//         todo!()
-//     }
-
-//     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-//         todo!()
-//     }
-// }
-
-// impl UmmalQura {
-//     fn saudi_criterion(date: RataDie) -> bool {
-//         let prev_day = date - 1;
-//         let set = Astronomical::sunset(Moment::new(prev_day.to_f64_date()), MECCA).unwrap();
-//         let tee = Location::universal_from_standard(set, MECCA);
-//         let phase = Astronomical::lunar_phase(tee);
-
-//         0.0 < phase
-//             && 90.0 > Astronomical::moonlag(Moment::new(prev_day.to_f64_date()), MECCA).unwrap()
-//     }
-
-//     fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
-//         let moon = Astronomical::lunar_phase_at_or_before(0.0, Moment::new(date.to_f64_date()));
-//         let age = date - moon.as_rata_die();
-
-//         let tau = if age <= 3 && !Self::saudi_criterion(date) {
-//             moon - 30.0
-//         } else {
-//             moon
-//         };
-
-//         next(tau.as_rata_die(), MECCA, Self::saudi_criterion)
-//     }
-
-//     fn fixed_from_saudi_islamic(date: UmmalQuraDateInner) -> RataDie {
-//         let year = date.0.year;
-//         let month = date.0.month;
-//         let day = date.0.day;
-//         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY
-//             + floor(((year - 1) as f64 * 12.0 + (month as f64) - 0.5) * MEAN_SYNODIC_MONTH) as i64;
-//         let date = Self::saudi_new_month_on_or_before(midmonth) + day.into() - 1;
-
-//         date
-//     }
-
-//     fn saudi_islamic_from_fixed(date: RataDie) -> Date<UmmalQura> {
-//         let crescent = Self::saudi_new_month_on_or_before(date);
-//         let elapsed_months_f64 = libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH);
-//         let elapsed_months = libm::round(elapsed_months_f64) as u32;
-//         let year = ((elapsed_months / 12) + 1) as i32;
-//         let month = ((elapsed_months % 12)+ 1) as u8;
-//         let day = ((date - crescent) + 1) as u8;
-
-//         Date::try_new_ummalqura_date(year, month, day).unwrap()
-//     }
-// }
-
-// impl Date<UmmalQura> {
-//     pub fn try_new_ummalqura_date(
-//         year: i32,
-//         month: u8,
-//         day: u8,
-//     ) -> Result<Date<UmmalQura>, CalendarError> {
-//         ArithmeticDate::new_from_solar_ordinals(year, month, day)
-//             .map(UmmalQuraDateInner)
-//             .map(|inner| Date::from_raw(inner, UmmalQura))
-//     }
-// }
-
-// impl DateTime<UmmalQura> {
-//     pub fn try_new_ummalqura_datetime(
-//         year: i32,
-//         month: u8,
-//         day: u8,
-//         hour: u8,
-//         minute: u8,
-//         second: u8,
-//     ) -> Result<DateTime<UmmalQura>, CalendarError> {
-//         Ok(DateTime {
-//             date: Date::try_new_ummalqura_date(year, month, day)?,
-//             time: types::Time::try_new(hour, minute, second, 0)?,
-//         })
-//     }
-// }
 
 #[cfg(test)]
 mod test {
@@ -443,7 +316,7 @@ mod test {
         month: u8,
         day: u8,
     }
-    
+
     static TEST_FIXED_DATE: [i64; 33] = [
         -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
         470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
@@ -619,9 +492,10 @@ mod test {
     ];
 
     #[test]
-    fn test_islam_from_fixed() {
+    fn test_observational_islamic_from_fixed() {
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
-            let date = Date::try_new_islamic_date(case.year, case.month, case.day).unwrap();
+            let date =
+                Date::try_new_observational_islamic_date(case.year, case.month, case.day).unwrap();
             assert_eq!(
                 IslamicObservational::islamic_from_fixed(RataDie::new(*f_date)),
                 date,
@@ -630,5 +504,26 @@ mod test {
         }
     }
 
+    #[test]
+    fn test_fixed_from_observational_islamic() {
+        for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+            let date = IslamicDateInner(ArithmeticDate::new_unchecked(
+                case.year, case.month, case.day,
+            ));
+            assert_eq!(
+                IslamicObservational::fixed_from_islamic(date),
+                RataDie::new(*f_date),
+                "{case:?}"
+            );
+        }
+    }
 
+    #[test]
+    fn test_islamic_epoch() {
+        let epoch = FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date();
+        // Iso year of Islamic Epoch
+        let epoch_year_from_fixed = Iso::iso_from_fixed(RataDie::new(epoch)).inner.0.year;
+        // 622 is the correct ISO year for the Islamic Epoch
+        assert_eq!(epoch_year_from_fixed, 622);
+    }
 }

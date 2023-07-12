@@ -5,8 +5,6 @@
 use crate::types::Moment;
 use core::ops::{Add, AddAssign, Sub, SubAssign};
 
-use crate::types::Moment;
-
 /// The *Rata Die*, or *R.D.*, or `fixed_date`: number of days since January 1, 1 CE.
 ///
 /// See: <https://en.wikipedia.org/wiki/Rata_Die>

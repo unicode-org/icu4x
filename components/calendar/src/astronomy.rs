@@ -8,7 +8,6 @@
 
 use crate::error::LocationError;
 use crate::helpers::*;
-use crate::islamic;
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
@@ -29,13 +28,6 @@ pub(crate) struct Location {
 #[allow(clippy::excessive_precision)]
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
-// Location of mecca from the lisp code
-pub(crate) const MECCA: Location = Location {
-    latitude: 6427.0 / 300.0,
-    longitude: 11947.0 / 300.0,
-    elevation: 298.0,
-    zone: (1_f64 / 8_f64),
-};
 /// The mean synodic month in days of 86400 atomic seconds
 /// (86400 seconds = 24 hours * 60 minutes/hour * 60 seconds/minute)
 pub(crate) const MEAN_SYNODIC_MONTH: f64 = 29.530588861;
@@ -671,21 +663,21 @@ impl Astronomical {
 
     #[allow(dead_code)]
     pub fn phasis_on_or_after(date: RataDie, location: Location) -> RataDie {
-        let moon = Self::lunar_phase_at_or_before(0.0, date.to_moment());
+        let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
         let age = date - moon.as_rata_die();
-        let tau = if age <= 4 || Self::visible_crescent((date - 1).to_moment(), location) {
+        let tau = if age <= 4 || Self::visible_crescent((date - 1).as_moment(), location) {
             moon + 29.0 // Next new moon
         } else {
-            date.to_moment()
+            date.as_moment()
         };
         next(tau, location, Self::visible_crescent)
     }
 
     #[allow(dead_code)]
     pub fn phasis_on_or_before(date: RataDie, location: Location) -> RataDie {
-        let moon = Self::lunar_phase_at_or_before(0.0, date.to_moment());
+        let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
         let age = date - moon.as_rata_die();
-        let tau = if age <= 3 || !Self::visible_crescent((date).to_moment(), location) {
+        let tau = if age <= 3 && !Self::visible_crescent((date).as_moment(), location) {
             moon - 30.0 // Next new moon
         } else {
             moon
@@ -693,9 +685,9 @@ impl Astronomical {
         next(tau, location, Self::visible_crescent)
     }
 
-    #[allow(dead_code)]
+    #[allow(dead_code, clippy::unwrap_used)]
     pub fn month_length(date: RataDie, location: Location) -> u8 {
-        let moon = Self::phasis_on_or_after(date - 1, location);
+        let moon = Self::phasis_on_or_after(date + 1, location);
         let prev = Self::phasis_on_or_before(date, location);
 
         (moon - prev).try_into().unwrap()
@@ -904,8 +896,6 @@ impl Astronomical {
         .1
     }
 
-    
-
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4196-L4206
     fn moon_node(c: f64) -> f64 {
         div_rem_euclid_f64(
@@ -1016,7 +1006,7 @@ impl Astronomical {
     #[allow(dead_code)]
     pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> Moment {
         let tau = moment.inner()
-            - MEAN_SYNODIC_MONTH / (360.0 / phase) * ((Self::lunar_phase(moment) - phase) % 360.0);
+            - (MEAN_SYNODIC_MONTH / 360.0) * ((Self::lunar_phase(moment) - phase) % 360.0);
         let a = tau - 2.0;
         let b = if moment.inner() <= (tau + 2.0) {
             moment.inner()
@@ -1112,11 +1102,7 @@ impl Astronomical {
     // Best viewing time (UT) in evening.
     fn simple_best_view(date: RataDie, location: Location) -> Moment {
         let dark = Self::dusk(date.to_f64_date(), location, 4.5);
-        let best = if dark.is_none() {
-            (date + 1).to_moment()
-        } else {
-            dark.unwrap()
-        };
+        let best = dark.unwrap_or((date + 1).as_moment());
 
         Location::universal_from_standard(best, location)
     }
@@ -1139,7 +1125,16 @@ impl Astronomical {
         let deg_90 = 90.0;
         let deg_4_1 = 4.1;
 
-        new < phase && deg_10_6 <= cap_arcl && cap_arcl <= deg_90 && h > deg_4_1
+        if phase > new
+            && phase < first_quarter
+            && cap_arcl >= deg_10_6
+            && cap_arcl <= deg_90
+            && h > deg_4_1
+        {
+            return true;
+        }
+
+        false
     }
 
     // Only for use in Islamic calendar
@@ -1227,6 +1222,14 @@ mod tests {
     const TEST_LOWER_BOUND_FACTOR: f64 = 0.9999999;
     const TEST_UPPER_BOUND_FACTOR: f64 = 1.0000001;
 
+    // Move outside of test module when implementing Umm-Al-Qura calendar
+    pub(crate) const MECCA: Location = Location {
+        latitude: 6427.0 / 300.0,
+        longitude: 11947.0 / 300.0,
+        elevation: 298.0,
+        zone: (1_f64 / 8_f64),
+    };
+
     fn assert_eq_f64(expected_value: f64, value: f64, moment: Moment) {
         if expected_value > 0.0 {
             assert!(value > expected_value * TEST_LOWER_BOUND_FACTOR, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
@@ -1285,8 +1288,8 @@ mod tests {
             let moment: Moment = Moment::new(*rd as f64);
             let ephemeris = Astronomical::ephemeris_correction(moment);
             let expected_ephemeris_value = expected_ephemeris;
-            assert!(ephemeris > expected_ephemeris_value * TEST_LOWER_BOUND_FACTOR_FACTOR, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
-            assert!(ephemeris < expected_ephemeris_value * TEST_UPPER_BOUND_FACTOR_FACTOR, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+            assert!(ephemeris > expected_ephemeris_value * TEST_LOWER_BOUND_FACTOR, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
+            assert!(ephemeris < expected_ephemeris_value * TEST_UPPER_BOUND_FACTOR, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
         }
     }
 
@@ -1780,11 +1783,11 @@ mod tests {
             let next_new_moon = Astronomical::new_moon_at_or_after(moment);
             let expected_next_new_moon_moment = Moment::new(*expected_next_new_moon);
             if *expected_next_new_moon > 0.0 {
-                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * TEST_LOWER_BOUND_FACTOR_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
-                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * TEST_UPPER_BOUND_FACTOR_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * TEST_LOWER_BOUND_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * TEST_UPPER_BOUND_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
             } else {
-                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * TEST_UPPER_BOUND_FACTOR_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
-                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * TEST_LOWER_BOUND_FACTOR_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() > next_new_moon.inner() * TEST_UPPER_BOUND_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
+                assert!(expected_next_new_moon_moment.inner() < next_new_moon.inner() * TEST_LOWER_BOUND_FACTOR, "New moon calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_next_new_moon_moment:?} and calculated: {next_new_moon:?}\n\n");
             }
         }
     }
