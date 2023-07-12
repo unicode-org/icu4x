@@ -55,6 +55,10 @@ fn generate_fs_and_verify_zero_copy() {
 
     let mut options = options::Options::default();
     options.locales = options::LocaleInclude::Explicit(LOCALES.iter().cloned().collect());
+    options.segmenter_models = options::SegmenterModelInclude::Explicit(vec![
+        "thaidict".into(),
+        "Thai_codepoints_exclusive_model4_heavy".into(),
+    ]);
 
     DatagenProvider::try_new(options, source)
         .unwrap()
