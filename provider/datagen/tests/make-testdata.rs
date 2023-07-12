@@ -72,43 +72,33 @@ fn generate_fs_and_verify_zero_copy() {
     // violations for total_bytes_allocated (but not net_bytes_allocated)
     let mut total_violations = BTreeSet::new();
 
-    for entry in glob::glob(
-        &data_root
-            .join("postcard/**/*.postcard")
-            .display()
-            .to_string(),
-    )
-    .unwrap()
-    {
-        let entry = entry.unwrap();
-
-        let payload =
-            DataPayload::from_owned_buffer(std::fs::read(&entry).unwrap().into_boxed_slice());
-
-        let key = icu_datagen::key(
-            &entry
-                .strip_prefix(data_root.join("postcard"))
-                .unwrap()
-                .parent()
-                .unwrap()
+    for key in icu_datagen::all_keys() {
+        for entry in glob::glob(
+            &data_root
+                .join("postcard")
+                .join(key.path().get())
+                .join("**/*.postcard")
                 .display()
-                .to_string()
-                .replace('\\', "/"),
+                .to_string(),
         )
-        .unwrap();
+        .unwrap()
+        {
+            let payload =
+                DataPayload::from_owned_buffer(std::fs::read(&entry.unwrap()).unwrap().into_boxed_slice());
 
-        let stats_before = dhat::HeapStats::get();
+            let stats_before = dhat::HeapStats::get();
 
-        // We need to generate the stats before the deserialized struct gets dropped, in order
-        // to distinguish between a temporary and permanent allocation.
-        let stats_after =
-            icu_datagen::deserialize_and_discard(key, payload, dhat::HeapStats::get).unwrap();
+            // We need to generate the stats before the deserialized struct gets dropped, in order
+            // to distinguish between a temporary and permanent allocation.
+            let stats_after =
+                icu_datagen::deserialize_and_discard(key, payload, dhat::HeapStats::get).unwrap();
 
-        if stats_after.total_bytes != stats_before.total_bytes {
-            if stats_after.curr_bytes != stats_before.curr_bytes {
-                net_violations.insert(key.path().get());
-            } else {
-                total_violations.insert(key.path().get());
+            if stats_after.total_bytes != stats_before.total_bytes {
+                if stats_after.curr_bytes != stats_before.curr_bytes {
+                    net_violations.insert(key.path().get());
+                } else {
+                    total_violations.insert(key.path().get());
+                }
             }
         }
     }
