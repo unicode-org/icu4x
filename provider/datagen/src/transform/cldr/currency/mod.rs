@@ -266,18 +266,44 @@ fn extract_currency_essential<'data>(
     Ok(result)
 }
 
-// TODO: will be used in the next PR.
-// #[test]
-// fn test_basic() {
-//     use icu_locid::locale;
-//     use icu_singlenumberformatter::provider::*;
-//     let provider = crate::DatagenProvider::for_test();
-//     let usd: DataPayload<CurrencyEssentialV1Maker> = provider
-//         .load(DataRequest {
-//             locale: &locale!("ar-EG").into(),
-//             metadata: Default::default(),
-//         })
-//         .unwrap()
-//         .take_payload()
-//         .unwrap();
-// }
+#[test]
+fn test_basic() {
+    use icu_locid::locale;
+    use icu_singlenumberformatter::provider::*;
+    let provider = crate::DatagenProvider::for_test();
+    let ar_eg: DataPayload<CurrencyEssentialV1Maker> = provider
+        .load(DataRequest {
+            locale: &locale!("ar-EG").into(),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    assert_eq!(
+        ar_eg.clone().get().to_owned().standard,
+        "‏#,##0.00 ¤;‏-#,##0.00 ¤"
+    );
+    assert_eq!(
+        ar_eg.clone().get().to_owned().standard_alpha_next_to_number,
+        ""
+    );
+    let short_pattern = ar_eg
+        .clone()
+        .get()
+        .to_owned()
+        .indices_map
+        .get(&tinystr!(3, "EGP"))
+        .unwrap()
+        .short_place_holder
+        .as_unsigned_int();
+    let short_place_holder = ar_eg
+        .get()
+        .to_owned()
+        .place_holders
+        .get(short_pattern as usize)
+        .unwrap()
+        .to_string();
+
+    assert_eq!(short_place_holder, "ج.م.\u{200f}");
+}
