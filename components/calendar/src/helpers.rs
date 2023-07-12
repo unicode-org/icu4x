@@ -213,7 +213,7 @@ where
 {
     loop {
         if condition(index) {
-            return index
+            return index;
         }
         index += 1;
     }

@@ -28,7 +28,7 @@ pub(crate) struct Location {
 #[allow(clippy::excessive_precision)]
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
- pub(crate) const MECCA: Location = Location {
+pub(crate) const MECCA: Location = Location {
     latitude: 6427.0 / 300.0,
     longitude: 11947.0 / 300.0,
     elevation: 298.0,

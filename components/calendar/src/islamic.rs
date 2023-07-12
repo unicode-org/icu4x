@@ -30,7 +30,7 @@
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{div_rem_euclid, next, div_rem_euclid_f64};
+use crate::helpers::{div_rem_euclid, div_rem_euclid_f64, next};
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
@@ -97,11 +97,9 @@ impl CalendarArithmetic for IslamicObservational {
     }
 
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        if Self::is_leap_year(year) {
-            (12, 30)
-        } else {
-            (12, 29)
-        }
+        let days = Self::month_days(year, 12);
+
+        (12, days)
     }
 }
 
@@ -270,7 +268,7 @@ impl Date<IslamicObservational> {
         month: u8,
         day: u8,
     ) -> Result<Date<IslamicObservational>, CalendarError> {
-        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
             .map(IslamicDateInner)
             .map(|inner| Date::from_raw(inner, IslamicObservational))
     }
@@ -312,11 +310,41 @@ impl DateTime<IslamicObservational> {
 pub struct UmmalQuraDateInner(ArithmeticDate<UmmalQura>);
 
 impl CalendarArithmetic for UmmalQura {
+    fn month_days(year: i32, month: u8) -> u8 {
+        let midmonth = RataDie::new(libm::floor(
+            FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
+                + (((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH),
+        ) as i64);
 
+        if Self::saudi_criterion(midmonth) {
+            30
+        } else {
+            29
+        }
+    }
+
+    fn months_for_every_year(_year: i32) -> u8 {
+        12
+    }
+
+    fn days_in_provided_year(_year: i32) -> u32 {
+        355
+    }
+
+    // As an observational-lunar calendar, it does not have leap years.
+    fn is_leap_year(year: i32) -> bool {
+        false
+    }
+
+    fn last_month_day_in_year(year: i32) -> (u8, u8) {
+        let days = Self::month_days(year, 12);
+
+        (12, days)
+    }
 }
 
 impl Calendar for UmmalQura {
-
+    
 }
 
 impl Date<UmmalQura> {
@@ -339,30 +367,30 @@ impl DateTime<UmmalQura> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<UmmalQura>,CalendarError> {
+    ) -> Result<DateTime<UmmalQura>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_ummalqura_date(year, month, day)?,
-            time: types::Time::try_new(hour,minute,second,0)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
 
 impl UmmalQura {
-
     fn saudi_criterion(date: RataDie) -> bool {
-        let set = Astronomical::sunset((date-1).as_moment(), MECCA)?;
+        let set = Astronomical::sunset((date - 1).as_moment(), MECCA)?;
         let tee = Location::universal_from_standard(set, MECCA);
         let phase = Astronomical::lunar_phase(tee);
 
-        phase > 0.0 && phase < 90.0 && Astronomical::moonlag((date-1).as_moment(), MECCA)? > 0.0
+        phase > 0.0 && phase < 90.0 && Astronomical::moonlag((date - 1).as_moment(), MECCA)? > 0.0
     }
 
     fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
-        let moon = libm::floor((Astronomical::lunar_phase_at_or_before(0.0, date.as_moment())).inner());
+        let moon =
+            libm::floor((Astronomical::lunar_phase_at_or_before(0.0, date.as_moment())).inner());
         let age = (moon - date.to_f64_date());
         let tau = if age <= 3.0 && !Self::saudi_criterion(date) {
             moon - 30.0
-        } else { 
+        } else {
             moon
         };
 
@@ -371,12 +399,13 @@ impl UmmalQura {
 
     fn saudi_islamic_from_fixed(date: RataDie) -> Date<UmmalQura> {
         let crescent = Self::saudi_new_month_on_or_before(date);
-        let elapsed_months = libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH);
+        let elapsed_months =
+            libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH);
         let year = (1.0 + div_rem_euclid_f64(elapsed_months, 12.0).0) as i32;
         let month = (1.0 + div_rem_euclid_f64(elapsed_months, 12.0).1) as u8;
         let day = (1 + (crescent - date)) as u8;
 
-        Date::try_new_ummalqura_date(year,month,day).unwrap()
+        Date::try_new_ummalqura_date(year, month, day).unwrap()
     }
 
     fn fixed_from_saudi_islamic(date: UmmalQuraDateInner) -> RataDie {
@@ -384,7 +413,10 @@ impl UmmalQura {
         let month = date.0.month;
         let day = date.0.day;
 
-        let midmonth =RataDie::new(libm::floor(FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date() + (((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH)) as i64);
+        let midmonth = RataDie::new(libm::floor(
+            FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
+                + (((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH),
+        ) as i64);
         let first_day_of_month = Self::saudi_new_month_on_or_before(midmonth).to_i64_date();
 
         RataDie::new(first_day_of_month + day as i64 - 1)
