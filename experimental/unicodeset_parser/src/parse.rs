@@ -12,7 +12,7 @@ use icu_collections::{
 };
 use icu_properties::maps::load_script;
 use icu_properties::script::load_script_with_extensions_unstable;
-use icu_properties::sets::{load_for_ecma262_unstable, load_for_general_category_group};
+use icu_properties::sets::{load_for_ecma262_unstable, load_for_general_category_group, load_xid_start, load_xid_continue};
 use icu_properties::Script;
 use icu_properties::{provider::*, GeneralCategoryGroup};
 use icu_provider::prelude::*;
@@ -190,16 +190,37 @@ enum Token<'a> {
     Char(char),
 }
 
-struct Lexer<'a, 'b> {
-    variable_map: VariableMap<'a>,
+struct Lexer<'data, 'b> {
+    variable_map: VariableMap<'data>,
+    xid_start: CodePointInversionList<'data>,
+    xid_continue: CodePointInversionList<'data>,
     iter: Peekable<CharIndices<'b>>,
     // true if the previous passed char was a syntax \ . 
     // it is needed to figure out if $abc is the variable abc, or \$ followed by abc.
     escaped: bool,
 }
 
-impl<'a, 'b> Iterator for Lexer<'a, 'b> {
-    type Item = Token<'a>;
+impl<'data, 'b> Lexer<'data, 'b> {
+    fn try_new<P>(variable_map: VariableMap<'data>, source: &'b str, provider: &P) -> Result<Self, icu_properties::PropertiesError> 
+    where P: ?Sized + DataProvider<XidStartV1Marker> + DataProvider<XidContinueV1Marker>
+    {
+        let xid_start = load_xid_start(provider)?;
+        let xid_start = xid_start.to_code_point_inversion_list();
+        let xid_continue = load_xid_continue(provider)?;
+        let xid_continue = xid_continue.to_code_point_inversion_list();
+
+        Ok(Self {
+            variable_map,
+            xid_start,
+            xid_continue,
+            iter: source.char_indices().peekable(),
+            escaped: false,
+        })
+    }
+}
+
+impl<'data, 'b> Iterator for Lexer<'data, 'b> {
+    type Item = Token<'data>;
 
     fn next(&mut self) -> Option<Self::Item> {
         match self.iter.peek() {
