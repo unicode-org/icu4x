@@ -365,7 +365,7 @@ impl Astronomical {
     /// Calculates the right ascension at a given [`Moment`] of UTC time of an object at latitude `beta` and longitude `lambda`; all angles are in degrees.
     /// the right ascension is the angular distance east or west of an object in the sky with respect to the plane
     /// of the vernal equinox, which is the celestial coordinate point at which the ecliptic intersects the celestial
-    /// equator marking spring in the northern hemisphere; analagous to longitude.
+    /// equator marking spring in the northern hemisphere; analogous to longitude.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3578-L3588
