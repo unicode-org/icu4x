@@ -362,7 +362,7 @@ impl Astronomical {
         )
     }
 
-    /// Calculates right ascension at a given Moment of UTC time for the latitude and longitude of an object lambda;
+    /// Calculates the right ascension at a given [`Moment`] of UTC time of an object at latitude `beta` and longitude `lambda`; all angles are in degrees.
     /// the right ascension is the angular distance east or west of an object in the sky with respect to the plane
     /// of the vernal equinox, which is the celestial coordinate point at which the ecliptic intersects the celestial
     /// equator marking spring in the northern hemisphere; analagous to longitude.
