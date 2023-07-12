@@ -125,5 +125,6 @@ path = "tests/verify-zero-copy.rs"
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
-skip_feature_sets = [["use_icu4c"], ["use_wasm"], ["icu_casemap"], ["icu_compactdecimal"], ["icu_displaynames"], ["icu_relativetime"]]
+skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
+always_include_features = ["icu_casemap", "icu_compactdecimal", "icu_displaynames", "icu_relativetime"]
 max_combination_size = 3
