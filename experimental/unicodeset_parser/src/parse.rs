@@ -272,10 +272,7 @@ where
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
-    fn new_internal(
-        iter: &'b mut Peekable<CharIndices<'a>>,
-        provider: &'c P,
-    ) -> Self {
+    fn new_internal(iter: &'b mut Peekable<CharIndices<'a>>, provider: &'c P) -> Self {
         UnicodeSetBuilder {
             single_set: CodePointInversionListBuilder::new(),
             multi_set: Default::default(),
@@ -359,10 +356,8 @@ where
                             self.single_set.add_char(prev);
                         }
 
-                        let mut inner_builder = UnicodeSetBuilder::new_internal(
-                            self.iter,
-                            self.property_provider,
-                        );
+                        let mut inner_builder =
+                            UnicodeSetBuilder::new_internal(self.iter, self.property_provider);
                         inner_builder.parse_unicode_set()?;
                         let (single, multi) = inner_builder.finalize();
 
@@ -996,9 +991,7 @@ where
 /// assert_eq!(set.size(), elements.count());
 /// ```
 #[cfg(feature = "compiled_data")]
-pub fn parse(
-    source: &str,
-) -> Result<CodePointInversionListAndStringList<'static>> {
+pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static>> {
     parse_unstable(source, &icu_properties::provider::Baked)
 }
 
@@ -1092,7 +1085,6 @@ mod tests {
 
     use super::*;
 
-
     // "aabxzz" => [a..=a, b..=x, z..=z]
     fn range_iter_from_str(s: &str) -> impl Iterator<Item = RangeInclusive<u32>> {
         debug_assert_eq!(
@@ -1154,10 +1146,7 @@ mod tests {
         );
     }
 
-    fn assert_is_error_and_message_eq(
-        source: &str,
-        expected_err: &str,
-    ) {
+    fn assert_is_error_and_message_eq(source: &str, expected_err: &str) {
         let result = parse(source);
         assert!(result.is_err());
         let err = result.unwrap_err();
