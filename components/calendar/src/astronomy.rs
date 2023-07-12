@@ -350,7 +350,7 @@ impl Astronomical {
 
     /// Calculates the declination at a given [`Moment`] of UTC time of an object at latitude `beta` and longitude `lambda`; all angles are in degrees.
     /// the declination is the angular distance north or south of an object in the sky with respect to the plane
-    /// of the Earth's equator; analagous to latitude.
+    /// of the Earth's equator; analogous to latitude.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3567-L3576
