@@ -578,7 +578,8 @@ impl Astronomical {
     /// Sidereal time, as the hour angle between the meridian and the vernal equinox,
     /// from a given moment.
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// in turn from _Astronomical Algorithms_ by Meeus, 2nd edition (1988), p. 88.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3860-L3870
     #[allow(dead_code)] // TODO: Remove dead code tag after use
     pub(crate) fn sidereal_from_moment(moment: Moment) -> f64 {
