@@ -204,6 +204,139 @@ impl Astronomical {
         (intermediate - J2000) / 36525.0
     }
 
+    pub(crate) fn equation_of_time(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let lambda = poly(c, &vec![280.46645, 36000.76983, 0.0003032]);
+        let anomaly = poly(c, &vec![357.52910, 35999.05030, -0.0001559, -0.00000048]);
+        let eccentricity = poly(c, &vec![0.016708617, -0.000042037, -0.0000001236]);
+        let varepsilon = Self::obliquity(moment);
+        let y = libm::pow(tan_degrees(varepsilon / 2.0), 2.0);
+        let equation = (y * sin_degrees(2.0 * lambda) - 2.0 * eccentricity * sin_degrees(anomaly)
+            + 4.0 * eccentricity * y * sin_degrees(anomaly) * cos_degrees(2.0 * lambda)
+            - 0.5 * libm::pow(y, 2.0) * sin_degrees(4.0 * lambda)
+            - 1.25 * libm::pow(eccentricity, 2.0) * sin_degrees(2.0 * anomaly))
+            / (2.0 * PI);
+
+        signum(equation) * libm::fabs(equation).min(12.0 / 24.0)
+    }
+
+    #[allow(dead_code, clippy::unwrap_used)]
+    pub(crate) fn dusk(date: f64, location: Location, alpha: f64) -> Option<Moment> {
+        let evening = false;
+        let moment_of_depression = Self::moment_of_depression(
+            Moment::new(date + (18.0 / 24.0)),
+            location,
+            alpha,
+            evening,
+        )?;
+        Some(Location::standard_from_local(
+            moment_of_depression,
+            location,
+        ))
+    }
+
+    // Calculates the obliquity of the ecliptic at a given moment
+    pub fn obliquity(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let angle = 23.0 + 26.0 / 60.0 + 21.448 / 3600.0;
+        let coefs = &vec![0.0, -46.8150 / 3600.0, -0.00059 / 3600.0, 0.001813 / 3600.0];
+        angle + poly(c, coefs)
+    }
+
+    // Calculates declination at a given Moment of UTC time for the latitude and longitude of an object lambda
+    pub(crate) fn declination(moment: Moment, beta: f64, lambda: f64) -> f64 {
+        let varepsilon = Self::obliquity(moment);
+        arcsin_degrees(
+            sin_degrees(beta) * cos_degrees(varepsilon)
+                + cos_degrees(beta) * sin_degrees(varepsilon) * sin_degrees(lambda),
+        )
+    }
+
+    pub(crate) fn right_ascension(
+        moment: Moment,
+        beta: f64,
+        lambda: f64,
+    ) -> Result<f64, &'static str> {
+        let varepsilon = Self::obliquity(moment);
+        arctan_degrees(
+            sin_degrees(lambda) * cos_degrees(varepsilon)
+                - tan_degrees(beta) * sin_degrees(varepsilon),
+            cos_degrees(lambda),
+        )
+    }
+
+    pub(crate) fn local_from_apparent(moment: Moment, location: Location) -> Moment {
+        moment - Self::equation_of_time(Location::universal_from_local(moment, location))
+    }
+
+    pub(crate) fn approx_moment_of_depression(
+        moment: Moment,
+        location: Location,
+        alpha: f64,
+        early: bool,
+    ) -> Option<Moment> {
+        let date = libm::floor(moment.as_rata_die().to_f64_date());
+        let alt = if alpha >= 0.0 {
+            if early {
+                date
+            } else {
+                date + 1.0
+            }
+        } else {
+            date + 12.0 / 24.0
+        };
+
+        let value = if libm::fabs(Self::sine_offset(moment, location, alpha)) > 1.0 {
+            Self::sine_offset(Moment::new(alt), location, alpha)
+        } else {
+            Self::sine_offset(moment, location, alpha)
+        };
+
+        if libm::fabs(value) <= 1.0 {
+            let offset = mod3(
+                div_rem_euclid_f64(arcsin_degrees(value), 360.0).0,
+                -12.0 / 24.0,
+                12.0 / 24.0,
+            );
+
+            let moment = Moment::new(
+                date + if early {
+                    (6.0 / 24.0) - offset
+                } else {
+                    (18.0 / 24.0) + offset
+                },
+            );
+            Some(Self::local_from_apparent(moment, location))
+        } else {
+            None
+        }
+    }
+
+    #[allow(clippy::unwrap_used)]
+    pub(crate) fn moment_of_depression(
+        approx: Moment,
+        location: Location,
+        alpha: f64,
+        early: bool,
+    ) -> Option<Moment> {
+        let moment = Self::approx_moment_of_depression(approx, location, alpha, early)?;
+        if libm::fabs(approx - moment) < 30.0 {
+            Some(moment)
+        } else {
+            Self::moment_of_depression(moment, location, alpha, early)
+        }
+    }
+
+    // Refraction angle at given moment in given location
+    pub(crate) fn refraction(location: Location) -> f64 {
+        // The moment is not used.
+        let h = location.elevation.max(0.0);
+        let earth_r = 6.372e6; // Radius of Earth.
+        let dip = arccos_degrees(earth_r / (earth_r + h));
+
+        (34.0 / 60.0) + dip + ((19.0 / 3600.0) * libm::sqrt(h))
+    }
+
     /// The moment (in universal time) of the nth new moon after
     /// (or before if n is negative) the new moon of January 11, 1 CE,
     /// which is the first new moon after R.D. 0.
@@ -299,6 +432,101 @@ impl Astronomical {
             additional += l * libm::sin((i + j * k).to_radians());
         }
         Self::universal_from_dynamical(approx + correction + extra + additional)
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn sidereal_from_moment(moment: Moment) -> f64 {
+        let c = (moment - J2000) / 36525.0;
+        let coefficients = &vec![
+            (280.46061837),
+            (36525.0 * 360.98564736629),
+            (0.000387933),
+            (-1.0 / 38710000.0),
+        ];
+
+        let angle = poly(c, coefficients);
+
+        div_rem_euclid_f64(angle, 360.0).1
+    }
+
+    /// Latitude of the moon (in degrees) at a given moment
+    ///
+    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4466
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
+    pub(crate) fn lunar_latitude(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let l = Self::mean_lunar_longitude(c);
+        let d = Self::lunar_elongation(c);
+        let ms = Self::solar_anomaly(c);
+        let ml = Self::lunar_anomaly(c);
+        let f = Self::moon_node(c);
+        let e = 1.0 - (0.002516 * c) - (0.0000074 * libm::pow(c, 2.0));
+        let args_lunar_elongation: [f64; 60] = [
+            0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 0.0, 2.0, 0.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+            0.0, 4.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 4.0, 4.0, 0.0, 4.0, 2.0, 2.0,
+            2.0, 2.0, 0.0, 2.0, 2.0, 2.0, 2.0, 4.0, 2.0, 2.0, 0.0, 2.0, 1.0, 1.0, 0.0, 2.0, 1.0,
+            2.0, 0.0, 4.0, 4.0, 1.0, 4.0, 1.0, 4.0, 2.0,
+        ];
+
+        let args_solar_anomaly: [f64; 60] = [
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, -1.0, -1.0,
+            -1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, -1.0, -2.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+            0.0, -1.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0, -2.0,
+        ];
+
+        let args_lunar_anomaly: [f64; 60] = [
+            0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 2.0, 1.0, 2.0, 0.0, -2.0, 1.0, 0.0, -1.0, 0.0,
+            -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 3.0, 0.0, -1.0, 1.0, -2.0,
+            0.0, 2.0, 1.0, -2.0, 3.0, 2.0, -3.0, -1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0,
+            -2.0, -1.0, 1.0, -2.0, 2.0, -2.0, -1.0, 1.0, 1.0, -1.0, 0.0, 0.0,
+        ];
+
+        let args_moon_node: [f64; 60] = [
+            1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0,
+            -1.0, -1.0, -1.0, 1.0, 3.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -3.0, 1.0,
+            -3.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 3.0, -1.0, -1.0, 1.0,
+            -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0,
+        ];
+
+        let sine_coeff: [f64; 60] = [
+            5128122.0, 280602.0, 277693.0, 173237.0, 55413.0, 46271.0, 32573.0, 17198.0, 9266.0,
+            8822.0, 8216.0, 4324.0, 4200.0, -3359.0, 2463.0, 2211.0, 2065.0, -1870.0, 1828.0,
+            -1794.0, -1749.0, -1565.0, -1491.0, -1475.0, -1410.0, -1344.0, -1335.0, 1107.0, 1021.0,
+            833.0, 777.0, 671.0, 607.0, 596.0, 491.0, -451.0, 439.0, 422.0, 421.0, -366.0, -351.0,
+            331.0, 315.0, 302.0, -283.0, -229.0, 223.0, 223.0, -220.0, -220.0, -185.0, 181.0,
+            -177.0, 176.0, 166.0, -164.0, 132.0, -119.0, 115.0, 107.0,
+        ];
+
+        let mut correction = 0.0;
+
+        for (v, w, x, y, z) in sine_coeff
+            .iter()
+            .zip(
+                args_lunar_elongation.iter().zip(
+                    args_solar_anomaly
+                        .iter()
+                        .zip(args_lunar_anomaly.iter().zip(args_moon_node.iter())),
+                ),
+            )
+            .map(|(v, (w, (x, (y, z))))| (v, w, x, y, z))
+        {
+            correction +=
+                v * libm::pow(e, libm::fabs(*x)) * sin_degrees(w * d + x * ms + y * ml + z * f);
+        }
+        correction /= 1_000_000.0;
+
+        let venus = (175.0
+            * (sin_degrees(119.75 + c * 131.849 + f) + sin_degrees(119.75 + c * 131.849 - f)))
+            / 1_000_000.0;
+
+        let flat_earth =
+            (-2235.0 * sin_degrees(l) + 127.0 * sin_degrees(l - ml) + -115.0 * sin_degrees(l + ml))
+                / 1_000_000.0;
+
+        let extra = (382.0 * sin_degrees(313.45 + (c * 481266.484))) / 1_000_000.0;
+
+        correction + venus + flat_earth + extra
     }
 
     /// Longitude of the moon (in degrees) at a given moment
@@ -400,6 +628,169 @@ impl Astronomical {
         .1
     }
 
+    /// Altitude of the moon (in degrees) at a given moment
+    ///
+    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4537
+    #[allow(dead_code, clippy::unwrap_used)]
+    pub(crate) fn lunar_altitude(moment: Moment, location: Location) -> f64 {
+        let phi = location.latitude;
+        let psi = location.longitude;
+        let lambda = Self::lunar_longitude(moment); // This works
+        let beta = Self::lunar_latitude(moment); // This works
+        let alpha = Self::right_ascension(moment, beta, lambda).unwrap(); // Safe value
+        let delta = Self::declination(moment, beta, lambda);
+        let theta0 = Self::sidereal_from_moment(moment);
+        let cap_h: f64 = div_rem_euclid_f64(theta0 + psi - alpha, 360.0).1;
+
+        let altitude = arcsin_degrees(
+            sin_degrees(phi) * sin_degrees(delta)
+                + cos_degrees(phi) * cos_degrees(delta) * cos_degrees(cap_h),
+        );
+
+        mod3(altitude, -180.0, 180.0)
+    }
+
+    pub(crate) fn lunar_distance(moment: Moment) -> f64 {
+        let c = Self::julian_centuries(moment);
+        let cap_d = Self::lunar_elongation(c);
+        let cap_m = Self::solar_anomaly(c);
+        let cap_m_prime = Self::lunar_anomaly(c);
+        let cap_f = Self::moon_node(c);
+        let cap_e = 1.0 - (0.002516 * c) - (0.0000074 * libm::pow(c, 2.0));
+
+        let args_lunar_elongation = [
+            0.0, 2.0, 2.0, 0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 4.0,
+            0.0, 4.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 4.0, 2.0, 0.0, 2.0, 2.0, 1.0, 2.0, 0.0, 0.0,
+            2.0, 2.0, 2.0, 4.0, 0.0, 3.0, 2.0, 4.0, 0.0, 2.0, 2.0, 2.0, 4.0, 0.0, 4.0, 1.0, 2.0,
+            0.0, 1.0, 3.0, 4.0, 2.0, 0.0, 1.0, 2.0, 2.0,
+        ];
+
+        let args_solar_anomaly = [
+            0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 1.0, 0.0, 1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, -2.0, 1.0, 2.0,
+            -2.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, -1.0, 2.0, 2.0, 1.0, -1.0, 0.0, 0.0, -1.0, 0.0,
+            1.0, 0.0, 1.0, 0.0, 0.0, -1.0, 2.0, 1.0, 0.0, 0.0,
+        ];
+
+        let args_lunar_anomaly = [
+            1.0, -1.0, 0.0, 2.0, 0.0, 0.0, -2.0, -1.0, 1.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 1.0,
+            -1.0, 3.0, -2.0, -1.0, 0.0, -1.0, 0.0, 1.0, 2.0, 0.0, -3.0, -2.0, -1.0, -2.0, 1.0, 0.0,
+            2.0, 0.0, -1.0, 1.0, 0.0, -1.0, 2.0, -1.0, 1.0, -2.0, -1.0, -1.0, -2.0, 0.0, 1.0, 4.0,
+            0.0, -2.0, 0.0, 2.0, 1.0, -2.0, -3.0, 2.0, 1.0, -1.0, 3.0, -1.0,
+        ];
+
+        let args_moon_node = [
+            0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 2.0, -2.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, -2.0, 2.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0,
+            -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0,
+        ];
+
+        let cosine_coeff = [
+            -20905355.0,
+            -3699111.0,
+            -2955968.0,
+            -569925.0,
+            48888.0,
+            -3149.0,
+            246158.0,
+            -152138.0,
+            -170733.0,
+            -204586.0,
+            -129620.0,
+            108743.0,
+            104755.0,
+            10321.0,
+            0.0,
+            79661.0,
+            -34782.0,
+            -23210.0,
+            -21636.0,
+            24208.0,
+            30824.0,
+            -8379.0,
+            -16675.0,
+            -12831.0,
+            -10445.0,
+            -11650.0,
+            14403.0,
+            -7003.0,
+            0.0,
+            10056.0,
+            6322.0,
+            -9884.0,
+            5751.0,
+            0.0,
+            -4950.0,
+            4130.0,
+            0.0,
+            -3958.0,
+            0.0,
+            3258.0,
+            2616.0,
+            -1897.0,
+            -2117.0,
+            2354.0,
+            0.0,
+            0.0,
+            -1423.0,
+            -1117.0,
+            -1571.0,
+            -1739.0,
+            0.0,
+            -4421.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1165.0,
+            0.0,
+            0.0,
+            8752.0,
+        ];
+
+        let correction: f64 = cosine_coeff
+            .iter()
+            .zip(args_lunar_elongation.iter())
+            .zip(args_solar_anomaly.iter())
+            .zip(args_lunar_anomaly.iter())
+            .zip(args_moon_node.iter())
+            .map(|((((&v, &w), &x), &y), &z)| {
+                v * libm::pow(cap_e, libm::fabs(x))
+                    * libm::cos((w * cap_d + x * cap_m + y * cap_m_prime + z * cap_f).to_radians())
+            })
+            .sum();
+
+        385000560.0 + correction
+    }
+
+    /// Parallax of moon at tee at location.
+    /// Adapted from "Astronomical Algorithms" by Jean Meeus,
+    /// Willmann-Bell, 2nd edn., 1998.
+    pub(crate) fn lunar_parallax(moment: Moment, location: Location) -> f64 {
+        let geo = Self::lunar_altitude(moment, location);
+        let cap_delta = Self::lunar_distance(moment);
+        let alt = 6378140.0 / cap_delta;
+        let arg = alt * libm::cos(geo.to_radians());
+        arcsin_degrees(arg)
+    }
+
+    /// Topocentric altitude of moon at moment at location,
+    /// as a small positive/negative angle in degrees.
+    fn topocentric_lunar_altitude(moment: Moment, location: Location) -> f64 {
+        Self::lunar_altitude(moment, location) - Self::lunar_parallax(moment, location)
+    }
+
+    /// Observed altitude of upper limb of moon at moment at location,
+    /// as a small positive/negative angle in degrees.
+    fn observed_lunar_altitude(moment: Moment, location: Location) -> f64 {
+        let r = Self::topocentric_lunar_altitude(moment, location);
+        let y = Self::refraction(location);
+        let z = 16.0 / 60.0;
+
+        r + y + z
+    }
+
     // Average anomaly of the sun (in degrees) at a given Moment in Julian centuries
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4172-L4182
@@ -442,6 +833,61 @@ impl Astronomical {
         .1
     }
 
+    #[allow(dead_code)]
+    fn moonset(date: Moment, location: Location) -> Option<Moment> {
+        let moment = Location::universal_from_standard(date, location);
+        let waxing = Self::lunar_phase(date) < 180.0;
+        let alt = Self::observed_lunar_altitude(moment, location);
+        let lat = location.latitude;
+        let offset = alt / (4.0 * (90.0 - libm::fabs(lat)));
+
+        let approx = if waxing {
+            if offset > 0.0 {
+                moment + offset
+            } else {
+                moment + 1.0 + offset
+            }
+        } else {
+            moment - offset + 0.5
+        };
+
+        let set = Moment::new(binary_search(
+            approx.inner() - (6.0 / 24.0),
+            approx.inner() + (6.0 / 24.0),
+            |x| Self::observed_lunar_altitude(Moment::new(x), location) < 0.0,
+            |u, l| (u - l) < 1.0 / (24.0 * 60.0),
+        ));
+
+        if set < moment + 1.0 {
+            let std = Moment::new(libm::fmax(
+                Location::standard_from_universal(set, location).inner(),
+                date.inner(),
+            ));
+            debug_assert!(std >= date, "std should not be less than date");
+            if std < date {
+                return None;
+            }
+            Some(std)
+        } else {
+            None
+        }
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn sunset(date: Moment, location: Location) -> Option<Moment> {
+        let alpha = Self::refraction(location) + (16.0 / 60.0);
+
+        Self::dusk(date.inner(), location, alpha)
+    }
+
+    #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
+    pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
+        let sunset = Self::sunset(date, location)?;
+        let moonset = Self::moonset(date, location)?;
+
+        Some(moonset - sunset)
+    }
+
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4037-L4047
@@ -477,6 +923,22 @@ impl Astronomical {
         } else {
             a
         }
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> Moment {
+        let tau = moment.inner()
+            - (MEAN_SYNODIC_MONTH / 360.0) * ((Self::lunar_phase(moment) - phase) % 360.0);
+        let a = tau - 2.0;
+        let b = if moment.inner() <= (tau + 2.0) {
+            moment.inner()
+        } else {
+            Moment::new(tau + 2.0).inner()
+        };
+
+        let lunar_phase_f64 = |x: f64| -> f64 { Self::lunar_phase(Moment::new(x)) };
+
+        Moment::new(invert_angular(lunar_phase_f64, phase, (a, b)))
     }
 
     /// The longitude of the Sun at a given Moment in degrees
@@ -560,6 +1022,65 @@ impl Astronomical {
         div_rem_euclid_f64(lambda + Self::aberration(c) + Self::nutation(moment), 360.0).1
     }
 
+    // Best viewing time (UT) in evening.
+    fn simple_best_view(date: RataDie, location: Location) -> Moment {
+        let dark = Self::dusk(date.to_f64_date(), location, 4.5);
+        let best = dark.unwrap_or((date + 1).as_moment());
+
+        Location::universal_from_standard(best, location)
+    }
+
+    // Angular separation of sun and moon at a specific moment
+    fn arc_of_light(moment: Moment) -> f64 {
+        arccos_degrees(
+            cos_degrees(Self::lunar_latitude(moment)) * cos_degrees(Self::lunar_phase(moment)),
+        )
+    }
+
+    fn shaukat_criterion(date: Moment, location: Location) -> bool {
+        let tee = Self::simple_best_view((date - 1.0).as_rata_die(), location);
+        let phase = Self::lunar_phase(tee);
+        let h = Self::lunar_altitude(tee, location);
+        let cap_arcl = Self::arc_of_light(tee);
+
+        let new = 0.0;
+        let first_quarter = 90.0;
+        let deg_10_6 = 10.6;
+        let deg_90 = 90.0;
+        let deg_4_1 = 4.1;
+
+        if phase > new
+            && phase < first_quarter
+            && cap_arcl >= deg_10_6
+            && cap_arcl <= deg_90
+            && h > deg_4_1
+        {
+            return true;
+        }
+
+        false
+    }
+
+    // Only for use in Islamic calendar
+    pub(crate) fn visible_crescent(date: Moment, location: Location) -> bool {
+        Self::shaukat_criterion(date, location)
+    }
+
+    // Given an angle and a Moment moment, approximate the Moment at or before moment
+    // at which solar longitude exceeded the given angle.
+    pub(crate) fn estimate_prior_solar_longitude(angle: f64, moment: Moment) -> Moment {
+        let rate = MEAN_TROPICAL_YEAR / 360.0;
+        let tau =
+            moment - rate * div_rem_euclid_f64(Self::solar_longitude(moment) - angle, 360.0).1;
+        let delta = interval_mod_f64(Self::solar_longitude(tau) - angle, -180.0, 180.0);
+        let result_rhs = tau - rate * delta;
+        if moment < result_rhs {
+            moment
+        } else {
+            result_rhs
+        }
+    }
+
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
                         // This code differs from the lisp/book code by taking in a julian centuries value instead of
                         // a Moment; this is because aberration is only ever called in the fn solar_longitude, which
@@ -604,6 +1125,16 @@ impl Astronomical {
             result += 1;
         }
         result
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn sine_offset(moment: Moment, location: Location, alpha: f64) -> f64 {
+        let phi = location.latitude;
+        let tee_prime = Location::universal_from_local(moment, location);
+        let delta = Self::declination(tee_prime, 0.0, Self::solar_longitude(tee_prime));
+
+        tan_degrees(phi) * tan_degrees(delta)
+            + sin_degrees(alpha) / (cos_degrees(delta) * cos_degrees(phi))
     }
 }
 
