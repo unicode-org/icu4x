@@ -270,7 +270,8 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3850-L3853
-    pub(crate) fn dynamical_from_universal(universal: Moment) -> Moment { // TODO: Determine correct naming scheme for "dynamical"
+    pub(crate) fn dynamical_from_universal(universal: Moment) -> Moment {
+        // TODO: Determine correct naming scheme for "dynamical"
         universal + Self::ephemeris_correction(universal)
     }
 
@@ -278,7 +279,8 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3845-L3848
-    pub(crate) fn universal_from_dynamical(dynamical: Moment) -> Moment { // TODO: Determine correct naming scheme for "dynamical"
+    pub(crate) fn universal_from_dynamical(dynamical: Moment) -> Moment {
+        // TODO: Determine correct naming scheme for "dynamical"
         dynamical - Self::ephemeris_correction(dynamical)
     }
 
