@@ -89,16 +89,19 @@ pub const fn quotient64(n: i64, d: i64) -> i64 {
         a - 1
     }
 }
+
 // cosine of x in radians
 pub fn cos_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
     libm::cos(radians)
 }
+
 // sine of x in radians
 pub fn sin_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
     libm::sin(radians)
 }
+
 // tan of x in radians
 pub fn tan_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
@@ -156,6 +159,7 @@ pub fn poly(x: f64, coeffs: &[f64]) -> f64 {
         None => 0.0,
     }
 }
+
 // A generic function that finds a value within an interval
 // where a certain condition is satisfied.
 pub fn binary_search<F, G>(mut l: f64, mut h: f64, test: F, end: G) -> f64
@@ -180,6 +184,7 @@ where
         }
     }
 }
+
 // Returns a number that represents the sign of `self`.
 // - `1.0` if the number is positive, `+0.0` or `INFINITY`
 // - `-1.0` if the number is negative, `-0.0` or `NEG_INFINITY`
@@ -205,6 +210,7 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
         |u, l| (u - l) < varepsilon,
     )
 }
+
 // Used for Umm-Al-Qura calculations
 pub(crate) fn next<F>(mut index: Moment, location: Location, condition: F) -> RataDie
 where
