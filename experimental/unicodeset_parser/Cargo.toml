@@ -26,12 +26,12 @@ all-features = true
 
 [dependencies]
 icu_collections = { path = "../../components/collections" }
-icu_properties = { path = "../../components/properties" }
+icu_properties = { path = "../../components/properties", default-features = false }
 icu_provider = { path = "../../provider/core" }
 
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec",  features = ["yoke"] }
 log = "0.4"
 
-[dev-dependencies]
-icu_testdata = { version = "1.2.0", path = "../../provider/testdata" }
+[features]
+compiled_data = ["icu_properties/compiled_data"]

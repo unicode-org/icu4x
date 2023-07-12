@@ -103,13 +103,21 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
+    # Job-specific dependencies
+    - name: Install rustfmt
+      run: rustup component add rustfmt
+
     # Actual job
     - name: Run `cargo make ci-job-test`
       run: cargo make ci-job-test
 
-  # ci-job-test-cargo-tutorial
-  test-cargo-tutorial:
+  # ci-job-test-tutorials
+  test-tutorials:
     runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        behavior: [local, cratesio]
+      fail-fast: true
     steps:
     - uses: actions/checkout@v3
 
@@ -146,8 +154,8 @@ jobs:
         path: /tmp/icu4x-source-cache
 
     # Actual job
-    - name: Run `cargo make ci-job-test-cargo-tutorial`
-      run: cargo make ci-job-test-cargo-tutorial
+    - name: Run `cargo make ci-job-test-tutorials-${{ matrix.behavior }}`
+      run: cargo make ci-job-test-tutorials-${{ matrix.behavior }}
 
   # ci-job-testdata
   testdata:

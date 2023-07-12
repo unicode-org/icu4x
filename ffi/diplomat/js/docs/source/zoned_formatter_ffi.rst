@@ -14,7 +14,7 @@
 
         This function has ``date_length`` and ``time_length`` arguments and uses default options for the time zone.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new>`__ for more information.
 
 
     .. js:function:: create_with_lengths_and_iso_8601_time_zone_fallback(provider, locale, date_length, time_length, zone_options)
@@ -23,7 +23,7 @@
 
         This function has ``date_length`` and ``time_length`` arguments and uses an ISO-8601 style fallback for the time zone with the given configurations.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new>`__ for more information.
 
 
     .. js:method:: format_iso_datetime_with_custom_time_zone(datetime, time_zone)
@@ -46,7 +46,7 @@
 
         This function has ``date_length`` and ``time_length`` arguments and uses default options for the time zone.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new>`__ for more information.
 
 
     .. js:function:: create_with_lengths_and_iso_8601_time_zone_fallback(provider, locale, date_length, time_length, zone_options)
@@ -55,7 +55,7 @@
 
         This function has ``date_length`` and ``time_length`` arguments and uses an ISO-8601 style fallback for the time zone with the given configurations.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new>`__ for more information.
 
 
     .. js:method:: format_datetime_with_custom_time_zone(datetime, time_zone)

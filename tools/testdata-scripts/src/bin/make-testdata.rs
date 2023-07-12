@@ -2,14 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crlify::BufWriterWithLineEndingFix;
 use icu_datagen::baked_exporter::*;
 use icu_datagen::blob_exporter::*;
 use icu_datagen::fs_exporter::serializers::*;
 use icu_datagen::fs_exporter::*;
 use icu_datagen::prelude::*;
 use icu_provider::datagen::MultiExporter;
-use rust_format::*;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -25,23 +23,26 @@ fn main() {
         .init()
         .unwrap();
 
-    let out_dir = Path::new(concat!(
+    let data_root = Path::new(concat!(
+        core::env!("CARGO_MANIFEST_DIR"),
+        "/../../provider/datagen/tests/data/"
+    ));
+
+    let testdata_data_root = Path::new(concat!(
         core::env!("CARGO_MANIFEST_DIR"),
         "/../../provider/testdata/data/"
     ));
 
     let source = SourceData::offline()
-        .with_cldr(repodata::paths::cldr(), Default::default())
+        .with_cldr(data_root.join("cldr"), Default::default())
         .unwrap()
-        .with_icuexport(repodata::paths::icuexport())
-        .unwrap()
-        .with_segmenter_lstm(repodata::paths::lstm())
+        .with_icuexport(data_root.join("icuexport"))
         .unwrap();
 
     let json_out = Box::new(
         FilesystemExporter::try_new(Box::new(Json::pretty()), {
             let mut options = ExporterOptions::default();
-            options.root = repodata::paths::json();
+            options.root = data_root.join("json");
             options.overwrite = OverwriteOption::RemoveAndReplace;
             options.fingerprint = true;
             options
@@ -52,7 +53,7 @@ fn main() {
     let postcard_out = Box::new(
         FilesystemExporter::try_new(Box::<Postcard>::default(), {
             let mut options = ExporterOptions::default();
-            options.root = out_dir.join("postcard");
+            options.root = data_root.join("postcard");
             options.overwrite = OverwriteOption::RemoveAndReplace;
             options.fingerprint = true;
             options
@@ -61,11 +62,11 @@ fn main() {
     );
 
     let blob_out = Box::new(BlobExporter::new_with_sink(Box::new(
-        File::create(out_dir.join("testdata.postcard")).unwrap(),
+        File::create(data_root.join("testdata.postcard")).unwrap(),
     )));
 
     let mod_out = Box::new(
-        BakedExporter::new(out_dir.join("baked"), {
+        BakedExporter::new(testdata_data_root.join("baked"), {
             let mut options = Options::default();
             options.insert_feature_gates = true;
             options.use_separate_crates = true;
@@ -90,8 +91,13 @@ fn main() {
         )
         .unwrap();
 
-    let mut metadata =
-        BufWriterWithLineEndingFix::new(File::create(out_dir.join("metadata.rs.data")).unwrap());
+    std::fs::copy(
+        data_root.join("testdata.postcard"),
+        testdata_data_root.join("testdata.postcard"),
+    )
+    .unwrap();
+
+    let mut metadata = File::create(testdata_data_root.join("metadata.rs.data")).unwrap();
 
     metadata
         .write_all(
@@ -107,22 +113,20 @@ fn main() {
         .unwrap();
 
     let locales = databake::Bake::bake(LOCALES, &Default::default());
-    // repodata corresponds to these tags.
     let cldr_tag = SourceData::LATEST_TESTED_CLDR_TAG;
     let icu_tag = SourceData::LATEST_TESTED_ICUEXPORT_TAG;
     let lstm_tag = SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG;
 
     metadata
         .write_all(
-            RustFmt::new()
-                .format_tokens(quote::quote! {
-                    pub const LOCALES: &[icu_locid::LanguageIdentifier] = &#locales;
-                    pub const CLDR_TAG: &str = #cldr_tag;
-                    pub const ICUEXPORT_TAG: &str = #icu_tag;
-                    pub const SEGMENTER_LSTM_TAG: &str = #lstm_tag;
-                })
-                .unwrap()
-                .as_bytes(),
+            quote::quote! {
+                pub const LOCALES: &[icu_locid::LanguageIdentifier] = &#locales;
+                pub const CLDR_TAG: &str = #cldr_tag;
+                pub const ICUEXPORT_TAG: &str = #icu_tag;
+                pub const SEGMENTER_LSTM_TAG: &str = #lstm_tag;
+            }
+            .to_string()
+            .as_bytes(),
         )
         .unwrap();
 }

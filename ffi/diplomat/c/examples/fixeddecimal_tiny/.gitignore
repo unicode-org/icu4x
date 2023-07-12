@@ -5,5 +5,4 @@ optim*
 *.elf
 *.o
 a.out.dSYM
-decimal-bn-en.postcard
-decimal_bn_en.h
+baked_data

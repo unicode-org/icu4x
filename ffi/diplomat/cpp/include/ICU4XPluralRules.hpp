@@ -39,14 +39,14 @@ class ICU4XPluralRules {
   /**
    * Construct an [`ICU4XPluralRules`] for the given locale, for cardinal numbers
    * 
-   * See the [Rust documentation for `try_new_cardinal_unstable`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal_unstable) for more information.
+   * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
    */
   static diplomat::result<ICU4XPluralRules, ICU4XError> create_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * Construct an [`ICU4XPluralRules`] for the given locale, for ordinal numbers
    * 
-   * See the [Rust documentation for `try_new_ordinal_unstable`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal_unstable) for more information.
+   * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
    */
   static diplomat::result<ICU4XPluralRules, ICU4XError> create_ordinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 

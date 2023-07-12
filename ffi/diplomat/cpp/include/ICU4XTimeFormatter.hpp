@@ -40,7 +40,7 @@ class ICU4XTimeFormatter {
   /**
    * Creates a new [`ICU4XTimeFormatter`] from locale data.
    * 
-   * See the [Rust documentation for `try_new_with_length_unstable`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length_unstable) for more information.
+   * See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length) for more information.
    */
   static diplomat::result<ICU4XTimeFormatter, ICU4XError> create_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length);
 

@@ -18,7 +18,7 @@ export class ICU4XLineSegmenter {
 
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with default options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_unstable Rust documentation for `try_new_auto_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto Rust documentation for `new_auto`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_auto(provider: ICU4XDataProvider): ICU4XLineSegmenter | never;
@@ -27,7 +27,7 @@ export class ICU4XLineSegmenter {
 
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with default options and LSTM payload data for Burmese, Khmer, Lao, and Thai.
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_unstable Rust documentation for `try_new_lstm_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm Rust documentation for `new_lstm`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_lstm(provider: ICU4XDataProvider): ICU4XLineSegmenter | never;
@@ -36,7 +36,7 @@ export class ICU4XLineSegmenter {
 
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with default options and dictionary payload data for Burmese, Khmer, Lao, and Thai..
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_unstable Rust documentation for `try_new_dictionary_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary Rust documentation for `new_dictionary`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_dictionary(provider: ICU4XDataProvider): ICU4XLineSegmenter | never;
@@ -45,7 +45,7 @@ export class ICU4XLineSegmenter {
 
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with custom options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_with_options_unstable Rust documentation for `try_new_auto_with_options_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options Rust documentation for `new_auto_with_options`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_auto_with_options_v1(provider: ICU4XDataProvider, options: ICU4XLineBreakOptionsV1): ICU4XLineSegmenter | never;
@@ -54,7 +54,7 @@ export class ICU4XLineSegmenter {
 
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with custom options and LSTM payload data for Burmese, Khmer, Lao, and Thai.
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_with_options_unstable Rust documentation for `try_new_lstm_with_options_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options Rust documentation for `new_lstm_with_options`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_lstm_with_options_v1(provider: ICU4XDataProvider, options: ICU4XLineBreakOptionsV1): ICU4XLineSegmenter | never;
@@ -63,7 +63,7 @@ export class ICU4XLineSegmenter {
 
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with custom options and dictionary payload data for Burmese, Khmer, Lao, and Thai.
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_with_options_unstable Rust documentation for `try_new_dictionary_with_options_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options Rust documentation for `new_dictionary_with_options`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_dictionary_with_options_v1(provider: ICU4XDataProvider, options: ICU4XLineBreakOptionsV1): ICU4XLineSegmenter | never;

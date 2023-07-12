@@ -15,29 +15,29 @@ pub mod ffi {
 
     impl ICU4XComposingNormalizer {
         /// Construct a new ICU4XComposingNormalizer instance for NFC
-        #[diplomat::rust_link(
-            icu::normalizer::ComposingNormalizer::try_new_nfc_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
         pub fn create_nfc(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XComposingNormalizer>, ICU4XError> {
-            Ok(Box::new(ICU4XComposingNormalizer(
-                ComposingNormalizer::try_new_nfc_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XComposingNormalizer(call_constructor!(
+                ComposingNormalizer::new_nfc [r => Ok(r)],
+                ComposingNormalizer::try_new_nfc_with_any_provider,
+                ComposingNormalizer::try_new_nfc_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Construct a new ICU4XComposingNormalizer instance for NFKC
-        #[diplomat::rust_link(
-            icu::normalizer::ComposingNormalizer::try_new_nfkc_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfkc, FnInStruct)]
         pub fn create_nfkc(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XComposingNormalizer>, ICU4XError> {
-            Ok(Box::new(ICU4XComposingNormalizer(
-                ComposingNormalizer::try_new_nfkc_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XComposingNormalizer(call_constructor!(
+                ComposingNormalizer::new_nfkc [r => Ok(r)],
+                ComposingNormalizer::try_new_nfkc_with_any_provider,
+                ComposingNormalizer::try_new_nfkc_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Normalize a (potentially ill-formed) UTF8 string
@@ -82,29 +82,29 @@ pub mod ffi {
 
     impl ICU4XDecomposingNormalizer {
         /// Construct a new ICU4XDecomposingNormalizer instance for NFC
-        #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::try_new_nfd_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
         pub fn create_nfd(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XDecomposingNormalizer>, ICU4XError> {
-            Ok(Box::new(ICU4XDecomposingNormalizer(
-                DecomposingNormalizer::try_new_nfd_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XDecomposingNormalizer(call_constructor!(
+                DecomposingNormalizer::new_nfd [r => Ok(r)],
+                DecomposingNormalizer::try_new_nfd_with_any_provider,
+                DecomposingNormalizer::try_new_nfd_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Construct a new ICU4XDecomposingNormalizer instance for NFKC
-        #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::try_new_nfkd_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfkd, FnInStruct)]
         pub fn create_nfkd(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XDecomposingNormalizer>, ICU4XError> {
-            Ok(Box::new(ICU4XDecomposingNormalizer(
-                DecomposingNormalizer::try_new_nfkd_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XDecomposingNormalizer(call_constructor!(
+                DecomposingNormalizer::new_nfkd [r => Ok(r)],
+                DecomposingNormalizer::try_new_nfkd_with_any_provider,
+                DecomposingNormalizer::try_new_nfkd_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Normalize a (potentially ill-formed) UTF8 string

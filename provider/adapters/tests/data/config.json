@@ -1,0 +1,19 @@
+{
+    "keys": {
+        "Explicit": [
+            "fallback/likelysubtags@1",
+            "fallback/parents@1",
+            "fallback/supplement/co@1",
+            "core/helloworld@1"
+        ]
+    },
+    "locales": "All",
+    "cldr": "Latest",
+    "icu_export": "Latest",
+    "segmenter_lstm": "Latest",
+    "export": {
+        "Blob": "blob.postcard"
+    },
+    "fallback": "Legacy",
+    "overwrite": true
+}

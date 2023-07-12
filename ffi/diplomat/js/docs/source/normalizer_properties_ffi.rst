@@ -12,7 +12,7 @@
 
         Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new>`__ for more information.
 
 
     .. js:method:: get(ch)
@@ -42,7 +42,7 @@
 
         Construct a new ICU4XCanonicalComposition instance for NFC
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new>`__ for more information.
 
 
     .. js:method:: compose(starter, second)
@@ -65,7 +65,7 @@
 
         Construct a new ICU4XCanonicalDecomposition instance for NFC
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new>`__ for more information.
 
 
     .. js:method:: decompose(c)
