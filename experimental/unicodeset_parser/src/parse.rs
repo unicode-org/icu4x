@@ -204,7 +204,6 @@ enum Operation {
 }
 
 // this builds the set on-the-fly while parsing it
-// this builds the set on-the-fly while parsing it
 struct UnicodeSetBuilder<'a, 'b, 'c, P: ?Sized> {
     single_set: CodePointInversionListBuilder,
     multi_set: HashSet<String>,
