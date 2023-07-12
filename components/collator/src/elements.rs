@@ -149,11 +149,11 @@ pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VA
 
 pub(crate) const EMPTY_U16: &ZeroSlice<u16> = zeroslice![];
 const SINGLE_REPLACEMENT_CHARACTER_U16: &ZeroSlice<u16> =
-    zeroslice![u16; <u16 as AsULE>::ULE::from_unsigned; REPLACEMENT_CHARACTER as u16];
+    zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [REPLACEMENT_CHARACTER as u16]);
 
 pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = zeroslice![];
 const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> =
-    zeroslice![char; <char as AsULE>::ULE::from_aligned; REPLACEMENT_CHARACTER];
+    zeroslice!(char; <char as AsULE>::ULE::from_aligned; [REPLACEMENT_CHARACTER]);
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.

@@ -242,10 +242,10 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_auto_with_options`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
     pub fn new_auto() -> Self {
         Self::new_auto_with_options(Default::default())
@@ -286,10 +286,10 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_lstm_with_options`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[cfg(feature = "lstm")]
     pub fn new_lstm() -> Self {
         Self::new_lstm_with_options(Default::default())
@@ -330,10 +330,10 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_dictionary_with_options`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn new_dictionary() -> Self {
         Self::new_dictionary_with_options(Default::default())
     }
@@ -370,11 +370,11 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_auto`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "auto")]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn new_auto_with_options(options: LineBreakOptions) -> Self {
         Self::new_lstm_with_options(options)
     }
@@ -417,11 +417,11 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_dictionary`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "lstm")]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn new_lstm_with_options(options: LineBreakOptions) -> Self {
         Self {
             options,
@@ -474,10 +474,10 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_dictionary`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn new_dictionary_with_options(options: LineBreakOptions) -> Self {
         Self {
             options,

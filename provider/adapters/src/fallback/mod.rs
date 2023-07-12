@@ -24,7 +24,8 @@ pub use icu_locid_transform::fallback::{
 /// use icu_provider::hello_world::*;
 /// use icu_provider_adapters::fallback::LocaleFallbackProvider;
 ///
-/// let provider = icu_testdata::unstable_no_fallback();
+/// # let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!("../../tests/data/blob.postcard")).unwrap();
+/// # let provider = provider.as_deserializing();
 ///
 /// let req = DataRequest {
 ///     locale: &locale!("ja-JP").into(),
@@ -140,13 +141,10 @@ impl<P> LocaleFallbackProvider<P> {
     ///     .expect_err("No data for de-CH");
     ///
     /// // `HelloWorldProvider` does not contain fallback data,
-    /// // but we can fetch it from `icu_testdata`, and then
-    /// // use it to create the fallbacking data provider.
-    /// let fallbacker =
-    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("Fallback data present");
+    /// // but we can construct a fallbacker with `icu_locid_transform`'s
+    /// // compiled data.
     /// let provider =
-    ///     LocaleFallbackProvider::new_with_fallbacker(provider, fallbacker);
+    ///     LocaleFallbackProvider::new_with_fallbacker(provider, LocaleFallbacker::new().static_to_owned());
     ///
     /// // Now we can load the "de-CH" data via fallback to "de".
     /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
@@ -202,7 +200,8 @@ impl<P> LocaleFallbackProvider<P> {
         }
         let mut fallback_iterator = self
             .fallbacker
-            .fallback_for(key.into(), base_req.locale.clone());
+            .for_key(key)
+            .fallback_for(base_req.locale.clone());
         let base_silent = core::mem::replace(&mut base_req.metadata.silent, true);
         loop {
             let result = f1(DataRequest {

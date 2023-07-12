@@ -41,15 +41,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "android_system_properties"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "819e7219dbd41043ac279b19830f2efc897156490d7fd6ea916720117ee66311"
-dependencies = [
- "libc",
-]
-
-[[package]]
 name = "anes"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -313,18 +304,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "chrono"
-version = "0.4.24"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e3c5919066adf22df73762e50cffcde3a758f2a848b113b586d1f86728b673b"
-dependencies = [
- "iana-time-zone",
- "num-integer",
- "num-traits",
- "winapi",
-]
-
-[[package]]
 name = "ciborium"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -432,16 +411,6 @@ name = "cobs"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
-
-[[package]]
-name = "codespan-reporting"
-version = "0.11.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3538270d33cc669650c4b093848450d380def10c331d38c768e34cac80576e6e"
-dependencies = [
- "termcolor",
- "unicode-width",
-]
 
 [[package]]
 name = "colored"
@@ -669,50 +638,6 @@ checksum = "1bfb12502f3fc46cca1bb51ac28df9d618d813cdc3d2f25b9fe775a34af26bb3"
 dependencies = [
  "generic-array",
  "typenum",
-]
-
-[[package]]
-name = "cxx"
-version = "1.0.94"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f61f1b6389c3fe1c316bf8a4dccc90a38208354b330925bce1f74a6c4756eb93"
-dependencies = [
- "cc",
- "cxxbridge-flags",
- "cxxbridge-macro",
- "link-cplusplus",
-]
-
-[[package]]
-name = "cxx-build"
-version = "1.0.94"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12cee708e8962df2aeb38f594aae5d827c022b6460ac71a7a3e2c3c2aae5a07b"
-dependencies = [
- "cc",
- "codespan-reporting",
- "once_cell",
- "proc-macro2",
- "quote",
- "scratch",
- "syn 2.0.15",
-]
-
-[[package]]
-name = "cxxbridge-flags"
-version = "1.0.94"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7944172ae7e4068c533afbb984114a56c46e9ccddda550499caa222902c7f7bb"
-
-[[package]]
-name = "cxxbridge-macro"
-version = "1.0.94"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2345488264226bf682893e25de0769f3360aac9957980ec49361b083ddaa5bc5"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.15",
 ]
 
 [[package]]
@@ -1277,35 +1202,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 
 [[package]]
-name = "iana-time-zone"
-version = "0.1.56"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0722cd7114b7de04316e7ea5456a0bbb20e4adb46fd27a3697adb812cff0f37c"
-dependencies = [
- "android_system_properties",
- "core-foundation-sys",
- "iana-time-zone-haiku",
- "js-sys",
- "wasm-bindgen",
- "windows",
-]
-
-[[package]]
-name = "iana-time-zone-haiku"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0703ae284fc167426161c2e3f1da3ea71d94b21bedbcc9494e92b28e334e3dca"
-dependencies = [
- "cxx",
- "cxx-build",
-]
-
-[[package]]
 name = "icu"
 version = "1.2.0"
 dependencies = [
  "icu_calendar",
- "icu_casemapping",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_compactdecimal",
@@ -1321,7 +1222,6 @@ dependencies = [
  "icu_provider",
  "icu_relativetime",
  "icu_segmenter",
- "icu_testdata",
  "icu_timezone",
  "writeable",
 ]
@@ -1384,7 +1284,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_capi"
@@ -1394,6 +1294,7 @@ dependencies = [
  "diplomat-runtime",
  "fixed_decimal",
  "icu_calendar",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_datetime",
@@ -1410,7 +1311,6 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_fs",
  "icu_segmenter",
- "icu_testdata",
  "icu_timezone",
  "log",
  "serde",
@@ -1437,14 +1337,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_casemapping"
+name = "icu_casemap"
 version = "0.7.2"
 dependencies = [
  "databake",
  "displaydoc",
- "icu_casemapping_data",
+ "icu_casemap_data",
+ "icu_codepointtrie_builder",
  "icu_collections",
  "icu_locid",
+ "icu_normalizer",
+ "icu_properties",
  "icu_provider",
  "serde",
  "writeable",
@@ -1453,8 +1356,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_casemapping_data"
-version = "0.0.0"
+name = "icu_casemap_data"
+version = "1.3.0"
 
 [[package]]
 name = "icu_codepointtrie_builder"
@@ -1495,7 +1398,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_collections"
@@ -1507,7 +1410,7 @@ dependencies = [
  "iai",
  "icu",
  "icu_benchmark_macros",
- "icu_testdata",
+ "icu_properties",
  "postcard",
  "serde",
  "serde_json",
@@ -1537,7 +1440,7 @@ dependencies = [
 
 [[package]]
 name = "icu_compactdecimal_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_datagen"
@@ -1552,7 +1455,7 @@ dependencies = [
  "eyre",
  "icu",
  "icu_calendar",
- "icu_casemapping",
+ "icu_casemap",
  "icu_codepointtrie_builder",
  "icu_collator",
  "icu_collections",
@@ -1573,7 +1476,6 @@ dependencies = [
  "icu_provider_fs",
  "icu_relativetime",
  "icu_segmenter",
- "icu_testdata",
  "icu_timezone",
  "itertools",
  "lazy_static",
@@ -1581,7 +1483,6 @@ dependencies = [
  "memchr",
  "ndarray",
  "rayon",
- "repodata",
  "serde",
  "serde-aux",
  "serde_json",
@@ -1615,7 +1516,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "icu_provider_adapters",
- "icu_testdata",
+ "icu_provider_blob",
  "icu_timezone",
  "litemap",
  "serde",
@@ -1628,7 +1529,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_decimal"
@@ -1655,7 +1556,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_depcheck"
@@ -1678,7 +1579,7 @@ dependencies = [
 
 [[package]]
 name = "icu_displaynames_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_ffi_coverage"
@@ -1712,7 +1613,6 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "icu_testdata",
  "tinystr",
 ]
 
@@ -1737,7 +1637,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_locid"
@@ -1769,7 +1669,6 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform_data",
  "icu_provider",
- "icu_testdata",
  "serde",
  "serde_json",
  "tinystr",
@@ -1779,7 +1678,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -1806,7 +1705,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_pattern"
@@ -1844,7 +1743,6 @@ dependencies = [
  "icu_locid_transform",
  "icu_plurals_data",
  "icu_provider",
- "icu_testdata",
  "serde",
  "serde_json",
  "zerovec",
@@ -1852,7 +1750,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_properties"
@@ -1865,7 +1763,6 @@ dependencies = [
  "icu_locid_transform",
  "icu_properties_data",
  "icu_provider",
- "icu_testdata",
  "serde",
  "tinystr",
  "unicode-bidi",
@@ -1874,7 +1771,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_provider"
@@ -1906,8 +1803,8 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_provider",
+ "icu_provider_blob",
  "icu_provider_fs",
- "icu_testdata",
  "serde",
  "tinystr",
  "writeable",
@@ -1954,7 +1851,6 @@ dependencies = [
 name = "icu_provider_macros"
 version = "1.2.0"
 dependencies = [
- "icu",
  "icu_provider",
  "proc-macro2",
  "quote",
@@ -1981,7 +1877,7 @@ dependencies = [
 
 [[package]]
 name = "icu_relativetime_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_segmenter"
@@ -1994,10 +1890,7 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_locid_transform",
- "icu_properties",
  "icu_provider",
- "icu_provider_adapters",
- "icu_provider_fs",
  "icu_segmenter_data",
  "itertools",
  "libm",
@@ -2009,36 +1902,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter_data"
-version = "0.0.0"
-
-[[package]]
-name = "icu_testdata"
-version = "1.2.0"
-dependencies = [
- "criterion",
- "icu",
- "icu_calendar",
- "icu_casemapping",
- "icu_collator",
- "icu_collections",
- "icu_compactdecimal",
- "icu_datetime",
- "icu_decimal",
- "icu_displaynames",
- "icu_list",
- "icu_locid",
- "icu_locid_transform",
- "icu_normalizer",
- "icu_plurals",
- "icu_properties",
- "icu_provider",
- "icu_provider_adapters",
- "icu_provider_blob",
- "icu_relativetime",
- "icu_segmenter",
- "icu_timezone",
- "zerovec",
-]
+version = "1.3.0"
 
 [[package]]
 name = "icu_testdata_scripts"
@@ -2053,8 +1917,6 @@ dependencies = [
  "icu_provider",
  "log",
  "quote",
- "repodata",
- "rust-format",
  "simple_logger",
  "ureq",
  "zip",
@@ -2070,7 +1932,6 @@ dependencies = [
  "icu_calendar",
  "icu_locid",
  "icu_provider",
- "icu_testdata",
  "icu_timezone_data",
  "serde",
  "tinystr",
@@ -2079,7 +1940,19 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone_data"
+version = "1.3.0"
+
+[[package]]
+name = "icu_unicodeset_parser"
 version = "0.0.0"
+dependencies = [
+ "icu_collections",
+ "icu_properties",
+ "icu_provider",
+ "log",
+ "tinystr",
+ "zerovec",
+]
 
 [[package]]
 name = "ident_case"
@@ -2166,7 +2039,6 @@ name = "ixdtf"
 version = "0.1.0"
 dependencies = [
  "criterion",
- "icu_testdata",
  "serde-json-core",
 ]
 
@@ -2221,15 +2093,6 @@ name = "libm"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "348108ab3fba42ec82ff6e9564fc4ca0247bdccdc68dd8af9764bbc79c3c8ffb"
-
-[[package]]
-name = "link-cplusplus"
-version = "1.0.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ecd207c9c713c34f95a097a5b029ac2ce6010530c7b49d7fea24d977dede04f5"
-dependencies = [
- "cc",
-]
 
 [[package]]
 name = "linux-raw-sys"
@@ -2291,15 +2154,6 @@ checksum = "c0fbfc88337168279f2e9ae06e157cfed4efd3316e14dc96ed074d4f2e6c5952"
 dependencies = [
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "lru"
-version = "0.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6e8aaa3f231bb4bd57b84b2d5dc3ae7f350265df8aa96492e0bc394a1571909"
-dependencies = [
- "hashbrown 0.12.3",
 ]
 
 [[package]]
@@ -2655,9 +2509,9 @@ checksum = "dc375e1527247fe1a97d8b7156678dfe7c1af2fc075c9a4db3690ecd2a148068"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.56"
+version = "1.0.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b63bdb0cd06f1f4dedf69b254734f9b45af66e4a031e42a7480257d9898b435"
+checksum = "7b368fba921b0dce7e60f5e04ec15e565b3303972b42bcfde1d0713b881959eb"
 dependencies = [
  "unicode-ident",
 ]
@@ -2833,13 +2687,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "repodata"
-version = "0.0.0"
-dependencies = [
- "icu_provider_fs",
-]
-
-[[package]]
 name = "ring"
 version = "0.16.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2877,15 +2724,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "rust-format"
-version = "0.3.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60e7c00b6c3bf5e38a880eec01d7e829d12ca682079f8238a464def3c4b31627"
-dependencies = [
- "proc-macro2",
 ]
 
 [[package]]
@@ -2981,12 +2819,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 
 [[package]]
-name = "scratch"
-version = "1.0.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1792db035ce95be60c3f8853017b3999209281c24e2ba5bc8e59bf97a0c590c1"
-
-[[package]]
 name = "sct"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3057,7 +2889,6 @@ version = "4.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3dfe1b7eb6f9dcf011bd6fad169cdeaae75eda0d61b1a99a3f015b41b0cae39"
 dependencies = [
- "chrono",
  "serde",
  "serde_json",
 ]
@@ -3582,30 +3413,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tutorials-test"
-version = "0.0.0"
-dependencies = [
- "databake",
- "displaydoc",
- "icu",
- "icu_datagen",
- "icu_provider",
- "icu_provider_adapters",
- "icu_provider_blob",
- "icu_provider_fs",
- "icu_testdata",
- "itertools",
- "litemap",
- "lru",
- "serde",
- "serde-aux",
- "tinystr",
- "writeable",
- "yoke",
- "zerofrom",
-]
-
-[[package]]
 name = "typenum"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3651,12 +3458,6 @@ name = "unicode-segmentation"
 version = "1.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1dd624098567895118886609431a7c3b8f516e41d30e0643f03d94592a147e36"
-
-[[package]]
-name = "unicode-width"
-version = "0.1.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0edd1e5b14653f783770bce4a4dabb4a5108a5370a5f5d8cfe8710c361f6c8b"
 
 [[package]]
 name = "unicode-xid"
@@ -4152,15 +3953,6 @@ name = "winapi-x86_64-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
-
-[[package]]
-name = "windows"
-version = "0.48.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e686886bc078bc1b0b600cac0147aadb815089b6e4da64016cbd754b6342700f"
-dependencies = [
- "windows-targets 0.48.0",
-]
 
 [[package]]
 name = "windows-sys"

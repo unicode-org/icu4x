@@ -59,14 +59,14 @@
 
         Construct an :js:class:`ICU4XPluralRules` for the given locale, for cardinal numbers
 
-        See the `Rust documentation for try_new_cardinal_unstable <https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal_unstable>`__ for more information.
+        See the `Rust documentation for try_new_cardinal <https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal>`__ for more information.
 
 
     .. js:function:: create_ordinal(provider, locale)
 
         Construct an :js:class:`ICU4XPluralRules` for the given locale, for ordinal numbers
 
-        See the `Rust documentation for try_new_ordinal_unstable <https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal_unstable>`__ for more information.
+        See the `Rust documentation for try_new_ordinal <https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal>`__ for more information.
 
 
     .. js:method:: category_for(op)

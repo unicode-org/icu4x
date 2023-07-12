@@ -59,61 +59,55 @@ pub mod ffi {
 
     impl ICU4XListFormatter {
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(
-            icu::normalizer::ListFormatter::try_new_and_with_length_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_and_with_length, FnInStruct)]
         pub fn create_and_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             length: ICU4XListLength,
         ) -> Result<Box<ICU4XListFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XListFormatter(
-                ListFormatter::try_new_and_with_length_unstable(
-                    &provider.0,
-                    &locale,
-                    length.into(),
-                )?,
-            )))
+            Ok(Box::new(ICU4XListFormatter(call_constructor!(
+                ListFormatter::try_new_and_with_length,
+                ListFormatter::try_new_and_with_length_with_any_provider,
+                ListFormatter::try_new_and_with_length_with_buffer_provider,
+                provider,
+                &locale,
+                length.into()
+            )?)))
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(
-            icu::normalizer::ListFormatter::try_new_or_with_length_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_or_with_length, FnInStruct)]
         pub fn create_or_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             length: ICU4XListLength,
         ) -> Result<Box<ICU4XListFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XListFormatter(
-                ListFormatter::try_new_or_with_length_unstable(
-                    &provider.0,
-                    &locale,
-                    length.into(),
-                )?,
-            )))
+            Ok(Box::new(ICU4XListFormatter(call_constructor!(
+                ListFormatter::try_new_or_with_length,
+                ListFormatter::try_new_or_with_length_with_any_provider,
+                ListFormatter::try_new_or_with_length_with_buffer_provider,
+                provider,
+                &locale,
+                length.into()
+            )?)))
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(
-            icu::normalizer::ListFormatter::try_new_unit_with_length_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_unit_with_length, FnInStruct)]
         pub fn create_unit_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             length: ICU4XListLength,
         ) -> Result<Box<ICU4XListFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XListFormatter(
-                ListFormatter::try_new_unit_with_length_unstable(
-                    &provider.0,
-                    &locale,
-                    length.into(),
-                )?,
-            )))
+            Ok(Box::new(ICU4XListFormatter(call_constructor!(
+                ListFormatter::try_new_unit_with_length,
+                ListFormatter::try_new_unit_with_length_with_any_provider,
+                ListFormatter::try_new_unit_with_length_with_buffer_provider,
+                provider,
+                &locale,
+                length.into()
+            )?)))
         }
 
         #[diplomat::rust_link(icu::normalizer::ListFormatter::format, FnInStruct)]

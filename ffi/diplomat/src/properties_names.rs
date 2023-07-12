@@ -6,8 +6,10 @@
 pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use icu_properties::{names::PropertyValueNameToEnumMapper, provider, GeneralCategoryGroup};
-    use icu_provider::prelude::{DataProvider, DataResponse, KeyedDataMarker};
+    use icu_properties::{
+        names::PropertyValueNameToEnumMapper, BidiClass, EastAsianWidth, GeneralCategory,
+        GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
+    };
 
     use crate::errors::ffi::ICU4XError;
 
@@ -16,28 +18,11 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapper, Struct)]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapperBorrowed, Struct)]
     #[diplomat::rust_link(
-        icu::properties::names::PropertyValueNameToEnumMapper::as_borrowed,
-        FnInStruct,
-        hidden
-    )]
-    #[diplomat::rust_link(
         icu::properties::names::PropertyValueNameToEnumMapper::from_data,
         FnInStruct,
         hidden
     )]
     pub struct ICU4XPropertyValueNameToEnumMapper(PropertyValueNameToEnumMapper<u16>);
-
-    fn load<
-        M: KeyedDataMarker<Yokeable = provider::names::PropertyValueNameToEnumMapV1<'static>>,
-    >(
-        provider: &ICU4XDataProvider,
-    ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
-        let data = DataProvider::<M>::load(&provider.0, Default::default())
-            .and_then(DataResponse::take_payload)?;
-        Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
-            PropertyValueNameToEnumMapper::from_data(data),
-        )))
-    }
 
     impl ICU4XPropertyValueNameToEnumMapper {
         /// Get the property value matching the given name, using strict matching
@@ -87,28 +72,56 @@ pub mod ffi {
         pub fn load_general_category(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
-            load::<provider::GeneralCategoryNameToValueV1Marker>(provider)
+            Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
+                call_constructor_unstable!(
+                    GeneralCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    GeneralCategory::get_name_to_enum_mapper,
+                    provider,
+                )?
+                .erase(),
+            )))
         }
 
-        #[diplomat::rust_link(icu::properties::BidiClass::get_name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::BidiClass::name_to_enum_mapper, FnInStruct)]
         pub fn load_bidi_class(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
-            load::<provider::BidiClassNameToValueV1Marker>(provider)
+            Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
+                call_constructor_unstable!(
+                    BidiClass::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    BidiClass::get_name_to_enum_mapper,
+                    provider,
+                )?
+                .erase(),
+            )))
         }
 
-        #[diplomat::rust_link(icu::properties::EastAsianWidth::get_name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::EastAsianWidth::name_to_enum_mapper, FnInStruct)]
         pub fn load_east_asian_width(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
-            load::<provider::EastAsianWidthNameToValueV1Marker>(provider)
+            Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
+                call_constructor_unstable!(
+                    EastAsianWidth::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    EastAsianWidth::get_name_to_enum_mapper,
+                    provider,
+                )?
+                .erase(),
+            )))
         }
 
-        #[diplomat::rust_link(icu::properties::LineBreak::get_name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::LineBreak::name_to_enum_mapper, FnInStruct)]
         pub fn load_line_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
-            load::<provider::LineBreakNameToValueV1Marker>(provider)
+            Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
+                call_constructor_unstable!(
+                    LineBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    LineBreak::get_name_to_enum_mapper,
+                    provider,
+                )?
+                .erase(),
+            )))
         }
 
         #[diplomat::rust_link(
@@ -118,28 +131,56 @@ pub mod ffi {
         pub fn load_grapheme_cluster_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
-            load::<provider::GraphemeClusterBreakNameToValueV1Marker>(provider)
+            Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
+                call_constructor_unstable!(
+                    GraphemeClusterBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    GraphemeClusterBreak::get_name_to_enum_mapper,
+                    provider,
+                )?
+                .erase(),
+            )))
         }
 
-        #[diplomat::rust_link(icu::properties::WordBreak::get_name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::WordBreak::name_to_enum_mapper, FnInStruct)]
         pub fn load_word_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
-            load::<provider::WordBreakNameToValueV1Marker>(provider)
+            Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
+                call_constructor_unstable!(
+                    WordBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    WordBreak::get_name_to_enum_mapper,
+                    provider,
+                )?
+                .erase(),
+            )))
         }
 
-        #[diplomat::rust_link(icu::properties::SentenceBreak::get_name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::SentenceBreak::name_to_enum_mapper, FnInStruct)]
         pub fn load_sentence_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
-            load::<provider::SentenceBreakNameToValueV1Marker>(provider)
+            Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
+                call_constructor_unstable!(
+                    SentenceBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    SentenceBreak::get_name_to_enum_mapper,
+                    provider,
+                )?
+                .erase(),
+            )))
         }
 
-        #[diplomat::rust_link(icu::properties::Script::get_name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::Script::name_to_enum_mapper, FnInStruct)]
         pub fn load_script(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
-            load::<provider::ScriptNameToValueV1Marker>(provider)
+            Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
+                call_constructor_unstable!(
+                    Script::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    Script::get_name_to_enum_mapper,
+                    provider,
+                )?
+                .erase(),
+            )))
         }
     }
 
@@ -150,11 +191,6 @@ pub mod ffi {
         FnInStruct
     )]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapper, Struct)]
-    #[diplomat::rust_link(
-        icu::properties::names::PropertyValueNameToEnumMapper::as_borrowed,
-        FnInStruct,
-        hidden
-    )]
     pub struct ICU4XGeneralCategoryNameToMaskMapper(
         PropertyValueNameToEnumMapper<GeneralCategoryGroup>,
     );
@@ -193,13 +229,12 @@ pub mod ffi {
         pub fn load(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XError> {
-            let data = DataProvider::<provider::GeneralCategoryMaskNameToValueV1Marker>::load(
-                &provider.0,
-                Default::default(),
-            )
-            .and_then(DataResponse::take_payload)?;
             Ok(Box::new(ICU4XGeneralCategoryNameToMaskMapper(
-                PropertyValueNameToEnumMapper::from_data(data),
+                call_constructor_unstable!(
+                    GeneralCategoryGroup::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    GeneralCategoryGroup::get_name_to_enum_mapper,
+                    provider,
+                )?,
             )))
         }
     }

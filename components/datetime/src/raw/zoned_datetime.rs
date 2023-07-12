@@ -38,7 +38,7 @@ pub(crate) struct ZonedDateTimeFormatter {
 
 impl ZonedDateTimeFormatter {
     #[inline(never)]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new(
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,

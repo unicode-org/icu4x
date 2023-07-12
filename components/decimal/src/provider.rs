@@ -19,12 +19,12 @@
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
     use crate as icu_decimal;
     icu_decimal_data::impl_decimal_symbols_v1!(Baked);

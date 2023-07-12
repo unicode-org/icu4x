@@ -127,8 +127,7 @@ impl CustomTimeZone {
     /// use icu_locid::locale;
     /// use tinystr::tinystr;
     ///
-    /// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("data exists");
+    /// let mzc = MetazoneCalculator::new();
     /// let mut tz = CustomTimeZone {
     ///     gmt_offset: Some("+11".parse().expect("Failed to parse a GMT offset.")),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),

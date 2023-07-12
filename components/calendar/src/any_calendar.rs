@@ -5,6 +5,7 @@
 //! Module for working with multiple calendars at once
 
 use crate::buddhist::Buddhist;
+use crate::chinese::Chinese;
 use crate::coptic::Coptic;
 use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
 use crate::gregorian::Gregorian;
@@ -89,6 +90,8 @@ pub enum AnyCalendar {
     Coptic(Coptic),
     /// An [`Iso`] calendar
     Iso(Iso),
+    /// A [`Chinese`] calendar
+    Chinese(Chinese),
 }
 
 // TODO(#3469): Decide on the best way to implement Ord.
@@ -110,6 +113,8 @@ pub enum AnyDateInner {
     Indian(<Indian as Calendar>::DateInner),
     /// A date for a [`Persian`] calendar
     Persian(<Persian as Calendar>::DateInner),
+    /// A date for a [`Chinese`] calendar
+    Chinese(<Chinese as Calendar>::DateInner),
     /// A date for a [`Coptic`] calendar
     Coptic(<Coptic as Calendar>::DateInner),
     /// A date for an [`Iso`] calendar
@@ -171,6 +176,9 @@ impl Calendar for AnyCalendar {
             Self::Persian(ref c) => {
                 AnyDateInner::Persian(c.date_from_codes(era, year, month_code, day)?)
             }
+            Self::Chinese(ref c) => {
+                AnyDateInner::Chinese(c.date_from_codes(era, year, month_code, day)?)
+            }
             Self::Coptic(ref c) => {
                 AnyDateInner::Coptic(c.date_from_codes(era, year, month_code, day)?)
             }
@@ -189,6 +197,7 @@ impl Calendar for AnyCalendar {
             Self::Coptic(ref c) => AnyDateInner::Coptic(c.date_from_iso(iso)),
             Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_iso(iso)),
             Self::Persian(ref c) => AnyDateInner::Persian(c.date_from_iso(iso)),
+            Self::Chinese(ref c) => AnyDateInner::Chinese(c.date_from_iso(iso)),
         }
     }
 
@@ -369,6 +378,7 @@ impl Calendar for AnyCalendar {
             Self::Coptic(_) => "AnyCalendar (Coptic)",
             Self::Iso(_) => "AnyCalendar (Iso)",
             Self::Persian(_) => "AnyCalendar (Persian)",
+            Self::Chinese(_) => "AnyCalendar (Chinese)",
         }
     }
 
@@ -383,10 +393,10 @@ impl AnyCalendar {
     /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
     /// fallbacking. If this is desired, use [`Self::new_for_locale()`].
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub const fn new(kind: AnyCalendarKind) -> Self {
         match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
@@ -397,6 +407,7 @@ impl AnyCalendar {
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -427,6 +438,7 @@ impl AnyCalendar {
             ),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -458,6 +470,7 @@ impl AnyCalendar {
             ),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -487,6 +500,7 @@ impl AnyCalendar {
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -503,10 +517,10 @@ impl AnyCalendar {
     /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
     /// calendar for the locale, falling back to gregorian.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn new_for_locale(locale: &DataLocale) -> Self {
         let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
         Self::new(kind)
@@ -551,6 +565,7 @@ impl AnyCalendar {
             Self::Coptic(_) => "Coptic",
             Self::Iso(_) => "Iso",
             Self::Persian(_) => "Persian",
+            Self::Chinese(_) => "Chinese",
         }
     }
 
@@ -569,6 +584,7 @@ impl AnyCalendar {
             Self::Coptic(_) => AnyCalendarKind::Coptic,
             Self::Iso(_) => AnyCalendarKind::Iso,
             Self::Persian(_) => AnyCalendarKind::Persian,
+            Self::Chinese(_) => AnyCalendarKind::Chinese,
         }
     }
 
@@ -613,6 +629,7 @@ impl AnyDateInner {
             AnyDateInner::Coptic(_) => "Coptic",
             AnyDateInner::Iso(_) => "Iso",
             AnyDateInner::Persian(_) => "Persian",
+            AnyDateInner::Chinese(_) => "Chinese",
         }
     }
 }
@@ -641,6 +658,8 @@ pub enum AnyCalendarKind {
     Iso,
     /// The kind of a [`Persian`] calendar
     Persian,
+    /// The kind of a [`Chinese`] calendar
+    Chinese,
 }
 
 impl AnyCalendarKind {
@@ -713,6 +732,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Ethiopian => "ethiopic",
             AnyCalendarKind::EthiopianAmeteAlem => "ethioaa",
             AnyCalendarKind::Persian => "persian",
+            AnyCalendarKind::Chinese => "chinese",
         }
     }
 
@@ -729,6 +749,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Ethiopian => value!("ethiopic"),
             AnyCalendarKind::EthiopianAmeteAlem => value!("ethioaa"),
             AnyCalendarKind::Persian => value!("persian"),
+            AnyCalendarKind::Chinese => value!("chinese"),
         }
     }
 

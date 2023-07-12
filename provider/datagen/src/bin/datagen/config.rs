@@ -39,7 +39,6 @@ fn is_default<T: Default + PartialEq>(value: &T) -> bool {
 pub enum KeyInclude {
     None,
     All,
-    AllWithExperimental,
     Explicit(#[serde(with = "data_key_as_str")] HashSet<DataKey>),
     ForBinary(PathBuf),
 }

@@ -56,7 +56,7 @@ pub mod ffi {
     /// An object that runs the ICU4X locale fallback algorithm with specific configurations.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbacker, Struct)]
-    #[diplomat::rust_link(icu::locid::fallback::LocaleFallbackerConfig, Struct)]
+    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackerWithConfig, Struct)]
     pub struct ICU4XLocaleFallbackerWithConfig<'a>(pub LocaleFallbackerWithConfig<'a>);
 
     /// An iterator over the locale under fallback.
@@ -66,16 +66,16 @@ pub mod ffi {
 
     impl ICU4XLocaleFallbacker {
         /// Creates a new `ICU4XLocaleFallbacker` from a data provider.
-        #[diplomat::rust_link(
-            icu::locid_transform::fallback::LocaleFallbacker::try_new_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbacker::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleFallbacker>, ICU4XError> {
-            Ok(Box::new(ICU4XLocaleFallbacker(
-                LocaleFallbacker::try_new_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XLocaleFallbacker(call_constructor!(
+                LocaleFallbacker::new [r => Ok(r.static_to_owned())],
+                LocaleFallbacker::try_new_with_any_provider,
+                LocaleFallbacker::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Creates a new `ICU4XLocaleFallbacker` without data for limited functionality.
@@ -91,6 +91,11 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::locid_transform::fallback::LocaleFallbacker::for_config,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::locid_transform::fallback::LocaleFallbackerBorrowed::for_config,
+            FnInStruct,
+            hidden
         )]
         pub fn for_config<'a, 'temp>(
             &'a self,
@@ -110,6 +115,11 @@ pub mod ffi {
         )]
         #[diplomat::rust_link(
             icu::locid_transform::fallback::LocaleFallbackerBorrowed::fallback_for,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locid_transform::fallback::LocaleFallbackerWithConfig::fallback_for,
             FnInStruct,
             hidden
         )]

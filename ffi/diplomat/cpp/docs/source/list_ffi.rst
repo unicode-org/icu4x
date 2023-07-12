@@ -37,21 +37,21 @@
 
         Construct a new ICU4XListFormatter instance for And patterns
 
-        See the `Rust documentation for try_new_and_with_length_unstable <https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_and_with_length_unstable>`__ for more information.
+        See the `Rust documentation for try_new_and_with_length <https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_and_with_length>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XListFormatter, ICU4XError> create_or_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListLength length)
 
         Construct a new ICU4XListFormatter instance for And patterns
 
-        See the `Rust documentation for try_new_or_with_length_unstable <https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_or_with_length_unstable>`__ for more information.
+        See the `Rust documentation for try_new_or_with_length <https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_or_with_length>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XListFormatter, ICU4XError> create_unit_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListLength length)
 
         Construct a new ICU4XListFormatter instance for And patterns
 
-        See the `Rust documentation for try_new_unit_with_length_unstable <https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_with_length_unstable>`__ for more information.
+        See the `Rust documentation for try_new_unit_with_length <https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_with_length>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_to_writeable(const ICU4XList& list, W& write) const

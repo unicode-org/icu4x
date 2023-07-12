@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-const std::string_view path = "../../../../../provider/repodata/data/json/";
+const std::string_view path = "../../../../../provider/datagen/tests/data/json/";
 
 int main() {
     ICU4XLogger::init_simple_logger();

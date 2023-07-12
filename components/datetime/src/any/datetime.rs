@@ -149,10 +149,10 @@ impl DateTimeFormatter {
     ///     "Sep 1, 2020, 12:34 PM"
     /// );
     /// ```
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ **Enabled with the `"compiled_data"` feature.**
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[inline]
     pub fn try_new(
         locale: &DataLocale,
@@ -196,36 +196,6 @@ impl DateTimeFormatter {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new)]
-    /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::datetime::{options::length, DateTimeFormatter};
-    /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let mut options = length::Bag::from_date_time_style(
-    ///     length::Date::Medium,
-    ///     length::Time::Short,
-    /// );
-    /// let locale = locale!("en-u-ca-gregory");
-    ///
-    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
-    ///     &icu_testdata::buffer(),
-    ///     &locale.into(),
-    ///     options.into(),
-    /// )
-    /// .expect("Failed to create TypedDateTimeFormatter instance.");
-    ///
-    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
-    /// let any_datetime = datetime.to_any();
-    ///
-    /// assert_writeable_eq!(
-    ///     dtf.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020, 12:34 PM"
-    /// );
-    /// ```
     #[inline]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
@@ -332,7 +302,7 @@ impl DateTimeFormatter {
     /// );
     /// ```
     #[cfg(feature = "experimental")]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[inline(never)]
     pub fn try_new_experimental(
         locale: &DataLocale,
@@ -631,4 +601,35 @@ mod tests {
             "2022 M09 20 00:00:00"
         );
     }
+}
+
+#[test]
+#[cfg(feature = "serde")]
+fn buffer_constructor() {
+    use icu::calendar::DateTime;
+    use icu::datetime::{options::length, DateTimeFormatter};
+    use icu::locid::locale;
+    use writeable::assert_writeable_eq;
+
+    let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(
+        "../../tests/data/blob.postcard"
+    ))
+    .unwrap();
+
+    let dtf = DateTimeFormatter::try_new_with_buffer_provider(
+        &provider,
+        &locale!("en").into(),
+        length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into(),
+    )
+    .unwrap();
+
+    assert_writeable_eq!(
+        dtf.format(
+            &DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
+                .unwrap()
+                .to_any()
+        )
+        .expect("Calendars should match"),
+        "Sep 1, 2020, 12:34 PM"
+    );
 }

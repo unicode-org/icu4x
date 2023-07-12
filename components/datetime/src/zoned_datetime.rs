@@ -122,7 +122,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// [data provider]: icu_provider
     #[cfg(feature = "experimental")]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[inline]
     pub fn try_new_experimental(
         locale: &DataLocale,
@@ -237,7 +237,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// [data provider]: icu_provider
     #[inline]
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new(
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,

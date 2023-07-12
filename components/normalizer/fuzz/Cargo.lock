@@ -141,12 +141,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "either"
-version = "1.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fcaabb2fef8c910e7f4c7ce9f67a1283a1715879a7c230ca9d6d1ae31f16d91"
-
-[[package]]
 name = "encoding_rs"
 version = "0.8.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -166,15 +160,6 @@ dependencies = [
  "log",
  "regex",
  "termcolor",
-]
-
-[[package]]
-name = "fixed_decimal"
-version = "0.5.3"
-dependencies = [
- "displaydoc",
- "smallvec",
- "writeable",
 ]
 
 [[package]]
@@ -202,82 +187,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_calendar"
-version = "1.2.0"
-dependencies = [
- "displaydoc",
- "icu_locid",
- "icu_provider",
- "tinystr",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_collator"
-version = "1.2.0"
-dependencies = [
- "displaydoc",
- "icu_collections",
- "icu_locid",
- "icu_normalizer",
- "icu_properties",
- "icu_provider",
- "smallvec",
- "utf16_iter",
- "utf8_iter",
- "zerovec",
-]
-
-[[package]]
 name = "icu_collections"
 version = "1.2.0"
 dependencies = [
  "displaydoc",
- "serde",
  "yoke",
  "zerofrom",
  "zerovec",
-]
-
-[[package]]
-name = "icu_datetime"
-version = "1.2.0"
-dependencies = [
- "displaydoc",
- "either",
- "fixed_decimal",
- "icu_calendar",
- "icu_decimal",
- "icu_locid",
- "icu_plurals",
- "icu_provider",
- "icu_timezone",
- "smallvec",
- "tinystr",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_decimal"
-version = "1.2.0"
-dependencies = [
- "displaydoc",
- "fixed_decimal",
- "icu_locid",
- "icu_provider",
- "writeable",
-]
-
-[[package]]
-name = "icu_list"
-version = "1.2.0"
-dependencies = [
- "displaydoc",
- "icu_provider",
- "regex-automata",
- "writeable",
 ]
 
 [[package]]
@@ -293,14 +209,19 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "displaydoc",
  "icu_locid",
+ "icu_locid_transform_data",
  "icu_provider",
  "tinystr",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_locid_transform_data"
+version = "1.3.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -308,9 +229,9 @@ version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
+ "icu_normalizer_data",
  "icu_properties",
  "icu_provider",
- "serde",
  "smallvec",
  "utf16_iter",
  "utf8_iter",
@@ -324,7 +245,6 @@ version = "0.0.0"
 dependencies = [
  "encoding_rs",
  "icu_normalizer",
- "icu_testdata",
  "libfuzzer-sys",
  "rust_icu_sys",
  "rust_icu_unorm2",
@@ -334,15 +254,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_plurals"
-version = "1.2.0"
-dependencies = [
- "displaydoc",
- "fixed_decimal",
- "icu_locid",
- "icu_provider",
- "zerovec",
-]
+name = "icu_normalizer_data"
+version = "1.3.0"
 
 [[package]]
 name = "icu_properties"
@@ -350,11 +263,16 @@ version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
+ "icu_locid_transform",
+ "icu_properties_data",
  "icu_provider",
- "serde",
  "tinystr",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_properties_data"
+version = "1.3.0"
 
 [[package]]
 name = "icu_provider"
@@ -363,22 +281,10 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider_macros",
- "serde",
  "stable_deref_trait",
  "writeable",
  "yoke",
  "zerofrom",
- "zerovec",
-]
-
-[[package]]
-name = "icu_provider_adapters"
-version = "1.2.0"
-dependencies = [
- "icu_locid",
- "icu_provider",
- "tinystr",
- "yoke",
  "zerovec",
 ]
 
@@ -388,53 +294,7 @@ version = "1.2.0"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "icu_segmenter"
-version = "1.2.0"
-dependencies = [
- "displaydoc",
- "icu_collections",
- "icu_locid",
- "icu_provider",
- "utf8_iter",
- "zerovec",
-]
-
-[[package]]
-name = "icu_testdata"
-version = "1.2.0"
-dependencies = [
- "icu_calendar",
- "icu_collator",
- "icu_collections",
- "icu_datetime",
- "icu_decimal",
- "icu_list",
- "icu_locid",
- "icu_locid_transform",
- "icu_normalizer",
- "icu_plurals",
- "icu_properties",
- "icu_provider",
- "icu_provider_adapters",
- "icu_segmenter",
- "icu_timezone",
- "zerovec",
-]
-
-[[package]]
-name = "icu_timezone"
-version = "1.2.0"
-dependencies = [
- "displaydoc",
- "icu_calendar",
- "icu_locid",
- "icu_provider",
- "tinystr",
- "zerovec",
+ "syn 2.0.15",
 ]
 
 [[package]]
@@ -568,15 +428,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "regex-automata"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9368763f5a9b804326f3af749e16f9abf378d227bcdee7634b13d8f17793782"
-dependencies = [
- "memchr",
-]
-
-[[package]]
 name = "regex-syntax"
 version = "0.6.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -686,20 +537,6 @@ name = "serde"
 version = "1.0.160"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bb2f3770c8bce3bcda7e149193a069a0f4365bda1fa5cd88e03bca26afc1216c"
-dependencies = [
- "serde_derive",
-]
-
-[[package]]
-name = "serde_derive"
-version = "1.0.160"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "291a097c63d8497e00160b166a967a4a79c64f3facdd01cbd7502231688d77df"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.15",
-]
 
 [[package]]
 name = "shlex"
@@ -749,13 +586,13 @@ dependencies = [
 
 [[package]]
 name = "synstructure"
-version = "0.12.6"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f36bdaa60a83aca3921b5259d5400cbf5e90fc51931376a9bd4a0eb79aa7210f"
+checksum = "285ba80e733fac80aa4270fbcdf83772a79b80aa35c97075320abfee4a915b06"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.15",
  "unicode-xid",
 ]
 
@@ -802,7 +639,6 @@ name = "tinystr"
 version = "0.7.1"
 dependencies = [
  "displaydoc",
- "serde",
  "zerovec",
 ]
 
@@ -914,7 +750,7 @@ version = "0.7.1"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.15",
  "synstructure",
 ]
 
@@ -931,7 +767,7 @@ version = "0.1.2"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.15",
  "synstructure",
 ]
 
@@ -939,7 +775,6 @@ dependencies = [
 name = "zerovec"
 version = "0.9.4"
 dependencies = [
- "serde",
  "yoke",
  "zerofrom",
  "zerovec-derive",
@@ -951,6 +786,6 @@ version = "0.9.4"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.15",
  "synstructure",
 ]

@@ -196,7 +196,7 @@ cd ffi/diplomat/js/examples/node
 exec --fail-on-error make icu_capi.wasm
 exec --fail-on-error make lib
 # Copy testdata instead of generating full data from scratch
-cp ../../../../../provider/testdata/data/testdata.postcard data.postcard
+cp ../../../../../provider/datagen/tests/data/testdata.postcard data.postcard
 # --foreground-scripts makes npm forward the output of make
 exec --fail-on-error npm ci --foreground-scripts
 exec --fail-on-error npm test

@@ -65,9 +65,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
     ///
-    /// let data =
-    ///     maps::load_general_category(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
+    /// let data = maps::general_category().static_to_owned();
     ///
     /// let gc = data.try_into_converted::<u8>().unwrap();
     /// let gc = gc.as_borrowed();
@@ -262,6 +260,15 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     }
 }
 
+impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
+    /// Cheaply converts a `CodePointMapDataBorrowed<'static>` into a `CodePointMapData`.
+    pub fn static_to_owned(self) -> CodePointMapData<T> {
+        CodePointMapData {
+            data: DataPayload::from_static_ref(self.map),
+        }
+    }
+}
+
 impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
     /// Yields an [`Iterator`] returning ranges of consecutive code points that
     /// have a `General_Category` value belonging to the specified [`GeneralCategoryGroup`]
@@ -319,8 +326,8 @@ macro_rules! make_map_property {
         }
         $(#[$doc])*
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
-        #[cfg(feature = "data")]
+        /// ✨ **Enabled with the `"compiled_data"` feature.**
+        #[cfg(feature = "compiled_data")]
         pub const fn $constname() -> CodePointMapDataBorrowed<'static, $value_ty> {
             CodePointMapDataBorrowed {
                 map: crate::provider::Baked::$singleton

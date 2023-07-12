@@ -49,7 +49,7 @@
 
     .. js:function:: load_script(provider)
 
-        See the `Rust documentation for load_script <https://docs.rs/icu/latest/icu/properties/maps/fn.load_script.html>`__ for more information.
+        See the `Rust documentation for script <https://docs.rs/icu/latest/icu/properties/maps/fn.script.html>`__ for more information.
 
 
 .. js:class:: ICU4XCodePointMapData8
@@ -120,35 +120,35 @@
 
     .. js:function:: load_general_category(provider)
 
-        See the `Rust documentation for load_general_category <https://docs.rs/icu/latest/icu/properties/maps/fn.load_general_category.html>`__ for more information.
+        See the `Rust documentation for general_category <https://docs.rs/icu/latest/icu/properties/maps/fn.general_category.html>`__ for more information.
 
 
     .. js:function:: load_bidi_class(provider)
 
-        See the `Rust documentation for load_bidi_class <https://docs.rs/icu/latest/icu/properties/maps/fn.load_bidi_class.html>`__ for more information.
+        See the `Rust documentation for bidi_class <https://docs.rs/icu/latest/icu/properties/maps/fn.bidi_class.html>`__ for more information.
 
 
     .. js:function:: load_east_asian_width(provider)
 
-        See the `Rust documentation for load_east_asian_width <https://docs.rs/icu/latest/icu/properties/maps/fn.load_east_asian_width.html>`__ for more information.
+        See the `Rust documentation for east_asian_width <https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html>`__ for more information.
 
 
     .. js:function:: load_line_break(provider)
 
-        See the `Rust documentation for load_line_break <https://docs.rs/icu/latest/icu/properties/maps/fn.load_line_break.html>`__ for more information.
+        See the `Rust documentation for line_break <https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html>`__ for more information.
 
 
     .. js:function:: try_grapheme_cluster_break(provider)
 
-        See the `Rust documentation for load_grapheme_cluster_break <https://docs.rs/icu/latest/icu/properties/maps/fn.load_grapheme_cluster_break.html>`__ for more information.
+        See the `Rust documentation for grapheme_cluster_break <https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html>`__ for more information.
 
 
     .. js:function:: load_word_break(provider)
 
-        See the `Rust documentation for load_word_break <https://docs.rs/icu/latest/icu/properties/maps/fn.load_word_break.html>`__ for more information.
+        See the `Rust documentation for word_break <https://docs.rs/icu/latest/icu/properties/maps/fn.word_break.html>`__ for more information.
 
 
     .. js:function:: load_sentence_break(provider)
 
-        See the `Rust documentation for load_sentence_break <https://docs.rs/icu/latest/icu/properties/maps/fn.load_sentence_break.html>`__ for more information.
+        See the `Rust documentation for sentence_break <https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html>`__ for more information.
 

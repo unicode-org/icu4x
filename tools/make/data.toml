@@ -27,7 +27,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/testdata/data provider/fs/tests/data provider/blob/tests/data provider/repodata
+output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
@@ -120,7 +120,7 @@ exit_on_error true
 
 if array_is_empty ${@}
     mode = set "--release"
-    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemapping experimental/compactdecimal experimental/displaynames experimental/relativetime
+    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemap experimental/compactdecimal experimental/displaynames experimental/relativetime
 else
     mode = set "--bin=icu4x-datagen" # need some valid argument
     components = set ${@}
@@ -154,16 +154,6 @@ if greater_than ${output_length} 0
 end
 '''
 
-[tasks.full-data]
-description = "Builds a complete postcard file from latest data."
-category = "ICU4X Data"
-dependencies = ["bakeddata"]
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking --release -- --locales basic moderate --keys experimental-all --format mod --out nonbake
-rm -r nonbake
-'''
-
 [tasks.download-repo-sources]
 description = "Download fresh CLDR JSON and icuexportdata, overwriting the existing CLDR JSON/icuexportdata."
 category = "ICU4X Data"
@@ -172,7 +162,6 @@ args = [
     "run",
     "--bin=download-repo-sources",
     "--",
-    "--out=provider/repodata/data",
     "-v",
 ]
 

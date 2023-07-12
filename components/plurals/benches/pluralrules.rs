@@ -13,17 +13,10 @@ fn pluralrules(c: &mut Criterion) {
     let plurals_data = helpers::get_plurals_data();
     let numbers_data = helpers::get_numbers_data();
 
-    let provider = icu_testdata::unstable();
-
     c.bench_function("plurals/pluralrules/overview", |b| {
         b.iter(|| {
             for lang in &plurals_data.langs {
-                let pr = PluralRules::try_new_unstable(
-                    &provider,
-                    &lang.into(),
-                    PluralRuleType::Cardinal,
-                )
-                .unwrap();
+                let pr = PluralRules::try_new(&lang.into(), PluralRuleType::Cardinal).unwrap();
                 for s in &numbers_data.usize {
                     let _ = pr.category_for(*s);
                 }
@@ -39,24 +32,13 @@ fn pluralrules(c: &mut Criterion) {
         c.bench_function("plurals/pluralrules/construct/fs", |b| {
             b.iter(|| {
                 for lang in &plurals_data.langs {
-                    PluralRules::try_new_unstable(&provider, &lang.into(), PluralRuleType::Ordinal)
-                        .unwrap();
-                    PluralRules::try_new_unstable(
-                        &provider,
-                        &lang.into(),
-                        PluralRuleType::Cardinal,
-                    )
-                    .unwrap();
+                    PluralRules::try_new(&lang.into(), PluralRuleType::Ordinal).unwrap();
+                    PluralRules::try_new(&lang.into(), PluralRuleType::Cardinal).unwrap();
                 }
             });
         });
 
-        let pr = PluralRules::try_new_unstable(
-            &provider,
-            &locale!("ru").into(),
-            PluralRuleType::Cardinal,
-        )
-        .unwrap();
+        let pr = PluralRules::try_new(&locale!("ru").into(), PluralRuleType::Cardinal).unwrap();
         c.bench_function("plurals/pluralrules/select/fs", |b| {
             b.iter(|| {
                 for s in &numbers_data.usize {

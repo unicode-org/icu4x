@@ -4,10 +4,10 @@
 
 import test from 'ava';
 
-import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter, fullData } from "../index.js"
+import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "../index.js"
 
 const locale = ICU4XLocale.create_from_string("bn");
-const provider = ICU4XDataProvider.create_from_byte_slice(await fullData());
+const provider = ICU4XDataProvider.create_compiled();
 const format = ICU4XFixedDecimalFormatter.create_with_grouping_strategy(provider, locale, "Auto");
 
 test("format a simple decimal", t => {

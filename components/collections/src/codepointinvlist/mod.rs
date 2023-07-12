@@ -66,6 +66,7 @@ use alloc::vec::Vec;
 pub use builder::CodePointInversionListBuilder;
 pub use conversions::*;
 pub use cpinvlist::CodePointInversionList;
+pub use cpinvlist::CodePointInversionListULE;
 use displaydoc::Display;
 
 /// Custom Errors for [`CodePointInversionList`].

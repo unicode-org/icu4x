@@ -513,6 +513,17 @@ pub const fn i64_to_saturated_i32(input: i64) -> i32 {
 }
 
 #[test]
+fn test_signum_i64() {
+    assert_eq!(signum(5.0), 1.0);
+    assert_eq!(signum(-5.0), -1.0);
+    assert_eq!(signum(0.0), 1.0);
+    assert_eq!(signum(-0.0), -1.0);
+    assert_eq!(signum(f64::INFINITY), 1.0);
+    assert_eq!(signum(f64::NEG_INFINITY), -1.0);
+    assert!(signum(f64::NAN).is_nan());
+}
+
+#[test]
 fn test_i64_to_saturated_i32() {
     assert_eq!(i64_to_saturated_i32(i64::MIN), i32::MIN);
     assert_eq!(i64_to_saturated_i32(-2147483649), -2147483648);
