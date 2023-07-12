@@ -186,7 +186,8 @@ impl Astronomical {
     /// somewhat-unpredictable discrepancy between dynamical time
     /// and universal time
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus (1991) with data from NASA.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3884-L3952
     pub(crate) fn ephemeris_correction(moment: Moment) -> f64 {
         // TODO: Change this to directly convert from moment to Gregorian year through a separate fn
@@ -296,7 +297,8 @@ impl Astronomical {
     /// and noon as measured by a clock adjusted to the local longitude. This varies throughout the
     /// year and the difference is given by the equation of time.
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 185.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3954-L3983
     pub(crate) fn equation_of_time(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
@@ -482,7 +484,8 @@ impl Astronomical {
     /// (or before if n is negative) the new moon of January 11, 1 CE,
     /// which is the first new moon after R.D. 0.
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, corrected 2nd edn., 2005.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4288-L4377
     pub(crate) fn nth_new_moon(n: i32) -> Moment {
         let n0 = 24724.0;
@@ -579,7 +582,7 @@ impl Astronomical {
     /// from a given moment.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
-    /// in turn from _Astronomical Algorithms_ by Meeus, 2nd edition (1988), p. 88.
+    /// originally from _Astronomical Algorithms_ by Meeus, 2nd edition (1988), p. 88.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3860-L3870
     #[allow(dead_code)] // TODO: Remove dead code tag after use
     pub(crate) fn sidereal_from_moment(moment: Moment) -> f64 {
@@ -598,7 +601,8 @@ impl Astronomical {
 
     /// Latitude of the moon (in degrees) at a given moment
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4466
     pub(crate) fn lunar_latitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
@@ -675,7 +679,8 @@ impl Astronomical {
 
     /// Longitude of the moon (in degrees) at a given moment
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4215-L4278
     pub(crate) fn lunar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
@@ -746,7 +751,8 @@ impl Astronomical {
 
     /// Mean longitude of the moon (in degrees) at a given Moment in Julian centuries.
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 336-340.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4148-L4158
     fn mean_lunar_longitude(c: f64) -> f64 {
         let n = 218.3164477
@@ -758,7 +764,8 @@ impl Astronomical {
 
     /// Lunar elongation (the moon's angular distance east of the Sun) at a given Moment in Julian centuries
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4160-L4170
     fn lunar_elongation(c: f64) -> f64 {
         div_rem_euclid_f64(
@@ -772,7 +779,8 @@ impl Astronomical {
 
     /// Altitude of the moon (in degrees) at a given moment
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4537
     #[allow(dead_code, clippy::unwrap_used)]
     pub(crate) fn lunar_altitude(moment: Moment, location: Location) -> f64 {
@@ -795,7 +803,8 @@ impl Astronomical {
 
     /// Distance to the moon in meters at the given moment.
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4568-L4617
     pub(crate) fn lunar_distance(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
@@ -914,7 +923,8 @@ impl Astronomical {
     /// The parallax of the moon, meaning the difference in angle of the direction of the moon
     /// as measured from a given location and from the center of the Earth, in degrees.
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4619-L4628
     pub(crate) fn lunar_parallax(moment: Moment, location: Location) -> f64 {
         let geo = Self::lunar_altitude(moment, location);
@@ -949,7 +959,8 @@ impl Astronomical {
     /// Average anomaly of the sun (in degrees) at a given Moment in Julian centuries.
     /// See: https://en.wikipedia.org/wiki/Mean_anomaly
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4172-L4182
     fn solar_anomaly(c: f64) -> f64 {
         div_rem_euclid_f64(
@@ -963,7 +974,8 @@ impl Astronomical {
     /// Average anomaly of the moon (in degrees) at a given Moment in Julian centuries
     /// See: https://en.wikipedia.org/wiki/Mean_anomaly
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4184-L4194
     fn lunar_anomaly(c: f64) -> f64 {
         div_rem_euclid_f64(
@@ -980,7 +992,8 @@ impl Astronomical {
     /// The moon's argument of latitude, in degrees, at the moment given by `c` in Julian centuries.
     /// The argument of latitude is used to define the position of a body moving in a Kepler orbit.
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4196-L4206
     fn moon_node(c: f64) -> f64 {
         div_rem_euclid_f64(
@@ -1131,7 +1144,8 @@ impl Astronomical {
 
     /// The longitude of the Sun at a given Moment in degrees.
     ///
-    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
+    /// originally from "Planetary Programs and Tables from -4000 to +2800" by Bretagnon & Simon, 1986.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L3985-L4035
     pub(crate) fn solar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
