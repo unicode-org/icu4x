@@ -95,6 +95,7 @@ simple_logger = { version = "4.1.0", default-features = false, optional = true }
 icu = { path = "../../components/icu" }
 glob = "0.3.1"
 dhat = "0.3.0"
+simple_logger = { version = "4.1.0", default-features = false }
 
 [features]
 default = ["bin", "use_wasm", "networking", "legacy_api", "rayon"]
@@ -120,6 +121,7 @@ required-features = ["bin"]
 [[test]]
 name = "make-testdata"
 path = "tests/make-testdata.rs"
+required-features = ["provider_fs", "use_wasm"]
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
