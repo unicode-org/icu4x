@@ -14,18 +14,19 @@ use crate::{
     Calendar, Date,
 };
 
-/// For an example of how to use this trait, see `impl ChineseBased<Chinese>` in [`Chinese`].
-///
-/// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendars.
-/// To do so, calendars should implement `fn location` by providing a location at which observations of the
-/// new moon are recorded (which may change over time), with the most important part being the time zone
-/// offset (longitude, latitude, and elevation are not relevant for these particular calculations);
-/// define `const EPOCH` as a `RataDie` marking the start date of the era of the Calendar for internal use,
-/// which may not accurately reflect how years or eras are marked traditionally or how they will be seen
-/// by end-users; and implement `fn new_chinese_based_date` by taking a year, month, and day, and
+/// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
+/// To do so, calendars should:
+/// 
+/// - Implement `fn location` by providing a location at which observations of the moon are recorded, which
+/// may change over time (the zone is important, long, lat, and elevation are not relevant for these calculations)
+/// - Define `const EPOCH` as a `RataDie` marking the start date of the era of the Calendar for internal use,
+/// which may not accurately reflect how years or eras are marked traditionally or seen by end-users
+/// - Implement `fn new_chinese_based_date` by taking a year, month, and day in a Chinese-based calendar and
 /// returning a Date of the relevant Calendar type.
-pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
-    /// Given a fixed date, the location used for observations of the new moon in order to
+/// 
+/// For an example of how to use this trait, see `impl ChineseBased<Chinese>` in [`Chinese`].
+pub(crate) trait ChineseBased<C: CalendarArithmetic> {
+    /// Given a fixed date, return the location used for observations of the new moon in order to
     /// calculate the beginning of months. For multiple Chinese-based lunar calendars, this has
     /// changed over the years, and can cause differences in calendar date.
     fn location(fixed: RataDie) -> Location;
