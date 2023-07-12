@@ -13,7 +13,7 @@ use std::path::Path;
 #[global_allocator]
 static ALLOC: dhat::Alloc = dhat::Alloc;
 
-include!("../../../tools/testdata-scripts/locales.rs.data"); // TODO where should this live?
+include!("data/locales.rs.data");
 
 #[test]
 fn generate_fs_and_verify_zero_copy() {
