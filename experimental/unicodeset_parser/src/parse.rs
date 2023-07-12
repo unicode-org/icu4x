@@ -79,7 +79,7 @@ impl ParseError {
     /// use icu_unicodeset_parser::*;
     ///
     /// let source = "[[abc]-x]";
-    /// let set = parse(source, Default::default());
+    /// let set = parse(source);
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
     /// assert_eq!(err.fmt_with_source(source).to_string(), "[[abc]-x← error: unexpected character 'x'");
@@ -89,7 +89,7 @@ impl ParseError {
     /// use icu_unicodeset_parser::*;
     ///
     /// let source = r"[\N{LATIN CAPITAL LETTER A}]";
-    /// let set = parse(source, Default::default());
+    /// let set = parse(source);
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
     /// assert_eq!(err.fmt_with_source(source).to_string(), r"[\N← error: unimplemented");
@@ -203,27 +203,13 @@ enum Operation {
     Intersection,
 }
 
-// TODO: if UnicodeSetBuilder is staying private, this should have a more generic name like ParseOptions or UnicodeSetParseOptions
-/// Options for parsing a UnicodeSet.
-#[derive(Debug, Clone, Copy, Default)]
-#[non_exhaustive]
-pub struct UnicodeSetBuilderOptions {
-    /// If true, the dollar sign '$' is treated as an anchor and replaced with U+FFFF whenever
-    /// it appears as a single codepoint (e.g., `[$]`) or as part of a range (e.g., `[\uFF00-$]`).
-    /// Note that '$' is never replaced in a property, nor in a multi-codepoint expression,
-    /// no matter what this option is set to.
-    ///
-    /// This option is useful for implementations that interpret U+FFFF as a special value.
-    pub dollar_is_anchor: bool,
-}
-
+// this builds the set on-the-fly while parsing it
 // this builds the set on-the-fly while parsing it
 struct UnicodeSetBuilder<'a, 'b, 'c, P: ?Sized> {
     single_set: CodePointInversionListBuilder,
     multi_set: HashSet<String>,
     iter: &'b mut Peekable<CharIndices<'a>>,
     inverted: bool,
-    options: UnicodeSetBuilderOptions,
     property_provider: &'c P,
 }
 
@@ -288,7 +274,6 @@ where
 {
     fn new_internal(
         iter: &'b mut Peekable<CharIndices<'a>>,
-        options: UnicodeSetBuilderOptions,
         provider: &'c P,
     ) -> Self {
         UnicodeSetBuilder {
@@ -296,7 +281,6 @@ where
             multi_set: Default::default(),
             iter,
             inverted: false,
-            options,
             property_provider: provider,
         }
     }
@@ -377,7 +361,6 @@ where
 
                         let mut inner_builder = UnicodeSetBuilder::new_internal(
                             self.iter,
-                            self.options,
                             self.property_provider,
                         );
                         inner_builder.parse_unicode_set()?;
@@ -407,7 +390,7 @@ where
                 }
                 // parse a literal char (either individually or as the start of a range)
                 (Begin | Char | AfterUnicodeSet, c) if legal_char_start(c) => {
-                    let c = self.parse_char(self.options.dollar_is_anchor)?;
+                    let c = self.parse_char(true)?;
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
@@ -417,7 +400,7 @@ where
                 // parse a literal char as the end of a range
                 (CharMinus, c) if legal_char_start(c) => {
                     let start = prev_char.ok_or(PEK::Eof)?;
-                    let end = self.parse_char(self.options.dollar_is_anchor)?;
+                    let end = self.parse_char(true)?;
                     if start > end {
                         // TODO(#3558): Better error message (e.g., "start greater than end in range")?
                         // note: offset - 1, because we already consumed the end char (and its offset)
@@ -973,9 +956,9 @@ where
 ///
 /// Parse ranges
 /// ```
-/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::parse;
 ///
-/// let set = parse("[a-zA-Z0-9]", Default::default()).unwrap();
+/// let set = parse("[a-zA-Z0-9]").unwrap();
 /// let code_points = set.code_points();
 ///
 /// assert!(code_points.contains_range(&('a'..='z')));
@@ -985,9 +968,9 @@ where
 ///
 /// Parse properties, set operations, inner sets
 /// ```
-/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::parse;
 ///
-/// let set = parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]", Default::default()).unwrap();
+/// let set = parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]").unwrap();
 /// let elements = 'a'..='z';
 /// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(elements.count(), set.size());
@@ -995,9 +978,9 @@ where
 ///
 /// Inversions remove strings
 /// ```
-/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::parse;
 ///
-/// let set = parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]", Default::default()).unwrap();
+/// let set = parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
 /// assert!(set.contains_char('z'));
 /// assert_eq!(set.size(), 1);
 /// assert!(!set.has_strings());
@@ -1005,9 +988,9 @@ where
 ///
 /// Set operators (including the implicit union) have the same precedence and are left-associative
 /// ```
-/// use icu_unicodeset_parser::{parse, UnicodeSetBuilderOptions};
+/// use icu_unicodeset_parser::parse;
 ///
-/// let set = parse("[[ace][bdf] - [abc][def]]", Default::default()).unwrap();
+/// let set = parse("[[ace][bdf] - [abc][def]]").unwrap();
 /// let elements = 'd'..='f';
 /// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(set.size(), elements.count());
@@ -1015,15 +998,13 @@ where
 #[cfg(feature = "compiled_data")]
 pub fn parse(
     source: &str,
-    options: UnicodeSetBuilderOptions,
 ) -> Result<CodePointInversionListAndStringList<'static>> {
-    parse_unstable(source, options, &icu_properties::provider::Baked)
+    parse_unstable(source, &icu_properties::provider::Baked)
 }
 
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse)]
 pub fn parse_unstable<P>(
     source: &str,
-    options: UnicodeSetBuilderOptions,
     provider: &P,
 ) -> Result<CodePointInversionListAndStringList<'static>>
 where
@@ -1089,7 +1070,7 @@ where
     // TODO(#3550): Think about returning byte-length of the parsed UnicodeSet for use in the transliterator parser, or add public function that accepts a peekable char iterator?
 
     let mut iter = source.char_indices().peekable();
-    let mut builder = UnicodeSetBuilder::new_internal(&mut iter, options, provider);
+    let mut builder = UnicodeSetBuilder::new_internal(&mut iter, provider);
 
     builder.parse_unicode_set()?;
     let (single, multi) = builder.finalize();
@@ -1111,12 +1092,6 @@ mod tests {
 
     use super::*;
 
-    const OPTIONS_ANCHOR: UnicodeSetBuilderOptions = UnicodeSetBuilderOptions {
-        dollar_is_anchor: true,
-    };
-    const OPTIONS_NO_ANCHOR: UnicodeSetBuilderOptions = UnicodeSetBuilderOptions {
-        dollar_is_anchor: false,
-    };
 
     // "aabxzz" => [a..=a, b..=x, z..=z]
     fn range_iter_from_str(s: &str) -> impl Iterator<Item = RangeInclusive<u32>> {
@@ -1180,11 +1155,10 @@ mod tests {
     }
 
     fn assert_is_error_and_message_eq(
-        options: UnicodeSetBuilderOptions,
         source: &str,
         expected_err: &str,
     ) {
-        let result = parse(source, options);
+        let result = parse(source);
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert_eq!(err.fmt_with_source(source).to_string(), expected_err);
@@ -1192,130 +1166,124 @@ mod tests {
 
     #[test]
     fn test_semantics() {
-        const D: UnicodeSetBuilderOptions = OPTIONS_ANCHOR;
         const ALL_CHARS: &str = "\x00\u{10FFFF}";
-        let cases: Vec<(_, _, _, Vec<&str>)> = vec![
+        let cases: Vec<(_, _, Vec<&str>)> = vec![
             // simple
-            (D, "[a]", "aa", vec![]),
-            (D, "[]", "", vec![]),
-            (D, "[qax]", "aaqqxx", vec![]),
-            (D, "[a-z]", "az", vec![]),
+            ("[a]", "aa", vec![]),
+            ("[]", "", vec![]),
+            ("[qax]", "aaqqxx", vec![]),
+            ("[a-z]", "az", vec![]),
             // whitespace escaping
-            (D, r"[\n]", "\n\n", vec![]),
-            (D, "[\\\n]", "\n\n", vec![]),
+            (r"[\n]", "\n\n", vec![]),
+            ("[\\\n]", "\n\n", vec![]),
             // empty - whitespace is skipped
-            (D, "[\n]", "", vec![]),
-            (D, "[\u{9}]", "", vec![]),
-            (D, "[\u{A}]", "", vec![]),
-            (D, "[\u{B}]", "", vec![]),
-            (D, "[\u{C}]", "", vec![]),
-            (D, "[\u{D}]", "", vec![]),
-            (D, "[\u{20}]", "", vec![]),
-            (D, "[\u{85}]", "", vec![]),
-            (D, "[\u{200E}]", "", vec![]),
-            (D, "[\u{200F}]", "", vec![]),
-            (D, "[\u{2028}]", "", vec![]),
-            (D, "[\u{2029}]", "", vec![]),
+            ("[\n]", "", vec![]),
+            ("[\u{9}]", "", vec![]),
+            ("[\u{A}]", "", vec![]),
+            ("[\u{B}]", "", vec![]),
+            ("[\u{C}]", "", vec![]),
+            ("[\u{D}]", "", vec![]),
+            ("[\u{20}]", "", vec![]),
+            ("[\u{85}]", "", vec![]),
+            ("[\u{200E}]", "", vec![]),
+            ("[\u{200F}]", "", vec![]),
+            ("[\u{2028}]", "", vec![]),
+            ("[\u{2029}]", "", vec![]),
             // but not all "whitespace", only Pattern_White_Space:
-            (D, "[\u{A0}]", "\u{A0}\u{A0}", vec![]), // non-breaking space
+            ("[\u{A0}]", "\u{A0}\u{A0}", vec![]), // non-breaking space
             // anchor
-            (OPTIONS_NO_ANCHOR, "[$]", "$$", vec![]),
-            (OPTIONS_NO_ANCHOR, "[{$}]", "$$", vec![]),
-            (D, "[$]", "\u{ffff}\u{ffff}", vec![]),
-            (D, r"[\$]", "$$", vec![]),
-            (D, "[{$}]", "$$", vec![]),
+            ("[$]", "\u{ffff}\u{ffff}", vec![]),
+            (r"[\$]", "$$", vec![]),
+            ("[{$}]", "$$", vec![]),
             // set operations
-            (D, "[[a-z]&[b-z]]", "bz", vec![]),
-            (D, "[[a-z]-[b-z]]", "aa", vec![]),
-            (D, "[[a-z][b-z]]", "az", vec![]),
-            (D, "[[a-a][b-z]]", "az", vec![]),
-            (D, "[[a-z{abc}]&[b-z{abc}{abx}]]", "bz", vec!["abc"]),
-            (D, "[[{abx}a-z{abc}]&[b-z{abc}]]", "bz", vec!["abc"]),
-            (D, "[[a-z{abx}]-[{abx}b-z{abc}]]", "aa", vec![]),
-            (D, "[[a-z{abx}{abc}]-[{abx}b-z]]", "aa", vec!["abc"]),
-            (D, "[[a-z{abc}][b-z{abx}]]", "az", vec!["abc", "abx"]),
+            ("[[a-z]&[b-z]]", "bz", vec![]),
+            ("[[a-z]-[b-z]]", "aa", vec![]),
+            ("[[a-z][b-z]]", "az", vec![]),
+            ("[[a-a][b-z]]", "az", vec![]),
+            ("[[a-z{abc}]&[b-z{abc}{abx}]]", "bz", vec!["abc"]),
+            ("[[{abx}a-z{abc}]&[b-z{abc}]]", "bz", vec!["abc"]),
+            ("[[a-z{abx}]-[{abx}b-z{abc}]]", "aa", vec![]),
+            ("[[a-z{abx}{abc}]-[{abx}b-z]]", "aa", vec!["abc"]),
+            ("[[a-z{abc}][b-z{abx}]]", "az", vec!["abc", "abx"]),
             // associativity
-            (D, "[[a-a][b-z] - [a-d][e-z]]", "ez", vec![]),
-            (D, "[[a-a][b-z] - [a-d]&[e-z]]", "ez", vec![]),
-            (D, "[[a-a][b-z] - [a-z][]]", "", vec![]),
-            (D, "[[a-a][b-z] - [a-z]&[]]", "", vec![]),
-            (D, "[[a-a][b-z] & [a-z]-[]]", "az", vec![]),
-            (D, "[[a-a][b-z] & []-[a-z]]", "", vec![]),
-            (D, "[[a-a][b-z] & [a-b][x-z]]", "abxz", vec![]),
-            (D, "[[a-z]-[a-b]-[y-z]]", "cx", vec![]),
+            ("[[a-a][b-z] - [a-d][e-z]]", "ez", vec![]),
+            ("[[a-a][b-z] - [a-d]&[e-z]]", "ez", vec![]),
+            ("[[a-a][b-z] - [a-z][]]", "", vec![]),
+            ("[[a-a][b-z] - [a-z]&[]]", "", vec![]),
+            ("[[a-a][b-z] & [a-z]-[]]", "az", vec![]),
+            ("[[a-a][b-z] & []-[a-z]]", "", vec![]),
+            ("[[a-a][b-z] & [a-b][x-z]]", "abxz", vec![]),
+            ("[[a-z]-[a-b]-[y-z]]", "cx", vec![]),
             // escape tests
-            (D, r"[\x61-\x63]", "ac", vec![]),
-            (D, r"[a-\x63]", "ac", vec![]),
-            (D, r"[\x61-c]", "ac", vec![]),
-            (D, r"[\u0061-\x63]", "ac", vec![]),
-            (D, r"[\U00000061-\x63]", "ac", vec![]),
-            (D, r"[\x{61}-\x63]", "ac", vec![]),
-            (D, r"[\u{61}-\x63]", "ac", vec![]),
-            (D, r"[\u{61}{hello\ world}]", "aa", vec!["hello world"]),
-            (D, r"[{hello\ world}\u{61}]", "aa", vec!["hello world"]),
-            (D, r"[{h\u{65}llo\ world}]", "", vec!["hello world"]),
+            (r"[\x61-\x63]", "ac", vec![]),
+            (r"[a-\x63]", "ac", vec![]),
+            (r"[\x61-c]", "ac", vec![]),
+            (r"[\u0061-\x63]", "ac", vec![]),
+            (r"[\U00000061-\x63]", "ac", vec![]),
+            (r"[\x{61}-\x63]", "ac", vec![]),
+            (r"[\u{61}-\x63]", "ac", vec![]),
+            (r"[\u{61}{hello\ world}]", "aa", vec!["hello world"]),
+            (r"[{hello\ world}\u{61}]", "aa", vec!["hello world"]),
+            (r"[{h\u{65}llo\ world}]", "", vec!["hello world"]),
             // complement tests
-            (D, r"[^]", ALL_CHARS, vec![]),
-            (D, r"[[^]-[^a-z]]", "az", vec![]),
-            (D, r"[^{h\u{65}llo\ world}]", ALL_CHARS, vec![]),
+            (r"[^]", ALL_CHARS, vec![]),
+            (r"[[^]-[^a-z]]", "az", vec![]),
+            (r"[^{h\u{65}llo\ world}]", ALL_CHARS, vec![]),
             (
-                D,
                 r"[^[{h\u{65}llo\ world}]-[{hello\ world}]]",
                 ALL_CHARS,
                 vec![],
             ),
             (
-                D,
                 r"[^[\x00-\U0010FFFF]-[\u0100-\U0010FFFF]]",
                 "\u{100}\u{10FFFF}",
                 vec![],
             ),
-            (D, r"[^[^a-z]]", "az", vec![]),
-            (D, r"[^[^^]]", "^^", vec![]),
+            (r"[^[^a-z]]", "az", vec![]),
+            (r"[^[^^]]", "^^", vec![]),
             // binary properties
-            (D, r"[:AHex:]", "09afAF", vec![]),
-            (D, r"[:AHex=True:]", "09afAF", vec![]),
-            (D, r"[:AHex=T:]", "09afAF", vec![]),
-            (D, r"[:AHex=Yes:]", "09afAF", vec![]),
-            (D, r"[:AHex=Y:]", "09afAF", vec![]),
-            (D, r"[:^AHex≠True:]", "09afAF", vec![]),
-            (D, r"[:AHex≠False:]", "09afAF", vec![]),
-            (D, r"[[:^AHex≠False:]&[\x00-\x10]]", "\0\x10", vec![]),
-            (D, r"\p{AHex}", "09afAF", vec![]),
-            (D, r"\p{AHex=True}", "09afAF", vec![]),
-            (D, r"\p{AHex=T}", "09afAF", vec![]),
-            (D, r"\p{AHex=Yes}", "09afAF", vec![]),
-            (D, r"\p{AHex=Y}", "09afAF", vec![]),
-            (D, r"\P{AHex≠True}", "09afAF", vec![]),
-            (D, r"\p{AHex≠False}", "09afAF", vec![]),
+            (r"[:AHex:]", "09afAF", vec![]),
+            (r"[:AHex=True:]", "09afAF", vec![]),
+            (r"[:AHex=T:]", "09afAF", vec![]),
+            (r"[:AHex=Yes:]", "09afAF", vec![]),
+            (r"[:AHex=Y:]", "09afAF", vec![]),
+            (r"[:^AHex≠True:]", "09afAF", vec![]),
+            (r"[:AHex≠False:]", "09afAF", vec![]),
+            (r"[[:^AHex≠False:]&[\x00-\x10]]", "\0\x10", vec![]),
+            (r"\p{AHex}", "09afAF", vec![]),
+            (r"\p{AHex=True}", "09afAF", vec![]),
+            (r"\p{AHex=T}", "09afAF", vec![]),
+            (r"\p{AHex=Yes}", "09afAF", vec![]),
+            (r"\p{AHex=Y}", "09afAF", vec![]),
+            (r"\P{AHex≠True}", "09afAF", vec![]),
+            (r"\p{AHex≠False}", "09afAF", vec![]),
             // general category
-            (D, r"[[:gc=lower-case-letter:]&[a-zA-Z]]", "az", vec![]),
-            (D, r"[[:lower case letter:]&[a-zA-Z]]", "az", vec![]),
+            (r"[[:gc=lower-case-letter:]&[a-zA-Z]]", "az", vec![]),
+            (r"[[:lower case letter:]&[a-zA-Z]]", "az", vec![]),
             // general category groups
             // equivalence between L and the union of all the L* categories
             (
-                D,
                 r"[[[:L:]-[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]][[\p{Ll}\p{Lt}\p{Lu}\p{Lo}\p{Lm}]-[:L:]]]",
                 "",
                 vec![],
             ),
             // script
-            (D, r"[[:sc=latn:]&[a-zA-Z]]", "azAZ", vec![]),
-            (D, r"[[:sc=Latin:]&[a-zA-Z]]", "azAZ", vec![]),
-            (D, r"[[:Latin:]&[a-zA-Z]]", "azAZ", vec![]),
-            (D, r"[[:latn:]&[a-zA-Z]]", "azAZ", vec![]),
+            (r"[[:sc=latn:]&[a-zA-Z]]", "azAZ", vec![]),
+            (r"[[:sc=Latin:]&[a-zA-Z]]", "azAZ", vec![]),
+            (r"[[:Latin:]&[a-zA-Z]]", "azAZ", vec![]),
+            (r"[[:latn:]&[a-zA-Z]]", "azAZ", vec![]),
             // script extensions
-            (D, r"[[:scx=latn:]&[a-zA-Z]]", "azAZ", vec![]),
-            (D, r"[[:scx=Latin:]&[a-zA-Z]]", "azAZ", vec![]),
-            (D, r"[[:scx=Hira:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
-            (D, r"[[:sc=Hira:]&[\u30FC]]", "", vec![]),
-            (D, r"[[:scx=Kana:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
-            (D, r"[[:sc=Kana:]&[\u30FC]]", "", vec![]),
-            (D, r"[[:sc=Common:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
+            (r"[[:scx=latn:]&[a-zA-Z]]", "azAZ", vec![]),
+            (r"[[:scx=Latin:]&[a-zA-Z]]", "azAZ", vec![]),
+            (r"[[:scx=Hira:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
+            (r"[[:sc=Hira:]&[\u30FC]]", "", vec![]),
+            (r"[[:scx=Kana:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
+            (r"[[:sc=Kana:]&[\u30FC]]", "", vec![]),
+            (r"[[:sc=Common:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
             // TODO(#3556): Add more tests (specifically conformance tests if they exist)
         ];
-        for (options, source, single, multi) in cases {
-            let parsed = parse(source, options).unwrap();
+        for (source, single, multi) in cases {
+            let parsed = parse(source).unwrap();
             assert_set_equality(
                 source,
                 &parsed,
@@ -1380,7 +1348,7 @@ mod tests {
             (r"[\xe5-ä]", r"[\xe5-ä← error: unexpected character 'ä'"),
         ];
         for (source, expected_err) in cases {
-            assert_is_error_and_message_eq(OPTIONS_NO_ANCHOR, source, expected_err);
+            assert_is_error_and_message_eq(source, expected_err);
         }
     }
 }
