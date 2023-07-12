@@ -348,7 +348,7 @@ impl Astronomical {
         result
     }
 
-    /// Calculates declination at a given Moment of UTC time for the latitude and longitude of an object lambda;
+    /// Calculates the declination at a given [`Moment`] of UTC time of an object at latitude `beta` and longitude `lambda`; all angles are in degrees.
     /// the declination is the angular distance north or south of an object in the sky with respect to the plane
     /// of the Earth's equator; analagous to latitude.
     ///
