@@ -171,6 +171,7 @@ impl ParseError {
 }
 
 
+// invariant: a one-codepoint-element is represented as a char, not a single-char String
 pub enum VariableValue<'a> {
     UnicodeSet(CodePointInversionListAndStringList<'a>),
     Char(char),
@@ -179,19 +180,13 @@ pub enum VariableValue<'a> {
 
 pub type VariableMap<'a> = HashMap<String, VariableValue<'a>>;
 
-// struct Token<'a> {
-//     inner: TokenInner<'a>,
-//     // whether the token represents the element literally, or could be a syntax char.
-//     // e.g., Token{ '&', true } could come from \&, but Token{ '&', false } comes from &.
-//     // whether that is actually a literal '&' or a syntax character (set intersection) depends on the context
-//     // (inside a string, & means the literal '&').
-//     literal: bool,
-// }
-
 enum Token<'a> {
+    // Token::Elements are already escaped. the parser should not do any escaping.
+    // because ... \$blah ... would be lexed as \, $, b, l, a, h, there shouldn't be a scenario in the parser
+    // where a Token::Element follows a backslash escape. 
     Element(Element),
     UnicodeSet(CodePointInversionListAndStringList<'a>),
-    // the pass-through case 
+    // the pass-through case, source character-by-character, escaping must be done by the parser.
     Char(char),
 }
 
@@ -199,7 +194,7 @@ struct Lexer<'a, 'b> {
     variable_map: VariableMap<'a>,
     iter: Peekable<CharIndices<'b>>,
     // true if the previous passed char was a syntax \ . 
-    // Used to figure out if $abc is the variable abc, or \$ followed by abc.
+    // it is needed to figure out if $abc is the variable abc, or \$ followed by abc.
     escaped: bool,
 }
 
@@ -210,8 +205,16 @@ impl<'a, 'b> Iterator for Lexer<'a, 'b> {
         match self.iter.peek() {
             Some(&(_, '$')) if !self.escaped => {
                 todo!()
+                // try to parse variable, if next char is not a XID_Start char, then just return $
             },
-            Some(&(_, c)) => Some(Token::Char(c)),
+            Some(&(_, '\\')) => {
+                self.escaped = true;
+                Some(Token::Char('\\'))
+            },
+            Some(&(_, c)) => {
+                self.escaped = false;
+                Some(Token::Char(c))
+            },
             None => None,
         }
     }
@@ -238,7 +241,7 @@ fn is_char_pattern_white_space(c: char) -> bool {
     )
 }
 
-// this ignores the ambiguity between \escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
+// this ignores the ambiguity between \-escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
 // returns whether the provided char signifies the start of a literal char (raw or escaped - so \ is a legal char start)
 fn legal_char_start(c: char) -> bool {
     !(c == '&'
