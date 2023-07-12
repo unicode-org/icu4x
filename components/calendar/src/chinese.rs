@@ -105,7 +105,7 @@ const CHINESE_LOCATION_POST_1929: Location =
 /// * Wikipedia: https://en.wikipedia.org/wiki/Chinese_calendar
 ///
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[non_exhaustive]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Chinese;
 
 /// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
