@@ -83,8 +83,9 @@ fn generate_fs_and_verify_zero_copy() {
         )
         .unwrap()
         {
-            let payload =
-                DataPayload::from_owned_buffer(std::fs::read(&entry.unwrap()).unwrap().into_boxed_slice());
+            let payload = DataPayload::from_owned_buffer(
+                std::fs::read(&entry.unwrap()).unwrap().into_boxed_slice(),
+            );
 
             let stats_before = dhat::HeapStats::get();
 
