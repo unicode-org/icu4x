@@ -51,6 +51,9 @@ const ROC_ERA_OFFSET: i32 = 1911;
 ///
 /// [Republic of China calendar]: https://en.wikipedia.org/wiki/Republic_of_China_calendar
 ///
+/// The Republic of China calendar should not be confused with the Chinese traditional lunar calendar
+/// (see [`Chinese`]).
+///
 /// # Era codes
 ///
 /// This calendar supports two era codes: `"minguo"`, corresponding to years in the 民國 (minguo) era (CE year 1912 and
