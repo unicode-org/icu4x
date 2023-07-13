@@ -589,6 +589,26 @@ pub fn datagen(
                     )
                 })
                 .unwrap_or(options::LocaleInclude::All),
+            segmenter_models: match locales {
+                None => options::SegmenterModelInclude::Recommended,
+                Some(list) => options::SegmenterModelInclude::Explicit({
+                    let mut models = vec![];
+                    for locale in list {
+                        let locale = locale.into();
+                        if let Some(model) =
+                            transform::segmenter::lstm::data_locale_to_model_name(&locale)
+                        {
+                            models.push(model.into());
+                        }
+                        if let Some(model) =
+                            transform::segmenter::dictionary::data_locale_to_model_name(&locale)
+                        {
+                            models.push(model.into());
+                        }
+                    }
+                    models
+                }),
+            },
             ..source.options.clone()
         },
         {

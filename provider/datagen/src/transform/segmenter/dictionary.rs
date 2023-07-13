@@ -25,7 +25,7 @@ fn model_name_to_data_locale(name: &str) -> Option<DataLocale> {
     }
 }
 
-fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
+pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
     match locale.get_langid() {
         id if id == langid!("km") => Some("khmerdict"),
         id if id == langid!("ja") => Some("cjdict"),
