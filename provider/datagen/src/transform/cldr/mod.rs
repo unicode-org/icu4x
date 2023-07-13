@@ -9,11 +9,13 @@ pub mod characters;
 pub mod cldr_serde;
 pub mod datetime;
 pub mod decimal;
+#[cfg(feature = "icu_displaynames")]
 pub mod displaynames;
 pub mod fallback;
 pub mod list;
 pub mod locale_canonicalizer;
 pub mod plurals;
+#[cfg(feature = "icu_relativetime")]
 pub mod relativetime;
 pub mod source;
 pub mod time_zones;
