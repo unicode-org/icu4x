@@ -14,7 +14,7 @@ use std::path::PathBuf;
 use zip::ZipArchive;
 
 include!("../../globs.rs.data");
-include!("../../locales.rs.data");
+include!("../../../../provider/datagen/tests/data/locales.rs.data");
 
 #[derive(Parser)]
 #[command(
