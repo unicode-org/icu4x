@@ -652,6 +652,7 @@ where
     }
 
     // parses and consumes: '{' (s charInString)* s '}'
+    // TODO: decide on names for multi-codepoint-sequences and adjust both struct fields and fn names
     fn parse_string(&mut self) -> Result<(usize, CharOrString)> {
         self.consume('{')?;
 
@@ -680,43 +681,6 @@ where
 
         // .into() handles 1-length-string -> char conversion
         Ok((last_offset, buffer.into()))
-    }
-
-    // parses and consumes '{' (s char)+ s '}'
-    // TODO: decide on names for multi-codepoint-sequences and adjust both struct fields and fn names
-    fn parse_multi(&mut self) -> Result<()> {
-        self.consume('{')?;
-
-        let mut buffer = String::new();
-
-        loop {
-            self.skip_whitespace();
-
-            match self.must_peek_char()? {
-                '}' => {
-                    self.iter.next();
-                    break;
-                }
-                c if legal_char_in_string_start(c) => {
-                    let c = self.parse_char()?;
-                    buffer.push(c);
-                }
-                c => return self.error_here(PEK::UnexpectedChar(c)),
-            }
-        }
-
-        let mut chars = buffer.chars();
-        match (chars.next(), chars.next()) {
-            (Some(single_char), None) => {
-                // multi-codepoint-sequences containing a single char are interpreted as a single char
-                self.single_set.add_char(single_char);
-            }
-            _ => {
-                self.multi_set.insert(buffer);
-            }
-        }
-
-        Ok(())
     }
 
     // starts with \ and consumes the whole escape sequence
