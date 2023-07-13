@@ -56,9 +56,6 @@ pub enum CalendarError {
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
     Data(DataError),
-    #[displaydoc("The depression angle of angle alpha cannot be reached")]
-    /// The depression angle of the sun is unreachable
-    DepressionAngleUnreachable,
 }
 
 /// A list of error outcomes for exceeding location bounds

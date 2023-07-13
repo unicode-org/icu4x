@@ -685,7 +685,7 @@ impl Astronomical {
         let moon = Self::phasis_on_or_after(date + 1, location);
         let prev = Self::phasis_on_or_before(date, location);
 
-        (moon - prev).try_into().unwrap()
+        (moon - prev) as u8
     }
 
     // Lunar elongation (the moon's angular distance east of the Sun) at a given Moment in Julian centuries
@@ -1206,13 +1206,23 @@ mod tests {
     const TEST_LOWER_BOUND_FACTOR: f64 = 0.9999999;
     const TEST_UPPER_BOUND_FACTOR: f64 = 1.0000001;
 
-    fn assert_eq_f64(expected_value: f64, value: f64, moment: Moment) {
-        if expected_value > 0.0 {
-            assert!(value > expected_value * TEST_LOWER_BOUND_FACTOR, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
-            assert!(value < expected_value * TEST_UPPER_BOUND_FACTOR, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
-        } else {
-            assert!(value > expected_value * TEST_UPPER_BOUND_FACTOR, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
-            assert!(value < expected_value * TEST_LOWER_BOUND_FACTOR, "calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_value} and calculated: {value}\n\n");
+    macro_rules! assert_eq_f64 {
+        ($expected_value:expr, $value:expr, $moment:expr) => {
+            if $expected_value > 0.0 {
+                assert!($value > $expected_value * TEST_LOWER_BOUND_FACTOR,
+                         "calculation failed for the test case:\n\n\tMoment: {:?} with expected: {} and calculated: {}\n\n",
+                         $moment, $expected_value, $value);
+                assert!($value < $expected_value * TEST_UPPER_BOUND_FACTOR,
+                         "calculation failed for the test case:\n\n\tMoment: {:?} with expected: {} and calculated: {}\n\n",
+                         $moment, $expected_value, $value);
+            } else {
+                assert!($value > $expected_value * TEST_UPPER_BOUND_FACTOR,
+                         "calculation failed for the test case:\n\n\tMoment: {:?} with expected: {} and calculated: {}\n\n",
+                         $moment, $expected_value, $value);
+                assert!($value < $expected_value * TEST_LOWER_BOUND_FACTOR,
+                         "calculation failed for the test case:\n\n\tMoment: {:?} with expected: {} and calculated: {}\n\n",
+                         $moment, $expected_value, $value);
+            }
         }
     }
 
