@@ -507,7 +507,7 @@ impl UmmalQura {
     fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
         let moon =
             libm::floor((Astronomical::lunar_phase_at_or_before(0.0, date.as_moment())).inner());
-        let age = moon - date.to_f64_date();
+        let age = (date.to_f64_date() - moon) ;
         let tau = if age <= 3.0 && !Self::saudi_criterion(date) {
             moon - 30.0
         } else {
@@ -574,11 +574,18 @@ mod test {
         470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
         664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
     ];
-
-    static SAUDI_CRITERION_RESULTS: [bool; 33] = [
+    // Values from lisp code
+    static SAUDI_CRITERION_EXPECTED: [bool; 33] = [
         false, false, true, false, false, true, false, true, false, false, true, false, false,
         true, true, true, true, false, false, true, true, true, false, false, false, false, false,
         false, true, false, true, false, true,
+    ];
+    // Values from lisp code
+    static SAUDI_NEW_MONTH_OR_BEFORE_EXPECTED: [f64; 33] = [
+        -214203.0, -61412.0, 25467.0, 49210.0, 171290.0, 210152.0, 253414.0, 369735.0, 400063.0,
+        434348.0, 452598.0, 470139.0, 473830.0, 507850.0, 524150.0, 544674.0, 567118.0, 569450.0,
+        601698.0, 613421.0, 626592.0, 645551.0, 664214.0, 671391.0, 694779.0, 704405.0, 708835.0,
+        709396.0, 709573.0, 727263.0, 728709.0, 744301.0, 764647.0,
     ];
 
     static ASTRONOMICAL_CASES: [DateCase; 33] = [
@@ -785,11 +792,18 @@ mod test {
         assert_eq!(epoch_year_from_fixed, 622);
     }
 
-    #[test]
     fn test_saudi_criterion() {
-        for (boolean, f_date) in SAUDI_CRITERION_RESULTS.iter().zip(TEST_FIXED_DATE.iter()) {
+        for (boolean, f_date) in SAUDI_CRITERION_EXPECTED.iter().zip(TEST_FIXED_DATE.iter()) {
             let bool_result = UmmalQura::saudi_criterion(RataDie::new(*f_date));
             assert_eq!(*boolean, bool_result, "{f_date:?}");
+        }
+    }
+    
+    #[test]
+    fn test_saudi_new_month_or_before() {
+        for (date, f_date) in SAUDI_NEW_MONTH_OR_BEFORE_EXPECTED.iter().zip(TEST_FIXED_DATE.iter()) {
+            let date_result = UmmalQura::saudi_new_month_on_or_before(RataDie::new(*f_date)).to_f64_date();
+            assert_eq!(*date, date_result, "{f_date:?}");
         }
     }
 
