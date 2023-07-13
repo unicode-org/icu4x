@@ -55,6 +55,7 @@ pub(crate) const MAX_UTC_OFFSET: f64 = 14.0 / 24.0;
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
     /// attempting to create a location outside of these bounds will result in a LocationError.
+    #[allow(dead_code)]
     pub(crate) fn try_new(
         latitude: f64,
         longitude: f64,
@@ -88,23 +89,27 @@ impl Location {
             zone,
         }
     }
-    #[allow(dead_code)]
+
     /// Get the longitude of a Location
+    #[allow(dead_code)]
     pub(crate) fn longitude(&self) -> f64 {
         self.longitude
     }
-    #[allow(dead_code)]
+
     /// Get the latitude of a Location
+    #[allow(dead_code)]
     pub(crate) fn latitude(&self) -> f64 {
         self.latitude
     }
-    #[allow(dead_code)]
+
     /// Get the elevation of a Location
+    #[allow(dead_code)]
     pub(crate) fn elevation(&self) -> f64 {
         self.elevation
     }
-    #[allow(dead_code)]
+
     /// Get the utc-offset of a Location
+    #[allow(dead_code)]
     pub(crate) fn zone(&self) -> f64 {
         self.zone
     }
@@ -116,6 +121,7 @@ impl Location {
     pub(crate) fn zone_from_longitude(longitude: f64) -> f64 {
         longitude / (360.0)
     }
+
     // Convert standard time to local mean time given a location and a time zone with given offset
     pub(crate) fn standard_from_local(standard_time: Moment, location: Location) -> Moment {
         Self::standard_from_universal(
@@ -130,6 +136,7 @@ impl Location {
     }
 
     /// Convert from universal time to local time given a location
+    #[allow(dead_code)]
     pub(crate) fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
         universal_time + Self::zone_from_longitude(location.longitude)
     }
