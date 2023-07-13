@@ -38,7 +38,7 @@ class ICU4XCanonicalDecomposition {
   /**
    * Construct a new ICU4XCanonicalDecomposition instance for NFC
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
    */
   static diplomat::result<ICU4XCanonicalDecomposition, ICU4XError> create(const ICU4XDataProvider& provider);
 

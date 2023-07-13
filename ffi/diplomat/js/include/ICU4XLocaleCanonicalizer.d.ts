@@ -16,7 +16,7 @@ export class ICU4XLocaleCanonicalizer {
 
    * Create a new {@link ICU4XLocaleCanonicalizer `ICU4XLocaleCanonicalizer`}.
 
-   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XLocaleCanonicalizer | never;
@@ -25,7 +25,7 @@ export class ICU4XLocaleCanonicalizer {
 
    * Create a new {@link ICU4XLocaleCanonicalizer `ICU4XLocaleCanonicalizer`} with extended data.
 
-   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.try_new_with_expander_unstable Rust documentation for `try_new_with_expander_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new_with_expander Rust documentation for `new_with_expander`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_extended(provider: ICU4XDataProvider): ICU4XLocaleCanonicalizer | never;

@@ -641,7 +641,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_short_name_marker_linear4 {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear4/", $enum_s, "@1"));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear4/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
                     }
 
                     #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]

@@ -22,7 +22,6 @@ pub struct SerdeDFA<'data> {
     pattern: Option<Cow<'data, str>>,
 }
 
-#[cfg(feature = "datagen")]
 impl PartialEq for SerdeDFA<'_> {
     fn eq(&self, other: &Self) -> bool {
         self.dfa_bytes == other.dfa_bytes

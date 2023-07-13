@@ -7,27 +7,42 @@
 ###### CI TASKS
 
 [tasks.testdata]
-description = "Rebuild all ICU4X testdata from source data checked into the repository"
+description = "Run the testdata generation test in icu_datagen"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "test",
+    "-p=icu_datagen",
+    "--no-default-features",
+    "--features=provider_fs,use_wasm,rayon,icu_casemap,icu_compactdecimal,icu_displaynames,icu_relativetime",
+    "generate_fs_and_verify_zero_copy",
+    "--",
+    "--nocapture"
+]
+
+[tasks.testdata-legacy]
+description = "Build the data for the legacy icu_testdata crate"
 category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=make-testdata",
+    "--bin=make-testdata-legacy",
 ]
+
 
 [tasks.testdata-check]
 description = "Rebuild ICU4X testdata and ensure that the working copy is clean"
 category = "ICU4X Data"
 dependencies = [
+    "download-repo-sources",
     "testdata",
     "testdata-hello-world",
-    "download-repo-sources",
 ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/testdata/data provider/fs/tests/data provider/blob/tests/data provider/repodata
+output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
@@ -120,7 +135,7 @@ exit_on_error true
 
 if array_is_empty ${@}
     mode = set "--release"
-    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemapping experimental/compactdecimal experimental/displaynames experimental/relativetime
+    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemap experimental/compactdecimal experimental/displaynames experimental/relativetime
 else
     mode = set "--bin=icu4x-datagen" # need some valid argument
     components = set ${@}
@@ -129,7 +144,7 @@ end
 root = pwd
 for component in ${components}
     cd "${component}/data"
-    exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking ${mode} -- --config config.json
+    exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking,icu_casemap,icu_displaynames,icu_relativetime,icu_compactdecimal ${mode} -- --config config.json
     cd "${root}"
 end
 '''
@@ -162,7 +177,6 @@ args = [
     "run",
     "--bin=download-repo-sources",
     "--",
-    "--out=provider/repodata/data",
     "-v",
 ]
 

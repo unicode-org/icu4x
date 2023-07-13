@@ -106,6 +106,15 @@ pub struct CodePointSetDataBorrowed<'a> {
     set: &'a PropertyCodePointSetV1<'a>,
 }
 
+impl CodePointSetDataBorrowed<'static> {
+    /// Cheaply converts a `CodePointSetDataBorrowed<'static>` into a `CodePointSetData`.
+    pub fn static_to_owned(self) -> CodePointSetData {
+        CodePointSetData {
+            data: DataPayload::from_static_ref(self.set),
+        }
+    }
+}
+
 impl<'a> CodePointSetDataBorrowed<'a> {
     /// Check if the set contains a character
     ///
@@ -291,6 +300,15 @@ impl<'a> UnicodeSetDataBorrowed<'a> {
     #[inline]
     pub fn contains_char(&self, ch: char) -> bool {
         self.set.contains_char(ch)
+    }
+}
+
+impl UnicodeSetDataBorrowed<'static> {
+    /// Cheaply converts a `UnicodeSetDataBorrowed<'static>` into a `UnicodeSetData`.
+    pub fn static_to_owned(self) -> UnicodeSetData {
+        UnicodeSetData {
+            data: DataPayload::from_static_ref(self.set),
+        }
     }
 }
 
@@ -1816,7 +1834,7 @@ pub fn for_general_category_group(enum_val: GeneralCategoryGroup) -> CodePointSe
 ///
 /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
 #[cfg(feature = "compiled_data")]
-pub fn load_for_ecma262(name: &str) -> Result<CodePointSetDataBorrowed, PropertiesError> {
+pub fn load_for_ecma262(name: &str) -> Result<CodePointSetDataBorrowed<'static>, PropertiesError> {
     use crate::runtime::UnicodeProperty;
 
     let prop = if let Some(prop) = UnicodeProperty::parse_ecma262_name(name) {

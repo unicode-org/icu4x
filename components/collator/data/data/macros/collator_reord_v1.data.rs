@@ -44,7 +44,8 @@ macro_rules! __impl_collator_reord_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    let mut fallback_iterator = icu_locid_transform::fallback::LocaleFallbacker::new().fallback_for(<icu_collator::provider::CollationReorderingV1Marker as icu_provider::KeyedDataMarker>::KEY.into(), req.locale.clone());
+                    const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu_locid_transform::fallback::LocaleFallbacker::new().for_config(icu_locid_transform::fallback::LocaleFallbackConfig::from_key(<icu_collator::provider::CollationReorderingV1Marker as icu_provider::KeyedDataMarker>::KEY));
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if fallback_iterator.get().is_empty() {
                             return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu_collator::provider::CollationReorderingV1Marker as icu_provider::KeyedDataMarker>::KEY, req));
