@@ -386,6 +386,7 @@ where
         // {multi}
         // unicodeset
         // & and - operators, but only between unicodesets
+        // $variables in place of strings, chars, or unicodesets
 
         #[derive(Debug, Clone, Copy)]
         enum State {
