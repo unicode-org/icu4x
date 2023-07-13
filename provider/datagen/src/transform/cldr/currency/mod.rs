@@ -308,7 +308,35 @@ fn test_basic() {
 
     use icu_locid::locale;
     use icu_singlenumberformatter::provider::*;
+
     let provider = crate::DatagenProvider::for_test();
+
+    let en: DataPayload<CurrencyEssentialV1Maker> = provider
+        .load(DataRequest {
+            locale: &locale!("en").into(),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    let en_place_holders = &en.get().to_owned().place_holders;
+    assert_eq!(en.clone().get().to_owned().standard, "¤#,##0.00");
+    assert_eq!(
+        en.clone().get().to_owned().standard_alpha_next_to_number,
+        "¤\u{a0}#,##0.00"
+    );
+
+    let (en_usd_short, en_usd_narrow) =
+        get_place_holders_of_currency(tinystr!(3, "USD"), &en, en_place_holders);
+    assert_eq!(en_usd_short, "$");
+    assert_eq!(en_usd_narrow, "$");
+
+    let (en_egp_short, en_egp_narrow) =
+        get_place_holders_of_currency(tinystr!(3, "EGP"), &en, en_place_holders);
+    assert_eq!(en_egp_short, "");
+    assert_eq!(en_egp_narrow, "E£");
+
     let ar_eg: DataPayload<CurrencyEssentialV1Maker> = provider
         .load(DataRequest {
             locale: &locale!("ar-EG").into(),
@@ -318,10 +346,7 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let place_holders = &ar_eg.get().to_owned().place_holders;
-
-    let (ar_eg_short, ar_eg_narrow) =
-        get_place_holders_of_currency(tinystr!(3, "EGP"), &ar_eg, place_holders);
+    let ar_eg_place_holders = &ar_eg.get().to_owned().place_holders;
 
     assert_eq!(
         ar_eg.clone().get().to_owned().standard,
@@ -331,6 +356,13 @@ fn test_basic() {
         ar_eg.clone().get().to_owned().standard_alpha_next_to_number,
         ""
     );
-    assert_eq!(ar_eg_short, "ج.م.\u{200f}");
-    assert_eq!(ar_eg_narrow, "E£");
+    let (ar_eg_egp_short, ar_eg_egp_narrow) =
+        get_place_holders_of_currency(tinystr!(3, "EGP"), &ar_eg, ar_eg_place_holders);
+    assert_eq!(ar_eg_egp_short, "ج.م.\u{200f}");
+    assert_eq!(ar_eg_egp_narrow, "E£");
+
+    let (ar_eg_usd_short, ar_eg_usd_narrow) =
+        get_place_holders_of_currency(tinystr!(3, "USD"), &ar_eg, ar_eg_place_holders);
+    assert_eq!(ar_eg_usd_short, "US$");
+    assert_eq!(ar_eg_usd_narrow, "US$");
 }
