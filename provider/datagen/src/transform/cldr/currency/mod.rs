@@ -257,7 +257,7 @@ fn extract_currency_essential<'data>(
     }
 
     let result = CurrencyEssentialV1 {
-        indices_map,
+        currency_patterns_map: indices_map,
         standard: standard.to_owned().into(),
         standard_alpha_next_to_number: standard_alpha_next_to_number.to_owned().into(),
         place_holders,
@@ -266,6 +266,7 @@ fn extract_currency_essential<'data>(
     Ok(result)
 }
 
+// TODO(younies): How to not make this function dead?
 fn get_place_holders_of_currency(
     iso_code: TinyAsciiStr<3>,
     locale: &DataPayload<CurrencyEssentialV1Maker>,
@@ -279,7 +280,7 @@ fn get_place_holders_of_currency(
     };
     let owned = locale.get().to_owned();
     let currency_pattern: &CurrencyPatternsULE =
-        owned.indices_map.get(&iso_code).unwrap_or(&default);
+        owned.currency_patterns_map.get(&iso_code).unwrap_or(&default);
 
     let short_place_holder = if currency_pattern.short_place_holder_index == u16::MAX.into() {
         "".to_string()

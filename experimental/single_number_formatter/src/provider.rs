@@ -25,11 +25,12 @@ use zerovec::{VarZeroVec, ZeroMap};
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentialV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub indices_map: ZeroMap<'data, TinyAsciiStr<3>, CurrencyPatterns>,
+    pub currency_patterns_map: ZeroMap<'data, TinyAsciiStr<3>, CurrencyPatterns>,
 
-    // // #[cfg_attr(feature = "serde", serde(borrow))]
-    // pub currencies_patterns: VarZeroVec<'data, CurrencyPatternsULE>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub standard: Cow<'data, str>,
+
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub standard_alpha_next_to_number: Cow<'data, str>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]

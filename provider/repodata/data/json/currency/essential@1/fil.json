@@ -1,5 +1,5 @@
 {
-  "indices_map": {
+  "currency_patterns_map": {
     "AED": {
       "short_pattern_standard": false,
       "narrow_pattern_standard": false,
