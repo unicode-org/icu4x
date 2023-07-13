@@ -7,21 +7,36 @@
 ###### CI TASKS
 
 [tasks.testdata]
-description = "Rebuild all ICU4X testdata from source data checked into the repository"
+description = "Run the testdata generation test in icu_datagen"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "test",
+    "-p=icu_datagen",
+    "--no-default-features",
+    "--features=provider_fs,use_wasm,rayon,icu_casemap,icu_compactdecimal,icu_displaynames,icu_relativetime",
+    "generate_fs_and_verify_zero_copy",
+    "--",
+    "--nocapture"
+]
+
+[tasks.testdata-legacy]
+description = "Build the data for the legacy icu_testdata crate"
 category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=make-testdata",
+    "--bin=make-testdata-legacy",
 ]
+
 
 [tasks.testdata-check]
 description = "Rebuild ICU4X testdata and ensure that the working copy is clean"
 category = "ICU4X Data"
 dependencies = [
+    "download-repo-sources",
     "testdata",
     "testdata-hello-world",
-    "download-repo-sources",
 ]
 script_runner = "@duckscript"
 script = '''

@@ -109,11 +109,15 @@ macro_rules! registry {
                     }
                 )+
             )+
-            unreachable!("unregistered marker")
+            unreachable!("unregistered key {key:?}")
         }
 
         #[doc(hidden)]
         pub fn deserialize_and_discard<R>(key: DataKey, buf: DataPayload<BufferMarker>, r: impl Fn() -> R) -> Result<R, DataError> {
+            if key.path() == icu_provider::hello_world::HelloWorldV1Marker::KEY.path() {
+                let _reified_data: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                return Ok(r());
+            }
             $(
                 $(
                     #[cfg($feature)]
@@ -123,7 +127,7 @@ macro_rules! registry {
                     }
                 )+
             )+
-            unreachable!("unregistered marker")
+            unreachable!("unregistered key {key:?}")
         }
     }
 }
