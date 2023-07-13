@@ -32,6 +32,8 @@ pub enum ParseErrorKind {
     UnknownProperty,
     /// A reference to an unknown variable.
     UnknownVariable,
+    /// A variable of a certain type occurring in an unexpected context.
+    UnexpectedVariable,
     /// The source is an incomplete unicode set.
     Eof,
     /// Something unexpected went wrong with our code. Please file a bug report on GitHub.
@@ -144,6 +146,9 @@ impl ParseError {
             }
             ParseErrorKind::UnknownVariable => {
                 s.push_str("unknown variable");
+            }
+            ParseErrorKind::UnexpectedVariable => {
+                s.push_str("unexpected variable");
             }
             ParseErrorKind::Eof => {
                 s.push_str("unexpected end of input");
@@ -360,8 +365,8 @@ struct UnicodeSetBuilder<'a, 'b, 'c, 'var, 'caller, P: ?Sized> {
     inverted: bool,
     variable_map: &'caller VariableMap<'var>,
     // TODO(#3550): Figure out how to store the borrowed sets directly here.
-    xid_start: CodePointInversionList<'caller>,
-    xid_continue: CodePointInversionList<'caller>,
+    xid_start: &'caller CodePointInversionList<'caller>,
+    xid_continue: &'caller CodePointInversionList<'caller>,
     property_provider: &'c P,
 }
 
@@ -427,8 +432,8 @@ where
     fn new_internal(
         iter: &'b mut Peekable<CharIndices<'a>>,
         variable_map: &'caller VariableMap<'var>,
-        xid_start: CodePointInversionList<'caller>,
-        xid_continue: CodePointInversionList<'caller>,
+        xid_start: &'caller CodePointInversionList<'caller>,
+        xid_continue: &'caller CodePointInversionList<'caller>,
         provider: &'c P,
     ) -> Self {
         UnicodeSetBuilder {
@@ -518,7 +523,7 @@ where
             self.skip_whitespace();
 
             // first check if the next token is a variable
-            if let Some(var) = self.parse_variable()? {
+            if let Some((offset, var)) = self.parse_variable()? {
                 // TODO: Unfortunately, this match has a lot of duplication with the last match block
                 match (state, var) {
                     // anchor, must be at the end of the set
@@ -580,6 +585,9 @@ where
                         self.multi_set.insert(s.clone());
                         state = Begin;
                     }
+                    _ => {
+                        return Err(PEK::UnexpectedVariable.with_offset(offset));
+                    }
                 }
                 continue;
             }
@@ -598,7 +606,9 @@ where
                         let mut inner_builder = UnicodeSetBuilder::new_internal(
                             self.iter,
                             self.variable_map,
+                            // zero-copy clone
                             self.xid_start,
+                            // zero-copy clone
                             self.xid_continue,
                             self.property_provider,
                         );
@@ -692,8 +702,8 @@ where
     }
 
     // is 'context-sensitive' to avoid duplicate work
-    // if this is a trailing $ (eg [.... $ ]), then this function returns Ok(Some(VarOrAnchor::A))
-    fn parse_variable(&mut self) -> Result<Option<VarOrAnchor<'var, 'caller>>> {
+    // if this is a trailing $ (eg [.... $ ]), then this function returns Ok(Some((offset, VarOrAnchor::A)))
+    fn parse_variable(&mut self) -> Result<Option<(usize, VarOrAnchor<'var, 'caller>)>> {
         // EOF is invalid in this context
         if self.must_peek_char()? != '$' {
             return Ok(None);
@@ -707,7 +717,7 @@ where
             // only valid if this turns into a anchor
             self.skip_whitespace();
             self.consume(']')?;
-            return Ok(Some(VarOrAnchor::A));
+            return Ok(Some((var_offset, VarOrAnchor::A)));
         }
 
         res.push(first_c);
@@ -724,7 +734,7 @@ where
         }
 
         if let Some(v) = self.variable_map.get(&res) {
-            return Ok(Some(VarOrAnchor::V(v)));
+            return Ok(Some((var_offset, VarOrAnchor::V(v))));
         }
 
         Err(PEK::UnknownVariable.with_offset(var_offset))
@@ -1353,6 +1363,31 @@ where
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
+    // TODO(#3550): Add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly?
+    // ^ will likely need a different iterator type on UnicodeSetBuilder
+    // TODO(#3550): Think about returning byte-length of the parsed UnicodeSet for use in the transliterator parser, or add public function that accepts a peekable char iterator?
+
+    let mut iter = source.char_indices().peekable();
+
+    let xid_start = load_xid_start(provider).map_err(|_| PEK::Internal)?;
+    let xid_start_list = xid_start.to_code_point_inversion_list();
+    let xid_continue = load_xid_continue(provider).map_err(|_| PEK::Internal)?;
+    let xid_continue_list = xid_continue.to_code_point_inversion_list();
+
+    let mut builder = UnicodeSetBuilder::new_internal(&mut iter, variable_map, &xid_start_list, &xid_continue_list, provider);
+
+    builder.parse_unicode_set()?;
+    let (single, multi) = builder.finalize();
+    let built_single = single.build();
+
+    let mut strings = multi.into_iter().collect::<Vec<_>>();
+    strings.sort();
+    let zerovec = (&strings).into();
+
+    let cpinvlistandstrlist = CodePointInversionListAndStringList::try_from(built_single, zerovec)
+        .map_err(|_| PEK::Internal)?;
+
+    Ok(cpinvlistandstrlist)
 }
 
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse)]
@@ -1418,25 +1453,9 @@ where
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
-    // TODO(#3550): Add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly?
-    // ^ will likely need a different iterator type on UnicodeSetBuilder
-    // TODO(#3550): Think about returning byte-length of the parsed UnicodeSet for use in the transliterator parser, or add public function that accepts a peekable char iterator?
-
-    let mut iter = source.char_indices().peekable();
-    let mut builder = UnicodeSetBuilder::new_internal(&mut iter, provider);
-
-    builder.parse_unicode_set()?;
-    let (single, multi) = builder.finalize();
-    let built_single = single.build();
-
-    let mut strings = multi.into_iter().collect::<Vec<_>>();
-    strings.sort();
-    let zerovec = (&strings).into();
-
-    let cpinvlistandstrlist = CodePointInversionListAndStringList::try_from(built_single, zerovec)
-        .map_err(|_| PEK::Internal)?;
-
-    Ok(cpinvlistandstrlist)
+    // TODO: avoid allocation. Maybe use some map on the stack, or some wrapper enum (enum MapOrEmpty { Empty, Map(Map) })
+    let dummy = Default::default();
+    parse_unstable_with_variables(source, &dummy, provider)
 }
 
 #[cfg(test)]
