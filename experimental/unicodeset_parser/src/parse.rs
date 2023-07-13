@@ -45,6 +45,7 @@ pub enum ParseErrorKind {
     InvalidEscape,
 }
 use ParseErrorKind as PEK;
+use zerovec::VarZeroVec;
 
 impl ParseErrorKind {
     fn with_offset(self, offset: usize) -> ParseError {
@@ -183,10 +184,11 @@ impl ParseError {
     }
 }
 
-// invariant: a one-codepoint-element is represented as a char, not a single-char String
 #[derive(Debug, Clone)]
 pub enum VariableValue<'a> {
     UnicodeSet(CodePointInversionListAndStringList<'a>),
+    // in theory, a one-code-point string is always the same as a char, but we might want to keep
+    // this variant for efficiency?
     Char(char),
     String(String),
 }
@@ -226,6 +228,47 @@ fn legal_char_in_string_start(c: char) -> bool {
     !(c == '}' || is_char_pattern_white_space(c))
 }
 
+// invariant: a one-codepoint-element is represented as a char, not a single-char String
+#[derive(Debug)]
+enum CharOrString {
+    Char(char),
+    String(String),
+}
+
+impl From<char> for CharOrString {
+    fn from(c: char) -> Self {
+        CharOrString::Char(c)
+    }
+}
+
+impl From<String> for CharOrString {
+    fn from(s: String) -> Self {
+        let mut chars = s.chars();
+        match (chars.next(), chars.next()) {
+            (Some(c), None) => CharOrString::Char(c),
+            _ => CharOrString::String(s),
+        }
+    }
+}
+
+#[derive(Debug)]
+enum MainToken<'data> {
+    // to be interpreted as value
+    CharOrString(CharOrString),
+    // inner set
+    UnicodeSet(CodePointInversionListAndStringList<'data>),
+    // anchor, only at the end of a set ([... $])
+    DollarSign,
+    // intersection operator, only inbetween two sets ([[...] & [...]])
+    Ampersand,
+    // difference operator, only inbetween two sets ([[...] - [...]])
+    // or
+    // range operator, only inbetween two chars ([a-z], [a-{z}])
+    Minus,
+    // ] to indicate the end of a set
+    ClosingBracket,
+}
+
 #[derive(Debug)]
 enum VarOrAnchor<'a, 'b> {
     A,
@@ -240,19 +283,19 @@ enum Operation {
 }
 
 // this builds the set on-the-fly while parsing it
-struct UnicodeSetBuilder<'a, 'b, 'c, 'var, 'caller, P: ?Sized> {
+struct UnicodeSetBuilder<'a, 'b, 'c, 'var, 'parse, P: ?Sized> {
     single_set: CodePointInversionListBuilder,
     multi_set: HashSet<String>,
     iter: &'b mut Peekable<CharIndices<'a>>,
     inverted: bool,
-    variable_map: &'caller VariableMap<'var>,
+    variable_map: &'parse VariableMap<'var>,
     // TODO(#3550): Figure out how to store the borrowed sets directly here.
-    xid_start: &'caller CodePointInversionList<'caller>,
-    xid_continue: &'caller CodePointInversionList<'caller>,
+    xid_start: &'parse CodePointInversionList<'parse>,
+    xid_continue: &'parse CodePointInversionList<'parse>,
     property_provider: &'c P,
 }
 
-impl<'a, 'b, 'c, 'var, 'caller, P> UnicodeSetBuilder<'a, 'b, 'c, 'var, 'caller, P>
+impl<'a, 'b, 'c, 'var, 'parse, P> UnicodeSetBuilder<'a, 'b, 'c, 'var, 'parse, P>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -313,9 +356,9 @@ where
 {
     fn new_internal(
         iter: &'b mut Peekable<CharIndices<'a>>,
-        variable_map: &'caller VariableMap<'var>,
-        xid_start: &'caller CodePointInversionList<'caller>,
-        xid_continue: &'caller CodePointInversionList<'caller>,
+        variable_map: &'parse VariableMap<'var>,
+        xid_start: &'parse CodePointInversionList<'parse>,
+        xid_continue: &'parse CodePointInversionList<'parse>,
         provider: &'c P,
     ) -> Self {
         UnicodeSetBuilder {
@@ -419,139 +462,61 @@ where
         loop {
             self.skip_whitespace();
 
-            // first check if the next token is a variable or trailing anchor
-            if self.must_peek_char()? == '$' {
-                use VarOrAnchor::*;
-                use VariableValue as VV;
+            // for error messages
+            let (immediate_offset, immediate_char) = self.must_peek()?;
+            // get next MainToken
+            let (offset, tok) = self.parse_main_token()?;
 
-                let (offset, var) = self.parse_variable()?;
-                // TODO: Unfortunately, this match has a lot of duplication with the last match block
-                match (state, var) {
-                    // anchor, must be at the end of the set
-                    (Begin | Char | AfterUnicodeSet, A) => {
-                        if let Some(prev) = prev_char.take() {
-                            self.single_set.add_char(prev);
-                        }
-                        self.single_set.add_char('\u{FFFF}');
-                        state = AfterDollar;
-                    }
-                    // unicodeset
-                    (Begin | Char | AfterUnicodeSet | AfterOp, V(VV::UnicodeSet(set))) => {
-                        if let Some(prev) = prev_char.take() {
-                            self.single_set.add_char(prev);
-                        }
-
-                        self.process_chars(operation, set.code_points().clone());
-                        self.process_strings(
-                            operation,
-                            set.strings().iter().map(ToString::to_string).collect(),
-                        );
-
-                        operation = DEFAULT_OP;
-                        state = AfterUnicodeSet;
-                    }
-                    // raw char, [a $var b]
-                    (Begin | Char | AfterUnicodeSet, V(&VV::Char(c))) => {
-                        if let Some(prev) = prev_char.take() {
-                            self.single_set.add_char(prev);
-                        }
-                        prev_char = Some(c);
-                        state = Char;
-                    }
-                    // char ending a range, [ a - $b ]
-                    (CharMinus, V(&VV::Char(c))) => {
-                        let start = prev_char.ok_or(PEK::Eof)?;
-                        let end = c;
-                        if start > end {
-                            // TODO(#3558): Better error message (e.g., "start greater than end in range")?
-                            // note: offset - 1, because we already consumed the end char (and its offset)
-                            return Err(
-                                PEK::UnexpectedChar(end).with_offset(self.must_peek_index()? - 1)
-                            );
-                        }
-
-                        self.single_set.add_range(&(start..=end));
-                        prev_char = None;
-                        state = Begin;
-                    }
-                    // string
-                    (Begin | Char | AfterUnicodeSet, V(VV::String(s))) => {
-                        if let Some(prev) = prev_char.take() {
-                            self.single_set.add_char(prev);
-                        }
-                        self.multi_set.insert(s.clone());
-                        state = Begin;
-                    }
-                    _ => {
-                        return Err(PEK::UnexpectedVariable.with_offset(offset));
-                    }
-                }
-                continue;
-            }
-            // no variables will occur in the remainder of this iteration
-            // also no raw $, because those will have been handled above by VarOrAnchor::A
-
-            // handling unicodesets separately, because of ambiguity between escaped characters and perl property names
-            if self.peek_unicode_set_start() {
-                match (state, self.must_peek_char()?) {
-                    // parse a recursive unicode set
-                    (Begin | Char | AfterUnicodeSet | AfterOp, _) => {
-                        if let Some(prev) = prev_char.take() {
-                            self.single_set.add_char(prev);
-                        }
-
-                        let mut inner_builder = UnicodeSetBuilder::new_internal(
-                            self.iter,
-                            self.variable_map,
-                            // zero-copy clone
-                            self.xid_start,
-                            // zero-copy clone
-                            self.xid_continue,
-                            self.property_provider,
-                        );
-                        inner_builder.parse_unicode_set()?;
-                        let (single, multi) = inner_builder.finalize();
-
-                        self.process_chars(operation, single.build());
-                        self.process_strings(operation, multi);
-                        operation = DEFAULT_OP;
-
-                        state = AfterUnicodeSet;
-                    }
-                    (_, c) => return self.error_here(PEK::UnexpectedChar(c)),
-                }
-                continue;
-            }
-
-            // note: no UnicodeSets can occur in this match block, as they would've been caught by the above match
-            match (state, self.must_peek_char()?) {
-                // parse the end of this unicode set
-                (Begin | Char | AfterUnicodeSet | AfterDollar, ']') => {
-                    self.iter.next();
+            use CharOrString as CS;
+            use MainToken as MT;
+            match (state, tok) {
+                // the end of this unicode set
+                (Begin | Char | AfterUnicodeSet | AfterDollar, MT::ClosingBracket) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
 
                     return Ok(());
                 }
-                // parse a literal char (either individually or as the start of a range)
-                (Begin | Char | AfterUnicodeSet, c) if legal_char_start(c) => {
-                    let c = self.parse_char()?;
+                // inner unicode set
+                (Begin | Char | AfterUnicodeSet | AfterOp, MT::UnicodeSet(set)) => {
+                    if let Some(prev) = prev_char.take() {
+                        self.single_set.add_char(prev);
+                    }
+
+                    self.process_chars(operation, set.code_points().clone());
+                    self.process_strings(
+                        operation,
+                        set.strings().iter().map(ToString::to_string).collect(),
+                    );
+
+                    operation = DEFAULT_OP;
+                    state = AfterUnicodeSet;
+                }
+                // a literal char or string (either individually or as the start of a range if char)
+                (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::Char(c))) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
                     prev_char = Some(c);
                     state = Char;
                 }
+                // parse a multi-codepoint-sequence (length != 1, by CharOrString invariant)
+                (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::String(s))) => {
+                    if let Some(prev) = prev_char.take() {
+                        self.single_set.add_char(prev);
+                    }
+
+                    self.multi_set.insert(s);
+                    state = Begin;
+                }
                 // parse a literal char as the end of a range
-                (CharMinus, c) if legal_char_start(c) => {
-                    let start = prev_char.ok_or(PEK::Eof)?;
-                    let end = self.parse_char()?;
+                (CharMinus, MT::CharOrString(CS::Char(end))) => {
+                    let start = prev_char.ok_or(PEK::Internal.with_offset(offset))?;
                     if start > end {
                         // TODO(#3558): Better error message (e.g., "start greater than end in range")?
-                        // note: offset - 1, because we already consumed the end char (and its offset)
                         return Err(
-                            PEK::UnexpectedChar(end).with_offset(self.must_peek_index()? - 1)
+                            PEK::UnexpectedChar(end).with_offset(offset)
                         );
                     }
 
@@ -559,49 +524,94 @@ where
                     prev_char = None;
                     state = Begin;
                 }
-                // parse a multi-codepoint-sequence
-                (Begin | Char | AfterUnicodeSet, '{') => {
-                    if let Some(prev) = prev_char.take() {
-                        self.single_set.add_char(prev);
-                    }
-
-                    self.parse_multi()?;
-                    state = Begin;
-                }
                 // start parsing a char range
-                (Char, '-') => {
-                    self.iter.next();
+                (Char, MT::Minus) => {
                     state = CharMinus;
                 }
                 // start parsing a unicode set difference
-                (AfterUnicodeSet, '-') => {
-                    self.iter.next();
+                (AfterUnicodeSet, MT::Minus) => {
                     operation = Operation::Difference;
                     state = AfterOp;
                 }
                 // start parsing a unicode set difference
-                (AfterUnicodeSet, '&') => {
-                    self.iter.next();
+                (AfterUnicodeSet, MT::Ampersand) => {
                     operation = Operation::Intersection;
                     state = AfterOp;
                 }
-                // (Begin | Char | AfterUnicodeSet, '$') => {
-                //     self.iter.next();
-                //     if let Some(prev) = prev_char.take() {
-                //         self.single_set.add_char(prev);
-                //     }
-                //     self.single_set.add_char('\u{FFFF}');
-                //     state = AfterDollar;
-                // }
-                (_, c) => return self.error_here(PEK::UnexpectedChar(c)),
+                (Begin | Char | AfterUnicodeSet, MT::DollarSign) => {
+                    if let Some(prev) = prev_char.take() {
+                        self.single_set.add_char(prev);
+                    }
+                    self.single_set.add_char('\u{FFFF}');
+                    state = AfterDollar;
+                }
+                (_, c) => return Err(PEK::UnexpectedChar(immediate_char).with_offset(immediate_offset)),
             }
+        }
+    }
+
+    fn parse_main_token(&mut self) -> Result<(usize, MainToken<'var>)> {
+        let (initial_offset, first) = self.must_peek()?;
+        if first == ']' {
+            self.iter.next();
+            return Ok((initial_offset, MainToken::ClosingBracket));
+        }
+        let (_, second) = self.must_peek_double()?;
+        match (first, second) {
+            // variable or anchor
+            ('$', _) => {
+                let (offset, var_or_anchor) = self.parse_variable()?;
+                match var_or_anchor {
+                    VarOrAnchor::A => Ok((offset, MainToken::DollarSign)),
+                    VarOrAnchor::V(&VariableValue::Char(c)) => Ok((offset, MainToken::CharOrString(c.into()))),
+                    VarOrAnchor::V(VariableValue::String(s)) => {
+                        // .into() handles 1-length-string -> char conversion
+                        Ok((offset, MainToken::CharOrString(s.clone().into())))
+                    },
+                    VarOrAnchor::V(VariableValue::UnicodeSet(set)) => Ok((offset, MainToken::UnicodeSet(set.clone()))),
+                }
+            }
+            // string
+            ('{', _) => {
+                self.parse_string().map(|(offset, cs)| (offset, MainToken::CharOrString(cs)))
+            }
+            // inner set
+            ('\\', 'p' | 'P') | ('[', _) => {
+                let mut inner_builder = UnicodeSetBuilder::new_internal(
+                    self.iter,
+                    self.variable_map,
+                    // zero-copy clone
+                    self.xid_start,
+                    // zero-copy clone
+                    self.xid_continue,
+                    self.property_provider,
+                );
+                inner_builder.parse_unicode_set()?;
+                let (single, multi) = inner_builder.finalize();
+                // note: offset - 1, because we already consumed full set
+                let offset = self.must_peek_index()? - 1;
+                let cpilasl = CodePointInversionListAndStringList::try_from(single.build(), VarZeroVec::from(&multi.into_iter().collect::<Vec<_>>())).map_err(|_| PEK::Internal.with_offset(offset))?;
+                Ok((offset, MainToken::UnicodeSet(cpilasl)))
+            }
+            (c, _) if legal_char_start(c) => {
+                self.parse_char().map(|(offset, cs)| (offset, MainToken::CharOrString(cs)))
+            }
+            ('-', _) => {
+                self.iter.next();
+                Ok((initial_offset, MainToken::Minus))
+            }
+            ('&', _) => {
+                self.iter.next();
+                Ok((initial_offset, MainToken::Ampersand))
+            }
+            (c, _) => Err(PEK::UnexpectedChar(c).with_offset(initial_offset)),
         }
     }
 
     // parses a variable or an anchor. expects '$' as next token.
     // is 'context-sensitive' to avoid duplicate work
     // if this is a trailing $ (eg [.... $ ]), then this function returns Ok(Some((offset, VarOrAnchor::A)))
-    fn parse_variable(&mut self) -> Result<(usize, VarOrAnchor<'var, 'caller>)> {
+    fn parse_variable(&mut self) -> Result<(usize, VarOrAnchor<'var, 'parse>)> {
         self.consume('$')?;
 
         let mut res = String::new();
@@ -631,6 +641,37 @@ where
         }
 
         Err(PEK::UnknownVariable.with_offset(var_offset))
+    }
+
+    // parses and consumes: '{' (s charInString)* s '}'
+    fn parse_string(&mut self) -> Result<(usize, CharOrString)> {
+        self.consume('{')?;
+
+        let mut buffer = String::new();
+        let mut last_offset;
+
+        loop {
+            self.skip_whitespace();
+            last_offset = self.must_peek_index()?;
+            match self.must_peek_char()? {
+                '}' => {
+                    self.iter.next();
+                    break;
+                }
+                c if legal_char_in_string_start(c) => {
+                    // don't need the offset, because '}' will always be the last char
+                    let (_, c_or_s) = self.parse_char()?;
+                    match c_or_s {
+                        CharOrString::Char(c) => buffer.push(c),
+                        CharOrString::String(s) => buffer.push_str(&s),
+                    }
+                }
+                c => return self.error_here(PEK::UnexpectedChar(c)),
+            }
+        }
+
+        // .into() handles 1-length-string -> char conversion
+        Ok((last_offset, buffer.into()))
     }
 
     // parses and consumes '{' (s char)+ s '}'
@@ -672,7 +713,7 @@ where
 
     // starts with \ and consumes the whole escape sequence
     // TODO(#3557): Multi-code-point escapes. Would mean that this function could return either a char or a String.
-    fn parse_escaped_char(&mut self) -> Result<char> {
+    fn parse_escaped_char(&mut self) -> Result<(usize, CharOrString)> {
         self.consume('\\')?;
 
         let (offset, next_char) = self.must_next()?;
@@ -687,57 +728,58 @@ where
                 let c =
                     char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
                 self.skip_whitespace();
+                let offset = self.must_peek_index()?;
                 self.consume('}')?;
-                Ok(c)
+                Ok((offset, c.into()))
             }
             'u' => {
                 // 'u' hex{4}
-                let exact: [char; 4] = self.parse_exact_hex_digits()?;
+                let (offset, exact) = self.parse_exact_hex_digits::<4>()?;
                 let hex_digits = exact.iter().collect::<String>();
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                char::try_from(num).map(|c| (offset, c.into())).map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'x' => {
                 // 'x' hex{2}
-                let exact: [char; 2] = self.parse_exact_hex_digits()?;
+                let (offset, exact) = self.parse_exact_hex_digits::<2>()?;
                 let hex_digits = exact.iter().collect::<String>();
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                char::try_from(num).map(|c| (offset, c.into())).map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'U' => {
                 // 'U00' ('0' hex{5} | '10' hex{4})
                 self.consume('0')?;
                 self.consume('0')?;
-                let hex_digits = match self.must_peek_char()? {
+                let (offset, hex_digits) = match self.must_peek_char()? {
                     '0' => {
                         self.iter.next();
-                        let exact: [char; 5] = self.parse_exact_hex_digits()?;
-                        exact.iter().collect::<String>()
+                        let (offset, exact) = self.parse_exact_hex_digits::<5>()?;
+                        (offset, exact.iter().collect::<String>())
                     }
                     '1' => {
                         self.iter.next();
                         self.consume('0')?;
-                        let exact: [char; 4] = self.parse_exact_hex_digits()?;
-                        ['1', '0'].iter().chain(exact.iter()).collect::<String>()
+                        let (offset, exact) = self.parse_exact_hex_digits::<4>()?;
+                        (offset, ['1', '0'].iter().chain(exact.iter()).collect::<String>())
                     }
                     c => return self.error_here(PEK::UnexpectedChar(c)),
                 };
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                char::try_from(num).map(|c| (offset, c.into())).map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'N' => {
                 // parse code point with name in {}
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
                 Err(PEK::Unimplemented.with_offset(offset))
             }
-            'a' => Ok('\u{0007}'),
-            'b' => Ok('\u{0008}'),
-            't' => Ok('\u{0009}'),
-            'n' => Ok('\u{000A}'),
-            'v' => Ok('\u{000B}'),
-            'f' => Ok('\u{000C}'),
-            'r' => Ok('\u{000D}'),
-            _ => Ok(next_char),
+            'a' => Ok((offset, '\u{0007}'.into())),
+            'b' => Ok((offset, '\u{0008}'.into())),
+            't' => Ok((offset, '\u{0009}'.into())),
+            'n' => Ok((offset, '\u{000A}'.into())),
+            'v' => Ok((offset, '\u{000B}'.into())),
+            'f' => Ok((offset, '\u{000C}'.into())),
+            'r' => Ok((offset, '\u{000D}'.into())),
+            _ => Ok((offset, next_char.into())),
         }
     }
 
@@ -945,13 +987,13 @@ where
 
     // parses either a raw char or an escaped char. all chars are allowed, the caller must make sure to handle
     // cases where some characters are not allowed
-    fn parse_char(&mut self) -> Result<char> {
-        let c = self.must_peek_char()?;
+    fn parse_char(&mut self) -> Result<(usize, CharOrString)> {
+        let (offset, c) = self.must_peek()?;
         match c {
             '\\' => self.parse_escaped_char(),
             _ => {
                 self.iter.next();
-                Ok(c)
+                Ok((offset, CharOrString::Char(c)))
             }
         }
     }
@@ -975,17 +1017,22 @@ where
         Ok((result, end_offset))
     }
 
-    // parses [0-9a-fA-F]{N}
-    fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[char; N]> {
+    // parses [0-9a-fA-F]{N}, returns the offset of the last digit
+    fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<(usize, [char; N])> {
+        debug_assert!(N > 0);
+
         let mut result = [0 as char; N];
+        // N is never zero, so the loop will always run at least once
+        let mut last_offset = 0;
         for slot in result.iter_mut() {
             let (offset, c) = self.must_next()?;
+            last_offset = offset;
             if !c.is_ascii_hexdigit() {
                 return Err(PEK::UnexpectedChar(c).with_offset(offset));
             }
             *slot = c;
         }
-        Ok(result)
+        Ok((last_offset, result))
     }
 
     fn skip_whitespace(&mut self) {
@@ -1012,6 +1059,13 @@ where
     // use this whenever an empty iterator would imply an Eof error
     fn must_peek(&mut self) -> Result<(usize, char)> {
         self.iter.peek().copied().ok_or(PEK::Eof.into())
+    }
+
+    // must_peek, but looks two chars ahead. use sparingly
+    fn must_peek_double(&mut self) -> Result<(usize, char)> {
+        let mut copy = self.iter.clone();
+        copy.next();
+        copy.next().ok_or(PEK::Eof.into())
     }
 
     // see must_peek
