@@ -925,7 +925,7 @@ impl Astronomical {
             approx.inner() - (6.0 / 24.0),
             approx.inner() + (6.0 / 24.0),
             |x| Self::observed_lunar_altitude(Moment::new(x), location) < 0.0,
-            |u, l| (u - l) < 1.0 / (24.0 * 60.0),
+            |u, l| (u - l) < 1.0 / 24.0 / 60.0,
         ));
 
         if set < moment + 1.0 {
@@ -1384,7 +1384,7 @@ mod tests {
             let lunar_lat = Astronomical::lunar_latitude(moment);
             let expected_lunar_lat_value = *expected_lunar_lat;
 
-            assert_eq_f64(expected_lunar_lat_value, lunar_lat, moment)
+            assert_eq_f64!(expected_lunar_lat_value, lunar_lat, moment)
         }
     }
 
@@ -1437,7 +1437,7 @@ mod tests {
             let lunar_long = Astronomical::lunar_longitude(moment);
             let expected_lunar_long_value = *expected_lunar_long;
 
-            assert_eq_f64(expected_lunar_long_value, lunar_long, moment)
+            assert_eq_f64!(expected_lunar_long_value, lunar_long, moment)
         }
     }
 
@@ -1490,7 +1490,7 @@ mod tests {
             let lunar_alt = Astronomical::lunar_altitude(moment, MECCA);
             let expected_alt_value = *expected_alt;
 
-            assert_eq_f64(expected_alt_value, lunar_alt, moment)
+            assert_eq_f64!(expected_alt_value, lunar_alt, moment)
         }
     }
 
@@ -1543,7 +1543,7 @@ mod tests {
             let distance = Astronomical::lunar_distance(moment);
             let expected_distance_val = *expected_distance;
 
-            assert_eq_f64(expected_distance_val, distance, moment)
+            assert_eq_f64!(expected_distance_val, distance, moment)
         }
     }
 
@@ -1596,7 +1596,7 @@ mod tests {
             let parallax_val = Astronomical::lunar_parallax(moment, MECCA);
             let expected_parallax_val = *parallax;
 
-            assert_eq_f64(expected_parallax_val, parallax_val, moment);
+            assert_eq_f64!(expected_parallax_val, parallax_val, moment);
         }
     }
 
@@ -1654,7 +1654,7 @@ mod tests {
             if moonset_val.is_none() {
                 assert_eq!(expected_moonset_val, 0.0);
             } else {
-                assert_eq_f64(expected_moonset_val, moonset_val.unwrap().inner(), moment);
+                assert_eq_f64!(expected_moonset_val, moonset_val.unwrap().inner(), moment);
             }
         }
     }
@@ -1716,7 +1716,7 @@ mod tests {
             let moment = Moment::new(*rd);
             let sunset_value = Astronomical::sunset(moment, jerusalem).unwrap();
             let expected_sunset_val = *expected_sunset_value;
-            assert_eq_f64(expected_sunset_val, sunset_value.inner(), moment)
+            assert_eq_f64!(expected_sunset_val, sunset_value.inner(), moment)
         }
     }
 
@@ -1901,7 +1901,7 @@ mod tests {
             let obl_val = Astronomical::obliquity(moment);
             let expected_val = *expected_obl_val;
 
-            assert_eq_f64(expected_val, obl_val, moment)
+            assert_eq_f64!(expected_val, obl_val, moment)
         }
     }
 }

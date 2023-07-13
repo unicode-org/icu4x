@@ -496,13 +496,12 @@ impl UmmalQura {
     }
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6957
     fn saudi_criterion(date: RataDie) -> bool {
-        let set = Astronomical::sunset((date - 1).as_moment(), MECCA).unwrap(); // Unwrap used temporarily
-        let tee = Location::universal_from_standard(set, MECCA);
+        let sunset = Astronomical::sunset((date - 1).as_moment(), MECCA).unwrap(); // Unwrap used temporarily
+        let tee = Location::universal_from_standard(sunset, MECCA);
         let phase = Astronomical::lunar_phase(tee);
+        let moonlag = Astronomical::moonlag((date - 1).as_moment(), MECCA).unwrap(); // Unwrap used temporarily
 
-        phase > 0.0
-            && phase < 90.0
-            && Astronomical::moonlag((date - 1).as_moment(), MECCA).unwrap() > 0.0
+        phase > 0.0 && phase < 90.0 && moonlag > 0.0
     }
 
     fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
@@ -574,6 +573,12 @@ mod test {
         -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
         470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
         664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
+    ];
+
+    static SAUDI_CRITERION_RESULTS: [bool; 33] = [
+        false, false, true, false, false, true, false, true, false, false, true, false, false,
+        true, true, true, true, false, false, true, true, true, false, false, false, false, false,
+        false, true, false, true, false, true,
     ];
 
     static ASTRONOMICAL_CASES: [DateCase; 33] = [
@@ -779,4 +784,24 @@ mod test {
         // 622 is the correct ISO year for the Islamic Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }
+
+    #[test]
+    fn test_saudi_criterion() {
+        for (boolean, f_date) in SAUDI_CRITERION_RESULTS.iter().zip(TEST_FIXED_DATE.iter()) {
+            let bool_result = UmmalQura::saudi_criterion(RataDie::new(*f_date));
+            assert_eq!(*boolean, bool_result, "{f_date:?}");
+        }
+    }
+
+    // #[test]
+    // fn test_saudi_islamic_from_fixed() {
+    //     for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+    //         let date = Date::try_new_ummalqura_date(case.year, case.month, case.day).unwrap();
+    //         assert_eq!(
+    //             UmmalQura::saudi_islamic_from_fixed(RataDie::new(*f_date)),
+    //             date,
+    //             "{case:?}"
+    //         );
+    //     }
+    // }
 }
