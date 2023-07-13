@@ -693,6 +693,8 @@ impl Astronomical {
         let moon = Self::phasis_on_or_after(date + 1, location);
         let prev = Self::phasis_on_or_before(date, location);
 
+        debug_assert!(moon > prev);
+        debug_assert!(moon - prev < u8::MAX.into());
         (moon - prev) as u8
     }
 
