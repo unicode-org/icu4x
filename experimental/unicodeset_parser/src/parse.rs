@@ -44,8 +44,8 @@ pub enum ParseErrorKind {
     /// The provided escape sequence is not a valid Unicode code point.
     InvalidEscape,
 }
-use ParseErrorKind as PEK;
 use zerovec::VarZeroVec;
+use ParseErrorKind as PEK;
 
 impl ParseErrorKind {
     fn with_offset(self, offset: usize) -> ParseError {
@@ -515,9 +515,7 @@ where
                     let start = prev_char.ok_or(PEK::Internal.with_offset(offset))?;
                     if start > end {
                         // TODO(#3558): Better error message (e.g., "start greater than end in range")?
-                        return Err(
-                            PEK::UnexpectedChar(end).with_offset(offset)
-                        );
+                        return Err(PEK::UnexpectedChar(end).with_offset(offset));
                     }
 
                     self.single_set.add_range(&(start..=end));
@@ -545,7 +543,9 @@ where
                     self.single_set.add_char('\u{FFFF}');
                     state = AfterDollar;
                 }
-                (_, c) => return Err(PEK::UnexpectedChar(immediate_char).with_offset(immediate_offset)),
+                (_, c) => {
+                    return Err(PEK::UnexpectedChar(immediate_char).with_offset(immediate_offset))
+                }
             }
         }
     }
@@ -563,18 +563,22 @@ where
                 let (offset, var_or_anchor) = self.parse_variable()?;
                 match var_or_anchor {
                     VarOrAnchor::A => Ok((offset, MainToken::DollarSign)),
-                    VarOrAnchor::V(&VariableValue::Char(c)) => Ok((offset, MainToken::CharOrString(c.into()))),
+                    VarOrAnchor::V(&VariableValue::Char(c)) => {
+                        Ok((offset, MainToken::CharOrString(c.into())))
+                    }
                     VarOrAnchor::V(VariableValue::String(s)) => {
                         // .into() handles 1-length-string -> char conversion
                         Ok((offset, MainToken::CharOrString(s.clone().into())))
-                    },
-                    VarOrAnchor::V(VariableValue::UnicodeSet(set)) => Ok((offset, MainToken::UnicodeSet(set.clone()))),
+                    }
+                    VarOrAnchor::V(VariableValue::UnicodeSet(set)) => {
+                        Ok((offset, MainToken::UnicodeSet(set.clone())))
+                    }
                 }
             }
             // string
-            ('{', _) => {
-                self.parse_string().map(|(offset, cs)| (offset, MainToken::CharOrString(cs)))
-            }
+            ('{', _) => self
+                .parse_string()
+                .map(|(offset, cs)| (offset, MainToken::CharOrString(cs))),
             // inner set
             ('\\', 'p' | 'P') | ('[', _) => {
                 let mut inner_builder = UnicodeSetBuilder::new_internal(
@@ -590,12 +594,16 @@ where
                 let (single, multi) = inner_builder.finalize();
                 // note: offset - 1, because we already consumed full set
                 let offset = self.must_peek_index()? - 1;
-                let cpilasl = CodePointInversionListAndStringList::try_from(single.build(), VarZeroVec::from(&multi.into_iter().collect::<Vec<_>>())).map_err(|_| PEK::Internal.with_offset(offset))?;
+                let cpilasl = CodePointInversionListAndStringList::try_from(
+                    single.build(),
+                    VarZeroVec::from(&multi.into_iter().collect::<Vec<_>>()),
+                )
+                .map_err(|_| PEK::Internal.with_offset(offset))?;
                 Ok((offset, MainToken::UnicodeSet(cpilasl)))
             }
-            (c, _) if legal_char_start(c) => {
-                self.parse_char().map(|(offset, cs)| (offset, MainToken::CharOrString(cs)))
-            }
+            (c, _) if legal_char_start(c) => self
+                .parse_char()
+                .map(|(offset, cs)| (offset, MainToken::CharOrString(cs))),
             ('-', _) => {
                 self.iter.next();
                 Ok((initial_offset, MainToken::Minus))
@@ -737,14 +745,18 @@ where
                 let (offset, exact) = self.parse_exact_hex_digits::<4>()?;
                 let hex_digits = exact.iter().collect::<String>();
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num).map(|c| (offset, c.into())).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                char::try_from(num)
+                    .map(|c| (offset, c.into()))
+                    .map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'x' => {
                 // 'x' hex{2}
                 let (offset, exact) = self.parse_exact_hex_digits::<2>()?;
                 let hex_digits = exact.iter().collect::<String>();
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num).map(|c| (offset, c.into())).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                char::try_from(num)
+                    .map(|c| (offset, c.into()))
+                    .map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'U' => {
                 // 'U00' ('0' hex{5} | '10' hex{4})
@@ -760,12 +772,17 @@ where
                         self.iter.next();
                         self.consume('0')?;
                         let (offset, exact) = self.parse_exact_hex_digits::<4>()?;
-                        (offset, ['1', '0'].iter().chain(exact.iter()).collect::<String>())
+                        (
+                            offset,
+                            ['1', '0'].iter().chain(exact.iter()).collect::<String>(),
+                        )
                     }
                     c => return self.error_here(PEK::UnexpectedChar(c)),
                 };
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num).map(|c| (offset, c.into())).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                char::try_from(num)
+                    .map(|c| (offset, c.into()))
+                    .map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'N' => {
                 // parse code point with name in {}
