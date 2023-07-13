@@ -260,16 +260,16 @@ impl Astronomical {
 
     pub(crate) fn equation_of_time(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
-        let lambda = poly(c, vec![280.46645, 36000.76983, 0.0003032]);
-        let anomaly = poly(c, vec![357.52910, 35999.05030, -0.0001559, -0.00000048]);
-        let eccentricity = poly(c, vec![0.016708617, -0.000042037, -0.0000001236]);
+        let lambda = poly(c, &vec![280.46645, 36000.76983, 0.0003032]);
+        let anomaly = poly(c, &vec![357.52910, 35999.05030, -0.0001559, -0.00000048]);
+        let eccentricity = poly(c, &vec![0.016708617, -0.000042037, -0.0000001236]);
         let varepsilon = Self::obliquity(moment);
         let y = libm::pow(tan_degrees(varepsilon / 2.0), 2.0);
-        let equation = 1.0 / (2.0 * PI)
-            * (y * sin_degrees(2.0 * lambda) - 2.0 * eccentricity * sin_degrees(anomaly)
-                + 4.0 * eccentricity * y * sin_degrees(anomaly) * cos_degrees(2.0 * lambda)
-                - 0.5 * libm::pow(y, 2.0) * sin_degrees(4.0 * lambda)
-                - 1.25 * libm::pow(eccentricity, 2.0) * sin_degrees(2.0 * anomaly));
+        let equation = (y * sin_degrees(2.0 * lambda) - 2.0 * eccentricity * sin_degrees(anomaly)
+            + 4.0 * eccentricity * y * sin_degrees(anomaly) * cos_degrees(2.0 * lambda)
+            - 0.5 * libm::pow(y, 2.0) * sin_degrees(4.0 * lambda)
+            - 1.25 * libm::pow(eccentricity, 2.0) * sin_degrees(2.0 * anomaly))
+            / (2.0 * PI);
 
         signum(equation) * libm::fabs(equation).min(12.0 / 24.0)
     }
@@ -277,27 +277,26 @@ impl Astronomical {
     #[allow(dead_code, clippy::unwrap_used)]
     pub(crate) fn dusk(date: f64, location: Location, alpha: f64) -> Option<Moment> {
         let evening = false;
-        let result =
-            Self::moment_of_depression(Moment::new(date + (18.0 / 24.0)), location, alpha, evening);
-
-        result?;
-        Some(Location::standard_from_local(result.unwrap(), location))
+        let moment_of_depression = Self::moment_of_depression(
+            Moment::new(date + (18.0 / 24.0)),
+            location,
+            alpha,
+            evening,
+        )?;
+        Some(Location::standard_from_local(
+            moment_of_depression,
+            location,
+        ))
     }
 
     // Calculates the obliquity of the ecliptic at a given moment
     pub fn obliquity(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let angle = 23.0 + 26.0 / 60.0 + 21.448 / 3600.0;
-        let list = [0.0, -46.8150 / 3600.0, -0.00059 / 3600.0, 0.001813 / 3600.0];
-
-        let mut result = angle;
-        let mut c_power = c;
-        for coef in list.into_iter().skip(1) {
-            result += coef * c_power;
-            c_power *= c;
-        }
-        result
+        let coefs = &vec![0.0, -46.8150 / 3600.0, -0.00059 / 3600.0, 0.001813 / 3600.0];
+        angle + poly(c, coefs)
     }
+
     // Calculates declination at a given Moment of UTC time for the latitude and longitude of an object lambda
     pub(crate) fn declination(moment: Moment, beta: f64, lambda: f64) -> f64 {
         let varepsilon = Self::obliquity(moment);
@@ -306,6 +305,7 @@ impl Astronomical {
                 + cos_degrees(beta) * sin_degrees(varepsilon) * sin_degrees(lambda),
         )
     }
+    
     pub(crate) fn right_ascension(
         moment: Moment,
         beta: f64,
@@ -329,8 +329,7 @@ impl Astronomical {
         alpha: f64,
         early: bool,
     ) -> Option<Moment> {
-        let mut t = Self::sine_offset(moment, location, alpha);
-        let date = moment.as_rata_die().to_i64_date() as f64;
+        let date = libm::floor(moment.as_rata_die().to_f64_date());
         let alt = if alpha >= 0.0 {
             if early {
                 date
@@ -341,11 +340,10 @@ impl Astronomical {
             date + 12.0 / 24.0
         };
 
-        let value = if libm::fabs(t) > 1.0 {
-            t = Self::sine_offset(Moment::new(alt), location, alpha);
-            t
+        let value = if libm::fabs(Self::sine_offset(moment, location, alpha)) > 1.0 {
+            Self::sine_offset(Moment::new(alt), location, alpha)
         } else {
-            t
+            Self::sine_offset(moment, location, alpha)
         };
 
         if libm::fabs(value) <= 1.0 {
@@ -367,6 +365,7 @@ impl Astronomical {
             None
         }
     }
+    
     #[allow(clippy::unwrap_used)]
     pub(crate) fn moment_of_depression(
         approx: Moment,
@@ -374,14 +373,14 @@ impl Astronomical {
         alpha: f64,
         early: bool,
     ) -> Option<Moment> {
-        let moment = Self::approx_moment_of_depression(approx, location, alpha, early);
-        moment?;
-        if libm::fabs(approx - moment.unwrap()) < 30.0 {
-            Some(moment.unwrap())
+        let moment = Self::approx_moment_of_depression(approx, location, alpha, early)?;
+        if libm::fabs(approx - moment) < 30.0 {
+            Some(moment)
         } else {
-            Self::moment_of_depression(moment.unwrap(), location, alpha, early)
+            Self::moment_of_depression(moment, location, alpha, early)
         }
     }
+
     // Refraction angle at given moment in given location
     pub(crate) fn refraction(location: Location) -> f64 {
         // The moment is not used.
@@ -491,7 +490,7 @@ impl Astronomical {
     #[allow(dead_code)]
     pub(crate) fn sidereal_from_moment(moment: Moment) -> f64 {
         let c = (moment - J2000) / 36525.0;
-        let coefficients = vec![
+        let coefficients = &vec![
             (280.46061837),
             (36525.0 * 360.98564736629),
             (0.000387933),
@@ -553,17 +552,20 @@ impl Astronomical {
         ];
 
         let mut correction = 0.0;
-        let len = sine_coeff.len();
-        #[allow(clippy::indexing_slicing)]
-        for i in 0..len {
-            let v = sine_coeff[i];
-            let w = args_lunar_elongation[i];
-            let x = args_solar_anomaly[i];
-            let y = args_lunar_anomaly[i];
-            let z = args_moon_node[i];
 
+        for (v, w, x, y, z) in sine_coeff
+            .iter()
+            .zip(
+                args_lunar_elongation.iter().zip(
+                    args_solar_anomaly
+                        .iter()
+                        .zip(args_lunar_anomaly.iter().zip(args_moon_node.iter())),
+                ),
+            )
+            .map(|(v, (w, (x, (y, z))))| (v, w, x, y, z))
+        {
             correction +=
-                v * libm::pow(e, libm::fabs(x)) * sin_degrees(w * d + x * ms + y * ml + z * f);
+                v * libm::pow(e, libm::fabs(*x)) * sin_degrees(w * d + x * ms + y * ml + z * f);
         }
         correction /= 1_000_000.0;
 
@@ -938,6 +940,7 @@ impl Astronomical {
                 Location::standard_from_universal(set, location).inner(),
                 date.inner(),
             ));
+            debug_assert!(std >= date, "std should not be less than date");
             if std < date {
                 return None;
             }
@@ -956,17 +959,10 @@ impl Astronomical {
 
     #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
-        let sun = Self::sunset(date, location);
-        let moon = Self::moonset(date, location);
+        let sunset = Self::sunset(date, location)?;
+        let moonset = Self::moonset(date, location)?;
 
-        // Sunset does not occur
-        sun?;
-        if moon.is_none() {
-            Some(24.0 / 24.0) // Arbitrary value as stated by lisp code
-        } else {
-            #[allow(clippy::unnecessary_unwrap)]
-            Some(moon.unwrap() - sun.unwrap())
-        }
+        Some(moonset - sunset)
     }
 
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
@@ -1106,6 +1102,7 @@ impl Astronomical {
 
         Location::universal_from_standard(best, location)
     }
+
     // Angular separation of sun and moon at a specific moment
     fn arc_of_light(moment: Moment) -> f64 {
         arccos_degrees(
@@ -1202,6 +1199,7 @@ impl Astronomical {
         }
         result
     }
+
     #[allow(dead_code)]
     pub(crate) fn sine_offset(moment: Moment, location: Location, alpha: f64) -> f64 {
         let phi = location.latitude;
