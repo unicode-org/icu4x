@@ -544,9 +544,13 @@ jobs:
       run: |
         mkdir -p benchmarks/datasize
 
-    - name: Measure size of selected data package provider/datagen/tests/data/testdata.postcard
+    - name: Generate testdata
       run: |
-        cargo run --package icu_benchmark_binsize  -- provider/datagen/tests/data/testdata.postcard file | tee benchmarks/datasize/output.txt
+        cargo run --bin make-testdata-legacy
+
+    - name: Measure size of selected data package provider/testdata/data/testdata.postcard
+      run: |
+        cargo run --package icu_benchmark_binsize  -- provider/testdata/data/testdata.postcard file | tee benchmarks/datasize/output.txt
 
     - name:  Download previous benchmark data
       run: |
