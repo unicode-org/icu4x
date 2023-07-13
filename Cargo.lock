@@ -1321,6 +1321,7 @@ dependencies = [
  "icu_provider",
  "icu_relativetime",
  "icu_segmenter",
+ "icu_singlenumberformatter",
  "icu_timezone",
  "writeable",
 ]

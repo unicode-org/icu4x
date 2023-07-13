@@ -54,24 +54,14 @@ pub struct CurrencyPatterns {
     /// Otherwise, use the standard_alpha_next_to_number pattern.
     pub narrow_pattern_standard: bool,
 
+    /// The index of the short pattern place holder in the place holders list.
+    /// If the value is u16::MAX, this means that the short pattern does not have a place holder.
     pub short_place_holder_index: u16,
 
+    /// The index of the narrow pattern place holder in the place holders list.
+    /// If the value is u16::MAX, this means that the narrow pattern does not have a place holder.
     pub narrow_place_holder_index: u16,
 }
-
-// #[zerovec::make_varule(CurrencyPatternsULE)]
-// #[cfg_attr(
-//     feature = "datagen",
-//     derive(serde::Serialize, databake::Bake),
-//     databake(path = icu_singlenumberformatter::provider),
-// )]
-// #[zerovec::derive(Serialize, Deserialize, Debug)]
-// #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-// #[derive(Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
-// pub struct CurrencyPatterns<'data> {
-//     pub standard: Cow<'data, str>,
-//     pub standard_alpha_next_to_number: Cow<'data, str>,
-// }
 
 ///
 ///
