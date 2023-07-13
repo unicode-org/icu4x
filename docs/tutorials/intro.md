@@ -112,15 +112,8 @@ Users are also free to design their own providers that best fit into their ecosy
 
 # 5. Using an ICU4X component
 
-We're going to extend our app to use the `icu::datetime` component to format a date and time. This component requires data, but as we don't want to jump into data management just yet, we will use `ICU4X`'s `icu_testdata` crate. This contains test providers that support all ICU4X keys for a small representative set of locales. It contains a `BufferProvider` (`icu_testdata::buffer()`), an `AnyProvider` (`icu_testdata::any()`), and an unstable data provider (`icu_testdata::unstable()`). The latter two require fewer Cargo features, so we will be using those.
-
-First, we need to add the crate to our `Cargo.toml`:
-
-```console
-$ cargo add icu_testdata
-```
-
-We can then use it in our code to format a date:
+We're going to extend our app to use the `icu::datetime` component to format a date and time. This component requires data; we will look at custom data generation later and for now use the default included data,
+which is exposed through constructors such as `try_new`.
 
 ```rust
 use icu::locid::{Locale, locale};
@@ -130,11 +123,9 @@ use icu::datetime::{DateTimeFormatter, options::length};
 const LOCALE: Locale = locale!("ja"); // let's try some other language
 
 fn main() {
-    let provider = icu_testdata::any();
-
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = DateTimeFormatter::try_new_with_any_provider(&provider, &LOCALE.into(), options.into())
+    let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &LOCALE.into(), options.into())
         .expect("Failed to initialize DateTimeFormatter");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)

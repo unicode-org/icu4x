@@ -72,7 +72,8 @@ mod testutil;
 mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
-pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_discard};
+#[allow(deprecated)] // ugh
+pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_discard, key};
 pub use source::SourceData;
 
 #[cfg(feature = "provider_baked")]
@@ -193,13 +194,15 @@ impl DatagenProvider {
     pub fn for_test() -> Self {
         // Singleton so that all instantiations share the same cache.
         lazy_static::lazy_static! {
-            static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                // This is equivalent to `latest_tested` for the files defined in
-                // `tools/testdata-scripts/globs.rs.data`.
-                source: SourceData::offline()
-                    .with_cldr(repodata::paths::cldr(), Default::default()).unwrap()
-                    .with_icuexport(repodata::paths::icuexport()).unwrap()
-                    .with_segmenter_lstm(repodata::paths::lstm()).unwrap(),
+            static ref TEST_PROVIDER: DatagenProvider = {
+                let data_root = std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
+                DatagenProvider {
+                    // This is equivalent to `latest_tested` for the files defined in
+                    // `tools/testdata-scripts/globs.rs.data`.
+                    source: SourceData::offline()
+                        .with_cldr(data_root.join("cldr"), Default::default()).unwrap()
+                        .with_icuexport(data_root.join("icuexport")).unwrap(),
+                }
             };
         }
         TEST_PROVIDER.clone()
@@ -363,27 +366,6 @@ impl DatagenProvider {
         }
         internal(self, keys, &mut exporter)
     }
-}
-
-/// Parses a human-readable key identifier into a [`DataKey`].
-//  Supports the hello world key
-/// # Example
-/// ```
-/// # use icu_provider::KeyedDataMarker;
-/// assert_eq!(
-///     icu_datagen::key("list/and@1"),
-///     Some(icu::list::provider::AndListV1Marker::KEY),
-/// );
-/// ```
-pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
-    lazy_static::lazy_static! {
-        static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys_with_experimental()
-                    .into_iter()
-                    .chain([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-                    .map(|k| (k.path().get(), k))
-                    .collect();
-    }
-    LOOKUP.get(string.as_ref()).copied()
 }
 
 /// Parses a list of human-readable key identifiers and returns a

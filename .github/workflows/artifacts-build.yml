@@ -526,7 +526,7 @@ jobs:
           git checkout empty
           gsutil -m cp -r benchmarks/binsize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/binsize
 
-  # Data size benchmark: track size of provider/testdata/data/testdata.postcard (total data size).
+  # Data size benchmark: track size of provider/datagen/tests/data/testdata.postcard (total data size).
   bench-datasize:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
@@ -543,6 +543,10 @@ jobs:
     - name: Setup output data directory
       run: |
         mkdir -p benchmarks/datasize
+
+    - name: Generate testdata
+      run: |
+        cargo run --bin make-testdata-legacy
 
     - name: Measure size of selected data package provider/testdata/data/testdata.postcard
       run: |
