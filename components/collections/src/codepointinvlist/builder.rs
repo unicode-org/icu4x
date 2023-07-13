@@ -492,7 +492,7 @@ impl CodePointInversionListBuilder {
     /// let check = builder.build();
     /// assert!(check.is_empty());
     /// ```
-    pub fn is_empty(&mut self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.intervals.is_empty()
     }
 }
