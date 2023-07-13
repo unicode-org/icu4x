@@ -368,7 +368,7 @@ impl DateTime<Chinese> {
     }
 }
 
-impl ChineseBased<Chinese> for Chinese {
+impl ChineseBased for Chinese {
     fn location(fixed: RataDie) -> Location {
         let year = Iso::iso_from_fixed(fixed).year().number;
         if year < 1929 {

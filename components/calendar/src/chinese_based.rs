@@ -38,8 +38,8 @@ use crate::{
 /// - Implement `fn new_chinese_based_date` by taking a year, month, and day in a Chinese-based calendar and
 /// returning a Date of the relevant Calendar type.
 ///
-/// For an example of how to use this trait, see `impl ChineseBased<Chinese>` in [`Chinese`].
-pub(crate) trait ChineseBased<C: CalendarArithmetic> {
+/// For an example of how to use this trait, see `impl ChineseBased for Chinese` in [`Chinese`].
+pub(crate) trait ChineseBased: CalendarArithmetic {
     /// Given a fixed date, return the location used for observations of the new moon in order to
     /// calculate the beginning of months. For multiple Chinese-based lunar calendars, this has
     /// changed over the years, and can cause differences in calendar date.
@@ -53,16 +53,16 @@ pub(crate) trait ChineseBased<C: CalendarArithmetic> {
     /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
     ///
     /// This function should just call try_new_C_date where C is the name of the calendar.
-    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<C>;
+    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<Self>;
 }
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct ChineseBasedDateInner<C: ChineseBased<C> + CalendarArithmetic>(
+pub(crate) struct ChineseBasedDateInner<C: ChineseBased + CalendarArithmetic>(
     pub(crate) ArithmeticDate<C>,
 );
 
-impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
+impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Get the current major solar term of a fixed date, output as an integer from 1..=12.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
@@ -286,7 +286,7 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
     }
 }
 
-impl<C: ChineseBased<C> + Calendar> CalendarArithmetic for C {
+impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
     /// Returns the number of days in the given (year, month). In the Chinese calendar, months start at each
     /// new moon, so this function finds the number of days between the new moon at the beginning of the given
     /// month and the new moon at the beginning of the next month.
