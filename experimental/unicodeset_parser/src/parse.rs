@@ -184,7 +184,7 @@ impl ParseError {
 }
 
 // invariant: a one-codepoint-element is represented as a char, not a single-char String
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum VariableValue<'a> {
     UnicodeSet(CodePointInversionListAndStringList<'a>),
     Char(char),
@@ -460,6 +460,20 @@ where
                     self.parse_unicode_set_inner()
                 }
             }
+            '$' => {
+                // must be variable ref to a UnicodeSet
+                let (offset, v) = self.parse_variable()?;
+                match v {
+                    VarOrAnchor::V(VariableValue::UnicodeSet(s)) => {
+                        self.single_set.add_set(s.code_points());
+                        self.multi_set
+                            .extend(s.strings().iter().map(ToString::to_string));
+                        Ok(())
+                    }
+                    VarOrAnchor::V(_) => Err(PEK::UnexpectedVariable.with_offset(offset)),
+                    VarOrAnchor::A => Err(PEK::UnexpectedChar('$').with_offset(offset)),
+                }
+            }
             c => self.error_here(PEK::UnexpectedChar(c)),
         }
     }
@@ -522,12 +536,16 @@ where
         loop {
             self.skip_whitespace();
 
-            // first check if the next token is a variable
-            if let Some((offset, var)) = self.parse_variable()? {
+            // first check if the next token is a variable or trailing anchor
+            if self.must_peek_char()? == '$' {
+                use VarOrAnchor::*;
+                use VariableValue as VV;
+
+                let (offset, var) = self.parse_variable()?;
                 // TODO: Unfortunately, this match has a lot of duplication with the last match block
                 match (state, var) {
                     // anchor, must be at the end of the set
-                    (Begin | Char | AfterUnicodeSet, VarOrAnchor::A) => {
+                    (Begin | Char | AfterUnicodeSet, A) => {
                         if let Some(prev) = prev_char.take() {
                             self.single_set.add_char(prev);
                         }
@@ -535,10 +553,7 @@ where
                         state = AfterDollar;
                     }
                     // unicodeset
-                    (
-                        Begin | Char | AfterUnicodeSet | AfterOp,
-                        VarOrAnchor::V(VariableValue::UnicodeSet(set)),
-                    ) => {
+                    (Begin | Char | AfterUnicodeSet | AfterOp, V(VV::UnicodeSet(set))) => {
                         if let Some(prev) = prev_char.take() {
                             self.single_set.add_char(prev);
                         }
@@ -553,7 +568,7 @@ where
                         state = AfterUnicodeSet;
                     }
                     // raw char, [a $var b]
-                    (Begin | Char | AfterUnicodeSet, VarOrAnchor::V(&VariableValue::Char(c))) => {
+                    (Begin | Char | AfterUnicodeSet, V(&VV::Char(c))) => {
                         if let Some(prev) = prev_char.take() {
                             self.single_set.add_char(prev);
                         }
@@ -561,7 +576,7 @@ where
                         state = Char;
                     }
                     // char ending a range, [ a - $b ]
-                    (CharMinus, VarOrAnchor::V(&VariableValue::Char(c))) => {
+                    (CharMinus, V(&VV::Char(c))) => {
                         let start = prev_char.ok_or(PEK::Eof)?;
                         let end = c;
                         if start > end {
@@ -577,7 +592,7 @@ where
                         state = Begin;
                     }
                     // string
-                    (Begin | Char | AfterUnicodeSet, VarOrAnchor::V(VariableValue::String(s))) => {
+                    (Begin | Char | AfterUnicodeSet, V(VV::String(s))) => {
                         if let Some(prev) = prev_char.take() {
                             self.single_set.add_char(prev);
                         }
@@ -700,26 +715,25 @@ where
         }
     }
 
+    // parses a variable or an anchor. expects '$' as next token.
     // is 'context-sensitive' to avoid duplicate work
     // if this is a trailing $ (eg [.... $ ]), then this function returns Ok(Some((offset, VarOrAnchor::A)))
-    fn parse_variable(&mut self) -> Result<Option<(usize, VarOrAnchor<'var, 'caller>)>> {
-        // EOF is invalid in this context
-        if self.must_peek_char()? != '$' {
-            return Ok(None);
-        }
-        self.iter.next();
+    fn parse_variable(&mut self) -> Result<(usize, VarOrAnchor<'var, 'caller>)> {
+        self.consume('$')?;
 
         let mut res = String::new();
         let (mut var_offset, first_c) = self.must_peek()?;
 
         if !self.xid_start.contains(first_c) {
-            return Ok(Some((var_offset, VarOrAnchor::A)));
+            // -1 because we already consumed the '$'
+            return Ok((var_offset - 1, VarOrAnchor::A));
         }
 
         res.push(first_c);
         self.iter.next();
-        loop {
-            let (offset, c) = self.must_peek()?;
+        // important: if we are parsing a root unicodeset as a variable, we might reach EOF as
+        // a valid end of the variable name, so we cannot use must_peek here.
+        while let Some(&(offset, c)) = self.iter.peek() {
             if !self.xid_continue.contains(c) {
                 break;
             }
@@ -730,7 +744,7 @@ where
         }
 
         if let Some(v) = self.variable_map.get(&res) {
-            return Ok(Some((var_offset, VarOrAnchor::V(v))));
+            return Ok((var_offset, VarOrAnchor::V(v)));
         }
 
         Err(PEK::UnknownVariable.with_offset(var_offset))
@@ -1527,11 +1541,84 @@ mod tests {
         );
     }
 
-    fn assert_is_error_and_message_eq(source: &str, expected_err: &str) {
-        let result = parse(source);
+    fn assert_is_error_and_message_eq(source: &str, expected_err: &str, vm: &VariableMap<'_>) {
+        let result = parse_with_variables(source, vm);
         assert!(result.is_err(), "{source} does not cause an error!");
         let err = result.unwrap_err();
         assert_eq!(err.fmt_with_source(source).to_string(), expected_err);
+    }
+
+    #[test]
+    fn test_semantics_with_variables() {
+        let map_char_char = HashMap::from([
+            ("a".to_string(), VariableValue::Char('a')),
+            ("var2".to_string(), VariableValue::Char('z')),
+        ]);
+
+        let map_headache = HashMap::from([("hehe".to_string(), VariableValue::Char('-'))]);
+
+        let map_char_string = HashMap::from([
+            ("a".to_string(), VariableValue::Char('a')),
+            ("var2".to_string(), VariableValue::String("abc".into())),
+        ]);
+
+        let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
+        let map_char_set = HashMap::from([
+            ("a".to_string(), VariableValue::Char('a')),
+            ("set".to_string(), VariableValue::UnicodeSet(set)),
+        ]);
+
+        let cases: Vec<(_, _, _, Vec<&str>)> = vec![
+            // simple
+            (&map_char_char, "[$a]", "aa", vec![]),
+            (&map_char_char, "[ $a ]", "aa", vec![]),
+            (&map_char_char, "[$a$]", "aa\u{ffff}\u{ffff}", vec![]),
+            (&map_char_char, "[$a$ ]", "aa\u{ffff}\u{ffff}", vec![]),
+            (&map_char_char, "[$a$var2]", "aazz", vec![]),
+            (&map_char_char, "[$a - $var2]", "az", vec![]),
+            (&map_char_char, "[$a-$var2]", "az", vec![]),
+            (&map_headache, "[a $hehe z]", "aazz--", vec![]),
+            (
+                &map_char_char,
+                "[[$]var2]]",
+                "\u{ffff}\u{ffff}vvaarr22",
+                vec![],
+            ),
+            // variable prefix escaping
+            (&map_char_char, r"[\$var2]", "$$vvaarr22", vec![]),
+            (&map_char_char, r"[\\$var2]", r"\\zz", vec![]),
+            // no variable dereferencing in strings
+            (&map_char_char, "[{$a}]", "", vec!["$a"]),
+            // set operations
+            (&map_char_set, "[$set & [b-z]]", "bz", vec![]),
+            (&map_char_set, "[[a-z]-[b-z]]", "aa", vec![]),
+            (&map_char_set, "[$set-[b-z]]", "aa", vec!["Hello, World!"]),
+            (&map_char_set, "[$set-$set]", "", vec![]),
+            (&map_char_set, "[[a-zA]-$set]", "AA", vec![]),
+            (&map_char_set, "[$set[b-z]]", "az", vec!["Hello, World!"]),
+            (&map_char_set, "[[a-a]$set]", "az", vec!["Hello, World!"]),
+            (&map_char_set, "$set", "az", vec!["Hello, World!"]),
+            // strings
+            (&map_char_string, "[$var2]", "", vec!["abc"]),
+        ];
+        for (variable_map, source, single, multi) in cases {
+            let parsed = parse_with_variables(source, variable_map);
+            if let Err(err) = parsed {
+                assert!(
+                    false,
+                    "{source} results in an error: {}",
+                    err.fmt_with_source(source)
+                );
+                continue;
+            }
+            let parsed = parsed.unwrap();
+            assert_set_equality(
+                source,
+                &parsed,
+                range_iter_from_str(single),
+                multi.into_iter(),
+            );
+        }
     }
 
     #[test]
@@ -1657,7 +1744,11 @@ mod tests {
         for (source, single, multi) in cases {
             let parsed = parse(source);
             if let Err(err) = parsed {
-                assert!(false, "{source} results in an error: {}", err.fmt_with_source(source));
+                assert!(
+                    false,
+                    "{source} results in an error: {}",
+                    err.fmt_with_source(source)
+                );
                 continue;
             }
             let parsed = parsed.unwrap();
@@ -1720,8 +1811,9 @@ mod tests {
             ),
             (r"[\xe5-ä]", r"[\xe5-ä← error: unexpected character 'ä'"),
         ];
+        let vm = Default::default();
         for (source, expected_err) in cases {
-            assert_is_error_and_message_eq(source, expected_err);
+            assert_is_error_and_message_eq(source, expected_err, &vm);
         }
     }
 }
