@@ -471,6 +471,7 @@ where
             use MainToken as MT;
             match (state, tok) {
                 // the end of this unicode set
+                // TODO: Add CharMinus state?
                 (Begin | Char | AfterUnicodeSet | AfterDollar, MT::ClosingBracket) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
@@ -594,9 +595,11 @@ where
                 let (single, multi) = inner_builder.finalize();
                 // note: offset - 1, because we already consumed full set
                 let offset = self.must_peek_index()? - 1;
+                let mut strings = multi.into_iter().collect::<Vec<_>>();
+                strings.sort();
                 let cpilasl = CodePointInversionListAndStringList::try_from(
                     single.build(),
-                    VarZeroVec::from(&multi.into_iter().collect::<Vec<_>>()),
+                    VarZeroVec::from(&strings),
                 )
                 .map_err(|_| PEK::Internal.with_offset(offset))?;
                 Ok((offset, MainToken::UnicodeSet(cpilasl)))
