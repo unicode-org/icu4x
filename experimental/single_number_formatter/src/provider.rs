@@ -36,7 +36,7 @@ pub struct CurrencyEssentialV1<'data> {
     pub place_holders: VarZeroVec<'data, str>,
 }
 
-#[zerovec::make_ule(PatternsIndicesULE)]
+#[zerovec::make_ule(CurrencyPatternsULE)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -53,9 +53,9 @@ pub struct CurrencyPatterns {
     /// Otherwise, use the standard_alpha_next_to_number pattern.
     pub narrow_pattern_standard: bool,
 
-    pub short_place_holder: u16,
+    pub short_place_holder_index: u16,
 
-    pub narrow_place_holder: u16,
+    pub narrow_place_holder_index: u16,
 }
 
 // #[zerovec::make_varule(CurrencyPatternsULE)]

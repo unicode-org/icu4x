@@ -250,8 +250,8 @@ fn extract_currency_essential<'data>(
             &CurrencyPatterns {
                 short_pattern_standard,
                 narrow_pattern_standard,
-                short_place_holder: short_place_holder_index,
-                narrow_place_holder: narrow_place_holder_index,
+                short_place_holder_index,
+                narrow_place_holder_index,
             },
         );
     }
@@ -264,6 +264,42 @@ fn extract_currency_essential<'data>(
     };
 
     Ok(result)
+}
+
+fn get_place_holders_of_currency(
+    iso_code: TinyAsciiStr<3>,
+    locale: &DataPayload<CurrencyEssentialV1Maker>,
+    place_holders: &VarZeroVec<'_, str>,
+) -> (String, String) {
+    let default = CurrencyPatternsULE {
+        short_pattern_standard: true,
+        narrow_pattern_standard: true,
+        short_place_holder_index: u16::MAX.into(),
+        narrow_place_holder_index: u16::MAX.into(),
+    };
+    let owned = locale.get().to_owned();
+    let currency_pattern: &CurrencyPatternsULE =
+        owned.indices_map.get(&iso_code).unwrap_or(&default);
+
+    let short_place_holder = if currency_pattern.short_place_holder_index == u16::MAX.into() {
+        "".to_string()
+    } else {
+        place_holders
+            .get(currency_pattern.short_place_holder_index.as_unsigned_int() as usize)
+            .unwrap()
+            .to_string()
+    };
+
+    let narrow_place_holder = if currency_pattern.narrow_place_holder_index == u16::MAX.into() {
+        "".to_string()
+    } else {
+        place_holders
+            .get(currency_pattern.narrow_place_holder_index.as_unsigned_int() as usize)
+            .unwrap()
+            .to_string()
+    };
+
+    (short_place_holder, narrow_place_holder)
 }
 
 #[test]
@@ -280,6 +316,11 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
+    let place_holders = &ar_eg.get().to_owned().place_holders;
+
+    let (ar_eg_short, ar_eg_narrow) =
+        get_place_holders_of_currency(tinystr!(3, "EGP"), &ar_eg, place_holders);
+
     assert_eq!(
         ar_eg.clone().get().to_owned().standard,
         "‏#,##0.00 ¤;‏-#,##0.00 ¤"
@@ -288,22 +329,6 @@ fn test_basic() {
         ar_eg.clone().get().to_owned().standard_alpha_next_to_number,
         ""
     );
-    let short_pattern = ar_eg
-        .clone()
-        .get()
-        .to_owned()
-        .indices_map
-        .get(&tinystr!(3, "EGP"))
-        .unwrap()
-        .short_place_holder
-        .as_unsigned_int();
-    let short_place_holder = ar_eg
-        .get()
-        .to_owned()
-        .place_holders
-        .get(short_pattern as usize)
-        .unwrap()
-        .to_string();
-
-    assert_eq!(short_place_holder, "ج.م.\u{200f}");
+    assert_eq!(ar_eg_short, "ج.م.\u{200f}");
+    assert_eq!(ar_eg_narrow, "E£");
 }
