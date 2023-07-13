@@ -12,7 +12,6 @@ use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
 use crate::{Date, Gregorian};
-use alloc::vec;
 
 #[derive(Debug, Copy, Clone, Default)]
 /// A Location on the Earth given as a latitude, longitude, and elevation,
@@ -25,6 +24,7 @@ pub(crate) struct Location {
     pub(crate) elevation: f64, // elevation in meters
     pub(crate) zone: f64,      // UTC timezone offset
 }
+
 #[allow(clippy::excessive_precision)]
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
@@ -47,7 +47,6 @@ pub(crate) const MAX_UTC_OFFSET: f64 = 14.0 / 24.0;
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
     /// attempting to create a location outside of these bounds will result in a LocationError.
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn try_new(
         latitude: f64,
         longitude: f64,
@@ -83,25 +82,21 @@ impl Location {
     }
 
     /// Get the longitude of a Location
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn longitude(&self) -> f64 {
         self.longitude
     }
 
     /// Get the latitude of a Location
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn latitude(&self) -> f64 {
         self.latitude
     }
 
     /// Get the elevation of a Location
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn elevation(&self) -> f64 {
         self.elevation
     }
 
     /// Get the utc-offset of a Location
-    #[allow(dead_code)]
     pub(crate) fn zone(&self) -> f64 {
         self.zone
     }
@@ -110,12 +105,10 @@ impl Location {
     /// this yields the difference in Moment given a longitude
     /// e.g. a longitude of 90 degrees is 0.25 (90 / 360) days ahead
     /// of a location with a longitude of 0 degrees.
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn zone_from_longitude(longitude: f64) -> f64 {
         longitude / (360.0)
     }
     // Convert standard time to local mean time given a location and a time zone with given offset
-    #[allow(dead_code)]
     pub(crate) fn standard_from_local(standard_time: Moment, location: Location) -> Moment {
         Self::standard_from_universal(
             Self::universal_from_local(standard_time, location),
@@ -129,7 +122,6 @@ impl Location {
     }
 
     /// Convert from universal time to local time given a location
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
         universal_time + Self::zone_from_longitude(location.longitude)
     }
@@ -146,7 +138,6 @@ impl Location {
     /// return the Moment in standard time from the time zone with the given offset.
     /// The field utc_offset should be within the range of possible offsets given by
     /// the constand fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
-    #[allow(dead_code)]
     pub(crate) fn standard_from_universal(standard_time: Moment, location: Location) -> Moment {
         debug_assert!(location.zone > MIN_UTC_OFFSET && location.zone < MAX_UTC_OFFSET, "UTC offset {0} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)", location.zone);
         standard_time + location.zone
@@ -260,9 +251,9 @@ impl Astronomical {
 
     pub(crate) fn equation_of_time(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
-        let lambda = poly(c, &vec![280.46645, 36000.76983, 0.0003032]);
-        let anomaly = poly(c, &vec![357.52910, 35999.05030, -0.0001559, -0.00000048]);
-        let eccentricity = poly(c, &vec![0.016708617, -0.000042037, -0.0000001236]);
+        let lambda = poly(c, &[280.46645, 36000.76983, 0.0003032]);
+        let anomaly = poly(c, &[357.52910, 35999.05030, -0.0001559, -0.00000048]);
+        let eccentricity = poly(c, &[0.016708617, -0.000042037, -0.0000001236]);
         let varepsilon = Self::obliquity(moment);
         let y = libm::pow(tan_degrees(varepsilon / 2.0), 2.0);
         let equation = (y * sin_degrees(2.0 * lambda) - 2.0 * eccentricity * sin_degrees(anomaly)
@@ -274,7 +265,7 @@ impl Astronomical {
         signum(equation) * libm::fabs(equation).min(12.0 / 24.0)
     }
 
-    #[allow(dead_code, clippy::unwrap_used)]
+    #[allow(clippy::unwrap_used)]
     pub(crate) fn dusk(date: f64, location: Location, alpha: f64) -> Option<Moment> {
         let evening = false;
         let moment_of_depression = Self::moment_of_depression(
@@ -293,7 +284,7 @@ impl Astronomical {
     pub fn obliquity(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let angle = 23.0 + 26.0 / 60.0 + 21.448 / 3600.0;
-        let coefs = &vec![0.0, -46.8150 / 3600.0, -0.00059 / 3600.0, 0.001813 / 3600.0];
+        let coefs = &[0.0, -46.8150 / 3600.0, -0.00059 / 3600.0, 0.001813 / 3600.0];
         angle + poly(c, coefs)
     }
 
@@ -487,10 +478,9 @@ impl Astronomical {
         Self::universal_from_dynamical(approx + correction + extra + additional)
     }
 
-    #[allow(dead_code)]
     pub(crate) fn sidereal_from_moment(moment: Moment) -> f64 {
         let c = (moment - J2000) / 36525.0;
-        let coefficients = &vec![
+        let coefficients = &[
             (280.46061837),
             (36525.0 * 360.98564736629),
             (0.000387933),
@@ -505,7 +495,6 @@ impl Astronomical {
     /// Latitude of the moon (in degrees) at a given moment
     ///
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4466
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn lunar_latitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let l = Self::mean_lunar_longitude(c);
@@ -552,7 +541,6 @@ impl Astronomical {
         ];
 
         let mut correction = 0.0;
-
         for (v, w, x, y, z) in sine_coeff
             .iter()
             .zip(
@@ -663,7 +651,6 @@ impl Astronomical {
         div_rem_euclid_f64(n, 360.0).1
     }
 
-    #[allow(dead_code)]
     pub fn phasis_on_or_after(date: RataDie, location: Location) -> RataDie {
         let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
         let age = date - moon.as_rata_die();
@@ -672,10 +659,9 @@ impl Astronomical {
         } else {
             date.as_moment()
         };
-        next(tau, location, Self::visible_crescent)
+        next_moment(tau, location, Self::visible_crescent)
     }
 
-    #[allow(dead_code)]
     pub fn phasis_on_or_before(date: RataDie, location: Location) -> RataDie {
         let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
         let age = date - moon.as_rata_die();
@@ -684,10 +670,10 @@ impl Astronomical {
         } else {
             moon
         };
-        next(tau, location, Self::visible_crescent)
+        next_moment(tau, location, Self::visible_crescent)
     }
 
-    #[allow(dead_code, clippy::unwrap_used)]
+    #[allow(clippy::unwrap_used)]
     pub fn month_length(date: RataDie, location: Location) -> u8 {
         let moon = Self::phasis_on_or_after(date + 1, location);
         let prev = Self::phasis_on_or_before(date, location);
@@ -707,11 +693,12 @@ impl Astronomical {
         )
         .1
     }
+
     /// Altitude of the moon (in degrees) at a given moment
     ///
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4537
 
-    #[allow(dead_code, clippy::unwrap_used)]
+    #[allow(clippy::unwrap_used)]
     pub(crate) fn lunar_altitude(moment: Moment, location: Location) -> f64 {
         let phi = location.latitude;
         let psi = location.longitude;
@@ -910,7 +897,6 @@ impl Astronomical {
         .1
     }
 
-    #[allow(dead_code)]
     fn moonset(date: Moment, location: Location) -> Option<Moment> {
         let moment = Location::universal_from_standard(date, location);
         let waxing = Self::lunar_phase(date) < 180.0;
@@ -950,19 +936,18 @@ impl Astronomical {
         }
     }
 
-    #[allow(dead_code)]
     pub(crate) fn sunset(date: Moment, location: Location) -> Option<Moment> {
         let alpha = Self::refraction(location) + (16.0 / 60.0);
 
         Self::dusk(date.inner(), location, alpha)
     }
 
-    #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
+    #[allow(clippy::unwrap_used, clippy::eq_op)]
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
-        let sunset = Self::sunset(date, location)?;
-        let moonset = Self::moonset(date, location)?;
+        let sun = Self::sunset(date, location)?;
+        let moon = Self::moonset(date, location)?;
 
-        Some(moonset - sunset)
+        Some(moon - sun)
     }
 
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment
@@ -999,7 +984,7 @@ impl Astronomical {
             a
         }
     }
-    #[allow(dead_code)]
+
     pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> Moment {
         let tau = moment.inner()
             - (MEAN_SYNODIC_MONTH / 360.0) * ((Self::lunar_phase(moment) - phase) % 360.0);
@@ -1154,32 +1139,28 @@ impl Astronomical {
         }
     }
 
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
-                        // This code differs from the lisp/book code by taking in a julian centuries value instead of
-                        // a Moment; this is because aberration is only ever called in the fn solar_longitude, which
-                        // already converts moment to julian centuries. Thus this function takes the julian centuries
-                        // to avoid unnecessarily calculating the same value twice.
+    // This code differs from the lisp/book code by taking in a julian centuries value instead of
+    // a Moment; this is because aberration is only ever called in the fn solar_longitude, which
+    // already converts moment to julian centuries. Thus this function takes the julian centuries
+    // to avoid unnecessarily calculating the same value twice.
     fn aberration(c: f64) -> f64 {
         0.0000974 * libm::cos((177.63 + 35999.01848 * c).to_radians()) - 0.005575
     }
 
     /// Find the time of the new moon preceding a given Moment
     /// (the last new moon before moment)
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn new_moon_before(moment: Moment) -> Moment {
         Self::nth_new_moon(Self::num_of_new_moon_at_or_after(moment) - 1)
     }
 
     /// Find the time of the new moon following a given Moment
     /// (the first new moon after moment)
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn new_moon_at_or_after(moment: Moment) -> Moment {
         Self::nth_new_moon(Self::num_of_new_moon_at_or_after(moment))
     }
 
     // Function to find the number of the new moon at or after a given moment;
     // helper function for new_moon_before and new_moon_at_or_after
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     fn num_of_new_moon_at_or_after(moment: Moment) -> i32 {
         let t0: Moment = Self::nth_new_moon(0);
         let phi = Self::lunar_phase(moment);
@@ -1200,7 +1181,6 @@ impl Astronomical {
         result
     }
 
-    #[allow(dead_code)]
     pub(crate) fn sine_offset(moment: Moment, location: Location, alpha: f64) -> f64 {
         let phi = location.latitude;
         let tee_prime = Location::universal_from_local(moment, location);

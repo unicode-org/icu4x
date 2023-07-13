@@ -190,6 +190,10 @@ impl Calendar for IslamicObservational {
             next_year: Self::year_as_islamic(next_year),
         }
     }
+
+    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
+        todo!()
+    }
     // TODO: ADD TO ANYCALENDAR
     // fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
     //     Some(AnyCalendarKind::IslamicObservational)

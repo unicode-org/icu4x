@@ -152,6 +152,7 @@ pub fn arctan_degrees(y: f64, x: f64) -> Result<f64, &'static str> {
         Ok(mod_degrees(if x >= 0.0 { alpha } else { alpha + 180.0 }))
     }
 }
+
 // TODO: convert recursive into iterative
 pub fn poly(x: f64, coeffs: &[f64]) -> f64 {
     match coeffs.split_first() {
@@ -212,12 +213,24 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
 }
 
 // Used for Umm-Al-Qura calculations
-pub(crate) fn next<F>(mut index: Moment, location: Location, condition: F) -> RataDie
+pub(crate) fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
 where
     F: Fn(Moment, Location) -> bool,
 {
     loop {
         if condition(index, location) {
+            return index.as_rata_die();
+        }
+        index += 1.0;
+    }
+}
+
+pub(crate) fn next<F>(mut index: RataDie, condition: F) -> RataDie
+where
+    F: Fn(Moment, Location) -> bool,
+{
+    loop {
+        if condition(index) {
             return index.as_rata_die();
         }
         index += 1.0;
