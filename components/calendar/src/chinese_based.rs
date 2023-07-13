@@ -39,7 +39,7 @@ use crate::{
 /// returning a Date of the relevant Calendar type.
 ///
 /// For an example of how to use this trait, see `impl ChineseBased for Chinese` in [`Chinese`].
-pub(crate) trait ChineseBased: CalendarArithmetic {
+pub(crate) trait ChineseBased: CalendarArithmetic + Sized {
     /// Given a fixed date, return the location used for observations of the new moon in order to
     /// calculate the beginning of months. For multiple Chinese-based lunar calendars, this has
     /// changed over the years, and can cause differences in calendar date.
