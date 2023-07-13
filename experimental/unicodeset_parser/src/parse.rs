@@ -1374,7 +1374,13 @@ where
     let xid_continue = load_xid_continue(provider).map_err(|_| PEK::Internal)?;
     let xid_continue_list = xid_continue.to_code_point_inversion_list();
 
-    let mut builder = UnicodeSetBuilder::new_internal(&mut iter, variable_map, &xid_start_list, &xid_continue_list, provider);
+    let mut builder = UnicodeSetBuilder::new_internal(
+        &mut iter,
+        variable_map,
+        &xid_start_list,
+        &xid_continue_list,
+        provider,
+    );
 
     builder.parse_unicode_set()?;
     let (single, multi) = builder.finalize();
