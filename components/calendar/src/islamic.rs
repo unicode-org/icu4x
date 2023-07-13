@@ -185,6 +185,10 @@ impl Calendar for IslamicObservational {
             next_year: Self::year_as_islamic(next_year),
         }
     }
+
+    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
+        todo!()
+    }
     // TODO: ADD TO ANYCALENDAR
     // fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
     //     Some(AnyCalendarKind::IslamicObservational)
@@ -328,7 +332,7 @@ impl CalendarArithmetic for UmmalQura {
     }
 
     // As an observational-lunar calendar, it does not have leap years.
-    fn is_leap_year(year: i32) -> bool {
+    fn is_leap_year(_year: i32) -> bool {
         false
     }
 
@@ -421,6 +425,7 @@ impl Calendar for UmmalQura {
             next_year: Self::year_as_islamic(next_year),
         }
     }
+
     // TODO: ADD TO ANYCALENDAR
     // fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
     //     Some(AnyCalendarKind::UmmalQura)
@@ -491,24 +496,26 @@ impl UmmalQura {
     }
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6957
     fn saudi_criterion(date: RataDie) -> bool {
-        let set = Astronomical::sunset((date - 1).as_moment(), MECCA)?;
+        let set = Astronomical::sunset((date - 1).as_moment(), MECCA).unwrap(); // Unwrap used temporarily
         let tee = Location::universal_from_standard(set, MECCA);
         let phase = Astronomical::lunar_phase(tee);
 
-        phase > 0.0 && phase < 90.0 && Astronomical::moonlag((date - 1).as_moment(), MECCA)? > 0.0
+        phase > 0.0
+            && phase < 90.0
+            && Astronomical::moonlag((date - 1).as_moment(), MECCA).unwrap() > 0.0
     }
 
     fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
         let moon =
             libm::floor((Astronomical::lunar_phase_at_or_before(0.0, date.as_moment())).inner());
-        let age = (moon - date.to_f64_date());
+        let age = moon - date.to_f64_date();
         let tau = if age <= 3.0 && !Self::saudi_criterion(date) {
             moon - 30.0
         } else {
             moon
         };
 
-        next(RataDie::new(tau as i64), MECCA, Self::saudi_criterion)
+        next(RataDie::new(tau as i64), Self::saudi_criterion)
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6996

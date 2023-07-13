@@ -21,6 +21,7 @@ impl RataDie {
         result.check();
         result
     }
+
     #[cfg(debug_assertions)]
     pub const fn check(&self) {
         if self.0 > i64::MAX / 256 {
@@ -41,12 +42,15 @@ impl RataDie {
     pub const fn big_negative() -> Self {
         Self::new(i64::MIN / 256 / 256)
     }
+
     pub const fn to_i64_date(self) -> i64 {
         self.0
     }
+
     pub const fn to_f64_date(self) -> f64 {
         self.0 as f64
     }
+
     /// Calculate the number of days between two RataDie in a const-friendly way
     pub const fn const_diff(self, rhs: Self) -> i64 {
         self.0 - rhs.0
