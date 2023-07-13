@@ -452,4 +452,29 @@ mod test {
             }
         }
     }
+
+    #[test]
+    fn test_roc_directionality_near_rd_zero() {
+        // Same as `test_directionality_near_epoch`, but with a focus around RD 0
+        for i in -100..=100 {
+            for j in -100..100 {
+                let iso_i = Iso::iso_from_fixed(RataDie::new(i));
+                let iso_j = Iso::iso_from_fixed(RataDie::new(j));
+
+                let roc_i = iso_i.to_calendar(Roc);
+                let roc_j = iso_j.to_calendar(Roc);
+
+                assert_eq!(
+                    i.cmp(&j),
+                    iso_i.cmp(&iso_j),
+                    "ISO directionality inconcistent with directionality for i: {i}, j: {j}"
+                );
+                assert_eq!(
+                    i.cmp(&j),
+                    roc_i.cmp(&roc_j),
+                    "ROC directionality inconsistent with directionality for i: {i}, j: {j}"
+                );
+            }
+        }
+    }
 }
