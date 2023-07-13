@@ -25,6 +25,14 @@ pub(crate) struct Location {
     pub(crate) zone: f64,      // UTC timezone offset
 }
 
+#[allow(dead_code)]
+pub(crate) const MECCA: Location = Location {
+    latitude: 6427.0 / 300.0,
+    longitude: 11947.0 / 300.0,
+    elevation: 298.0,
+    zone: (1_f64 / 8_f64),
+};
+
 #[allow(clippy::excessive_precision)]
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
@@ -80,22 +88,22 @@ impl Location {
             zone,
         }
     }
-
+    #[allow(dead_code)]
     /// Get the longitude of a Location
     pub(crate) fn longitude(&self) -> f64 {
         self.longitude
     }
-
+    #[allow(dead_code)]
     /// Get the latitude of a Location
     pub(crate) fn latitude(&self) -> f64 {
         self.latitude
     }
-
+    #[allow(dead_code)]
     /// Get the elevation of a Location
     pub(crate) fn elevation(&self) -> f64 {
         self.elevation
     }
-
+    #[allow(dead_code)]
     /// Get the utc-offset of a Location
     pub(crate) fn zone(&self) -> f64 {
         self.zone
@@ -296,7 +304,7 @@ impl Astronomical {
                 + cos_degrees(beta) * sin_degrees(varepsilon) * sin_degrees(lambda),
         )
     }
-    
+
     pub(crate) fn right_ascension(
         moment: Moment,
         beta: f64,
@@ -717,6 +725,7 @@ impl Astronomical {
         mod3(altitude, -180.0, 180.0)
     }
 
+    #[allow(dead_code)]
     pub(crate) fn lunar_distance(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let cap_d = Self::lunar_elongation(c);
@@ -834,6 +843,7 @@ impl Astronomical {
     /// Parallax of moon at tee at location.
     /// Adapted from "Astronomical Algorithms" by Jean Meeus,
     /// Willmann-Bell, 2nd edn., 1998.
+    #[allow(dead_code)]
     pub(crate) fn lunar_parallax(moment: Moment, location: Location) -> f64 {
         let geo = Self::lunar_altitude(moment, location);
         let cap_delta = Self::lunar_distance(moment);
@@ -844,12 +854,14 @@ impl Astronomical {
 
     /// Topocentric altitude of moon at moment at location,
     /// as a small positive/negative angle in degrees.
+    #[allow(dead_code)]
     fn topocentric_lunar_altitude(moment: Moment, location: Location) -> f64 {
         Self::lunar_altitude(moment, location) - Self::lunar_parallax(moment, location)
     }
 
     /// Observed altitude of upper limb of moon at moment at location,
     /// as a small positive/negative angle in degrees.
+    #[allow(dead_code)]
     fn observed_lunar_altitude(moment: Moment, location: Location) -> f64 {
         let r = Self::topocentric_lunar_altitude(moment, location);
         let y = Self::refraction(location);
@@ -897,6 +909,7 @@ impl Astronomical {
         .1
     }
 
+    #[allow(dead_code)]
     fn moonset(date: Moment, location: Location) -> Option<Moment> {
         let moment = Location::universal_from_standard(date, location);
         let waxing = Self::lunar_phase(date) < 180.0;
@@ -936,13 +949,14 @@ impl Astronomical {
         }
     }
 
+    #[allow(dead_code)]
     pub(crate) fn sunset(date: Moment, location: Location) -> Option<Moment> {
         let alpha = Self::refraction(location) + (16.0 / 60.0);
 
         Self::dusk(date.inner(), location, alpha)
     }
 
-    #[allow(clippy::unwrap_used, clippy::eq_op)]
+    #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
         let sun = Self::sunset(date, location)?;
         let moon = Self::moonset(date, location)?;
@@ -1378,7 +1392,7 @@ mod tests {
             let lunar_lat = Astronomical::lunar_latitude(moment);
             let expected_lunar_lat_value = *expected_lunar_lat;
 
-            assert_eq_f64(expected_lunar_lat_value, lunar_lat, moment)
+            assert_eq_f64!(expected_lunar_lat_value, lunar_lat, moment)
         }
     }
 
@@ -1431,7 +1445,7 @@ mod tests {
             let lunar_long = Astronomical::lunar_longitude(moment);
             let expected_lunar_long_value = *expected_lunar_long;
 
-            assert_eq_f64(expected_lunar_long_value, lunar_long, moment)
+            assert_eq_f64!(expected_lunar_long_value, lunar_long, moment)
         }
     }
 
@@ -1484,7 +1498,7 @@ mod tests {
             let lunar_alt = Astronomical::lunar_altitude(moment, MECCA);
             let expected_alt_value = *expected_alt;
 
-            assert_eq_f64(expected_alt_value, lunar_alt, moment)
+            assert_eq_f64!(expected_alt_value, lunar_alt, moment)
         }
     }
 
@@ -1537,7 +1551,7 @@ mod tests {
             let distance = Astronomical::lunar_distance(moment);
             let expected_distance_val = *expected_distance;
 
-            assert_eq_f64(expected_distance_val, distance, moment)
+            assert_eq_f64!(expected_distance_val, distance, moment)
         }
     }
 
@@ -1590,7 +1604,7 @@ mod tests {
             let parallax_val = Astronomical::lunar_parallax(moment, MECCA);
             let expected_parallax_val = *parallax;
 
-            assert_eq_f64(expected_parallax_val, parallax_val, moment);
+            assert_eq_f64!(expected_parallax_val, parallax_val, moment);
         }
     }
 
@@ -1648,7 +1662,7 @@ mod tests {
             if moonset_val.is_none() {
                 assert_eq!(expected_moonset_val, 0.0);
             } else {
-                assert_eq_f64(expected_moonset_val, moonset_val.unwrap().inner(), moment);
+                assert_eq_f64!(expected_moonset_val, moonset_val.unwrap().inner(), moment);
             }
         }
     }
@@ -1710,7 +1724,7 @@ mod tests {
             let moment = Moment::new(*rd);
             let sunset_value = Astronomical::sunset(moment, jerusalem).unwrap();
             let expected_sunset_val = *expected_sunset_value;
-            assert_eq_f64(expected_sunset_val, sunset_value.inner(), moment)
+            assert_eq_f64!(expected_sunset_val, sunset_value.inner(), moment)
         }
     }
 
@@ -1895,7 +1909,7 @@ mod tests {
             let obl_val = Astronomical::obliquity(moment);
             let expected_val = *expected_obl_val;
 
-            assert_eq_f64(expected_val, obl_val, moment)
+            assert_eq_f64!(expected_val, obl_val, moment)
         }
     }
 }

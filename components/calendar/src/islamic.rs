@@ -96,11 +96,9 @@ impl CalendarArithmetic for IslamicObservational {
     }
 
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        if Self::is_leap_year(year) {
-            (12, 30)
-        } else {
-            (12, 29)
-        }
+        let days = Self::month_days(year, 12);
+
+        (12, days)
     }
 }
 
@@ -119,7 +117,7 @@ impl Calendar for IslamicObservational {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(IslamicDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IslamicDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
@@ -172,7 +170,7 @@ impl Calendar for IslamicObservational {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -191,9 +189,9 @@ impl Calendar for IslamicObservational {
         }
     }
 
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        todo!()
-    }
+    // fn days_in_month(&self, date: &Self::DateInner) -> u8 {
+    //     todo!()
+    // }
     // TODO: ADD TO ANYCALENDAR
     // fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
     //     Some(AnyCalendarKind::IslamicObservational)
@@ -218,7 +216,7 @@ impl IslamicObservational {
 
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
-
+        // Midmonth can be casted down because we just want a date between the 30 day interval, precision is not important.
         Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO) + day - 1
     }
 
@@ -273,7 +271,7 @@ impl Date<IslamicObservational> {
         month: u8,
         day: u8,
     ) -> Result<Date<IslamicObservational>, CalendarError> {
-        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
             .map(IslamicDateInner)
             .map(|inner| Date::from_raw(inner, IslamicObservational))
     }

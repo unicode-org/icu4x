@@ -227,13 +227,13 @@ where
 
 pub(crate) fn next<F>(mut index: RataDie, condition: F) -> RataDie
 where
-    F: Fn(Moment, Location) -> bool,
+    F: Fn(RataDie) -> bool,
 {
     loop {
         if condition(index) {
-            return index.as_rata_die();
+            return index;
         }
-        index += 1.0;
+        index += 1;
     }
 }
 

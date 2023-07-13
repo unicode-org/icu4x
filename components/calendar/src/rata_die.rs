@@ -21,7 +21,7 @@ impl RataDie {
         result.check();
         result
     }
-    
+
     #[cfg(debug_assertions)]
     pub const fn check(&self) {
         if self.0 > i64::MAX / 256 {
@@ -37,6 +37,7 @@ impl RataDie {
             );
         }
     }
+
     /// A valid RataDie that is intended to be below all dates representable in calendars
     #[cfg(test)]
     pub const fn big_negative() -> Self {
@@ -46,7 +47,7 @@ impl RataDie {
     pub const fn to_i64_date(self) -> i64 {
         self.0
     }
-    
+
     pub const fn to_f64_date(self) -> f64 {
         self.0 as f64
     }
