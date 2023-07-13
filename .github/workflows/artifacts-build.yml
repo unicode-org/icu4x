@@ -159,6 +159,7 @@ jobs:
       run: |
         cd ffi/diplomat/js/examples/node
         make
+        cd ../wasm-demo
         npm ci
 
     - name: Run Webpack
