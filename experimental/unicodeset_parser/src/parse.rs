@@ -528,7 +528,6 @@ where
                 match (state, var) {
                     // anchor, must be at the end of the set
                     (Begin | Char | AfterUnicodeSet, VarOrAnchor::A) => {
-                        self.iter.next();
                         if let Some(prev) = prev_char.take() {
                             self.single_set.add_char(prev);
                         }
@@ -714,9 +713,6 @@ where
         let (mut var_offset, first_c) = self.must_peek()?;
 
         if !self.xid_start.contains(first_c) {
-            // only valid if this turns into a anchor
-            self.skip_whitespace();
-            self.consume(']')?;
             return Ok(Some((var_offset, VarOrAnchor::A)));
         }
 
@@ -1579,6 +1575,8 @@ mod tests {
             ("[[a-z{abx}]-[{abx}b-z{abc}]]", "aa", vec![]),
             ("[[a-z{abx}{abc}]-[{abx}b-z]]", "aa", vec!["abc"]),
             ("[[a-z{abc}][b-z{abx}]]", "az", vec!["abc", "abx"]),
+            // strings
+            ("[{this is a minus -}]", "", vec!["thisisaminus-"]),
             // associativity
             ("[[a-a][b-z] - [a-d][e-z]]", "ez", vec![]),
             ("[[a-a][b-z] - [a-d]&[e-z]]", "ez", vec![]),
@@ -1614,7 +1612,7 @@ mod tests {
                 vec![],
             ),
             (r"[^[^a-z]]", "az", vec![]),
-            (r"[^[^^]]", "^^", vec![]),
+            (r"[^[^\^]]", "^^", vec![]),
             // binary properties
             (r"[:AHex:]", "09afAF", vec![]),
             (r"[:AHex=True:]", "09afAF", vec![]),
@@ -1691,10 +1689,6 @@ mod tests {
             // property values may not be empty
             (r"[:gc=:]", r"[:gc=:← error: unexpected character ':'"),
             (r"[\xag]", r"[\xag← error: unexpected character 'g'"),
-            // (
-            //     r"[{this is a minus -}]",
-            //     r"[{this is a minus -← error: unexpected character '-'",
-            // ),
             (r"[--]", r"[--← error: unexpected character '-'"),
             (r"[a-z-]", r"[a-z-← error: unexpected character '-'"),
             (r"[a-b-z]", r"[a-b-← error: unexpected character '-'"),
