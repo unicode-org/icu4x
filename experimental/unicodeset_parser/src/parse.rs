@@ -283,18 +283,18 @@ enum Operation {
 }
 
 // this builds the set on-the-fly while parsing it
-struct UnicodeSetBuilder<'a, 'parse, P: ?Sized> {
+struct UnicodeSetBuilder<'a, 'b, P: ?Sized> {
     single_set: CodePointInversionListBuilder,
     multi_set: HashSet<String>,
-    iter: &'parse mut Peekable<CharIndices<'a>>,
+    iter: &'a mut Peekable<CharIndices<'b>>,
     inverted: bool,
-    variable_map: &'parse VariableMap<'parse>,
-    xid_start: &'parse CodePointInversionList<'parse>,
-    xid_continue: &'parse CodePointInversionList<'parse>,
-    property_provider: &'parse P,
+    variable_map: &'a VariableMap<'a>,
+    xid_start: &'a CodePointInversionList<'a>,
+    xid_continue: &'a CodePointInversionList<'a>,
+    property_provider: &'a P,
 }
 
-impl<'a, 'parse, P> UnicodeSetBuilder<'a, 'parse, P>
+impl<'a, 'b, P> UnicodeSetBuilder<'a, 'b, P>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -354,11 +354,11 @@ where
         + DataProvider<XidStartV1Marker>,
 {
     fn new_internal(
-        iter: &'parse mut Peekable<CharIndices<'a>>,
-        variable_map: &'parse VariableMap<'parse>,
-        xid_start: &'parse CodePointInversionList<'parse>,
-        xid_continue: &'parse CodePointInversionList<'parse>,
-        provider: &'parse P,
+        iter: &'a mut Peekable<CharIndices<'b>>,
+        variable_map: &'a VariableMap<'a>,
+        xid_start: &'a CodePointInversionList<'a>,
+        xid_continue: &'a CodePointInversionList<'a>,
+        provider: &'a P,
     ) -> Self {
         UnicodeSetBuilder {
             single_set: CodePointInversionListBuilder::new(),
@@ -550,7 +550,7 @@ where
         }
     }
 
-    fn parse_main_token(&mut self) -> Result<(usize, MainToken<'parse>)> {
+    fn parse_main_token(&mut self) -> Result<(usize, MainToken<'a>)> {
         let (initial_offset, first) = self.must_peek()?;
         if first == ']' {
             self.iter.next();
@@ -621,7 +621,7 @@ where
     // parses a variable or an anchor. expects '$' as next token.
     // is 'context-sensitive' to avoid duplicate work
     // if this is a trailing $ (eg [.... $ ]), then this function returns Ok(Some((offset, VarOrAnchor::A)))
-    fn parse_variable(&mut self) -> Result<(usize, VarOrAnchor<'parse>)> {
+    fn parse_variable(&mut self) -> Result<(usize, VarOrAnchor<'a>)> {
         self.consume('$')?;
 
         let mut res = String::new();
