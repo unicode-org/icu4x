@@ -188,7 +188,7 @@ impl ParseError {
 #[derive(Debug, Clone)]
 #[non_exhaustive]
 pub enum VariableValue<'a> {
-    /// A UnicodeSet, represented as a [`CodePointInversionListAndStringList`].
+    /// A UnicodeSet, represented as a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList).
     UnicodeSet(CodePointInversionListAndStringList<'a>),
     // in theory, a one-code-point string is always the same as a char, but we might want to keep
     // this variant for efficiency?
@@ -1244,7 +1244,7 @@ where
     }
 }
 
-/// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`].
+/// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList).
 ///
 /// Supports UnicodeSets as described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
 ///
