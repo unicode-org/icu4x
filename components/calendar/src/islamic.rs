@@ -118,7 +118,7 @@ impl Calendar for IslamicObservational {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(IslamicDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IslamicDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
@@ -137,6 +137,10 @@ impl Calendar for IslamicObservational {
 
     fn days_in_year(&self, date: &Self::DateInner) -> u32 {
         date.0.days_in_year()
+    }
+
+    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
+        date.0.days_in_month()
     }
 
     fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
@@ -167,7 +171,7 @@ impl Calendar for IslamicObservational {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -213,7 +217,7 @@ impl IslamicObservational {
 
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
-
+        // Midmonth can be casted down because we just want a date between the 30 day interval, precision is not important.
         Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO) + day - 1
     }
 

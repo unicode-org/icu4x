@@ -212,7 +212,6 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     )
 }
 
-// Used for Umm-Al-Qura calculations
 pub(crate) fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
 where
     F: Fn(Moment, Location) -> bool,
@@ -225,6 +224,7 @@ where
     }
 }
 
+#[allow(dead_code)]
 pub(crate) fn next<F>(mut index: RataDie, condition: F) -> RataDie
 where
     F: Fn(RataDie) -> bool,

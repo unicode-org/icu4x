@@ -37,6 +37,7 @@ impl RataDie {
             );
         }
     }
+
     /// A valid RataDie that is intended to be below all dates representable in calendars
     #[cfg(test)]
     pub const fn big_negative() -> Self {

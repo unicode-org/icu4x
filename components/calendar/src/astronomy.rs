@@ -25,6 +25,14 @@ pub(crate) struct Location {
     pub(crate) zone: f64,      // UTC timezone offset
 }
 
+#[allow(dead_code)]
+pub(crate) const MECCA: Location = Location {
+    latitude: 6427.0 / 300.0,
+    longitude: 11947.0 / 300.0,
+    elevation: 298.0,
+    zone: (1_f64 / 8_f64),
+};
+
 #[allow(clippy::excessive_precision)]
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
@@ -54,6 +62,7 @@ pub(crate) const MAX_UTC_OFFSET: f64 = 14.0 / 24.0;
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
     /// attempting to create a location outside of these bounds will result in a LocationError.
+    #[allow(dead_code)]
     pub(crate) fn try_new(
         latitude: f64,
         longitude: f64,
@@ -89,16 +98,19 @@ impl Location {
     }
 
     /// Get the longitude of a Location
+    #[allow(dead_code)]
     pub(crate) fn longitude(&self) -> f64 {
         self.longitude
     }
 
     /// Get the latitude of a Location
+    #[allow(dead_code)]
     pub(crate) fn latitude(&self) -> f64 {
         self.latitude
     }
 
     /// Get the elevation of a Location
+    #[allow(dead_code)]
     pub(crate) fn elevation(&self) -> f64 {
         self.elevation
     }
@@ -115,6 +127,7 @@ impl Location {
     pub(crate) fn zone_from_longitude(longitude: f64) -> f64 {
         longitude / (360.0)
     }
+
     // Convert standard time to local mean time given a location and a time zone with given offset
     pub(crate) fn standard_from_local(standard_time: Moment, location: Location) -> Moment {
         Self::standard_from_universal(
@@ -129,6 +142,7 @@ impl Location {
     }
 
     /// Convert from universal time to local time given a location
+    #[allow(dead_code)]
     pub(crate) fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
         universal_time + Self::zone_from_longitude(location.longitude)
     }
@@ -685,6 +699,8 @@ impl Astronomical {
         let moon = Self::phasis_on_or_after(date + 1, location);
         let prev = Self::phasis_on_or_before(date, location);
 
+        debug_assert!(moon > prev);
+        debug_assert!(moon - prev < u8::MAX.into());
         (moon - prev) as u8
     }
 
@@ -724,6 +740,7 @@ impl Astronomical {
         mod3(altitude, -180.0, 180.0)
     }
 
+    #[allow(dead_code)]
     pub(crate) fn lunar_distance(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let cap_d = Self::lunar_elongation(c);
@@ -841,6 +858,7 @@ impl Astronomical {
     /// Parallax of moon at tee at location.
     /// Adapted from "Astronomical Algorithms" by Jean Meeus,
     /// Willmann-Bell, 2nd edn., 1998.
+    #[allow(dead_code)]
     pub(crate) fn lunar_parallax(moment: Moment, location: Location) -> f64 {
         let geo = Self::lunar_altitude(moment, location);
         let cap_delta = Self::lunar_distance(moment);
@@ -851,12 +869,14 @@ impl Astronomical {
 
     /// Topocentric altitude of moon at moment at location,
     /// as a small positive/negative angle in degrees.
+    #[allow(dead_code)]
     fn topocentric_lunar_altitude(moment: Moment, location: Location) -> f64 {
         Self::lunar_altitude(moment, location) - Self::lunar_parallax(moment, location)
     }
 
     /// Observed altitude of upper limb of moon at moment at location,
     /// as a small positive/negative angle in degrees.
+    #[allow(dead_code)]
     fn observed_lunar_altitude(moment: Moment, location: Location) -> f64 {
         let r = Self::topocentric_lunar_altitude(moment, location);
         let y = Self::refraction(location);
@@ -943,13 +963,14 @@ impl Astronomical {
         }
     }
 
+    #[allow(dead_code)]
     pub(crate) fn sunset(date: Moment, location: Location) -> Option<Moment> {
         let alpha = Self::refraction(location) + (16.0 / 60.0);
 
         Self::dusk(date.inner(), location, alpha)
     }
 
-    #[allow(clippy::unwrap_used, clippy::eq_op)]
+    #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
         let sun = Self::sunset(date, location)?;
         let moon = Self::moonset(date, location)?;
@@ -1094,6 +1115,7 @@ impl Astronomical {
 
         Location::universal_from_standard(best, location)
     }
+    
     // Angular separation of sun and moon at a specific moment
     fn arc_of_light(moment: Moment) -> f64 {
         arccos_degrees(
