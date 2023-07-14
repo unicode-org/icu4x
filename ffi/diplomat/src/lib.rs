@@ -71,7 +71,7 @@ pub mod calendar;
 pub mod casemap;
 #[cfg(feature = "icu_collator")]
 pub mod collator;
-#[cfg(feature = "icu_collections")]
+#[cfg(feature = "icu_properties")]
 pub mod collections_sets;
 #[cfg(any(
     feature = "icu_datetime",
@@ -113,9 +113,7 @@ pub mod properties_iter;
 pub mod properties_maps;
 #[cfg(feature = "icu_properties")]
 pub mod properties_names;
-// it may be worth having icu_collections take over
-// the job of enabling CodePointSetData (but not its various property methods)
-#[cfg(any(feature = "icu_collections", feature = "icu_properties"))]
+#[cfg(feature = "icu_properties")]
 pub mod properties_sets;
 #[cfg(feature = "icu_properties")]
 pub mod properties_unisets;
