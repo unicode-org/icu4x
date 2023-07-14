@@ -1168,7 +1168,11 @@ where
         match op {
             Operation::Union => self.string_set.extend(other_strings.into_iter()),
             Operation::Difference => {
-                self.string_set = self.string_set.difference(&other_strings).cloned().collect()
+                self.string_set = self
+                    .string_set
+                    .difference(&other_strings)
+                    .cloned()
+                    .collect()
             }
             Operation::Intersection => {
                 self.string_set = self
