@@ -1079,6 +1079,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ad0a93d233ebf96623465aad4046a8d3aa4da22d4f4beba5388838c8a434bbb4"
 
 [[package]]
+name = "glob"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
+
+[[package]]
 name = "half"
 version = "1.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1453,6 +1459,7 @@ dependencies = [
  "displaydoc",
  "elsa",
  "eyre",
+ "glob",
  "icu",
  "icu_calendar",
  "icu_casemap",
@@ -1467,7 +1474,6 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
- "icu_personnames",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1714,19 +1720,6 @@ dependencies = [
  "displaydoc",
  "iai",
  "writeable",
-]
-
-[[package]]
-name = "icu_personnames"
-version = "0.1.0"
-dependencies = [
- "databake",
- "icu_collections",
- "icu_locid",
- "icu_provider",
- "litemap",
- "serde",
- "zerovec",
 ]
 
 [[package]]

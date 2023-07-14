@@ -109,11 +109,15 @@ macro_rules! registry {
                     }
                 )+
             )+
-            unreachable!("unregistered marker")
+            unreachable!("unregistered key {key:?}")
         }
 
         #[doc(hidden)]
         pub fn deserialize_and_discard<R>(key: DataKey, buf: DataPayload<BufferMarker>, r: impl Fn() -> R) -> Result<R, DataError> {
+            if key.path() == icu_provider::hello_world::HelloWorldV1Marker::KEY.path() {
+                let _reified_data: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                return Ok(r());
+            }
             $(
                 $(
                     #[cfg($feature)]
@@ -123,7 +127,7 @@ macro_rules! registry {
                     }
                 )+
             )+
-            unreachable!("unregistered marker")
+            unreachable!("unregistered key {key:?}")
         }
     }
 }
@@ -133,7 +137,7 @@ registry!(
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
-    #[cfg(any(all(), feature = "icu_casemap"))]
+    #[cfg(feature = "icu_casemap")]
     icu_casemap::provider::CaseMapV1Marker = "props/casemap@1",
     #[cfg(any(all(), feature = "icu_collator"))]
     icu_collator::provider::CollationDataV1Marker = "collator/data@1",
@@ -142,7 +146,7 @@ registry!(
     icu_collator::provider::CollationMetadataV1Marker = "collator/meta@1",
     icu_collator::provider::CollationReorderingV1Marker = "collator/reord@1",
     icu_collator::provider::CollationSpecialPrimariesV1Marker = "collator/prim@1",
-    #[cfg(any(all(), feature = "icu_compactdecimal"))]
+    #[cfg(feature = "icu_compactdecimal")]
     icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
     icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1",
     #[cfg(any(all(), feature = "icu_datetime"))]
@@ -185,7 +189,7 @@ registry!(
     icu_datetime::provider::time_zones::ExemplarCitiesV1Marker = "time_zone/exemplar_cities@1",
     #[cfg(any(all(), feature = "icu_decimal"))]
     icu_decimal::provider::DecimalSymbolsV1Marker = "decimal/symbols@1",
-    #[cfg(any(all(), feature = "icu_displaynames"))]
+    #[cfg(feature = "icu_displaynames")]
     icu_displaynames::provider::RegionDisplayNamesV1Marker = "displaynames/regions@1",
     icu_displaynames::provider::LanguageDisplayNamesV1Marker = "displaynames/languages@1",
     icu_displaynames::provider::LocaleDisplayNamesV1Marker = "displaynames/locales@1",
@@ -343,7 +347,7 @@ registry!(
     icu_properties::provider::VariationSelectorV1Marker = "props/VS@1",
     icu_properties::provider::WhiteSpaceV1Marker = "props/WSpace@1",
     icu_properties::provider::WordBreakV1Marker = "props/WB@1",
-    #[cfg(any(all(), feature = "icu_relativetime"))]
+    #[cfg(feature = "icu_relativetime")]
     icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker =
         "relativetime/long/second@1",
     icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker =
