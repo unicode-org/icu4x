@@ -54,7 +54,7 @@ args = ["check", "--all-targets", "--all-features"]
 description = "Check ICU4X build with no features (covered in CI via cargo make check-all-features)"
 category = "ICU4X Development"
 command = "cargo"
-args = ["check", "--all-targets", "--no-default-features"]
+args = ["check", "--no-default-features"]
 
 [tasks.ci-job-msrv-check]
 description = "Run all tests for the CI 'check' job"

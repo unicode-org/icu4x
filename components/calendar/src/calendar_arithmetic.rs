@@ -193,11 +193,12 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     /// The [`types::FormattableMonth`] for the current month (with month code) for a solar calendar
     /// Lunar calendars should not use this method and instead manually implement a month code
     /// resolver.
+    /// Originally "solar_month" but renamed because it can be used for some lunar calendars
     ///
     /// Returns "und" if run with months that are out of bounds for the current
     /// calendar.
     #[inline]
-    pub fn solar_month(&self) -> types::FormattableMonth {
+    pub fn month(&self) -> types::FormattableMonth {
         let code = match self.month {
             a if a > C::months_for_every_year(self.year) => tinystr!(4, "und"),
             1 => tinystr!(4, "M01"),
@@ -223,7 +224,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     /// Construct a new arithmetic date from a year, month code, and day, bounds checking
     /// the month and day
-    pub fn new_from_solar_codes<C2: Calendar>(
+    /// Originally (new_from_solar_codes) but renamed because it works for some lunar calendars
+    pub fn new_from_codes<C2: Calendar>(
         // Separate type since the debug_name() impl may differ when DateInner types
         // are nested (e.g. in GregorianDateInner)
         cal: &C2,
@@ -231,7 +233,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self, CalendarError> {
-        let month = if let Some(ordinal) = ordinal_solar_month_from_code(month_code) {
+        let month = if let Some(ordinal) = ordinal_month_from_code(month_code) {
             ordinal
         } else {
             return Err(CalendarError::UnknownMonthCode(
@@ -260,7 +262,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
     /// the month and day
-    pub fn new_from_solar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
+    /// Originally (new_from_solar_ordinals) but renamed because it works for some lunar calendars
+    pub fn new_from_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
         let max_month = C::months_for_every_year(year);
         if month > max_month {
             return Err(CalendarError::Overflow {
@@ -280,15 +283,15 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         Ok(Self::new_unchecked(year, month, day))
     }
 
-    /// This fn currently just calls [`new_from_solar_ordinals`], but exists separately for
+    /// This fn currently just calls [`new_from_ordinals`], but exists separately for
     /// lunar calendars in case different logic needs to be implemented later.
     pub fn new_from_lunar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
-        Self::new_from_solar_ordinals(year, month, day)
+        Self::new_from_ordinals(year, month, day)
     }
 }
 
 /// For solar calendars, get the month number from the month code
-pub fn ordinal_solar_month_from_code(code: types::MonthCode) -> Option<u8> {
+pub fn ordinal_month_from_code(code: types::MonthCode) -> Option<u8> {
     // Match statements on tinystrs are annoying so instead
     // we calculate it from the bytes directly
     if code.0.len() != 3 {
