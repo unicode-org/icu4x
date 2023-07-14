@@ -135,7 +135,7 @@ pub mod time;
 pub mod timezone;
 #[cfg(feature = "icu_datetime")]
 pub mod timezone_formatter;
-#[cfg(any(feature = "icu_calendar"))]
+#[cfg(feature = "icu_calendar")]
 pub mod week;
 #[cfg(feature = "icu_datetime")]
 pub mod zoned_formatter;
