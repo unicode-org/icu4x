@@ -327,7 +327,7 @@ enum Operation {
 // this builds the set on-the-fly while parsing it
 struct UnicodeSetBuilder<'a, 'b, P: ?Sized> {
     single_set: CodePointInversionListBuilder,
-    multi_set: HashSet<String>,
+    string_set: HashSet<String>,
     iter: &'a mut Peekable<CharIndices<'b>>,
     inverted: bool,
     variable_map: &'a VariableMap<'a>,
@@ -404,7 +404,7 @@ where
     ) -> Self {
         UnicodeSetBuilder {
             single_set: CodePointInversionListBuilder::new(),
-            multi_set: Default::default(),
+            string_set: Default::default(),
             iter,
             inverted: false,
             variable_map,
@@ -432,7 +432,7 @@ where
                 match v {
                     VarOrAnchor::V(VariableValue::UnicodeSet(s)) => {
                         self.single_set.add_set(s.code_points());
-                        self.multi_set
+                        self.string_set
                             .extend(s.strings().iter().map(ToString::to_string));
                         Ok(())
                     }
@@ -461,7 +461,7 @@ where
         // repeatedly parse the following:
         // char
         // char-char
-        // {multi}
+        // {string}
         // unicodeset
         // & and - operators, but only between unicodesets
         // $variables in place of strings, chars, or unicodesets
@@ -579,7 +579,7 @@ where
                         self.single_set.add_char(prev);
                     }
 
-                    self.multi_set.insert(s);
+                    self.string_set.insert(s);
                     state = Begin;
                 }
                 // parse a literal char as the end of a range
@@ -675,10 +675,10 @@ where
                     self.property_provider,
                 );
                 inner_builder.parse_unicode_set()?;
-                let (single, multi) = inner_builder.finalize();
+                let (single, string_set) = inner_builder.finalize();
                 // note: offset - 1, because we already consumed full set
                 let offset = self.must_peek_index()? - 1;
-                let mut strings = multi.into_iter().collect::<Vec<_>>();
+                let mut strings = string_set.into_iter().collect::<Vec<_>>();
                 strings.sort();
                 let cpilasl = CodePointInversionListAndStringList::try_from(
                     single.build(),
@@ -738,7 +738,6 @@ where
     }
 
     // parses and consumes: '{' (s charInString)* s '}'
-    // TODO: decide on names for multi-codepoint-sequences and adjust both struct fields and fn names
     fn parse_string(&mut self) -> Result<(usize, CharOrString)> {
         self.consume('{')?;
 
@@ -1043,16 +1042,16 @@ where
     fn finalize(mut self) -> (CodePointInversionListBuilder, HashSet<String>) {
         if self.inverted {
             // code point inversion; removes all strings
-            if !self.multi_set.is_empty() {
+            if !self.string_set.is_empty() {
                 log::info!(
                     "Inverting a unicode set with strings. This removes all strings entirely."
                 );
             }
-            self.multi_set.drain();
+            self.string_set.drain();
             self.single_set.complement();
         }
 
-        (self.single_set, self.multi_set)
+        (self.single_set, self.string_set)
     }
 
     // parses either a raw char or an escaped char. all chars are allowed, the caller must make sure to handle
@@ -1167,13 +1166,13 @@ where
 
     fn process_strings(&mut self, op: Operation, other_strings: HashSet<String>) {
         match op {
-            Operation::Union => self.multi_set.extend(other_strings.into_iter()),
+            Operation::Union => self.string_set.extend(other_strings.into_iter()),
             Operation::Difference => {
-                self.multi_set = self.multi_set.difference(&other_strings).cloned().collect()
+                self.string_set = self.string_set.difference(&other_strings).cloned().collect()
             }
             Operation::Intersection => {
-                self.multi_set = self
-                    .multi_set
+                self.string_set = self
+                    .string_set
                     .intersection(&other_strings)
                     .cloned()
                     .collect()
@@ -1421,10 +1420,10 @@ where
     );
 
     builder.parse_unicode_set()?;
-    let (single, multi) = builder.finalize();
+    let (single, string_set) = builder.finalize();
     let built_single = single.build();
 
-    let mut strings = multi.into_iter().collect::<Vec<_>>();
+    let mut strings = string_set.into_iter().collect::<Vec<_>>();
     strings.sort();
     let zerovec = (&strings).into();
 
@@ -1536,7 +1535,7 @@ mod tests {
         source: &str,
         cpinvlistandstrlist: &CodePointInversionListAndStringList,
         single: impl Iterator<Item = RangeInclusive<u32>>,
-        multi: impl Iterator<Item = &'a str>,
+        strings: impl Iterator<Item = &'a str>,
     ) {
         let expected_ranges: HashSet<_> = single.collect();
         let actual_ranges: HashSet<_> = cpinvlistandstrlist.code_points().iter_ranges().collect();
@@ -1549,7 +1548,7 @@ mod tests {
             source.escape_debug()
         );
         let mut expected_size = cpinvlistandstrlist.code_points().size();
-        for s in multi {
+        for s in strings {
             expected_size += 1;
             assert!(
                 cpinvlistandstrlist.contains(s),
@@ -1629,7 +1628,7 @@ mod tests {
             // strings
             (&map_char_string, "[$var2]", "", vec!["abc"]),
         ];
-        for (variable_map, source, single, multi) in cases {
+        for (variable_map, source, single, strings) in cases {
             let parsed = parse_with_variables(source, variable_map);
             if let Err(err) = parsed {
                 assert!(
@@ -1644,7 +1643,7 @@ mod tests {
                 source,
                 &parsed,
                 range_iter_from_str(single),
-                multi.into_iter(),
+                strings.into_iter(),
             );
         }
     }
@@ -1793,7 +1792,7 @@ mod tests {
             // syntax edge cases from UTS35
             // TODO(#3556): Add more tests (specifically conformance tests if they exist)
         ];
-        for (source, single, multi) in cases {
+        for (source, single, strings) in cases {
             let parsed = parse(source);
             if let Err(err) = parsed {
                 assert!(
@@ -1808,7 +1807,7 @@ mod tests {
                 source,
                 &parsed,
                 range_iter_from_str(single),
-                multi.into_iter(),
+                strings.into_iter(),
             );
         }
     }
