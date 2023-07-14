@@ -1634,12 +1634,10 @@ mod tests {
         for (variable_map, source, single, strings) in cases {
             let parsed = parse_with_variables(source, variable_map);
             if let Err(err) = parsed {
-                assert!(
-                    false,
+                panic!(
                     "{source} results in an error: {}",
                     err.fmt_with_source(source)
                 );
-                continue;
             }
             let parsed = parsed.unwrap();
             assert_set_equality(
@@ -1798,12 +1796,10 @@ mod tests {
         for (source, single, strings) in cases {
             let parsed = parse(source);
             if let Err(err) = parsed {
-                assert!(
-                    false,
+                panic!(
                     "{source} results in an error: {}",
                     err.fmt_with_source(source)
                 );
-                continue;
             }
             let parsed = parsed.unwrap();
             assert_set_equality(
