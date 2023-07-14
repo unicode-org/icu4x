@@ -485,6 +485,9 @@ where
             // state after parsing a $ (that was not a variable reference)
             // the only valid next option is a closing bracket
             AfterDollar,
+            // state after parsing a - in an otherwise invalid position
+            // the only valid next option is a closing bracket
+            AfterMinus,
         }
         use State::*;
 
@@ -500,13 +503,16 @@ where
             // for error messages
             let (immediate_offset, immediate_char) = self.must_peek()?;
 
-            let (offset, tok) = self.parse_main_token()?;
+            let (tok_offset, from_var, tok) = self.parse_main_token()?;
 
             use CharOrString as CS;
             use MainToken as MT;
             match (state, tok) {
                 // the end of this unicode set
-                (Begin | Char | CharMinus | AfterUnicodeSet | AfterDollar, MT::ClosingBracket) => {
+                (
+                    Begin | Char | CharMinus | AfterUnicodeSet | AfterDollar | AfterMinus,
+                    MT::ClosingBracket,
+                ) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
@@ -515,6 +521,16 @@ where
                     }
 
                     return Ok(());
+                }
+                // special case ends for -
+                // [[a-z]-]
+                (AfterOp, MT::ClosingBracket) if matches!(operation, Operation::Difference) => {
+                    self.single_set.add_char('-');
+                    return Ok(());
+                }
+                (Begin, MT::Minus) => {
+                    self.single_set.add_char('-');
+                    state = AfterMinus;
                 }
                 // inner unicode set
                 (Begin | Char | AfterUnicodeSet | AfterOp, MT::UnicodeSet(set)) => {
@@ -568,13 +584,13 @@ where
                 }
                 // parse a literal char as the end of a range
                 (CharMinus, MT::CharOrString(CS::Char(c_vec))) if c_vec.len() == 1 => {
-                    let start = prev_char.ok_or(PEK::Internal.with_offset(offset))?;
+                    let start = prev_char.ok_or(PEK::Internal.with_offset(tok_offset))?;
                     // safety: the match guard checks length == 1
                     #[allow(clippy::indexing_slicing)]
                     let end = c_vec[0];
                     if start > end {
                         // TODO(#3558): Better error message (e.g., "start greater than end in range")?
-                        return Err(PEK::UnexpectedChar(end).with_offset(offset));
+                        return Err(PEK::UnexpectedChar(end).with_offset(tok_offset));
                     }
 
                     self.single_set.add_range(&(start..=end));
@@ -605,17 +621,24 @@ where
                 _ => {
                     // TODO(#3558): We have precise knowledge about the following MainToken here,
                     //  should we make use of that?
+
+                    if from_var {
+                        // otherwise we get error messages such as
+                        // [$a-$← error: unexpected character '$'
+                        // for input [$a-$b], $a = 'a', $b = "string" ;
+                        return Err(PEK::UnexpectedVariable.with_offset(tok_offset));
+                    }
                     return Err(PEK::UnexpectedChar(immediate_char).with_offset(immediate_offset));
                 }
             }
         }
     }
 
-    fn parse_main_token(&mut self) -> Result<(usize, MainToken<'a>)> {
+    fn parse_main_token(&mut self) -> Result<(usize, bool, MainToken<'a>)> {
         let (initial_offset, first) = self.must_peek()?;
         if first == ']' {
             self.iter.next();
-            return Ok((initial_offset, MainToken::ClosingBracket));
+            return Ok((initial_offset, false, MainToken::ClosingBracket));
         }
         let (_, second) = self.must_peek_double()?;
         match (first, second) {
@@ -623,23 +646,23 @@ where
             ('$', _) => {
                 let (offset, var_or_anchor) = self.parse_variable()?;
                 match var_or_anchor {
-                    VarOrAnchor::A => Ok((offset, MainToken::DollarSign)),
+                    VarOrAnchor::A => Ok((offset, false, MainToken::DollarSign)),
                     VarOrAnchor::V(&VariableValue::Char(c)) => {
-                        Ok((offset, MainToken::CharOrString(c.into())))
+                        Ok((offset, true, MainToken::CharOrString(c.into())))
                     }
                     VarOrAnchor::V(VariableValue::String(s)) => {
                         // .into() handles 1-length-string -> char conversion
-                        Ok((offset, MainToken::CharOrString(s.clone().into())))
+                        Ok((offset, true, MainToken::CharOrString(s.clone().into())))
                     }
                     VarOrAnchor::V(VariableValue::UnicodeSet(set)) => {
-                        Ok((offset, MainToken::UnicodeSet(set.clone())))
+                        Ok((offset, true, MainToken::UnicodeSet(set.clone())))
                     }
                 }
             }
             // string
             ('{', _) => self
                 .parse_string()
-                .map(|(offset, cs)| (offset, MainToken::CharOrString(cs))),
+                .map(|(offset, cs)| (offset, false, MainToken::CharOrString(cs))),
             // inner set
             ('\\', 'p' | 'P') | ('[', _) => {
                 let mut inner_builder = UnicodeSetBuilder::new_internal(
@@ -662,18 +685,18 @@ where
                     VarZeroVec::from(&strings),
                 )
                 .map_err(|_| PEK::Internal.with_offset(offset))?;
-                Ok((offset, MainToken::UnicodeSet(cpilasl)))
+                Ok((offset, false, MainToken::UnicodeSet(cpilasl)))
             }
             (c, _) if legal_char_start(c) => self
                 .parse_char()
-                .map(|(offset, cs)| (offset, MainToken::CharOrString(cs))),
+                .map(|(offset, cs)| (offset, false, MainToken::CharOrString(cs))),
             ('-', _) => {
                 self.iter.next();
-                Ok((initial_offset, MainToken::Minus))
+                Ok((initial_offset, false, MainToken::Minus))
             }
             ('&', _) => {
                 self.iter.next();
-                Ok((initial_offset, MainToken::Ampersand))
+                Ok((initial_offset, false, MainToken::Ampersand))
             }
             (c, _) => Err(PEK::UnexpectedChar(c).with_offset(initial_offset)),
         }
@@ -1556,21 +1579,21 @@ mod tests {
     #[test]
     fn test_semantics_with_variables() {
         let map_char_char = HashMap::from([
-            ("a".to_string(), VariableValue::Char('a')),
-            ("var2".to_string(), VariableValue::Char('z')),
+            ("a".to_string(), 'a'.into()),
+            ("var2".to_string(), 'z'.into()),
         ]);
 
-        let map_headache = HashMap::from([("hehe".to_string(), VariableValue::Char('-'))]);
+        let map_headache = HashMap::from([("hehe".to_string(), '-'.into())]);
 
         let map_char_string = HashMap::from([
-            ("a".to_string(), VariableValue::Char('a')),
-            ("var2".to_string(), VariableValue::String("abc".into())),
+            ("a".to_string(), 'a'.into()),
+            ("var2".to_string(), "abc".into()),
         ]);
 
         let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
         let map_char_set = HashMap::from([
-            ("a".to_string(), VariableValue::Char('a')),
-            ("set".to_string(), VariableValue::UnicodeSet(set)),
+            ("a".to_string(), 'a'.into()),
+            ("set".to_string(), set.into()),
         ]);
 
         let cases: Vec<(_, _, _, Vec<&str>)> = vec![
@@ -1635,6 +1658,12 @@ mod tests {
             ("[]", "", vec![]),
             ("[qax]", "aaqqxx", vec![]),
             ("[a-z]", "az", vec![]),
+            ("[--]", "--", vec![]),
+            ("[a-b-]", "ab--", vec![]),
+            ("[[a-b]-]", "ab--", vec![]),
+            ("[{ab}-]", "--", vec!["ab"]),
+            ("[-a-b]", "ab--", vec![]),
+            ("[-a]", "--aa", vec![]),
             // whitespace escaping
             (r"[\n]", "\n\n", vec![]),
             ("[\\\n]", "\n\n", vec![]),
@@ -1657,7 +1686,10 @@ mod tests {
             ("[^[^ $ ]]", "\u{ffff}\u{ffff}", vec![]),
             ("[^[^a$]]", "aa\u{ffff}\u{ffff}", vec![]),
             ("[^[^a$ ]]", "aa\u{ffff}\u{ffff}", vec![]),
-            ("[-a]", "--aa", vec![]),
+            ("[-]", "--", vec![]),
+            ("[  -  ]", "--", vec![]),
+            ("[  - -  ]", "--", vec![]),
+            ("[ a-b -  ]", "ab--", vec![]),
             ("[ -a]", "--aa", vec![]),
             ("[a-]", "--aa", vec![]),
             ("[a- ]", "--aa", vec![]),
@@ -1758,6 +1790,7 @@ mod tests {
             (r"[[:scx=Kana:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
             (r"[[:sc=Kana:]&[\u30FC]]", "", vec![]),
             (r"[[:sc=Common:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
+            // syntax edge cases from UTS35
             // TODO(#3556): Add more tests (specifically conformance tests if they exist)
         ];
         for (source, single, multi) in cases {
@@ -1781,6 +1814,63 @@ mod tests {
     }
 
     #[test]
+    fn test_error_messages_with_variables() {
+        let map_char_char = HashMap::from([
+            ("a".to_string(), 'a'.into()),
+            ("var2".to_string(), 'z'.into()),
+        ]);
+
+        let map_char_string = HashMap::from([
+            ("a".to_string(), 'a'.into()),
+            ("var2".to_string(), "abc".into()),
+        ]);
+
+        let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
+        let map_char_set = HashMap::from([
+            ("a".to_string(), 'a'.into()),
+            ("set".to_string(), set.into()),
+        ]);
+
+        let cases = [
+            (
+                &map_char_char,
+                "[$$a]",
+                r"[$$a← error: unexpected variable",
+            ),
+            (
+                &map_char_char,
+                "[$ a]",
+                r"[$ a← error: unexpected character 'a'",
+            ),
+            (&map_char_char, "$a", r"$a← error: unexpected variable"),
+            (&map_char_char, "$", r"$← error: unexpected end of input"),
+            (
+                &map_char_string,
+                "[$var2-$a]",
+                r"[$var2-$a← error: unexpected variable",
+            ),
+            (
+                &map_char_string,
+                "[$a-$var2]",
+                r"[$a-$var2← error: unexpected variable",
+            ),
+            (
+                &map_char_set,
+                "[$a-$set]",
+                r"[$a-$set← error: unexpected variable",
+            ),
+            (
+                &map_char_set,
+                "[$set-$a]",
+                r"[$set-$a← error: unexpected variable",
+            ),
+        ];
+        for (vm, source, expected_err) in cases {
+            assert_is_error_and_message_eq(source, expected_err, vm);
+        }
+    }
+
+    #[test]
     fn test_error_messages() {
         let cases = [
             (r"[a-z[\]]", r"[a-z[\]]← error: unexpected end of input"),
@@ -1799,9 +1889,7 @@ mod tests {
             // property values may not be empty
             (r"[:gc=:]", r"[:gc=:← error: unexpected character ':'"),
             (r"[\xag]", r"[\xag← error: unexpected character 'g'"),
-            (r"[--]", r"[--← error: unexpected character '-'"),
-            (r"[a-z-]", r"[a-z-← error: unexpected character '-'"),
-            (r"[a-b-z]", r"[a-b-← error: unexpected character '-'"),
+            (r"[a-b-z]", r"[a-b-z← error: unexpected character 'z'"),
             // TODO(#3558): Might be better as "[a-\p← error: unexpected character 'p'"?
             (r"[a-\p{ll}]", r"[a-\← error: unexpected character '\\'"),
             (r"[a-&]", r"[a-&← error: unexpected character '&'"),
