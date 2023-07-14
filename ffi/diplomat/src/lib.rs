@@ -113,11 +113,11 @@ pub mod properties_iter;
 pub mod properties_maps;
 #[cfg(feature = "icu_properties")]
 pub mod properties_names;
-#[cfg(feature = "icu_properties")]
-pub mod properties_sets;
 // it may be worth having icu_collections take over
 // the job of enabling CodePointSetData (but not its various property methods)
 #[cfg(any(feature = "icu_collections", feature = "icu_properties"))]
+pub mod properties_sets;
+#[cfg(feature = "icu_properties")]
 pub mod properties_unisets;
 #[cfg(feature = "icu_properties")]
 pub mod script;
