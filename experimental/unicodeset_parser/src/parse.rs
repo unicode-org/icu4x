@@ -184,16 +184,45 @@ impl ParseError {
     }
 }
 
+/// The value of a variable in a Unicode set.
 #[derive(Debug, Clone)]
 #[non_exhaustive]
 pub enum VariableValue<'a> {
+    /// A UnicodeSet, represented as a [`CodePointInversionListAndStringList`].
     UnicodeSet(CodePointInversionListAndStringList<'a>),
     // in theory, a one-code-point string is always the same as a char, but we might want to keep
     // this variant for efficiency?
+    /// A single code point.
     Char(char),
+    /// A string.
     String(String),
 }
 
+impl From<char> for VariableValue<'_> {
+    fn from(c: char) -> Self {
+        VariableValue::Char(c)
+    }
+}
+
+impl From<String> for VariableValue<'_> {
+    fn from(s: String) -> Self {
+        VariableValue::String(s)
+    }
+}
+
+impl<'a> From<&'a str> for VariableValue<'a> {
+    fn from(s: &'a str) -> Self {
+        VariableValue::String(s.to_owned())
+    }
+}
+
+impl<'a> From<CodePointInversionListAndStringList<'a>> for VariableValue<'a> {
+    fn from(set: CodePointInversionListAndStringList<'a>) -> Self {
+        VariableValue::UnicodeSet(set)
+    }
+}
+
+/// The map used for parsing UnicodeSets with variable support. See [`parse_with_variables`].
 pub type VariableMap<'a> = HashMap<String, VariableValue<'a>>;
 
 // necessary helper because char::is_whitespace is not equivalent to [:Pattern_White_Space:]
@@ -221,11 +250,13 @@ fn legal_char_start(c: char) -> bool {
         || c == '['
         || c == ']'
         || c == '{'
+        // TODO: This is most likely unnecessary, because skip_whitespace will have consumed any that existed
         || is_char_pattern_white_space(c))
 }
 
 // same as `legal_char_start` but adapted to the charInString nonterminal. \ is allowed due to escapes.
 fn legal_char_in_string_start(c: char) -> bool {
+    // TODO: is_char_pattern_white_space is most likely unnecessary, because skip_whitespace will have consumed any that existed
     !(c == '}' || is_char_pattern_white_space(c))
 }
 
@@ -234,6 +265,7 @@ fn legal_char_in_string_start(c: char) -> bool {
 // invariant: a char is 1+ chars long
 #[derive(Debug)]
 enum CharOrString {
+    // TODO: Avoid allocating for a small number of chars
     Char(Vec<char>),
     String(String),
 }
@@ -1186,13 +1218,15 @@ where
     }
 }
 
-/// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList).
+/// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`].
 ///
-/// Supports a subset of the syntax described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
-/// (_Note: This is technically wrong, as we do support `[]` and `[^]`, which is disallowed by UTS35,
-/// as accepted syntax for the empty set and the full (code point) set, respectively._)
+/// Supports UnicodeSets as described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
 ///
 /// The error type of the returned Result can be pretty-printed with [`ParseError::fmt_with_source`].
+///
+/// # Variables
+///
+/// If you need support for variables inside UnicodeSets (e.g., `[$start-$end]`), use [`parse_with_variables`].
 ///
 /// # Limitations
 ///
@@ -1201,13 +1235,6 @@ where
 /// and `Script` property names, i.e., `[:Latn:]` and `[:Ll:]` are both valid, with the former implying the `Script` property, and the latter the
 /// `General_Category` property.
 /// * We do not support `\N{Unicode code point name}` character escaping. Use any other escape method described in UTS35.
-///
-/// # Stability
-///
-/// [📚 Help choosing a constructor](icu_provider::constructors)
-/// <div class="stab unstable">
-/// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-/// </div>
 ///
 /// # Examples
 ///
@@ -1257,6 +1284,28 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
     parse_unstable(source, &icu_properties::provider::Baked)
 }
 
+/// Parses a UnicodeSet pattern with support for variables enabled.
+///
+/// See [`parse`] for more information.
+///
+/// # Examples
+///
+/// ```
+/// use icu_unicodeset_parser::*;
+///
+/// let my_set = parse("[abc]").unwrap();
+///
+/// let mut variable_map = VariableMap::new();
+/// variable_map.insert("start".into(), 'a'.into());
+/// variable_map.insert("end".into(), 'z'.into());
+/// variable_map.insert("str".into(), "Hello World".into());
+/// variable_map.insert("the_set".into(), my_set.into());
+///
+/// let set = parse_with_variables("[[$start-$end]-$the_set $str]", &variable_map).unwrap();
+/// assert!(set.code_points().contains_range(&('d'..='z')));
+/// assert!(set.contains("Hello World"));
+/// assert_eq!(set.size(), 1 + ('d'..='z').count());
+///
 #[cfg(feature = "compiled_data")]
 pub fn parse_with_variables(
     source: &str,
@@ -1778,6 +1827,8 @@ mod tests {
                 r"[\xe5-\xe4← error: unexpected character 'ä'",
             ),
             (r"[\xe5-ä]", r"[\xe5-ä← error: unexpected character 'ä'"),
+            // TODO: add negative whitespace significance tests
+            // TODO: add negative variable tests
         ];
         let vm = Default::default();
         for (source, expected_err) in cases {
