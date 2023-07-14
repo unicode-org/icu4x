@@ -265,7 +265,7 @@ fn legal_char_in_string_start(c: char) -> bool {
 // invariant: a char is 1+ chars long
 #[derive(Debug)]
 enum CharOrString {
-    // TODO: Avoid allocating for a small number of chars
+    // TODO(#3684): Avoid allocating for a small number of chars, or even just a single char
     Char(Vec<char>),
     String(String),
 }
@@ -1496,7 +1496,6 @@ where
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
-    // TODO: avoid allocation. Maybe use some map on the stack, or some wrapper enum (enum MapOrEmpty { Empty, Map(Map) })
     let dummy = Default::default();
     parse_unstable_with_variables(source, &dummy, provider)
 }
@@ -1907,6 +1906,7 @@ mod tests {
             // > 1 byte in UTF-8 edge case
             (r"ä", r"ä← error: unexpected character 'ä'"),
             (r"\p{gc=ä}", r"\p{gc=ä← error: unknown property"),
+            (r"\p{gc=ä}", r"\p{gc=ä← error: unknown property"),
             (
                 r"[\xe5-\xe4]",
                 r"[\xe5-\xe4← error: unexpected character 'ä'",
@@ -1917,7 +1917,6 @@ mod tests {
             (r"[:]", r"[:]← error: unexpected character ']'"),
             (r"[:L]", r"[:L]← error: unexpected character ']'"),
             (r"\p {L}", r"\p ← error: unexpected character ' '"),
-            // TODO: add negative variable tests
         ];
         let vm = Default::default();
         for (source, expected_err) in cases {
