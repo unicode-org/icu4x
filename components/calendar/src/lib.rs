@@ -129,6 +129,7 @@ pub mod ethiopian;
 pub mod gregorian;
 mod helpers;
 pub mod indian;
+pub mod islamic;
 pub mod iso;
 pub mod japanese;
 pub mod julian;
