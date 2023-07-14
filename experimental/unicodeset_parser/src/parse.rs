@@ -184,7 +184,7 @@ impl ParseError {
     }
 }
 
-/// The value of a variable in a Unicode set.
+/// The value of a variable in a UnicodeSet. Used as value type in [`VariableMap`].
 #[derive(Debug, Clone)]
 #[non_exhaustive]
 pub enum VariableValue<'a> {
