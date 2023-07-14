@@ -58,9 +58,7 @@ pub(crate) trait ChineseBased: CalendarArithmetic + Sized {
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct ChineseBasedDateInner<C: ChineseBased + CalendarArithmetic>(
-    pub(crate) ArithmeticDate<C>,
-);
+pub(crate) struct ChineseBasedDateInner<C: ChineseBased>(pub(crate) ArithmeticDate<C>);
 
 impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Get the current major solar term of a fixed date, output as an integer from 1..=12.
@@ -68,6 +66,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
     pub(crate) fn major_solar_term_from_fixed(date: RataDie) -> i32 {
+        // TODO: Make this an unsigned int (the size isn't super important, but could fit in a u8)
         let moment: Moment = date.as_moment();
         let location = C::location(date);
         let universal: Moment = Location::universal_from_standard(moment, location);
@@ -147,9 +146,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let month_after_twelfth =
             Self::new_moon_on_or_after((month_after_eleventh + 1).as_moment()); // m13
         let next_eleventh_month = Self::new_moon_before((following_solstice + 1).as_moment()); // next-m11
-        let m12_float = month_after_eleventh.as_moment().inner();
-        let next_m11_float = next_eleventh_month.as_moment().inner();
-        let lhs_argument = libm::round((next_m11_float - m12_float) / MEAN_SYNODIC_MONTH) as i64;
+        let lhs_argument =
+            libm::round((next_eleventh_month - month_after_eleventh) as f64 / MEAN_SYNODIC_MONTH)
+                as i64;
         if lhs_argument == 12
             && (Self::no_major_solar_term(month_after_eleventh)
                 || Self::no_major_solar_term(month_after_twelfth))
