@@ -270,9 +270,9 @@ enum MainToken<'data> {
 }
 
 #[derive(Debug)]
-enum VarOrAnchor<'a, 'b> {
+enum VarOrAnchor<'a> {
     A,
-    V(&'b VariableValue<'a>),
+    V(&'a VariableValue<'a>),
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -283,19 +283,18 @@ enum Operation {
 }
 
 // this builds the set on-the-fly while parsing it
-struct UnicodeSetBuilder<'a, 'b, 'c, 'var, 'parse, P: ?Sized> {
+struct UnicodeSetBuilder<'a, 'parse, P: ?Sized> {
     single_set: CodePointInversionListBuilder,
     multi_set: HashSet<String>,
-    iter: &'b mut Peekable<CharIndices<'a>>,
+    iter: &'parse mut Peekable<CharIndices<'a>>,
     inverted: bool,
-    variable_map: &'parse VariableMap<'var>,
-    // TODO(#3550): Figure out how to store the borrowed sets directly here.
+    variable_map: &'parse VariableMap<'parse>,
     xid_start: &'parse CodePointInversionList<'parse>,
     xid_continue: &'parse CodePointInversionList<'parse>,
-    property_provider: &'c P,
+    property_provider: &'parse P,
 }
 
-impl<'a, 'b, 'c, 'var, 'parse, P> UnicodeSetBuilder<'a, 'b, 'c, 'var, 'parse, P>
+impl<'a, 'parse, P> UnicodeSetBuilder<'a, 'parse, P>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -355,11 +354,11 @@ where
         + DataProvider<XidStartV1Marker>,
 {
     fn new_internal(
-        iter: &'b mut Peekable<CharIndices<'a>>,
-        variable_map: &'parse VariableMap<'var>,
+        iter: &'parse mut Peekable<CharIndices<'a>>,
+        variable_map: &'parse VariableMap<'parse>,
         xid_start: &'parse CodePointInversionList<'parse>,
         xid_continue: &'parse CodePointInversionList<'parse>,
-        provider: &'c P,
+        provider: &'parse P,
     ) -> Self {
         UnicodeSetBuilder {
             single_set: CodePointInversionListBuilder::new(),
@@ -551,7 +550,7 @@ where
         }
     }
 
-    fn parse_main_token(&mut self) -> Result<(usize, MainToken<'var>)> {
+    fn parse_main_token(&mut self) -> Result<(usize, MainToken<'parse>)> {
         let (initial_offset, first) = self.must_peek()?;
         if first == ']' {
             self.iter.next();
@@ -622,7 +621,7 @@ where
     // parses a variable or an anchor. expects '$' as next token.
     // is 'context-sensitive' to avoid duplicate work
     // if this is a trailing $ (eg [.... $ ]), then this function returns Ok(Some((offset, VarOrAnchor::A)))
-    fn parse_variable(&mut self) -> Result<(usize, VarOrAnchor<'var, 'parse>)> {
+    fn parse_variable(&mut self) -> Result<(usize, VarOrAnchor<'parse>)> {
         self.consume('$')?;
 
         let mut res = String::new();
