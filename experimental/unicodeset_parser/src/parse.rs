@@ -1925,11 +1925,16 @@ mod tests {
             (r"[:L]", r"[:L]← error: unexpected character ']'"),
             (r"\p {L}", r"\p ← error: unexpected character ' '"),
             // multi-escapes are not allowed in ranges
-            (r"[\x{61 62}-d]", r"[\x{61 62}-d← error: unexpected character 'd'"),
-            (r"[\x{61 63}-\x{62 64}]", r"[\x{61 63}-\← error: unexpected character '\\'"),
+            (
+                r"[\x{61 62}-d]",
+                r"[\x{61 62}-d← error: unexpected character 'd'",
+            ),
+            (
+                r"[\x{61 63}-\x{62 64}]",
+                r"[\x{61 63}-\← error: unexpected character '\\'",
+            ),
             // TODO(#3558): This is a bad error message.
             (r"[a-\x{62 64}]", r"[a-\← error: unexpected character '\\'"),
-
         ];
         let vm = Default::default();
         for (source, expected_err) in cases {
