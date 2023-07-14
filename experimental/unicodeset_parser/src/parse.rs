@@ -1790,7 +1790,14 @@ mod tests {
             (r"[[:scx=Kana:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
             (r"[[:sc=Kana:]&[\u30FC]]", "", vec![]),
             (r"[[:sc=Common:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
-            // syntax edge cases from UTS35
+            // more syntax edge cases from UTS35 directly
+            (r"[\^a]", "^^aa", vec![]),
+            (r"[{{}]", "{{", vec![]),
+            (r"[{}}]", "}}", vec![""]),
+            (r"[}]", "}}", vec![]),
+            (r"[{$var}]", "", vec!["$var"]),
+            (r"[{[a-z}]", "", vec!["[a-z"]),
+            (r"[ { [ a - z } ]", "", vec!["[a-z"]),
             // TODO(#3556): Add more tests (specifically conformance tests if they exist)
         ];
         for (source, single, strings) in cases {
@@ -1917,6 +1924,12 @@ mod tests {
             (r"[:]", r"[:]← error: unexpected character ']'"),
             (r"[:L]", r"[:L]← error: unexpected character ']'"),
             (r"\p {L}", r"\p ← error: unexpected character ' '"),
+            // multi-escapes are not allowed in ranges
+            (r"[\x{61 62}-d]", r"[\x{61 62}-d← error: unexpected character 'd'"),
+            (r"[\x{61 63}-\x{62 64}]", r"[\x{61 63}-\← error: unexpected character '\\'"),
+            // TODO(#3558): This is a bad error message.
+            (r"[a-\x{62 64}]", r"[a-\← error: unexpected character '\\'"),
+
         ];
         let vm = Default::default();
         for (source, expected_err) in cases {
