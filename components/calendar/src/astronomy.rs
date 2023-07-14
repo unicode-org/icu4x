@@ -767,6 +767,10 @@ impl Astronomical {
         div_rem_euclid_f64(n, 360.0).1
     }
 
+    /// Closest fixed date on or after `date` on the eve of which crescent moon first became visible at `location`.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6883-L6896
     pub fn phasis_on_or_after(date: RataDie, location: Location) -> RataDie {
         let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
         let age = date - moon.as_rata_die();
@@ -778,6 +782,10 @@ impl Astronomical {
         next_moment(tau, location, Self::visible_crescent)
     }
 
+    /// Closest fixed date on or before `date` when crescent moon first became visible at `location`.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6868-L6881
     pub fn phasis_on_or_before(date: RataDie, location: Location) -> RataDie {
         let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
         let age = date - moon.as_rata_die();
@@ -789,6 +797,10 @@ impl Astronomical {
         next_moment(tau, location, Self::visible_crescent)
     }
 
+    /// Length of the lunar month containing `date` in days, based on observability at `location`.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7068-L7074
     #[allow(clippy::unwrap_used)]
     pub fn month_length(date: RataDie, location: Location) -> u8 {
         let moon = Self::phasis_on_or_after(date + 1, location);
@@ -1260,7 +1272,11 @@ impl Astronomical {
         div_rem_euclid_f64(lambda + Self::aberration(c) + Self::nutation(moment), 360.0).1
     }
 
-    // Best viewing time (UT) in evening.
+    /// The best viewing time (UT) in the evening for viewing the young moon from `location` on `date`. This is defined as
+    /// the time when the sun is 4.5 degrees below the horizon, or `date + 1` if there is no such time.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7337-L7346
     fn simple_best_view(date: RataDie, location: Location) -> Moment {
         let dark = Self::dusk(date.to_f64_date(), location, 4.5);
         let best = dark.unwrap_or((date + 1).as_moment());
@@ -1268,13 +1284,22 @@ impl Astronomical {
         Location::universal_from_standard(best, location)
     }
 
-    // Angular separation of sun and moon at a specific moment
+    /// Angular separation of the sun and moon at `moment`, for the purposes of determining the likely
+    /// visibility of the crescent moon.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7284-L7290
     fn arc_of_light(moment: Moment) -> f64 {
         arccos_degrees(
             cos_degrees(Self::lunar_latitude(moment)) * cos_degrees(Self::lunar_phase(moment)),
         )
     }
 
+    /// Criterion for likely visibility of the crescent moon on the eve of `date` at `location`,
+    /// not intended for high altitudes or polar regions, as defined by S.K. Shaukat.
+    /// 
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7306-L7317
     fn shaukat_criterion(date: Moment, location: Location) -> bool {
         let tee = Self::simple_best_view((date - 1.0).as_rata_die(), location);
         let phase = Self::lunar_phase(tee);
@@ -1299,7 +1324,8 @@ impl Astronomical {
         false
     }
 
-    // Only for use in Islamic calendar
+    /// Criterion for possible visibility of crescent moon on the eve of `date` at `location`;
+    /// currently, this calls `shaukat_criterion`, but this can be replaced with another implementation.
     pub(crate) fn visible_crescent(date: Moment, location: Location) -> bool {
         Self::shaukat_criterion(date, location)
     }
