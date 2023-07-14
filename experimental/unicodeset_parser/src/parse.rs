@@ -506,7 +506,9 @@ where
                     state = AfterUnicodeSet;
                 }
                 // a literal char (either individually or as the start of a range if char)
-                (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::Char(c_vec))) if c_vec.len() == 1 => {
+                (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::Char(c_vec)))
+                    if c_vec.len() == 1 =>
+                {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
@@ -574,7 +576,7 @@ where
                 _ => {
                     // TODO(#3558): We have precise knowledge about the following MainToken here,
                     //  should we make use of that?
-                    return Err(PEK::UnexpectedChar(immediate_char).with_offset(immediate_offset))
+                    return Err(PEK::UnexpectedChar(immediate_char).with_offset(immediate_offset));
                 }
             }
         }
@@ -744,9 +746,10 @@ where
                             }
 
                             let (hex_digits, end_offset) = self.parse_variable_length_hex()?;
-                            let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal.with_offset(end_offset))?;
-                            let parsed_c =
-                                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
+                            let num = u32::from_str_radix(&hex_digits, 16)
+                                .map_err(|_| PEK::Internal.with_offset(end_offset))?;
+                            let parsed_c = char::try_from(num)
+                                .map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
                             c_vec.push(parsed_c);
                         }
                     }
