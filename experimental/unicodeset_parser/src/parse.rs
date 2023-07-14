@@ -41,7 +41,8 @@ pub enum ParseErrorKind {
     /// The provided syntax is not supported by us. Note that unknown properties will return the
     /// `UnknownProperty` variant, not this one.
     Unimplemented,
-    /// The provided escape sequence is not a valid Unicode code point.
+    /// The provided escape sequence is not a valid Unicode code point or represents too many
+    /// code points.
     InvalidEscape,
 }
 use zerovec::VarZeroVec;
@@ -228,16 +229,25 @@ fn legal_char_in_string_start(c: char) -> bool {
     !(c == '}' || is_char_pattern_white_space(c))
 }
 
-// invariant: a one-codepoint-element is represented as a char, not a single-char String
+// A char or a string. The Vec<char> represents multi-escapes in the 2+ case.
+// invariant: a String is either zero or 2+ chars long, a one-char-string is equivalent to a single char.
+// invariant: a char is 1+ chars long
 #[derive(Debug)]
 enum CharOrString {
-    Char(char),
+    Char(Vec<char>),
     String(String),
+}
+
+impl From<Vec<char>> for CharOrString {
+    fn from(v: Vec<char>) -> Self {
+        debug_assert!(v.len() >= 1);
+        CharOrString::Char(v)
+    }
 }
 
 impl From<char> for CharOrString {
     fn from(c: char) -> Self {
-        CharOrString::Char(c)
+        CharOrString::Char(vec![c])
     }
 }
 
@@ -245,7 +255,7 @@ impl From<String> for CharOrString {
     fn from(s: String) -> Self {
         let mut chars = s.chars();
         match (chars.next(), chars.next()) {
-            (Some(c), None) => CharOrString::Char(c),
+            (Some(c), None) => c.into(),
             _ => CharOrString::String(s),
         }
     }
@@ -463,17 +473,19 @@ where
 
             // for error messages
             let (immediate_offset, immediate_char) = self.must_peek()?;
-            // get next MainToken
+
             let (offset, tok) = self.parse_main_token()?;
 
             use CharOrString as CS;
             use MainToken as MT;
             match (state, tok) {
                 // the end of this unicode set
-                // TODO: Add CharMinus state?
-                (Begin | Char | AfterUnicodeSet | AfterDollar, MT::ClosingBracket) => {
+                (Begin | Char | CharMinus | AfterUnicodeSet | AfterDollar, MT::ClosingBracket) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
+                    }
+                    if matches!(state, CharMinus) {
+                        self.single_set.add_char('-');
                     }
 
                     return Ok(());
@@ -493,15 +505,29 @@ where
                     operation = DEFAULT_OP;
                     state = AfterUnicodeSet;
                 }
-                // a literal char or string (either individually or as the start of a range if char)
-                (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::Char(c))) => {
+                // a literal char (either individually or as the start of a range if char)
+                (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::Char(c_vec))) if c_vec.len() == 1 => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
-                    prev_char = Some(c);
+                    // safety: the match guard checks length == 1
+                    prev_char = Some(c_vec[0]);
                     state = Char;
                 }
-                // parse a multi-codepoint-sequence (length != 1, by CharOrString invariant)
+                // a bunch of literal chars as part of a multi-escape sequence
+                (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::Char(c_vec))) => {
+                    if let Some(prev) = prev_char.take() {
+                        self.single_set.add_char(prev);
+                    }
+                    for c in c_vec {
+                        self.single_set.add_char(c);
+                    }
+
+                    // Note we cannot go to the Char state, because a multi-escape sequence of
+                    // length > 1 cannot initiate a range
+                    state = Begin;
+                }
+                // a literal string (length != 1, by CharOrString invariant)
                 (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::String(s))) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
@@ -511,8 +537,10 @@ where
                     state = Begin;
                 }
                 // parse a literal char as the end of a range
-                (CharMinus, MT::CharOrString(CS::Char(end))) => {
+                (CharMinus, MT::CharOrString(CS::Char(c_vec))) if c_vec.len() == 1 => {
                     let start = prev_char.ok_or(PEK::Internal.with_offset(offset))?;
+                    // safety: the match guard checks length == 1
+                    let end = c_vec[0];
                     if start > end {
                         // TODO(#3558): Better error message (e.g., "start greater than end in range")?
                         return Err(PEK::UnexpectedChar(end).with_offset(offset));
@@ -543,7 +571,9 @@ where
                     self.single_set.add_char('\u{FFFF}');
                     state = AfterDollar;
                 }
-                (_, c) => {
+                _ => {
+                    // TODO(#3558): We have precise knowledge about the following MainToken here,
+                    //  should we make use of that?
                     return Err(PEK::UnexpectedChar(immediate_char).with_offset(immediate_offset))
                 }
             }
@@ -673,7 +703,7 @@ where
                     // don't need the offset, because '}' will always be the last char
                     let (_, c_or_s) = self.parse_char()?;
                     match c_or_s {
-                        CharOrString::Char(c) => buffer.push(c),
+                        CharOrString::Char(c) => buffer.extend(c.into_iter()),
                         CharOrString::String(s) => buffer.push_str(&s),
                     }
                 }
@@ -686,7 +716,6 @@ where
     }
 
     // starts with \ and consumes the whole escape sequence
-    // TODO(#3557): Multi-code-point escapes. Would mean that this function could return either a char or a String.
     fn parse_escaped_char(&mut self) -> Result<(usize, CharOrString)> {
         self.consume('\\')?;
 
@@ -696,15 +725,37 @@ where
             'u' | 'x' if self.peek_char() == Some('{') => {
                 // bracketedHex
                 self.iter.next();
-                self.skip_whitespace();
-                let (hex_digits, end_offset) = self.parse_variable_length_hex()?;
-                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                let c =
-                    char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
-                self.skip_whitespace();
-                let offset = self.must_peek_index()?;
-                self.consume('}')?;
-                Ok((offset, c.into()))
+
+                let mut c_vec = Vec::new();
+                let last_offset;
+
+                loop {
+                    let skipped = self.skip_whitespace();
+                    match self.must_peek_char()? {
+                        '}' => {
+                            last_offset = self.must_peek_index()?;
+                            self.iter.next();
+                            break;
+                        }
+                        initial_c => {
+                            if skipped == 0 && !c_vec.is_empty() {
+                                // bracketed hex code points must be separated by whitespace
+                                return self.error_here(PEK::UnexpectedChar(initial_c));
+                            }
+
+                            let (hex_digits, end_offset) = self.parse_variable_length_hex()?;
+                            let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal.with_offset(end_offset))?;
+                            let parsed_c =
+                                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
+                            c_vec.push(parsed_c);
+                        }
+                    }
+                }
+                if c_vec.is_empty() {
+                    // TODO(#3558): UnexpectedChar, or InvalidEscape?
+                    return Err(PEK::UnexpectedChar('}').with_offset(last_offset));
+                }
+                Ok((last_offset, c_vec.into()))
             }
             'u' => {
                 // 'u' hex{4}
@@ -976,7 +1027,7 @@ where
             '\\' => self.parse_escaped_char(),
             _ => {
                 self.iter.next();
-                Ok((offset, CharOrString::Char(c)))
+                Ok((offset, c.into()))
             }
         }
     }
@@ -1018,13 +1069,17 @@ where
         Ok((last_offset, result))
     }
 
-    fn skip_whitespace(&mut self) {
+    // returns the number of skipped whitespace chars
+    fn skip_whitespace(&mut self) -> usize {
+        let mut num = 0;
         while let Some(c) = self.peek_char() {
             if !is_char_pattern_white_space(c) {
                 break;
             }
             self.iter.next();
+            num += 1;
         }
+        return num;
     }
 
     fn consume(&mut self, expected: char) -> Result<()> {
@@ -1620,6 +1675,8 @@ mod tests {
             ),
             (r"[^[^a-z]]", "az", vec![]),
             (r"[^[^\^]]", "^^", vec![]),
+            (r"[{\x{61 0062   063}}]", "", vec!["abc"]),
+            (r"[\x{61 0062   063}]", "ac", vec![]),
             // binary properties
             (r"[:AHex:]", "09afAF", vec![]),
             (r"[:AHex=True:]", "09afAF", vec![]),
