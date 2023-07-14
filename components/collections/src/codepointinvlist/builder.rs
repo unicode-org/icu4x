@@ -949,7 +949,7 @@ mod tests {
 
     #[test]
     fn test_is_empty() {
-        let mut builder = CodePointInversionListBuilder::new();
+        let builder = CodePointInversionListBuilder::new();
         assert!(builder.is_empty());
     }
 }
