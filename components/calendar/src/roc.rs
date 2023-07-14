@@ -33,9 +33,10 @@
 
 use crate::{
     calendar_arithmetic::ArithmeticDate,
+    helpers::{i64_to_i32, I32Result},
     iso::IsoDateInner,
     types::{self, Era},
-    Calendar, CalendarError, Date, DateTime, Iso, helpers::{i64_to_i32, I32Result},
+    Calendar, CalendarError, Date, DateTime, Iso,
 };
 use tinystr::tinystr;
 
@@ -244,12 +245,8 @@ impl DateTime<Roc> {
 
 pub(crate) fn year_as_roc(year: i64) -> types::FormattableYear {
     let year_i32 = match i64_to_i32(year) {
-        I32Result::BelowMin(_) => {
-            i32::MIN
-        }
-        I32Result::AboveMax(_) => {
-            i32::MAX
-        }
+        I32Result::BelowMin(_) => i32::MIN,
+        I32Result::AboveMax(_) => i32::MAX,
         I32Result::WithinRange(y) => y,
     };
     let offset_i64 = ROC_ERA_OFFSET as i64;
