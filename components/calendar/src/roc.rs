@@ -46,7 +46,7 @@ const ROC_ERA_OFFSET: i32 = 1911;
 
 /// The Republic of China (ROC) Calendar
 ///
-/// The [ROC calendar] is a solar calendar used in Taiwan and Penghu, as well as by overseas diaspora from
+/// The [Republic of China calendar] is a solar calendar used in Taiwan and Penghu, as well as by overseas diaspora from
 /// those locations. Months and days are identical to the [`Gregorian`] calendar, while years are counted
 /// with 1912, the year of the establishment of the Republic of China, as year 1 of the ROC/Minguo/民国/民國 era.
 ///
