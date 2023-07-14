@@ -205,18 +205,19 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// The calculation for `elapsed_years` in this function is based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
     pub(crate) fn chinese_based_date_from_fixed(date: RataDie) -> Date<C> {
-        let new_year = Self::new_year_on_or_before_fixed_date(date);
-        let elapsed_years =
-            libm::floor(1.5 - 1.0 / 12.0 + ((new_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR);
-        let elapsed_years_int = i64_to_i32(elapsed_years as i64);
+        let first_day_of_year = Self::new_year_on_or_before_fixed_date(date);
+        let year_float = libm::floor(
+            1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
+        );
+        let year_int = i64_to_i32(year_float as i64);
         debug_assert!(
-            matches!(elapsed_years_int, I32Result::WithinRange(_)),
+            matches!(year_int, I32Result::WithinRange(_)),
             "Year should be in range of i32"
         );
-        let year = elapsed_years_int.saturate();
+        let year = year_int.saturate();
         let mut month = 1;
         let max_months = 14;
-        let mut cur_month = new_year;
+        let mut cur_month = first_day_of_year;
         let mut next_month = Self::new_moon_on_or_after((cur_month + 1).as_moment());
         while next_month <= date && month < max_months {
             month += 1;
@@ -237,8 +238,8 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let month = date.0.month as i64;
         let day = date.0.day as i64;
         let mid_year = Self::fixed_mid_year_from_year(year);
-        let new_year = Self::new_year_on_or_before_fixed_date(mid_year);
-        let month_approx = new_year + (month - 1) * 29;
+        let first_day_of_year = Self::new_year_on_or_before_fixed_date(mid_year);
+        let month_approx = first_day_of_year + (month - 1) * 29;
         let prior_new_moon = Self::new_moon_on_or_after(month_approx.as_moment());
         prior_new_moon + day - 1
     }
