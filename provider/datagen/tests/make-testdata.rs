@@ -2,21 +2,30 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datagen::fs_exporter::serializers::{Json, Postcard};
+use icu_datagen::fs_exporter::serializers::Json;
 use icu_datagen::fs_exporter::*;
 use icu_datagen::prelude::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
+use std::fs::File;
+use std::io::Write;
 use std::path::Path;
+use std::sync::Mutex;
 
+// Heap measurements don't work in a parallel environment.
+#[cfg(not(feature = "rayon"))]
 #[global_allocator]
 static ALLOC: dhat::Alloc = dhat::Alloc;
 
 include!("data/locales.rs.data");
 
 #[test]
-fn generate_fs_and_verify_zero_copy() {
+fn generate_json_and_verify_postcard() {
+    // don't drop to avoid dhat from printing stats at the end
+    #[cfg(not(feature = "rayon"))]
+    core::mem::forget(dhat::Profiler::new_heap());
+
     simple_logger::SimpleLogger::new()
         .env()
         .with_level(log::LevelFilter::Info)
@@ -36,22 +45,18 @@ fn generate_fs_and_verify_zero_copy() {
             let mut options = ExporterOptions::default();
             options.root = data_root.join("json");
             options.overwrite = OverwriteOption::RemoveAndReplace;
-            options.fingerprint = true;
             options
         })
         .unwrap(),
     );
 
-    let postcard_out = Box::new(
-        FilesystemExporter::try_new(Box::<Postcard>::default(), {
-            let mut options = ExporterOptions::default();
-            options.root = data_root.join("postcard");
-            options.overwrite = OverwriteOption::RemoveAndReplace;
-            options.fingerprint = true;
-            options
-        })
-        .unwrap(),
-    );
+    let postcard_out = Box::new(PostcardTestingExporter {
+        size_hash: Default::default(),
+        zero_copy_violations: Default::default(),
+        zero_copy_net_violations: Default::default(),
+        rountrip_errors: Default::default(),
+        fingerprints: File::create(data_root.join("postcard/fingerprints.csv")).unwrap(),
+    });
 
     let mut options = options::Options::default();
     options.locales = options::LocaleInclude::Explicit(LOCALES.iter().cloned().collect());
@@ -63,73 +68,144 @@ fn generate_fs_and_verify_zero_copy() {
             MultiExporter::new(vec![json_out, postcard_out]),
         )
         .unwrap();
+}
 
-    // don't drop to avoid dhat from printing stats at the end
-    core::mem::forget(dhat::Profiler::new_heap());
+struct PostcardTestingExporter {
+    size_hash: Mutex<BTreeMap<(DataKey, String), (usize, u64)>>,
+    zero_copy_violations: Mutex<BTreeSet<DataKey>>,
+    zero_copy_net_violations: Mutex<BTreeSet<DataKey>>,
+    rountrip_errors: Mutex<BTreeSet<(DataKey, String)>>,
+    fingerprints: File,
+}
 
-    // violations for net_bytes_allocated
-    let mut net_violations = BTreeSet::new();
-    // violations for total_bytes_allocated (but not net_bytes_allocated)
-    let mut total_violations = BTreeSet::new();
+impl DataExporter for PostcardTestingExporter {
+    fn put_payload(
+        &self,
+        key: DataKey,
+        locale: &DataLocale,
+        payload_before: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        use postcard::{
+            ser_flavors::{AllocVec, Flavor},
+            Serializer,
+        };
+        let mut serializer = Serializer {
+            output: AllocVec::new(),
+        };
+        payload_before.serialize(&mut serializer).unwrap();
+        let serialized = serializer.output.finalize().unwrap();
 
-    for key in icu_datagen::all_keys() {
-        for entry in glob::glob(
-            &data_root
-                .join("postcard")
-                .join(key.path().get())
-                .join("**/*.postcard")
-                .display()
-                .to_string(),
-        )
-        .unwrap()
-        {
-            let payload = DataPayload::from_owned_buffer(
-                std::fs::read(&entry.unwrap()).unwrap().into_boxed_slice(),
-            );
+        let size = serialized.len();
 
-            let stats_before = dhat::HeapStats::get();
+        // We're using SipHash, which is deprecated, but we want a stable hasher
+        // (we're fine with it not being cryptographically secure since we're just using it to track diffs)
+        #[allow(deprecated)]
+        use std::hash::{Hash, Hasher, SipHasher};
+        #[allow(deprecated)]
+        let mut hasher = SipHasher::new();
+        serialized.iter().for_each(|b| b.hash(&mut hasher));
+        let hash = hasher.finish();
 
-            // We need to generate the stats before the deserialized struct gets dropped, in order
-            // to distinguish between a temporary and permanent allocation.
-            let stats_after =
-                icu_datagen::deserialize_and_discard(key, payload, dhat::HeapStats::get).unwrap();
+        let buffer_payload = DataPayload::from_owned_buffer(serialized.into_boxed_slice());
 
-            if stats_after.total_bytes != stats_before.total_bytes {
-                if stats_after.curr_bytes != stats_before.curr_bytes {
-                    net_violations.insert(key.path().get());
-                } else {
-                    total_violations.insert(key.path().get());
-                }
+        #[cfg(not(feature = "rayon"))]
+        let heap_before = dhat::HeapStats::get();
+
+        #[cfg(not(feature = "rayon"))]
+        let (heap_after, payload_after) =
+            icu_datagen::deserialize_and_measure(key, buffer_payload, dhat::HeapStats::get)
+                .unwrap();
+
+        #[cfg(feature = "rayon")]
+        let (_, payload_after) =
+            icu_datagen::deserialize_and_measure(key, buffer_payload, |()| ()).unwrap();
+
+        if payload_before != &payload_after {
+            self.rountrip_errors
+                .lock()
+                .expect("poison")
+                .insert((key, locale.to_string()));
+        }
+
+        #[cfg(not(feature = "rayon"))]
+        if heap_after.total_bytes != heap_before.total_bytes {
+            if heap_after.curr_bytes != heap_before.curr_bytes {
+                self.zero_copy_net_violations
+                    .lock()
+                    .expect("poison")
+                    .insert(key);
+            } else {
+                self.zero_copy_violations
+                    .lock()
+                    .expect("poison")
+                    .insert(key);
             }
         }
+
+        self.size_hash
+            .lock()
+            .expect("poison")
+            .insert((key, locale.to_string()), (size, hash));
+
+        Ok(())
     }
 
-    // Types in this list cannot be zero-copy deserialized.
-    //
-    // Such types contain some data that was allocated during deserializations
-    //
-    // Every entry in this list is a bug that needs to be addressed before ICU4X 1.0.
-    const EXPECTED_NET_VIOLATIONS: &[&str] = &[
-        // https://github.com/unicode-org/icu4x/issues/1678
-        "datetime/skeletons@1",
-    ];
+    fn close(&mut self) -> Result<(), DataError> {
+        for ((key, locale), (size, hash)) in self.size_hash.get_mut().expect("poison") {
+            writeln!(&mut self.fingerprints, "{key}, {locale}, {size}B, {hash:x}")?;
+        }
 
-    // Types in this list can be zero-copy deserialized (and do not contain allocated data),
-    // however there is some allocation that occurs during deserialization for validation.
-    //
-    // Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
-    // in this list since it does not affect databake.
-    const EXPECTED_TOTAL_VIOLATIONS: &[&str] = &[
-        // Regex DFAs need to be validated, which involved creating a BTreeMap
-        "list/and@1",
-        "list/or@1",
-        "list/unit@1",
-    ];
+        assert_eq!(
+            self.rountrip_errors.get_mut().expect("poison"),
+            &mut BTreeSet::default()
+        );
 
-    assert!(total_violations.iter().eq(EXPECTED_TOTAL_VIOLATIONS.iter()) && net_violations.iter().eq(EXPECTED_NET_VIOLATIONS.iter()),
-        "Expected violations list does not match found violations!\n\
-        If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
-        If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
-        to temporarily allow for this key to be allowlisted.\n\
-        Expected (net):\n{EXPECTED_NET_VIOLATIONS:?}\nFound (net):\n{net_violations:?}\nExpected (total):\n{EXPECTED_TOTAL_VIOLATIONS:?}\nFound (total):\n{total_violations:?}");
+        // Types in this list cannot be zero-copy deserialized.
+        //
+        // Such types contain some data that was allocated during deserializations
+        //
+        // Every entry in this list is a bug that needs to be addressed before ICU4X 1.0.
+        const EXPECTED_NET_VIOLATIONS: &[DataKey] = &[
+            // https://github.com/unicode-org/icu4x/issues/1678
+            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+        ];
+
+        // Types in this list can be zero-copy deserialized (and do not contain allocated data),
+        // however there is some allocation that occurs during deserialization for validation.
+        //
+        // Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
+        // in this list since it does not affect databake.
+        const EXPECTED_TOTAL_VIOLATIONS: &[DataKey] = &[
+            // Regex DFAs need to be validated, which involved creating a BTreeMap
+            icu_list::provider::AndListV1Marker::KEY,
+            icu_list::provider::OrListV1Marker::KEY,
+            icu_list::provider::UnitListV1Marker::KEY,
+        ];
+
+        let total_violations = self
+            .zero_copy_violations
+            .get_mut()
+            .expect("poison")
+            .iter()
+            .copied()
+            .collect::<Vec<_>>();
+        let net_violations = self
+            .zero_copy_net_violations
+            .get_mut()
+            .expect("poison")
+            .iter()
+            .copied()
+            .collect::<Vec<_>>();
+
+        #[cfg(not(feature = "rayon"))]
+        assert!(total_violations == EXPECTED_TOTAL_VIOLATIONS && net_violations == EXPECTED_NET_VIOLATIONS,
+            "Expected violations list does not match found violations!\n\
+            If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
+            If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
+            to temporarily allow for this key to be allowlisted.\n\
+            Expected (net):\n{EXPECTED_NET_VIOLATIONS:?}\nFound (net):\n{net_violations:?}\nExpected (total):\n{EXPECTED_TOTAL_VIOLATIONS:?}\nFound (total):\n{total_violations:?}"
+        );
+
+        Ok(())
+    }
 }
