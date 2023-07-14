@@ -1661,6 +1661,8 @@ mod tests {
             ("[ -a]", "--aa", vec![]),
             ("[a-]", "--aa", vec![]),
             ("[a- ]", "--aa", vec![]),
+            ("[ :]", "::", vec![]),
+            ("[ :L:]", "::LL", vec![]),
             // but not all "whitespace", only Pattern_White_Space:
             ("[\u{A0}]", "\u{A0}\u{A0}", vec![]), // non-breaking space
             // anchor
@@ -1827,7 +1829,11 @@ mod tests {
                 r"[\xe5-\xe4← error: unexpected character 'ä'",
             ),
             (r"[\xe5-ä]", r"[\xe5-ä← error: unexpected character 'ä'"),
-            // TODO: add negative whitespace significance tests
+            // whitespace significance
+            (r"[ ^]", r"[ ^← error: unexpected character '^'"),
+            (r"[:]", r"[:]← error: unexpected character ']'"),
+            (r"[:L]", r"[:L]← error: unexpected character ']'"),
+            (r"\p {L}", r"\p ← error: unexpected character ' '"),
             // TODO: add negative variable tests
         ];
         let vm = Default::default();
