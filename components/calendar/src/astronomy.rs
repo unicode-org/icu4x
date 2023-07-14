@@ -24,6 +24,7 @@ pub(crate) struct Location {
     pub(crate) zone: f64,      // UTC timezone offset in fractional days (1 hr = 1.0 / 24.0 day)
 }
 
+/// The location of Mecca; used for Islamic calendar calculations.
 #[allow(dead_code)]
 pub(crate) const MECCA: Location = Location {
     latitude: 6427.0 / 300.0,
