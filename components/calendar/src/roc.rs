@@ -35,7 +35,7 @@ use crate::{
     calendar_arithmetic::ArithmeticDate,
     iso::IsoDateInner,
     types::{self, Era},
-    Calendar, CalendarError, Date, DateTime, Iso,
+    Calendar, CalendarError, Date, DateTime, Iso, helpers::{i64_to_i32, I32Result},
 };
 use tinystr::tinystr;
 
@@ -56,8 +56,8 @@ const ROC_ERA_OFFSET: i32 = 1911;
 ///
 /// # Era codes
 ///
-/// This calendar supports two era codes: `"minguo"`, corresponding to years in the 民國 (minguo) era (CE year 1912 and
-/// after), and `"before minguo"`, corresponding to years before the 民國 (minguo) era (CE year 1911 and before).
+/// This calendar supports two era codes: `"roc"`, corresponding to years in the 民國 (minguo) era (CE year 1912 and
+/// after), and `"roc-inverse"`, corresponding to years before the 民國 (minguo) era (CE year 1911 and before).
 #[derive(Copy, Clone, Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Roc;
@@ -76,12 +76,12 @@ impl Calendar for Roc {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, crate::Error> {
-        let year = if era.0 == tinystr!(16, "minguo") {
+        let year = if era.0 == tinystr!(16, "roc") {
             if year <= 0 {
                 return Err(CalendarError::OutOfRange);
             }
             year + ROC_ERA_OFFSET
-        } else if era.0 == tinystr!(16, "before minguo") {
+        } else if era.0 == tinystr!(16, "roc-inverse") {
             if year <= 0 {
                 return Err(CalendarError::OutOfRange);
             }
@@ -136,7 +136,7 @@ impl Calendar for Roc {
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
-        year_as_roc(date.0 .0.year)
+        year_as_roc(date.0 .0.year as i64)
     }
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
@@ -153,9 +153,9 @@ impl Calendar for Roc {
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(date.0),
             days_in_year: Iso::days_in_year_direct(date.0 .0.year),
-            prev_year: year_as_roc(prev_year),
+            prev_year: year_as_roc(prev_year as i64),
             days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: year_as_roc(next_year),
+            next_year: year_as_roc(next_year as i64),
         }
     }
 }
@@ -163,7 +163,7 @@ impl Calendar for Roc {
 impl Date<Roc> {
     /// Construct a new Republic of China calendar Date.
     ///
-    /// Years are specified in either the "minguo" or "before minguo" eras
+    /// Years are specified in either the "roc" or "roc-inverse" eras
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -172,10 +172,10 @@ impl Date<Roc> {
     /// use tinystr::tinystr;
     ///
     /// // Create a new ROC Date
-    /// let date_roc = Date::try_new_roc_date(Era(tinystr!(16, "minguo")), 1, 2, 3)
+    /// let date_roc = Date::try_new_roc_date(Era(tinystr!(16, "roc")), 1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
-    /// assert_eq!(date_roc.year().era.0, tinystr!(16, "minguo"));
+    /// assert_eq!(date_roc.year().era.0, tinystr!(16, "roc"));
     /// assert_eq!(date_roc.year().number, 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
@@ -192,9 +192,9 @@ impl Date<Roc> {
         month: u8,
         day: u8,
     ) -> Result<Date<Roc>, CalendarError> {
-        let roc_year = if era.0 == tinystr!(16, "minguo") {
+        let roc_year = if era.0 == tinystr!(16, "roc") {
             year.saturating_add(ROC_ERA_OFFSET)
-        } else if era.0 == tinystr!(16, "before minguo") {
+        } else if era.0 == tinystr!(16, "roc-inverse") {
             (ROC_ERA_OFFSET + 1).saturating_sub(year)
         } else {
             return Err(CalendarError::UnknownEra(era.0, "ROC"));
@@ -206,7 +206,7 @@ impl Date<Roc> {
 impl DateTime<Roc> {
     /// Construct a new Republic of China calendar datetime from integers.
     ///
-    /// Years are specified in either the "minguo" or "before minguo" eras (see [`Roc`] for more info).
+    /// Years are specified in either the "roc" or "roc-inverse" eras (see [`Roc`] for more info).
     ///
     /// ```rust
     /// use icu::calendar::DateTime;
@@ -215,10 +215,10 @@ impl DateTime<Roc> {
     /// use tinystr::tinystr;
     ///
     /// // Create a new ROC DateTime
-    /// let datetime_roc = DateTime::try_new_roc_datetime(Era(tinystr!(16, "minguo")), 1, 2, 3, 13, 1, 0)
+    /// let datetime_roc = DateTime::try_new_roc_datetime(Era(tinystr!(16, "roc")), 1, 2, 3, 13, 1, 0)
     ///     .expect("Failed to initialize ROC DateTime instance.");
     ///
-    /// assert_eq!(datetime_roc.date.year().era.0, tinystr!(16, "minguo"));
+    /// assert_eq!(datetime_roc.date.year().era.0, tinystr!(16, "roc"));
     /// assert_eq!(datetime_roc.date.year().number, 1, "ROC year check failed!");
     /// assert_eq!(datetime_roc.date.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(datetime_roc.date.day_of_month().0, 3, "ROC day of month check failed!");
@@ -242,20 +242,30 @@ impl DateTime<Roc> {
     }
 }
 
-pub(crate) fn year_as_roc(year: i32) -> types::FormattableYear {
-    if year > ROC_ERA_OFFSET {
+pub(crate) fn year_as_roc(year: i64) -> types::FormattableYear {
+    let year_i32 = match i64_to_i32(year) {
+        I32Result::BelowMin(_) => {
+            i32::MIN
+        }
+        I32Result::AboveMax(_) => {
+            i32::MAX
+        }
+        I32Result::WithinRange(y) => y,
+    };
+    let offset_i64 = ROC_ERA_OFFSET as i64;
+    if year > offset_i64 {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "minguo")),
-            number: year.saturating_sub(ROC_ERA_OFFSET),
+            era: types::Era(tinystr!(16, "roc")),
+            number: year_i32.saturating_sub(ROC_ERA_OFFSET),
             cyclic: None,
-            related_iso: Some(year),
+            related_iso: Some(year_i32),
         }
     } else {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "before minguo")),
-            number: (ROC_ERA_OFFSET + 1).saturating_sub(year),
+            era: types::Era(tinystr!(16, "roc-inverse")),
+            number: (ROC_ERA_OFFSET + 1).saturating_sub(year_i32),
             cyclic: None,
-            related_iso: Some(year),
+            related_iso: Some(year_i32),
         }
     }
 }
@@ -313,7 +323,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "minguo")),
+                expected_era: Era(tinystr!(16, "roc")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -323,7 +333,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "minguo")),
+                expected_era: Era(tinystr!(16, "roc")),
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -333,7 +343,7 @@ mod test {
                 iso_month: 6,
                 iso_day: 30,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "minguo")),
+                expected_era: Era(tinystr!(16, "roc")),
                 expected_month: 6,
                 expected_day: 30,
             },
@@ -343,7 +353,7 @@ mod test {
                 iso_month: 7,
                 iso_day: 13,
                 expected_year: 112,
-                expected_era: Era(tinystr!(16, "minguo")),
+                expected_era: Era(tinystr!(16, "roc")),
                 expected_month: 7,
                 expected_day: 13,
             },
@@ -367,7 +377,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "before minguo")),
+                expected_era: Era(tinystr!(16, "roc-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -377,7 +387,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "before minguo")),
+                expected_era: Era(tinystr!(16, "roc-inverse")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -387,7 +397,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "before minguo")),
+                expected_era: Era(tinystr!(16, "roc-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -397,7 +407,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "before minguo")),
+                expected_era: Era(tinystr!(16, "roc-inverse")),
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -407,7 +417,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1911,
-                expected_era: Era(tinystr!(16, "before minguo")),
+                expected_era: Era(tinystr!(16, "roc-inverse")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -417,7 +427,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1912,
-                expected_era: Era(tinystr!(16, "before minguo")),
+                expected_era: Era(tinystr!(16, "roc-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
