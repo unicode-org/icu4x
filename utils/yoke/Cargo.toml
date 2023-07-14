@@ -6,7 +6,7 @@
 name = "yoke"
 version = "0.7.1"
 description = "Abstraction allowing borrowed data to be carried along with the backing data it borrows from"
-rust-version = "1.64.0"
+rust-version = "1.65.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"

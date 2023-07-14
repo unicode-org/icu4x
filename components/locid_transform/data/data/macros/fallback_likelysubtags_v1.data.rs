@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_fallback_likelysubtags_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.64"]
+        #[clippy::msrv = "1.65"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_FALLBACK_LIKELYSUBTAGS_V1: &'static <icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::DataMarker>::Yokeable = &icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1 {
@@ -28,7 +28,7 @@ macro_rules! __impl_fallback_likelysubtags_v1 {
                 },
             };
         }
-        #[clippy::msrv = "1.64"]
+        #[clippy::msrv = "1.65"]
         impl icu_provider::DataProvider<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {

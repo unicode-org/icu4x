@@ -6,7 +6,7 @@
 name = "icu_pattern"
 description = "ICU pattern utilities"
 version = "0.1.4"
-rust-version = "1.64.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

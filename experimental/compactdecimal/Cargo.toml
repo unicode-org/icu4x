@@ -6,7 +6,7 @@
 name = "icu_compactdecimal"
 version = "0.2.0"
 description = "Compact decimal"
-rust-version = "1.64.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"

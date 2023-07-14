@@ -6,7 +6,7 @@
 name = "icu_provider"
 description = "Trait and struct definitions for the ICU data provider"
 version = "1.2.0"
-rust-version = "1.64.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

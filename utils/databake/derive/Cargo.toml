@@ -6,7 +6,7 @@
 name = "databake-derive"
 description = "Custom derive for the databake crate"
 version = "0.1.5"
-rust-version = "1.64.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

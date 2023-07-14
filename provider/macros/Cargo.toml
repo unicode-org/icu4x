@@ -6,7 +6,7 @@
 name = "icu_provider_macros"
 description = "Proc macros for ICU data providers"
 version = "1.2.0"
-rust-version = "1.64.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
