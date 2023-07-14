@@ -210,8 +210,8 @@ impl From<String> for VariableValue<'_> {
     }
 }
 
-impl<'a> From<&'a str> for VariableValue<'a> {
-    fn from(s: &'a str) -> Self {
+impl From<&str> for VariableValue<'_> {
+    fn from(s: &str) -> Self {
         VariableValue::String(s.to_owned())
     }
 }
