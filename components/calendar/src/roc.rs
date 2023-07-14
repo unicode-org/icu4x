@@ -91,7 +91,7 @@ impl Calendar for Roc {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day)
+        ArithmeticDate::new_from_codes(self, year, month_code, day)
             .map(IsoDateInner)
             .map(RocDateInner)
     }
