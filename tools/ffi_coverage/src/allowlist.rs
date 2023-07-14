@@ -216,7 +216,6 @@ lazy_static::lazy_static! {
         "icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list",
         "icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list",
         "icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list",
-        "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_set", // returns an inversion list
         "icu::collections::codepointinvlist::CodePointInversionList",
         "icu::collections::codepointinvlist::CodePointInversionListULE",
         "icu::collections::codepointinvlist::CodePointInversionListError",

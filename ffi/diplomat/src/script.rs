@@ -6,10 +6,11 @@
 pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use icu_properties::{script, Script};
+    use icu_properties::{script, sets::CodePointSetData, Script};
 
     use crate::errors::ffi::ICU4XError;
     use crate::properties_iter::ffi::CodePointRangeIterator;
+    use crate::properties_sets::ffi::ICU4XCodePointSetData;
 
     #[diplomat::opaque]
     /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
@@ -116,6 +117,20 @@ pub mod ffi {
         )]
         pub fn has_script(&self, code_point: u32, script: u16) -> bool {
             self.0.has_script(code_point, Script(script))
+        }
+
+        /// Check if the Script_Extensions property of the given code point covers the given script
+        #[diplomat::rust_link(
+            icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_set,
+            FnInStruct
+        )]
+        pub fn get_script_extensions_set(&self, script: u16) -> Box<ICU4XCodePointSetData> {
+            let list = self
+                .0
+                .get_script_extensions_set(Script(script))
+                .into_owned();
+            let set = CodePointSetData::from_code_point_inversion_list(list);
+            Box::new(ICU4XCodePointSetData(set))
         }
     }
     impl<'a> ICU4XScriptExtensionsSet<'a> {
