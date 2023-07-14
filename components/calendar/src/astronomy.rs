@@ -768,7 +768,7 @@ impl Astronomical {
     }
 
     /// Closest fixed date on or after `date` on the eve of which crescent moon first became visible at `location`.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6883-L6896
     pub fn phasis_on_or_after(date: RataDie, location: Location) -> RataDie {
@@ -783,7 +783,7 @@ impl Astronomical {
     }
 
     /// Closest fixed date on or before `date` when crescent moon first became visible at `location`.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6868-L6881
     pub fn phasis_on_or_before(date: RataDie, location: Location) -> RataDie {
@@ -798,7 +798,7 @@ impl Astronomical {
     }
 
     /// Length of the lunar month containing `date` in days, based on observability at `location`.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7068-L7074
     #[allow(clippy::unwrap_used)]
@@ -1274,7 +1274,7 @@ impl Astronomical {
 
     /// The best viewing time (UT) in the evening for viewing the young moon from `location` on `date`. This is defined as
     /// the time when the sun is 4.5 degrees below the horizon, or `date + 1` if there is no such time.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7337-L7346
     fn simple_best_view(date: RataDie, location: Location) -> Moment {
@@ -1286,7 +1286,7 @@ impl Astronomical {
 
     /// Angular separation of the sun and moon at `moment`, for the purposes of determining the likely
     /// visibility of the crescent moon.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7284-L7290
     fn arc_of_light(moment: Moment) -> f64 {
@@ -1297,7 +1297,7 @@ impl Astronomical {
 
     /// Criterion for likely visibility of the crescent moon on the eve of `date` at `location`,
     /// not intended for high altitudes or polar regions, as defined by S.K. Shaukat.
-    /// 
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7306-L7317
     fn shaukat_criterion(date: Moment, location: Location) -> bool {
