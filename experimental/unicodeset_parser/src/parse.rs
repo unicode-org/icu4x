@@ -14,7 +14,6 @@ use icu_properties::maps::load_script;
 use icu_properties::script::load_script_with_extensions_unstable;
 use icu_properties::sets::{
     load_for_ecma262_unstable, load_for_general_category_group, load_xid_continue, load_xid_start,
-    CodePointSetData,
 };
 use icu_properties::Script;
 use icu_properties::{provider::*, GeneralCategoryGroup};
@@ -186,6 +185,7 @@ impl ParseError {
 }
 
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum VariableValue<'a> {
     UnicodeSet(CodePointInversionListAndStringList<'a>),
     // in theory, a one-code-point string is always the same as a char, but we might want to keep
@@ -240,7 +240,7 @@ enum CharOrString {
 
 impl From<Vec<char>> for CharOrString {
     fn from(v: Vec<char>) -> Self {
-        debug_assert!(v.len() >= 1);
+        debug_assert!(!v.is_empty());
         CharOrString::Char(v)
     }
 }
@@ -415,21 +415,15 @@ where
     // beginning [ is already consumed
     fn parse_unicode_set_inner(&mut self) -> Result<()> {
         // special cases for the first chars after [
-        match self.must_peek_char()? {
-            '^' => {
-                self.iter.next();
-                self.inverted = true;
-            }
-            _ => {}
+        if self.must_peek_char()? == '^' {
+            self.iter.next();
+            self.inverted = true;
         }
         // whitespace allowed between ^ and - in `[^ - ....]`
         self.skip_whitespace();
-        match self.must_peek_char()? {
-            '-' => {
-                self.iter.next();
-                self.single_set.add_char('-');
-            }
-            _ => {}
+        if self.must_peek_char()? == '-' {
+            self.iter.next();
+            self.single_set.add_char('-');
         }
 
         // repeatedly parse the following:
@@ -513,7 +507,9 @@ where
                         self.single_set.add_char(prev);
                     }
                     // safety: the match guard checks length == 1
-                    prev_char = Some(c_vec[0]);
+                    #[allow(clippy::indexing_slicing)]
+                    let c = c_vec[0];
+                    prev_char = Some(c);
                     state = Char;
                 }
                 // a bunch of literal chars as part of a multi-escape sequence
@@ -542,6 +538,7 @@ where
                 (CharMinus, MT::CharOrString(CS::Char(c_vec))) if c_vec.len() == 1 => {
                     let start = prev_char.ok_or(PEK::Internal.with_offset(offset))?;
                     // safety: the match guard checks length == 1
+                    #[allow(clippy::indexing_slicing)]
                     let end = c_vec[0];
                     if start > end {
                         // TODO(#3558): Better error message (e.g., "start greater than end in range")?
@@ -1003,25 +1000,6 @@ where
         (self.single_set, self.multi_set)
     }
 
-    fn peek_unicode_set_start(&mut self) -> bool {
-        match self.peek_char() {
-            Some('\\') => {}
-            Some('[') => return true,
-            _ => return false,
-        }
-
-        // need to look one more char into the future. Peekable doesnt lend itself well to this,
-        // so maybe think about using a different iterator internally
-        let mut future = self.iter.clone();
-        future.next();
-
-        match future.peek() {
-            // perl property
-            Some(&(_, 'p' | 'P')) => true,
-            _ => false,
-        }
-    }
-
     // parses either a raw char or an escaped char. all chars are allowed, the caller must make sure to handle
     // cases where some characters are not allowed
     fn parse_char(&mut self) -> Result<(usize, CharOrString)> {
@@ -1082,7 +1060,7 @@ where
             self.iter.next();
             num += 1;
         }
-        return num;
+        num
     }
 
     fn consume(&mut self, expected: char) -> Result<()> {
@@ -1280,17 +1258,17 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
 }
 
 #[cfg(feature = "compiled_data")]
-pub fn parse_with_variables<'data>(
+pub fn parse_with_variables(
     source: &str,
-    variable_map: &VariableMap<'data>,
+    variable_map: &VariableMap<'_>,
 ) -> Result<CodePointInversionListAndStringList<'static>> {
     parse_unstable_with_variables(source, variable_map, &icu_properties::provider::Baked)
 }
 
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse_with_variables)]
-pub fn parse_unstable_with_variables<'data, P>(
+pub fn parse_unstable_with_variables<P>(
     source: &str,
-    variable_map: &VariableMap<'data>,
+    variable_map: &VariableMap<'_>,
     provider: &P,
 ) -> Result<CodePointInversionListAndStringList<'static>>
 where
@@ -1624,6 +1602,16 @@ mod tests {
             ("[\u{200F}]", "", vec![]),
             ("[\u{2028}]", "", vec![]),
             ("[\u{2029}]", "", vec![]),
+            // whitespace significance:
+            ("[^[^$]]", "\u{ffff}\u{ffff}", vec![]),
+            ("[^[^ $]]", "\u{ffff}\u{ffff}", vec![]),
+            ("[^[^ $ ]]", "\u{ffff}\u{ffff}", vec![]),
+            ("[^[^a$]]", "aa\u{ffff}\u{ffff}", vec![]),
+            ("[^[^a$ ]]", "aa\u{ffff}\u{ffff}", vec![]),
+            ("[-a]", "--aa", vec![]),
+            ("[ -a]", "--aa", vec![]),
+            ("[a-]", "--aa", vec![]),
+            ("[a- ]", "--aa", vec![]),
             // but not all "whitespace", only Pattern_White_Space:
             ("[\u{A0}]", "\u{A0}\u{A0}", vec![]), // non-breaking space
             // anchor
