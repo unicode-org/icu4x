@@ -102,3 +102,10 @@
 
         See the `Rust documentation for has_script <https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script>`__ for more information.
 
+
+    .. cpp:function:: ICU4XCodePointSetData get_script_extensions_set(uint16_t script) const
+
+        Check if the Script_Extensions property of the given code point covers the given script
+
+        See the `Rust documentation for get_script_extensions_set <https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set>`__ for more information.
+
