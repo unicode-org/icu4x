@@ -75,7 +75,7 @@ impl Calendar for Buddhist {
         }
         let year = year - BUDDHIST_ERA_OFFSET;
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(IsoDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> IsoDateInner {
         *iso.inner()
