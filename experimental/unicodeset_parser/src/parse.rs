@@ -1832,11 +1832,7 @@ mod tests {
         ]);
 
         let cases = [
-            (
-                &map_char_char,
-                "[$$a]",
-                r"[$$a← error: unexpected variable",
-            ),
+            (&map_char_char, "[$$a]", r"[$$a← error: unexpected variable"),
             (
                 &map_char_char,
                 "[$ a]",
