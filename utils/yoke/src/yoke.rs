@@ -74,12 +74,37 @@ use alloc::sync::Arc;
 /// assert_eq!(&**yoke.get(), "hello");
 /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
 /// ```
-#[derive(Debug)]
 pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     // must be the first field for drop order
     // this will have a 'static lifetime parameter, that parameter is a lie
     yokeable: Y,
     cart: C,
+}
+
+// Manual `Debug` implementation, since the derived one would be unsound.
+// See https://github.com/unicode-org/icu4x/issues/3685
+impl<Y: for<'a> Yokeable<'a>, C: core::fmt::Debug> core::fmt::Debug for Yoke<Y, C>
+where
+    for<'a> <Y as Yokeable<'a>>::Output: core::fmt::Debug,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("Yoke")
+            .field("yokeable", self.get())
+            .field("cart", self.backing_cart())
+            .finish()
+    }
+}
+
+#[test]
+fn test_debug() {
+    let local_data = "foo".to_owned();
+    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(
+        Rc::new(local_data),
+    );
+    assert_eq!(
+        format!("{y1:?}"),
+        r#"Yoke { yokeable: "foo", cart: "foo" }"#,
+    );
 }
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C>
