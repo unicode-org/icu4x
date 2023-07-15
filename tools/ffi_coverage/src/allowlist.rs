@@ -427,5 +427,8 @@ lazy_static::lazy_static! {
         // No macros in FFI
         "icu_provider_adapters::make_forking_provider",
 
+        // Rust-specific trait abstraction, handled as individual types over FFI
+        "icu::casemap::ClosureSet",
+
     ].iter().map(|s| s.split("::").map(str::to_owned).collect()).collect();
 }
