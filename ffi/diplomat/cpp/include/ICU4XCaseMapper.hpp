@@ -15,6 +15,7 @@ class ICU4XDataProvider;
 class ICU4XCaseMapper;
 #include "ICU4XError.hpp"
 class ICU4XLocale;
+class ICU4XCodePointSetBuilder;
 
 /**
  * A destruction policy for using ICU4XCaseMapper with std::unique_ptr.
@@ -113,6 +114,35 @@ class ICU4XCaseMapper {
   diplomat::result<std::string, ICU4XError> fold_turkic(const std::string_view s) const;
 
   /**
+   * Adds all simple case mappings and the full case folding for `c` to `set`.
+   * Also adds special case closure mappings.
+   * 
+   * In other words, this adds all characters that this casemaps to, as
+   * well as all characters that may casemap to this one.
+   * 
+   * Note that since ICU4XCodePointSetBuilder does not handle string mappings
+   * 
+   * See the [Rust documentation for `add_case_closure`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure) for more information.
+   */
+  void add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const;
+
+  /**
+   * Maps the string to single code points and adds the associated case closure
+   * mappings, if they exist.
+   * 
+   * The string is mapped to code points if it is their full case folding string.
+   * In other words, this performs a reverse full case folding and then
+   * adds the case closure items of the resulting code points.
+   * If the string is found and its closure applied, then
+   * the string itself is added as well as part of its code points' closure.
+   * 
+   * Returns true if the string was found
+   * 
+   * See the [Rust documentation for `add_string_case_closure`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_string_case_closure) for more information.
+   */
+  bool add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const;
+
+  /**
    * Returns the simple lowercase mapping of the given character.
    * 
    * This function only implements simple and common mappings.
@@ -176,6 +206,7 @@ class ICU4XCaseMapper {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
+#include "ICU4XCodePointSetBuilder.hpp"
 
 inline diplomat::result<ICU4XCaseMapper, ICU4XError> ICU4XCaseMapper::create(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_create(provider.AsFFI());
@@ -301,6 +332,12 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::fold_turkic(co
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+}
+inline void ICU4XCaseMapper::add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const {
+  capi::ICU4XCaseMapper_add_case_closure(this->inner.get(), c, builder.AsFFIMut());
+}
+inline bool ICU4XCaseMapper::add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const {
+  return capi::ICU4XCaseMapper_add_string_case_closure(this->inner.get(), s.data(), s.size(), builder.AsFFIMut());
 }
 inline char32_t ICU4XCaseMapper::simple_lowercase(char32_t ch) const {
   return capi::ICU4XCaseMapper_simple_lowercase(this->inner.get(), ch);
