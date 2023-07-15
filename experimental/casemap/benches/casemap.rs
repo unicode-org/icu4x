@@ -27,7 +27,7 @@ fn overview_bench(c: &mut Criterion) {
 
     c.bench_function("icu_casemap/titlecase_segment", |b| {
         b.iter(|| {
-            for s in TEST_STRING_EN.split(" ") {
+            for s in TEST_STRING_EN.split(' ') {
                 black_box(casemapper.titlecase_segment_to_string(black_box(s), &root));
             }
         });
