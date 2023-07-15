@@ -16,8 +16,8 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations_
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(not(test), no_std)]
 #![cfg_attr(
     not(test),
     deny(

@@ -4,7 +4,7 @@
 
 [package]
 name = "icu_casemap"
-description = "Unicode case mapping algorithms"
+description = "Unicode case mapping and folding algorithms"
 version = "0.7.2"
 rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
@@ -17,6 +17,7 @@ categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
+    "data/*",
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
@@ -24,9 +25,6 @@ include = [
     "LICENSE",
     "README.md"
 ]
-
-[package.metadata.workspaces]
-independent = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -47,10 +45,14 @@ icu_casemap_data = { version = "~1.3.0", path = "data", optional = true }
 
 [features]
 default = ["compiled_data"]
-std = ["icu_collections/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 compiled_data = ["dep:icu_casemap_data"]
+
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [dev-dependencies]
 icu_properties = { path = "../../components/properties" }
