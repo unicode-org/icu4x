@@ -2,6 +2,41 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! # Byte Perfect Hash Function Internals
+//!
+//! This module contains a perfect hash function (PHF) optimized for... TODO
+//!
+//! Reading a `key` from the PHF uses the following algorithm:
+//!
+//! 1. Let `t`, the bucket index, be `f1(key, p)`.
+//! 2. Let `i`, the key index, be `f2(key, q_t)`.
+//! 3. If `key == k_i`, return `Some(i)`; else return `None`.
+//!
+//! The functions [`f1`] and [`f2`] are internal to the PHF but should remain stable across
+//! serialization versions of `ZeroTrie`.
+//!
+//! ```
+//! let phf_example_bytes = [
+//!     // `p` parameter
+//!     1,
+//!     // `q` parameters, one for each of the N buckets
+//!     0, 0, 1, 1,
+//!     // Exact keys to be compared with the input
+//!     b'e', b'a', b'c', b'g'
+//! ];
+//!
+//! let phf = zerotrie::byte_phf::PerfectByteHashMap::from_bytes(&phf_example_bytes);
+//!
+//! // The PHF returns the index of the key or `None` if not found.
+//! assert_eq!(phf.get(b'a'), Some(1));
+//! assert_eq!(phf.get(b'b'), None);
+//! assert_eq!(phf.get(b'c'), Some(2));
+//! assert_eq!(phf.get(b'd'), None);
+//! assert_eq!(phf.get(b'e'), Some(0));
+//! assert_eq!(phf.get(b'f'), None);
+//! assert_eq!(phf.get(b'g'), Some(3));
+//! ```
+
 #[cfg(feature = "alloc")]
 mod builder;
 #[cfg(feature = "alloc")]
@@ -12,11 +47,17 @@ pub use builder::find;
 #[cfg(feature = "alloc")]
 pub use cached_owned::PerfectByteHashMapCacheOwned;
 
+/// The cutoff for the fast version of [`f1`].
 const P_FAST_MAX: u8 = 11;
+
+/// The cutoff for the fast version of [`f2`].
 const Q_FAST_MAX: u8 = 95;
 
+/// The maximum allowable value of `p`. This could be raised if found to be necessary.
 #[cfg(feature = "alloc")] // used in the builder code
 const P_REAL_MAX: u8 = 15;
+
+/// The maximum allowable value of `q`. This could be raised if found to be necessary.
 #[cfg(feature = "alloc")] // used in the builder code
 const Q_REAL_MAX: u8 = 127;
 
@@ -44,7 +85,41 @@ fn debug_get(slice: &[u8], index: usize) -> Option<u8> {
     }
 }
 
+/// Calculates the function `f1` for the PHF. For the exact formula, please read the code.
+///
+/// When `p == 0`, the operation is a simple modulus.
+///
+/// The argument `n` is used only for taking the modulus so that the return value is
+/// in the range `[0, n)`.
+///
 /// Invariant: n > 0
+///
+/// # Examples
+///
+/// ```
+/// use zerotrie::byte_phf::f1;
+/// const N: usize = 10;
+///
+/// // With p = 0:
+/// assert_eq!(0, f1(0, 0, N));
+/// assert_eq!(1, f1(1, 0, N));
+/// assert_eq!(2, f1(2, 0, N));
+/// assert_eq!(9, f1(9, 0, N));
+/// assert_eq!(0, f1(10, 0, N));
+/// assert_eq!(1, f1(11, 0, N));
+/// assert_eq!(2, f1(12, 0, N));
+/// assert_eq!(9, f1(19, 0, N));
+///
+/// // With p = 1:
+/// assert_eq!(1, f1(0, 1, N));
+/// assert_eq!(0, f1(1, 1, N));
+/// assert_eq!(2, f1(2, 1, N));
+/// assert_eq!(2, f1(9, 1, N));
+/// assert_eq!(4, f1(10, 1, N));
+/// assert_eq!(5, f1(11, 1, N));
+/// assert_eq!(1, f1(12, 1, N));
+/// assert_eq!(7, f1(19, 1, N));
+/// ```
 #[inline]
 pub fn f1(byte: u8, p: u8, n: usize) -> usize {
     let n = if n > 0 {
@@ -57,6 +132,9 @@ pub fn f1(byte: u8, p: u8, n: usize) -> usize {
         byte as usize % n
     } else {
         let mut result = byte ^ p ^ byte.wrapping_shr(p as u32);
+        // In almost all cases, the PHF works with the above constant-time operation.
+        // However, to crack a few difficult cases, we fall back to the linear-time
+        // operation shown below.
         for _ in P_FAST_MAX..p {
             result = result ^ (result << 1) ^ (result >> 1);
         }
@@ -64,7 +142,41 @@ pub fn f1(byte: u8, p: u8, n: usize) -> usize {
     }
 }
 
+/// Calculates the function `f2` for the PHF. For the exact formula, please read the code.
+///
+/// When `q == 0`, the operation is a simple modulus.
+///
+/// The argument `n` is used only for taking the modulus so that the return value is
+/// in the range `[0, n)`.
+///
 /// Invariant: n > 0
+///
+/// # Examples
+///
+/// ```
+/// use zerotrie::byte_phf::f2;
+/// const N: usize = 10;
+///
+/// // With q = 0:
+/// assert_eq!(0, f2(0, 0, N));
+/// assert_eq!(1, f2(1, 0, N));
+/// assert_eq!(2, f2(2, 0, N));
+/// assert_eq!(9, f2(9, 0, N));
+/// assert_eq!(0, f2(10, 0, N));
+/// assert_eq!(1, f2(11, 0, N));
+/// assert_eq!(2, f2(12, 0, N));
+/// assert_eq!(9, f2(19, 0, N));
+///
+/// // With q = 1:
+/// assert_eq!(1, f2(0, 1, N));
+/// assert_eq!(0, f2(1, 1, N));
+/// assert_eq!(3, f2(2, 1, N));
+/// assert_eq!(8, f2(9, 1, N));
+/// assert_eq!(1, f2(10, 1, N));
+/// assert_eq!(0, f2(11, 1, N));
+/// assert_eq!(3, f2(12, 1, N));
+/// assert_eq!(8, f2(19, 1, N));
+/// ```
 #[inline]
 pub fn f2(byte: u8, q: u8, n: usize) -> usize {
     let n = if n > 0 {
@@ -277,6 +389,11 @@ mod tests {
                 keys: "ac",
                 expected: &[1, 0, 1, b'c', b'a'],
                 reordered_keys: "ca",
+            },
+            TestCase {
+                keys: "aceg",
+                expected: &[1, 0, 0, 1, 1, b'e', b'a', b'c', b'g'],
+                reordered_keys: "eacg",
             },
             TestCase {
                 keys: "abd",

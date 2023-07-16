@@ -66,6 +66,9 @@
 //! - Bottom 8 bits: number of edges in the branch (`N`); if N = 0, set N to 256
 //! - Bits 9 and 10: width of the offset table (`W`)
 //!
+//! Note that N is always in the range [1, 256]. There can't be more than 256 edges because
+//! there are only 256 unique u8 values.
+//!
 //! A few examples of the head node of the branch:
 //!
 //! - `0b11000000`: varint bits `0`: N = 0 which means N = 256; W = 0
@@ -78,8 +81,32 @@
 //!
 //! ### Binary Search Branch Nodes
 //!
-//! Here, the head branch node is followed by N sorted bytes and then (W+1)*(N-1) bytes
-//! for the offset table.
+//! A binary search branch node is used when:
+//!
+//! 1. The trie is a `ZeroTrieSimpleAscii`, OR
+//! 2. There are 15 or fewer items in the branch.
+//!
+//! The head branch node is followed by N sorted bytes. When evaluating a branch node, one byte
+//! is consumed from the input. If it is one of the N sorted bytes (scanned using binary search),
+//! the index `i` of the byte within the list is used to index into the offset table (described
+//! below). If the byte is not in the list, the string is not in the trie, so return `None`.
+//!
+//! ### Perfect Hash Branch Nodes
+//!
+//! A perfect hash branch node is used when:
+//!
+//! 1. The trie is NOT a `ZeroTrieSimpleAscii`, AND
+//! 2. There are 16 or more items in the branch.
+//!
+//! The head branch node is followed by 1 byte containing parameter `p`, N bytes containing
+//! parameters `q`, and N bytes containing the bytes to match. From these parameters, either an
+//! index within the hash table `i` is resolved and used as input to index into the offset
+//! table (described below), or the value is determined to not be present and `None` is
+//! returned. For more detail on resolving the perfect hash function, see [`crate::byte_phf`].
+//!
+//! ### Offset Tables
+//!
+//! Both types of branch node are followed by an offset table.
 
 use crate::byte_phf::PerfectByteHashMap;
 use crate::varint::read_varint_meta2;
