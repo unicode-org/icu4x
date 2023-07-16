@@ -4198,6 +4198,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "zerotrie"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "criterion",
+ "displaydoc",
+ "icu_benchmark_macros",
+ "litemap",
+ "postcard",
+ "rand",
+ "rand_pcg",
+ "serde",
+ "serde_json",
+ "zerovec",
+]
+
+[[package]]
 name = "zerovec"
 version = "0.9.4"
 dependencies = [

@@ -40,7 +40,7 @@ postcard = { version = "1.0", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false }
 zerovec = { path = "../../utils/zerovec", features = ["serde", "hashmap"] }
 litemap = { path = "../../utils/litemap" }
-criterion = "0.3"
+criterion = "0.4"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 serde_json = "1.0"
 bincode = "1.0"
