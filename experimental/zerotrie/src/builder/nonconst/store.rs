@@ -17,7 +17,7 @@ pub trait TrieBuilderStore {
     fn atbs_to_bytes(&self) -> Vec<u8>;
     fn atbs_bitor_assign(&mut self, index: usize, other: u8);
     fn atbs_swap_ranges(&mut self, start: usize, mid: usize, limit: usize);
-    fn atbs_split_first(&mut self) -> Option<u8>;
+    fn atbs_pop_front(&mut self) -> Option<u8>;
 
     fn atbs_prepend_n_zeros(&mut self, n: usize) {
         let mut i = 0;
@@ -87,7 +87,7 @@ impl TrieBuilderStore for VecDeque<u8> {
             }
         }
     }
-    fn atbs_split_first(&mut self) -> Option<u8> {
+    fn atbs_pop_front(&mut self) -> Option<u8> {
         self.pop_front()
     }
 }

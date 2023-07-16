@@ -58,7 +58,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             self.data.atbs_push_front(ascii);
             Ok(1)
         } else if matches!(self.options.ascii_mode, AsciiMode::BinarySpans) {
-            if let Some(old_front) = self.data.atbs_split_first() {
+            if let Some(old_front) = self.data.atbs_pop_front() {
                 let old_byte_len = self.data.atbs_len() + 1;
                 if old_front & 0b11100000 == 0b10100000 {
                     // Extend an existing span

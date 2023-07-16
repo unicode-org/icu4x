@@ -98,7 +98,7 @@ pub(crate) fn try_read_varint_meta3_from_tstore<S: TrieBuilderStore>(
     let mut value = (start & 0b00001111) as usize;
     if (start & 0b00010000) != 0 {
         loop {
-            let next = remainder.atbs_split_first()?;
+            let next = remainder.atbs_pop_front()?;
             // Note: value << 7 could drop high bits. The first addition can't overflow.
             // The second addition could overflow; in such a case we just inform the
             // developer via the debug assertion.
