@@ -5,7 +5,8 @@
 /// Intermediate metadata for a branch node under construction.
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct BranchMeta {
-    /// The lead byte for this branch.
+    /// The lead byte for this branch. Formerly it was required to be an ASCII byte, but now
+    /// it can be any byte.
     pub ascii: u8,
     /// The size in bytes of the trie data reachable from this branch.
     pub local_length: usize,
@@ -16,6 +17,7 @@ pub(crate) struct BranchMeta {
 }
 
 impl BranchMeta {
+    /// Creates a new empty [`BranchMeta`].
     pub const fn const_default() -> Self {
         BranchMeta {
             ascii: 0,

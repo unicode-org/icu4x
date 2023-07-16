@@ -6,15 +6,21 @@
 
 use super::super::branch_meta::BranchMeta;
 
-/// A const-friendly slice type.
+/// A const-friendly slice type. It is backed by a full slice but is primarily intended
+/// to represent subslices of the full slice. We need this only because we can't take
+/// subslices in const Rust.
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct ConstSlice<'a, T> {
+    /// The full slice.
     full_slice: &'a [T],
+    /// The start index of the slice represented by this [`ConstSlice`].
     start: usize,
+    /// The non-inclusive end index of the slice represented by this [`ConstSlice`].
     limit: usize,
 }
 
 impl<'a, T> ConstSlice<'a, T> {
+    /// Creates a [`ConstSlice`] representing an entire slice.
     pub const fn from_slice(other: &'a [T]) -> Self {
         ConstSlice {
             full_slice: other,
@@ -23,6 +29,7 @@ impl<'a, T> ConstSlice<'a, T> {
         }
     }
 
+    /// Creates a [`ConstSlice`] with the given start and limit.
     pub const fn from_manual_slice(full_slice: &'a [T], start: usize, limit: usize) -> Self {
         ConstSlice {
             full_slice,
@@ -31,14 +38,17 @@ impl<'a, T> ConstSlice<'a, T> {
         }
     }
 
+    /// Returns the length of the [`ConstSlice`].
     pub const fn len(&self) -> usize {
         self.limit - self.start
     }
 
+    /// Gets the element at `index`, panicking if not present.
     pub const fn get_or_panic(&self, index: usize) -> &T {
         &self.full_slice[index + self.start]
     }
 
+    /// Gets the first element or `None` if empty.
     #[cfg(test)]
     pub const fn first(&self) -> Option<&T> {
         if self.len() == 0 {
@@ -48,6 +58,7 @@ impl<'a, T> ConstSlice<'a, T> {
         }
     }
 
+    /// Gets the last element or `None` if empty.
     pub const fn last(&self) -> Option<&T> {
         if self.len() == 0 {
             None
@@ -56,6 +67,7 @@ impl<'a, T> ConstSlice<'a, T> {
         }
     }
 
+    /// Gets a subslice of this slice.
     #[cfg(test)]
     pub const fn get_subslice_or_panic(
         &self,
@@ -71,6 +83,7 @@ impl<'a, T> ConstSlice<'a, T> {
         }
     }
 
+    /// Non-const function that returns this [`ConstSlice`] as a regular slice.
     #[cfg(any(test, feature = "alloc"))]
     pub fn as_slice(&self) -> &'a [T] {
         &self.full_slice[self.start..self.limit]
@@ -98,6 +111,9 @@ impl<const N: usize, T: Default> Default for ConstArrayBuilder<N, T> {
 }
 
 impl<const N: usize, T> ConstArrayBuilder<N, T> {
+    /// Creates a new, empty builder of the given size. `cursor` indicates where in the
+    /// array new elements will be inserted first. Since we use a lot of prepend operations,
+    /// it is common to set `cursor` to `N`.
     pub const fn new_empty(full_array: [T; N], cursor: usize) -> Self {
         assert!(cursor <= N);
         Self {
@@ -107,6 +123,7 @@ impl<const N: usize, T> ConstArrayBuilder<N, T> {
         }
     }
 
+    /// Creates a new builder with some initial content in `[start, limit)`.
     pub const fn from_manual_slice(full_array: [T; N], start: usize, limit: usize) -> Self {
         assert!(start <= limit);
         assert!(limit <= N);
@@ -117,39 +134,42 @@ impl<const N: usize, T> ConstArrayBuilder<N, T> {
         }
     }
 
+    /// Returns the number of initialized elements in the builder.
     pub const fn len(&self) -> usize {
         self.limit - self.start
     }
 
+    /// Whether there are no initialized elements in the builder.
     #[allow(dead_code)]
     pub const fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
+    /// Returns the initialized elements as a [`ConstSlice`].
     pub const fn as_const_slice(&self) -> ConstSlice<T> {
         ConstSlice::from_manual_slice(&self.full_array, self.start, self.limit)
     }
 
+    /// Non-const function that returns a slice of the initialized elements.
     #[cfg(feature = "alloc")]
     pub fn as_slice(&self) -> &[T] {
         &self.full_array[self.start..self.limit]
     }
 }
 
-impl<const N: usize> ConstArrayBuilder<N, u8> {
-    pub const fn const_bitor_assign(mut self, index: usize, other: u8) -> Self {
-        self.full_array[self.start + index] |= other;
-        self
-    }
-    // Can't be generic because T has a destructor
-    pub const fn const_take_or_panic(self) -> [u8; N] {
+// Certain functions that involve dropping `T` require that it be `Copy`
+impl<const N: usize, T: Copy> ConstArrayBuilder<N, T> {
+    /// Takes a fully initialized builder as an array. Panics if the builder is not
+    /// fully initialized.
+    pub const fn const_take_or_panic(self) -> [T; N] {
         if self.start != 0 || self.limit != N {
             panic!("AsciiTrieBuilder buffer too large");
         }
         self.full_array
     }
-    // Can't be generic because T has a destructor
-    pub const fn const_push_front_or_panic(mut self, value: u8) -> Self {
+
+    /// Prepends an element to the front of the builder, panicking if there is no room.
+    pub const fn const_push_front_or_panic(mut self, value: T) -> Self {
         if self.start == 0 {
             panic!("AsciiTrieBuilder buffer too small");
         }
@@ -157,8 +177,9 @@ impl<const N: usize> ConstArrayBuilder<N, u8> {
         self.full_array[self.start] = value;
         self
     }
-    // Can't be generic because T has a destructor
-    pub const fn const_extend_front_or_panic(mut self, other: ConstSlice<u8>) -> Self {
+
+    /// Prepends multiple elements to the front of the builder, panicking if there is no room.
+    pub const fn const_extend_front_or_panic(mut self, other: ConstSlice<T>) -> Self {
         if self.start < other.len() {
             panic!("AsciiTrieBuilder buffer too small");
         }
@@ -172,15 +193,16 @@ impl<const N: usize> ConstArrayBuilder<N, u8> {
     }
 }
 
-impl<const N: usize, T: Copy> ConstArrayBuilder<N, T> {
-    pub const fn push_front_or_panic(mut self, value: T) -> Self {
-        if self.start == 0 {
-            panic!("AsciiTrieBuilder buffer too small");
-        }
-        self.start -= 1;
-        self.full_array[self.start] = value;
+impl<const N: usize> ConstArrayBuilder<N, u8> {
+    /// Specialized function that performs `self[index] |= other`
+    pub const fn const_bitor_assign(mut self, index: usize, other: u8) -> Self {
+        self.full_array[self.start + index] |= other;
         self
     }
+}
+
+impl<const N: usize, T: Copy> ConstArrayBuilder<N, T> {
+    /// Swaps the elements at positions `i` and `j`.
     #[cfg(feature = "alloc")]
     pub fn swap_or_panic(mut self, i: usize, j: usize) -> Self {
         self.full_array.swap(self.start + i, self.start + j);
@@ -188,6 +210,11 @@ impl<const N: usize, T: Copy> ConstArrayBuilder<N, T> {
     }
 }
 
+/// Evaluates a block over each element of a const slice. Takes three arguments:
+///
+/// 1. Expression that resolves to the [`ConstSlice`].
+/// 2. Token that will be assigned the value of the element.
+/// 3. Block to evaluate for each element.
 macro_rules! const_for_each {
     ($safe_const_slice:expr, $item:tt, $inner:expr) => {{
         let mut i = 0;
@@ -201,6 +228,7 @@ macro_rules! const_for_each {
 
 pub(crate) use const_for_each;
 
+/// A data structure that holds up to N [`BranchMeta`] items.
 pub(crate) struct ConstLengthsStack<const N: usize> {
     data: [Option<BranchMeta>; N],
     idx: usize,
@@ -213,6 +241,7 @@ impl<const N: usize> core::fmt::Debug for ConstLengthsStack<N> {
 }
 
 impl<const N: usize> ConstLengthsStack<N> {
+    /// Creates a new empty [`ConstLengthsStack`].
     pub const fn new() -> Self {
         Self {
             data: [None; N],
@@ -220,10 +249,12 @@ impl<const N: usize> ConstLengthsStack<N> {
         }
     }
 
+    /// Returns whether the stack is empty.
     pub const fn is_empty(&self) -> bool {
         self.idx == 0
     }
 
+    /// Adds a [`BranchMeta`] to the stack, panicking if there is no room.
     #[must_use]
     pub const fn push_or_panic(mut self, meta: BranchMeta) -> Self {
         if self.idx >= N {
@@ -238,6 +269,8 @@ impl<const N: usize> ConstLengthsStack<N> {
         self
     }
 
+    /// Returns a copy of the [`BranchMeta`] on the top of the stack, panicking if
+    /// the stack is empty.
     pub const fn peek_or_panic(&self) -> BranchMeta {
         if self.idx == 0 {
             panic!("AsciiTrie Builder: Attempted to peek from an empty stack");
@@ -245,6 +278,7 @@ impl<const N: usize> ConstLengthsStack<N> {
         self.get_or_panic(0)
     }
 
+    /// Returns a copy of the [`BranchMeta`] at the specified index.
     const fn get_or_panic(&self, index: usize) -> BranchMeta {
         if self.idx <= index {
             panic!("AsciiTrie Builder: Attempted to get too deep in a stack");
@@ -255,6 +289,7 @@ impl<const N: usize> ConstLengthsStack<N> {
         }
     }
 
+    /// Removes many [`BranchMeta`]s from the stack, returning them in a [`ConstArrayBuilder`].
     pub const fn pop_many_or_panic(
         mut self,
         len: usize,
@@ -267,7 +302,7 @@ impl<const N: usize> ConstLengthsStack<N> {
                 break;
             }
             let i = self.idx - ix - 1;
-            result = result.push_front_or_panic(match self.data[i] {
+            result = result.const_push_front_or_panic(match self.data[i] {
                 Some(x) => x,
                 None => panic!("Not enough items in the ConstLengthsStack"),
             });
@@ -277,12 +312,14 @@ impl<const N: usize> ConstLengthsStack<N> {
         (self, result)
     }
 
+    /// Non-const function that returns the initialized elements as a slice.
     fn as_slice(&self) -> &[Option<BranchMeta>] {
         &self.data[0..self.idx]
     }
 }
 
 impl<const N: usize> ConstArrayBuilder<N, BranchMeta> {
+    /// Converts this builder-array of [`BranchMeta`] to one of the `ascii` fields.
     pub const fn map_to_ascii_bytes(&self) -> ConstArrayBuilder<N, u8> {
         let mut result = ConstArrayBuilder::new_empty([0; N], N);
         let self_as_slice = self.as_const_slice();

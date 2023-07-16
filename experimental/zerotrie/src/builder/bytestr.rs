@@ -7,6 +7,7 @@ use core::borrow::Borrow;
 #[cfg(feature = "serde")]
 use alloc::boxed::Box;
 
+/// A struct transparent over `[u8]` with convenient helper functions.
 #[repr(transparent)]
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct ByteStr([u8]);
@@ -71,10 +72,12 @@ impl ByteStr {
         self.0.get(index).copied()
     }
 
+    /// Returns the byte at the given index, panicking if out of bounds.
     pub(crate) const fn byte_at_or_panic(&self, index: usize) -> u8 {
         self.0[index]
     }
 
+    /// Const function to evaluate `self < other`.
     pub(crate) const fn is_less_then(&self, other: &Self) -> bool {
         let mut i = 0;
         while i < self.len() && i < other.len() {
@@ -89,6 +92,7 @@ impl ByteStr {
         self.len() < other.len()
     }
 
+    /// Const function to evaluate `self[..prefix_len] == other[..prefix_len]`
     pub(crate) const fn prefix_eq(&self, other: &ByteStr, prefix_len: usize) -> bool {
         assert!(prefix_len <= self.len());
         assert!(prefix_len <= other.len());

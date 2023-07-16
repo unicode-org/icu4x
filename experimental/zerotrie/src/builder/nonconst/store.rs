@@ -9,16 +9,33 @@ use super::super::konst::ConstArrayBuilder;
 use alloc::collections::VecDeque;
 use alloc::vec::Vec;
 
+/// A trait applied to a data structure for building a ZeroTrie.
 pub trait TrieBuilderStore {
+    /// Create a new empty store.
     fn atbs_new_empty() -> Self;
+
+    /// Return the length in bytes of the store.
     fn atbs_len(&self) -> usize;
+    
+    /// Push a byte to the front of the store.
     fn atbs_push_front(&mut self, byte: u8);
+
+    /// Push multiple bytes to the front of the store.
     fn atbs_extend_front(&mut self, other: &[u8]);
+
+    /// Read the store into a `Vec<u8>`.
     fn atbs_to_bytes(&self) -> Vec<u8>;
+
+    /// Perform the operation `self[index] |= other`
     fn atbs_bitor_assign(&mut self, index: usize, other: u8);
+
+    /// Swap the adjacent ranges `self[start..mid]` and `self[mid..limit]`.
     fn atbs_swap_ranges(&mut self, start: usize, mid: usize, limit: usize);
+
+    /// Remove and return the first element in the store, or None if empty.
     fn atbs_pop_front(&mut self) -> Option<u8>;
 
+    /// Prepend `n` zeros to the front of the store.
     fn atbs_prepend_n_zeros(&mut self, n: usize) {
         let mut i = 0;
         while i < n {
@@ -65,6 +82,8 @@ impl TrieBuilderStore for VecDeque<u8> {
                 self.len()
             );
         }
+        // The following algorithm is an in-place swap of two adjacent ranges of potentially
+        // different lengths. Would make a good coding interview question.
         loop {
             if start == mid || mid == limit {
                 return;
@@ -92,6 +111,7 @@ impl TrieBuilderStore for VecDeque<u8> {
     }
 }
 
+/// A data structure that holds any number of [`BranchMeta`] items.
 pub(crate) struct NonConstLengthsStack {
     data: Vec<BranchMeta>,
 }
@@ -103,22 +123,28 @@ impl core::fmt::Debug for NonConstLengthsStack {
 }
 
 impl NonConstLengthsStack {
+    /// Creates a new empty [`ConstLengthsStack`].
     pub const fn new() -> Self {
         Self { data: Vec::new() }
     }
 
+    /// Returns whether the stack is empty.
     pub fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
 
+    /// Adds a [`BranchMeta`] to the stack.
     pub fn push(&mut self, meta: BranchMeta) {
         self.data.push(meta);
     }
 
+    /// Returns a copy of the [`BranchMeta`] on the top of the stack, panicking if
+    /// the stack is empty.
     pub fn peek_or_panic(&self) -> BranchMeta {
         *self.data.last().unwrap()
     }
 
+    /// Removes many [`BranchMeta`]s from the stack, returning them in a [`ConstArrayBuilder`].
     pub fn pop_many_or_panic(&mut self, len: usize) -> ConstArrayBuilder<256, BranchMeta> {
         debug_assert!(len <= 256);
         let mut result = ConstArrayBuilder::new_empty([BranchMeta::const_default(); 256], 256);
@@ -129,7 +155,7 @@ impl NonConstLengthsStack {
             }
             let i = self.data.len() - ix - 1;
             // Won't panic because len <= 256
-            result = result.push_front_or_panic(match self.data.get(i) {
+            result = result.const_push_front_or_panic(match self.data.get(i) {
                 Some(x) => *x,
                 None => panic!("Not enough items in the ConstLengthsStack"),
             });
@@ -139,6 +165,7 @@ impl NonConstLengthsStack {
         result
     }
 
+    /// Non-const function that returns the initialized elements as a slice.
     fn as_slice(&self) -> &[BranchMeta] {
         &self.data
     }
