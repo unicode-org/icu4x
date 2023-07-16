@@ -56,7 +56,7 @@ default = []
 bench = []
 alloc = []
 litemap = ["dep:litemap", "alloc"]
-serde = ["dep:serde", "alloc", "litemap/serde", "zerovec?/serde"]
+serde = ["dep:serde", "dep:litemap", "alloc", "litemap/serde", "zerovec?/serde"]
 
 [[bench]]
 name = "overview"

@@ -161,10 +161,12 @@ macro_rules! impl_zerotrie_subtype {
             }
             /// Maps the store into another type.
             #[inline]
-            pub fn map_store<X>(self, f: impl FnOnce(Store) -> X) -> $name<X> {
+            #[cfg(feature = "serde")]
+            pub(crate) fn map_store<X>(self, f: impl FnOnce(Store) -> X) -> $name<X> {
                 $name::<X>::from_store(f(self.store))
             }
             #[inline]
+            #[cfg(feature = "serde")]
             pub(crate) fn map_store_into_zerotrie<X>(self, f: impl FnOnce(Store) -> X) -> ZeroTrie<X> {
                 $name::<X>::from_store(f(self.store)).into_zerotrie()
             }
@@ -476,11 +478,6 @@ macro_rules! impl_zerotrie_subtype {
 }
 
 #[cfg(feature = "alloc")]
-fn vec_u8_to_box_u8(input: Vec<u8>) -> Box<[u8]> {
-    input.into_boxed_slice()
-}
-
-#[cfg(feature = "alloc")]
 fn string_to_box_u8(input: String) -> Box<[u8]> {
     input.into_boxed_str().into_boxed_bytes()
 }
@@ -499,7 +496,7 @@ impl_zerotrie_subtype!(
     get_phf_limited,
     Vec<u8>,
     get_iter_phf,
-    vec_u8_to_box_u8
+    Vec::into_boxed_slice
 );
 impl_zerotrie_subtype!(
     ZeroTrieExtendedCapacity,
@@ -507,7 +504,7 @@ impl_zerotrie_subtype!(
     get_phf_extended,
     Vec<u8>,
     get_iter_phf,
-    vec_u8_to_box_u8
+    Vec::into_boxed_slice
 );
 
 macro_rules! impl_dispatch {
@@ -547,7 +544,8 @@ impl<Store> ZeroTrie<Store> {
         impl_dispatch!(self, take_store())
     }
     /// Maps the store into another type.
-    pub fn map_store<NewStore>(self, f: impl FnOnce(Store) -> NewStore) -> ZeroTrie<NewStore> {
+    #[cfg(feature = "serde")]
+    pub(crate) fn map_store<NewStore>(self, f: impl FnOnce(Store) -> NewStore) -> ZeroTrie<NewStore> {
         impl_dispatch!(self, map_store_into_zerotrie(f))
     }
 }
@@ -615,6 +613,7 @@ where
     K: AsRef<[u8]>,
 {
     fn from_iter<T: IntoIterator<Item = (K, usize)>>(iter: T) -> Self {
+        // We need two Vecs because the first one anchors the `K`s that the second one borrows.
         let items = Vec::from_iter(iter);
         let mut items: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_ref(), *v)).collect();
         items.sort();
