@@ -176,11 +176,10 @@ pub fn f2(byte: u8, q: u8, n: usize) -> usize {
         debug_assert!(false, "unreachable by invariant");
         1
     };
-    // ((byte ^ q) as usize) % n
     let mut result = byte ^ q;
-    // if q >= Q_FAST_MAX {
-    //     result = result ^ byte.wrapping_shr(q as u32);
-    // }
+    // In almost all cases, the PHF works with the above constant-time operation.
+    // However, to crack a few difficult cases, we fall back to the linear-time
+    // operation shown below.
     for _ in Q_FAST_MAX..q {
         result = result ^ (result << 1) ^ (result >> 1);
     }
