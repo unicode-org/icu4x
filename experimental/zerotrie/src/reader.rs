@@ -309,33 +309,38 @@ fn get_branch_w0(mut trie: &[u8], i: usize, n: usize) -> Option<&[u8]> {
     debug_get_range(trie, p..q)
 }
 
-enum ByteType {
+/// The node type. See the module-level docs for more explanation of the four node types.
+enum NodeType {
+    /// An ASCII node. Contains a single literal ASCII byte and no varint.
     Ascii,
+    /// A span node. Contains a varint indicating how big the span is.
     Span,
+    /// A value node. Contains a varint representing the value.
     Value,
-    Match,
+    /// A branch node. Contains a varint of the number of output nodes, plus W in the high bits.
+    Branch,
 }
 
-impl core::fmt::Debug for ByteType {
+impl core::fmt::Debug for NodeType {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        use ByteType::*;
+        use NodeType::*;
         f.write_str(match *self {
             Ascii => "a",
             Span => "s",
             Value => "v",
-            Match => "m",
+            Branch => "m",
         })
     }
 }
 
 #[inline]
-fn byte_type(b: u8) -> ByteType {
+fn byte_type(b: u8) -> NodeType {
     match b & 0b11100000 {
-        0b10000000 => ByteType::Value,
-        0b10100000 => ByteType::Span,
-        0b11000000 => ByteType::Match,
-        0b11100000 => ByteType::Match,
-        _ => ByteType::Ascii,
+        0b10000000 => NodeType::Value,
+        0b10100000 => NodeType::Span,
+        0b11000000 => NodeType::Branch,
+        0b11100000 => NodeType::Branch,
+        _ => NodeType::Ascii,
     }
 }
 
@@ -354,12 +359,12 @@ pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
         (b, trie) = trie.split_first()?;
         let byte_type = byte_type(*b);
         (x, trie) = match byte_type {
-            ByteType::Ascii => (0, trie),
-            ByteType::Span | ByteType::Value => read_varint_meta3(*b, trie)?,
-            ByteType::Match => read_varint_meta2(*b, trie)?,
+            NodeType::Ascii => (0, trie),
+            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
+            NodeType::Branch => read_varint_meta2(*b, trie)?,
         };
         if let Some((c, temp)) = ascii.split_first() {
-            if matches!(byte_type, ByteType::Ascii) {
+            if matches!(byte_type, NodeType::Ascii) {
                 if b == c {
                     // Matched a byte
                     ascii = temp;
@@ -369,11 +374,11 @@ pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
                     return None;
                 }
             }
-            if matches!(byte_type, ByteType::Value) {
+            if matches!(byte_type, NodeType::Value) {
                 // Value node, but not at end of string
                 continue;
             }
-            if matches!(byte_type, ByteType::Span) {
+            if matches!(byte_type, NodeType::Span) {
                 let (trie_span, ascii_span);
                 (trie_span, trie) = debug_split_at(trie, x)?;
                 (ascii_span, ascii) = maybe_split_at(ascii, x)?;
@@ -402,7 +407,7 @@ pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
             ascii = temp;
             continue;
         } else {
-            if matches!(byte_type, ByteType::Value) {
+            if matches!(byte_type, NodeType::Value) {
                 // Value node at end of string
                 return Some(x);
             }
@@ -418,12 +423,12 @@ pub fn get_phf_limited(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
         (b, trie) = trie.split_first()?;
         let byte_type = byte_type(*b);
         (x, trie) = match byte_type {
-            ByteType::Ascii => (0, trie),
-            ByteType::Span | ByteType::Value => read_varint_meta3(*b, trie)?,
-            ByteType::Match => read_varint_meta2(*b, trie)?,
+            NodeType::Ascii => (0, trie),
+            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
+            NodeType::Branch => read_varint_meta2(*b, trie)?,
         };
         if let Some((c, temp)) = ascii.split_first() {
-            if matches!(byte_type, ByteType::Ascii) {
+            if matches!(byte_type, NodeType::Ascii) {
                 if b == c {
                     // Matched a byte
                     ascii = temp;
@@ -433,11 +438,11 @@ pub fn get_phf_limited(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
                     return None;
                 }
             }
-            if matches!(byte_type, ByteType::Value) {
+            if matches!(byte_type, NodeType::Value) {
                 // Value node, but not at end of string
                 continue;
             }
-            if matches!(byte_type, ByteType::Span) {
+            if matches!(byte_type, NodeType::Span) {
                 let (trie_span, ascii_span);
                 (trie_span, trie) = debug_split_at(trie, x)?;
                 (ascii_span, ascii) = maybe_split_at(ascii, x)?;
@@ -472,7 +477,7 @@ pub fn get_phf_limited(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
             ascii = temp;
             continue;
         } else {
-            if matches!(byte_type, ByteType::Value) {
+            if matches!(byte_type, NodeType::Value) {
                 // Value node at end of string
                 return Some(x);
             }
@@ -488,12 +493,12 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
         (b, trie) = trie.split_first()?;
         let byte_type = byte_type(*b);
         (x, trie) = match byte_type {
-            ByteType::Ascii => (0, trie),
-            ByteType::Span | ByteType::Value => read_varint_meta3(*b, trie)?,
-            ByteType::Match => read_varint_meta2(*b, trie)?,
+            NodeType::Ascii => (0, trie),
+            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
+            NodeType::Branch => read_varint_meta2(*b, trie)?,
         };
         if let Some((c, temp)) = ascii.split_first() {
-            if matches!(byte_type, ByteType::Ascii) {
+            if matches!(byte_type, NodeType::Ascii) {
                 if b == c {
                     // Matched a byte
                     ascii = temp;
@@ -503,11 +508,11 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
                     return None;
                 }
             }
-            if matches!(byte_type, ByteType::Value) {
+            if matches!(byte_type, NodeType::Value) {
                 // Value node, but not at end of string
                 continue;
             }
-            if matches!(byte_type, ByteType::Span) {
+            if matches!(byte_type, NodeType::Span) {
                 let (trie_span, ascii_span);
                 (trie_span, trie) = debug_split_at(trie, x)?;
                 (ascii_span, ascii) = maybe_split_at(ascii, x)?;
@@ -539,7 +544,7 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
             ascii = temp;
             continue;
         } else {
-            if matches!(byte_type, ByteType::Value) {
+            if matches!(byte_type, NodeType::Value) {
                 // Value node at end of string
                 return Some(x);
             }
@@ -586,21 +591,21 @@ impl<'a> Iterator for ZeroTrieIterator<'a> {
                 }
             };
             let byte_type = byte_type(*b);
-            if matches!(byte_type, ByteType::Ascii) {
+            if matches!(byte_type, NodeType::Ascii) {
                 string.push(*b);
                 continue;
             }
             (x, trie) = match byte_type {
-                ByteType::Ascii => (0, trie),
-                ByteType::Span | ByteType::Value => read_varint_meta3(*b, trie)?,
-                ByteType::Match => read_varint_meta2(*b, trie)?,
+                NodeType::Ascii => (0, trie),
+                NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
+                NodeType::Branch => read_varint_meta2(*b, trie)?,
             };
-            if matches!(byte_type, ByteType::Span) {
+            if matches!(byte_type, NodeType::Span) {
                 (span, trie) = debug_split_at(trie, x)?;
                 string.extend(span);
                 continue;
             }
-            if matches!(byte_type, ByteType::Value) {
+            if matches!(byte_type, NodeType::Value) {
                 let retval = string.clone();
                 // Return to this position on the next step
                 self.state.push((trie, string, 0));

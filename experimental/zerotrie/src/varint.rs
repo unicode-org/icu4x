@@ -45,6 +45,8 @@ use crate::builder::konst::ConstArrayBuilder;
 use crate::builder::nonconst::TrieBuilderStore;
 
 /// Reads a varint with 2 bits of metadata in the lead byte.
+///
+/// Returns the varint value and a subslice of `remainder` with the varint bytes removed.
 pub const fn read_varint_meta2(start: u8, remainder: &[u8]) -> Option<(usize, &[u8])> {
     let mut value = (start & 0b00011111) as usize;
     let mut remainder = remainder;
@@ -68,6 +70,8 @@ pub const fn read_varint_meta2(start: u8, remainder: &[u8]) -> Option<(usize, &[
 }
 
 /// Reads a varint with 3 bits of metadata in the lead byte.
+///
+/// Returns the varint value and a subslice of `remainder` with the varint bytes removed.
 pub const fn read_varint_meta3(start: u8, remainder: &[u8]) -> Option<(usize, &[u8])> {
     let mut value = (start & 0b00001111) as usize;
     let mut remainder = remainder;
@@ -90,6 +94,9 @@ pub const fn read_varint_meta3(start: u8, remainder: &[u8]) -> Option<(usize, &[
     Some((value, remainder))
 }
 
+/// Reads and removes a varint with 3 bits of metadata from a [`TrieBuilderStore`].
+///
+/// Returns the varint value.
 #[cfg(feature = "alloc")]
 pub(crate) fn try_read_varint_meta3_from_tstore<S: TrieBuilderStore>(
     start: u8,
@@ -118,6 +125,7 @@ const MAX_VARINT: usize = usize::MAX;
 // Add an extra 1 since the lead byte holds only 5 bits of data.
 const MAX_VARINT_LENGTH: usize = 1 + core::mem::size_of::<usize>() * 8 / 7;
 
+/// Returns a new [`ConstArrayBuilder`] containing a varint with 2 bits of metadata.
 pub(crate) const fn write_varint_meta2(value: usize) -> ConstArrayBuilder<MAX_VARINT_LENGTH, u8> {
     let mut result = [0; MAX_VARINT_LENGTH];
     let mut i = MAX_VARINT_LENGTH - 1;
@@ -145,6 +153,7 @@ pub(crate) const fn write_varint_meta2(value: usize) -> ConstArrayBuilder<MAX_VA
     ConstArrayBuilder::from_manual_slice(result, i, MAX_VARINT_LENGTH)
 }
 
+/// Returns a new [`ConstArrayBuilder`] containing a varint with 3 bits of metadata.
 pub(crate) const fn write_varint_meta3(value: usize) -> ConstArrayBuilder<MAX_VARINT_LENGTH, u8> {
     let mut result = [0; MAX_VARINT_LENGTH];
     let mut i = MAX_VARINT_LENGTH - 1;
