@@ -194,9 +194,9 @@ impl<const N: usize, T: Copy> ConstArrayBuilder<N, T> {
 }
 
 impl<const N: usize> ConstArrayBuilder<N, u8> {
-    /// Specialized function that performs `self[index] |= other`
-    pub const fn const_bitor_assign(mut self, index: usize, other: u8) -> Self {
-        self.full_array[self.start + index] |= other;
+    /// Specialized function that performs `self[index] |= bits`
+    pub const fn const_bitor_assign(mut self, index: usize, bits: u8) -> Self {
+        self.full_array[self.start + index] |= bits;
         self
     }
 }

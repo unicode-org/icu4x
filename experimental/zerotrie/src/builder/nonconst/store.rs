@@ -26,8 +26,8 @@ pub trait TrieBuilderStore {
     /// Read the store into a `Vec<u8>`.
     fn atbs_to_bytes(&self) -> Vec<u8>;
 
-    /// Perform the operation `self[index] |= other`
-    fn atbs_bitor_assign(&mut self, index: usize, other: u8);
+    /// Perform the operation `self[index] |= bits`
+    fn atbs_bitor_assign(&mut self, index: usize, bits: u8);
 
     /// Swap the adjacent ranges `self[start..mid]` and `self[mid..limit]`.
     fn atbs_swap_ranges(&mut self, start: usize, mid: usize, limit: usize);
@@ -69,8 +69,8 @@ impl TrieBuilderStore for VecDeque<u8> {
         v.extend(b);
         v
     }
-    fn atbs_bitor_assign(&mut self, index: usize, other: u8) {
-        self[index] |= other;
+    fn atbs_bitor_assign(&mut self, index: usize, bits: u8) {
+        self[index] |= bits;
     }
     fn atbs_swap_ranges(&mut self, mut start: usize, mut mid: usize, mut limit: usize) {
         if start > mid || mid > limit {

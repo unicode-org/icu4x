@@ -93,14 +93,17 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         Self { data }
     }
 
-    /// Performs the operation `self[index] |= byte`
-    const fn bitor_assign_at(self, index: usize, byte: u8) -> Self {
+    /// Performs the operation `self[index] |= bits`
+    const fn bitor_assign_at(self, index: usize, bits: u8) -> Self {
         let mut data = self.data;
-        data = data.const_bitor_assign(index, byte);
+        data = data.const_bitor_assign(index, bits);
         Self { data }
     }
 
     /// Creates a new builder containing the elements in the given slice of key/value pairs.
+    ///
+    /// `K` is the stack size of the lengths stack. If you get an error such as
+    /// "AsciiTrie Builder: Need more stack", try increasing `K`.
     ///
     /// # Panics
     ///
@@ -127,6 +130,9 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     /// Creates a new builder containing the elements in the given slice of key/value pairs.
     ///
     /// Assumes that the items are sorted. If they are not, unexpected behavior may occur.
+    ///
+    /// `K` is the stack size of the lengths stack. If you get an error such as
+    /// "AsciiTrie Builder: Need more stack", try increasing `K`.
     pub const fn from_sorted_const_tuple_slice<const K: usize>(
         items: ConstSlice<(&ByteStr, usize)>,
     ) -> Result<Self, Error> {

@@ -210,6 +210,7 @@ where
     /// Gets the usize for the given byte, or `None` if it is not in the map.
     pub fn get(&self, key: u8) -> Option<usize> {
         let (p, buffer) = self.0.as_ref().split_first()?;
+        // Note: there are N buckets followed by N keys
         let n = buffer.len() / 2;
         if n == 0 {
             return None;
@@ -237,6 +238,7 @@ where
             .map(|s| s.1)
             .unwrap_or(&[])
     }
+    /// Diagnostic function that returns `p` and the maximum value of `q`
     #[cfg(test)]
     pub fn p_qmax(&self) -> Option<(u8, u8)> {
         let (p, buffer) = self.0.as_ref().split_first()?;
