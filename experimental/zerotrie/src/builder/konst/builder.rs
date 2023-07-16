@@ -17,21 +17,26 @@ pub(crate) struct ZeroTrieBuilderConst<const N: usize> {
 }
 
 impl<const N: usize> ZeroTrieBuilderConst<N> {
+    /// Non-const function that returns the current trie data as a slice.
     #[cfg(feature = "litemap")]
     pub fn as_bytes(&self) -> &[u8] {
         self.data.as_const_slice().as_slice()
     }
 
+    /// Returns the trie data, panicking if the buffer is the wrong size.
     pub const fn take_or_panic(self) -> [u8; N] {
         self.data.const_take_or_panic()
     }
 
+    /// Creates a new empty builder.
     pub const fn new() -> Self {
         Self {
             data: ConstArrayBuilder::new_empty([0; N], N),
         }
     }
 
+    /// Prepends an ASCII node to the front of the builder. Returns the new builder
+    /// and the delta in length, which is always 1.
     #[must_use]
     const fn prepend_ascii(self, ascii: u8) -> (Self, usize) {
         if ascii >= 128 {
@@ -41,6 +46,8 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         (Self { data }, 1)
     }
 
+    /// Prepends a value node to the front of the builder. Returns the new builder
+    /// and the delta in length, which depends on the size of the varint.
     #[must_use]
     const fn prepend_value(self, value: usize) -> (Self, usize) {
         let mut data = self.data;
@@ -50,6 +57,8 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         (Self { data }, varint_array.len())
     }
 
+    /// Prepends a branch node to the front of the builder. Returns the new builder
+    /// and the delta in length, which depends on the size of the varint.
     #[must_use]
     const fn prepend_branch(self, value: usize) -> (Self, usize) {
         let mut data = self.data;
@@ -59,6 +68,8 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         (Self { data }, varint_array.len())
     }
 
+    /// Prepends multiple arbitrary bytes to the front of the builder. Returns the new builder
+    /// and the delta in length, which is the length of the slice.
     #[must_use]
     const fn prepend_slice(self, s: ConstSlice<u8>) -> (Self, usize) {
         let mut data = self.data;
@@ -70,6 +81,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         (Self { data }, s.len())
     }
 
+    /// Prepends multiple zeros to the front of the builder. Returns the new builder.
     #[must_use]
     const fn prepend_n_zeros(self, n: usize) -> Self {
         let mut data = self.data;
@@ -81,12 +93,17 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         Self { data }
     }
 
+    /// Performs the operation `self[index] |= byte`
     const fn bitor_assign_at(self, index: usize, byte: u8) -> Self {
         let mut data = self.data;
         data = data.const_bitor_assign(index, byte);
         Self { data }
     }
 
+    /// Creates a new builder containing the elements in the given slice of key/value pairs.
+    ///
+    /// # Panics
+    ///
     /// Panics if the items are not sorted
     pub const fn from_tuple_slice<'a, const K: usize>(
         items: &[(&'a ByteStr, usize)],
@@ -107,7 +124,9 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         Self::from_sorted_const_tuple_slice::<K>(items)
     }
 
-    /// Assumes that the items are sorted
+    /// Creates a new builder containing the elements in the given slice of key/value pairs.
+    ///
+    /// Assumes that the items are sorted. If they are not, unexpected behavior may occur.
     pub const fn from_sorted_const_tuple_slice<const K: usize>(
         items: ConstSlice<(&ByteStr, usize)>,
     ) -> Result<Self, Error> {
@@ -118,6 +137,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         Ok(result)
     }
 
+    /// The actual builder algorithm.
     #[must_use]
     const fn create_or_panic<const K: usize>(
         mut self,

@@ -49,10 +49,15 @@ pub(crate) struct ZeroTrieBuilder<S> {
 }
 
 impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
+    /// Returns the trie data as a `Vec<u8>`.
     pub fn to_bytes(&self) -> Vec<u8> {
         self.data.atbs_to_bytes()
     }
 
+    /// Prepends a byte value to the front of the builder. If it is ASCII, an ASCII
+    /// node is prepended. If it is non-ASCII, if there is already a span node at
+    /// the front, we modify the span node to add the new byte; otherwise, we create
+    /// a new span node. Returns the delta in length, which is either 1 or 2.
     fn prepend_ascii(&mut self, ascii: u8) -> Result<usize, Error> {
         if ascii <= 127 {
             self.data.atbs_push_front(ascii);
@@ -86,6 +91,8 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         }
     }
 
+    /// Prepends a value node to the front of the builder. Returns the
+    /// delta in length, which depends on the size of the varint.
     #[must_use]
     fn prepend_value(&mut self, value: usize) -> usize {
         let varint_array = varint::write_varint_meta3(value);
@@ -94,6 +101,8 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         varint_array.len()
     }
 
+    /// Prepends a branch node to the front of the builder. Returns the
+    /// delta in length, which depends on the size of the varint.
     #[must_use]
     fn prepend_branch(&mut self, value: usize) -> usize {
         let varint_array = varint::write_varint_meta2(value);
@@ -102,6 +111,8 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         varint_array.len()
     }
 
+    /// Prepends multiple arbitrary bytes to the front of the builder. Returns the
+    /// delta in length, which is the length of the slice.
     #[must_use]
     fn prepend_slice(&mut self, s: &[u8]) -> usize {
         self.data.atbs_extend_front(s);
@@ -143,6 +154,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         Ok(result)
     }
 
+    /// The actual builder algorithm.
     #[allow(clippy::unwrap_used)] // lots of indexing, but all indexes should be in range
     fn create(&mut self, all_items: &[(&ByteStr, usize)]) -> Result<usize, Error> {
         let mut prefix_len = match all_items.last() {
