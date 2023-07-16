@@ -204,9 +204,9 @@
 //! ```
 
 use crate::byte_phf::PerfectByteHashMap;
+use crate::helpers::*;
 use crate::varint::read_varint_meta2;
 use crate::varint::read_varint_meta3;
-use crate::helpers::*;
 
 #[cfg(feature = "alloc")]
 use alloc::string::String;

@@ -16,7 +16,7 @@ pub trait TrieBuilderStore {
 
     /// Return the length in bytes of the store.
     fn atbs_len(&self) -> usize;
-    
+
     /// Push a byte to the front of the store.
     fn atbs_push_front(&mut self, byte: u8);
 

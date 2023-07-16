@@ -545,7 +545,10 @@ impl<Store> ZeroTrie<Store> {
     }
     /// Maps the store into another type.
     #[cfg(feature = "serde")]
-    pub(crate) fn map_store<NewStore>(self, f: impl FnOnce(Store) -> NewStore) -> ZeroTrie<NewStore> {
+    pub(crate) fn map_store<NewStore>(
+        self,
+        f: impl FnOnce(Store) -> NewStore,
+    ) -> ZeroTrie<NewStore> {
         impl_dispatch!(self, map_store_into_zerotrie(f))
     }
 }

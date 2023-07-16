@@ -25,6 +25,14 @@ assert_eq!(trie.get("axyb"), Some(33));
 assert_eq!(trie.byte_len(), 18);
 ```
 
+## Internal Structure
+
+To read about the internal structure of [`ZeroTrie`], build the docs with private modules:
+
+```bash
+cargo doc --document-private-items --all-features --no-deps --open
+```
+
 [`LiteMap`]: litemap::LiteMap
 [`BTreeMap`]: alloc::collections::BTreeMap
 
