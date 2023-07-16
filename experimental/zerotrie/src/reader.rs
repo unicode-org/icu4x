@@ -206,59 +206,10 @@
 use crate::byte_phf::PerfectByteHashMap;
 use crate::varint::read_varint_meta2;
 use crate::varint::read_varint_meta3;
-use core::ops::Range;
+use crate::helpers::*;
 
 #[cfg(feature = "alloc")]
 use alloc::string::String;
-
-/// Like slice::split_at but returns an Option instead of panicking.
-///
-/// Debug-panics if `mid` is out of range.
-#[inline]
-fn debug_split_at(slice: &[u8], mid: usize) -> Option<(&[u8], &[u8])> {
-    if mid > slice.len() {
-        debug_assert!(false, "debug_split_at: index expected to be in range");
-        None
-    } else {
-        // Note: We're trusting the compiler to inline this and remove the assertion
-        // hiding on the top of slice::split_at: `assert(mid <= self.len())`
-        Some(slice.split_at(mid))
-    }
-}
-
-/// Like slice::split_at but returns an Option instead of panicking.
-#[inline]
-fn maybe_split_at(slice: &[u8], mid: usize) -> Option<(&[u8], &[u8])> {
-    if mid > slice.len() {
-        None
-    } else {
-        // Note: We're trusting the compiler to inline this and remove the assertion
-        // hiding on the top of slice::split_at: `assert(mid <= self.len())`
-        Some(slice.split_at(mid))
-    }
-}
-
-#[inline]
-fn debug_get(slice: &[u8], index: usize) -> Option<u8> {
-    match slice.get(index) {
-        Some(x) => Some(*x),
-        None => {
-            debug_assert!(false, "debug_get: index expected to be in range");
-            None
-        }
-    }
-}
-
-#[inline]
-fn debug_get_range(slice: &[u8], range: Range<usize>) -> Option<&[u8]> {
-    match slice.get(range) {
-        Some(x) => Some(x),
-        None => {
-            debug_assert!(false, "debug_get_range: indices expected to be in range");
-            None
-        }
-    }
-}
 
 /// Given a slice starting with an offset table, returns the trie for the given index.
 ///

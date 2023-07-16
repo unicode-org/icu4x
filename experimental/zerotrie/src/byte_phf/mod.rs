@@ -50,6 +50,8 @@
 //! assert_eq!(phf.get(b'g'), Some(3));
 //! ```
 
+use crate::helpers::*;
+
 #[cfg(feature = "alloc")]
 mod builder;
 #[cfg(feature = "alloc")]
@@ -73,30 +75,6 @@ const P_REAL_MAX: u8 = 15;
 /// The maximum allowable value of `q`. This could be raised if found to be necessary.
 #[cfg(feature = "alloc")] // used in the builder code
 const Q_REAL_MAX: u8 = 127;
-
-/// Like slice::split_at but returns an Option instead of panicking
-#[inline]
-fn debug_split_at(slice: &[u8], mid: usize) -> Option<(&[u8], &[u8])> {
-    if mid > slice.len() {
-        debug_assert!(false, "debug_split_at: index expected to be in range");
-        None
-    } else {
-        // Note: We're trusting the compiler to inline this and remove the assertion
-        // hiding on the top of slice::split_at: `assert(mid <= self.len())`
-        Some(slice.split_at(mid))
-    }
-}
-
-#[inline]
-fn debug_get(slice: &[u8], index: usize) -> Option<u8> {
-    match slice.get(index) {
-        Some(x) => Some(*x),
-        None => {
-            debug_assert!(false, "debug_get: index expected to be in range");
-            None
-        }
-    }
-}
 
 /// Calculates the function `f1` for the PHF. For the exact formula, please read the code.
 ///
