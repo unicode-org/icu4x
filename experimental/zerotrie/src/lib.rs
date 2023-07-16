@@ -57,3 +57,10 @@ pub use crate::zerotrie::ZeroTrieExtendedCapacity;
 pub use crate::zerotrie::ZeroTriePerfectHash;
 pub use crate::zerotrie::ZeroTrieSimpleAscii;
 pub use error::Error as ZeroTrieError;
+
+#[doc(hidden)]
+pub mod _internal {
+    pub use crate::byte_phf::f1;
+    pub use crate::byte_phf::f2;
+    pub use crate::byte_phf::PerfectByteHashMap;
+}

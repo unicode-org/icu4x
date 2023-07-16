@@ -27,6 +27,8 @@
 //! values are in the fast range.
 //!
 //! ```
+//! use zerotrie::_internal::PerfectByteHashMap;
+//!
 //! let phf_example_bytes = [
 //!     // `p` parameter
 //!     1,
@@ -36,7 +38,7 @@
 //!     b'e', b'a', b'c', b'g'
 //! ];
 //!
-//! let phf = zerotrie::byte_phf::PerfectByteHashMap::from_bytes(&phf_example_bytes);
+//! let phf = PerfectByteHashMap::from_bytes(&phf_example_bytes);
 //!
 //! // The PHF returns the index of the key or `None` if not found.
 //! assert_eq!(phf.get(b'a'), Some(1));
@@ -108,7 +110,7 @@ fn debug_get(slice: &[u8], index: usize) -> Option<u8> {
 /// # Examples
 ///
 /// ```
-/// use zerotrie::byte_phf::f1;
+/// use zerotrie::_internal::f1;
 /// const N: usize = 10;
 ///
 /// // With p = 0:
@@ -165,7 +167,7 @@ pub fn f1(byte: u8, p: u8, n: usize) -> usize {
 /// # Examples
 ///
 /// ```
-/// use zerotrie::byte_phf::f2;
+/// use zerotrie::_internal::f2;
 /// const N: usize = 10;
 ///
 /// // With q = 0:
@@ -216,10 +218,6 @@ impl<S> PerfectByteHashMap<S> {
     pub fn from_store(store: S) -> Self {
         Self(store)
     }
-
-    pub fn take_store(self) -> S {
-        self.0
-    }
 }
 
 impl<S> PerfectByteHashMap<S>
@@ -254,6 +252,7 @@ where
             .map(|s| s.1)
             .unwrap_or(&[])
     }
+    #[cfg(test)]
     pub fn p_qmax(&self) -> Option<(u8, u8)> {
         let (p, buffer) = self.0.as_ref().split_first()?;
         let n = buffer.len() / 2;

@@ -30,8 +30,4 @@ impl PerfectByteHashMapCacheOwned {
         };
         Ok(mut_phf.as_borrowed())
     }
-
-    pub fn get(&self, keys: &[u8]) -> Option<&PerfectByteHashMap<[u8]>> {
-        self.data.get(keys).map(|p| p.as_borrowed())
-    }
 }
