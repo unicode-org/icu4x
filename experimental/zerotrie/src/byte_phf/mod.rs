@@ -209,21 +209,28 @@ pub fn f2(byte: u8, q: u8, n: usize) -> usize {
     result as usize % n
 }
 
-// Standard layout: P, N bytes of Q, N bytes of expected keys
+/// A constant-time map from bytes to unique indices.
+///
+/// Uses a perfect hash function (see module-level documentation). Does not support mutation.
+///
+/// Standard layout: P, N bytes of Q, N bytes of expected keys
 #[derive(Debug, PartialEq, Eq)]
 #[repr(transparent)]
-pub struct PerfectByteHashMap<S: ?Sized>(S);
+pub struct PerfectByteHashMap<Store: ?Sized>(Store);
 
-impl<S> PerfectByteHashMap<S> {
-    pub fn from_store(store: S) -> Self {
+impl<Store> PerfectByteHashMap<Store> {
+    /// Creates an instance from a pre-existing store. See [`Self::as_bytes`].
+    #[inline]
+    pub fn from_store(store: Store) -> Self {
         Self(store)
     }
 }
 
-impl<S> PerfectByteHashMap<S>
+impl<Store> PerfectByteHashMap<Store>
 where
-    S: AsRef<[u8]> + ?Sized,
+    Store: AsRef<[u8]> + ?Sized,
 {
+    /// Gets the usize for the given byte, or `None` if it is not in the map.
     pub fn get(&self, key: u8) -> Option<usize> {
         let (p, buffer) = self.0.as_ref().split_first()?;
         let n = buffer.len() / 2;
@@ -246,6 +253,7 @@ where
     pub fn num_items(&self) -> usize {
         self.0.as_ref().len() / 2
     }
+    /// Get an iterator over the keys in the order in which they are stored in the map.
     pub fn keys(&self) -> &[u8] {
         let n = self.num_items();
         debug_split_at(self.0.as_ref(), 1 + n)
@@ -262,6 +270,8 @@ where
         let (qq, _) = debug_split_at(buffer, n)?;
         Some((*p, *qq.iter().max().unwrap()))
     }
+    /// Returns the map as bytes. The map can be recovered with [`Self::from_store`]
+    /// or [`Self::from_bytes`].
     pub fn as_bytes(&self) -> &[u8] {
         self.0.as_ref()
     }
@@ -287,6 +297,7 @@ where
 }
 
 impl PerfectByteHashMap<[u8]> {
+    /// Creates an instance from pre-existing bytes. See [`Self::as_bytes`].
     #[inline]
     pub fn from_bytes(bytes: &[u8]) -> &Self {
         // Safety: Self is repr(transparent) over [u8]
@@ -294,10 +305,11 @@ impl PerfectByteHashMap<[u8]> {
     }
 }
 
-impl<S> PerfectByteHashMap<S>
+impl<Store> PerfectByteHashMap<Store>
 where
-    S: AsRef<[u8]> + ?Sized,
+    Store: AsRef<[u8]> + ?Sized,
 {
+    /// Converts from `PerfectByteHashMap<AsRef<[u8]>>` to `&PerfectByteHashMap<[u8]>`
     #[inline]
     pub fn as_borrowed(&self) -> &PerfectByteHashMap<[u8]> {
         PerfectByteHashMap::from_bytes(self.0.as_ref())

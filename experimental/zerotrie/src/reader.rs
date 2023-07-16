@@ -26,6 +26,8 @@
 //!
 //! When a node is consumed, a shorter, well-formed ZeroTrie remains.
 //!
+//! ### Basic Example
+//!
 //! Here is an example ZeroTrie without branch nodes:
 //!
 //! ```
@@ -106,7 +108,100 @@
 //!
 //! ### Offset Tables
 //!
-//! Both types of branch node are followed by an offset table.
+//! The _offset table_ encodes the range of the remaining buffer containing the trie reachable
+//! from the byte matched in the branch node. Both types of branch nodes include an offset
+//! table followig the key lookup. Given the index `i` from the first step, the range
+//! `[s_i, s_(i+1))` brackets the next step in the trie.
+//!
+//! Offset tables utilize the `W` parameter stored in the branch head node. The special case
+//! when `W == 0`, with `N - 1` bytes, is easiest to understand:
+//!
+//! **Offset table, W = 0:** `[s_1, s_2, ..., s_(N-1)]`
+//!
+//! Note that `s_0` is always 0 and `s_N` is always the length of the remaining slice, so those
+//! values are not explicitly included in the offset table.
+//!
+//! When W > 0, the high and low bits of the offsets are in separate bytes, arranged as follows:
+//!
+//! **Generalized offset table:** `[a_1, a_2, ..., a_(N-1), b_1, b_2, ..., b_(N-1), c_1, ...]`
+//!
+//! where `s_i = (a_i << 8 + b_i) << 8 + c_i ...` (high bits first, low bits last)
+//!
+//! ### Advanced Example
+//!
+//! The following trie encodes the following map. It has multiple varints and branch nodes, which
+//! are all binary search with W = 0. Note that there is a value for the empty string.
+//!
+//! - "" → 0
+//! - "axb" → 100
+//! - "ayc" → 2
+//! - "azd" → 3
+//! - "bxe" → 4
+//! - "bxefg" → 500
+//! - "bxefh" → 6
+//! - "bxei" → 7
+//! - "bxeikl" → 8
+//!
+//! ```
+//! use zerotrie::ZeroTrieSimpleAscii;
+//!
+//! let bytes = [
+//!     0b10000000, // value 0
+//!     0b11000010, // branch of 2
+//!     b'a',       //
+//!     b'b',       //
+//!     13,         //
+//!     0b11000011, // start of 'a' subtree: branch of 3
+//!     b'x',       //
+//!     b'y',       //
+//!     b'z',       //
+//!     3,          //
+//!     5,          //
+//!     b'b',       //
+//!     0b10010000, // value 100 (lead)
+//!     0x54,       // value 100 (trail)
+//!     b'c',       //
+//!     0b10000010, // value 2
+//!     b'd',       //
+//!     0b10000011, // value 3
+//!     b'x',       // start of 'b' subtree
+//!     b'e',       //
+//!     0b10000100, // value 4
+//!     0b11000010, // branch of 2
+//!     b'f',       //
+//!     b'i',       //
+//!     7,          //
+//!     0b11000010, // branch of 2
+//!     b'g',       //
+//!     b'h',       //
+//!     2,          //
+//!     0b10010011, // value 500 (lead)
+//!     0x64,       // value 500 (trail)
+//!     0b10000110, // value 6
+//!     0b10000111, // value 7
+//!     b'k',       //
+//!     b'l',       //
+//!     0b10001000, // value 8
+//! ];
+//!
+//! let trie = ZeroTrieSimpleAscii::from_bytes(&bytes);
+//!
+//! // Assert that the specified items are in the map
+//! assert_eq!(trie.get(b""), Some(0));
+//! assert_eq!(trie.get(b"axb"), Some(100));
+//! assert_eq!(trie.get(b"ayc"), Some(2));
+//! assert_eq!(trie.get(b"azd"), Some(3));
+//! assert_eq!(trie.get(b"bxe"), Some(4));
+//! assert_eq!(trie.get(b"bxefg"), Some(500));
+//! assert_eq!(trie.get(b"bxefh"), Some(6));
+//! assert_eq!(trie.get(b"bxei"), Some(7));
+//! assert_eq!(trie.get(b"bxeikl"), Some(8));
+//!
+//! // Assert that some other items are not in the map
+//! assert_eq!(trie.get(b"a"), None);
+//! assert_eq!(trie.get(b"bx"), None);
+//! assert_eq!(trie.get(b"xba"), None);
+//! ```
 
 use crate::byte_phf::PerfectByteHashMap;
 use crate::varint::read_varint_meta2;
