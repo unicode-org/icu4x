@@ -14,10 +14,10 @@
 //! ```txt
 //! xxx0'1010 = 10
 //! xxx0'1111 = 15 (largest single-byte value with M=3)
-//! xxx1'0000 0000'0000 = 16 (smallest two-byte value with M=3)
+//! xxx1'0000 0000'0000 must be 16 (smallest two-byte value with M=3)
 //! xxx1'0000 0000'0001 = 17
 //! xxx1'1111 0111'1111 = 2063 (largest two-byte value with M=3)
-//! xxx1'0000 1000'0000 0000'0000 = 2064 (smallest three-byte value with M=3)
+//! xxx1'0000 1000'0000 0000'0000 must be 2064 (smallest three-byte value with M=3)
 //! xxx1'0000 1000'0000 0000'0001 = 2065
 //! ```
 //!
