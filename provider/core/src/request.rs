@@ -42,7 +42,7 @@ pub struct DataRequestMetadata {
     pub silent: bool,
 }
 
-/// The main locale type used by the ICU4X data provider.
+/// A locale type optimized for use in fallbacking and the ICU4X data pipeline.
 ///
 /// [`DataLocale`] contains less functionality than [`Locale`] but more than
 /// [`LanguageIdentifier`] for better size and performance while still meeting

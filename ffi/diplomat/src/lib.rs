@@ -67,6 +67,8 @@ pub mod bidi;
     feature = "icu_calendar"
 ))]
 pub mod calendar;
+#[cfg(feature = "icu_casemap")]
+pub mod casemap;
 #[cfg(feature = "icu_collator")]
 pub mod collator;
 #[cfg(any(

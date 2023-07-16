@@ -32,8 +32,8 @@ members = [
     "components/timezone",
     "components/timezone/data",
     "experimental/bies",
-    "experimental/casemapping",
-    "experimental/casemapping/data",
+    "experimental/casemap",
+    "experimental/casemap/data",
     "experimental/compactdecimal",
     "experimental/compactdecimal/data",
     "experimental/displaynames",
@@ -55,15 +55,12 @@ members = [
     "provider/datagen",
     "provider/fs",
     "provider/macros",
-    "provider/repodata",
-    "provider/testdata",
     "tools/benchmark/binsize",
     "tools/benchmark/macros",
     "tools/benchmark/memory",
     "tools/depcheck",
     "tools/ffi_coverage",
     "tools/testdata-scripts",
-    "tools/tutorials-test",
     "utils/databake",
     "utils/databake/derive",
     "utils/deduplicating_array",
@@ -85,6 +82,14 @@ members = [
 exclude = [
     # GNaw needs to be run from outside the workspace for features to work
     "ffi/gn",
+    # Testdata will still be published in the 1.x stream, but is deprecated
+    # and we don't use it anymore. As we don't want to keep the actual data
+    # in the repo it doesn't build without running `cargo make testdata-legacy`
+    # first.
+    "provider/testdata",
+    # Tutorials are tested in their own cargo workspace against released and
+    # local crates
+    "docs",
 ]
 
 # LTO is needed for WASM and other size-optimized builds,

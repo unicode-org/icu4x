@@ -129,10 +129,6 @@ pub const EXTRA_BLOB_DEPS: &[&str] = &["cobs", "icu_provider_blob", "postcard"];
 /// This shuld rarely change
 pub const EXTRA_FS_DEPS: &[&str] = &["icu_provider_fs", "serde-json-core"];
 
-/// Dependencies allowed when opting in to test data on FFI
-/// This shuld rarely change
-pub const EXTRA_TEST_DEPS: &[&str] = &["icu_testdata"];
-
 /// Dependencies needed by datagen (not counting `log`, `zip`, and `rayon` deps)
 /// This might change semi frequently but we should try and keep this small.
 pub const EXTRA_DATAGEN_DEPS: &[&str] = &[

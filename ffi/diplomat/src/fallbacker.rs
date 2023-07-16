@@ -56,7 +56,7 @@ pub mod ffi {
     /// An object that runs the ICU4X locale fallback algorithm with specific configurations.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbacker, Struct)]
-    #[diplomat::rust_link(icu::locid::fallback::LocaleFallbackerConfig, Struct)]
+    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackerWithConfig, Struct)]
     pub struct ICU4XLocaleFallbackerWithConfig<'a>(pub LocaleFallbackerWithConfig<'a>);
 
     /// An iterator over the locale under fallback.
@@ -92,6 +92,11 @@ pub mod ffi {
             icu::locid_transform::fallback::LocaleFallbacker::for_config,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::locid_transform::fallback::LocaleFallbackerBorrowed::for_config,
+            FnInStruct,
+            hidden
+        )]
         pub fn for_config<'a, 'temp>(
             &'a self,
             config: ICU4XLocaleFallbackConfig<'temp>,
@@ -110,6 +115,11 @@ pub mod ffi {
         )]
         #[diplomat::rust_link(
             icu::locid_transform::fallback::LocaleFallbackerBorrowed::fallback_for,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locid_transform::fallback::LocaleFallbackerWithConfig::fallback_for,
             FnInStruct,
             hidden
         )]

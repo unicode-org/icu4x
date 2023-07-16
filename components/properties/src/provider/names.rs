@@ -186,7 +186,7 @@ impl NormalizedPropertyNameStr {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(marker(
     GeneralCategoryMaskNameToValueV1Marker,
     "propnames/from/gcm@1",
@@ -213,7 +213,7 @@ pub struct PropertyValueNameToEnumMapV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct]
 #[cfg_attr(
     feature = "datagen", 
@@ -236,7 +236,7 @@ pub struct PropertyEnumToValueNameSparseMapV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct]
 #[cfg_attr(
     feature = "datagen", 
@@ -260,7 +260,7 @@ pub struct PropertyEnumToValueNameLinearMapV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct]
 #[cfg_attr(
     feature = "datagen", 

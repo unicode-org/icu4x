@@ -82,9 +82,6 @@ fn main() -> eyre::Result<()> {
     let keys = match config.keys {
         config::KeyInclude::None => Default::default(),
         config::KeyInclude::All => icu_datagen::all_keys().into_iter().collect(),
-        config::KeyInclude::AllWithExperimental => icu_datagen::all_keys_with_experimental()
-            .into_iter()
-            .collect(),
         config::KeyInclude::Explicit(set) => set,
         config::KeyInclude::ForBinary(path) => {
             icu_datagen::keys_from_bin(path)?.into_iter().collect()

@@ -12,7 +12,7 @@ edition = "2021"
 crate-type = ["staticlib"]
 
 [dependencies]
-icu_capi = { path = "../../../..", default-features = false, features = ["buffer_provider", "icu_decimal"] }
+icu_capi = { path = "../../../..", default-features = false, features = ["compiled_data", "icu_decimal"] }
 dlmalloc = { version = "0.2", features = ["global"] }
 
 [profile.release]

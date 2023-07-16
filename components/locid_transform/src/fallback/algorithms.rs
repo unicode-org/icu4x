@@ -427,7 +427,9 @@ mod tests {
                 } else {
                     fallbacker_no_data
                 };
-                let mut it = fallbacker.fallback_for(config, Locale::from_str(cas.input).unwrap());
+                let mut it = fallbacker
+                    .for_config(config)
+                    .fallback_for(Locale::from_str(cas.input).unwrap().into());
                 for &expected in expected_chain {
                     assert_eq!(
                         expected,
