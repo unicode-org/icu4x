@@ -556,9 +556,15 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
+/// Internal iterator type for walking the strings contained in a ZeroTrie.
 #[cfg(feature = "alloc")]
 pub(crate) struct ZeroTrieIterator<'a> {
+    /// Whether the PHF is enabled on this trie.
     use_phf: bool,
+    /// Intermediate state during iteration:
+    /// 1. A trie (usually a slice of the original, bigger trie)
+    /// 2. The string that leads to the trie
+    /// 3. If the trie's lead node is a branch node, the current index being evaluated
     state: Vec<(&'a [u8], Vec<u8>, usize)>,
 }
 
