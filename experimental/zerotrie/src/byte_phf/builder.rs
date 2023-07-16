@@ -13,6 +13,9 @@ use alloc::vec::Vec;
 /// hash maps that fall back to the slow path.
 const MAX_L2_SEARCH_MISSES: usize = 24;
 
+/// Directly compute the perfect hash function.
+///
+/// Returns `(p, [q_0, q_1, ..., q_(N-1)])`, or an error if the PHF could not be computed.
 #[allow(unused_labels)] // for readability
 pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
     #[allow(non_snake_case)]
@@ -65,6 +68,7 @@ pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
                         bqs[i] = 0;
                         if i == 0 || num_max_q > MAX_L2_SEARCH_MISSES {
                             if p == max_allowable_p && max_allowable_p != P_REAL_MAX {
+                                // println!("Could not solve fast function: trying again: {bytes:?}");
                                 max_allowable_p = P_REAL_MAX;
                                 max_allowable_q = Q_REAL_MAX;
                                 p = 0;

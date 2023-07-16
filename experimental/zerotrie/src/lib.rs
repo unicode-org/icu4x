@@ -27,6 +27,14 @@
 //! assert_eq!(trie.byte_len(), 18);
 //! ```
 //!
+//! # Internal Structure
+//!
+//! To read about the internal structure of [`ZeroTrie`], build the docs with private modules:
+//!
+//! ```bash
+//! cargo doc --document-private-items --all-features --no-deps --open
+//! ```
+//!
 //! [`LiteMap`]: litemap::LiteMap
 //! [`BTreeMap`]: alloc::collections::BTreeMap
 
@@ -36,8 +44,7 @@
 extern crate alloc;
 
 mod builder;
-#[doc(hidden)]
-pub mod byte_phf;
+mod byte_phf;
 mod error;
 mod reader;
 #[cfg(feature = "serde")]

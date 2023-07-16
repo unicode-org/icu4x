@@ -2,9 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(rustdoc::private_intra_doc_links)] // doc(hidden) module
+
 //! # Byte Perfect Hash Function Internals
 //!
-//! This module contains a perfect hash function (PHF) optimized for... TODO
+//! This module contains a perfect hash function (PHF) designed for a fast, compact perfect
+//! hash over 1 to 256 nodes (bytes).
+//!
+//! The PHF uses the following variables:
+//!
+//! 1. A single parameter `p`, which is 0 in about 98% of cases.
+//! 2. A list of `N` parameters `q_t`, one per _bucket_
+//! 3. The `N` keys in an arbitrary order determined by the PHF
 //!
 //! Reading a `key` from the PHF uses the following algorithm:
 //!
@@ -13,7 +22,9 @@
 //! 3. If `key == k_i`, return `Some(i)`; else return `None`.
 //!
 //! The functions [`f1`] and [`f2`] are internal to the PHF but should remain stable across
-//! serialization versions of `ZeroTrie`.
+//! serialization versions of `ZeroTrie`. They are very fast, constant-time operations as long
+//! as `p` <= [`P_FAST_MAX`] and `q` <= [`Q_FAST_MAX`]. In practice, nearly 100% of parameter
+//! values are in the fast range.
 //!
 //! ```
 //! let phf_example_bytes = [
