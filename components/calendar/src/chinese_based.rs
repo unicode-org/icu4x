@@ -68,8 +68,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
-    pub(crate) fn major_solar_term_from_fixed(date: RataDie) -> i32 {
-        // TODO: Make this an unsigned int (the size isn't super important, but could fit in a u8)
+    pub(crate) fn major_solar_term_from_fixed(date: RataDie) -> u32 {
         let moment: Moment = date.as_moment();
         let location = C::location(date);
         let universal: Moment = Location::universal_from_standard(moment, location);
@@ -79,7 +78,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Solar longitude should be in range of i32"
         );
         let s = solar_longitude.saturate();
-        adjusted_rem_euclid(2 + quotient(s, 30), 12)
+        let result_signed = adjusted_rem_euclid(2 + quotient(s, 30), 12);
+        debug_assert!(result_signed >= 0);
+        result_signed as u32
     }
 
     /// Returns true if the month of a given fixed date does not have a major solar term,
@@ -96,7 +97,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5303-L5316
-    pub(crate) fn minor_solar_term_from_fixed(date: RataDie) -> i32 {
+    pub(crate) fn minor_solar_term_from_fixed(date: RataDie) -> u32 {
         let moment: Moment = date.as_moment();
         let location = C::location(date);
         let universal: Moment = Location::universal_from_standard(moment, location);
@@ -106,7 +107,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Solar longitude should be in range of i32"
         );
         let s = solar_longitude.saturate();
-        adjusted_rem_euclid(3 + quotient(s - 15, 30), 12)
+        let result_signed = adjusted_rem_euclid(3 + quotient(s - 15, 30), 12);
+        debug_assert!(result_signed >= 0);
+        result_signed as u32
     }
 
     /// The fixed date in standard time at the observation location of the next new moon on or after a given Moment.
