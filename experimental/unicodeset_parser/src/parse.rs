@@ -12,9 +12,7 @@ use icu_collections::{
 };
 use icu_properties::maps::load_script;
 use icu_properties::script::load_script_with_extensions_unstable;
-use icu_properties::sets::{
-    load_for_ecma262_unstable, load_for_general_category_group, load_xid_continue, load_xid_start,
-};
+use icu_properties::sets::{load_for_ecma262_unstable, load_for_general_category_group, load_pattern_white_space, load_xid_continue, load_xid_start};
 use icu_properties::Script;
 use icu_properties::{provider::*, GeneralCategoryGroup};
 use icu_provider::prelude::*;
@@ -198,32 +196,42 @@ pub enum VariableValue<'a> {
     String(String),
 }
 
-impl From<char> for VariableValue<'_> {
-    fn from(c: char) -> Self {
-        VariableValue::Char(c)
-    }
-}
-
-impl From<String> for VariableValue<'_> {
-    fn from(s: String) -> Self {
-        VariableValue::String(s)
-    }
-}
-
-impl From<&str> for VariableValue<'_> {
-    fn from(s: &str) -> Self {
-        VariableValue::String(s.to_owned())
-    }
-}
-
-impl<'a> From<CodePointInversionListAndStringList<'a>> for VariableValue<'a> {
-    fn from(set: CodePointInversionListAndStringList<'a>) -> Self {
-        VariableValue::UnicodeSet(set)
-    }
-}
-
 /// The map used for parsing UnicodeSets with variable support. See [`parse_with_variables`].
-pub type VariableMap<'a> = HashMap<String, VariableValue<'a>>;
+#[derive(Debug, Clone, Default)]
+pub struct VariableMap<'a>(HashMap<String, VariableValue<'a>>);
+
+impl<'a> VariableMap<'a> {
+    /// Creates a new empty map.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Removes a key from the map, returning the value at the key if the key
+    /// was previously in the map.
+    pub fn remove(&mut self, key: &str) -> Option<VariableValue<'a>> {
+        self.0.remove(key)
+    }
+
+    /// Inserts a key-value pair into the map.
+    pub fn insert(&mut self, key: String, value: VariableValue<'a>) {
+        self.0.insert(key, value);
+    }
+
+    /// [`VariableMap::insert`] special case for a value of type `char`.
+    pub fn insert_char(&mut self, key: String, value: char) {
+        self.insert(key, VariableValue::Char(value));
+    }
+
+    /// [`VariableMap::insert`] special case for a value of type `String`.
+    pub fn insert_string(&mut self, key: String, value: String) {
+        self.insert(key, VariableValue::String(value));
+    }
+
+    /// [`VariableMap::insert`] special case for a value of type [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList).
+    pub fn insert_set(&mut self, key: String, value: CodePointInversionListAndStringList<'a>) {
+        self.insert(key, VariableValue::UnicodeSet(value));
+    }
+}
 
 // necessary helper because char::is_whitespace is not equivalent to [:Pattern_White_Space:]
 #[inline]
@@ -242,6 +250,7 @@ fn is_char_pattern_white_space(c: char) -> bool {
 
 // this ignores the ambiguity between \-escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
 // returns whether the provided char signifies the start of a literal char (raw or escaped - so \ is a legal char start)
+// important: assumes c is not pattern_white_space
 fn legal_char_start(c: char) -> bool {
     !(c == '&'
         || c == '-'
@@ -255,6 +264,7 @@ fn legal_char_start(c: char) -> bool {
 }
 
 // same as `legal_char_start` but adapted to the charInString nonterminal. \ is allowed due to escapes.
+// important: assumes c is not pattern_white_space
 fn legal_char_in_string_start(c: char) -> bool {
     // TODO: is_char_pattern_white_space is most likely unnecessary, because skip_whitespace will have consumed any that existed
     !(c == '}' || is_char_pattern_white_space(c))
@@ -311,12 +321,6 @@ enum MainToken<'data> {
     ClosingBracket,
 }
 
-#[derive(Debug)]
-enum VarOrAnchor<'a> {
-    A,
-    V(&'a VariableValue<'a>),
-}
-
 #[derive(Debug, Clone, Copy)]
 enum Operation {
     Union,
@@ -333,6 +337,7 @@ struct UnicodeSetBuilder<'a, 'b, P: ?Sized> {
     variable_map: &'a VariableMap<'a>,
     xid_start: &'a CodePointInversionList<'a>,
     xid_continue: &'a CodePointInversionList<'a>,
+    pat_ws: &'a CodePointInversionList<'a>,
     property_provider: &'a P,
 }
 
@@ -400,6 +405,7 @@ where
         variable_map: &'a VariableMap<'a>,
         xid_start: &'a CodePointInversionList<'a>,
         xid_continue: &'a CodePointInversionList<'a>,
+        pat_ws: &'a CodePointInversionList<'a>,
         provider: &'a P,
     ) -> Self {
         UnicodeSetBuilder {
@@ -410,6 +416,7 @@ where
             variable_map,
             xid_start,
             xid_continue,
+            pat_ws,
             property_provider: provider,
         }
     }
@@ -430,14 +437,14 @@ where
                 // must be variable ref to a UnicodeSet
                 let (offset, v) = self.parse_variable()?;
                 match v {
-                    VarOrAnchor::V(VariableValue::UnicodeSet(s)) => {
+                    Some(VariableValue::UnicodeSet(s)) => {
                         self.single_set.add_set(s.code_points());
                         self.string_set
                             .extend(s.strings().iter().map(ToString::to_string));
                         Ok(())
                     }
-                    VarOrAnchor::V(_) => Err(PEK::UnexpectedVariable.with_offset(offset)),
-                    VarOrAnchor::A => Err(PEK::UnexpectedChar('$').with_offset(offset)),
+                    Some(_) => Err(PEK::UnexpectedVariable.with_offset(offset)),
+                    None => Err(PEK::UnexpectedChar('$').with_offset(offset)),
                 }
             }
             c => self.error_here(PEK::UnexpectedChar(c)),
@@ -646,15 +653,15 @@ where
             ('$', _) => {
                 let (offset, var_or_anchor) = self.parse_variable()?;
                 match var_or_anchor {
-                    VarOrAnchor::A => Ok((offset, false, MainToken::DollarSign)),
-                    VarOrAnchor::V(&VariableValue::Char(c)) => {
+                    None => Ok((offset, false, MainToken::DollarSign)),
+                    Some(&VariableValue::Char(c)) => {
                         Ok((offset, true, MainToken::CharOrString(c.into())))
                     }
-                    VarOrAnchor::V(VariableValue::String(s)) => {
+                    Some(VariableValue::String(s)) => {
                         // .into() handles 1-length-string -> char conversion
                         Ok((offset, true, MainToken::CharOrString(s.clone().into())))
                     }
-                    VarOrAnchor::V(VariableValue::UnicodeSet(set)) => {
+                    Some(VariableValue::UnicodeSet(set)) => {
                         Ok((offset, true, MainToken::UnicodeSet(set.clone())))
                     }
                 }
@@ -704,8 +711,9 @@ where
 
     // parses a variable or an anchor. expects '$' as next token.
     // is 'context-sensitive' to avoid duplicate work
-    // if this is a trailing $ (eg [.... $ ]), then this function returns Ok(Some((offset, VarOrAnchor::A)))
-    fn parse_variable(&mut self) -> Result<(usize, VarOrAnchor<'a>)> {
+    // if this is a trailing $ (eg [.... $ ]), then this function returns Ok(None),
+    // otherwise Ok(Some(variable_value)).
+    fn parse_variable(&mut self) -> Result<(usize, Option<&'a VariableValue<'a>>)> {
         self.consume('$')?;
 
         let mut res = String::new();
@@ -713,7 +721,7 @@ where
 
         if !self.xid_start.contains(first_c) {
             // -1 because we already consumed the '$'
-            return Ok((var_offset - 1, VarOrAnchor::A));
+            return Ok((var_offset - 1, None));
         }
 
         res.push(first_c);
@@ -730,8 +738,8 @@ where
             res.push(c);
         }
 
-        if let Some(v) = self.variable_map.get(&res) {
-            return Ok((var_offset, VarOrAnchor::V(v)));
+        if let Some(v) = self.variable_map.0.get(&res) {
+            return Ok((var_offset, Some(v)));
         }
 
         Err(PEK::UnknownVariable.with_offset(var_offset))
@@ -1322,10 +1330,10 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
 /// let my_set = parse("[abc]").unwrap();
 ///
 /// let mut variable_map = VariableMap::new();
-/// variable_map.insert("start".into(), 'a'.into());
-/// variable_map.insert("end".into(), 'z'.into());
-/// variable_map.insert("str".into(), "Hello World".into());
-/// variable_map.insert("the_set".into(), my_set.into());
+/// variable_map.insert_char("start".into(), 'a');
+/// variable_map.insert_char("end".into(), 'z');
+/// variable_map.insert_string("str".into(), "Hello World".into());
+/// variable_map.insert_set("the_set".into(), my_set);
 ///
 /// let set = parse_with_variables("[[$start-$end]-$the_set $str]", &variable_map).unwrap();
 /// assert!(set.code_points().contains_range(&('d'..='z')));
@@ -1415,11 +1423,15 @@ where
     let xid_continue = load_xid_continue(provider).map_err(|_| PEK::Internal)?;
     let xid_continue_list = xid_continue.to_code_point_inversion_list();
 
+    let pat_ws = load_pattern_white_space(provider).map_err(|_| PEK::Internal)?;
+    let pat_ws_list = pat_ws.to_code_point_inversion_list();
+
     let mut builder = UnicodeSetBuilder::new_internal(
         &mut iter,
         variable_map,
         &xid_start_list,
         &xid_continue_list,
+        &pat_ws_list,
         provider,
     );
 
@@ -1580,23 +1592,21 @@ mod tests {
 
     #[test]
     fn test_semantics_with_variables() {
-        let map_char_char = HashMap::from([
-            ("a".to_string(), 'a'.into()),
-            ("var2".to_string(), 'z'.into()),
-        ]);
+        let mut map_char_char = VariableMap::default();
+        map_char_char.insert_char("a".to_string(), 'a');
+        map_char_char.insert_char("var2".to_string(), 'z');
 
-        let map_headache = HashMap::from([("hehe".to_string(), '-'.into())]);
+        let mut map_headache = VariableMap::default();
+        map_headache.insert_char("hehe".to_string(), '-');
 
-        let map_char_string = HashMap::from([
-            ("a".to_string(), 'a'.into()),
-            ("var2".to_string(), "abc".into()),
-        ]);
+        let mut map_char_string = VariableMap::default();
+        map_char_string.insert_char("a".to_string(), 'a');
+        map_char_string.insert_string("var2".to_string(), "abc".to_string());
 
         let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
-        let map_char_set = HashMap::from([
-            ("a".to_string(), 'a'.into()),
-            ("set".to_string(), set.into()),
-        ]);
+        let mut map_char_set = VariableMap::default();
+        map_char_set.insert_char("a".to_string(), 'a');
+        map_char_set.insert_set("set".to_string(), set);
 
         let cases: Vec<(_, _, _, Vec<&str>)> = vec![
             // simple
@@ -1820,21 +1830,18 @@ mod tests {
 
     #[test]
     fn test_error_messages_with_variables() {
-        let map_char_char = HashMap::from([
-            ("a".to_string(), 'a'.into()),
-            ("var2".to_string(), 'z'.into()),
-        ]);
+        let mut map_char_char = VariableMap::default();
+        map_char_char.insert_char("a".to_string(), 'a');
+        map_char_char.insert_char("var2".to_string(), 'z');
 
-        let map_char_string = HashMap::from([
-            ("a".to_string(), 'a'.into()),
-            ("var2".to_string(), "abc".into()),
-        ]);
+        let mut map_char_string = VariableMap::default();
+        map_char_string.insert_char("a".to_string(), 'a');
+        map_char_string.insert_string("var2".to_string(), "abc".to_string());
 
         let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
-        let map_char_set = HashMap::from([
-            ("a".to_string(), 'a'.into()),
-            ("set".to_string(), set.into()),
-        ]);
+        let mut map_char_set = VariableMap::default();
+        map_char_set.insert_char("a".to_string(), 'a');
+        map_char_set.insert_set("set".to_string(), set);
 
         let cases = [
             (&map_char_char, "[$$a]", r"[$$a← error: unexpected variable"),
@@ -1866,8 +1873,8 @@ mod tests {
                 r"[$set-$a← error: unexpected variable",
             ),
         ];
-        for (vm, source, expected_err) in cases {
-            assert_is_error_and_message_eq(source, expected_err, vm);
+        for (variable_map, source, expected_err) in cases {
+            assert_is_error_and_message_eq(source, expected_err, variable_map);
         }
     }
 
