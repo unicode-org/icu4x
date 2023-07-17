@@ -143,7 +143,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         Ok(result)
     }
 
-    /// The actual builder algorithm.
+    /// The actual builder algorithm. For an explanation, see [`crate::builder`].
     #[must_use]
     const fn create_or_panic<const K: usize>(
         mut self,
@@ -154,30 +154,33 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
             // Empty slice:
             None => return (Self::new(), 0),
         };
+        // Initialize the main loop to point at the last string.
         let mut lengths_stack = ConstLengthsStack::<K>::new();
         let mut i = all_items.len() - 1;
         let mut j = all_items.len();
         let mut current_len = 0;
+        // Start the main loop.
         loop {
             let item_i = all_items.get_or_panic(i);
             let item_j = all_items.get_or_panic(j - 1);
-            assert!(item_i.0.prefix_eq(item_j.0, prefix_len));
+            debug_assert!(item_i.0.prefix_eq(item_j.0, prefix_len));
+            // Check if we need to add a value node here.
             if item_i.0.len() == prefix_len {
                 let len;
                 (self, len) = self.prepend_value(item_i.1);
                 current_len += len;
             }
             if prefix_len == 0 {
+                // All done! Leave the main loop.
                 break;
             }
+            // Reduce the prefix length by 1 and recalculate i and j.
             prefix_len -= 1;
             let mut new_i = i;
             let mut new_j = j;
-            let mut diff_i = 0;
-            let mut diff_j = 0;
             let mut ascii_i = item_i.0.byte_at_or_panic(prefix_len);
             let mut ascii_j = item_j.0.byte_at_or_panic(prefix_len);
-            assert!(ascii_i == ascii_j);
+            debug_assert!(ascii_i == ascii_j);
             let key_ascii = ascii_i;
             loop {
                 if new_i == 0 {
@@ -194,12 +197,11 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                     break;
                 }
                 if candidate.len() == prefix_len {
-                    // A string of length prefix_len can't be preceded by another with that prefix
+                    // A string that equals the prefix does not take part in the branch node.
                     break;
                 }
                 let candidate = candidate.byte_at_or_panic(prefix_len);
                 if candidate != ascii_i {
-                    diff_i += 1;
                     ascii_i = candidate;
                 }
             }
@@ -222,21 +224,23 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                 }
                 let candidate = candidate.byte_at_or_panic(prefix_len);
                 if candidate != ascii_j {
-                    diff_j += 1;
                     ascii_j = candidate;
                 }
             }
-            if diff_i == 0 && diff_j == 0 {
+            // If there are no different bytes at this prefix level, we can add an ASCII or Span
+            // node and then continue to the next iteration of the main loop.
+            if ascii_i == key_ascii && ascii_j == key_ascii {
                 let len;
                 (self, len) = self.prepend_ascii(ascii_i);
                 current_len += len;
-                assert!(i == new_i || i == new_i + 1);
+                debug_assert!(i == new_i || i == new_i + 1);
                 i = new_i;
-                assert!(j == new_j);
+                debug_assert!(j == new_j);
                 continue;
             }
-            // Branch
-            if diff_j == 0 {
+            // If i and j changed, we are a target of a branch node.
+            if ascii_j == key_ascii {
+                // We are the _last_ target of a branch node.
                 lengths_stack = lengths_stack.push_or_panic(BranchMeta {
                     ascii: key_ascii,
                     cumulative_length: current_len,
@@ -244,6 +248,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                     count: 1,
                 });
             } else {
+                // We are the _not the last_ target of a branch node.
                 let BranchMeta {
                     cumulative_length,
                     count,
@@ -256,7 +261,9 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                     count: count + 1,
                 });
             }
-            if diff_i != 0 {
+            if ascii_i != key_ascii {
+                // We are _not the first_ target of a branch node.
+                // Set the cursor to the previous string and continue the loop.
                 j = i;
                 i -= 1;
                 prefix_len = all_items.get_or_panic(i).0.len();
@@ -306,6 +313,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                 }
                 k += 1;
             }
+            // Write out the lookup table
             assert!(0 < total_count && total_count <= 256);
             let branch_value = (w << 8) + (total_count & 0xff);
             let slice_len;

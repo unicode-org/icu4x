@@ -228,23 +228,26 @@ macro_rules! const_for_each {
 
 pub(crate) use const_for_each;
 
-/// A data structure that holds up to N [`BranchMeta`] items.
-pub(crate) struct ConstLengthsStack<const N: usize> {
-    data: [Option<BranchMeta>; N],
+/// A data structure that holds up to K [`BranchMeta`] items.
+///
+/// Note: It should be possible to store the required data in the builder buffer itself,
+/// which would eliminate the need for this helper struct and the limit it imposes.
+pub(crate) struct ConstLengthsStack<const K: usize> {
+    data: [Option<BranchMeta>; K],
     idx: usize,
 }
 
-impl<const N: usize> core::fmt::Debug for ConstLengthsStack<N> {
+impl<const K: usize> core::fmt::Debug for ConstLengthsStack<K> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         self.as_slice().fmt(f)
     }
 }
 
-impl<const N: usize> ConstLengthsStack<N> {
+impl<const K: usize> ConstLengthsStack<K> {
     /// Creates a new empty [`ConstLengthsStack`].
     pub const fn new() -> Self {
         Self {
-            data: [None; N],
+            data: [None; K],
             idx: 0,
         }
     }
@@ -257,10 +260,10 @@ impl<const N: usize> ConstLengthsStack<N> {
     /// Adds a [`BranchMeta`] to the stack, panicking if there is no room.
     #[must_use]
     pub const fn push_or_panic(mut self, meta: BranchMeta) -> Self {
-        if self.idx >= N {
+        if self.idx >= K {
             panic!(concat!(
                 "AsciiTrie Builder: Need more stack (max ",
-                stringify!(N),
+                stringify!(K),
                 ")"
             ));
         }
@@ -318,10 +321,10 @@ impl<const N: usize> ConstLengthsStack<N> {
     }
 }
 
-impl<const N: usize> ConstArrayBuilder<N, BranchMeta> {
+impl<const K: usize> ConstArrayBuilder<K, BranchMeta> {
     /// Converts this builder-array of [`BranchMeta`] to one of the `ascii` fields.
-    pub const fn map_to_ascii_bytes(&self) -> ConstArrayBuilder<N, u8> {
-        let mut result = ConstArrayBuilder::new_empty([0; N], N);
+    pub const fn map_to_ascii_bytes(&self) -> ConstArrayBuilder<K, u8> {
+        let mut result = ConstArrayBuilder::new_empty([0; K], K);
         let self_as_slice = self.as_const_slice();
         const_for_each!(self_as_slice, value, {
             result = result.const_push_front_or_panic(value.ascii);

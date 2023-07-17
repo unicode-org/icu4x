@@ -123,7 +123,7 @@ impl core::fmt::Debug for NonConstLengthsStack {
 }
 
 impl NonConstLengthsStack {
-    /// Creates a new empty [`ConstLengthsStack`].
+    /// Creates a new empty [`NonConstLengthsStack`].
     pub const fn new() -> Self {
         Self { data: Vec::new() }
     }
