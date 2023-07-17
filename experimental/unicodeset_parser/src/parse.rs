@@ -675,6 +675,8 @@ where
                 .map_err(|_| PEK::Internal.with_offset(offset))?;
                 Ok((offset, false, MainToken::UnicodeSet(cpilasl)))
             }
+            // note: c cannot be a whitespace, because we called skip_whitespace just before
+            // (in the main parse loop), so it's safe to call this guard function
             (c, _) if legal_char_start(c) => self
                 .parse_char()
                 .map(|(offset, cs)| (offset, false, MainToken::CharOrString(cs))),
@@ -741,6 +743,8 @@ where
                     self.iter.next();
                     break;
                 }
+                // note: c cannot be a whitespace, because we called skip_whitespace just before,
+                // so it's safe to call this guard function
                 c if legal_char_in_string_start(c) => {
                     // don't need the offset, because '}' will always be the last char
                     let (_, c_or_s) = self.parse_char()?;
