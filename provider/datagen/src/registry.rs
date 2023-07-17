@@ -113,17 +113,17 @@ macro_rules! registry {
         }
 
         #[doc(hidden)]
-        pub fn deserialize_and_measure<Measurement>(key: DataKey, buf: DataPayload<BufferMarker>, measure: impl Fn() -> Measurement) -> Result<(Measurement, DataPayload<icu_provider::datagen::ExportMarker>), DataError> {
+        pub fn deserialize_and_measure(key: DataKey, buf: DataPayload<BufferMarker>) -> Result<(DataPayload<icu_provider::datagen::ExportMarker>, (i64, u64)), DataError> {
             if key.path() == icu_provider::hello_world::HelloWorldV1Marker::KEY.path() {
-                let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
-                return Ok((measure(), icu_provider::dynutil::UpcastDataPayload::upcast(deserialized)));
+                let (deserialized, (heap_diff, heap_max)): (Result<DataPayload<icu_provider::hello_world::HelloWorldV1Marker>, _>, _) = heap_measurements::measure(|| buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1));
+                return Ok((icu_provider::dynutil::UpcastDataPayload::upcast(deserialized?), (heap_diff, heap_max)));
             }
             $(
                 $(
                     #[cfg($feature)]
                     if key == <$marker>::KEY {
-                        let deserialized: DataPayload<$marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
-                        return Ok((measure(), icu_provider::dynutil::UpcastDataPayload::upcast(deserialized)));
+                        let (deserialized, (heap_diff, heap_max)): (Result<DataPayload<$marker>, _>, _) = heap_measurements::measure(|| buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1));
+                        return Ok((icu_provider::dynutil::UpcastDataPayload::upcast(deserialized?), (heap_diff, heap_max)));
                     }
                 )+
             )+
@@ -403,6 +403,66 @@ registry!(
     #[cfg(any(all(), feature = "icu_timezone"))]
     icu_timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
 );
+
+pub use heap_measurements::MeasuringAllocator;
+
+// Inspired by the assert_no_alloc crate
+mod heap_measurements {
+    use std::alloc::{GlobalAlloc, Layout, System};
+    use std::cell::Cell;
+
+    thread_local! {
+        static ACTIVE: Cell<bool> = Cell::new(false);
+        static HEAP_SIZE_CHANGE: Cell<i64> = Cell::new(0);
+        static MAX_HEAP_SIZE: Cell<u64> = Cell::new(0);
+    }
+
+    pub fn measure<T, F: FnOnce() -> T>(func: F) -> (T, (i64, u64)) {
+        // RAII guard for managing the alloc zone.
+        struct Guard;
+        impl Guard {
+            fn new() -> Self {
+                ACTIVE.with(|c| c.set(true));
+                HEAP_SIZE_CHANGE.with(|c| c.set(0));
+                MAX_HEAP_SIZE.with(|c| c.set(0));
+                Self
+            }
+
+            fn count(self) -> (i64, u64) {
+                ACTIVE.with(|c| c.set(false));
+                (HEAP_SIZE_CHANGE.with(|c| c.get()), MAX_HEAP_SIZE.with(|c| c.get()))
+            }
+        }
+        impl Drop for Guard {
+            fn drop(&mut self) {
+                ACTIVE.with(|c| c.set(false));
+            }
+        }
+        let guard = Guard::new();
+        (func(), guard.count())
+    }
+
+    #[doc(hidden)]
+    #[derive(Debug)]
+    pub struct MeasuringAllocator;
+
+    unsafe impl GlobalAlloc for MeasuringAllocator {
+        unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+            if ACTIVE.with(|f| f.get()) {
+                HEAP_SIZE_CHANGE.with(|c| c.set(c.get() + layout.size() as i64));
+                MAX_HEAP_SIZE.with(|c| c.set(core::cmp::max(c.get() as i64, HEAP_SIZE_CHANGE.with(|c| c.get())) as u64));
+            }
+            System.alloc(layout)
+        }
+
+        unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+            if ACTIVE.with(|f| f.get()) {
+                HEAP_SIZE_CHANGE.with(|c| c.set(c.get() - layout.size() as i64));
+            }
+            System.dealloc(ptr, layout)
+        }
+    }
+}
 
 #[test]
 fn no_key_collisions() {

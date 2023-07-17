@@ -73,7 +73,7 @@ mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
 #[allow(deprecated)] // ugh
-pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
+pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, MeasuringAllocator, key};
 pub use source::SourceData;
 
 #[cfg(feature = "provider_baked")]

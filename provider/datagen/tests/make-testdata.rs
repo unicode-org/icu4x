@@ -13,19 +13,13 @@ use std::io::Write;
 use std::path::Path;
 use std::sync::Mutex;
 
-// Heap measurements don't work in a parallel environment.
-#[cfg(not(feature = "rayon"))]
 #[global_allocator]
-static ALLOC: dhat::Alloc = dhat::Alloc;
+static A: icu_datagen::MeasuringAllocator = icu_datagen::MeasuringAllocator;
 
 include!("data/locales.rs.data");
 
 #[test]
 fn generate_json_and_verify_postcard() {
-    // don't drop to avoid dhat from printing stats at the end
-    #[cfg(not(feature = "rayon"))]
-    core::mem::forget(dhat::Profiler::new_heap());
-
     simple_logger::SimpleLogger::new()
         .env()
         .with_level(log::LevelFilter::Info)
@@ -52,9 +46,7 @@ fn generate_json_and_verify_postcard() {
 
     let postcard_out = Box::new(PostcardTestingExporter {
         size_hash: Default::default(),
-        #[cfg(not(feature = "rayon"))]
         zero_copy_violations: Default::default(),
-        #[cfg(not(feature = "rayon"))]
         zero_copy_net_violations: Default::default(),
         rountrip_errors: Default::default(),
         fingerprints: File::create(data_root.join("postcard/fingerprints.csv")).unwrap(),
@@ -74,13 +66,33 @@ fn generate_json_and_verify_postcard() {
 
 struct PostcardTestingExporter {
     size_hash: Mutex<BTreeMap<(DataKey, String), (usize, u64)>>,
-    #[cfg(not(feature = "rayon"))]
     zero_copy_violations: Mutex<BTreeSet<DataKey>>,
-    #[cfg(not(feature = "rayon"))]
     zero_copy_net_violations: Mutex<BTreeSet<DataKey>>,
     rountrip_errors: Mutex<BTreeSet<(DataKey, String)>>,
     fingerprints: File,
 }
+
+// Types in this list cannot be zero-copy deserialized.
+//
+// Such types contain some data that was allocated during deserializations
+//
+// Every entry in this list is a bug that needs to be addressed before ICU4X 1.0.
+const EXPECTED_NET_VIOLATIONS: &[DataKey] = &[
+    // https://github.com/unicode-org/icu4x/issues/1678
+    icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+];
+
+// Types in this list can be zero-copy deserialized (and do not contain allocated data),
+// however there is some allocation that occurs during deserialization for validation.
+//
+// Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
+// in this list since it does not affect databake.
+const EXPECTED_TOTAL_VIOLATIONS: &[DataKey] = &[
+    // Regex DFAs need to be validated, which involved creating a BTreeMap
+    icu_list::provider::AndListV1Marker::KEY,
+    icu_list::provider::OrListV1Marker::KEY,
+    icu_list::provider::UnitListV1Marker::KEY,
+];
 
 impl DataExporter for PostcardTestingExporter {
     fn put_payload(
@@ -112,17 +124,7 @@ impl DataExporter for PostcardTestingExporter {
 
         let buffer_payload = DataPayload::from_owned_buffer(serialized.into_boxed_slice());
 
-        #[cfg(not(feature = "rayon"))]
-        let heap_before = dhat::HeapStats::get();
-
-        #[cfg(not(feature = "rayon"))]
-        let (heap_after, payload_after) =
-            icu_datagen::deserialize_and_measure(key, buffer_payload, dhat::HeapStats::get)
-                .unwrap();
-
-        #[cfg(feature = "rayon")]
-        let (_, payload_after) =
-            icu_datagen::deserialize_and_measure(key, buffer_payload, || ()).unwrap();
+        let (payload_after, (heap_diff, heap_max)) = icu_datagen::deserialize_and_measure(key, buffer_payload).unwrap();
 
         if payload_before != &payload_after {
             self.rountrip_errors
@@ -131,14 +133,19 @@ impl DataExporter for PostcardTestingExporter {
                 .insert((key, locale.to_string()));
         }
 
-        #[cfg(not(feature = "rayon"))]
-        if heap_after.total_bytes != heap_before.total_bytes {
-            if heap_after.curr_bytes != heap_before.curr_bytes {
+        if heap_max > 0 {
+            if heap_diff != 0 {
+                if !EXPECTED_NET_VIOLATIONS.contains(&key) {
+                    println!("Net violation {key} {locale}");
+                }
                 self.zero_copy_net_violations
                     .lock()
                     .expect("poison")
                     .insert(key);
             } else {
+                if !EXPECTED_TOTAL_VIOLATIONS.contains(&key) {
+                    println!("Violation {key} {locale}");
+                }
                 self.zero_copy_violations
                     .lock()
                     .expect("poison")
@@ -164,31 +171,6 @@ impl DataExporter for PostcardTestingExporter {
             &mut BTreeSet::default()
         );
 
-        // Types in this list cannot be zero-copy deserialized.
-        //
-        // Such types contain some data that was allocated during deserializations
-        //
-        // Every entry in this list is a bug that needs to be addressed before ICU4X 1.0.
-        #[cfg(not(feature = "rayon"))]
-        const EXPECTED_NET_VIOLATIONS: &[DataKey] = &[
-            // https://github.com/unicode-org/icu4x/issues/1678
-            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
-        ];
-
-        // Types in this list can be zero-copy deserialized (and do not contain allocated data),
-        // however there is some allocation that occurs during deserialization for validation.
-        //
-        // Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
-        // in this list since it does not affect databake.
-        #[cfg(not(feature = "rayon"))]
-        const EXPECTED_TOTAL_VIOLATIONS: &[DataKey] = &[
-            // Regex DFAs need to be validated, which involved creating a BTreeMap
-            icu_list::provider::AndListV1Marker::KEY,
-            icu_list::provider::OrListV1Marker::KEY,
-            icu_list::provider::UnitListV1Marker::KEY,
-        ];
-
-        #[cfg(not(feature = "rayon"))]
         let total_violations = self
             .zero_copy_violations
             .get_mut()
@@ -196,7 +178,6 @@ impl DataExporter for PostcardTestingExporter {
             .iter()
             .copied()
             .collect::<Vec<_>>();
-        #[cfg(not(feature = "rayon"))]
         let net_violations = self
             .zero_copy_net_violations
             .get_mut()
@@ -205,7 +186,6 @@ impl DataExporter for PostcardTestingExporter {
             .copied()
             .collect::<Vec<_>>();
 
-        #[cfg(not(feature = "rayon"))]
         assert!(total_violations == EXPECTED_TOTAL_VIOLATIONS && net_violations == EXPECTED_NET_VIOLATIONS,
             "Expected violations list does not match found violations!\n\
             If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
