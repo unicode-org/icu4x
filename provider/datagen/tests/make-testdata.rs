@@ -124,7 +124,8 @@ impl DataExporter for PostcardTestingExporter {
 
         let buffer_payload = DataPayload::from_owned_buffer(serialized.into_boxed_slice());
 
-        let (payload_after, (heap_diff, heap_max)) = icu_datagen::deserialize_and_measure(key, buffer_payload).unwrap();
+        let (payload_after, (heap_diff, heap_max)) =
+            icu_datagen::deserialize_and_measure(key, buffer_payload).unwrap();
 
         if payload_before != &payload_after {
             self.rountrip_errors

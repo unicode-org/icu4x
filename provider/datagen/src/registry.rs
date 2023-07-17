@@ -430,7 +430,10 @@ mod heap_measurements {
 
             fn count(self) -> (i64, u64) {
                 ACTIVE.with(|c| c.set(false));
-                (HEAP_SIZE_CHANGE.with(|c| c.get()), MAX_HEAP_SIZE.with(|c| c.get()))
+                (
+                    HEAP_SIZE_CHANGE.with(|c| c.get()),
+                    MAX_HEAP_SIZE.with(|c| c.get()),
+                )
             }
         }
         impl Drop for Guard {
@@ -450,7 +453,9 @@ mod heap_measurements {
         unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
             if ACTIVE.with(|f| f.get()) {
                 HEAP_SIZE_CHANGE.with(|c| c.set(c.get() + layout.size() as i64));
-                MAX_HEAP_SIZE.with(|c| c.set(core::cmp::max(c.get() as i64, HEAP_SIZE_CHANGE.with(|c| c.get())) as u64));
+                MAX_HEAP_SIZE.with(|c| {
+                    c.set(core::cmp::max(c.get() as i64, HEAP_SIZE_CHANGE.with(|c| c.get())) as u64)
+                });
             }
             System.alloc(layout)
         }
