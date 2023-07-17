@@ -75,6 +75,7 @@ default = [
 ]
 std = [
     "icu_calendar/std",
+    "icu_casemap?/std",
     "icu_collator/std",
     "icu_collections/std",
     "icu_datetime/std",

@@ -45,6 +45,7 @@ icu_casemap_data = { version = "~1.3.0", path = "data", optional = true }
 
 [features]
 default = ["compiled_data"]
+std = ["icu_collections/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 compiled_data = ["dep:icu_casemap_data"]
