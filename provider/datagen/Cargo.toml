@@ -91,6 +91,7 @@ eyre = { version = "0.6", optional = true }
 simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
+crlify = { version = "1.0.1", path = "../../utils/crlify" }
 icu = { path = "../../components/icu" }
 postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
