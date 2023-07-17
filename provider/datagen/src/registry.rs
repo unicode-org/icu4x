@@ -447,6 +447,7 @@ mod heap_measurements {
 
     #[doc(hidden)]
     #[derive(Debug)]
+    #[allow(clippy::exhaustive_structs)]
     pub struct MeasuringAllocator;
 
     unsafe impl GlobalAlloc for MeasuringAllocator {
