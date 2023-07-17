@@ -4,6 +4,20 @@
 
 //! This module contains types and traits for use in the Chinese traditional lunar calendar,
 //! as well as in related and derived calendars such as the Korean and Vietnamese lunar calendars.
+//!
+//! ```rust
+//! use icu::calendar::{chinese::Chinese, Iso, Date};
+//!
+//! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
+//! let chinese_date = Date::new_from_iso(iso_date, Chinese);
+//! // TODO: When Korean and Vietnamese are added, put example code here as well.
+//!
+//! assert_eq!(chinese_date.year().number, 4660);
+//! assert_eq!(chinese_date.year().related_iso, Some(2023));
+//! assert_eq!(chinese_date.year().cyclic, Some(40));
+//! assert_eq!(chinese_date.month().ordinal, 6);
+//! assert_eq!(chinese_date.day_of_month().0, 6);
+//! ```
 
 use crate::{
     astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
@@ -17,18 +31,19 @@ use crate::{
     Calendar, Date,
 };
 
-/// For an example of how to use this trait, see `impl ChineseBased<Chinese>` in [`Chinese`].
+/// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
+/// To do so, calendars should:
 ///
-/// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendars.
-/// To do so, calendars should implement `fn location` by providing a location at which observations of the
-/// new moon are recorded (which may change over time), with the most important part being the time zone
-/// offset (longitude, latitude, and elevation are not relevant for these particular calculations);
-/// define `const EPOCH` as a `RataDie` marking the start date of the era of the Calendar for internal use,
-/// which may not accurately reflect how years or eras are marked traditionally or how they will be seen
-/// by end-users; and implement `fn new_chinese_based_date` by taking a year, month, and day, and
+/// - Implement `fn location` by providing a location at which observations of the moon are recorded, which
+/// may change over time (the zone is important, long, lat, and elevation are not relevant for these calculations)
+/// - Define `const EPOCH` as a `RataDie` marking the start date of the era of the Calendar for internal use,
+/// which may not accurately reflect how years or eras are marked traditionally or seen by end-users
+/// - Implement `fn new_chinese_based_date` by taking a year, month, and day in a Chinese-based calendar and
 /// returning a Date of the relevant Calendar type.
-pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
-    /// Given a fixed date, the location used for observations of the new moon in order to
+///
+/// For an example of how to use this trait, see `impl ChineseBased for Chinese` in [`Chinese`].
+pub(crate) trait ChineseBased: CalendarArithmetic + Sized {
+    /// Given a fixed date, return the location used for observations of the new moon in order to
     /// calculate the beginning of months. For multiple Chinese-based lunar calendars, this has
     /// changed over the years, and can cause differences in calendar date.
     fn location(fixed: RataDie) -> Location;
@@ -41,21 +56,20 @@ pub(crate) trait ChineseBased<C: ChineseBased<C> + CalendarArithmetic> {
     /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
     ///
     /// This function should just call try_new_C_date where C is the name of the calendar.
-    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<C>;
+    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<Self>;
 }
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct ChineseBasedDateInner<C: ChineseBased<C> + CalendarArithmetic>(
-    pub(crate) ArithmeticDate<C>,
-);
+pub(crate) struct ChineseBasedDateInner<C: ChineseBased>(pub(crate) ArithmeticDate<C>);
 
-impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
+impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Get the current major solar term of a fixed date, output as an integer from 1..=12.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
     pub(crate) fn major_solar_term_from_fixed(date: RataDie) -> i32 {
+        // TODO: Make this an unsigned int (the size isn't super important, but could fit in a u8)
         let moment: Moment = date.as_moment();
         let location = C::location(date);
         let universal: Moment = Location::universal_from_standard(moment, location);
@@ -135,9 +149,9 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
         let month_after_twelfth =
             Self::new_moon_on_or_after((month_after_eleventh + 1).as_moment()); // m13
         let next_eleventh_month = Self::new_moon_before((following_solstice + 1).as_moment()); // next-m11
-        let m12_float = month_after_eleventh.as_moment().inner();
-        let next_m11_float = next_eleventh_month.as_moment().inner();
-        let lhs_argument = libm::round((next_m11_float - m12_float) / MEAN_SYNODIC_MONTH) as i64;
+        let lhs_argument =
+            libm::round((next_eleventh_month - month_after_eleventh) as f64 / MEAN_SYNODIC_MONTH)
+                as i64;
         if lhs_argument == 12
             && (Self::no_major_solar_term(month_after_eleventh)
                 || Self::no_major_solar_term(month_after_twelfth))
@@ -194,22 +208,19 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// The calculation for `elapsed_years` in this function is based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
     pub(crate) fn chinese_based_date_from_fixed(date: RataDie) -> Date<C> {
-        let new_year = Self::new_year_on_or_before_fixed_date(date);
-        let elapsed_years =
-            libm::floor(1.5 - 1.0 / 12.0 + ((new_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR)
-                as i64;
-        let year = match i64_to_i32(elapsed_years) {
-            I32Result::BelowMin(_) => {
-                return Self::min_chinese_based_date();
-            }
-            I32Result::AboveMax(_) => {
-                return Self::max_chinese_based_date();
-            }
-            I32Result::WithinRange(y) => y,
-        };
+        let first_day_of_year = Self::new_year_on_or_before_fixed_date(date);
+        let year_float = libm::floor(
+            1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
+        );
+        let year_int = i64_to_i32(year_float as i64);
+        debug_assert!(
+            matches!(year_int, I32Result::WithinRange(_)),
+            "Year should be in range of i32"
+        );
+        let year = year_int.saturate();
         let mut month = 1;
         let max_months = 14;
-        let mut cur_month = new_year;
+        let mut cur_month = first_day_of_year;
         let mut next_month = Self::new_moon_on_or_after((cur_month + 1).as_moment());
         while next_month <= date && month < max_months {
             month += 1;
@@ -220,27 +231,7 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
         let day = (date - cur_month + 1) as u8;
         C::new_chinese_based_date(year, month, day)
     }
-
-    /// The minimum possible ChineseBasedDate given the minimum values of
-    /// year, month, and day fields in ArithmeticDate
-    fn min_chinese_based_date() -> Date<C> {
-        let min_arithmetic: ArithmeticDate<C> = ArithmeticDate::min_date();
-        let year = min_arithmetic.year;
-        let month = min_arithmetic.month;
-        let day = min_arithmetic.day;
-        C::new_chinese_based_date(year, month, day)
-    }
-
-    /// The maximum possible ChineseBasedDate given the maximum values of
-    /// year, month, and day fields in ArithmeticDate
-    fn max_chinese_based_date() -> Date<C> {
-        let max_arithmetic: ArithmeticDate<C> = ArithmeticDate::max_date();
-        let year = max_arithmetic.year;
-        let month = max_arithmetic.month;
-        let day = max_arithmetic.day;
-        C::new_chinese_based_date(year, month, day)
-    }
-
+    
     /// Get a RataDie from a ChineseBasedDateInner
     ///
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
@@ -250,8 +241,8 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
         let month = date.0.month as i64;
         let day = date.0.day as i64;
         let mid_year = Self::fixed_mid_year_from_year(year);
-        let new_year = Self::new_year_on_or_before_fixed_date(mid_year);
-        let month_approx = new_year + (month - 1) * 29;
+        let first_day_of_year = Self::new_year_on_or_before_fixed_date(mid_year);
+        let month_approx = first_day_of_year + (month - 1) * 29;
         let prior_new_moon = Self::new_moon_on_or_after(month_approx.as_moment());
         prior_new_moon + day - 1
     }
@@ -297,7 +288,7 @@ impl<C: ChineseBased<C> + CalendarArithmetic> ChineseBasedDateInner<C> {
     }
 }
 
-impl<C: ChineseBased<C> + Calendar> CalendarArithmetic for C {
+impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
     /// Returns the number of days in the given (year, month). In the Chinese calendar, months start at each
     /// new moon, so this function finds the number of days between the new moon at the beginning of the given
     /// month and the new moon at the beginning of the next month.

@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::astronomy::PI;
-use alloc::vec::Vec;
+use crate::{
+    astronomy::{Location, PI},
+    rata_die::RataDie,
+    types::Moment,
+};
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///
@@ -86,16 +89,19 @@ pub const fn quotient64(n: i64, d: i64) -> i64 {
         a - 1
     }
 }
+
 // cosine of x in radians
 pub fn cos_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
     libm::cos(radians)
 }
+
 // sine of x in radians
 pub fn sin_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
     libm::sin(radians)
 }
+
 // tan of x in radians
 pub fn tan_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
@@ -146,13 +152,15 @@ pub fn arctan_degrees(y: f64, x: f64) -> Result<f64, &'static str> {
         Ok(mod_degrees(if x >= 0.0 { alpha } else { alpha + 180.0 }))
     }
 }
+
 // TODO: convert recursive into iterative
-pub fn poly(x: f64, coeffs: Vec<f64>) -> f64 {
+pub fn poly(x: f64, coeffs: &[f64]) -> f64 {
     match coeffs.split_first() {
-        Some((first, rest)) => first + x * poly(x, rest.to_vec()),
+        Some((first, rest)) => first + x * poly(x, rest),
         None => 0.0,
     }
 }
+
 // A generic function that finds a value within an interval
 // where a certain condition is satisfied.
 pub fn binary_search<F, G>(mut l: f64, mut h: f64, test: F, end: G) -> f64
@@ -177,6 +185,7 @@ where
         }
     }
 }
+
 // Returns a number that represents the sign of `self`.
 // - `1.0` if the number is positive, `+0.0` or `INFINITY`
 // - `-1.0` if the number is negative, `-0.0` or `NEG_INFINITY`
@@ -202,6 +211,32 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
         |u, l| (u - l) < varepsilon,
     )
 }
+
+// Used for Umm-Al-Qura calculations
+pub(crate) fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
+where
+    F: Fn(Moment, Location) -> bool,
+{
+    loop {
+        if condition(index, location) {
+            return index.as_rata_die();
+        }
+        index += 1.0;
+    }
+}
+#[allow(dead_code)]
+pub(crate) fn next<F>(mut index: RataDie, condition: F) -> RataDie
+where
+    F: Fn(RataDie) -> bool,
+{
+    loop {
+        if condition(index) {
+            return index;
+        }
+        index += 1;
+    }
+}
+
 #[test]
 fn test_binary_search() {
     struct TestCase {
