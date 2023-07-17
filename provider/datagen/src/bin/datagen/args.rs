@@ -334,6 +334,9 @@ impl Cli {
         {
             config::LocaleInclude::CldrSet(locale_subsets.into_iter().collect())
         } else {
+            if self.locales.as_slice() == ["all"] {
+                log::warn!("`--locales all` selects the Allar language. Use `--locales full` for all locales");
+            }
             config::LocaleInclude::Explicit(
                 self.locales
                     .iter()
