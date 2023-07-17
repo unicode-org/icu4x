@@ -231,7 +231,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let day = (date - cur_month + 1) as u8;
         C::new_chinese_based_date(year, month, day)
     }
-    
+
     /// Get a RataDie from a ChineseBasedDateInner
     ///
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
