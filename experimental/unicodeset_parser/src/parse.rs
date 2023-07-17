@@ -12,7 +12,10 @@ use icu_collections::{
 };
 use icu_properties::maps::load_script;
 use icu_properties::script::load_script_with_extensions_unstable;
-use icu_properties::sets::{load_for_ecma262_unstable, load_for_general_category_group, load_pattern_white_space, load_xid_continue, load_xid_start};
+use icu_properties::sets::{
+    load_for_ecma262_unstable, load_for_general_category_group, load_pattern_white_space,
+    load_xid_continue, load_xid_start,
+};
 use icu_properties::Script;
 use icu_properties::{provider::*, GeneralCategoryGroup};
 use icu_provider::prelude::*;
@@ -237,13 +240,7 @@ impl<'a> VariableMap<'a> {
 // returns whether the provided char signifies the start of a literal char (raw or escaped - so \ is a legal char start)
 // important: assumes c is not pattern_white_space
 fn legal_char_start(c: char) -> bool {
-    !(c == '&'
-        || c == '-'
-        || c == '$'
-        || c == '^'
-        || c == '['
-        || c == ']'
-        || c == '{')
+    !(c == '&' || c == '-' || c == '$' || c == '^' || c == '[' || c == ']' || c == '{')
 }
 
 // same as `legal_char_start` but adapted to the charInString nonterminal. \ is allowed due to escapes.
