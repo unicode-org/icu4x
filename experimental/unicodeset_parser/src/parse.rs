@@ -233,21 +233,6 @@ impl<'a> VariableMap<'a> {
     }
 }
 
-// necessary helper because char::is_whitespace is not equivalent to [:Pattern_White_Space:]
-#[inline]
-fn is_char_pattern_white_space(c: char) -> bool {
-    matches!(
-        c,
-        ('\u{0009}'..='\u{000D}')
-            | '\u{0020}'
-            | '\u{0085}'
-            | '\u{200E}'
-            | '\u{200F}'
-            | '\u{2028}'
-            | '\u{2029}'
-    )
-}
-
 // this ignores the ambiguity between \-escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
 // returns whether the provided char signifies the start of a literal char (raw or escaped - so \ is a legal char start)
 // important: assumes c is not pattern_white_space
@@ -258,16 +243,13 @@ fn legal_char_start(c: char) -> bool {
         || c == '^'
         || c == '['
         || c == ']'
-        || c == '{'
-        // TODO: This is most likely unnecessary, because skip_whitespace will have consumed any that existed
-        || is_char_pattern_white_space(c))
+        || c == '{')
 }
 
 // same as `legal_char_start` but adapted to the charInString nonterminal. \ is allowed due to escapes.
 // important: assumes c is not pattern_white_space
 fn legal_char_in_string_start(c: char) -> bool {
-    // TODO: is_char_pattern_white_space is most likely unnecessary, because skip_whitespace will have consumed any that existed
-    !(c == '}' || is_char_pattern_white_space(c))
+    c != '}'
 }
 
 // A char or a string. The Vec<char> represents multi-escapes in the 2+ case.
@@ -675,10 +657,9 @@ where
                 let mut inner_builder = UnicodeSetBuilder::new_internal(
                     self.iter,
                     self.variable_map,
-                    // zero-copy clone
                     self.xid_start,
-                    // zero-copy clone
                     self.xid_continue,
+                    self.pat_ws,
                     self.property_provider,
                 );
                 inner_builder.parse_unicode_set()?;
@@ -1116,7 +1097,7 @@ where
     fn skip_whitespace(&mut self) -> usize {
         let mut num = 0;
         while let Some(c) = self.peek_char() {
-            if !is_char_pattern_white_space(c) {
+            if !self.pat_ws.contains(c) {
                 break;
             }
             self.iter.next();
