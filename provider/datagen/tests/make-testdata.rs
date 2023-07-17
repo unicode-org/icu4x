@@ -52,7 +52,9 @@ fn generate_json_and_verify_postcard() {
 
     let postcard_out = Box::new(PostcardTestingExporter {
         size_hash: Default::default(),
+        #[cfg(not(feature = "rayon"))]
         zero_copy_violations: Default::default(),
+        #[cfg(not(feature = "rayon"))]
         zero_copy_net_violations: Default::default(),
         rountrip_errors: Default::default(),
         fingerprints: File::create(data_root.join("postcard/fingerprints.csv")).unwrap(),
@@ -72,7 +74,9 @@ fn generate_json_and_verify_postcard() {
 
 struct PostcardTestingExporter {
     size_hash: Mutex<BTreeMap<(DataKey, String), (usize, u64)>>,
+    #[cfg(not(feature = "rayon"))]
     zero_copy_violations: Mutex<BTreeSet<DataKey>>,
+    #[cfg(not(feature = "rayon"))]
     zero_copy_net_violations: Mutex<BTreeSet<DataKey>>,
     rountrip_errors: Mutex<BTreeSet<(DataKey, String)>>,
     fingerprints: File,
@@ -118,7 +122,7 @@ impl DataExporter for PostcardTestingExporter {
 
         #[cfg(feature = "rayon")]
         let (_, payload_after) =
-            icu_datagen::deserialize_and_measure(key, buffer_payload, |()| ()).unwrap();
+            icu_datagen::deserialize_and_measure(key, buffer_payload, || ()).unwrap();
 
         if payload_before != &payload_after {
             self.rountrip_errors
@@ -165,6 +169,7 @@ impl DataExporter for PostcardTestingExporter {
         // Such types contain some data that was allocated during deserializations
         //
         // Every entry in this list is a bug that needs to be addressed before ICU4X 1.0.
+        #[cfg(not(feature = "rayon"))]
         const EXPECTED_NET_VIOLATIONS: &[DataKey] = &[
             // https://github.com/unicode-org/icu4x/issues/1678
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
@@ -175,6 +180,7 @@ impl DataExporter for PostcardTestingExporter {
         //
         // Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
         // in this list since it does not affect databake.
+        #[cfg(not(feature = "rayon"))]
         const EXPECTED_TOTAL_VIOLATIONS: &[DataKey] = &[
             // Regex DFAs need to be validated, which involved creating a BTreeMap
             icu_list::provider::AndListV1Marker::KEY,
@@ -182,6 +188,7 @@ impl DataExporter for PostcardTestingExporter {
             icu_list::provider::UnitListV1Marker::KEY,
         ];
 
+        #[cfg(not(feature = "rayon"))]
         let total_violations = self
             .zero_copy_violations
             .get_mut()
@@ -189,6 +196,7 @@ impl DataExporter for PostcardTestingExporter {
             .iter()
             .copied()
             .collect::<Vec<_>>();
+        #[cfg(not(feature = "rayon"))]
         let net_violations = self
             .zero_copy_net_violations
             .get_mut()
