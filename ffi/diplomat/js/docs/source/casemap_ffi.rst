@@ -50,7 +50,7 @@
 
     .. js:method:: add_case_closure(c, builder)
 
-        Adds all simple case mappings and the full case folding for ``c`` to ``set``. Also adds special case closure mappings.
+        Adds all simple case mappings and the full case folding for ``c`` to ``builder``. Also adds special case closure mappings.
 
         In other words, this adds all characters that this casemaps to, as well as all characters that may casemap to this one.
 

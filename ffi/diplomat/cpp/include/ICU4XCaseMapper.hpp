@@ -114,7 +114,7 @@ class ICU4XCaseMapper {
   diplomat::result<std::string, ICU4XError> fold_turkic(const std::string_view s) const;
 
   /**
-   * Adds all simple case mappings and the full case folding for `c` to `set`.
+   * Adds all simple case mappings and the full case folding for `c` to `builder`.
    * Also adds special case closure mappings.
    * 
    * In other words, this adds all characters that this casemaps to, as
