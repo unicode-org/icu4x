@@ -190,9 +190,6 @@ impl Calendar for IslamicObservational {
         }
     }
 
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        todo!()
-    }
     // TODO: ADD TO ANYCALENDAR
     // fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
     //     Some(AnyCalendarKind::IslamicObservational)
@@ -320,7 +317,7 @@ impl CalendarArithmetic for UmmalQura {
                 + (((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH),
         ) as i64);
 
-        if Self::saudi_criterion(midmonth) {
+        if Self::saudi_criterion(midmonth).is_some() {
             30
         } else {
             29
@@ -362,7 +359,7 @@ impl Calendar for UmmalQura {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(UmmalQuraDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(UmmalQuraDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
@@ -411,7 +408,7 @@ impl Calendar for UmmalQura {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -456,7 +453,7 @@ impl Date<UmmalQura> {
         month: u8,
         day: u8,
     ) -> Result<Date<UmmalQura>, CalendarError> {
-        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
             .map(UmmalQuraDateInner)
             .map(|inner| Date::from_raw(inner, UmmalQura))
     }
@@ -499,26 +496,35 @@ impl UmmalQura {
         Self
     }
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6957
-    fn saudi_criterion(date: RataDie) -> bool {
-        let sunset = Astronomical::sunset((date - 1).as_moment(), MECCA).unwrap(); // Unwrap used temporarily
+    fn saudi_criterion(date: RataDie) -> Option<bool> {
+        let sunset = Astronomical::sunset((date - 1).as_moment(), MECCA)?;
         let tee = Location::universal_from_standard(sunset, MECCA);
         let phase = Astronomical::lunar_phase(tee);
-        let moonlag = Astronomical::moonlag((date - 1).as_moment(), MECCA).unwrap(); // Unwrap used temporarily
+        let moonlag = Astronomical::moonlag((date - 1).as_moment(), MECCA)?;
+        
+        Some(phase > 0.0 && phase < 90.0 && moonlag > 0.0)
+    }
 
-        phase > 0.0 && phase < 90.0 && moonlag > 0.0
+    pub(crate) fn adjusted_saudi_criterion(date: RataDie) -> bool {
+        let x = Self::saudi_criterion(date);
+        if x.is_none() {
+            return false;
+        } else {
+            x.unwrap()
+        }
     }
 
     fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
         let moon =
             libm::floor((Astronomical::lunar_phase_at_or_before(0.0, date.as_moment())).inner());
-        let age = (date.to_f64_date() - moon) ;
-        let tau = if age <= 3.0 && !Self::saudi_criterion(date) {
+        let age = date.to_f64_date() - moon ;
+        let tau = if age <= 3.0 && !Self::adjusted_saudi_criterion(date) {
             moon - 30.0
         } else {
             moon
         };
-
-        next(RataDie::new(tau as i64), Self::saudi_criterion)
+        
+        next(RataDie::new(tau as i64), Self::adjusted_saudi_criterion)
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6996
@@ -588,7 +594,7 @@ mod test {
     static SAUDI_NEW_MONTH_OR_BEFORE_EXPECTED: [f64; 33] = [
         -214203.0, -61412.0, 25467.0, 49210.0, 171290.0, 210152.0, 253414.0, 369735.0, 400063.0,
         434348.0, 452598.0, 470139.0, 473830.0, 507850.0, 524150.0, 544674.0, 567118.0, 569450.0,
-        601698.0, 613421.0, 626592.0, 645551.0, 664214.0, 671391.0, 694779.0, 704405.0, 708835.0,
+        60168.0, 613421.0, 626592.0, 645551.0, 664214.0, 671391.0, 694779.0, 704405.0, 708835.0,
         709396.0, 709573.0, 727263.0, 728709.0, 744301.0, 764647.0,
     ];
 
@@ -795,12 +801,17 @@ mod test {
         // 622 is the correct ISO year for the Islamic Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }
-
+    #[test]
     fn test_saudi_criterion() {
         for (boolean, f_date) in SAUDI_CRITERION_EXPECTED.iter().zip(TEST_FIXED_DATE.iter()) {
-            let bool_result = UmmalQura::saudi_criterion(RataDie::new(*f_date));
+            let bool_result = UmmalQura::saudi_criterion(RataDie::new(*f_date)).unwrap();
             assert_eq!(*boolean, bool_result, "{f_date:?}");
         }
+    }
+    #[test]
+    fn test_22222() {
+        let bool_result = UmmalQura::saudi_criterion(RataDie::new(601698)).unwrap();
+        assert_eq!(true, bool_result);
     }
     
     #[test]

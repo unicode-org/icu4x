@@ -36,13 +36,6 @@ pub(crate) const MECCA: Location = Location {
 #[allow(clippy::excessive_precision)]
 pub(crate) const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
-pub(crate) const MECCA: Location = Location {
-    latitude: 6427.0 / 300.0,
-    longitude: 11947.0 / 300.0,
-    elevation: 298.0,
-    zone: (1_f64 / 8_f64),
-};
-
 /// The mean synodic month in days of 86400 atomic seconds
 /// (86400 seconds = 24 hours * 60 minutes/hour * 60 seconds/minute)
 pub(crate) const MEAN_SYNODIC_MONTH: f64 = 29.530588861;
@@ -973,9 +966,11 @@ impl Astronomical {
     #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
         let sun = Self::sunset(date, location)?;
-        let moon = Self::moonset(date, location)?;
-
-        Some(moon - sun)
+        let moon = Self::moonset(date, location);
+        if moon.is_none() { return Some(1.0); }
+        else {
+            Some(moon.unwrap() - sun) // Safe unwrap()
+        }
     }
 
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment

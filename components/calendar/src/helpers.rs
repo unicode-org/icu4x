@@ -224,7 +224,6 @@ where
     }
 }
 
-#[allow(dead_code)]
 pub(crate) fn next<F>(mut index: RataDie, condition: F) -> RataDie
 where
     F: Fn(RataDie) -> bool,
