@@ -71,6 +71,8 @@ pub mod calendar;
 pub mod casemap;
 #[cfg(feature = "icu_collator")]
 pub mod collator;
+#[cfg(feature = "icu_properties")]
+pub mod collections_sets;
 #[cfg(any(
     feature = "icu_datetime",
     feature = "icu_timezone",
