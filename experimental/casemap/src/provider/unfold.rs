@@ -7,6 +7,7 @@
 #[cfg(feature = "datagen")]
 use alloc::string::String;
 use icu_provider::prelude::*;
+use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 
 /// Reverse case folding data. Maps from multi-character strings back
@@ -28,7 +29,7 @@ use zerovec::ZeroMap;
 pub struct CaseMapUnfoldData<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The actual map. Maps from strings to a list of codepoints, stored as a contiguous UTF-8 string
-    pub map: ZeroMap<'data, str, str>,
+    pub map: ZeroMap<'data, UnvalidatedStr, str>,
 }
 
 impl<'data> CaseMapUnfoldData<'data> {
@@ -75,7 +76,10 @@ impl<'data> CaseMapUnfoldData<'data> {
                 .ok_or(DataError::custom("Unfold: unpaired surrogate in key"))?;
             let val = Self::decode_string(&row[string_width..])
                 .ok_or(DataError::custom("Unfold: unpaired surrogate in value"))?;
-            if map.try_append(key.as_ref(), val.as_ref()).is_some() {
+            if map
+                .try_append(UnvalidatedStr::from_str(&key), val.as_ref())
+                .is_some()
+            {
                 return Err(DataError::custom("Unfold: keys not sorted/unique"));
             }
         }
@@ -92,6 +96,6 @@ impl<'data> CaseMapUnfoldData<'data> {
     // Given a string, returns another string representing the set of characters
     // that case fold to that string.
     pub(crate) fn get(&self, key: &str) -> Option<&str> {
-        self.map.get(key)
+        self.map.get(UnvalidatedStr::from_str(key))
     }
 }

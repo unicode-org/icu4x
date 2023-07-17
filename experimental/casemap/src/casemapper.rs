@@ -14,6 +14,18 @@ use writeable::Writeable;
 /// A struct with the ability to convert characters and strings to uppercase or lowercase,
 /// or fold them to a normalized form for case-insensitive comparison.
 ///
+/// # Example
+///
+/// ```rust
+/// use icu_casemap::CaseMapper;
+/// use icu_locid::langid;
+///
+/// let cm = CaseMapper::new();
+///
+/// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
+/// assert_eq!(cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und")), "γειά σου κόσμε");
+/// ```
+///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature

@@ -82,7 +82,7 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("43.0.0", icu_testdata::versions::cldr_tag());
+    /// assert_eq!("43.1.0", icu_testdata::versions::cldr_tag());
     /// ```
     #[deprecated(since = "1.3.0", note = "use `compiled_data`")]
     pub fn cldr_tag() -> alloc::string::String {
