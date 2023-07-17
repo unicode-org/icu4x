@@ -203,15 +203,15 @@ impl DataError {
 
     /// Logs the data error with the given request, returning an error containing the resource key.
     ///
-    /// If the "log_error_context" Cargo feature is enabled, this logs the whole request. Either way,
+    /// If the "logging" Cargo feature is enabled, this logs the whole request. Either way,
     /// it returns an error with the resource key portion of the request as context.
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    #[cfg_attr(not(feature = "logging"), allow(unused_variables))]
     pub fn with_req(mut self, key: DataKey, req: DataRequest) -> Self {
         if req.metadata.silent {
             self.silent = true;
         }
         // Don't write out a log for MissingDataKey since there is no context to add
-        #[cfg(feature = "log_error_context")]
+        #[cfg(feature = "logging")]
         if !self.silent && self.kind != DataErrorKind::MissingDataKey {
             log::warn!("{} (key: {}, request: {})", self, key, req);
         }
@@ -220,12 +220,12 @@ impl DataError {
 
     /// Logs the data error with the given context, then return self.
     ///
-    /// This does not modify the error, but if the "log_error_context" Cargo feature is enabled,
+    /// This does not modify the error, but if the "logging" Cargo feature is enabled,
     /// it will print out the context.
     #[cfg(feature = "std")]
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    #[cfg_attr(not(feature = "logging"), allow(unused_variables))]
     pub fn with_path_context<P: AsRef<std::path::Path> + ?Sized>(self, path: &P) -> Self {
-        #[cfg(feature = "log_error_context")]
+        #[cfg(feature = "logging")]
         if !self.silent {
             log::warn!("{} (path: {:?})", self, path.as_ref());
         }
@@ -234,12 +234,12 @@ impl DataError {
 
     /// Logs the data error with the given context, then return self.
     ///
-    /// This does not modify the error, but if the "log_error_context" Cargo feature is enabled,
+    /// This does not modify the error, but if the "logging" Cargo feature is enabled,
     /// it will print out the context.
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    #[cfg_attr(not(feature = "logging"), allow(unused_variables))]
     #[inline]
     pub fn with_display_context<D: fmt::Display + ?Sized>(self, context: &D) -> Self {
-        #[cfg(feature = "log_error_context")]
+        #[cfg(feature = "logging")]
         if !self.silent {
             log::warn!("{}: {}", self, context);
         }
@@ -248,12 +248,12 @@ impl DataError {
 
     /// Logs the data error with the given context, then return self.
     ///
-    /// This does not modify the error, but if the "log_error_context" Cargo feature is enabled,
+    /// This does not modify the error, but if the "logging" Cargo feature is enabled,
     /// it will print out the context.
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    #[cfg_attr(not(feature = "logging"), allow(unused_variables))]
     #[inline]
     pub fn with_debug_context<D: fmt::Debug + ?Sized>(self, context: &D) -> Self {
-        #[cfg(feature = "log_error_context")]
+        #[cfg(feature = "logging")]
         if !self.silent {
             log::warn!("{}: {:?}", self, context);
         }
@@ -277,7 +277,7 @@ impl std::error::Error for DataError {}
 #[cfg(feature = "std")]
 impl From<std::io::Error> for DataError {
     fn from(e: std::io::Error) -> Self {
-        #[cfg(feature = "log_error_context")]
+        #[cfg(feature = "logging")]
         log::warn!("I/O error: {}", e);
         DataErrorKind::Io(e.kind()).into_error()
     }
