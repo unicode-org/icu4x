@@ -119,7 +119,8 @@ pub mod ffi {
             self.0.has_script(code_point, Script(script))
         }
 
-        /// Check if the Script_Extensions property of the given code point covers the given script
+        /// Build the CodePointSetData corresponding to a codepoints matching a particular script
+        /// in their Script_Extensions
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_set,
             FnInStruct

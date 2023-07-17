@@ -89,7 +89,7 @@
 
         In other words, this adds all characters that this casemaps to, as well as all characters that may casemap to this one.
 
-        Note that since ICU4XCodePointSetBuilder does not handle string mappings
+        Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings
 
         See the `Rust documentation for add_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure>`__ for more information.
 
