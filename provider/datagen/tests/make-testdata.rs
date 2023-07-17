@@ -7,14 +7,13 @@ use icu_datagen::fs_exporter::*;
 use icu_datagen::prelude::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+use std::alloc::{GlobalAlloc, Layout, System};
+use std::cell::Cell;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::sync::Mutex;
-
-#[global_allocator]
-static A: icu_datagen::MeasuringAllocator = icu_datagen::MeasuringAllocator;
 
 include!("data/locales.rs.data");
 
@@ -124,8 +123,14 @@ impl DataExporter for PostcardTestingExporter {
 
         let buffer_payload = DataPayload::from_owned_buffer(serialized.into_boxed_slice());
 
-        let (payload_after, (heap_diff, heap_max)) =
-            icu_datagen::deserialize_and_measure(key, buffer_payload).unwrap();
+        MeasuringAllocator::start_measure();
+
+        let ((allocated, deallocated), payload_after) = icu_datagen::deserialize_and_measure(
+            key,
+            buffer_payload,
+            MeasuringAllocator::end_measure,
+        )
+        .unwrap();
 
         if payload_before != &payload_after {
             self.rountrip_errors
@@ -134,24 +139,22 @@ impl DataExporter for PostcardTestingExporter {
                 .insert((key, locale.to_string()));
         }
 
-        if heap_max > 0 {
-            if heap_diff != 0 {
-                if !EXPECTED_NET_VIOLATIONS.contains(&key) {
-                    println!("Net violation {key} {locale}");
-                }
-                self.zero_copy_net_violations
-                    .lock()
-                    .expect("poison")
-                    .insert(key);
-            } else {
-                if !EXPECTED_TOTAL_VIOLATIONS.contains(&key) {
-                    println!("Violation {key} {locale}");
-                }
-                self.zero_copy_violations
-                    .lock()
-                    .expect("poison")
-                    .insert(key);
+        if deallocated != allocated {
+            if !EXPECTED_NET_VIOLATIONS.contains(&key) {
+                println!("Net violation {key} {locale}");
             }
+            self.zero_copy_net_violations
+                .lock()
+                .expect("poison")
+                .insert(key);
+        } else if allocated > 0 {
+            if !EXPECTED_TOTAL_VIOLATIONS.contains(&key) {
+                println!("Violation {key} {locale}");
+            }
+            self.zero_copy_violations
+                .lock()
+                .expect("poison")
+                .insert(key);
         }
 
         self.size_hash
@@ -196,5 +199,48 @@ impl DataExporter for PostcardTestingExporter {
         );
 
         Ok(())
+    }
+}
+
+#[global_allocator]
+static ALLOCATOR: MeasuringAllocator = MeasuringAllocator;
+
+// Inspired by the assert_no_alloc crate
+struct MeasuringAllocator;
+
+impl MeasuringAllocator {
+    // We need to track allocations on each thread independently
+    thread_local! {
+        static ACTIVE: Cell<bool> = Cell::new(false);
+        static TOTAL_ALLOCATED: Cell<u64> = Cell::new(0);
+        static TOTAL_DEALLOCATED: Cell<u64> = Cell::new(0);
+    }
+
+    pub fn start_measure() {
+        Self::ACTIVE.with(|c| c.set(true));
+    }
+
+    pub fn end_measure() -> (u64, u64) {
+        Self::ACTIVE.with(|c| c.set(false));
+        (
+            Self::TOTAL_ALLOCATED.with(|c| c.take()),
+            Self::TOTAL_DEALLOCATED.with(|c| c.take()),
+        )
+    }
+}
+
+unsafe impl GlobalAlloc for MeasuringAllocator {
+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        if Self::ACTIVE.with(|f| f.get()) {
+            Self::TOTAL_ALLOCATED.with(|c| c.set(c.get() + layout.size() as u64));
+        }
+        System.alloc(layout)
+    }
+
+    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+        if Self::ACTIVE.with(|f| f.get()) {
+            Self::TOTAL_DEALLOCATED.with(|c| c.set(c.get() + layout.size() as u64));
+        }
+        System.dealloc(ptr, layout)
     }
 }
