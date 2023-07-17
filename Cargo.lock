@@ -1346,6 +1346,7 @@ dependencies = [
 name = "icu_casemap"
 version = "0.7.2"
 dependencies = [
+ "criterion",
  "databake",
  "displaydoc",
  "icu_casemap_data",
