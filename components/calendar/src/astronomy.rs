@@ -967,8 +967,9 @@ impl Astronomical {
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
         let sun = Self::sunset(date, location)?;
         let moon = Self::moonset(date, location);
-        if moon.is_none() { return Some(1.0); }
-        else {
+        if moon.is_none() {
+            return Some(1.0);
+        } else {
             Some(moon.unwrap() - sun) // Safe unwrap()
         }
     }
@@ -1110,7 +1111,7 @@ impl Astronomical {
 
         Location::universal_from_standard(best, location)
     }
-    
+
     // Angular separation of sun and moon at a specific moment
     fn arc_of_light(moment: Moment) -> f64 {
         arccos_degrees(
