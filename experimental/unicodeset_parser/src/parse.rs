@@ -218,7 +218,6 @@ impl<'a> VariableMap<'a> {
     /// Insert a `char` into the `VariableMap`.    
     /// 
     /// Returns `Err` with the old value, if it exists.
-    #[must_use]
     pub fn insert_char(&mut self, key: String, c: char) -> Result<(), VariableValue> {
         let existing = self.0.insert(key, VariableValue::Char(c));
         if let Some(existing) = existing {
@@ -230,7 +229,6 @@ impl<'a> VariableMap<'a> {
     /// Insert a `String` of any length into the `VariableMap`. 
     /// 
     /// Returns `Err` with the old value, if it exists.
-    #[must_use]
     pub fn insert_string(&mut self, key: String, s: String) -> Result<(), VariableValue> {
         let mut chars = s.chars();
         let val = match (chars.next(), chars.next()) {
@@ -249,7 +247,6 @@ impl<'a> VariableMap<'a> {
     /// it consists of exactly one code point.
     /// 
     /// Returns `Err` with the old value, if it exists.
-    #[must_use]
     pub fn insert_str(&mut self, key: String, s: &str) -> Result<(), VariableValue> {
         let mut chars = s.chars();
         let val = match (chars.next(), chars.next()) {
@@ -267,7 +264,6 @@ impl<'a> VariableMap<'a> {
     /// Insert a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList) into the `VariableMap`.
     /// 
     /// Returns `Err` with the old value, if it exists.
-    #[must_use]
     pub fn insert_set(&mut self, key: String, value: CodePointInversionListAndStringList<'a>) -> Result<(), VariableValue> {
         let existing = self.0.insert(key, VariableValue::UnicodeSet(value));
         if let Some(existing) = existing {
