@@ -727,8 +727,7 @@ where
     }
 
     // parses a variable or an anchor. expects '$' as next token.
-    // is 'context-sensitive' to avoid duplicate work
-    // if this is a trailing $ (eg [.... $ ]), then this function returns Ok(None),
+    // if this is a single $ (eg `[... $ ]` or the invalid `$ a`), then this function returns Ok(None),
     // otherwise Ok(Some(variable_value)).
     fn parse_variable(&mut self) -> Result<(usize, Option<&'a VariableValue<'a>>)> {
         self.consume('$')?;
