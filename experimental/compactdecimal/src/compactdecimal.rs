@@ -282,14 +282,15 @@ impl CompactDecimalFormatter {
     /// # Examples
     ///
     /// ```
-    /// # use icu_compactdecimal::CompactDecimalFormatter;
-    /// # use icu_locid::locale;
-    /// # use writeable::assert_writeable_eq;
-    /// #
-    /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en").into(),
-    /// #    Default::default(),
-    /// # ).unwrap();
+    /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let short_english = CompactDecimalFormatter::try_new_short(
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    /// ).unwrap();
+    ///
     /// assert_writeable_eq!(short_english.format_i64(0), "0");
     /// assert_writeable_eq!(short_english.format_i64(2), "2");
     /// assert_writeable_eq!(short_english.format_i64(843), "843");
@@ -321,6 +322,65 @@ impl CompactDecimalFormatter {
     pub fn format_i64(&self, value: i64) -> FormattedCompactDecimal<'_> {
         let unrounded = FixedDecimal::from(value);
         self.format_fixed_decimal(unrounded)
+    }
+
+    /// Formats an integer in compact decimal notation using the default
+    /// precision settings.
+    ///
+    /// The result may have a fractional digit only if it is compact and its
+    /// significand is less than 10. Trailing fractional 0s are omitted, and
+    /// a sign is shown only for negative values.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let short_english = CompactDecimalFormatter::try_new_short(
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    /// ).unwrap();
+    ///
+    /// assert_writeable_eq!(short_english.format_f64(0.0).unwrap(), "0");
+    /// assert_writeable_eq!(short_english.format_f64(2.0).unwrap(), "2");
+    /// assert_writeable_eq!(short_english.format_f64(843.0).unwrap(), "843");
+    /// assert_writeable_eq!(short_english.format_f64(2207.0).unwrap(), "2.2K");
+    /// assert_writeable_eq!(short_english.format_f64(15_127.0).unwrap(), "15K");
+    /// assert_writeable_eq!(short_english.format_f64(3_010_349.0).unwrap(), "3M");
+    /// assert_writeable_eq!(short_english.format_f64(-13_132.0).unwrap(), "-13K");
+    /// ```
+    ///
+    /// The result is the nearest such compact number, with halfway cases-
+    /// rounded towards the number with an even least significant digit.
+    ///
+    /// ```
+    /// # use icu_compactdecimal::CompactDecimalFormatter;
+    /// # use icu_locid::locale;
+    /// # use writeable::assert_writeable_eq;
+    /// #
+    /// # let short_english = CompactDecimalFormatter::try_new_short(
+    /// #    &locale!("en").into(),
+    /// #    Default::default(),
+    /// # ).unwrap();
+    /// assert_writeable_eq!(short_english.format_f64(999_499.99).unwrap(), "999K");
+    /// assert_writeable_eq!(short_english.format_f64(999_500.00).unwrap(), "1M");
+    /// assert_writeable_eq!(short_english.format_f64(1650.0).unwrap(), "1.6K");
+    /// assert_writeable_eq!(short_english.format_f64(1750.0).unwrap(), "1.8K");
+    /// assert_writeable_eq!(short_english.format_f64(1950.0).unwrap(), "2K");
+    /// assert_writeable_eq!(short_english.format_f64(-1_172_700.0).unwrap(), "-1.2M");
+    /// ```
+    #[cfg(feature = "ryu")]
+    pub fn format_f64(
+        &self,
+        value: f64,
+    ) -> Result<FormattedCompactDecimal<'_>, CompactDecimalError> {
+        use fixed_decimal::FloatPrecision::Floating;
+        // NOTE: This first gets the shortest representation of the f64, which
+        // manifests as double rounding.
+        let partly_rounded = FixedDecimal::try_from_f64(value, Floating)?;
+        Ok(self.format_fixed_decimal(partly_rounded))
     }
 
     /// Formats a [`FixedDecimal`] by automatically scaling and rounding it.
