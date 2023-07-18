@@ -195,7 +195,7 @@ pub enum VariableValue<'a> {
     // this variant for efficiency?
     /// A single code point.
     Char(char),
-    /// A string. It is guaranteed that when returned from a VariableMap, this variant contains never exactly one code point. 
+    /// A string. It is guaranteed that when returned from a VariableMap, this variant contains never exactly one code point.
     String(String),
 }
 
@@ -216,7 +216,7 @@ impl<'a> VariableMap<'a> {
     }
 
     /// Insert a `char` into the `VariableMap`.    
-    /// 
+    ///
     /// Returns `Err` with the old value, if it exists.
     pub fn insert_char(&mut self, key: String, c: char) -> Result<(), VariableValue> {
         let existing = self.0.insert(key, VariableValue::Char(c));
@@ -226,8 +226,8 @@ impl<'a> VariableMap<'a> {
         Ok(())
     }
 
-    /// Insert a `String` of any length into the `VariableMap`. 
-    /// 
+    /// Insert a `String` of any length into the `VariableMap`.
+    ///
     /// Returns `Err` with the old value, if it exists.
     pub fn insert_string(&mut self, key: String, s: String) -> Result<(), VariableValue> {
         let mut chars = s.chars();
@@ -245,7 +245,7 @@ impl<'a> VariableMap<'a> {
 
     /// Special case for [`insert_string`] if you already have a `&str`. Avoids allocating the string if
     /// it consists of exactly one code point.
-    /// 
+    ///
     /// Returns `Err` with the old value, if it exists.
     pub fn insert_str(&mut self, key: String, s: &str) -> Result<(), VariableValue> {
         let mut chars = s.chars();
@@ -262,9 +262,13 @@ impl<'a> VariableMap<'a> {
     }
 
     /// Insert a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList) into the `VariableMap`.
-    /// 
+    ///
     /// Returns `Err` with the old value, if it exists.
-    pub fn insert_set(&mut self, key: String, value: CodePointInversionListAndStringList<'a>) -> Result<(), VariableValue> {
+    pub fn insert_set(
+        &mut self,
+        key: String,
+        value: CodePointInversionListAndStringList<'a>,
+    ) -> Result<(), VariableValue> {
         let existing = self.0.insert(key, VariableValue::UnicodeSet(value));
         if let Some(existing) = existing {
             return Err(existing);
