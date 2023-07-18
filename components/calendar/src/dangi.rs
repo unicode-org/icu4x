@@ -695,7 +695,7 @@ mod test {
     }
 
     #[test]
-    fn test_dangi_cases() {
+    fn test_dangi_consistent_with_icu() {
         // Test cases for this test are derived from existing ICU Intl.DateTimeFormat. If there is a bug in ICU,
         // these test cases may be affected, and this calendar's output may not be entirely valid.
 

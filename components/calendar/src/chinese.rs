@@ -6,7 +6,6 @@
 //!
 //! ```rust
 //! use icu::calendar::{Date, DateTime};
-//! use tinystr::tinystr;
 //!
 //! // `Date` type
 //! let chinese_date = Date::try_new_chinese_date(4660, 6, 6)
@@ -305,8 +304,8 @@ impl Calendar for Chinese {
 }
 
 impl Date<Chinese> {
-    /// Construct a new Chinese date from a `year`, `month`, `leap_month`, and `day`.
-    /// `year` represents the Chinese year counted infinitely with -2636 (2637 BCE) as year Chinese year 1;
+    /// Construct a new Chinese date from a `year`, `month`, and `day`.
+    /// `year` represents the Chinese year counted infinitely with -2636 (2637 BCE) as Chinese year 1;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
     /// `day` indicates the day of month
     ///
@@ -940,6 +939,123 @@ mod test {
             assert_eq!(
                 ordinal, None,
                 "Invalid month code failed for year: {year}, code: {code}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_consistent_with_icu() {
+        #[derive(Debug)]
+        struct TestCase {
+            iso_year: i32,
+            iso_month: u8,
+            iso_day: u8,
+            expected_rel_iso: i32,
+            expected_cyclic: i32,
+            expected_month: u32,
+            expected_day: u32,
+        }
+
+        let cases = [
+            TestCase {
+                iso_year: -2332,
+                iso_month: 3,
+                iso_day: 1,
+                expected_rel_iso: -2332,
+                expected_cyclic: 5,
+                expected_month: 1,
+                expected_day: 16,
+            },
+            TestCase {
+                iso_year: -2332,
+                iso_month: 2,
+                iso_day: 15,
+                expected_rel_iso: -2332,
+                expected_cyclic: 5,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            // TestCase { // This test case fails to match ICU
+            //     iso_year: -2332,
+            //     iso_month: 2,
+            //     iso_day: 14,
+            //     expected_rel_iso: -2333,
+            //     expected_cyclic: 4,
+            //     expected_month: 13,
+            //     expected_day: 29,
+            // },
+            // TestCase { // This test case fails to match ICU
+            //     iso_year: -2332,
+            //     iso_month: 1,
+            //     iso_day: 17,
+            //     expected_rel_iso: -2333,
+            //     expected_cyclic: 4,
+            //     expected_month: 13,
+            //     expected_day: 1
+            // },
+            // TestCase { // This test case fails to match ICU
+            //     iso_year: -2332,
+            //     iso_month: 1,
+            //     iso_day: 16,
+            //     expected_rel_iso: -2333,
+            //     expected_cyclic: 4,
+            //     expected_month: 12,
+            //     expected_day: 30
+            // },
+            TestCase {
+                iso_year: -2332,
+                iso_month: 1,
+                iso_day: 15,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 12,
+                expected_day: 29,
+            },
+            TestCase {
+                iso_year: -2332,
+                iso_month: 1,
+                iso_day: 1,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 12,
+                expected_day: 15,
+            },
+            TestCase {
+                iso_year: -2333,
+                iso_month: 1,
+                iso_day: 16,
+                expected_rel_iso: -2334,
+                expected_cyclic: 3,
+                expected_month: 12,
+                expected_day: 19,
+            },
+        ];
+
+        for case in cases {
+            let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+            let chinese = iso.to_calendar(Chinese);
+            let chinese_rel_iso = chinese.year().related_iso;
+            let chinese_cyclic = chinese.year().cyclic;
+            let chinese_month = chinese.month().ordinal;
+            let chinese_day = chinese.day_of_month().0;
+
+            assert_eq!(
+                chinese_rel_iso,
+                Some(case.expected_rel_iso),
+                "Related ISO failed for test case: {case:?}"
+            );
+            assert_eq!(
+                chinese_cyclic,
+                Some(case.expected_cyclic),
+                "Cyclic year failed for test case: {case:?}"
+            );
+            assert_eq!(
+                chinese_month, case.expected_month,
+                "Month failed for test case: {case:?}"
+            );
+            assert_eq!(
+                chinese_day, case.expected_day,
+                "Day failed for test case: {case:?}"
             );
         }
     }
