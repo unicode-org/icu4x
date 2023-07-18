@@ -22,7 +22,7 @@
 use crate::{
     astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic},
-    helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
+    helpers::{adjusted_rem_euclid, div_rem_euclid_f64, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
     types::Moment,
     Calendar, Date,
@@ -146,9 +146,13 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let month_after_twelfth =
             Self::new_moon_on_or_after((month_after_eleventh + 1).as_moment()); // m13
         let next_eleventh_month = Self::new_moon_before((following_solstice + 1).as_moment()); // next-m11
-        let lhs_argument =
-            libm::round((next_eleventh_month - month_after_eleventh) as f64 / MEAN_SYNODIC_MONTH)
-                as i64;
+        let lhs_argument = libm::round(
+            div_rem_euclid_f64(
+                (next_eleventh_month - month_after_eleventh) as f64,
+                MEAN_SYNODIC_MONTH,
+            )
+            .0,
+        ) as i64;
         if lhs_argument == 12
             && (Self::no_major_solar_term(month_after_eleventh)
                 || Self::no_major_solar_term(month_after_twelfth))

@@ -2,7 +2,36 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! TODO: Docs
+//! This module contains types and implementations for the Korean Dangi calendar.
+//! 
+//! ```rust
+//! use icu:;calendar::{Date, DateTime};
+//! 
+//! // `Date` type
+//! let dangi_date = Date::try_new_dangi_date(4355, 6, 6)
+//!     .expect("Failed to initialize Dangi Date instance.");
+//! 
+//! // `DateTime` type
+//! let dangi_datetime = DateTime::try_new_dangi_datetime(4355, 6, 6, 13, 1, 0)
+//!     .expect("Failed to initialize Dangi DateTime instance.");
+//! 
+//! // `Date` checks
+//! assert_eq!(dangi_date.year().number, 4355);
+//! assert_eq!(dangi_date.year().related_iso, Some(2023));
+//! assert_eq!(dangi_date.year().cyclic, Some(40));
+//! assert_eq!(dangi_date.month().ordinal, 6);
+//! assert_eq!(dangi_date.day_of_month().0, 6);
+//! 
+//! // `DateTime` checks
+//! assert_eq!(dangi_datetime.date.year().number, 4355);
+//! assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
+//! assert_eq!(dangi_datetime.date.year().cyclic, Some(40));
+//! assert_eq!(dangi_datetime.date.month().ordinal, 6);
+//! assert_eq!(dangi_datetime.date.day_of_month().0, 6);
+//! assert_eq!(dangi_datetime.time.hour.number(), 13);
+//! assert_eq!(dangi_datetime.time.minute.number(), 1);
+//! assert_eq!(dangi_datetime.time.second.number(), 0);
+//! ```
 
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::{
@@ -19,7 +48,13 @@ use tinystr::tinystr;
 // The first day in the Korean Dangi calendar (based on the founding of Gojoseon)
 const KOREAN_EPOCH: RataDie = RataDie::new(-852065); // Lunar new year 2333 BCE (-2332 ISO)
 
-// TODO: Docs
+/// The Korean Dangi calendar relies on knowing the current day at the moment of a new moon;
+/// however, this can vary depending on location. As such, new moon calculations are based on
+/// the time in Seoul. Before 1908, local time was used, represented as UTC+(3809/450 h).
+/// This changed multiple times as different standard timezones were adopted in Korea.
+/// Currently, UTC+9h is used.
+/// 
+/// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day).
 const UTC_OFFSET_ORIGINAL: f64 = (3809.0 / 450.0) / 24.0;
 const UTC_OFFSET_1908: f64 = 8.5 / 24.0;
 const UTC_OFFSET_1912: f64 = 9.0 / 24.0;
@@ -66,12 +101,21 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
     UTC_OFFSET_1961,
 );
 
-/// TODO: Docs
+/// The Dangi Calendar
+/// 
+/// The Dangi Calendar is a lunisolar calendar used traditionally in North and South Korea.
+/// It is often used today to track important cultural events and holidays like Seollal
+/// (Korean lunar new year). It is similar to the Chinese lunar calendar (see [`Chinese`]),
+/// except that observations are based in Korea (currently UTC+9) rather than China (UTC+8).
+/// 
+/// # Era codes
+/// 
+/// This Calendar supports a single era code "dangi" based on the year -2332 ISO (2333 BCE) as year 1.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Dangi;
 
-/// TODO: Docs
+/// The inner date type used for representing [`Date`]s of [`Dangi`]. See [`Date`] and [`Dangi`] for more detail.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct DangiDateInner(ChineseBasedDateInner<Dangi>);
 
@@ -375,6 +419,7 @@ impl Dangi {
 mod test {
 
     use super::*;
+    use crate::chinese::Chinese;
 
     #[test]
     fn test_seollal() {
@@ -388,14 +433,112 @@ mod test {
             expected_day: u32,
         }
 
-        let cases = [TestCase {
-            iso_year: 2024,
-            iso_month: 6,
-            iso_day: 6,
-            expected_year: 2024,
-            expected_month: 2,
-            expected_day: 10,
-        }];
+        let cases = [
+            TestCase {
+                iso_year: 2024,
+                iso_month: 6,
+                iso_day: 6,
+                expected_year: 2024,
+                expected_month: 2,
+                expected_day: 10,
+            },
+            TestCase {
+                iso_year: 2024,
+                iso_month: 2,
+                iso_day: 9,
+                expected_year: 2023,
+                expected_month: 1,
+                expected_day: 22,
+            },
+            TestCase {
+                iso_year: 2023,
+                iso_month: 1,
+                iso_day: 22,
+                expected_year: 2023,
+                expected_month: 1,
+                expected_day: 22,
+            },
+            TestCase {
+                iso_year: 2023,
+                iso_month: 1,
+                iso_day: 21,
+                expected_year: 2022,
+                expected_month: 2,
+                expected_day: 1,
+            },
+            TestCase {
+                iso_year: 2022,
+                iso_month: 6,
+                iso_day: 6,
+                expected_year: 2022,
+                expected_month: 2,
+                expected_day: 1
+            },
+            TestCase {
+                iso_year:       2021,
+                iso_month:      6,
+                iso_day:        6,
+                expected_year:  2021,
+                expected_month: 2,
+                expected_day:   12,
+            },
+            TestCase {
+                iso_year:       2020,
+                iso_month:      6,
+                iso_day:        6,
+                expected_year:  2020,
+                expected_month: 1,
+                expected_day:   25,
+            },
+            TestCase {
+                iso_year:       2019,
+                iso_month:      6,
+                iso_day:        6,
+                expected_year:  2019,
+                expected_month: 2,
+                expected_day:   5,
+            },
+            TestCase {
+                iso_year:       2018,
+                iso_month:      6,
+                iso_day:        6,
+                expected_year:  2018,
+                expected_month: 2,
+                expected_day:   16,
+            },
+            TestCase {
+                iso_year:       2025,
+                iso_month:      6,
+                iso_day:        6,
+                expected_year:  2025,
+                expected_month: 1,
+                expected_day:   29,
+            },
+            TestCase {
+                iso_year:       2026,
+                iso_month:      8,
+                iso_day:        8,
+                expected_year:  2026,
+                expected_month: 2,
+                expected_day:   17,
+            },
+            TestCase {
+                iso_year:       2027,
+                iso_month:      4,
+                iso_day:        4,
+                expected_year:  2027,
+                expected_month: 2,
+                expected_day:   7,
+            },
+            TestCase {
+                iso_year:       2028,
+                iso_month:      9,
+                iso_day:        21,
+                expected_year:  2028,
+                expected_month: 1,
+                expected_day:   27,
+            },
+        ];
 
         for case in cases {
             let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
@@ -414,6 +557,421 @@ mod test {
                 seollal.day_of_month().0,
                 case.expected_day,
                 "Day check failed for case: {case:?}"
+            );
+        }
+    }
+
+    fn check_cyclic_and_rel_iso(year: i32) {
+        let iso = Date::try_new_iso_date(year, 6, 6).unwrap();
+        let chinese = iso.to_calendar(Chinese);
+        let dangi = iso.to_calendar(Dangi);
+        let chinese_year = chinese.year().cyclic;
+        let korean_year = dangi.year().cyclic;
+        assert_eq!(
+            chinese_year, korean_year,
+            "Cyclic year failed for year: {year}"
+        );
+        let chinese_rel_iso = chinese.year().related_iso;
+        let korean_rel_iso = dangi.year().related_iso;
+        assert_eq!(
+            chinese_rel_iso, korean_rel_iso,
+            "Rel. ISO year equality failed for year: {year}"
+        );
+        assert_eq!(korean_rel_iso, Some(year), "Dangi Rel. ISO failed!");
+    }
+
+    #[test]
+    fn test_cyclic_same_as_chinese_near_present_day() {
+        for year in 1923..=2123 {
+            check_cyclic_and_rel_iso(year);
+        }
+    }
+
+    #[test]
+    fn test_cyclic_same_as_chinese_near_rd_zero() {
+        for year in -100..=100 {
+            check_cyclic_and_rel_iso(year);
+        }
+    }
+
+    #[test]
+    fn test_fixed_chinese_roundtrip() {
+        let mut fixed = -1963020;
+        let max_fixed = 1963020;
+        let mut iters = 0;
+        let max_iters = 560;
+        while fixed < max_fixed && iters < max_iters {
+            let rata_die = RataDie::new(fixed);
+            let chinese = Inner::chinese_based_date_from_fixed(rata_die);
+            let result = Inner::fixed_from_chinese_based_date_inner(chinese.inner.0);
+            let result_debug = result.to_i64_date();
+            assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
+            fixed += 7043;
+            iters += 1;
+        }
+    }
+
+    #[test]
+    fn test_iso_to_dangi_roundtrip() {
+        let mut fixed = -1963020;
+        let max_fixed = 1963020;
+        let mut iters = 0;
+        let max_iters = 560;
+        while fixed < max_fixed && iters < max_iters {
+            let rata_die = RataDie::new(fixed);
+            let iso = Iso::iso_from_fixed(rata_die);
+            let korean = iso.to_calendar(Dangi);
+            let result = korean.to_calendar(Iso);
+            assert_eq!(
+                iso, result,
+                "Failed roundtrip ISO -> Dangi -> ISO for fixed: {fixed}"
+            );
+            fixed += 7043;
+            iters += 1;
+        }
+    }
+
+    #[test]
+    fn test_dangi_cases() {
+        // Test cases for this test are derived from existing ICU Intl.DateTimeFormat. If there is a bug in ICU,
+        // these test cases may be affected, and this calendar's output may not be entirely valid.
+
+        #[derive(Debug)]
+        struct TestCase {
+            iso_year: i32,
+            iso_month: u8,
+            iso_day: u8,
+            expected_rel_iso: i32,
+            expected_cyclic: i32,
+            expected_month: u32,
+            expected_day: u32,
+        }
+
+        let cases = [
+            TestCase {
+                iso_year: 2027,
+                iso_month: 2,
+                iso_day: 7,
+                expected_rel_iso: 2027,
+                expected_cyclic: 44,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            TestCase {
+                iso_year: 2023,
+                iso_month: 7,
+                iso_day: 1,
+                expected_rel_iso: 2023,
+                expected_cyclic: 40,
+                expected_month: 6,
+                expected_day: 14,
+            },
+            TestCase {
+                iso_year: 2022,
+                iso_month: 3,
+                iso_day: 1,
+                expected_rel_iso: 2022,
+                expected_cyclic: 39,
+                expected_month: 1,
+                expected_day: 29,
+            },
+            TestCase {
+                iso_year: 2021,
+                iso_month: 2,
+                iso_day: 1,
+                expected_rel_iso: 2020,
+                expected_cyclic: 37,
+                expected_month: 13,
+                expected_day: 20,
+            },
+            TestCase {
+                iso_year: 2000,
+                iso_month: 8,
+                iso_day: 30,
+                expected_rel_iso: 2000,
+                expected_cyclic: 17,
+                expected_month: 8,
+                expected_day: 2,
+            },
+            TestCase {
+                iso_year: 1990,
+                iso_month: 11,
+                iso_day: 11,
+                expected_rel_iso: 1990,
+                expected_cyclic: 7,
+                expected_month: 10,
+                expected_day: 24,
+            },
+            TestCase {
+                iso_year: 1970,
+                iso_month: 6,
+                iso_day: 10,
+                expected_rel_iso: 1970,
+                expected_cyclic: 47,
+                expected_month: 5,
+                expected_day: 7,
+            },
+            TestCase {
+                iso_year: 1970,
+                iso_month: 1,
+                iso_day: 1,
+                expected_rel_iso: 1969,
+                expected_cyclic: 46,
+                expected_month: 11,
+                expected_day: 24,
+            },
+            TestCase {
+                iso_year: 1941,
+                iso_month: 12,
+                iso_day: 7,
+                expected_rel_iso: 1941,
+                expected_cyclic: 18,
+                expected_month: 11,
+                expected_day: 19,
+            },
+            TestCase {
+                iso_year: 1812,
+                iso_month: 5,
+                iso_day: 4,
+                expected_rel_iso: 1812,
+                expected_cyclic: 9,
+                expected_month: 3,
+                expected_day: 24,
+            },
+            TestCase {
+                iso_year: 1655,
+                iso_month: 6,
+                iso_day: 15,
+                expected_rel_iso: 1655,
+                expected_cyclic: 32,
+                expected_month: 5,
+                expected_day: 12,
+            },
+            TestCase {
+                iso_year: 1333,
+                iso_month: 3,
+                iso_day: 10,
+                expected_rel_iso: 1333,
+                expected_cyclic: 10,
+                expected_month: 2,
+                expected_day: 16,
+            },
+            TestCase {
+                iso_year: 1000,
+                iso_month: 10,
+                iso_day: 10,
+                expected_rel_iso: 1000,
+                expected_cyclic: 37,
+                expected_month: 9,
+                expected_day: 5,
+            },
+            TestCase {
+                iso_year: 842,
+                iso_month: 2,
+                iso_day: 15,
+                expected_rel_iso: 841,
+                expected_cyclic: 58,
+                expected_month: 13,
+                expected_day: 28,
+            },
+            TestCase {
+                iso_year: 101,
+                iso_month: 1,
+                iso_day: 10,
+                expected_rel_iso: 100,
+                expected_cyclic: 37,
+                expected_month: 12,
+                expected_day: 24,
+            },
+            TestCase {
+                iso_year: -1,
+                iso_month: 3,
+                iso_day: 28,
+                expected_rel_iso: -1,
+                expected_cyclic: 56,
+                expected_month: 2,
+                expected_day: 25,
+            },
+            TestCase {
+                iso_year: -3,
+                iso_month: 2,
+                iso_day: 28,
+                expected_rel_iso: -3,
+                expected_cyclic: 54,
+                expected_month: 2,
+                expected_day: 5,
+            },
+            TestCase {
+                iso_year: -365,
+                iso_month: 7,
+                iso_day: 24,
+                expected_rel_iso: -365,
+                expected_cyclic: 52,
+                expected_month: 6,
+                expected_day: 24,
+            },
+            TestCase {
+                iso_year: -999,
+                iso_month: 9,
+                iso_day: 9,
+                expected_rel_iso: -999,
+                expected_cyclic: 18,
+                expected_month: 7,
+                expected_day: 27,
+            },
+            TestCase {
+                iso_year: -1500,
+                iso_month: 1,
+                iso_day: 5,
+                expected_rel_iso: -1501,
+                expected_cyclic: 56,
+                expected_month: 12,
+                expected_day: 2,
+            },
+            TestCase {
+                iso_year: -2332,
+                iso_month: 3,
+                iso_day: 1,
+                expected_rel_iso: -2332,
+                expected_cyclic: 5,
+                expected_month: 1,
+                expected_day: 16,
+            },
+            TestCase {
+                iso_year: -2332,
+                iso_month: 2,
+                iso_day: 15,
+                expected_rel_iso: -2332,
+                expected_cyclic: 5,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            // TestCase { // This test case fails to match ICU
+            //     iso_year: -2332,
+            //     iso_month: 2,
+            //     iso_day: 14,
+            //     expected_rel_iso: -2333,
+            //     expected_cyclic: 4,
+            //     expected_month: 13,
+            //     expected_day: 29,
+            // },
+            // TestCase { // This test case fails to match ICU
+            //     iso_year: -2332,
+            //     iso_month: 1,
+            //     iso_day: 17,
+            //     expected_rel_iso: -2333,
+            //     expected_cyclic: 4,
+            //     expected_month: 13,
+            //     expected_day: 1
+            // },
+            // TestCase { // This test case fails to match ICU
+            //     iso_year: -2332,
+            //     iso_month: 1,
+            //     iso_day: 16,
+            //     expected_rel_iso: -2333,
+            //     expected_cyclic: 4,
+            //     expected_month: 12,
+            //     expected_day: 30
+            // },
+            TestCase {
+                iso_year: -2332,
+                iso_month: 1,
+                iso_day: 15,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 12,
+                expected_day: 29,
+            },
+            TestCase {
+                iso_year: -2332,
+                iso_month: 1,
+                iso_day: 1,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 12,
+                expected_day: 15,
+            },
+            TestCase {
+                iso_year: -2333,
+                iso_month: 1,
+                iso_day: 16,
+                expected_rel_iso: -2334,
+                expected_cyclic: 3,
+                expected_month: 12,
+                expected_day: 19,
+            },
+            TestCase {
+                iso_year: -2333,
+                iso_month: 1,
+                iso_day: 27,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            TestCase {
+                iso_year: -2333,
+                iso_month: 1,
+                iso_day: 26,
+                expected_rel_iso: -2334,
+                expected_cyclic: 3,
+                expected_month: 12,
+                expected_day: 29,
+            },
+            TestCase {
+                iso_year: -2600,
+                iso_month: 9,
+                iso_day: 16,
+                expected_rel_iso: -2600,
+                expected_cyclic: 37,
+                expected_month: 8,
+                expected_day: 16,
+            },
+            TestCase {
+                iso_year: -2855,
+                iso_month: 2,
+                iso_day: 3,
+                expected_rel_iso: -2856,
+                expected_cyclic: 21,
+                expected_month: 12,
+                expected_day: 30,
+            },
+            // TestCase { // This test case fails to match ICU
+            //     iso_year: -3000,
+            //     iso_month: 5,
+            //     iso_day: 15,
+            //     expected_rel_iso: -3000,
+            //     expected_cyclic: 57,
+            //     expected_month: 3,
+            //     expected_day: 30
+            // }
+        ];
+
+        for case in cases {
+            let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+            let dangi = iso.to_calendar(Dangi);
+            let dangi_rel_iso = dangi.year().related_iso;
+            let dangi_cyclic = dangi.year().cyclic;
+            let dangi_month = dangi.month().ordinal;
+            let dangi_day = dangi.day_of_month().0;
+
+            assert_eq!(
+                dangi_rel_iso,
+                Some(case.expected_rel_iso),
+                "Related ISO failed for test case: {case:?}"
+            );
+            assert_eq!(
+                dangi_cyclic,
+                Some(case.expected_cyclic),
+                "Cyclic year failed for test case: {case:?}"
+            );
+            assert_eq!(
+                dangi_month, case.expected_month,
+                "Month failed for test case: {case:?}"
+            );
+            assert_eq!(
+                dangi_day, case.expected_day,
+                "Day failed for test case: {case:?}"
             );
         }
     }
