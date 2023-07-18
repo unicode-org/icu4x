@@ -195,7 +195,7 @@ pub enum VariableValue<'a> {
     // this variant for efficiency?
     /// A single code point.
     Char(char),
-    /// A string.
+    /// A string. It is guaranteed that when returned from a VariableMap, this variant contains never exactly one code point. 
     String(String),
 }
 
@@ -215,24 +215,65 @@ impl<'a> VariableMap<'a> {
         self.0.remove(key)
     }
 
-    /// Inserts a key-value pair into the map.
-    pub fn insert(&mut self, key: String, value: VariableValue<'a>) {
-        self.0.insert(key, value);
+    /// Insert a `char` into the `VariableMap`.    
+    /// 
+    /// Returns `Err` with the old value, if it exists.
+    #[must_use]
+    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), VariableValue> {
+        let existing = self.0.insert(key, VariableValue::Char(c));
+        if let Some(existing) = existing {
+            return Err(existing);
+        }
+        Ok(())
     }
 
-    /// [`VariableMap::insert`] special case for a value of type `char`.
-    pub fn insert_char(&mut self, key: String, value: char) {
-        self.insert(key, VariableValue::Char(value));
+    /// Insert a `String` of any length into the `VariableMap`. 
+    /// 
+    /// Returns `Err` with the old value, if it exists.
+    #[must_use]
+    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), VariableValue> {
+        let mut chars = s.chars();
+        let val = match (chars.next(), chars.next()) {
+            (Some(c), None) => VariableValue::Char(c),
+            _ => VariableValue::String(s),
+        };
+
+        let existing = self.0.insert(key, val);
+        if let Some(existing) = existing {
+            return Err(existing);
+        }
+        Ok(())
     }
 
-    /// [`VariableMap::insert`] special case for a value of type `String`.
-    pub fn insert_string(&mut self, key: String, value: String) {
-        self.insert(key, VariableValue::String(value));
+    /// Special case for [`insert_string`] if you already have a `&str`. Avoids allocating the string if
+    /// it consists of exactly one code point.
+    /// 
+    /// Returns `Err` with the old value, if it exists.
+    #[must_use]
+    pub fn insert_str(&mut self, key: String, s: &str) -> Result<(), VariableValue> {
+        let mut chars = s.chars();
+        let val = match (chars.next(), chars.next()) {
+            (Some(c), None) => VariableValue::Char(c),
+            _ => VariableValue::String(s.to_string()),
+        };
+
+        let existing = self.0.insert(key, val);
+        if let Some(existing) = existing {
+            return Err(existing);
+        }
+        Ok(())
     }
 
-    /// [`VariableMap::insert`] special case for a value of type [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList).
-    pub fn insert_set(&mut self, key: String, value: CodePointInversionListAndStringList<'a>) {
-        self.insert(key, VariableValue::UnicodeSet(value));
+    /// Insert a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList) into the `VariableMap`.
+    /// 
+    /// Returns `Err` with the old value, if it exists.
+    #[must_use]
+    pub fn insert_set(&mut self, key: String, value: CodePointInversionListAndStringList<'a>) -> Result<(), VariableValue> {
+        let existing = self.0.insert(key, VariableValue::UnicodeSet(value));
+        if let Some(existing) = existing {
+            return Err(existing);
+        }
+        Ok(())
     }
 }
 
@@ -274,11 +315,8 @@ impl From<char> for CharOrString {
 
 impl From<String> for CharOrString {
     fn from(s: String) -> Self {
-        let mut chars = s.chars();
-        match (chars.next(), chars.next()) {
-            (Some(c), None) => c.into(),
-            _ => CharOrString::String(s),
-        }
+        debug_assert_ne!(s.chars().count(), 1);
+        CharOrString::String(s)
     }
 }
 
@@ -637,7 +675,7 @@ where
                         Ok((offset, true, MainToken::CharOrString(c.into())))
                     }
                     Some(VariableValue::String(s)) => {
-                        // .into() handles 1-length-string -> char conversion
+                        // we know that the VariableMap only contains non-length-1 Strings.
                         Ok((offset, true, MainToken::CharOrString(s.clone().into())))
                     }
                     Some(VariableValue::UnicodeSet(set)) => {
@@ -755,7 +793,12 @@ where
         }
 
         // .into() handles 1-length-string -> char conversion
-        Ok((last_offset, buffer.into()))
+        let mut chars = buffer.chars();
+        let char_or_string = match (chars.next(), chars.next()) {
+            (Some(c), None) => c.into(),
+            _ => buffer.into(),
+        };
+        Ok((last_offset, char_or_string))
     }
 
     // starts with \ and consumes the whole escape sequence
@@ -1312,10 +1355,10 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
 /// let my_set = parse("[abc]").unwrap();
 ///
 /// let mut variable_map = VariableMap::new();
-/// variable_map.insert_char("start".into(), 'a');
-/// variable_map.insert_char("end".into(), 'z');
-/// variable_map.insert_string("str".into(), "Hello World".into());
-/// variable_map.insert_set("the_set".into(), my_set);
+/// let _ = variable_map.insert_char("start".into(), 'a');
+/// let _ = variable_map.insert_char("end".into(), 'z');
+/// let _ = variable_map.insert_string("str".into(), "Hello World".into());
+/// let _ = variable_map.insert_set("the_set".into(), my_set);
 ///
 /// let set = parse_with_variables("[[$start-$end]-$the_set $str]", &variable_map).unwrap();
 /// assert!(set.code_points().contains_range(&('d'..='z')));
@@ -1575,20 +1618,20 @@ mod tests {
     #[test]
     fn test_semantics_with_variables() {
         let mut map_char_char = VariableMap::default();
-        map_char_char.insert_char("a".to_string(), 'a');
-        map_char_char.insert_char("var2".to_string(), 'z');
+        let _ = map_char_char.insert_char("a".to_string(), 'a');
+        let _ = map_char_char.insert_char("var2".to_string(), 'z');
 
         let mut map_headache = VariableMap::default();
-        map_headache.insert_char("hehe".to_string(), '-');
+        let _ = map_headache.insert_char("hehe".to_string(), '-');
 
         let mut map_char_string = VariableMap::default();
-        map_char_string.insert_char("a".to_string(), 'a');
-        map_char_string.insert_string("var2".to_string(), "abc".to_string());
+        let _ = map_char_string.insert_char("a".to_string(), 'a');
+        let _ = map_char_string.insert_string("var2".to_string(), "abc".to_string());
 
         let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
         let mut map_char_set = VariableMap::default();
-        map_char_set.insert_char("a".to_string(), 'a');
-        map_char_set.insert_set("set".to_string(), set);
+        let _ = map_char_set.insert_char("a".to_string(), 'a');
+        let _ = map_char_set.insert_set("set".to_string(), set);
 
         let cases: Vec<(_, _, _, Vec<&str>)> = vec![
             // simple
@@ -1813,17 +1856,17 @@ mod tests {
     #[test]
     fn test_error_messages_with_variables() {
         let mut map_char_char = VariableMap::default();
-        map_char_char.insert_char("a".to_string(), 'a');
-        map_char_char.insert_char("var2".to_string(), 'z');
+        let _ = map_char_char.insert_char("a".to_string(), 'a');
+        let _ = map_char_char.insert_char("var2".to_string(), 'z');
 
         let mut map_char_string = VariableMap::default();
-        map_char_string.insert_char("a".to_string(), 'a');
-        map_char_string.insert_string("var2".to_string(), "abc".to_string());
+        let _ = map_char_string.insert_char("a".to_string(), 'a');
+        let _ = map_char_string.insert_string("var2".to_string(), "abc".to_string());
 
         let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
         let mut map_char_set = VariableMap::default();
-        map_char_set.insert_char("a".to_string(), 'a');
-        map_char_set.insert_set("set".to_string(), set);
+        let _ = map_char_set.insert_char("a".to_string(), 'a');
+        let _ = map_char_set.insert_set("set".to_string(), set);
 
         let cases = [
             (&map_char_char, "[$$a]", r"[$$a← error: unexpected variable"),
