@@ -12,8 +12,6 @@ use core::convert::TryFrom;
 use core::marker::PhantomData;
 use core::ops::Range;
 
-extern crate std;
-
 // Also used by owned.rs
 pub(super) const LENGTH_WIDTH: usize = 4;
 pub(super) const METADATA_WIDTH: usize = 0;
@@ -189,7 +187,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .get(0)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?
             .as_unsigned_int();
-        // USE OF F::INDEX_WIDTH is 8, either this should be 4, or multi field should use INDEX_WIDTH
         let indices_bytes = slice
             .get(
                 LENGTH_WIDTH + METADATA_WIDTH
