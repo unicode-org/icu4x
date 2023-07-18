@@ -300,26 +300,6 @@ enum CharOrString {
     String(String),
 }
 
-impl From<Vec<char>> for CharOrString {
-    fn from(v: Vec<char>) -> Self {
-        debug_assert!(!v.is_empty());
-        CharOrString::Char(v)
-    }
-}
-
-impl From<char> for CharOrString {
-    fn from(c: char) -> Self {
-        CharOrString::Char(vec![c])
-    }
-}
-
-impl From<String> for CharOrString {
-    fn from(s: String) -> Self {
-        debug_assert_ne!(s.chars().count(), 1);
-        CharOrString::String(s)
-    }
-}
-
 #[derive(Debug)]
 enum MainToken<'data> {
     // to be interpreted as value
@@ -336,6 +316,19 @@ enum MainToken<'data> {
     Minus,
     // ] to indicate the end of a set
     ClosingBracket,
+}
+
+impl<'a> MainToken<'a> {
+    fn from_variable_value(val: VariableValue<'a>) -> Self {
+        match val {
+            VariableValue::Char(c) => MainToken::CharOrString(CharOrString::Char(vec![c])),
+            VariableValue::String(s) => {
+                // we know that the VariableMap only contains non-length-1 Strings.
+                MainToken::CharOrString(CharOrString::String(s))
+            }
+            VariableValue::UnicodeSet(set) => MainToken::UnicodeSet(set),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -671,16 +664,7 @@ where
                 let (offset, var_or_anchor) = self.parse_variable()?;
                 match var_or_anchor {
                     None => Ok((offset, false, MainToken::DollarSign)),
-                    Some(&VariableValue::Char(c)) => {
-                        Ok((offset, true, MainToken::CharOrString(c.into())))
-                    }
-                    Some(VariableValue::String(s)) => {
-                        // we know that the VariableMap only contains non-length-1 Strings.
-                        Ok((offset, true, MainToken::CharOrString(s.clone().into())))
-                    }
-                    Some(VariableValue::UnicodeSet(set)) => {
-                        Ok((offset, true, MainToken::UnicodeSet(set.clone())))
-                    }
+                    Some(v) => Ok((offset, true, MainToken::from_variable_value(v.clone()))),
                 }
             }
             // string
@@ -792,11 +776,10 @@ where
             }
         }
 
-        // .into() handles 1-length-string -> char conversion
         let mut chars = buffer.chars();
         let char_or_string = match (chars.next(), chars.next()) {
-            (Some(c), None) => c.into(),
-            _ => buffer.into(),
+            (Some(c), None) => CharOrString::Char(vec![c]),
+            _ => CharOrString::String(buffer),
         };
         Ok((last_offset, char_or_string))
     }
@@ -842,7 +825,7 @@ where
                     // TODO(#3558): UnexpectedChar, or InvalidEscape?
                     return Err(PEK::UnexpectedChar('}').with_offset(last_offset));
                 }
-                Ok((last_offset, c_vec.into()))
+                Ok((last_offset, CharOrString::Char(c_vec)))
             }
             'u' => {
                 // 'u' hex{4}
@@ -850,7 +833,7 @@ where
                 let hex_digits = exact.iter().collect::<String>();
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
                 char::try_from(num)
-                    .map(|c| (offset, c.into()))
+                    .map(|c| (offset, CharOrString::Char(vec![c])))
                     .map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'x' => {
@@ -859,7 +842,7 @@ where
                 let hex_digits = exact.iter().collect::<String>();
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
                 char::try_from(num)
-                    .map(|c| (offset, c.into()))
+                    .map(|c| (offset, CharOrString::Char(vec![c])))
                     .map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'U' => {
@@ -885,7 +868,7 @@ where
                 };
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
                 char::try_from(num)
-                    .map(|c| (offset, c.into()))
+                    .map(|c| (offset, CharOrString::Char(vec![c])))
                     .map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'N' => {
@@ -893,14 +876,14 @@ where
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
                 Err(PEK::Unimplemented.with_offset(offset))
             }
-            'a' => Ok((offset, '\u{0007}'.into())),
-            'b' => Ok((offset, '\u{0008}'.into())),
-            't' => Ok((offset, '\u{0009}'.into())),
-            'n' => Ok((offset, '\u{000A}'.into())),
-            'v' => Ok((offset, '\u{000B}'.into())),
-            'f' => Ok((offset, '\u{000C}'.into())),
-            'r' => Ok((offset, '\u{000D}'.into())),
-            _ => Ok((offset, next_char.into())),
+            'a' => Ok((offset, CharOrString::Char(vec!['\u{0007}']))),
+            'b' => Ok((offset, CharOrString::Char(vec!['\u{0008}']))),
+            't' => Ok((offset, CharOrString::Char(vec!['\u{0009}']))),
+            'n' => Ok((offset, CharOrString::Char(vec!['\u{000A}']))),
+            'v' => Ok((offset, CharOrString::Char(vec!['\u{000B}']))),
+            'f' => Ok((offset, CharOrString::Char(vec!['\u{000C}']))),
+            'r' => Ok((offset, CharOrString::Char(vec!['\u{000D}']))),
+            _ => Ok((offset, CharOrString::Char(vec![next_char]))),
         }
     }
 
@@ -1095,7 +1078,7 @@ where
             '\\' => self.parse_escaped_char(),
             _ => {
                 self.iter.next();
-                Ok((offset, c.into()))
+                Ok((offset, CharOrString::Char(vec![c])))
             }
         }
     }
