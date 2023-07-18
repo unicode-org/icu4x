@@ -47,7 +47,7 @@ fn generate_json_and_verify_postcard() {
     let postcard_out = Box::new(PostcardTestingExporter {
         size_hash: Default::default(),
         zero_copy_violations: Default::default(),
-        zero_copy_net_violations: Default::default(),
+        zero_copy_transient_violations: Default::default(),
         rountrip_errors: Default::default(),
         fingerprints: BufWriterWithLineEndingFix::new(
             File::create(data_root.join("postcard/fingerprints.csv")).unwrap(),
@@ -69,7 +69,7 @@ fn generate_json_and_verify_postcard() {
 struct PostcardTestingExporter {
     size_hash: Mutex<BTreeMap<(DataKey, String), (usize, u64)>>,
     zero_copy_violations: Mutex<BTreeSet<DataKey>>,
-    zero_copy_net_violations: Mutex<BTreeSet<DataKey>>,
+    zero_copy_transient_violations: Mutex<BTreeSet<DataKey>>,
     rountrip_errors: Mutex<BTreeSet<(DataKey, String)>>,
     fingerprints: BufWriterWithLineEndingFix<File>,
 }
@@ -79,7 +79,7 @@ struct PostcardTestingExporter {
 // Such types contain some data that was allocated during deserializations
 //
 // Every entry in this list is a bug that needs to be addressed before ICU4X 1.0.
-const EXPECTED_NET_VIOLATIONS: &[DataKey] = &[
+const EXPECTED_VIOLATIONS: &[DataKey] = &[
     // https://github.com/unicode-org/icu4x/issues/1678
     icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
 ];
@@ -89,7 +89,7 @@ const EXPECTED_NET_VIOLATIONS: &[DataKey] = &[
 //
 // Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
 // in this list since it does not affect databake.
-const EXPECTED_TOTAL_VIOLATIONS: &[DataKey] = &[
+const EXPECTED_TRANSIENT_VIOLATIONS: &[DataKey] = &[
     // Regex DFAs need to be validated, which involved creating a BTreeMap
     icu_list::provider::AndListV1Marker::KEY,
     icu_list::provider::OrListV1Marker::KEY,
@@ -143,18 +143,18 @@ impl DataExporter for PostcardTestingExporter {
         }
 
         if deallocated != allocated {
-            if !EXPECTED_NET_VIOLATIONS.contains(&key) {
-                println!("Net violation {key} {locale}");
+            if !EXPECTED_VIOLATIONS.contains(&key) {
+                log::warn!("Zerocopy violation {key} {locale}: {allocated}B allocated, {deallocated}B deallocated");
             }
-            self.zero_copy_net_violations
+            self.zero_copy_violations
                 .lock()
                 .expect("poison")
                 .insert(key);
         } else if allocated > 0 {
-            if !EXPECTED_TOTAL_VIOLATIONS.contains(&key) {
-                println!("Violation {key} {locale}");
+            if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&key) {
+                log::warn!("Transient zerocopy violation {key} {locale}: {allocated}B allocated/deallocated");
             }
-            self.zero_copy_violations
+            self.zero_copy_transient_violations
                 .lock()
                 .expect("poison")
                 .insert(key);
@@ -178,27 +178,28 @@ impl DataExporter for PostcardTestingExporter {
             &mut BTreeSet::default()
         );
 
-        let total_violations = self
+        let violations = self
             .zero_copy_violations
             .get_mut()
             .expect("poison")
             .iter()
             .copied()
             .collect::<Vec<_>>();
-        let net_violations = self
-            .zero_copy_net_violations
+
+        let transient_violations = self
+            .zero_copy_transient_violations
             .get_mut()
             .expect("poison")
             .iter()
             .copied()
             .collect::<Vec<_>>();
 
-        assert!(total_violations == EXPECTED_TOTAL_VIOLATIONS && net_violations == EXPECTED_NET_VIOLATIONS,
+        assert!(transient_violations == EXPECTED_TRANSIENT_VIOLATIONS && violations == EXPECTED_VIOLATIONS,
             "Expected violations list does not match found violations!\n\
             If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
             If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
             to temporarily allow for this key to be allowlisted.\n\
-            Expected (net):\n{EXPECTED_NET_VIOLATIONS:?}\nFound (net):\n{net_violations:?}\nExpected (total):\n{EXPECTED_TOTAL_VIOLATIONS:?}\nFound (total):\n{total_violations:?}"
+            Expected:\n{EXPECTED_VIOLATIONS:?}\nFound:\n{violations:?}\nExpected (transient):\n{EXPECTED_TRANSIENT_VIOLATIONS:?}\nFound (transient):\n{transient_violations:?}"
         );
 
         Ok(())
