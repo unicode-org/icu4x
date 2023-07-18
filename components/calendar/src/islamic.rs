@@ -342,11 +342,95 @@ impl CalendarArithmetic for IslamicCivil {
 }
 
 impl Calendar for IslamicCivil {
+    type DateInner = IslamicCivilDateInner;
 
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, CalendarError> {
+        let year = if era.0 == tinystr!(16, "ah") {
+            year
+        } else {
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+        };
+
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IslamicCivilDateInner)
+    }
+
+    fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
+        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        Self::islamic_from_fixed(fixed_iso).inner
+    }
+
+    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
+        let fixed_islamic = Self::fixed_from_islamic(*date);
+        Iso::iso_from_fixed(fixed_islamic)
+    }
+
+    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
+        date.0.months_in_year()
+    }
+
+    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+        date.0.days_in_year()
+    }
+
+    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
+        date.0.days_in_month()
+    }
+
+    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+        Iso.day_of_week(self.date_to_iso(date).inner())
+    }
+
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+        date.0.offset_date(offset)
+    }
+
+    fn until(
+        &self,
+        date1: &Self::DateInner,
+        date2: &Self::DateInner,
+        _calendar2: &Self,
+        _largest_unit: DateDurationUnit,
+        _smallest_unit: DateDurationUnit,
+    ) -> DateDuration<Self> {
+        date1.0.until(date2.0, _largest_unit, _smallest_unit)
+    }
+
+    fn debug_name(&self) -> &'static str {
+        "IslamicCivil"
+    }
+
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        Self::year_as_islamic(date.0.year)
+    }
+
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+        date.0.month()
+    }
+
+    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
+        date.0.day_of_month()
+    }
+
+    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
+        let prev_year = date.0.year.saturating_sub(1);
+        let next_year = date.0.year.saturating_add(1);
+        types::DayOfYearInfo {
+            day_of_year: date.0.day_of_year(),
+            days_in_year: date.0.days_in_year(),
+            prev_year: Self::year_as_islamic(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            next_year: Self::year_as_islamic(next_year),
+        }
+    }
 }
 
 impl IslamicCivil {
-
 }
 
 impl Date<IslamicCivil> {
