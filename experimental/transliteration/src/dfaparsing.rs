@@ -7,6 +7,16 @@ use std::iter::Peekable;
 // TODO: parse transform rules and filter rules
 // TODO: parse escaped characters
 
+/*
+2023-07-18: New things
+- Parse everything. Parse recursive ID calls just into Strings
+- Need to use variable map inside parsing already, because of UnicodeSets. Can do this at the top level when parsing a "line" where we check
+"if is_variable_def, then add to variablemap", and variablemap is of course used during parsing
+- Switch to Parser struct?
+- In compilation, keep track which variables are used in forward and which in backward dir (eg two HashSets)
+- Compile string recursive IDs into actual source/target IDs (see Daily TODO july10/july7)
+ */
+
 macro_rules! t {
     () => (
         Peekable<impl Iterator<Item = char> + Clone>
