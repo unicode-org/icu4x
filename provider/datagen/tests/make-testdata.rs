@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crlify::BufWriterWithLineEndingFix;
 use icu_datagen::fs_exporter::serializers::Json;
 use icu_datagen::fs_exporter::*;
 use icu_datagen::prelude::*;
@@ -14,7 +15,6 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::sync::Mutex;
-use crlify::BufWriterWithLineEndingFix;
 
 include!("data/locales.rs.data");
 
@@ -49,7 +49,9 @@ fn generate_json_and_verify_postcard() {
         zero_copy_violations: Default::default(),
         zero_copy_net_violations: Default::default(),
         rountrip_errors: Default::default(),
-        fingerprints: BufWriterWithLineEndingFix::new(File::create(data_root.join("postcard/fingerprints.csv")).unwrap()),
+        fingerprints: BufWriterWithLineEndingFix::new(
+            File::create(data_root.join("postcard/fingerprints.csv")).unwrap(),
+        ),
     });
 
     let mut options = options::Options::default();
