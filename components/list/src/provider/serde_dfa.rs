@@ -87,7 +87,7 @@ const KNOWN_FINGERPRINTS: &[u64] = &[
 // second-pre-image resistant.
 fn fingerprint(data: &[u8]) -> u64 {
     #[allow(deprecated)]
-    use std::hash::{Hash, Hasher, SipHasher};
+    use core::hash::{Hash, Hasher, SipHasher};
     #[allow(deprecated)]
     let mut hasher = SipHasher::new();
     data.hash(&mut hasher);
