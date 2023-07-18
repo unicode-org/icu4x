@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::BorrowMut;
 use std::collections::HashMap;
-use std::collections::hash_map::{Entry, VacantEntry};
 use std::fmt::Display;
 use std::{collections::HashSet, iter::Peekable, str::CharIndices};
 
@@ -201,6 +199,10 @@ pub enum VariableValue<'a> {
     String(String),
 }
 
+/// This error is returned when trying to insert a key into a `VariableMap` that already exists.
+#[derive(Debug, Copy, Clone)]
+pub struct VariableAlreadyExists;
+
 /// The map used for parsing UnicodeSets with variable support. See [`parse_with_variables`].
 #[derive(Debug, Clone, Default)]
 pub struct VariableMap<'a>(HashMap<String, VariableValue<'a>>);
@@ -217,31 +219,29 @@ impl<'a> VariableMap<'a> {
         self.0.remove(key)
     }
 
-    fn entry_or_err(&mut self, key: String) -> Result<VacantEntry<'_, String, VariableValue<'a>>, &'a VariableValue<'a>> {
-        match self.0.entry(key) {
-            Entry::Occupied(occupied) => {
-                Err(occupied.get())
-            },
-            Entry::Vacant(vacant) => {
-                Ok(vacant)
-            }
+    fn empty_entry_or_err(&self, key: &str) -> Result<(), VariableAlreadyExists> {
+        if self.0.get(key).is_some() {
+            Err(VariableAlreadyExists)
+        } else {
+            Ok(())
         }
     }
 
     /// Insert a `char` into the `VariableMap`.    
     ///
     /// Returns `Err` with the old value, if it exists.
-    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue> {
-        let entry = self.entry_or_err(key)?;
-        entry.insert(VariableValue::Char(c));
+    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), VariableAlreadyExists> {
+        self.empty_entry_or_err(&key)?;
+       
+        self.0.insert(key, VariableValue::Char(c));
         Ok(())
     }
 
     /// Insert a `String` of any length into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists.
-    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue> {
-        let entry = self.entry_or_err(key)?;
+    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), VariableAlreadyExists> {
+        self.empty_entry_or_err(&key)?;
 
         let mut chars = s.chars();
         let val = match (chars.next(), chars.next()) {
@@ -249,7 +249,7 @@ impl<'a> VariableMap<'a> {
             _ => VariableValue::String(s),
         };
 
-        entry.insert(val);
+        self.0.insert(key, val);
         Ok(())
     }
 
@@ -257,8 +257,8 @@ impl<'a> VariableMap<'a> {
     /// it consists of exactly one code point.
     ///
     /// Returns `Err` with the old value, if it exists.
-    pub fn insert_str(&mut self, key: String, s: &str) -> Result<(), &VariableValue> {
-        let entry = self.entry_or_err(key)?;
+    pub fn insert_str(&mut self, key: String, s: &str) -> Result<(), VariableAlreadyExists> {
+        self.empty_entry_or_err(&key)?;
 
         let mut chars = s.chars();
         let val = match (chars.next(), chars.next()) {
@@ -266,7 +266,7 @@ impl<'a> VariableMap<'a> {
             _ => VariableValue::String(s.to_string()),
         };
 
-        entry.insert(val);
+        self.0.insert(key, val);
         Ok(())
     }
 
@@ -277,9 +277,9 @@ impl<'a> VariableMap<'a> {
         &mut self,
         key: String,
         set: CodePointInversionListAndStringList<'a>,
-    ) -> Result<(), &VariableValue> {
-        let entry = self.entry_or_err(key)?;
-        entry.insert(VariableValue::UnicodeSet(set));
+    ) -> Result<(), VariableAlreadyExists> {
+        self.empty_entry_or_err(&key)?;
+        self.0.insert(key, VariableValue::UnicodeSet(set));
         Ok(())
     }
 }
