@@ -1338,10 +1338,13 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
 /// let my_set = parse("[abc]").unwrap();
 ///
 /// let mut variable_map = VariableMap::new();
-/// let _ = variable_map.insert_char("start".into(), 'a');
-/// let _ = variable_map.insert_char("end".into(), 'z');
-/// let _ = variable_map.insert_string("str".into(), "Hello World".into());
-/// let _ = variable_map.insert_set("the_set".into(), my_set);
+/// variable_map.insert_char("start".into(), 'a').unwrap();
+/// variable_map.insert_char("end".into(), 'z').unwrap();
+/// variable_map.insert_string("str".into(), "Hello World".into()).unwrap();
+/// variable_map.insert_set("the_set".into(), my_set).unwrap();
+///
+/// // If a variable already exists, it will be replaced but `Err` is returned.
+/// variable_map.insert_char("end".into(), 'Ω').unwrap_err();
 ///
 /// let set = parse_with_variables("[[$start-$end]-$the_set $str]", &variable_map).unwrap();
 /// assert!(set.code_points().contains_range(&('d'..='z')));
@@ -1601,20 +1604,20 @@ mod tests {
     #[test]
     fn test_semantics_with_variables() {
         let mut map_char_char = VariableMap::default();
-        let _ = map_char_char.insert_char("a".to_string(), 'a');
-        let _ = map_char_char.insert_char("var2".to_string(), 'z');
+        map_char_char.insert_char("a".to_string(), 'a').unwrap();
+        map_char_char.insert_char("var2".to_string(), 'z').unwrap();
 
         let mut map_headache = VariableMap::default();
-        let _ = map_headache.insert_char("hehe".to_string(), '-');
+        map_headache.insert_char("hehe".to_string(), '-').unwrap();
 
         let mut map_char_string = VariableMap::default();
-        let _ = map_char_string.insert_char("a".to_string(), 'a');
-        let _ = map_char_string.insert_string("var2".to_string(), "abc".to_string());
+        map_char_string.insert_char("a".to_string(), 'a').unwrap();
+        map_char_string.insert_string("var2".to_string(), "abc".to_string()).unwrap();
 
         let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
         let mut map_char_set = VariableMap::default();
-        let _ = map_char_set.insert_char("a".to_string(), 'a');
-        let _ = map_char_set.insert_set("set".to_string(), set);
+        map_char_set.insert_char("a".to_string(), 'a').unwrap();
+        map_char_set.insert_set("set".to_string(), set).unwrap();
 
         let cases: Vec<(_, _, _, Vec<&str>)> = vec![
             // simple
@@ -1839,17 +1842,17 @@ mod tests {
     #[test]
     fn test_error_messages_with_variables() {
         let mut map_char_char = VariableMap::default();
-        let _ = map_char_char.insert_char("a".to_string(), 'a');
-        let _ = map_char_char.insert_char("var2".to_string(), 'z');
+        map_char_char.insert_char("a".to_string(), 'a').unwrap();
+        map_char_char.insert_char("var2".to_string(), 'z').unwrap();
 
         let mut map_char_string = VariableMap::default();
-        let _ = map_char_string.insert_char("a".to_string(), 'a');
-        let _ = map_char_string.insert_string("var2".to_string(), "abc".to_string());
+        map_char_string.insert_char("a".to_string(), 'a').unwrap();
+        map_char_string.insert_string("var2".to_string(), "abc".to_string()).unwrap();
 
         let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
         let mut map_char_set = VariableMap::default();
-        let _ = map_char_set.insert_char("a".to_string(), 'a');
-        let _ = map_char_set.insert_set("set".to_string(), set);
+        map_char_set.insert_char("a".to_string(), 'a').unwrap();
+        map_char_set.insert_set("set".to_string(), set).unwrap();
 
         let cases = [
             (&map_char_char, "[$$a]", r"[$$a← error: unexpected variable"),
