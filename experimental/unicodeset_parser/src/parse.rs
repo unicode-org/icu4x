@@ -217,7 +217,7 @@ impl<'a> VariableMap<'a> {
 
     /// Insert a `char` into the `VariableMap`.    
     ///
-    /// Returns `Err` with the old value, if it exists.
+    /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
@@ -232,7 +232,7 @@ impl<'a> VariableMap<'a> {
 
     /// Insert a `String` of any length into the `VariableMap`.
     ///
-    /// Returns `Err` with the old value, if it exists.
+    /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
@@ -254,7 +254,7 @@ impl<'a> VariableMap<'a> {
     /// Special case for [`insert_string`] if you already have a `&str`. Avoids allocating the string if
     /// it consists of exactly one code point.
     ///
-    /// Returns `Err` with the old value, if it exists.
+    /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert_str(&mut self, key: String, s: &str) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
@@ -275,7 +275,7 @@ impl<'a> VariableMap<'a> {
 
     /// Insert a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList) into the `VariableMap`.
     ///
-    /// Returns `Err` with the old value, if it exists.
+    /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert_set(
         &mut self,
         key: String,
@@ -1358,7 +1358,7 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
 /// variable_map.insert_string("str".into(), "Hello World".into()).unwrap();
 /// variable_map.insert_set("the_set".into(), my_set).unwrap();
 ///
-/// // If a variable already exists, it will be replaced but `Err` is returned.
+/// // If a variable already exists, `Err` is returned, and the map is not updated.
 /// variable_map.insert_char("end".into(), 'Ω').unwrap_err();
 ///
 /// let set = parse_with_variables("[[$start-$end]-$the_set $str]", &variable_map).unwrap();
