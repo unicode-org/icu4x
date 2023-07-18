@@ -41,7 +41,7 @@ use ::tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)]
 /// Islamic Observational Calendar (Default)
 pub struct IslamicObservational;
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 /// Civil / Arithmetical Islamic Calendar (Used for administrative purposes)
 pub struct IslamicCivil;
@@ -304,6 +304,59 @@ impl DateTime<IslamicObservational> {
         })
     }
 }
+
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+/// The inner date type used for representing [`Date`]s of [`IslamicCivil`]. See [`Date`] and [`IslamicCivil`] for more details.
+pub struct IslamicCivilDateInner(ArithmeticDate<IslamicCivil>);
+
+impl CalendarArithmetic for IslamicCivil {
+    fn month_days(year: i32, month: u8) -> u8 {
+        match month {
+            1 | 3 | 5 | 7 | 9 | 11 => 30,
+            2 | 4 | 6 | 8 | 10 => 29,
+            12 if Self::is_leap_year(year) => 30,
+            12 => 29,
+            _ => 0,
+        }
+    }
+
+    fn months_for_every_year(_year: i32) -> u8 {
+        12
+    }
+
+    fn days_in_provided_year(_year: i32) -> u32 {
+        355
+    }
+
+    fn is_leap_year(year: i32) -> bool {
+        div_rem_euclid(14 + 11 * year, 30).1 < 11
+    }
+
+    fn last_month_day_in_year(year: i32) -> (u8, u8) {
+        if Self::is_leap_year(year) {
+            (12, 30)
+        } else {
+            (12, 29)
+        };
+    }
+}
+
+impl Calendar for IslamicCivil {
+
+}
+
+impl IslamicCivil {
+
+}
+
+impl Date<IslamicCivil> {
+
+}
+
+impl DateTime<IslamicCivil> {
+
+}
+
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 /// The inner date type used for representing [`Date`]s of [`UmmalQura`]. See [`Date`] and [`UmmalQura`] for more details.
