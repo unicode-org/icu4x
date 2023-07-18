@@ -119,12 +119,7 @@ fn generate_fs_and_verify_zero_copy() {
     //
     // Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
     // in this list since it does not affect databake.
-    const EXPECTED_TOTAL_VIOLATIONS: &[&str] = &[
-        // Regex DFAs need to be validated, which involved creating a BTreeMap
-        "list/and@1",
-        "list/or@1",
-        "list/unit@1",
-    ];
+    const EXPECTED_TOTAL_VIOLATIONS: &[&str] = &[];
 
     assert!(total_violations.iter().eq(EXPECTED_TOTAL_VIOLATIONS.iter()) && net_violations.iter().eq(EXPECTED_NET_VIOLATIONS.iter()),
         "Expected violations list does not match found violations!\n\
