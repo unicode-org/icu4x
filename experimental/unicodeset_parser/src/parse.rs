@@ -199,10 +199,6 @@ pub enum VariableValue<'a> {
     String(String),
 }
 
-/// This error is returned when trying to insert a key into a `VariableMap` that already exists.
-#[derive(Debug, Copy, Clone)]
-pub struct VariableAlreadyExists;
-
 /// The map used for parsing UnicodeSets with variable support. See [`parse_with_variables`].
 #[derive(Debug, Clone, Default)]
 pub struct VariableMap<'a>(HashMap<String, VariableValue<'a>>);
@@ -219,20 +215,17 @@ impl<'a> VariableMap<'a> {
         self.0.remove(key)
     }
 
-    fn empty_entry_or_err(&self, key: &str) -> Result<(), VariableAlreadyExists> {
-        if self.0.get(key).is_some() {
-            Err(VariableAlreadyExists)
-        } else {
-            Ok(())
-        }
-    }
-
     /// Insert a `char` into the `VariableMap`.    
     ///
     /// Returns `Err` with the old value, if it exists.
-    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), VariableAlreadyExists> {
-        self.empty_entry_or_err(&key)?;
-       
+    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue> {
+        // borrow-checker shenanigans, otherwise we could use if let
+        if self.0.get(&key).is_some() {
+            // safety: we just checked that this key exists
+            #[allow(clippy::indexing_slicing)]
+            return Err(&self.0[&key]);
+        }
+
         self.0.insert(key, VariableValue::Char(c));
         Ok(())
     }
@@ -240,8 +233,13 @@ impl<'a> VariableMap<'a> {
     /// Insert a `String` of any length into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists.
-    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), VariableAlreadyExists> {
-        self.empty_entry_or_err(&key)?;
+    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue> {
+        // borrow-checker shenanigans, otherwise we could use if let
+        if self.0.get(&key).is_some() {
+            // safety: we just checked that this key exists
+            #[allow(clippy::indexing_slicing)]
+            return Err(&self.0[&key]);
+        }
 
         let mut chars = s.chars();
         let val = match (chars.next(), chars.next()) {
@@ -257,8 +255,13 @@ impl<'a> VariableMap<'a> {
     /// it consists of exactly one code point.
     ///
     /// Returns `Err` with the old value, if it exists.
-    pub fn insert_str(&mut self, key: String, s: &str) -> Result<(), VariableAlreadyExists> {
-        self.empty_entry_or_err(&key)?;
+    pub fn insert_str(&mut self, key: String, s: &str) -> Result<(), &VariableValue> {
+        // borrow-checker shenanigans, otherwise we could use if let
+        if self.0.get(&key).is_some() {
+            // safety: we just checked that this key exists
+            #[allow(clippy::indexing_slicing)]
+            return Err(&self.0[&key]);
+        }
 
         let mut chars = s.chars();
         let val = match (chars.next(), chars.next()) {
@@ -277,8 +280,13 @@ impl<'a> VariableMap<'a> {
         &mut self,
         key: String,
         set: CodePointInversionListAndStringList<'a>,
-    ) -> Result<(), VariableAlreadyExists> {
-        self.empty_entry_or_err(&key)?;
+    ) -> Result<(), &VariableValue> {
+        // borrow-checker shenanigans, otherwise we could use if let
+        if self.0.get(&key).is_some() {
+            // safety: we just checked that this key exists
+            #[allow(clippy::indexing_slicing)]
+            return Err(&self.0[&key]);
+        }
         self.0.insert(key, VariableValue::UnicodeSet(set));
         Ok(())
     }
@@ -1619,7 +1627,9 @@ mod tests {
 
         let mut map_char_string = VariableMap::default();
         map_char_string.insert_char("a".to_string(), 'a').unwrap();
-        map_char_string.insert_string("var2".to_string(), "abc".to_string()).unwrap();
+        map_char_string
+            .insert_string("var2".to_string(), "abc".to_string())
+            .unwrap();
 
         let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
         let mut map_char_set = VariableMap::default();
@@ -1854,7 +1864,9 @@ mod tests {
 
         let mut map_char_string = VariableMap::default();
         map_char_string.insert_char("a".to_string(), 'a').unwrap();
-        map_char_string.insert_string("var2".to_string(), "abc".to_string()).unwrap();
+        map_char_string
+            .insert_string("var2".to_string(), "abc".to_string())
+            .unwrap();
 
         let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
         let mut map_char_set = VariableMap::default();
