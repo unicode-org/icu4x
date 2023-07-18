@@ -337,7 +337,7 @@ impl CalendarArithmetic for IslamicCivil {
             (12, 30)
         } else {
             (12, 29)
-        };
+        }
     }
 }
 
@@ -431,16 +431,120 @@ impl Calendar for IslamicCivil {
 }
 
 impl IslamicCivil {
+    /// Constructs a new Islamic Civil Calendar
+    pub fn new() -> Self {
+        Self
+    }
+
+    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
+    // The fixed date algorithms are from
+    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
+    //
+    // Lisp code reference:
+
+    fn fixed_from_islamic(i_date: IslamicCivilDateInner) -> RataDie {
+        let year = i64::from(i_date.0.year);
+        let month = i64::from(i_date.0.month);
+        let day = i64::from(i_date.0.day);
+
+        RataDie::new(
+            FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date() - 1
+                + (year - 1) * 354
+                + (3 + year * 11) / 30
+                + 29 * (month - 1)
+                + month / 2
+                + day,
+        )
+    }
+    #[allow(clippy::unwrap_used)]
+    fn islamic_from_fixed(date: RataDie) -> Date<IslamicCivil> {
+        let year = div_rem_euclid_f64(
+            ((date.to_f64_date() - FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()) * 30.0) + 10646.0,
+            10631.0,
+        )
+        .0 as i32;
+        let prior_days = (Self::fixed_from_islamic(IslamicCivilDateInner(
+            ArithmeticDate::new_from_lunar_ordinals(year, 1, 1).unwrap(),
+        )))
+        .to_f64_date()
+            - date.to_f64_date();
+        let month = div_rem_euclid_f64((prior_days * 11.0) + 330.0, 325.0).0 as u8;
+        let day = ((Self::fixed_from_islamic(IslamicCivilDateInner(
+            ArithmeticDate::new_from_lunar_ordinals(year, month, 1).unwrap(),
+        ))
+        .to_f64_date()
+            - date.to_f64_date())
+            + 1.0) as u8;
+
+        Date::try_new_islamic_civil_date(year, month, day).unwrap() // Safe value
+    }
+
+    fn year_as_islamic(year: i32) -> types::FormattableYear {
+        types::FormattableYear {
+            era: types::Era(tinystr!(16, "ah")),
+            number: year,
+            cyclic: None,
+            related_iso: None,
+        }
+    }
 }
 
 impl Date<IslamicCivil> {
-
+    /// Construct new Civil Islamic Date.
+    ///
+    /// Has no negative years, only era is the AH.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_islamic = Date::try_new_islamic_civil_date(1392, 4, 25)
+    ///     .expect("Failed to initialize Islamic Date instance.");
+    ///
+    /// assert_eq!(date_islamic.year().number, 1392);
+    /// assert_eq!(date_islamic.month().ordinal, 4);
+    /// assert_eq!(date_islamic.day_of_month().0, 25);
+    /// ```
+    pub fn try_new_islamic_civil_date(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<IslamicCivil>, CalendarError> {
+        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+            .map(IslamicCivilDateInner)
+            .map(|inner| Date::from_raw(inner, IslamicCivil))
+    }
 }
 
 impl DateTime<IslamicCivil> {
-
+    /// Construct a new Civil Islamic datetime from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let datetime_islamic = DateTime::try_new_islamic_civil_datetime(474, 10, 11, 13, 1, 0)
+    ///     .expect("Failed to initialize Islamic DateTime instance.");
+    ///
+    /// assert_eq!(datetime_islamic.date.year().number, 474);
+    /// assert_eq!(datetime_islamic.date.month().ordinal, 10);
+    /// assert_eq!(datetime_islamic.date.day_of_month().0, 11);
+    /// assert_eq!(datetime_islamic.time.hour.number(), 13);
+    /// assert_eq!(datetime_islamic.time.minute.number(), 1);
+    /// assert_eq!(datetime_islamic.time.second.number(), 0);
+    /// ```
+    pub fn try_new_islamic_civil_datetime(
+        year: i32,
+        month: u8,
+        day: u8,
+        hour: u8,
+        minute: u8,
+        second: u8,
+    ) -> Result<DateTime<IslamicCivil>, CalendarError> {
+        Ok(DateTime {
+            date: Date::try_new_islamic_civil_date(year, month, day)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
+        })
+    }
 }
-
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 /// The inner date type used for representing [`Date`]s of [`UmmalQura`]. See [`Date`] and [`UmmalQura`] for more details.
