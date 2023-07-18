@@ -9,7 +9,7 @@ edition = "2021"
 combine = "4.6.4"
 icu_properties = { version = "1.2.0", path = "../../components/properties" }
 icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde"] }
-icu_unicodeset_parser = { path = "../unicodeset_parser" }
+icu_unicodeset_parser = { path = "../unicodeset_parser", features = ["compiled_data"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke", "derive"] }

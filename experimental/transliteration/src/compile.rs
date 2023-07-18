@@ -27,7 +27,6 @@ use CompileErrorKind as CEK;
 use SourceLocation as SL;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_unicodeset_parser::ParseError;
-use icu_unicodeset_parser::UnicodeSetBuilderOptions;
 
 // TODO: replicate unicodeset_parser error behavior?
 #[derive(Debug, Clone, Copy)]
@@ -69,9 +68,7 @@ impl<'a> Compiler<'a> {
     }
 
     fn compile_unicode_set(&self, s: &str) -> Result<CodePointInversionListAndStringList<'a>> {
-        let mut options = UnicodeSetBuilderOptions::default();
-        options.dollar_is_anchor = true;
-        icu_unicodeset_parser::parse_unstable(s, options, &icu_testdata::unstable()).map_err(|e| CompileError::unicodeset(sl!(), e))
+        icu_unicodeset_parser::parse(s).map_err(|e| CompileError::unicodeset(sl!(), e))
     }
 
     fn compile_target_pattern(&self, parsed_pattern: &[prs::PatternElement]) -> Result<translit::Replacer<'a>> {
