@@ -33,7 +33,6 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{div_rem_euclid, div_rem_euclid_f64, next};
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
-use crate::types::Moment;
 use crate::{astronomy::*, Iso};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
@@ -46,18 +45,18 @@ pub struct IslamicObservational;
 #[allow(clippy::exhaustive_structs)]
 /// Civil / Arithmetical Islamic Calendar (Used for administrative purposes)
 pub struct IslamicCivil;
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 /// Umm-al-Qura Hijri Calendar (Used in Saudi Arabia)
 pub struct UmmalQura;
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 /// A Tabular version of the Arithmetical Islamic Calendar
 pub struct IslamicTabular;
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2066
 const FIXED_ISLAMIC_EPOCH_FRIDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 16);
-const FIXED_ISLAMIC_EPOCH_THURSDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 15);
+//const FIXED_ISLAMIC_EPOCH_THURSDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 15);
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6898
 const CAIRO: Location = Location {
@@ -504,13 +503,11 @@ impl UmmalQura {
 
         Some(phase > 0.0 && phase < 90.0 && moonlag > 0.0)
     }
-
     pub(crate) fn adjusted_saudi_criterion(date: RataDie) -> bool {
-        let x = Self::saudi_criterion(date);
-        if x.is_none() {
-            return false;
+        if let Some(x) = Self::saudi_criterion(date) {
+            x
         } else {
-            x.unwrap()
+            false
         }
     }
 
@@ -528,6 +525,7 @@ impl UmmalQura {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6996
+    #[allow(clippy::unwrap_used)]
     fn saudi_islamic_from_fixed(date: RataDie) -> Date<UmmalQura> {
         let crescent = Self::saudi_new_month_on_or_before(date);
         let elapsed_months =

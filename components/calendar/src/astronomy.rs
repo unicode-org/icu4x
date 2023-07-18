@@ -109,6 +109,7 @@ impl Location {
     }
 
     /// Get the utc-offset of a Location
+    #[allow(dead_code)]
     pub(crate) fn zone(&self) -> f64 {
         self.zone
     }
@@ -965,12 +966,14 @@ impl Astronomical {
 
     #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
-        let sun = Self::sunset(date, location)?;
-        let moon = Self::moonset(date, location);
-        if moon.is_none() {
-            return Some(1.0);
+        if let Some(sun) = Self::sunset(date, location) {
+            if let Some(moon) = Self::moonset(date, location) {
+                Some(moon - sun)
+            } else {
+                Some(1.0)
+            }
         } else {
-            Some(moon.unwrap() - sun) // Safe unwrap()
+            None
         }
     }
 
