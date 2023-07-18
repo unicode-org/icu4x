@@ -85,7 +85,7 @@ pub mod ffi {
 
     impl ICU4XCollator {
         /// Construct a new Collator instance.
-        #[diplomat::rust_link(icu::collator::Collator::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
         pub fn create_v1(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -94,8 +94,11 @@ pub mod ffi {
             let locale = locale.to_datalocale();
             let options = CollatorOptions::from(options);
 
-            Ok(Box::new(ICU4XCollator(Collator::try_new_unstable(
-                &provider.0,
+            Ok(Box::new(ICU4XCollator(call_constructor!(
+                Collator::try_new,
+                Collator::try_new_with_any_provider,
+                Collator::try_new_with_buffer_provider,
+                provider,
                 &locale,
                 options,
             )?)))

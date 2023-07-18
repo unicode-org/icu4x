@@ -47,31 +47,39 @@ pub mod ffi {
 
     impl ICU4XPluralRules {
         /// Construct an [`ICU4XPluralRules`] for the given locale, for cardinal numbers
-        #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal_unstable, FnInStruct)]
-        #[diplomat::rust_link(icu::plurals::PluralRules::try_new_unstable, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
         pub fn create_cardinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XPluralRules>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XPluralRules(
-                PluralRules::try_new_cardinal_unstable(&provider.0, &locale)?,
-            )))
+            Ok(Box::new(ICU4XPluralRules(call_constructor!(
+                PluralRules::try_new_cardinal,
+                PluralRules::try_new_cardinal_with_any_provider,
+                PluralRules::try_new_cardinal_with_buffer_provider,
+                provider,
+                &locale
+            )?)))
         }
 
         /// Construct an [`ICU4XPluralRules`] for the given locale, for ordinal numbers
-        #[diplomat::rust_link(icu::plurals::PluralRules::try_new_ordinal_unstable, FnInStruct)]
-        #[diplomat::rust_link(icu::plurals::PluralRules::try_new_unstable, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRules::try_new_ordinal, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
         pub fn create_ordinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XPluralRules>, ICU4XError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XPluralRules(
-                PluralRules::try_new_ordinal_unstable(&provider.0, &locale)?,
-            )))
+            Ok(Box::new(ICU4XPluralRules(call_constructor!(
+                PluralRules::try_new_ordinal,
+                PluralRules::try_new_ordinal_with_any_provider,
+                PluralRules::try_new_ordinal_with_buffer_provider,
+                provider,
+                &locale
+            )?)))
         }
 
         /// Get the category for a given number represented as operands

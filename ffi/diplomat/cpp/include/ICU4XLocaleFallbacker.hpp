@@ -37,7 +37,7 @@ class ICU4XLocaleFallbacker {
   /**
    * Creates a new `ICU4XLocaleFallbacker` from a data provider.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new) for more information.
    */
   static diplomat::result<ICU4XLocaleFallbacker, ICU4XError> create(const ICU4XDataProvider& provider);
 

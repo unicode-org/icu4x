@@ -145,7 +145,7 @@ where
     where
         D: Deserializer<'de>,
     {
-        let visitor: VarZeroVecVisitor<T, F> = VarZeroVecVisitor::default();
+        let visitor = VarZeroVecVisitor::<T, F>::default();
         if deserializer.is_human_readable() {
             deserializer.deserialize_seq(visitor)
         } else {
@@ -170,34 +170,32 @@ where
                 "&VarZeroSlice cannot be deserialized from human-readable formats",
             ))
         } else {
-            let visitor: VarZeroSliceRefVisitor<T, F> = VarZeroSliceRefVisitor::default();
-            let deserialized: &'a VarZeroSlice<_, _> = deserializer.deserialize_bytes(visitor)?;
-            Ok(deserialized)
+            let deserialized = VarZeroVec::<'a, T, F>::deserialize(deserializer)?;
+            let borrowed = if let VarZeroVec::Borrowed(b) = deserialized {
+                b
+            } else {
+                return Err(de::Error::custom(
+                    "&VarZeroSlice can only deserialize in zero-copy ways",
+                ));
+            };
+            Ok(borrowed)
         }
     }
 }
 
 /// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
-impl<'de, 'a, T, F> Deserialize<'de> for Box<VarZeroSlice<T, F>>
+impl<'de, T, F> Deserialize<'de> for Box<VarZeroSlice<T, F>>
 where
     T: VarULE + ?Sized,
     Box<T>: Deserialize<'de>,
     F: VarZeroVecFormat,
-    'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        if deserializer.is_human_readable() {
-            let visitor: VarZeroSliceBoxVisitor<T, F> = VarZeroSliceBoxVisitor::default();
-            let deserialized: Box<VarZeroSlice<_, _>> = deserializer.deserialize_seq(visitor)?;
-            Ok(deserialized)
-        } else {
-            Err(de::Error::custom(
-                "Box<VarZeroSlice> should not be deserialized from byte-slice formats",
-            ))
-        }
+        let deserialized = VarZeroVec::<T, F>::deserialize(deserializer)?;
+        Ok(deserialized.to_boxed())
     }
 }
 
@@ -260,6 +258,12 @@ mod test {
     struct DeriveTest_VarZeroSlice<'data> {
         #[serde(borrow)]
         _data: &'data VarZeroSlice<str>,
+    }
+
+    #[derive(serde::Serialize, serde::Deserialize)]
+    struct DeriveTest_VarZeroVec_of_VarZeroSlice<'data> {
+        #[serde(borrow)]
+        _data: VarZeroVec<'data, VarZeroSlice<str>>,
     }
 
     // ["foo", "bar", "baz", "dolor", "quux", "lorem ipsum"];

@@ -31,7 +31,7 @@ dependencies = [
     "check-no-features",
     "ci-job-fmt",
     "ci-job-clippy",
-    "check-cargo-tutorial-local",
+    "check-tutorials-local",
     "ci-job-tidy",
     "ci-job-doc",
 ]
@@ -54,7 +54,7 @@ args = ["check", "--all-targets", "--all-features"]
 description = "Check ICU4X build with no features (covered in CI via cargo make check-all-features)"
 category = "ICU4X Development"
 command = "cargo"
-args = ["check", "--all-targets", "--no-default-features"]
+args = ["check", "--no-default-features"]
 
 [tasks.ci-job-msrv-check]
 description = "Run all tests for the CI 'check' job"
@@ -72,11 +72,18 @@ dependencies = [
     "test-all-features",
 ]
 
-[tasks.ci-job-test-cargo-tutorial]
-description = "Run all checks for the CI 'test-cargo-tutorial' job"
+[tasks.ci-job-test-tutorials-local]
+description = "Run all checks for the CI 'test-tutorials' job"
 category = "CI"
 dependencies = [
-    "test-cargo-tutorial-local",
+    "test-tutorials-local",
+]
+
+[tasks.ci-job-test-tutorials-cratesio]
+description = "Run all checks for the CI 'test-tutorials' job"
+category = "CI"
+dependencies = [
+    "test-tutorials-cratesio",
 ]
 
 [tasks.ci-job-testdata]

@@ -63,17 +63,17 @@
 
     .. cpp:function:: static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_bidi_class(const ICU4XDataProvider& provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_east_asian_width(const ICU4XDataProvider& provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_line_break(const ICU4XDataProvider& provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_grapheme_cluster_break(const ICU4XDataProvider& provider)
@@ -83,15 +83,15 @@
 
     .. cpp:function:: static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_word_break(const ICU4XDataProvider& provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.name_to_enum_mapper>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_sentence_break(const ICU4XDataProvider& provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.name_to_enum_mapper>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_script(const ICU4XDataProvider& provider)
 
-        See the `Rust documentation for get_name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.get_name_to_enum_mapper>`__ for more information.
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.name_to_enum_mapper>`__ for more information.
 

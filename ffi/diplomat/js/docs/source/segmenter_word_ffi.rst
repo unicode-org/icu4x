@@ -97,7 +97,7 @@
 
         Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
 
-        See the `Rust documentation for try_new_auto_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto_unstable>`__ for more information.
+        See the `Rust documentation for new_auto <https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto>`__ for more information.
 
 
     .. js:function:: create_lstm(provider)
@@ -106,14 +106,14 @@
 
         Warning: :js:class:`ICU4XWordSegmenter` created by this function doesn't handle Chinese or Japanese.
 
-        See the `Rust documentation for try_new_lstm_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm_unstable>`__ for more information.
+        See the `Rust documentation for new_lstm <https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm>`__ for more information.
 
 
     .. js:function:: create_dictionary(provider)
 
         Construct an :js:class:`ICU4XWordSegmenter` with dictionary payload data for Chinese, Japanese, Burmese, Khmer, Lao, and Thai.
 
-        See the `Rust documentation for try_new_dictionary_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary_unstable>`__ for more information.
+        See the `Rust documentation for new_dictionary <https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary>`__ for more information.
 
 
     .. js:method:: segment_utf8(input)

@@ -268,6 +268,14 @@ impl<'data> CodePointInversionList<'data> {
         CodePointInversionList::try_from_inversion_list(inv_list_zv)
     }
 
+    /// Attempts to convert this list into a fully-owned one. No-op if already fully owned
+    pub fn into_owned(self) -> CodePointInversionList<'static> {
+        CodePointInversionList {
+            inv_list: self.inv_list.into_owned(),
+            size: self.size,
+        }
+    }
+
     /// Returns an owned inversion list representing the current [`CodePointInversionList`]
     pub fn get_inversion_list_vec(&self) -> Vec<u32> {
         let result: Vec<u32> = self.as_inversion_list().to_vec(); // Only crate public, to not leak impl

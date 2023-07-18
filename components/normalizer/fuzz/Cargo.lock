@@ -221,7 +221,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -255,7 +255,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_properties"
@@ -272,7 +272,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "0.0.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_provider"

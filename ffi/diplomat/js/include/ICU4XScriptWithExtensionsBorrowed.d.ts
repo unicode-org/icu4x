@@ -1,4 +1,5 @@
 import { u16, u32 } from "./diplomat-runtime"
+import { ICU4XCodePointSetData } from "./ICU4XCodePointSetData";
 import { ICU4XScriptExtensionsSet } from "./ICU4XScriptExtensionsSet";
 
 /**
@@ -32,4 +33,12 @@ export class ICU4XScriptWithExtensionsBorrowed {
    * See the {@link https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script Rust documentation for `has_script`} for more information.
    */
   has_script(code_point: u32, script: u16): boolean;
+
+  /**
+
+   * Build the CodePointSetData corresponding to a codepoints matching a particular script in their Script_Extensions
+
+   * See the {@link https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set Rust documentation for `get_script_extensions_set`} for more information.
+   */
+  get_script_extensions_set(script: u16): ICU4XCodePointSetData;
 }

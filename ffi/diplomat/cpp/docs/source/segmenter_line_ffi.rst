@@ -89,42 +89,42 @@
 
         Construct a :cpp:class:`ICU4XLineSegmenter` with default options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
 
-        See the `Rust documentation for try_new_auto_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_unstable>`__ for more information.
+        See the `Rust documentation for new_auto <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_lstm(const ICU4XDataProvider& provider)
 
         Construct a :cpp:class:`ICU4XLineSegmenter` with default options and LSTM payload data for Burmese, Khmer, Lao, and Thai.
 
-        See the `Rust documentation for try_new_lstm_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_unstable>`__ for more information.
+        See the `Rust documentation for new_lstm <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_dictionary(const ICU4XDataProvider& provider)
 
         Construct a :cpp:class:`ICU4XLineSegmenter` with default options and dictionary payload data for Burmese, Khmer, Lao, and Thai..
 
-        See the `Rust documentation for try_new_dictionary_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_unstable>`__ for more information.
+        See the `Rust documentation for new_dictionary <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_auto_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options)
 
         Construct a :cpp:class:`ICU4XLineSegmenter` with custom options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
 
-        See the `Rust documentation for try_new_auto_with_options_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_with_options_unstable>`__ for more information.
+        See the `Rust documentation for new_auto_with_options <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_lstm_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options)
 
         Construct a :cpp:class:`ICU4XLineSegmenter` with custom options and LSTM payload data for Burmese, Khmer, Lao, and Thai.
 
-        See the `Rust documentation for try_new_lstm_with_options_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_with_options_unstable>`__ for more information.
+        See the `Rust documentation for new_lstm_with_options <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options)
 
         Construct a :cpp:class:`ICU4XLineSegmenter` with custom options and dictionary payload data for Burmese, Khmer, Lao, and Thai.
 
-        See the `Rust documentation for try_new_dictionary_with_options_unstable <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_with_options_unstable>`__ for more information.
+        See the `Rust documentation for new_dictionary_with_options <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options>`__ for more information.
 
 
     .. cpp:function:: ICU4XLineBreakIteratorUtf8 segment_utf8(const std::string_view input) const

@@ -10,14 +10,14 @@
 
         Construct a new ICU4XComposingNormalizer instance for NFC
 
-        See the `Rust documentation for try_new_nfc_unstable <https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfc_unstable>`__ for more information.
+        See the `Rust documentation for new_nfc <https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc>`__ for more information.
 
 
     .. js:function:: create_nfkc(provider)
 
         Construct a new ICU4XComposingNormalizer instance for NFKC
 
-        See the `Rust documentation for try_new_nfkc_unstable <https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfkc_unstable>`__ for more information.
+        See the `Rust documentation for new_nfkc <https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc>`__ for more information.
 
 
     .. js:method:: normalize(s)
@@ -47,14 +47,14 @@
 
         Construct a new ICU4XDecomposingNormalizer instance for NFC
 
-        See the `Rust documentation for try_new_nfd_unstable <https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfd_unstable>`__ for more information.
+        See the `Rust documentation for new_nfd <https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd>`__ for more information.
 
 
     .. js:function:: create_nfkd(provider)
 
         Construct a new ICU4XDecomposingNormalizer instance for NFKC
 
-        See the `Rust documentation for try_new_nfkd_unstable <https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfkd_unstable>`__ for more information.
+        See the `Rust documentation for new_nfkd <https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd>`__ for more information.
 
 
     .. js:method:: normalize(s)

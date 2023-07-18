@@ -33,30 +33,30 @@
 
     .. js:function:: load_basic_emoji(provider)
 
-        See the `Rust documentation for load_basic_emoji <https://docs.rs/icu/latest/icu/properties/sets/fn.load_basic_emoji.html>`__ for more information.
+        See the `Rust documentation for basic_emoji <https://docs.rs/icu/latest/icu/properties/sets/fn.basic_emoji.html>`__ for more information.
 
 
     .. js:function:: load_exemplars_main(provider, locale)
 
-        See the `Rust documentation for load_exemplars_main <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_main.html>`__ for more information.
+        See the `Rust documentation for exemplars_main <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_main.html>`__ for more information.
 
 
     .. js:function:: load_exemplars_auxiliary(provider, locale)
 
-        See the `Rust documentation for load_exemplars_auxiliary <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html>`__ for more information.
+        See the `Rust documentation for exemplars_auxiliary <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_auxiliary.html>`__ for more information.
 
 
     .. js:function:: load_exemplars_punctuation(provider, locale)
 
-        See the `Rust documentation for load_exemplars_punctuation <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html>`__ for more information.
+        See the `Rust documentation for exemplars_punctuation <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_punctuation.html>`__ for more information.
 
 
     .. js:function:: load_exemplars_numbers(provider, locale)
 
-        See the `Rust documentation for load_exemplars_numbers <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html>`__ for more information.
+        See the `Rust documentation for exemplars_numbers <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_numbers.html>`__ for more information.
 
 
     .. js:function:: load_exemplars_index(provider, locale)
 
-        See the `Rust documentation for load_exemplars_index <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_index.html>`__ for more information.
+        See the `Rust documentation for exemplars_index <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_index.html>`__ for more information.
 

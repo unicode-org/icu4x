@@ -51,6 +51,7 @@ pub mod data_struct;
 pub mod errors;
 pub mod locale;
 pub mod logging;
+#[macro_use]
 pub mod provider;
 
 #[cfg(target_arch = "wasm32")]
@@ -66,8 +67,12 @@ pub mod bidi;
     feature = "icu_calendar"
 ))]
 pub mod calendar;
+#[cfg(feature = "icu_casemap")]
+pub mod casemap;
 #[cfg(feature = "icu_collator")]
 pub mod collator;
+#[cfg(feature = "icu_properties")]
+pub mod collections_sets;
 #[cfg(any(
     feature = "icu_datetime",
     feature = "icu_timezone",

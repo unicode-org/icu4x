@@ -33,16 +33,20 @@ pub mod ffi {
 
     impl ICU4XWeekCalculator {
         /// Creates a new [`ICU4XWeekCalculator`] from locale data.
-        #[diplomat::rust_link(icu::calendar::week::WeekCalculator::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::week::WeekCalculator::try_new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XWeekCalculator>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            Ok(Box::new(ICU4XWeekCalculator(
-                WeekCalculator::try_new_unstable(&provider.0, &locale)?,
-            )))
+            Ok(Box::new(ICU4XWeekCalculator(call_constructor!(
+                WeekCalculator::try_new,
+                WeekCalculator::try_new_with_any_provider,
+                WeekCalculator::try_new_with_buffer_provider,
+                provider,
+                &locale,
+            )?)))
         }
 
         #[diplomat::rust_link(

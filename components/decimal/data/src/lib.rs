@@ -4,6 +4,8 @@
 
 //! Data for the icu_decimal crate
 
+#![no_std]
+
 #[cfg(icu4x_custom_data)]
 include!(concat!(core::env!("ICU4X_DATA_DIR"), "/macros.rs"));
 #[cfg(not(icu4x_custom_data))]
