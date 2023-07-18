@@ -71,6 +71,29 @@ impl serde::Serialize for SerdeDFA<'_> {
     }
 }
 
+// These DFA are not expected to change frequently, so we can hardcode the fingerprints
+// for known valid DFA to avoid verification (which needs to allocate).
+//
+// SAFETY: If an attacker could compute a postcard payload with one of these fingerprints,
+// it would allow them to break our safety invariant. We therefore require the fingerprint
+// function to be second-pre-image resistant.
+const KNOWN_FINGERPRINTS: &[u64] = &[
+    0x5231f10e93340569, // list/and@1 es
+    0x3d6e152dc9f270d2, // list/or@1 es
+    0x145ce8e90f51c3f9, // list/and@1 he
+];
+
+// TODO: `SipHasher::new()` (i.e. without a secret key) is *not* guaranteed to be
+// second-pre-image resistant.
+fn fingerprint(data: &[u8]) -> u64 {
+    #[allow(deprecated)]
+    use std::hash::{Hash, Hasher, SipHasher};
+    #[allow(deprecated)]
+    let mut hasher = SipHasher::new();
+    data.hash(&mut hasher);
+    hasher.finish()
+}
+
 #[cfg(feature = "serde")]
 impl<'data> SerdeDFA<'data> {
     /// Deserializes to `Option<Self>`. Will return `None` for non-human-readable serialization
@@ -98,11 +121,12 @@ impl<'data> SerdeDFA<'data> {
             return Ok(None);
         }
 
-        // Verify safety invariant
-        DFA::from_bytes(&dfa_bytes).map_err(|e| {
-            use serde::de::Error;
-            D::Error::custom(alloc::format!("Invalid DFA bytes: {e}"))
-        })?;
+        if !KNOWN_FINGERPRINTS.contains(&fingerprint(&dfa_bytes)) {
+            DFA::from_bytes(&dfa_bytes).map_err(|e| {
+                use serde::de::Error;
+                D::Error::custom(alloc::format!("Invalid DFA bytes: {e}"))
+            })?;
+        }
 
         Ok(Some(SerdeDFA {
             dfa_bytes,
@@ -212,6 +236,66 @@ mod test {
 
         // Missing bytes lead to an error
         assert!(postcard::from_bytes::<OptionSerdeDFA>(&bytes[0..bytes.len() - 5]).is_err());
+    }
+
+    #[test]
+    fn test_postcard_fingerprints() {
+        use crate::provider::*;
+
+        for (key_locale, payload) in [
+            (
+                "list/and@1 es",
+                DataProvider::<AndListV1Marker>::load(
+                    &Baked,
+                    DataRequest {
+                        locale: &icu::locid::langid!("es").into(),
+                        metadata: Default::default(),
+                    },
+                )
+                .unwrap()
+                .take_payload()
+                .unwrap()
+                .cast::<ErasedListV1Marker>(),
+            ),
+            (
+                "list/or@1 es",
+                DataProvider::<OrListV1Marker>::load(
+                    &Baked,
+                    DataRequest {
+                        locale: &icu::locid::langid!("es").into(),
+                        metadata: Default::default(),
+                    },
+                )
+                .unwrap()
+                .take_payload()
+                .unwrap()
+                .cast(),
+            ),
+            (
+                "list/and@1 he",
+                DataProvider::<AndListV1Marker>::load(
+                    &Baked,
+                    DataRequest {
+                        locale: &icu::locid::langid!("he").into(),
+                        metadata: Default::default(),
+                    },
+                )
+                .unwrap()
+                .take_payload()
+                .unwrap()
+                .cast(),
+            ),
+        ] {
+            for pattern in &payload.get().0 {
+                if let Some(special_case) = &pattern.special_case {
+                    let fingerprint = fingerprint(&special_case.condition.dfa_bytes);
+                    assert!(
+                        KNOWN_FINGERPRINTS.contains(&fingerprint),
+                        "unknown fingerprint 0x{fingerprint:x} for {key_locale}"
+                    );
+                }
+            }
+        }
     }
 
     #[test]
