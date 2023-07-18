@@ -5,25 +5,25 @@
 //! This module contains types and implementations for the Korean Dangi calendar.
 //!
 //! ```rust
-//! use icu:;calendar::{Date, DateTime};
+//! use icu::calendar::{Date, DateTime};
 //!
 //! // `Date` type
-//! let dangi_date = Date::try_new_dangi_date(4355, 6, 6)
+//! let dangi_date = Date::try_new_dangi_date(4356, 6, 6)
 //!     .expect("Failed to initialize Dangi Date instance.");
 //!
 //! // `DateTime` type
-//! let dangi_datetime = DateTime::try_new_dangi_datetime(4355, 6, 6, 13, 1, 0)
+//! let dangi_datetime = DateTime::try_new_dangi_datetime(4356, 6, 6, 13, 1, 0)
 //!     .expect("Failed to initialize Dangi DateTime instance.");
 //!
 //! // `Date` checks
-//! assert_eq!(dangi_date.year().number, 4355);
+//! assert_eq!(dangi_date.year().number, 4356);
 //! assert_eq!(dangi_date.year().related_iso, Some(2023));
 //! assert_eq!(dangi_date.year().cyclic, Some(40));
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //!
 //! // `DateTime` checks
-//! assert_eq!(dangi_datetime.date.year().number, 4355);
+//! assert_eq!(dangi_datetime.date.year().number, 4356);
 //! assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
 //! assert_eq!(dangi_datetime.date.year().cyclic, Some(40));
 //! assert_eq!(dangi_datetime.date.month().ordinal, 6);
@@ -107,7 +107,27 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
 /// It is often used today to track important cultural events and holidays like Seollal
 /// (Korean lunar new year). It is similar to the Chinese lunar calendar (see [`Chinese`]),
 /// except that observations are based in Korea (currently UTC+9) rather than China (UTC+8).
+/// This can cause some differences; for example, 2012 was a leap year, but in the Dangi
+/// calendar the leap month was 3, while in the Chinese calendar the leap month was 4.
 ///
+/// ```rust
+/// use icu::calendar::{Date, dangi::Dangi, chinese::Chinese};
+/// use tinystr::tinystr;
+///
+/// let iso_a = Date::try_new_iso_date(2012, 4, 23).unwrap();
+/// let dangi_a = iso_a.to_calendar(Dangi);
+/// let chinese_a = iso_a.to_calendar(Chinese);
+///
+/// assert_eq!(dangi_a.month().code.0, tinystr!(4, "M03L"));
+/// assert_eq!(chinese_a.month().code.0, tinystr!(4, "M04"));
+///
+/// let iso_b = Date::try_new_iso_date(2012, 5, 23).unwrap();
+/// let dangi_b = iso_b.to_calendar(Dangi);
+/// let chinese_b = iso_b.to_calendar(Chinese);
+///
+/// assert_eq!(dangi_b.month().code.0, tinystr!(4, "M04"));
+/// assert_eq!(chinese_b.month().code.0, tinystr!(4, "M04L"));
+/// ```
 /// # Era codes
 ///
 /// This Calendar supports a single era code "dangi" based on the year -2332 ISO (2333 BCE) as year 1.
@@ -295,7 +315,23 @@ impl Calendar for Dangi {
 }
 
 impl Date<Dangi> {
-    /// TODO: Docs
+    /// Construct a new Dangi date from a `year`, `month`, and `day`.
+    /// `year` represents the Chinese year counted infinitely with -2332 (2333 BCE) as year 1;
+    /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
+    /// `day` indicates day of month.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_dangi = Date::try_new_dangi_date(4356, 6, 18)
+    ///     .expect("Failed to initialize Dangi Date instance.");
+    ///
+    /// assert_eq!(date_dangi.year().number, 4356);
+    /// assert_eq!(date_dangi.year().cyclic, Some(40));
+    /// assert_eq!(date_dangi.year().related_iso, Some(2023));
+    /// assert_eq!(date_dangi.month().ordinal, 6);
+    /// assert_eq!(date_dangi.day_of_month().0, 18);
+    /// ```
     pub fn try_new_dangi_date(year: i32, month: u8, day: u8) -> Result<Date<Dangi>, CalendarError> {
         ArithmeticDate::new_from_lunar_ordinals(year, month, day)
             .map(ChineseBasedDateInner)
@@ -305,7 +341,23 @@ impl Date<Dangi> {
 }
 
 impl DateTime<Dangi> {
-    /// TODO: Docs
+    /// Construct a new Dangi DateTime from integers. See [`try_new_dangi_date`].
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let dangi_datetime = DateTime::try_new_dangi_datetime(4356, 6, 6, 13, 1, 0)
+    ///     .expect("Failed to initialize Dangi DateTime instance.");
+    ///
+    /// assert_eq!(dangi_datetime.date.year().number, 4356);
+    /// assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
+    /// assert_eq!(dangi_datetime.date.year().cyclic, Some(40));
+    /// assert_eq!(dangi_datetime.date.month().ordinal, 6);
+    /// assert_eq!(dangi_datetime.date.day_of_month().0, 6);
+    /// assert_eq!(dangi_datetime.time.hour.number(), 13);
+    /// assert_eq!(dangi_datetime.time.minute.number(), 1);
+    /// assert_eq!(dangi_datetime.time.second.number(), 0);
+    /// ```
     pub fn try_new_dangi_datetime(
         year: i32,
         month: u8,
@@ -345,7 +397,20 @@ impl ChineseBased for Dangi {
 }
 
 impl Dangi {
-    /// TODO: Docs
+    /// Get the ISO Date of Seollal (Korean Lunar New Year) on or before the given ISO Date `iso`.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::dangi::Dangi;
+    ///
+    /// let iso = Date::try_new_iso_date(2023, 6, 18)
+    ///     .expect("Failed to initialize ISO Date instance.");
+    /// let seollal = Dangi::seollal_on_or_before_iso(iso);
+    ///
+    /// assert_eq!(seollal.year().number, 2023);
+    /// assert_eq!(seollal.month().ordinal, 1);
+    /// assert_eq!(seollal.day_of_month().0, 22);
+    /// ```
     pub fn seollal_on_or_before_iso(iso: Date<Iso>) -> Date<Iso> {
         let iso_inner = iso.inner;
         let fixed = Iso::fixed_from_iso(iso_inner);
@@ -353,7 +418,6 @@ impl Dangi {
         Iso::iso_from_fixed(result_fixed)
     }
 
-    /// TODO: Docs
     fn format_dangi_year(year: i32) -> FormattableYear {
         let era = Era(tinystr!(16, "dangi"));
         let number = year;
@@ -369,7 +433,6 @@ impl Dangi {
         }
     }
 
-    /// TODO: Docs
     fn ordinal_lunar_month_from_code(year: i32, code: MonthCode) -> Option<u8> {
         if code.0.len() < 3 {
             return None;
