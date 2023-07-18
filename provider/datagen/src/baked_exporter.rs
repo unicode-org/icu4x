@@ -440,7 +440,7 @@ impl DataExporter for BakedExporter {
             .replace('/', "_");
 
         let body = if values.is_empty() {
-            quote!(Err(icu_provider::DataErrorKind::MissingLocale))
+            quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req)))
         } else {
             let mut map = BTreeMap::new();
             let mut statics = Vec::new();
