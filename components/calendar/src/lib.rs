@@ -121,6 +121,7 @@ pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
 pub mod chinese;
+mod chinese_based;
 pub mod coptic;
 mod duration;
 mod error;
@@ -135,6 +136,7 @@ pub mod julian;
 pub mod persian;
 pub mod provider;
 mod rata_die;
+pub mod roc;
 pub mod types;
 mod week_of;
 
