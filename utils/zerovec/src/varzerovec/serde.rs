@@ -25,32 +25,6 @@ impl<T: ?Sized, F: VarZeroVecFormat> Default for VarZeroVecVisitor<T, F> {
     }
 }
 
-struct VarZeroSliceBoxVisitor<T: ?Sized, F: VarZeroVecFormat> {
-    #[allow(clippy::type_complexity)] // this is a private marker type, who cares
-    marker: PhantomData<(fn() -> Box<T>, F)>,
-}
-
-impl<T: ?Sized, F: VarZeroVecFormat> Default for VarZeroSliceBoxVisitor<T, F> {
-    fn default() -> Self {
-        Self {
-            marker: PhantomData,
-        }
-    }
-}
-
-struct VarZeroSliceRefVisitor<T: ?Sized, F: VarZeroVecFormat> {
-    #[allow(clippy::type_complexity)] // this is a private marker type, who cares
-    marker: PhantomData<(fn() -> Box<T>, F)>,
-}
-
-impl<T: ?Sized, F: VarZeroVecFormat> Default for VarZeroSliceRefVisitor<T, F> {
-    fn default() -> Self {
-        Self {
-            marker: PhantomData,
-        }
-    }
-}
-
 impl<'de, T, F> Visitor<'de> for VarZeroVecVisitor<T, F>
 where
     T: VarULE + ?Sized,
@@ -86,53 +60,6 @@ where
     }
 }
 
-impl<'de, T, F> Visitor<'de> for VarZeroSliceBoxVisitor<T, F>
-where
-    T: VarULE + ?Sized,
-    Box<T>: Deserialize<'de>,
-    F: VarZeroVecFormat,
-{
-    type Value = Box<VarZeroSlice<T, F>>;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("a sequence or borrowed buffer of bytes")
-    }
-
-    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-    where
-        A: SeqAccess<'de>,
-    {
-        let mut vec: Vec<Box<T>> = if let Some(capacity) = seq.size_hint() {
-            Vec::with_capacity(capacity)
-        } else {
-            Vec::new()
-        };
-        while let Some(value) = seq.next_element::<Box<T>>()? {
-            vec.push(value);
-        }
-        Ok(VarZeroVec::from(&vec).to_boxed())
-    }
-}
-
-impl<'de, T, F> Visitor<'de> for VarZeroSliceRefVisitor<T, F>
-where
-    T: VarULE + ?Sized,
-    F: VarZeroVecFormat,
-{
-    type Value = &'de VarZeroSlice<T, F>;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("a sequence or borrowed buffer of bytes")
-    }
-
-    fn visit_borrowed_bytes<E>(self, bytes: &'de [u8]) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        VarZeroSlice::parse_byte_slice(bytes).map_err(de::Error::custom)
-    }
-}
-
 /// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
 impl<'de, 'a, T, F> Deserialize<'de> for VarZeroVec<'a, T, F>
 where
@@ -158,6 +85,7 @@ where
 impl<'de, 'a, T, F> Deserialize<'de> for &'a VarZeroSlice<T, F>
 where
     T: VarULE + ?Sized,
+    Box<T>: Deserialize<'de>,
     F: VarZeroVecFormat,
     'de: 'a,
 {
@@ -246,12 +174,6 @@ mod test {
     struct DeriveTest_VarZeroVec<'data> {
         #[serde(borrow)]
         _data: VarZeroVec<'data, str>,
-    }
-
-    #[derive(serde::Serialize, serde::Deserialize)]
-    struct DeriveTest_VarZeroVec_of_VarZeroSlice<'data> {
-        #[serde(borrow)]
-        _data: VarZeroVec<'data, VarZeroSlice<str>>,
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]

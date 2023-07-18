@@ -7,8 +7,6 @@ use crate::varzerovec::Index32;
 use crate::VarZeroSlice;
 use core::mem;
 
-extern crate std;
-
 /// This type is used by the custom derive to represent multiple [`VarULE`]
 /// fields packed into a single end-of-struct field. It is not recommended
 /// to use this type directly.
