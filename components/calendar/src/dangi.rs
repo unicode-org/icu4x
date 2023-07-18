@@ -3,25 +3,25 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! This module contains types and implementations for the Korean Dangi calendar.
-//! 
+//!
 //! ```rust
 //! use icu:;calendar::{Date, DateTime};
-//! 
+//!
 //! // `Date` type
 //! let dangi_date = Date::try_new_dangi_date(4355, 6, 6)
 //!     .expect("Failed to initialize Dangi Date instance.");
-//! 
+//!
 //! // `DateTime` type
 //! let dangi_datetime = DateTime::try_new_dangi_datetime(4355, 6, 6, 13, 1, 0)
 //!     .expect("Failed to initialize Dangi DateTime instance.");
-//! 
+//!
 //! // `Date` checks
 //! assert_eq!(dangi_date.year().number, 4355);
 //! assert_eq!(dangi_date.year().related_iso, Some(2023));
 //! assert_eq!(dangi_date.year().cyclic, Some(40));
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
-//! 
+//!
 //! // `DateTime` checks
 //! assert_eq!(dangi_datetime.date.year().number, 4355);
 //! assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
@@ -53,7 +53,7 @@ const KOREAN_EPOCH: RataDie = RataDie::new(-852065); // Lunar new year 2333 BCE 
 /// the time in Seoul. Before 1908, local time was used, represented as UTC+(3809/450 h).
 /// This changed multiple times as different standard timezones were adopted in Korea.
 /// Currently, UTC+9h is used.
-/// 
+///
 /// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day).
 const UTC_OFFSET_ORIGINAL: f64 = (3809.0 / 450.0) / 24.0;
 const UTC_OFFSET_1908: f64 = 8.5 / 24.0;
@@ -102,14 +102,14 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
 );
 
 /// The Dangi Calendar
-/// 
+///
 /// The Dangi Calendar is a lunisolar calendar used traditionally in North and South Korea.
 /// It is often used today to track important cultural events and holidays like Seollal
 /// (Korean lunar new year). It is similar to the Chinese lunar calendar (see [`Chinese`]),
 /// except that observations are based in Korea (currently UTC+9) rather than China (UTC+8).
-/// 
+///
 /// # Era codes
-/// 
+///
 /// This Calendar supports a single era code "dangi" based on the year -2332 ISO (2333 BCE) as year 1.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -472,71 +472,71 @@ mod test {
                 iso_day: 6,
                 expected_year: 2022,
                 expected_month: 2,
-                expected_day: 1
+                expected_day: 1,
             },
             TestCase {
-                iso_year:       2021,
-                iso_month:      6,
-                iso_day:        6,
-                expected_year:  2021,
+                iso_year: 2021,
+                iso_month: 6,
+                iso_day: 6,
+                expected_year: 2021,
                 expected_month: 2,
-                expected_day:   12,
+                expected_day: 12,
             },
             TestCase {
-                iso_year:       2020,
-                iso_month:      6,
-                iso_day:        6,
-                expected_year:  2020,
+                iso_year: 2020,
+                iso_month: 6,
+                iso_day: 6,
+                expected_year: 2020,
                 expected_month: 1,
-                expected_day:   25,
+                expected_day: 25,
             },
             TestCase {
-                iso_year:       2019,
-                iso_month:      6,
-                iso_day:        6,
-                expected_year:  2019,
+                iso_year: 2019,
+                iso_month: 6,
+                iso_day: 6,
+                expected_year: 2019,
                 expected_month: 2,
-                expected_day:   5,
+                expected_day: 5,
             },
             TestCase {
-                iso_year:       2018,
-                iso_month:      6,
-                iso_day:        6,
-                expected_year:  2018,
+                iso_year: 2018,
+                iso_month: 6,
+                iso_day: 6,
+                expected_year: 2018,
                 expected_month: 2,
-                expected_day:   16,
+                expected_day: 16,
             },
             TestCase {
-                iso_year:       2025,
-                iso_month:      6,
-                iso_day:        6,
-                expected_year:  2025,
+                iso_year: 2025,
+                iso_month: 6,
+                iso_day: 6,
+                expected_year: 2025,
                 expected_month: 1,
-                expected_day:   29,
+                expected_day: 29,
             },
             TestCase {
-                iso_year:       2026,
-                iso_month:      8,
-                iso_day:        8,
-                expected_year:  2026,
+                iso_year: 2026,
+                iso_month: 8,
+                iso_day: 8,
+                expected_year: 2026,
                 expected_month: 2,
-                expected_day:   17,
+                expected_day: 17,
             },
             TestCase {
-                iso_year:       2027,
-                iso_month:      4,
-                iso_day:        4,
-                expected_year:  2027,
+                iso_year: 2027,
+                iso_month: 4,
+                iso_day: 4,
+                expected_year: 2027,
                 expected_month: 2,
-                expected_day:   7,
+                expected_day: 7,
             },
             TestCase {
-                iso_year:       2028,
-                iso_month:      9,
-                iso_day:        21,
-                expected_year:  2028,
+                iso_year: 2028,
+                iso_month: 9,
+                iso_day: 21,
+                expected_year: 2028,
                 expected_month: 1,
-                expected_day:   27,
+                expected_day: 27,
             },
         ];
 
