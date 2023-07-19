@@ -559,10 +559,7 @@ impl UmmAlQura {
         let month = date.0.month;
         let day = date.0.day;
 
-        let midmonth = RataDie::new(libm::floor(
-            FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
-                + (((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH),
-        ) as i64);
+        let midmonth = RataDie::new(FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date() + libm::floor(((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH) as i64);
         let first_day_of_month = Self::saudi_new_month_on_or_before(midmonth).to_i64_date();
 
         RataDie::new(first_day_of_month + day as i64 - 1)
@@ -614,7 +611,7 @@ mod test {
         709573.0, 728709.0, 744301.0, 764647.0,
     ];
 
-    static UMMALQURACASES: [DateCase; 31] = [
+    static UMMALQURA_DATE_EXPECTED: [DateCase; 31] = [
         DateCase {
             year: -1245,
             month: 12,
@@ -997,7 +994,7 @@ mod test {
 
     #[test]
     fn test_saudi_islamic_from_fixed() {
-        for (case, f_date) in UMMALQURACASES.iter().zip(TEST_FIXED_DATE_UMMALQURA.iter()) {
+        for (case, f_date) in UMMALQURA_DATE_EXPECTED.iter().zip(TEST_FIXED_DATE_UMMALQURA.iter()) {
             let date = Date::try_new_ummalqura_date(case.year, case.month, case.day).unwrap();
             assert_eq!(
                 UmmAlQura::saudi_islamic_from_fixed(RataDie::new(*f_date)),
@@ -1009,7 +1006,7 @@ mod test {
 
     #[test]
     fn test_fixed_from_saudi_islamic() {
-        for (case, f_date) in UMMALQURACASES.iter().zip(TEST_FIXED_DATE_UMMALQURA.iter()) {
+        for (case, f_date) in UMMALQURA_DATE_EXPECTED.iter().zip(TEST_FIXED_DATE_UMMALQURA.iter()) {
             let date = UmmAlQuraDateInner(ArithmeticDate::new_unchecked(
                 case.year, case.month, case.day,
             ));
