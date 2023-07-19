@@ -1,7 +1,7 @@
-use std::borrow::Cow;
-use std::collections::HashMap;
 use super::dfaparsing as prs;
 use super::translit;
+use std::borrow::Cow;
+use std::collections::HashMap;
 
 macro_rules! sl {
     () => {
@@ -23,10 +23,10 @@ impl core::fmt::Debug for SourceLocation {
     }
 }
 
-use CompileErrorKind as CEK;
-use SourceLocation as SL;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_unicodeset_parser::ParseError;
+use CompileErrorKind as CEK;
+use SourceLocation as SL;
 
 // TODO: replicate unicodeset_parser error behavior?
 #[derive(Debug, Clone, Copy)]
@@ -71,7 +71,10 @@ impl<'a> Compiler<'a> {
         icu_unicodeset_parser::parse(s).map_err(|e| CompileError::unicodeset(sl!(), e))
     }
 
-    fn compile_target_pattern(&self, parsed_pattern: &[prs::PatternElement]) -> Result<translit::Replacer<'a>> {
+    fn compile_target_pattern(
+        &self,
+        parsed_pattern: &[prs::PatternElement],
+    ) -> Result<translit::Replacer<'a>> {
         let mut replacement = String::new();
         let mut cursor_from_beginning = None;
         for (idx, element) in parsed_pattern.into_iter().enumerate() {
@@ -80,7 +83,8 @@ impl<'a> Compiler<'a> {
                     replacement.push_str(s);
                 }
                 prs::PatternElement::Variable(s) => {
-                    let variable_pattern = &self.variables
+                    let variable_pattern = &self
+                        .variables
                         .get(s)
                         .ok_or_else(|| CompileError::default(sl!()))?
                         .0;
@@ -109,7 +113,8 @@ impl<'a> Compiler<'a> {
                         return Err(CompileError::default(sl!()));
                     }
                     let curr_size = replacement.chars().count() as i32;
-                    cursor_from_beginning = Some(curr_size + cursor.pre_spacing as i32 - cursor.post_spacing as i32);
+                    cursor_from_beginning =
+                        Some(curr_size + cursor.pre_spacing as i32 - cursor.post_spacing as i32);
                 }
                 prs::PatternElement::UnicodeSet(_) => {
                     return Err(CompileError::default(sl!()));
@@ -117,14 +122,19 @@ impl<'a> Compiler<'a> {
             }
         }
 
-        let cursor_from_end = cursor_from_beginning.map(|cfb| cfb - replacement.chars().count() as i32).unwrap_or(0);
+        let cursor_from_end = cursor_from_beginning
+            .map(|cfb| cfb - replacement.chars().count() as i32)
+            .unwrap_or(0);
         Ok(translit::Replacer {
             replacement: replacement.into(),
             cursor: cursor_from_end,
         })
     }
 
-    fn compile_source_pattern(&self, parsed_pattern: &[prs::PatternElement]) -> Result<translit::Pattern<'a>> {
+    fn compile_source_pattern(
+        &self,
+        parsed_pattern: &[prs::PatternElement],
+    ) -> Result<translit::Pattern<'a>> {
         let mut pattern = Vec::new();
         let mut literal = String::new();
         for element in parsed_pattern {
@@ -141,7 +151,8 @@ impl<'a> Compiler<'a> {
                     pattern.push(translit::PatternElement::UnicodeSet(set));
                 }
                 prs::PatternElement::Variable(s) => {
-                    let variable_pattern = &self.variables
+                    let variable_pattern = &self
+                        .variables
                         .get(s)
                         .ok_or_else(|| CompileError::default(sl!()))?
                         .0;
@@ -154,23 +165,29 @@ impl<'a> Compiler<'a> {
 
                     // need some checks to uphold literal-concatenation invariant
                     // only need to check first and last element.
-                    match (variable_pattern.len(), variable_pattern.first(), variable_pattern.last()) {
+                    match (
+                        variable_pattern.len(),
+                        variable_pattern.first(),
+                        variable_pattern.last(),
+                    ) {
                         (0, _, _) => continue,
                         (1, Some(translit::PatternElement::Literal(s)), _) => {
                             literal.push_str(s);
                             continue;
-                        },
-                        (1, Some(u@translit::PatternElement::UnicodeSet(_)), _) => {
+                        }
+                        (1, Some(u @ translit::PatternElement::UnicodeSet(_)), _) => {
                             if !literal.is_empty() {
                                 pattern.push(translit::PatternElement::Literal(literal.into()));
                                 literal = String::new();
                             }
                             pattern.push(u.clone());
                             continue;
-                        },
+                        }
                         (2.., _, _) => {
                             // handle first element
-                            if let Some(translit::PatternElement::Literal(s)) = variable_pattern.first() {
+                            if let Some(translit::PatternElement::Literal(s)) =
+                                variable_pattern.first()
+                            {
                                 literal.push_str(s);
                                 pattern.push(translit::PatternElement::Literal(literal.into()));
                                 literal = String::new();
@@ -182,15 +199,21 @@ impl<'a> Compiler<'a> {
                                 pattern.push(variable_pattern[0].clone());
                             }
                             // handle middle elements
-                            pattern.extend(variable_pattern[1..(variable_pattern.len()-1)].iter().cloned());
+                            pattern.extend(
+                                variable_pattern[1..(variable_pattern.len() - 1)]
+                                    .iter()
+                                    .cloned(),
+                            );
                             // handle last element
-                            if let Some(translit::PatternElement::Literal(s)) = variable_pattern.last() {
+                            if let Some(translit::PatternElement::Literal(s)) =
+                                variable_pattern.last()
+                            {
                                 literal.push_str(s);
                                 continue;
                             } else {
-                                pattern.push(variable_pattern[variable_pattern.len()-1].clone());
+                                pattern.push(variable_pattern[variable_pattern.len() - 1].clone());
                             }
-                        },
+                        }
                         // unreachable
                         _ => return Err(CompileError::default(sl!())),
                     }
@@ -205,10 +228,22 @@ impl<'a> Compiler<'a> {
         Ok(translit::Pattern(pattern))
     }
 
-    fn compile_converison_rule_directed(&self, source: &prs::HalfRule, target: &prs::HalfRule) -> Result<translit::Rule<'a>> {
-        let ante = source.ante.as_ref().map(|ante| self.compile_source_pattern(&ante.0)).transpose()?;
+    fn compile_converison_rule_directed(
+        &self,
+        source: &prs::HalfRule,
+        target: &prs::HalfRule,
+    ) -> Result<translit::Rule<'a>> {
+        let ante = source
+            .ante
+            .as_ref()
+            .map(|ante| self.compile_source_pattern(&ante.0))
+            .transpose()?;
         let key = self.compile_source_pattern(&source.key.0)?;
-        let post = source.post.as_ref().map(|post| self.compile_source_pattern(&post.0)).transpose()?;
+        let post = source
+            .post
+            .as_ref()
+            .map(|post| self.compile_source_pattern(&post.0))
+            .transpose()?;
 
         let target = self.compile_target_pattern(&target.key.0)?;
 
@@ -221,7 +256,10 @@ impl<'a> Compiler<'a> {
     }
 
     // returns (fwd, bwd)
-    fn compile_conversion_rule(&self, parsed_rule: &prs::ConversionRule) -> Result<(Option<translit::Rule<'a>>, Option<translit::Rule<'a>>)> {
+    fn compile_conversion_rule(
+        &self,
+        parsed_rule: &prs::ConversionRule,
+    ) -> Result<(Option<translit::Rule<'a>>, Option<translit::Rule<'a>>)> {
         // we're doing some duplicate work here (compiling source and target key twice), but code is simpler
 
         let mut fwd_rule = None;
@@ -259,7 +297,10 @@ impl<'a> Compiler<'a> {
     }
 
     // returns (forward_transliterator, backwards_transliterator)
-    pub(super) fn compile(&mut self, parsed_rules: &[prs::Rule]) -> Result<(translit::Transliterator<'a>, translit::Transliterator<'a>)> {
+    pub(super) fn compile(
+        &mut self,
+        parsed_rules: &[prs::Rule],
+    ) -> Result<(translit::Transliterator<'a>, translit::Transliterator<'a>)> {
         let mut fwd_rules = Vec::new();
         let mut bwd_rules = Vec::new();
 
@@ -280,12 +321,9 @@ impl<'a> Compiler<'a> {
             }
         }
 
-
-
-        Ok((translit::Transliterator {
-            rules: fwd_rules,
-        }, translit::Transliterator {
-            rules: bwd_rules,
-        }))
+        Ok((
+            translit::Transliterator { rules: fwd_rules },
+            translit::Transliterator { rules: bwd_rules },
+        ))
     }
 }

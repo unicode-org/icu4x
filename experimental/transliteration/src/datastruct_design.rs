@@ -2,17 +2,18 @@
 
 use std::borrow::Cow;
 
+use icu_collections::codepointinvliststringlist::{
+    CodePointInversionListAndStringList, CodePointInversionListAndStringListULE,
+};
 use serde;
-use icu_collections::codepointinvliststringlist::{CodePointInversionListAndStringList, CodePointInversionListAndStringListULE};
 use zerovec::*;
 
 type UnicodeSet<'a> = CodePointInversionListAndStringList<'a>;
 
-
 // The datastruct for a full rule file (modulo naming and direction, direction is assumed forward)
 /*
 # Valid syntax is as such:
-filter?       
+filter?
 (recursive_simple_id | conversion_rule)*
 
 # because of semantics, I want to represent contiguous conversion_rules as a single block.
@@ -38,12 +39,12 @@ struct Transliterator<'a> {
     variable_table: VarTable<'a>,
 
     // only characters in this set are affected by the transliterator. None is equivalent to the full set
-    // because of ULE things, removing the Option<> and adopting full = None semantics might be easier. 
+    // because of ULE things, removing the Option<> and adopting full = None semantics might be easier.
     // filter?
     #[serde(borrow)]
     filter: UnicodeSet<'a>,
     // (recursive_simple_id_list conversion_rule_list)* is represented as a VZV of IDs and a VZV of conversion_rules, with the (weak) invariant
-    // that IDs_list[i] is before CRULEs_list[i], eg <id> <id> <rule> <rule> <rule> <id> is represented as ids: [[<id>, <id>], [<id>]], rules: [[<rule>, <rule>, <rule>], []] 
+    // that IDs_list[i] is before CRULEs_list[i], eg <id> <id> <rule> <rule> <rule> <id> is represented as ids: [[<id>, <id>], [<id>]], rules: [[<rule>, <rule>, <rule>], []]
     #[serde(borrow)]
     id_group_list: VarZeroVec<'a, VarZeroSlice<SimpleIDULE>>,
     #[serde(borrow)]
@@ -110,7 +111,6 @@ struct Rule<'a> {
 
 // Shanes suggestion: VarTable = VarZeroVec<Uset | Quantifier | Variable | ..>
 
-
 #[derive(serde::Serialize, serde::Deserialize)]
 struct VarTable<'a> {
     // Examples:
@@ -127,13 +127,13 @@ struct VarTable<'a> {
     //
     //
     #[serde(borrow)]
-    quantifiers_opt: VarZeroVec<'a, str>, 
+    quantifiers_opt: VarZeroVec<'a, str>,
     // zero or more
     #[serde(borrow)]
-    quantifiers_kleene: VarZeroVec<'a, str>, 
+    quantifiers_kleene: VarZeroVec<'a, str>,
     // one or more
     #[serde(borrow)]
-    quantifiers_kleene_plus: VarZeroVec<'a, str>, 
+    quantifiers_kleene_plus: VarZeroVec<'a, str>,
 
     #[serde(borrow)]
     segments: VarZeroVec<'a, str>,
@@ -169,8 +169,9 @@ mod tests {
 
     #[test]
     fn test_serialize() {
-        let all_filter = CodePointInversionListAndStringList::try_from(ALL, VarZeroVec::new()).unwrap();
-        
+        let all_filter =
+            CodePointInversionListAndStringList::try_from(ALL, VarZeroVec::new()).unwrap();
+
         // filter
         let filter = all_filter.clone();
 
@@ -212,17 +213,13 @@ mod tests {
         };
 
         let x: &VarZeroSlice<RuleULE> = transliterator.rule_group_list.get(0).unwrap();
-        let post: &str = unsafe {x.get(0).unwrap().unsized_fields.get_field(2)};
+        let post: &str = unsafe { x.get(0).unwrap().unsized_fields.get_field(2) };
         assert_eq!(post, rule.post);
 
         let post_zero = x.get(0).unwrap();
         let post_zero: Rule = ZeroFrom::zero_from(post_zero);
         let post_zero = post_zero.post;
         assert_eq!(post_zero, rule.post);
-
-
-
-        
 
         ()
     }

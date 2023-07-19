@@ -2,8 +2,10 @@ use std::borrow::Cow;
 use std::fmt::{Display, Formatter};
 use std::thread::sleep;
 
-use icu_collections::codepointinvliststringlist::{CodePointInversionListAndStringList, CodePointInversionListAndStringListULE};
-use serde::{Serialize, Deserialize};
+use icu_collections::codepointinvliststringlist::{
+    CodePointInversionListAndStringList, CodePointInversionListAndStringListULE,
+};
+use serde::{Deserialize, Serialize};
 
 /*
 Differences to parsed types:
@@ -63,12 +65,8 @@ impl<'a> PatternElement<'a> {
             }
             PatternElement::UnicodeSet(uset) => {
                 let char_to_check = match dir {
-                    MatchDirection::Forward => {
-                        source.first().copied().unwrap_or('\u{FFFF}')
-                    }
-                    MatchDirection::Backward => {
-                        source.last().copied().unwrap_or('\u{FFFF}')
-                    }
+                    MatchDirection::Forward => source.first().copied().unwrap_or('\u{FFFF}'),
+                    MatchDirection::Backward => source.last().copied().unwrap_or('\u{FFFF}'),
                 };
                 if uset.contains_char(char_to_check) {
                     return Some(1);
@@ -157,14 +155,13 @@ impl<'a> Display for Pattern<'a> {
                         l.to_string()
                     };
                     write!(f, "{}", res)?
-                },
+                }
                 PatternElement::UnicodeSet(s) => write!(f, "{:?}", s)?,
             }
         }
         Ok(())
     }
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Replacer<'a> {
@@ -255,14 +252,14 @@ impl<'a> Display for Transliterator<'a> {
 impl<'a> Transliterator<'a> {
     pub fn transliterate(&self, source: &str) -> String {
         /* Basic algorithm:
-           Until the cursor is at the end of the string and there are no more rules to apply:
-            1. Find the first rule that matches the current cursor position
-                a) Find the rule by reverse-matching the ante context (i.e., s[0..cursor].rev())
-                b) Then the key and post-context from s[cursor..]
-            2. Apply the rule
-                a) Replace the matched part of the source string with the target
-                b) Move the cursor according to the offset
-         */
+          Until the cursor is at the end of the string and there are no more rules to apply:
+           1. Find the first rule that matches the current cursor position
+               a) Find the rule by reverse-matching the ante context (i.e., s[0..cursor].rev())
+               b) Then the key and post-context from s[cursor..]
+           2. Apply the rule
+               a) Replace the matched part of the source string with the target
+               b) Move the cursor according to the offset
+        */
 
         let mut chars: Vec<_> = source.chars().collect();
         let mut cursor = 0;
@@ -271,7 +268,6 @@ impl<'a> Transliterator<'a> {
             // dbg!(cursor);
             // dbg!(chars.iter().copied().collect::<String>());
             // sleep(std::time::Duration::from_millis(1000));
-
 
             // step 1.
             for (i, rule) in self.rules.iter().enumerate() {
@@ -284,7 +280,10 @@ impl<'a> Transliterator<'a> {
 
                 // step 1a)
                 if let Some(ante) = ante {
-                    if ante.matches(&chars[0..cursor], MatchDirection::Backward).is_none() {
+                    if ante
+                        .matches(&chars[0..cursor], MatchDirection::Backward)
+                        .is_none()
+                    {
                         // ante doesn't match, skip this rule
                         continue;
                     }
@@ -293,7 +292,8 @@ impl<'a> Transliterator<'a> {
                 let mut key_end = cursor;
 
                 // step 1b)
-                if let Some(key_match_len) = key.matches(&chars[cursor..], MatchDirection::Forward) {
+                if let Some(key_match_len) = key.matches(&chars[cursor..], MatchDirection::Forward)
+                {
                     let key_match_len = key_match_len as usize;
                     key_end += key_match_len;
                 } else {
@@ -301,7 +301,10 @@ impl<'a> Transliterator<'a> {
                     continue;
                 }
                 if let Some(post) = post {
-                    if post.matches(&chars[key_end..], MatchDirection::Forward).is_none() {
+                    if post
+                        .matches(&chars[key_end..], MatchDirection::Forward)
+                        .is_none()
+                    {
                         // post doesn't match, skip this rule
                         continue;
                     }

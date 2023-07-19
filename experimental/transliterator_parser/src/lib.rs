@@ -23,8 +23,8 @@
 )]
 #![warn(missing_docs)]
 
-use icu_provider::prelude::*;
 use icu_properties::provider::*;
+use icu_provider::prelude::*;
 
 mod compile;
 mod parse;
@@ -39,18 +39,20 @@ pub use parse::ParseErrorKind;
 pub struct TransliteratorDataStruct;
 
 /// Parse a rule based transliterator definition into a `TransliteratorDataStruct`.
-/// 
-/// See [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms) for more information. 
+///
+/// See [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms) for more information.
 #[cfg(feature = "compiled_data")]
 pub fn parse(source: &str) -> Result<TransliteratorDataStruct, parse::ParseError> {
     parse_unstable(source, &icu_properties::provider::Baked)
 }
 
-
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse)]
-pub fn parse_unstable<P>(source: &str, provider: &P) -> Result<TransliteratorDataStruct, parse::ParseError> 
+pub fn parse_unstable<P>(
+    source: &str,
+    provider: &P,
+) -> Result<TransliteratorDataStruct, parse::ParseError>
 where
-P: ?Sized
+    P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>

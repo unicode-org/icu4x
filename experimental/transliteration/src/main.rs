@@ -14,10 +14,10 @@ use combine::{
 use std::fmt::Display;
 use std::io::Write;
 
-mod dfaparsing;
 mod compile;
-mod translit;
 mod datastruct_design;
+mod dfaparsing;
+mod translit;
 
 const RULES: &str = r#"
 $AE = [Ä {A \u0308}];
@@ -266,7 +266,6 @@ fn main() {
     ";
 
     // let source = "hello world";
-
 
     // let rules = RULES_NO_UNICODE_SET;
     let rules = RULES_ORIGINAL;

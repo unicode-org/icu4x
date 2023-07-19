@@ -10,7 +10,7 @@ use icu_collections::{
     codepointinvliststringlist::CodePointInversionListAndStringList,
 };
 use icu_properties::provider::*;
-use icu_properties::sets::{load_xid_start, load_xid_continue, load_pattern_white_space};
+use icu_properties::sets::{load_pattern_white_space, load_xid_continue, load_xid_start};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
@@ -113,7 +113,7 @@ pub enum Element {
     //  - <element>*
     //  - <element>+
     // note: Box<Element> instead of Section, because a quantifier only ever refers to the immediately preceding element.
-    // segments or variable refs are used to group multiple elements together. 
+    // segments or variable refs are used to group multiple elements together.
     Quantifier(QuantifierKind, Box<Element>),
     // Example: (<element> <element> ...)
     Segment(Section),
@@ -151,7 +151,7 @@ pub enum Dir {
 pub enum Rule {
     GlobalFilter(UnicodeSet),
     GlobalInverseFilter(UnicodeSet),
-    // forward and backward IDs. 
+    // forward and backward IDs.
     // "A (B)" is TransformRule(A, Some(B)),
     // "(B)" is TransformRule(Null, Some(B)),
     // "A" is TransformRule(A, None),
@@ -318,10 +318,7 @@ pub fn parse(source: &str) -> Result<Vec<Rule>> {
 }
 
 #[doc(hidden)]
-pub fn parse_unstable<P>(
-    source: &str,
-    provider: &P,
-) -> Result<Vec<Rule>>
+pub fn parse_unstable<P>(source: &str, provider: &P) -> Result<Vec<Rule>>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
