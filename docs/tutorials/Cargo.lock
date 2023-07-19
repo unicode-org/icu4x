@@ -744,7 +744,6 @@ version = "1.3.0"
 name = "icu_casemap"
 version = "0.7.2"
 dependencies = [
- "databake",
  "displaydoc",
  "icu_casemap_data",
  "icu_collections",
@@ -811,7 +810,6 @@ dependencies = [
 name = "icu_compactdecimal"
 version = "0.2.0"
 dependencies = [
- "databake",
  "displaydoc",
  "fixed_decimal",
  "icu_compactdecimal_data",
@@ -819,7 +817,6 @@ dependencies = [
  "icu_locid_transform",
  "icu_plurals",
  "icu_provider",
- "serde",
  "writeable",
  "zerovec",
 ]
@@ -839,26 +836,21 @@ dependencies = [
  "elsa",
  "eyre",
  "icu_calendar",
- "icu_casemap",
  "icu_codepointtrie_builder",
  "icu_collator",
  "icu_collections",
- "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
- "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
- "icu_personnames",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
- "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
  "itertools",
@@ -931,7 +923,6 @@ version = "1.3.0"
 name = "icu_displaynames"
 version = "0.10.0"
 dependencies = [
- "databake",
  "icu_collections",
  "icu_displaynames_data",
  "icu_locid",
@@ -1017,19 +1008,6 @@ dependencies = [
 [[package]]
 name = "icu_normalizer_data"
 version = "1.3.0"
-
-[[package]]
-name = "icu_personnames"
-version = "0.1.0"
-dependencies = [
- "databake",
- "icu_collections",
- "icu_locid",
- "icu_provider",
- "litemap",
- "serde",
- "zerovec",
-]
 
 [[package]]
 name = "icu_plurals"
@@ -1144,7 +1122,6 @@ dependencies = [
 name = "icu_relativetime"
 version = "0.1.1"
 dependencies = [
- "databake",
  "displaydoc",
  "fixed_decimal",
  "icu_decimal",
