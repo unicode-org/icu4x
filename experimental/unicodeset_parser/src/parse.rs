@@ -713,7 +713,7 @@ where
             // (in the main parse loop), so it's safe to call this guard function
             (c, _) if legal_char_start(c) => self
                 .parse_char()
-                .map(|(offset, cs)| (offset, false, MainToken::CharOrString(cs))),
+                .map(|(offset, c_vec)| (offset, false, MainToken::CharOrString(CharOrString::Char(c_vec)))),
             ('-', _) => {
                 self.iter.next();
                 Ok((initial_offset, false, MainToken::Minus))
@@ -780,11 +780,8 @@ where
                 // so it's safe to call this guard function
                 c if legal_char_in_string_start(c) => {
                     // don't need the offset, because '}' will always be the last char
-                    let (_, c_or_s) = self.parse_char()?;
-                    match c_or_s {
-                        CharOrString::Char(c) => buffer.extend(c.into_iter()),
-                        CharOrString::String(s) => buffer.push_str(&s),
-                    }
+                    let (_, c_vec) = self.parse_char()?;
+                    buffer.extend(c_vec.into_iter());
                 }
                 c => return self.error_here(PEK::UnexpectedChar(c)),
             }
@@ -799,7 +796,7 @@ where
     }
 
     // starts with \ and consumes the whole escape sequence
-    fn parse_escaped_char(&mut self) -> Result<(usize, CharOrString)> {
+    fn parse_escaped_char(&mut self) -> Result<(usize, Vec<char>)> {
         self.consume('\\')?;
 
         let (offset, next_char) = self.must_next()?;
@@ -839,7 +836,7 @@ where
                     // TODO(#3558): UnexpectedChar, or InvalidEscape?
                     return Err(PEK::UnexpectedChar('}').with_offset(last_offset));
                 }
-                Ok((last_offset, CharOrString::Char(c_vec)))
+                Ok((last_offset, c_vec))
             }
             'u' => {
                 // 'u' hex{4}
@@ -847,7 +844,7 @@ where
                 let hex_digits = exact.iter().collect::<String>();
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
                 char::try_from(num)
-                    .map(|c| (offset, CharOrString::Char(vec![c])))
+                    .map(|c| (offset, vec![c]))
                     .map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'x' => {
@@ -856,7 +853,7 @@ where
                 let hex_digits = exact.iter().collect::<String>();
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
                 char::try_from(num)
-                    .map(|c| (offset, CharOrString::Char(vec![c])))
+                    .map(|c| (offset, vec![c]))
                     .map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'U' => {
@@ -882,7 +879,7 @@ where
                 };
                 let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
                 char::try_from(num)
-                    .map(|c| (offset, CharOrString::Char(vec![c])))
+                    .map(|c| (offset, vec![c]))
                     .map_err(|_| PEK::InvalidEscape.with_offset(offset))
             }
             'N' => {
@@ -890,14 +887,14 @@ where
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
                 Err(PEK::Unimplemented.with_offset(offset))
             }
-            'a' => Ok((offset, CharOrString::Char(vec!['\u{0007}']))),
-            'b' => Ok((offset, CharOrString::Char(vec!['\u{0008}']))),
-            't' => Ok((offset, CharOrString::Char(vec!['\u{0009}']))),
-            'n' => Ok((offset, CharOrString::Char(vec!['\u{000A}']))),
-            'v' => Ok((offset, CharOrString::Char(vec!['\u{000B}']))),
-            'f' => Ok((offset, CharOrString::Char(vec!['\u{000C}']))),
-            'r' => Ok((offset, CharOrString::Char(vec!['\u{000D}']))),
-            _ => Ok((offset, CharOrString::Char(vec![next_char]))),
+            'a' => Ok((offset, vec!['\u{0007}'])),
+            'b' => Ok((offset, vec!['\u{0008}'])),
+            't' => Ok((offset, vec!['\u{0009}'])),
+            'n' => Ok((offset, vec!['\u{000A}'])),
+            'v' => Ok((offset, vec!['\u{000B}'])),
+            'f' => Ok((offset, vec!['\u{000C}'])),
+            'r' => Ok((offset, vec!['\u{000D}'])),
+            _ => Ok((offset, vec![next_char])),
         }
     }
 
@@ -1086,13 +1083,13 @@ where
 
     // parses either a raw char or an escaped char. all chars are allowed, the caller must make sure to handle
     // cases where some characters are not allowed
-    fn parse_char(&mut self) -> Result<(usize, CharOrString)> {
+    fn parse_char(&mut self) -> Result<(usize, Vec<char>)> {
         let (offset, c) = self.must_peek()?;
         match c {
             '\\' => self.parse_escaped_char(),
             _ => {
                 self.iter.next();
-                Ok((offset, CharOrString::Char(vec![c])))
+                Ok((offset, vec![c]))
             }
         }
     }
