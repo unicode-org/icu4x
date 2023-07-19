@@ -56,6 +56,9 @@ pub(crate) const MIN_UTC_OFFSET: f64 = -0.5;
 /// The maximum allowable UTC offset (+14 hours) in fractional days (14.0 / 24.0 days)
 pub(crate) const MAX_UTC_OFFSET: f64 = 14.0 / 24.0;
 
+/// The angle of winter for the purposes of solar calculations
+pub(crate) const WINTER: f64 = 270.0;
+
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
     /// attempting to create a location outside of these bounds will result in a LocationOutOfBoundsError.
