@@ -128,8 +128,7 @@ impl DataExporter for FilesystemExporter {
         .expect("infallible");
 
         #[allow(clippy::unwrap_used)] // has parent by construction
-        let parent_dir = Path::new(&path_buf)
-            .parent().unwrap();
+        let parent_dir = Path::new(&path_buf).parent().unwrap();
 
         fs::create_dir_all(parent_dir)
             .map_err(|e| DataError::from(e).with_path_context(&parent_dir))?;

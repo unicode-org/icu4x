@@ -5,10 +5,10 @@
 use crate::manifest::Manifest;
 use icu_provider::prelude::*;
 use std::fmt::Debug;
-use std::fs;
-use std::path::PathBuf;
 use std::fmt::Write;
+use std::fs;
 use std::path::Path;
+use std::path::PathBuf;
 
 /// A data provider that reads ICU4X data from a filesystem directory.
 ///
@@ -79,12 +79,16 @@ impl BufferProvider for FsDataProvider {
         if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingDataKey.with_req(key, req));
         }
-        write!(&mut path, "/{}.{}", req.locale, self.manifest.file_extension).expect("infallible");
+        write!(
+            &mut path,
+            "/{}.{}",
+            req.locale, self.manifest.file_extension
+        )
+        .expect("infallible");
         if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingLocale.with_req(key, req));
         }
-        let buffer =
-            fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
+        let buffer = fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(self.manifest.buffer_format);
         Ok(DataResponse {

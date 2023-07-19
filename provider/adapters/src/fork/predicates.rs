@@ -10,7 +10,7 @@ use icu_provider::prelude::*;
 ///
 /// [`ForkByErrorProvider`]: super::ForkByErrorProvider
 pub trait ForkByErrorPredicate {
-    /// The error to return if there are zero providers. 
+    /// The error to return if there are zero providers.
     const ERROR: DataErrorKind = DataErrorKind::MissingDataKey;
 
     /// This function is called when a data request fails and there are additional providers
@@ -131,7 +131,7 @@ pub struct MissingLocalePredicate;
 
 impl ForkByErrorPredicate for MissingLocalePredicate {
     const ERROR: DataErrorKind = DataErrorKind::MissingLocale;
-    
+
     #[inline]
     fn test(&self, _: DataKey, _: Option<DataRequest>, err: DataError) -> bool {
         matches!(
