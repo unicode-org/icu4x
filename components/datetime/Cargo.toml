@@ -6,7 +6,7 @@
 name = "icu_datetime"
 description = "API for formatting date and time to user readable textual representation"
 version = "1.2.1"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -112,7 +112,7 @@ denylist = ["bench"]
 [[bench]]
 name = "datetime"
 harness = false
-required-features = ["serde"]
+required-features = ["compiled_data"]
 
 [[bench]]
 name = "pattern"
@@ -121,7 +121,7 @@ required-features = ["bench"]
 
 [[test]]
 name = "datetime"
-required-features = ["serde"]
+required-features = ["compiled_data"]
 
 [[test]]
 name = "resolved_components"
@@ -133,4 +133,4 @@ required-features = ["experimental"]
 
 [[example]]
 name = "work_log"
-required-features = ["serde"]
+required-features = ["compiled_data"]

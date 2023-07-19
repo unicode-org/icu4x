@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_relativetime_narrow_week_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.61"]
+        #[clippy::msrv = "1.65"]
         impl icu_provider::DataProvider<icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
                 static KM: <icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu_relativetime::provider::RelativeTimePatternDataV1 {

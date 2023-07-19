@@ -6,7 +6,7 @@
 name = "icu_displaynames"
 description = "API to enable the translation of Language and Region display names"
 version = "0.10.0"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
