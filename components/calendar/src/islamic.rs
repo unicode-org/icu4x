@@ -48,7 +48,7 @@ pub struct IslamicCivil;
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 /// Umm-al-Qura Hijri Calendar (Used in Saudi Arabia)
-pub struct UmmalQura;
+pub struct UmmAlQura;
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 /// A Tabular version of the Arithmetical Islamic Calendar
@@ -56,6 +56,8 @@ pub struct IslamicTabular;
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2066
 const FIXED_ISLAMIC_EPOCH_FRIDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 16);
+
+// Thursday epoch as some communites and calendars consider that Mohammeds migration to Mecca happened the sunset of the 15th.
 //const FIXED_ISLAMIC_EPOCH_THURSDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 15);
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6898
@@ -74,6 +76,8 @@ pub struct IslamicDateInner(ArithmeticDate<IslamicObservational>);
 
 impl CalendarArithmetic for IslamicObservational {
     fn month_days(year: i32, month: u8) -> u8 {
+        // Formula used to get the R.D Date of the middle of a specific month, used in lunar calendars throughout the book
+        // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3277b839db1a70c2350d6c708ac83df78f/calendar.l#L6911C11-L6911C19
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
 
@@ -240,7 +244,7 @@ impl IslamicObservational {
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "ah")),
+            era: types::Era(tinystr!(16, "islamic")),
             number: year,
             cyclic: None,
             related_iso: None,
@@ -306,17 +310,17 @@ impl DateTime<IslamicObservational> {
 }
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-/// The inner date type used for representing [`Date`]s of [`UmmalQura`]. See [`Date`] and [`UmmalQura`] for more details.
-pub struct UmmalQuraDateInner(ArithmeticDate<UmmalQura>);
+/// The inner date type used for representing [`Date`]s of [`UmmAlQura`]. See [`Date`] and [`UmmAlQura`] for more details.
+pub struct UmmAlQuraDateInner(ArithmeticDate<UmmAlQura>);
 
-impl CalendarArithmetic for UmmalQura {
+impl CalendarArithmetic for UmmAlQura {
     fn month_days(year: i32, month: u8) -> u8 {
         let midmonth = RataDie::new(libm::floor(
             FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
                 + (((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH),
         ) as i64);
-
-        if Self::saudi_criterion(midmonth).is_some() {
+        // TODO: Add comment explaining functionality.
+        if Self::adjusted_saudi_criterion(midmonth) {
             30
         } else {
             29
@@ -343,8 +347,8 @@ impl CalendarArithmetic for UmmalQura {
     }
 }
 
-impl Calendar for UmmalQura {
-    type DateInner = UmmalQuraDateInner;
+impl Calendar for UmmAlQura {
+    type DateInner = UmmAlQuraDateInner;
     fn date_from_codes(
         &self,
         era: types::Era,
@@ -358,7 +362,7 @@ impl Calendar for UmmalQura {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(UmmalQuraDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(UmmAlQuraDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
@@ -428,12 +432,12 @@ impl Calendar for UmmalQura {
 
     // TODO: ADD TO ANYCALENDAR
     // fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-    //     Some(AnyCalendarKind::UmmalQura)
+    //     Some(AnyCalendarKind::UmmAlQura)
     // }
 }
 
-impl Date<UmmalQura> {
-    /// Construct new UmmalQura Islamic Date.
+impl Date<UmmAlQura> {
+    /// Construct new UmmAlQura Islamic Date.
     ///
     /// Has no negative years, only era is the AH.
     ///
@@ -451,15 +455,15 @@ impl Date<UmmalQura> {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<UmmalQura>, CalendarError> {
+    ) -> Result<Date<UmmAlQura>, CalendarError> {
         ArithmeticDate::new_from_lunar_ordinals(year, month, day)
-            .map(UmmalQuraDateInner)
-            .map(|inner| Date::from_raw(inner, UmmalQura))
+            .map(UmmAlQuraDateInner)
+            .map(|inner| Date::from_raw(inner, UmmAlQura))
     }
 }
 
-impl DateTime<UmmalQura> {
-    /// Construct a new UmmalQura datetime from integers.
+impl DateTime<UmmAlQura> {
+    /// Construct a new UmmAlQura datetime from integers.
     ///
     /// ```rust
     /// use icu::calendar::DateTime;
@@ -481,7 +485,7 @@ impl DateTime<UmmalQura> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<UmmalQura>, CalendarError> {
+    ) -> Result<DateTime<UmmAlQura>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_ummalqura_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
@@ -489,11 +493,13 @@ impl DateTime<UmmalQura> {
     }
 }
 
-impl UmmalQura {
-    /// Constructs a new UmmalQura Islamic Calendar
+impl UmmAlQura {
+    /// Constructs a new UmmAlQura Islamic Calendar
     pub fn new() -> Self {
         Self
     }
+
+    // Since March 2002, the month begins on the first evening after the conjuction on which the moon sets after the sun, this is the criterion expressing the rule.
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6957
     fn saudi_criterion(date: RataDie) -> Option<bool> {
         let sunset = Astronomical::sunset((date - 1).as_moment(), MECCA)?;
@@ -503,6 +509,7 @@ impl UmmalQura {
 
         Some(phase > 0.0 && phase < 90.0 && moonlag > 0.0)
     }
+
     pub(crate) fn adjusted_saudi_criterion(date: RataDie) -> bool {
         if let Some(x) = Self::saudi_criterion(date) {
             x
@@ -511,22 +518,26 @@ impl UmmalQura {
         }
     }
 
+    // Closest fixed date on or before date when Saudi visibility criterion is held.
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6966
     fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
-        let moon =
-            libm::floor((Astronomical::lunar_phase_at_or_before(0.0, date.as_moment())).inner());
-        let age = date.to_f64_date() - moon;
+        let last_new_moon =
+            libm::floor((Astronomical::lunar_phase_at_or_before(0.0, date.as_moment())).inner()); // Gets the R.D Date of the prior new moon
+        let age = date.to_f64_date() - last_new_moon;
+        // Explanation of why the value 3.0 is chosen: https://github.com/unicode-org/icu4x/pull/3673/files#r1267460916
         let tau = if age <= 3.0 && !Self::adjusted_saudi_criterion(date) {
-            moon - 30.0
+            // Checks if the criterion is not yet visibile on the evening of date
+            last_new_moon - 30.0 // Goes back a month
         } else {
-            moon
+            last_new_moon
         };
 
-        next(RataDie::new(tau as i64), Self::adjusted_saudi_criterion)
+        next(RataDie::new(tau as i64), Self::adjusted_saudi_criterion) // Loop that increments the day and checks if the criterion is now visibile
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6996
     #[allow(clippy::unwrap_used)]
-    fn saudi_islamic_from_fixed(date: RataDie) -> Date<UmmalQura> {
+    fn saudi_islamic_from_fixed(date: RataDie) -> Date<UmmAlQura> {
         let crescent = Self::saudi_new_month_on_or_before(date);
         let elapsed_months =
             libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH);
@@ -542,7 +553,7 @@ impl UmmalQura {
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6981
-    fn fixed_from_saudi_islamic(date: UmmalQuraDateInner) -> RataDie {
+    fn fixed_from_saudi_islamic(date: UmmAlQuraDateInner) -> RataDie {
         let year = date.0.year;
         let month = date.0.month;
         let day = date.0.day;
@@ -558,7 +569,7 @@ impl UmmalQura {
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "ah")),
+            era: types::Era(tinystr!(16, "islamic-umalqura")),
             number: year,
             cyclic: None,
             related_iso: None,
@@ -966,7 +977,7 @@ mod test {
     #[test]
     fn test_saudi_criterion() {
         for (boolean, f_date) in SAUDI_CRITERION_EXPECTED.iter().zip(TEST_FIXED_DATE.iter()) {
-            let bool_result = UmmalQura::saudi_criterion(RataDie::new(*f_date)).unwrap();
+            let bool_result = UmmAlQura::saudi_criterion(RataDie::new(*f_date)).unwrap();
             assert_eq!(*boolean, bool_result, "{f_date:?}");
         }
     }
@@ -978,7 +989,7 @@ mod test {
             .zip(TEST_FIXED_DATE_UMMALQURA.iter())
         {
             let date_result =
-                UmmalQura::saudi_new_month_on_or_before(RataDie::new(*f_date)).to_f64_date();
+                UmmAlQura::saudi_new_month_on_or_before(RataDie::new(*f_date)).to_f64_date();
             assert_eq!(*date, date_result, "{f_date:?}");
         }
     }
@@ -988,7 +999,7 @@ mod test {
         for (case, f_date) in UMMALQURACASES.iter().zip(TEST_FIXED_DATE_UMMALQURA.iter()) {
             let date = Date::try_new_ummalqura_date(case.year, case.month, case.day).unwrap();
             assert_eq!(
-                UmmalQura::saudi_islamic_from_fixed(RataDie::new(*f_date)),
+                UmmAlQura::saudi_islamic_from_fixed(RataDie::new(*f_date)),
                 date,
                 "{case:?}"
             );
@@ -998,11 +1009,11 @@ mod test {
     #[test]
     fn test_fixed_from_saudi_islamic() {
         for (case, f_date) in UMMALQURACASES.iter().zip(TEST_FIXED_DATE_UMMALQURA.iter()) {
-            let date = UmmalQuraDateInner(ArithmeticDate::new_unchecked(
+            let date = UmmAlQuraDateInner(ArithmeticDate::new_unchecked(
                 case.year, case.month, case.day,
             ));
             assert_eq!(
-                UmmalQura::fixed_from_saudi_islamic(date),
+                UmmAlQura::fixed_from_saudi_islamic(date),
                 RataDie::new(*f_date),
                 "{case:?}"
             );
