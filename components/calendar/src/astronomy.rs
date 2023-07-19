@@ -976,6 +976,8 @@ impl Astronomical {
     }
 
     #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
+    // Time between sunset and moonset on date at location. Returns None if there is no sunset or moonset on said date.
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6770
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
         if let Some(sun) = Self::sunset(date, location) {
             if let Some(moon) = Self::moonset(date, location) {
