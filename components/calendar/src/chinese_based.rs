@@ -18,6 +18,8 @@
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //! ```
+//!
+//! TODO(#3709): Address inconsistencies with ICU code for extreme dates
 
 use crate::{
     astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
