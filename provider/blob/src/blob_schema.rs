@@ -125,12 +125,7 @@ impl<'a> ZeroMapKV<'a> for Index32U8 {
     type OwnedType = Box<Index32U8>;
 }
 
-#[inline]
-const fn indexify(s: &[u8]) -> &Index32U8 {
-    unsafe { core::mem::transmute(s) }
-}
-
 impl Index32U8 {
     #[allow(dead_code)] // used in export and debug_assertions mode
-    pub(crate) const SENTINEL: &'static Self = indexify(&[]);
+    pub(crate) const SENTINEL: &'static Self = unsafe { &*(&[] as *const [u8] as *const Self) };
 }
