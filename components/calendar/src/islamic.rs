@@ -70,8 +70,6 @@ const CAIRO: Location = Location {
 /// The inner date type used for representing [`Date`]s of [`IslamicObservational`]. See [`Date`] and [`IslamicObservational`] for more details.
 pub struct IslamicDateInner(ArithmeticDate<IslamicObservational>);
 
-// OBSERVATIONAL CALENDAR
-
 impl CalendarArithmetic for IslamicObservational {
     fn month_days(year: i32, month: u8) -> u8 {
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
@@ -352,6 +350,7 @@ impl Calendar for IslamicCivil {
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
         let year = if era.0 == tinystr!(16, "ah") {
+            // TODO: Check name and alias
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
@@ -440,8 +439,7 @@ impl IslamicCivil {
     // The fixed date algorithms are from
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     //
-    // Lisp code reference:
-
+    // Lisp code reference:https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2076
     fn fixed_from_islamic(i_date: IslamicCivilDateInner) -> RataDie {
         let year = i64::from(i_date.0.year);
         let month = i64::from(i_date.0.month);
@@ -456,7 +454,7 @@ impl IslamicCivil {
                 + day,
         )
     }
-
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090
     #[allow(clippy::unwrap_used)]
     fn islamic_from_fixed(date: RataDie) -> Date<IslamicCivil> {
         let year = div_rem_euclid_f64(
@@ -466,13 +464,13 @@ impl IslamicCivil {
         .0 as i32;
         let prior_days = date.to_f64_date()
             - ((Self::fixed_from_islamic(IslamicCivilDateInner(
-                ArithmeticDate::new_from_lunar_ordinals(year, 1, 1).unwrap(),
+                ArithmeticDate::new_from_lunar_ordinals(year, 1, 1).unwrap(), // Safe unwrap due to hardcoded values,
             )))
             .to_f64_date());
         let month = div_rem_euclid_f64((prior_days * 11.0) + 330.0, 325.0).0 as u8;
         let day = (date.to_f64_date()
             - (Self::fixed_from_islamic(IslamicCivilDateInner(
-                ArithmeticDate::new_from_lunar_ordinals(year, month, 1).unwrap(),
+                ArithmeticDate::new_from_lunar_ordinals(year, month, 1).unwrap(), // Safe unwrap,
             ))
             .to_f64_date())
             + 1.0) as u8;
@@ -482,7 +480,7 @@ impl IslamicCivil {
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "ah")),
+            era: types::Era(tinystr!(16, "islamic-civil")),
             number: year,
             cyclic: None,
             related_iso: None,
