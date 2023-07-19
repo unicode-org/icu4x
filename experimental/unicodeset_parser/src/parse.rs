@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Display;
 use std::{collections::HashSet, iter::Peekable, str::CharIndices};
@@ -196,7 +197,7 @@ pub enum VariableValue<'a> {
     /// A single code point.
     Char(char),
     /// A string. It is guaranteed that when returned from a VariableMap, this variant contains never exactly one code point.
-    String(String),
+    String(Cow<'a, str>),
 }
 
 /// The map used for parsing UnicodeSets with variable support. See [`parse_with_variables`].
@@ -244,18 +245,17 @@ impl<'a> VariableMap<'a> {
         let mut chars = s.chars();
         let val = match (chars.next(), chars.next()) {
             (Some(c), None) => VariableValue::Char(c),
-            _ => VariableValue::String(s),
+            _ => VariableValue::String(Cow::Owned(s)),
         };
 
         self.0.insert(key, val);
         Ok(())
     }
 
-    /// Special case for [`insert_string`] if you already have a `&str`. Avoids allocating the string if
-    /// it consists of exactly one code point.
+    /// Insert a `&str` of any length into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert_str(&mut self, key: String, s: &str) -> Result<(), &VariableValue> {
+    pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
             // safety: we just checked that this key exists
@@ -266,7 +266,7 @@ impl<'a> VariableMap<'a> {
         let mut chars = s.chars();
         let val = match (chars.next(), chars.next()) {
             (Some(c), None) => VariableValue::Char(c),
-            _ => VariableValue::String(s.to_string()),
+            _ => VariableValue::String(Cow::Borrowed(s)),
         };
 
         self.0.insert(key, val);
@@ -339,7 +339,7 @@ impl<'a> MainToken<'a> {
             VariableValue::Char(c) => MainToken::CharOrString(CharOrString::Char(vec![c])),
             VariableValue::String(s) => {
                 // we know that the VariableMap only contains non-length-1 Strings.
-                MainToken::CharOrString(CharOrString::String(s))
+                MainToken::CharOrString(CharOrString::String(s.into_owned()))
             }
             VariableValue::UnicodeSet(set) => MainToken::UnicodeSet(set),
         }
