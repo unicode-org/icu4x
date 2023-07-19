@@ -464,17 +464,17 @@ impl IslamicCivil {
             10631.0,
         )
         .0 as i32;
-        let prior_days = (Self::fixed_from_islamic(IslamicCivilDateInner(
-            ArithmeticDate::new_from_lunar_ordinals(year, 1, 1).unwrap(),
-        )))
-        .to_f64_date()
-            - date.to_f64_date();
+        let prior_days = date.to_f64_date()
+            - ((Self::fixed_from_islamic(IslamicCivilDateInner(
+                ArithmeticDate::new_from_lunar_ordinals(year, 1, 1).unwrap(),
+            )))
+            .to_f64_date());
         let month = div_rem_euclid_f64((prior_days * 11.0) + 330.0, 325.0).0 as u8;
-        let day = ((Self::fixed_from_islamic(IslamicCivilDateInner(
-            ArithmeticDate::new_from_lunar_ordinals(year, month, 1).unwrap(),
-        ))
-        .to_f64_date()
-            - date.to_f64_date())
+        let day = (date.to_f64_date()
+            - (Self::fixed_from_islamic(IslamicCivilDateInner(
+                ArithmeticDate::new_from_lunar_ordinals(year, month, 1).unwrap(),
+            ))
+            .to_f64_date())
             + 1.0) as u8;
 
         Date::try_new_islamic_civil_date(year, month, day).unwrap() // Safe value
@@ -1432,7 +1432,7 @@ mod test {
             );
         }
     }
-    //#[test]
+    #[test]
     fn test_islamic_from_fixed() {
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date = Date::try_new_islamic_civil_date(case.year, case.month, case.day).unwrap();
