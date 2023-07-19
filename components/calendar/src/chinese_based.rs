@@ -27,7 +27,7 @@ use crate::{
     helpers::{adjusted_rem_euclid, div_rem_euclid_f64, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
     types::Moment,
-    Calendar, Date,
+    Calendar,
 };
 
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
@@ -52,10 +52,10 @@ pub(crate) trait ChineseBased: CalendarArithmetic + Sized {
     /// may not track years ordinally in the same way many western calendars do.
     const EPOCH: RataDie;
 
-    /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
+    /// Given a year, month, and day, create a ChineseBasedDateInner<C> where C is a Chinese-based calendar.
     ///
     /// This function should just call try_new_C_date where C is the name of the calendar.
-    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<Self>;
+    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Self>;
 }
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
@@ -202,7 +202,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
     }
 
-    /// Get a Date<C> from a fixed date
+    /// Get a ChineseBasedDateInner<C> from a fixed date
     ///
     /// Months are calculated by iterating through the dates of new moons until finding the last month which
     /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
@@ -210,7 +210,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     ///
     /// The calculation for `elapsed_years` in this function is based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
-    pub(crate) fn chinese_based_date_from_fixed(date: RataDie) -> Date<C> {
+    pub(crate) fn chinese_based_date_from_fixed(date: RataDie) -> ChineseBasedDateInner<C> {
         let first_day_of_year = Self::new_year_on_or_before_fixed_date(date);
         let year_float = libm::floor(
             1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,

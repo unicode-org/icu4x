@@ -160,7 +160,7 @@ impl Calendar for Chinese {
     // Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
         let fixed = Iso::fixed_from_iso(iso.inner);
-        Inner::chinese_based_date_from_fixed(fixed).inner
+        ChineseDateInner(Inner::chinese_based_date_from_fixed(fixed))
     }
 
     // Obtain an ISO date from a Chinese date
@@ -379,9 +379,14 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
 
+    // Unwrap can be used for this function because it is only called internally when
+    // generating dates from a valid year, month, and day
     #[allow(clippy::unwrap_used)]
-    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<Chinese> {
-        Date::try_new_chinese_date(year, month, day).unwrap()
+    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Chinese> {
+        Date::try_new_chinese_date(year, month, day)
+            .unwrap()
+            .inner
+            .0
     }
 }
 
@@ -537,8 +542,8 @@ mod test {
         struct TestCase {
             fixed: i64,
             expected_year: i32,
-            expected_month: u32,
-            expected_day: u32,
+            expected_month: u8,
+            expected_day: u8,
         }
 
         let cases = [
@@ -595,18 +600,15 @@ mod test {
         for case in cases {
             let chinese = Inner::chinese_based_date_from_fixed(RataDie::new(case.fixed));
             assert_eq!(
-                case.expected_year,
-                chinese.year().number,
+                case.expected_year, chinese.0.year,
                 "Chinese from fixed failed for case: {case:?}"
             );
             assert_eq!(
-                case.expected_month,
-                chinese.month().ordinal,
+                case.expected_month, chinese.0.month,
                 "Chinese from fixed failed for case: {case:?}"
             );
             assert_eq!(
-                case.expected_day,
-                chinese.day_of_month().0,
+                case.expected_day, chinese.0.day,
                 "Chinese from fixed failed for case: {case:?}"
             );
         }
@@ -654,7 +656,7 @@ mod test {
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
             let chinese = Inner::chinese_based_date_from_fixed(rata_die);
-            let result = Inner::fixed_from_chinese_based_date_inner(chinese.inner.0);
+            let result = Inner::fixed_from_chinese_based_date_inner(chinese);
             let result_debug = result.to_i64_date();
             assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
             fixed += 7043;
