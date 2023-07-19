@@ -42,12 +42,17 @@ pub struct ExporterOptions {
     pub root: PathBuf,
     /// Option for initializing the output directory.
     pub overwrite: OverwriteOption,
-    /// Whether to create a fingerprint file with SHA2 hashes
+    #[deprecated(
+        since = "1.3.0",
+        note = "this feature was mainly intended for internal use and will be removed in a future version"
+    )]
+    /// Whether to create a fingerprint file with hashes
     pub fingerprint: bool,
 }
 
 impl Default for ExporterOptions {
     fn default() -> Self {
+        #[allow(deprecated)] // obviously
         Self {
             root: PathBuf::from("icu4x_data"),
             overwrite: Default::default(),
@@ -86,6 +91,7 @@ impl FilesystemExporter {
         serializer: Box<dyn AbstractSerializer + Sync>,
         options: ExporterOptions,
     ) -> Result<Self, DataError> {
+        #[allow(deprecated)] // obviously
         let result = FilesystemExporter {
             root: options.root,
             manifest: Manifest::for_format(serializer.get_buffer_format())?,

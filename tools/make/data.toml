@@ -15,7 +15,7 @@ args = [
     "-p=icu_datagen",
     "--no-default-features",
     "--features=provider_fs,use_wasm,rayon,icu_casemap,icu_compactdecimal,icu_displaynames,icu_relativetime",
-    "generate_fs_and_verify_zero_copy",
+    "generate_json_and_verify_postcard",
     "--",
     "--nocapture"
 ]
