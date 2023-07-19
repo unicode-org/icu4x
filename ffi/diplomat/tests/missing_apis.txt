@@ -38,10 +38,6 @@ icu::calendar::persian::Persian::new#FnInStruct
 icu::calendar::persian::PersianDateInner#Struct
 icu::calendar::roc::Roc#Struct
 icu::calendar::roc::RocDateInner#Struct
-icu::casemap::CaseMapper::add_case_closure#FnInStruct
-icu::casemap::CaseMapper::add_string_case_closure#FnInStruct
-icu::casemap::ClosureSet::add_char#FnInTrait
-icu::casemap::ClosureSet::add_string#FnInTrait
 icu::locid_transform::Direction#Enum
 icu::locid_transform::LocaleDirectionality#Struct
 icu::locid_transform::LocaleDirectionality::get#FnInStruct

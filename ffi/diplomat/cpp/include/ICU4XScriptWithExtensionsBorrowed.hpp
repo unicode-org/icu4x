@@ -12,6 +12,7 @@
 #include "ICU4XScriptWithExtensionsBorrowed.h"
 
 class ICU4XScriptExtensionsSet;
+class ICU4XCodePointSetData;
 
 /**
  * A destruction policy for using ICU4XScriptWithExtensionsBorrowed with std::unique_ptr.
@@ -52,6 +53,14 @@ class ICU4XScriptWithExtensionsBorrowed {
    * See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
    */
   bool has_script(uint32_t code_point, uint16_t script) const;
+
+  /**
+   * Build the CodePointSetData corresponding to a codepoints matching a particular script
+   * in their Script_Extensions
+   * 
+   * See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
+   */
+  ICU4XCodePointSetData get_script_extensions_set(uint16_t script) const;
   inline const capi::ICU4XScriptWithExtensionsBorrowed* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptWithExtensionsBorrowed* AsFFIMut() { return this->inner.get(); }
   inline ICU4XScriptWithExtensionsBorrowed(capi::ICU4XScriptWithExtensionsBorrowed* i) : inner(i) {}
@@ -63,6 +72,7 @@ class ICU4XScriptWithExtensionsBorrowed {
 };
 
 #include "ICU4XScriptExtensionsSet.hpp"
+#include "ICU4XCodePointSetData.hpp"
 
 inline uint16_t ICU4XScriptWithExtensionsBorrowed::get_script_val(uint32_t code_point) const {
   return capi::ICU4XScriptWithExtensionsBorrowed_get_script_val(this->inner.get(), code_point);
@@ -72,5 +82,8 @@ inline ICU4XScriptExtensionsSet ICU4XScriptWithExtensionsBorrowed::get_script_ex
 }
 inline bool ICU4XScriptWithExtensionsBorrowed::has_script(uint32_t code_point, uint16_t script) const {
   return capi::ICU4XScriptWithExtensionsBorrowed_has_script(this->inner.get(), code_point, script);
+}
+inline ICU4XCodePointSetData ICU4XScriptWithExtensionsBorrowed::get_script_extensions_set(uint16_t script) const {
+  return ICU4XCodePointSetData(capi::ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set(this->inner.get(), script));
 }
 #endif
