@@ -6,7 +6,7 @@
 name = "icu_datetime"
 description = "API for formatting date and time to user readable textual representation"
 version = "1.2.1"
-rust-version = "1.64.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -58,7 +58,7 @@ criterion = "0.4"
 icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider_adapters = { path = "../../provider/adapters" }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_datetime", "icu_timezone", "icu_calendar", "icu_decimal", "icu_plurals", "icu_locid_transform"] }
+icu_provider_blob = { path = "../../provider/blob" }
 litemap = { path = "../../utils/litemap" }
 
 serde = { version = "1.0", features = ["derive"] }
@@ -112,7 +112,7 @@ denylist = ["bench"]
 [[bench]]
 name = "datetime"
 harness = false
-required-features = ["compiled_data"]
+required-features = ["serde"]
 
 [[bench]]
 name = "pattern"
@@ -121,7 +121,7 @@ required-features = ["bench"]
 
 [[test]]
 name = "datetime"
-required-features = ["compiled_data"]
+required-features = ["serde"]
 
 [[test]]
 name = "resolved_components"
@@ -133,4 +133,4 @@ required-features = ["experimental"]
 
 [[example]]
 name = "work_log"
-required-features = ["compiled_data"]
+required-features = ["serde"]

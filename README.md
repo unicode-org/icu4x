@@ -24,6 +24,8 @@ More information about the project can be found in [the docs subdirectory](docs/
 
 ## Quick Start
 
+### Current version (1.2)
+
 An example `ICU4X` powered application in Rust may look like below...
 
 `Cargo.toml`:

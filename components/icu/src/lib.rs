@@ -129,7 +129,7 @@ pub use icu_calendar as calendar;
 
 #[cfg(feature = "icu_casemap")]
 #[doc(inline)]
-pub use icu_casemap as casemapping;
+pub use icu_casemap as casemap;
 
 #[doc(inline)]
 pub use icu_collator as collator;

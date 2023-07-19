@@ -7,7 +7,7 @@
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
 use icu::displaynames::RegionDisplayNames;
-use icu::locid::{locale, subtags::region};
+use icu::locid::{locale, subtags_region as region};
 
 fn main() {
     let names = RegionDisplayNames::try_new_unstable(

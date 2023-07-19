@@ -286,7 +286,12 @@ impl Cli {
             match self.keys.as_slice() {
                 [x] if x == "none" => config::KeyInclude::None,
                 [x] if x == "all" => config::KeyInclude::All,
-                [x] if x == "experimental-all" => config::KeyInclude::AllWithExperimental,
+                [x] if x == "experimental-all" => {
+                    log::warn!("--keys=experimental-all is deprecated, using --keys=all.");
+                    log::warn!("--keys=all behavior is dependent on activated Cargo features, so");
+                    log::warn!("building with experimental features includes experimental keys");
+                    config::KeyInclude::All
+                }
                 keys => config::KeyInclude::Explicit(
                     keys.iter()
                         .map(|k| icu_datagen::key(k).ok_or(eyre::eyre!(k.to_string())))
@@ -329,6 +334,9 @@ impl Cli {
         {
             config::LocaleInclude::CldrSet(locale_subsets.into_iter().collect())
         } else {
+            if self.locales.as_slice() == ["all"] {
+                log::warn!("`--locales all` selects the Allar language. Use `--locales full` for all locales");
+            }
             config::LocaleInclude::Explicit(
                 self.locales
                     .iter()

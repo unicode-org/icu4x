@@ -361,14 +361,14 @@ impl DataExporter for BakedExporter {
         let bake = payload.tokenize(&self.dependencies);
 
         self.write_impl_macro(quote! {
-            #[clippy::msrv = "1.64"]
+            #[clippy::msrv = "1.61"]
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)]
                 pub const #singleton_ident: &'static <#marker as icu_provider::DataMarker>::Yokeable = &#bake;
             }
 
-            #[clippy::msrv = "1.64"]
+            #[clippy::msrv = "1.61"]
             impl icu_provider::DataProvider<#marker> for $provider {
                 fn load(
                     &self,
@@ -440,7 +440,7 @@ impl DataExporter for BakedExporter {
             .replace('/', "_");
 
         let body = if values.is_empty() {
-            quote!(Err(icu_provider::DataErrorKind::MissingLocale))
+            quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req)))
         } else {
             let mut map = BTreeMap::new();
             let mut statics = Vec::new();
@@ -508,8 +508,11 @@ impl DataExporter for BakedExporter {
                         let payload =  if let Ok(payload) = #search_direct {
                             payload
                         } else {
-                            let mut fallback_iterator = icu_locid_transform::fallback::LocaleFallbacker::new()
-                                .fallback_for(<#marker as icu_provider::KeyedDataMarker>::KEY.into(), req.locale.clone());
+                            const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> =
+                                icu_locid_transform::fallback::LocaleFallbacker::new()
+                                    .for_config(icu_locid_transform::fallback::LocaleFallbackConfig::from_key(
+                                        <#marker as icu_provider::KeyedDataMarker>::KEY));
+                            let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
                                 #maybe_err
 
@@ -536,7 +539,7 @@ impl DataExporter for BakedExporter {
 
         self.write_impl_macro(
             quote! {
-                #[clippy::msrv = "1.64"]
+                #[clippy::msrv = "1.61"]
                 impl icu_provider::DataProvider<#marker> for $provider {
                     fn load(
                         &self,
@@ -648,7 +651,7 @@ impl DataExporter for BakedExporter {
                 #[macro_export]
                 macro_rules! __impl_any_provider {
                     ($provider:path) => {
-                        #[clippy::msrv = "1.64"]
+                        #[clippy::msrv = "1.61"]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 #(
@@ -674,7 +677,7 @@ impl DataExporter for BakedExporter {
                 #[doc(inline)]
                 pub use __impl_any_provider as impl_any_provider;
 
-                #[clippy::msrv = "1.64"]
+                #[clippy::msrv = "1.61"]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },

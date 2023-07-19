@@ -14,7 +14,7 @@ use std::path::PathBuf;
 use zip::ZipArchive;
 
 include!("../../globs.rs.data");
-include!("../../locales.rs.data");
+include!("../../../../provider/datagen/tests/data/locales.rs.data");
 
 #[derive(Parser)]
 #[command(
@@ -24,12 +24,6 @@ include!("../../locales.rs.data");
 struct Args {
     #[arg(short, long, help = "Sets the level of verbosity (-v, -vv, or -vvv)", action = ArgAction::Count)]
     verbose: u8,
-    #[arg(
-        short,
-        long,
-        help = "Path to output data directory. The subdirectories 'cldr' and 'icuexport' will be overwritten. Omit this option to write data into the package tree"
-    )]
-    out: PathBuf,
 }
 
 fn main() -> eyre::Result<()> {
@@ -56,7 +50,8 @@ fn main() -> eyre::Result<()> {
         _ => eyre::bail!("Only -v, -vv, and -vvv are supported"),
     }
 
-    let output_path = &args.out;
+    let out_root =
+        std::path::Path::new(std::env!("CARGO_MANIFEST_DIR")).join("../../provider/datagen");
 
     fn cached(resource: &str) -> Result<PathBuf, DataError> {
         let root = std::env::var_os("ICU4X_SOURCE_CACHE")
@@ -84,8 +79,6 @@ fn main() -> eyre::Result<()> {
             std::fs::read(&zip).expect("should just have been downloaded"),
         ))
         .with_context(|| format!("Failed to read zip file {:?}", &zip))?;
-
-        let _ = fs::remove_dir_all(&root);
 
         for path in paths {
             if let Ok(mut file) = zip.by_name(&path) {
@@ -125,6 +118,7 @@ fn main() -> eyre::Result<()> {
         paths
     }
 
+    std::fs::remove_dir_all(out_root.join("tests/data/cldr"))?;
     extract(
         cached(&format!(
             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
@@ -133,9 +127,10 @@ fn main() -> eyre::Result<()> {
         ))
         .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
         expand_paths(CLDR_JSON_GLOB, false),
-        output_path.join("cldr"),
+        out_root.join("tests/data/cldr"),
     )?;
 
+    std::fs::remove_dir_all(out_root.join("tests/data/icuexport"))?;
     extract(
         cached(&format!(
             "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
@@ -144,27 +139,26 @@ fn main() -> eyre::Result<()> {
         ))
         .with_context(|| "Failed to download ICU ZIP".to_owned())?,
         expand_paths(ICUEXPORTDATA_GLOB, true),
-        output_path.join("icuexport"),
+        out_root.join("tests/data/icuexport"),
     )?;
 
-    for file in [
-        "burmesedict.toml",
-        "cjdict.toml",
-        "khmerdict.toml",
-        "laodict.toml",
-        "thaidict.toml",
-    ] {
-        std::fs::copy(
-            output_path
-                .join("icuexport/segmenter/dictionary")
-                .join(file),
-            output_path
-                .join("../../datagen/data/segmenter/dictionary")
-                .join(file),
-        )
-        .unwrap();
-    }
+    std::fs::remove_dir_all(out_root.join("data/segmenter/dictionary"))?;
+    extract(
+        cached(&format!(
+            "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
+            SourceData::LATEST_TESTED_ICUEXPORT_TAG,
+            SourceData::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
+        ))
+        .with_context(|| "Failed to download ICU ZIP".to_owned())?,
+        ICUEXPORTDATA_SEGMENTER_GLOB
+            .iter()
+            .copied()
+            .map(String::from)
+            .collect(),
+        out_root.join("data"),
+    )?;
 
+    std::fs::remove_dir_all(out_root.join("data/lstm"))?;
     extract(
         cached(&format!(
             "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
@@ -172,15 +166,8 @@ fn main() -> eyre::Result<()> {
         ))
         .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
         LSTM_GLOB.iter().copied().map(String::from).collect(),
-        output_path.join("lstm"),
+        out_root.join("data/lstm"),
     )?;
-
-    for path in &LSTM_GLOB[..4] {
-        std::fs::copy(
-            output_path.join("lstm").join(path),
-            output_path.join("../../datagen/data/lstm").join(path),
-        )?;
-    }
 
     Ok(())
 }

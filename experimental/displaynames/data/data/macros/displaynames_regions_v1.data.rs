@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_displaynames_regions_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.64"]
+        #[clippy::msrv = "1.61"]
         impl icu_provider::DataProvider<icu_displaynames::provider::RegionDisplayNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_displaynames::provider::RegionDisplayNamesV1Marker>, icu_provider::DataError> {
                 static HI_LATN: <icu_displaynames::provider::RegionDisplayNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu_displaynames::provider::RegionDisplayNamesV1 {
@@ -1665,7 +1665,8 @@ macro_rules! __impl_displaynames_regions_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    let mut fallback_iterator = icu_locid_transform::fallback::LocaleFallbacker::new().fallback_for(<icu_displaynames::provider::RegionDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.into(), req.locale.clone());
+                    const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu_locid_transform::fallback::LocaleFallbacker::new().for_config(icu_locid_transform::fallback::LocaleFallbackConfig::from_key(<icu_displaynames::provider::RegionDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY));
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if fallback_iterator.get().is_empty() {
                             return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu_displaynames::provider::RegionDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY, req));

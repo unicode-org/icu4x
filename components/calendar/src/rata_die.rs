@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::types::Moment;
 use core::ops::{Add, AddAssign, Sub, SubAssign};
 
 /// The *Rata Die*, or *R.D.*, or `fixed_date`: number of days since January 1, 1 CE.
@@ -20,6 +21,7 @@ impl RataDie {
         result.check();
         result
     }
+
     #[cfg(debug_assertions)]
     pub const fn check(&self) {
         if self.0 > i64::MAX / 256 {
@@ -35,17 +37,28 @@ impl RataDie {
             );
         }
     }
+
     /// A valid RataDie that is intended to be below all dates representable in calendars
     #[cfg(test)]
     pub const fn big_negative() -> Self {
         Self::new(i64::MIN / 256 / 256)
     }
+
     pub const fn to_i64_date(self) -> i64 {
         self.0
     }
+
+    pub const fn to_f64_date(self) -> f64 {
+        self.0 as f64
+    }
+
     /// Calculate the number of days between two RataDie in a const-friendly way
     pub const fn const_diff(self, rhs: Self) -> i64 {
         self.0 - rhs.0
+    }
+
+    pub const fn as_moment(&self) -> Moment {
+        Moment::new(self.0 as f64)
     }
 }
 

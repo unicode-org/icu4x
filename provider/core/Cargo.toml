@@ -6,7 +6,7 @@
 name = "icu_provider"
 description = "Trait and struct definitions for the ICU data provider"
 version = "1.2.0"
-rust-version = "1.64.0"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -63,7 +63,9 @@ sync = []
 macros = ["dep:icu_provider_macros"]
 
 # Enable logging of additional context of data errors
-log_error_context = ["dep:log"]
+logging = ["dep:log"]
+# Legacy name
+log_error_context = ["logging"]
 
 # Enable BufferProvider and other deserialization infrastructure
 serde = ["dep:serde", "yoke/serde"]

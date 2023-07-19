@@ -53,7 +53,7 @@ impl Default for SourceData {
 
 impl SourceData {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "43.0.0";
+    pub const LATEST_TESTED_CLDR_TAG: &'static str = "43.1.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-05-02/73.x";
@@ -434,6 +434,11 @@ impl AbstractFs {
                         "../data/lstm/Thai_codepoints_exclusive_model4_heavy/weights.json"
                     )
                     .as_slice(),
+                ),
+                (
+                    "Thai_graphclust_model4_heavy/weights.json",
+                    include_bytes!("../data/lstm/Thai_graphclust_model4_heavy/weights.json")
+                        .as_slice(),
                 ),
             ]
             .into_iter()
