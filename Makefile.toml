@@ -91,6 +91,7 @@ description = "Run all tests for the CI 'testdata' job"
 category = "CI"
 dependencies = [
     "testdata-check",
+    "testdata-legacy",
 ]
 
 [tasks.ci-job-test-docs]
