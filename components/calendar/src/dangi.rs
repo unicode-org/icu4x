@@ -394,7 +394,7 @@ impl ChineseBased for Dangi {
     // generating dates from a valid year, month, and day
     #[allow(clippy::unwrap_used)]
     fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Dangi> {
-        Date::try_new_dangi_date(year, month, day).unwrap().inner.0
+        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 }
 

@@ -379,14 +379,8 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
 
-    // Unwrap can be used for this function because it is only called internally when
-    // generating dates from a valid year, month, and day
-    #[allow(clippy::unwrap_used)]
     fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Chinese> {
-        Date::try_new_chinese_date(year, month, day)
-            .unwrap()
-            .inner
-            .0
+        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 }
 
