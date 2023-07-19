@@ -711,9 +711,13 @@ where
             }
             // note: c cannot be a whitespace, because we called skip_whitespace just before
             // (in the main parse loop), so it's safe to call this guard function
-            (c, _) if legal_char_start(c) => self
-                .parse_char()
-                .map(|(offset, c_vec)| (offset, false, MainToken::CharOrString(CharOrString::Char(c_vec)))),
+            (c, _) if legal_char_start(c) => self.parse_char().map(|(offset, c_vec)| {
+                (
+                    offset,
+                    false,
+                    MainToken::CharOrString(CharOrString::Char(c_vec)),
+                )
+            }),
             ('-', _) => {
                 self.iter.next();
                 Ok((initial_offset, false, MainToken::Minus))
