@@ -435,6 +435,10 @@ impl Dangi {
         }
     }
 
+    /// Get the ordinal lunar month from a code
+    ///
+    /// TODO: This code is exactly the same as in `Chinese`; consider abstracting this function
+    /// to a trait shared by Lunar calendars.
     fn ordinal_lunar_month_from_code(year: i32, code: MonthCode) -> Option<u8> {
         if code.0.len() < 3 {
             return None;
