@@ -361,14 +361,14 @@ impl DataExporter for BakedExporter {
         let bake = payload.tokenize(&self.dependencies);
 
         self.write_impl_macro(quote! {
-            #[clippy::msrv = "1.61"]
+            #[clippy::msrv = "1.65"]
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)]
                 pub const #singleton_ident: &'static <#marker as icu_provider::DataMarker>::Yokeable = &#bake;
             }
 
-            #[clippy::msrv = "1.61"]
+            #[clippy::msrv = "1.65"]
             impl icu_provider::DataProvider<#marker> for $provider {
                 fn load(
                     &self,
@@ -539,7 +539,7 @@ impl DataExporter for BakedExporter {
 
         self.write_impl_macro(
             quote! {
-                #[clippy::msrv = "1.61"]
+                #[clippy::msrv = "1.65"]
                 impl icu_provider::DataProvider<#marker> for $provider {
                     fn load(
                         &self,
@@ -651,7 +651,7 @@ impl DataExporter for BakedExporter {
                 #[macro_export]
                 macro_rules! __impl_any_provider {
                     ($provider:path) => {
-                        #[clippy::msrv = "1.61"]
+                        #[clippy::msrv = "1.65"]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 #(
@@ -677,7 +677,7 @@ impl DataExporter for BakedExporter {
                 #[doc(inline)]
                 pub use __impl_any_provider as impl_any_provider;
 
-                #[clippy::msrv = "1.61"]
+                #[clippy::msrv = "1.65"]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },
