@@ -699,6 +699,9 @@ mod test {
         // Test cases for this test are derived from existing ICU Intl.DateTimeFormat. If there is a bug in ICU,
         // these test cases may be affected, and this calendar's output may not be entirely valid.
 
+        // There are a number of test cases which do not match ICU for dates very far in the past or future,
+        // see #3709.
+
         #[derive(Debug)]
         struct TestCase {
             iso_year: i32,
@@ -711,24 +714,24 @@ mod test {
         }
 
         let cases = [
-            // TestCase { // This test case fails to match ICU
-            //     iso_year:           4321,
-            //     iso_month:          1,
-            //     iso_day:            23,
-            //     expected_rel_iso:   4320,
-            //     expected_cyclic:    57,
-            //     expected_month:     13,
-            //     expected_day:       11,
-            // },
-            // TestCase { // This test case fails to match ICU
-            //     iso_year:           3649,
-            //     iso_month:          9,
-            //     iso_day:            20,
-            //     expected_rel_iso:   3649,
-            //     expected_cyclic:    46,
-            //     expected_month:     8,
-            //     expected_day:       1,
-            // },
+            TestCase { // #3709: This test case fails to match ICU
+                iso_year:           4321,
+                iso_month:          1,
+                iso_day:            23,
+                expected_rel_iso:   4320,
+                expected_cyclic:    57,
+                expected_month:     13,
+                expected_day:       12,
+            },
+            TestCase {
+                iso_year:           3649,
+                iso_month:          9,
+                iso_day:            20,
+                expected_rel_iso:   3649,
+                expected_cyclic:    46,
+                expected_month:     9,
+                expected_day:       1,
+            },
             TestCase {
                 iso_year: 3333,
                 iso_month: 3,
@@ -1062,33 +1065,33 @@ mod test {
                 expected_month: 1,
                 expected_day: 1,
             },
-            // TestCase { // This test case fails to match ICU
-            //     iso_year: -2332,
-            //     iso_month: 2,
-            //     iso_day: 14,
-            //     expected_rel_iso: -2333,
-            //     expected_cyclic: 4,
-            //     expected_month: 13,
-            //     expected_day: 29,
-            // },
-            // TestCase { // This test case fails to match ICU
-            //     iso_year: -2332,
-            //     iso_month: 1,
-            //     iso_day: 17,
-            //     expected_rel_iso: -2333,
-            //     expected_cyclic: 4,
-            //     expected_month: 13,
-            //     expected_day: 1
-            // },
-            // TestCase { // This test case fails to match ICU
-            //     iso_year: -2332,
-            //     iso_month: 1,
-            //     iso_day: 16,
-            //     expected_rel_iso: -2333,
-            //     expected_cyclic: 4,
-            //     expected_month: 12,
-            //     expected_day: 30
-            // },
+            TestCase { // #3709: This test case fails to match ICU
+                iso_year: -2332,
+                iso_month: 2,
+                iso_day: 14,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 13,
+                expected_day: 30,
+            },
+            TestCase { // #3709: This test case fails to match ICU
+                iso_year: -2332,
+                iso_month: 1,
+                iso_day: 17,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 13,
+                expected_day: 2
+            },
+            TestCase { // #3709: This test case fails to match ICU
+                iso_year: -2332,
+                iso_month: 1,
+                iso_day: 16,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 13,
+                expected_day: 1
+            },
             TestCase {
                 iso_year: -2332,
                 iso_month: 1,
@@ -1152,42 +1155,42 @@ mod test {
                 expected_month: 12,
                 expected_day: 30,
             },
-            // TestCase { // This test case fails to match ICU
-            //     iso_year: -3000,
-            //     iso_month: 5,
-            //     iso_day: 15,
-            //     expected_rel_iso: -3000,
-            //     expected_cyclic: 57,
-            //     expected_month: 3,
-            //     expected_day: 30
-            // }
-            // TestCase { // This test case fails to match ICU
-            //     iso_year:           -3649,
-            //     iso_month:          9,
-            //     iso_day:            20,
-            //     expected_rel_iso:   -3649,
-            //     expected_cyclic:    8,
-            //     expected_month:     8,
-            //     expected_day:       9,
-            // },
-            // TestCase { // This test case fails to match ICU
-            //     iso_year:           -3649,
-            //     iso_month:          3,
-            //     iso_day:            30,
-            //     expected_rel_iso:   -3649,
-            //     expected_cyclic:    8,
-            //     expected_month:     2,
-            //     expected_day:       13,
-            // },
-            // TestCase { // This test case fails to match ICU
-            //     iso_year:           -3650,
-            //     iso_month:          3,
-            //     iso_day:            30,
-            //     expected_rel_iso:   -3650,
-            //     expected_cyclic:    7,
-            //     expected_month:     3,
-            //     expected_day:       2,
-            // },
+            TestCase { // #3709: This test case fails to match ICU
+                iso_year: -3000,
+                iso_month: 5,
+                iso_day: 15,
+                expected_rel_iso: -3000,
+                expected_cyclic: 57,
+                expected_month: 4,
+                expected_day: 1
+            },
+            TestCase { // #3709: This test case fails to match ICU
+                iso_year:           -3649,
+                iso_month:          9,
+                iso_day:            20,
+                expected_rel_iso:   -3649,
+                expected_cyclic:    8,
+                expected_month:     8,
+                expected_day:       10,
+            },
+            TestCase { // #3709: This test case fails to match ICU
+                iso_year:           -3649,
+                iso_month:          3,
+                iso_day:            30,
+                expected_rel_iso:   -3649,
+                expected_cyclic:    8,
+                expected_month:     2,
+                expected_day:       14,
+            },
+            TestCase { // #3709: This test case fails to match ICU
+                iso_year:           -3650,
+                iso_month:          3,
+                iso_day:            30,
+                expected_rel_iso:   -3650,
+                expected_cyclic:    7,
+                expected_month:     3,
+                expected_day:       3,
+            },
         ];
 
         for case in cases {
