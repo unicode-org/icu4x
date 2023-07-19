@@ -126,5 +126,6 @@ impl<'a> ZeroMapKV<'a> for Index32U8 {
 }
 
 impl Index32U8 {
+    #[allow(dead_code)]
     pub(crate) const SENTINEL: &'static Self = unsafe { core::mem::transmute::<&[u8], _>(&[]) };
 }
