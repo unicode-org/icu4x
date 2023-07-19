@@ -448,14 +448,15 @@ impl IslamicCivil {
         let day = i64::from(i_date.0.day);
 
         RataDie::new(
-            FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date() - 1
+            (FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date() - 1)
                 + (year - 1) * 354
-                + (3 + year * 11) / 30
+                + div_rem_euclid_f64(3.0 + year as f64 * 11.0, 30.0).0 as i64
                 + 29 * (month - 1)
-                + month / 2
+                + div_rem_euclid_f64(month as f64, 2.0).0 as i64
                 + day,
         )
     }
+
     #[allow(clippy::unwrap_used)]
     fn islamic_from_fixed(date: RataDie) -> Date<IslamicCivil> {
         let year = div_rem_euclid_f64(
@@ -1169,6 +1170,174 @@ mod test {
         },
     ];
 
+    static ARITHMETIC_CASES: [DateCase; 33] = [
+        DateCase {
+            year: -1245,
+            month: 12,
+            day: 9,
+        },
+        DateCase {
+            year: -813,
+            month: 2,
+            day: 23,
+        },
+        DateCase {
+            year: -568,
+            month: 4,
+            day: 1,
+        },
+        DateCase {
+            year: -501,
+            month: 4,
+            day: 6,
+        },
+        DateCase {
+            year: -157,
+            month: 10,
+            day: 17,
+        },
+        DateCase {
+            year: -47,
+            month: 6,
+            day: 3,
+        },
+        DateCase {
+            year: 75,
+            month: 7,
+            day: 13,
+        },
+        DateCase {
+            year: 403,
+            month: 10,
+            day: 5,
+        },
+        DateCase {
+            year: 489,
+            month: 5,
+            day: 22,
+        },
+        DateCase {
+            year: 586,
+            month: 2,
+            day: 7,
+        },
+        DateCase {
+            year: 637,
+            month: 8,
+            day: 7,
+        },
+        DateCase {
+            year: 687,
+            month: 2,
+            day: 20,
+        },
+        DateCase {
+            year: 697,
+            month: 7,
+            day: 7,
+        },
+        DateCase {
+            year: 793,
+            month: 7,
+            day: 1,
+        },
+        DateCase {
+            year: 839,
+            month: 7,
+            day: 6,
+        },
+        DateCase {
+            year: 897,
+            month: 6,
+            day: 1,
+        },
+        DateCase {
+            year: 960,
+            month: 9,
+            day: 30,
+        },
+        DateCase {
+            year: 967,
+            month: 5,
+            day: 27,
+        },
+        DateCase {
+            year: 1058,
+            month: 5,
+            day: 18,
+        },
+        DateCase {
+            year: 1091,
+            month: 6,
+            day: 2,
+        },
+        DateCase {
+            year: 1128,
+            month: 8,
+            day: 4,
+        },
+        DateCase {
+            year: 1182,
+            month: 2,
+            day: 3,
+        },
+        DateCase {
+            year: 1234,
+            month: 10,
+            day: 10,
+        },
+        DateCase {
+            year: 1255,
+            month: 1,
+            day: 11,
+        },
+        DateCase {
+            year: 1321,
+            month: 1,
+            day: 21,
+        },
+        DateCase {
+            year: 1348,
+            month: 3,
+            day: 19,
+        },
+        DateCase {
+            year: 1360,
+            month: 9,
+            day: 8,
+        },
+        DateCase {
+            year: 1362,
+            month: 4,
+            day: 13,
+        },
+        DateCase {
+            year: 1362,
+            month: 10,
+            day: 7,
+        },
+        DateCase {
+            year: 1412,
+            month: 9,
+            day: 13,
+        },
+        DateCase {
+            year: 1416,
+            month: 10,
+            day: 5,
+        },
+        DateCase {
+            year: 1460,
+            month: 10,
+            day: 12,
+        },
+        DateCase {
+            year: 1518,
+            month: 3,
+            day: 5,
+        },
+    ];
+
     #[test]
     fn test_observational_islamic_from_fixed() {
         for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
@@ -1245,6 +1414,31 @@ mod test {
             assert_eq!(
                 UmmalQura::fixed_from_saudi_islamic(date),
                 RataDie::new(*f_date),
+                "{case:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_fixed_from_islamic() {
+        for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+            let date = IslamicCivilDateInner(ArithmeticDate::new_unchecked(
+                case.year, case.month, case.day,
+            ));
+            assert_eq!(
+                IslamicCivil::fixed_from_islamic(date),
+                RataDie::new(*f_date),
+                "{case:?}"
+            );
+        }
+    }
+    //#[test]
+    fn test_islamic_from_fixed() {
+        for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+            let date = Date::try_new_islamic_civil_date(case.year, case.month, case.day).unwrap();
+            assert_eq!(
+                IslamicCivil::islamic_from_fixed(RataDie::new(*f_date)),
+                date,
                 "{case:?}"
             );
         }
