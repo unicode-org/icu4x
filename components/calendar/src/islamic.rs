@@ -54,10 +54,9 @@ pub struct UmmAlQura;
 /// A Tabular version of the Arithmetical Islamic Calendar
 pub struct IslamicTabular;
 
+// Different islamic calendars use different epochs (Thursday vs Friday) due to disagreement on the exact date of Mohammed's migration to Mecca.
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2066
 const FIXED_ISLAMIC_EPOCH_FRIDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 16);
-
-// Thursday epoch as some communites and calendars consider that Mohammeds migration to Mecca happened the sunset of the 15th.
 //const FIXED_ISLAMIC_EPOCH_THURSDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 15);
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6898
@@ -499,7 +498,9 @@ impl UmmAlQura {
         Self
     }
 
-    // Since March 2002, the month begins on the first evening after the conjuction on which the moon sets after the sun, this is the criterion expressing the rule.
+    // Saudi visibility criterion on eve of fixed date in Mecca.
+    // The start of the new month only happens if both of these criterias are met: The moon is a waxing crescent at sunset of the previous day
+    // and the moon sets after the sun on that same evening.
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6957
     fn saudi_criterion(date: RataDie) -> Option<bool> {
         let sunset = Astronomical::sunset((date - 1).as_moment(), MECCA)?;
