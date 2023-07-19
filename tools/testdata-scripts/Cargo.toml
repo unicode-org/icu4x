@@ -11,7 +11,7 @@ edition = "2021"
 [dependencies]
 crlify = { path = "../../utils/crlify" }
 databake = { path = "../../utils/databake" }
-icu_datagen = { path = "../../provider/datagen", default-features = false, features = ["legacy_api", "networking"] }
+icu_datagen = { path = "../../provider/datagen", default-features = false, features = ["legacy_api", "networking", "icu_compactdecimal", "icu_relativetime", "icu_displaynames", "icu_casemap"] }
 icu_locid = { path = "../../components/locid", features = ["databake"] }
 icu_provider = { path = "../../provider/core" }
 

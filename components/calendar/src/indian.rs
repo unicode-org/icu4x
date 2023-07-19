@@ -113,7 +113,7 @@ impl Calendar for Indian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(IndianDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
     }
 
     //
@@ -193,7 +193,7 @@ impl Calendar for Indian {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -264,7 +264,7 @@ impl Date<Indian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Indian>, CalendarError> {
-        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IndianDateInner)
             .map(|inner| Date::from_raw(inner, Indian))
     }

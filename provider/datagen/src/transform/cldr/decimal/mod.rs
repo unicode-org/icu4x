@@ -9,7 +9,9 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
+#[cfg(feature = "icu_compactdecimal")]
 mod compact;
+#[cfg(feature = "icu_compactdecimal")]
 mod compact_decimal_pattern;
 mod decimal_pattern;
 mod symbols;

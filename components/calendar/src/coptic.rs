@@ -124,7 +124,7 @@ impl Calendar for Coptic {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(CopticDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(CopticDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> CopticDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
@@ -173,7 +173,7 @@ impl Calendar for Coptic {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -266,7 +266,7 @@ impl Date<Coptic> {
         month: u8,
         day: u8,
     ) -> Result<Date<Coptic>, CalendarError> {
-        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(CopticDateInner)
             .map(|inner| Date::from_raw(inner, Coptic))
     }

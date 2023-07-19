@@ -13,6 +13,7 @@ export { ICU4XCanonicalDecomposition } from './ICU4XCanonicalDecomposition.js';
 export { ICU4XCaseMapper } from './ICU4XCaseMapper.js';
 export { ICU4XCodePointMapData16 } from './ICU4XCodePointMapData16.js';
 export { ICU4XCodePointMapData8 } from './ICU4XCodePointMapData8.js';
+export { ICU4XCodePointSetBuilder } from './ICU4XCodePointSetBuilder.js';
 export { ICU4XCodePointSetData } from './ICU4XCodePointSetData.js';
 export { ICU4XCollator } from './ICU4XCollator.js';
 export { ICU4XCollatorAlternateHandling } from './ICU4XCollatorAlternateHandling.js';
