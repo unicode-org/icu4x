@@ -25,15 +25,14 @@ pub enum ParseErrorKind {
     UnexpectedChar(char),
     /// A reference to an unknown variable.
     UnknownVariable,
-    /// The source is an incomplete unicode set.
+    /// The source is incomplete.
     Eof,
     /// Something unexpected went wrong with our code. Please file a bug report on GitHub.
     Internal,
-    /// The provided syntax is not supported by us. Note that unknown properties will return the
-    /// `UnknownProperty` variant, not this one.
+    /// The provided syntax is not supported by us. Please file an issue on GitHub if you need
+    /// this feature.
     Unimplemented,
-    /// The provided escape sequence is not a valid Unicode code point or represents too many
-    /// code points.
+    /// The provided escape sequence is not a valid Unicode code point.
     InvalidEscape,
     /// The provided transform ID is invalid.
     InvalidId,
@@ -52,9 +51,6 @@ impl ParseErrorKind {
 }
 
 /// The error type returned by the `parse` functions in this crate.
-///
-/// See [`ParseError::fmt_with_source`] for pretty-printing and [`ParseErrorKind`] of the
-/// different types of errors represented by this struct.
 #[derive(Debug, Clone, Copy)]
 pub struct ParseError {
     // offset is the index to an arbitrary byte in the last character in the source that makes sense
