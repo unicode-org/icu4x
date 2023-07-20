@@ -30,7 +30,7 @@
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::div_rem_euclid;
+use crate::helpers::{self, div_rem_euclid64, next};
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{astronomy::*, Iso};
@@ -45,18 +45,19 @@ pub struct IslamicObservational;
 #[allow(clippy::exhaustive_structs)]
 /// Civil / Arithmetical Islamic Calendar (Used for administrative purposes)
 pub struct IslamicCivil;
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 /// Umm-al-Qura Hijri Calendar (Used in Saudi Arabia)
-pub struct UmmalQura;
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+pub struct UmmAlQura;
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 /// A Tabular version of the Arithmetical Islamic Calendar
 pub struct IslamicTabular;
 
+// Different islamic calendars use different epochs (Thursday vs Friday) due to disagreement on the exact date of Mohammed's migration to Mecca.
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2066
 const FIXED_ISLAMIC_EPOCH_FRIDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 16);
-// const FIXED_ISLAMIC_EPOCH_THURSDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 15);
+//const FIXED_ISLAMIC_EPOCH_THURSDAY: RataDie = Julian::fixed_from_julian_integers(622, 7, 15);
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6898
 const CAIRO: Location = Location {
@@ -74,6 +75,8 @@ pub struct IslamicDateInner(ArithmeticDate<IslamicObservational>);
 
 impl CalendarArithmetic for IslamicObservational {
     fn month_days(year: i32, month: u8) -> u8 {
+        // Formula used to get the R.D Date of the middle of a specific month, used in lunar calendars throughout the book
+        // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3277b839db1a70c2350d6c708ac83df78f/calendar.l#L6911C11-L6911C19
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
 
@@ -189,9 +192,6 @@ impl Calendar for IslamicObservational {
         }
     }
 
-    // fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-    //     todo!()
-    // }
     // TODO: ADD TO ANYCALENDAR
     // fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
     //     Some(AnyCalendarKind::IslamicObservational)
@@ -226,9 +226,9 @@ impl IslamicObservational {
         let crescent = Astronomical::phasis_on_or_before(date, CAIRO);
         let elapsed_months =
             (libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH))
-                as i32;
-        let year = div_rem_euclid(elapsed_months, 12).0 + 1;
-        let month = div_rem_euclid(elapsed_months, 12).1 + 1;
+                as i64;
+        let year = helpers::i64_to_saturated_i32(div_rem_euclid64(elapsed_months, 12).0 + 1);
+        let month = div_rem_euclid64(elapsed_months, 12).1 + 1;
         let day = (date - crescent + 1) as u8;
 
         Date::try_new_observational_islamic_date(year, month as u8, day).unwrap()
@@ -243,7 +243,7 @@ impl IslamicObservational {
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "ah")),
+            era: types::Era(tinystr!(16, "islamic")),
             number: year,
             cyclic: None,
             related_iso: None,
@@ -308,6 +308,280 @@ impl DateTime<IslamicObservational> {
     }
 }
 
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+/// The inner date type used for representing [`Date`]s of [`UmmAlQura`]. See [`Date`] and [`UmmAlQura`] for more details.
+pub struct UmmAlQuraDateInner(ArithmeticDate<UmmAlQura>);
+
+impl CalendarArithmetic for UmmAlQura {
+    fn month_days(year: i32, month: u8) -> u8 {
+        let midmonth = RataDie::new(
+            FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date()
+                + libm::floor(
+                    ((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH,
+                ) as i64,
+        );
+        // TODO: Add comment explaining functionality.
+        if Self::adjusted_saudi_criterion(midmonth) {
+            30
+        } else {
+            29
+        }
+    }
+
+    fn months_for_every_year(_year: i32) -> u8 {
+        12
+    }
+
+    fn days_in_provided_year(_year: i32) -> u32 {
+        355
+    }
+
+    // As an observational-lunar calendar, it does not have leap years.
+    fn is_leap_year(_year: i32) -> bool {
+        false
+    }
+
+    fn last_month_day_in_year(year: i32) -> (u8, u8) {
+        let days = Self::month_days(year, 12);
+
+        (12, days)
+    }
+}
+
+impl Calendar for UmmAlQura {
+    type DateInner = UmmAlQuraDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, CalendarError> {
+        let year = if era.0 == tinystr!(16, "islamic-umalqura") {
+            year
+        } else {
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+        };
+
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(UmmAlQuraDateInner)
+    }
+
+    fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
+        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        Self::saudi_islamic_from_fixed(fixed_iso).inner
+    }
+
+    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
+        let fixed_islamic = Self::fixed_from_saudi_islamic(*date);
+        Iso::iso_from_fixed(fixed_islamic)
+    }
+
+    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
+        date.0.months_in_year()
+    }
+
+    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+        date.0.days_in_year()
+    }
+
+    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
+        date.0.days_in_month()
+    }
+
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+        date.0.offset_date(offset)
+    }
+
+    fn until(
+        &self,
+        date1: &Self::DateInner,
+        date2: &Self::DateInner,
+        _calendar2: &Self,
+        _largest_unit: DateDurationUnit,
+        _smallest_unit: DateDurationUnit,
+    ) -> DateDuration<Self> {
+        date1.0.until(date2.0, _largest_unit, _smallest_unit)
+    }
+
+    fn debug_name(&self) -> &'static str {
+        "Umm-al-Qura Islamic"
+    }
+
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        Self::year_as_islamic(date.0.year)
+    }
+
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+        date.0.month()
+    }
+
+    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
+        date.0.day_of_month()
+    }
+
+    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
+        let prev_year = date.0.year.saturating_sub(1);
+        let next_year = date.0.year.saturating_add(1);
+        types::DayOfYearInfo {
+            day_of_year: date.0.day_of_year(),
+            days_in_year: date.0.days_in_year(),
+            prev_year: Self::year_as_islamic(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            next_year: Self::year_as_islamic(next_year),
+        }
+    }
+
+    // TODO: ADD TO ANYCALENDAR
+    // fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+    //     Some(AnyCalendarKind::UmmAlQura)
+    // }
+}
+
+impl Date<UmmAlQura> {
+    /// Construct new UmmAlQura Islamic Date.
+    ///
+    /// Has no negative years, only era is the AH.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_islamic = Date::try_new_ummalqura_date(1392, 4, 25)
+    ///     .expect("Failed to initialize Islamic Date instance.");
+    ///
+    /// assert_eq!(date_islamic.year().number, 1392);
+    /// assert_eq!(date_islamic.month().ordinal, 4);
+    /// assert_eq!(date_islamic.day_of_month().0, 25);
+    /// ```
+    pub fn try_new_ummalqura_date(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<UmmAlQura>, CalendarError> {
+        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+            .map(UmmAlQuraDateInner)
+            .map(|inner| Date::from_raw(inner, UmmAlQura))
+    }
+}
+
+impl DateTime<UmmAlQura> {
+    /// Construct a new UmmAlQura datetime from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let datetime_islamic = DateTime::try_new_ummalqura_datetime(474, 10, 11, 13, 1, 0)
+    ///     .expect("Failed to initialize Islamic DateTime instance.");
+    ///
+    /// assert_eq!(datetime_islamic.date.year().number, 474);
+    /// assert_eq!(datetime_islamic.date.month().ordinal, 10);
+    /// assert_eq!(datetime_islamic.date.day_of_month().0, 11);
+    /// assert_eq!(datetime_islamic.time.hour.number(), 13);
+    /// assert_eq!(datetime_islamic.time.minute.number(), 1);
+    /// assert_eq!(datetime_islamic.time.second.number(), 0);
+    /// ```
+    pub fn try_new_ummalqura_datetime(
+        year: i32,
+        month: u8,
+        day: u8,
+        hour: u8,
+        minute: u8,
+        second: u8,
+    ) -> Result<DateTime<UmmAlQura>, CalendarError> {
+        Ok(DateTime {
+            date: Date::try_new_ummalqura_date(year, month, day)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
+        })
+    }
+}
+
+impl UmmAlQura {
+    /// Constructs a new UmmAlQura Islamic Calendar
+    pub fn new() -> Self {
+        Self
+    }
+
+    // Saudi visibility criterion on eve of fixed date in Mecca.
+    // The start of the new month only happens if both of these criterias are met: The moon is a waxing crescent at sunset of the previous day
+    // and the moon sets after the sun on that same evening.
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6957
+    fn saudi_criterion(date: RataDie) -> Option<bool> {
+        let sunset = Astronomical::sunset((date - 1).as_moment(), MECCA)?;
+        let tee = Location::universal_from_standard(sunset, MECCA);
+        let phase = Astronomical::lunar_phase(tee);
+        let moonlag = Astronomical::moonlag((date - 1).as_moment(), MECCA)?;
+
+        Some(phase > 0.0 && phase < 90.0 && moonlag > 0.0)
+    }
+
+    pub(crate) fn adjusted_saudi_criterion(date: RataDie) -> bool {
+        if let Some(x) = Self::saudi_criterion(date) {
+            x
+        } else {
+            false
+        }
+    }
+
+    // Closest fixed date on or before date when Saudi visibility criterion is held.
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6966
+    fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
+        let last_new_moon =
+            libm::floor((Astronomical::lunar_phase_at_or_before(0.0, date.as_moment())).inner()); // Gets the R.D Date of the prior new moon
+        let age = date.to_f64_date() - last_new_moon;
+        // Explanation of why the value 3.0 is chosen: https://github.com/unicode-org/icu4x/pull/3673/files#r1267460916
+        let tau = if age <= 3.0 && !Self::adjusted_saudi_criterion(date) {
+            // Checks if the criterion is not yet visibile on the evening of date
+            last_new_moon - 30.0 // Goes back a month
+        } else {
+            last_new_moon
+        };
+
+        next(RataDie::new(tau as i64), Self::adjusted_saudi_criterion) // Loop that increments the day and checks if the criterion is now visibile
+    }
+
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6996
+    #[allow(clippy::unwrap_used)]
+    fn saudi_islamic_from_fixed(date: RataDie) -> Date<UmmAlQura> {
+        let crescent = Self::saudi_new_month_on_or_before(date);
+        let elapsed_months =
+            libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH) as i64;
+        let year = helpers::i64_to_saturated_i32((div_rem_euclid64(elapsed_months, 12).0) + 1);
+        let month = ((div_rem_euclid64(elapsed_months, 12).1) + 1) as u8;
+        let day = ((date - crescent) + 1) as u8;
+
+        Date::try_new_ummalqura_date(year, month, day).unwrap()
+    }
+
+    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
+    // The fixed date algorithms are from
+    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
+    //
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6981
+    fn fixed_from_saudi_islamic(date: UmmAlQuraDateInner) -> RataDie {
+        let year = date.0.year;
+        let month = date.0.month;
+        let day = date.0.day;
+
+        let midmonth = RataDie::new(
+            FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date()
+                + libm::floor(
+                    ((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH,
+                ) as i64,
+        );
+        let first_day_of_month = Self::saudi_new_month_on_or_before(midmonth).to_i64_date();
+
+        RataDie::new(first_day_of_month + day as i64 - 1)
+    }
+
+    fn year_as_islamic(year: i32) -> types::FormattableYear {
+        types::FormattableYear {
+            era: types::Era(tinystr!(16, "islamic-umalqura")),
+            number: year,
+            cyclic: None,
+            related_iso: None,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -324,8 +598,185 @@ mod test {
         470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
         664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
     ];
+    // Removed: 601716 and 727274 fixed dates
+    static TEST_FIXED_DATE_UMMALQURA: [i64; 31] = [
+        -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
+        470160, 473837, 507850, 524156, 544676, 567118, 569477, 613424, 626596, 645554, 664224,
+        671401, 694799, 704424, 708842, 709409, 709580, 728714, 744313, 764652,
+    ];
+    // Values from lisp code
+    static SAUDI_CRITERION_EXPECTED: [bool; 33] = [
+        false, false, true, false, false, true, false, true, false, false, true, false, false,
+        true, true, true, true, false, false, true, true, true, false, false, false, false, false,
+        false, true, false, true, false, true,
+    ];
+    // Values from lisp code, removed two expected months.
+    static SAUDI_NEW_MONTH_OR_BEFORE_EXPECTED: [f64; 31] = [
+        -214203.0, -61412.0, 25467.0, 49210.0, 171290.0, 210152.0, 253414.0, 369735.0, 400063.0,
+        434348.0, 452598.0, 470139.0, 473830.0, 507850.0, 524150.0, 544674.0, 567118.0, 569450.0,
+        613421.0, 626592.0, 645551.0, 664214.0, 671391.0, 694779.0, 704405.0, 708835.0, 709396.0,
+        709573.0, 728709.0, 744301.0, 764647.0,
+    ];
 
-    static ASTRONOMICAL_CASES: [DateCase; 33] = [
+    static UMMALQURA_DATE_EXPECTED: [DateCase; 31] = [
+        DateCase {
+            year: -1245,
+            month: 12,
+            day: 11,
+        },
+        DateCase {
+            year: -813,
+            month: 2,
+            day: 26,
+        },
+        DateCase {
+            year: -568,
+            month: 4,
+            day: 3,
+        },
+        DateCase {
+            year: -501,
+            month: 4,
+            day: 8,
+        },
+        DateCase {
+            year: -157,
+            month: 10,
+            day: 18,
+        },
+        DateCase {
+            year: -47,
+            month: 6,
+            day: 4,
+        },
+        DateCase {
+            year: 75,
+            month: 7,
+            day: 14,
+        },
+        DateCase {
+            year: 403,
+            month: 10,
+            day: 6,
+        },
+        DateCase {
+            year: 489,
+            month: 5,
+            day: 23,
+        },
+        DateCase {
+            year: 586,
+            month: 2,
+            day: 8,
+        },
+        DateCase {
+            year: 637,
+            month: 8,
+            day: 8,
+        },
+        DateCase {
+            year: 687,
+            month: 2,
+            day: 22,
+        },
+        DateCase {
+            year: 697,
+            month: 7,
+            day: 8,
+        },
+        DateCase {
+            year: 793,
+            month: 7,
+            day: 1,
+        },
+        DateCase {
+            year: 839,
+            month: 7,
+            day: 7,
+        },
+        DateCase {
+            year: 897,
+            month: 6,
+            day: 3,
+        },
+        DateCase {
+            year: 960,
+            month: 10,
+            day: 1,
+        },
+        DateCase {
+            year: 967,
+            month: 5,
+            day: 28,
+        },
+        DateCase {
+            year: 1091,
+            month: 6,
+            day: 4,
+        },
+        DateCase {
+            year: 1128,
+            month: 8,
+            day: 5,
+        },
+        DateCase {
+            year: 1182,
+            month: 2,
+            day: 4,
+        },
+        DateCase {
+            year: 1234,
+            month: 10,
+            day: 11,
+        },
+        DateCase {
+            year: 1255,
+            month: 1,
+            day: 11,
+        },
+        DateCase {
+            year: 1321,
+            month: 1,
+            day: 21,
+        },
+        DateCase {
+            year: 1348,
+            month: 3,
+            day: 20,
+        },
+        DateCase {
+            year: 1360,
+            month: 9,
+            day: 8,
+        },
+        DateCase {
+            year: 1362,
+            month: 4,
+            day: 14,
+        },
+        DateCase {
+            year: 1362,
+            month: 10,
+            day: 8,
+        },
+        DateCase {
+            year: 1416,
+            month: 10,
+            day: 6,
+        },
+        DateCase {
+            year: 1460,
+            month: 10,
+            day: 13,
+        },
+        DateCase {
+            year: 1518,
+            month: 3,
+            day: 6,
+        },
+    ];
+
+    static OBSERVATIONAL_CASES: [DateCase; 33] = [
         DateCase {
             year: -1245,
             month: 12,
@@ -495,7 +946,7 @@ mod test {
 
     #[test]
     fn test_observational_islamic_from_fixed() {
-        for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+        for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date =
                 Date::try_new_observational_islamic_date(case.year, case.month, case.day).unwrap();
             assert_eq!(
@@ -508,7 +959,7 @@ mod test {
 
     #[test]
     fn test_fixed_from_observational_islamic() {
-        for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+        for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date = IslamicDateInner(ArithmeticDate::new_unchecked(
                 case.year, case.month, case.day,
             ));
@@ -527,5 +978,56 @@ mod test {
         let epoch_year_from_fixed = Iso::iso_from_fixed(RataDie::new(epoch)).inner.0.year;
         // 622 is the correct ISO year for the Islamic Epoch
         assert_eq!(epoch_year_from_fixed, 622);
+    }
+    #[test]
+    fn test_saudi_criterion() {
+        for (boolean, f_date) in SAUDI_CRITERION_EXPECTED.iter().zip(TEST_FIXED_DATE.iter()) {
+            let bool_result = UmmAlQura::saudi_criterion(RataDie::new(*f_date)).unwrap();
+            assert_eq!(*boolean, bool_result, "{f_date:?}");
+        }
+    }
+
+    #[test]
+    fn test_saudi_new_month_or_before() {
+        for (date, f_date) in SAUDI_NEW_MONTH_OR_BEFORE_EXPECTED
+            .iter()
+            .zip(TEST_FIXED_DATE_UMMALQURA.iter())
+        {
+            let date_result =
+                UmmAlQura::saudi_new_month_on_or_before(RataDie::new(*f_date)).to_f64_date();
+            assert_eq!(*date, date_result, "{f_date:?}");
+        }
+    }
+
+    #[test]
+    fn test_saudi_islamic_from_fixed() {
+        for (case, f_date) in UMMALQURA_DATE_EXPECTED
+            .iter()
+            .zip(TEST_FIXED_DATE_UMMALQURA.iter())
+        {
+            let date = Date::try_new_ummalqura_date(case.year, case.month, case.day).unwrap();
+            assert_eq!(
+                UmmAlQura::saudi_islamic_from_fixed(RataDie::new(*f_date)),
+                date,
+                "{case:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_fixed_from_saudi_islamic() {
+        for (case, f_date) in UMMALQURA_DATE_EXPECTED
+            .iter()
+            .zip(TEST_FIXED_DATE_UMMALQURA.iter())
+        {
+            let date = UmmAlQuraDateInner(ArithmeticDate::new_unchecked(
+                case.year, case.month, case.day,
+            ));
+            assert_eq!(
+                UmmAlQura::fixed_from_saudi_islamic(date),
+                RataDie::new(*f_date),
+                "{case:?}"
+            );
+        }
     }
 }
