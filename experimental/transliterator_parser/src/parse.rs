@@ -36,8 +36,10 @@ pub enum ParseErrorKind {
     InvalidEscape,
     /// The provided transform ID is invalid.
     InvalidId,
-    /// Invalid UnicodeSet syntax. See `icu_unicodeset_parser`'s [`ParseErrorKind`](icu_unicodeset_parser::ParseErrorKind).
-    UnicodeSetError(icu_unicodeset_parser::ParseErrorKind),
+    /// The provided number is invalid, which likely means it's too big.
+    InvalidNumber,
+    /// Invalid UnicodeSet syntax. See `icu_unicodeset_parser`'s [`ParseError`](icu_unicodeset_parser::ParseError).
+    UnicodeSetError(icu_unicodeset_parser::ParseError),
 }
 use ParseErrorKind as PEK;
 
@@ -60,6 +62,18 @@ pub struct ParseError {
     kind: ParseErrorKind,
 }
 
+impl ParseError {
+    fn or_with_offset(self, offset: usize) -> Self {
+        match self.offset {
+            Some(_) => self,
+            None => ParseError {
+                offset: Some(offset),
+                ..self
+            },
+        }
+    }
+}
+
 impl From<ParseErrorKind> for ParseError {
     fn from(kind: ParseErrorKind) -> Self {
         ParseError { offset: None, kind }
@@ -69,8 +83,8 @@ impl From<ParseErrorKind> for ParseError {
 impl From<icu_unicodeset_parser::ParseError> for ParseError {
     fn from(e: icu_unicodeset_parser::ParseError) -> Self {
         ParseError {
-            offset: e.offset(),
-            kind: PEK::UnicodeSetError(e.kind()),
+            offset: None,
+            kind: PEK::UnicodeSetError(e),
         }
     }
 }
@@ -143,6 +157,10 @@ pub(crate) enum Element {
     Cursor,
     // '@', only valid on the output side
     Placeholder,
+    // '^'
+    AnchorStart,
+    // '$'
+    AnchorEnd,
 }
 
 type Section = Vec<Element>;
@@ -155,9 +173,9 @@ pub(crate) struct HalfRule {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub(crate) enum Dir {
+pub(crate) enum Direction {
     Forward,
-    Backward,
+    Reverse,
     Both,
 }
 
@@ -172,7 +190,7 @@ pub(crate) enum Rule {
     // "A" is Transform(A, None),
     // "A ()" is Transform(A, Some(Null))
     Transform(SingleId, Option<SingleId>),
-    Conversion(HalfRule, Dir, HalfRule),
+    Conversion(HalfRule, Direction, HalfRule),
     VariableDefinition(String, Section),
 }
 
@@ -182,6 +200,8 @@ struct TransliteratorParser<'a, 'b, P: ?Sized> {
     // TODO: if we also keep a reference to source we can pass that onto the UnicodeSet parser without allocating
     iter: &'a mut Peekable<CharIndices<'b>>,
     variable_map: ParseVariableMap,
+    // cached set for the special set .
+    dot_set: Option<UnicodeSet>,
     // for variable identifiers (XID Start, XID Continue)
     xid_start: &'a CodePointInversionList<'a>,
     xid_continue: &'a CodePointInversionList<'a>,
@@ -260,6 +280,11 @@ where
     // initiates a UnicodeSet
     // TODO: does \p (and \P) work to initiate a UnicodeSet?
     const SET_START: char = '[';
+    // equivalent to the UnicodeSet [^[:Zp:][:Zl:]\r\n$]
+    const DOT: char = '.';
+    const DOT_SET: &'static str = r"[^[:Zp:][:Zl:]\r\n$]";
+    // matches the beginning of the input
+    const ANCHOR_START: char = '^';
     // initiates a segment or the reverse portion of an ID
     const OPEN_PAREN: char = '(';
     // terminates a segment or the reverse portion of an ID
@@ -268,6 +293,26 @@ where
     const ID_SEP: char = '-';
     // separates variant from ID
     const VARIANT_SEP: char = '/';
+    // variable reference prefix, and anchor end character
+    const VAR_PREFIX: char = '$';
+    // variable definition operator
+    const VAR_DEF_OP: char = '=';
+    // left context
+    const LEFT_CONTEXT: char = '{';
+    // right context
+    const RIGHT_CONTEXT: char = '}';
+    // optional quantifier
+    const OPTIONAL: char = '?';
+    // zero or more quantifier
+    const ZERO_OR_MORE: char = '*';
+    // one or more quantifier
+    const ONE_OR_MORE: char = '+';
+    // function prefix
+    const FUNCTION_PREFIX: char = '&';
+    // quoted literals
+    const QUOTE: char = '\'';
+    // escape character
+    const ESCAPE: char = '\\';
 
     fn new(
         iter: &'a mut Peekable<CharIndices<'b>>,
@@ -279,6 +324,7 @@ where
         Self {
             iter,
             variable_map: Default::default(),
+            dot_set: None,
             xid_start,
             xid_continue,
             pat_ws,
@@ -457,7 +503,33 @@ where
         // <variable_ref> '=' <section> ';'           # variable rule
         // <half-rule> <direction> <half-rule> ';'    # conversion rule
 
-        todo!()
+        let first_elt;
+        // try parsing into a variable rule
+        if Self::VAR_PREFIX == self.must_peek_char()? {
+            let elt = self.parse_variable_or_backref_or_anchor_end()?;
+            self.skip_whitespace();
+            if Self::VAR_DEF_OP == self.must_peek_char()? {
+                // must be variable ref
+                let var_name = match elt {
+                    Element::VariableRef(var_name) => var_name,
+                    _ => return self.unexpected_char_here(),
+                };
+                self.iter.next();
+                let section = self.parse_section(None)?;
+                self.consume(Self::RULE_END)?;
+                return Ok(Rule::VariableDefinition(var_name, section));
+            }
+            first_elt = Some(elt);
+        } else {
+            first_elt = None;
+        }
+
+        // must be conversion rule
+        let first_half = self.parse_half_rule(first_elt)?;
+        let dir = self.parse_direction()?;
+        let second_half = self.parse_half_rule(None)?;
+        self.consume(Self::RULE_END)?;
+        Ok(Rule::Conversion(first_half, dir, second_half))
     }
 
     fn parse_single_id(&mut self) -> Result<SingleId> {
@@ -537,34 +609,204 @@ where
         Ok(id)
     }
 
-    fn parse_half_rule(&mut self) -> Result<HalfRule> {
+    fn parse_half_rule(&mut self, prev_elt: Option<Element>) -> Result<HalfRule> {
         // Syntax:
         // (<section> '{')? <section> ('}' <section>)?
 
         todo!()
     }
 
-    fn parse_dir(&mut self) -> Result<Dir> {
+    fn parse_direction(&mut self) -> Result<Direction> {
         // Syntax:
         // '<' | '>' | '<>' | '→' | '←' | '↔'
 
-        todo!()
+        match self.must_peek_char()? {
+            '>' | '→' => {
+                self.iter.next();
+                Ok(Direction::Forward)
+            }
+            '↔' => {
+                self.iter.next();
+                Ok(Direction::Both)
+            }
+            '←' => {
+                self.iter.next();
+                Ok(Direction::Reverse)
+            }
+            '<' => {
+                self.iter.next();
+                match self.must_peek_char()? {
+                    '>' => {
+                        self.iter.next();
+                        Ok(Direction::Both)
+                    }
+                    _ => Ok(Direction::Reverse),
+                }
+            }
+            _ => self.unexpected_char_here(),
+        }
     }
 
-    fn parse_section(&mut self) -> Result<Section> {
-        todo!()
+    // whitespace before and after is consumed
+    fn parse_section(&mut self, prev_elt: Option<Element>) -> Result<Section> {
+        let mut section = Section::new();
+        let mut prev_elt = prev_elt;
+
+        loop {
+            let next_elt;
+            self.skip_whitespace();
+            match self.must_peek_char()? {
+                Self::VAR_PREFIX => {
+                    let elt = self.parse_variable_or_backref_or_anchor_end()?;
+                    next_elt = Some(elt);
+                }
+                Self::ANCHOR_START => {
+                    self.iter.next();
+                    next_elt = Some(Element::AnchorStart);
+                }
+                Self::SET_START => {
+                    next_elt = Some(Element::UnicodeSet(self.parse_unicode_set()?));
+                }
+                Self::OPEN_PAREN => {
+                    self.iter.next();
+                    next_elt = Some(Element::Segment(self.parse_section(None)?));
+                    self.consume(Self::CLOSE_PAREN)?;
+                }
+                Self::DOT => {
+                    self.iter.next();
+                    next_elt = Some(Element::UnicodeSet(self.get_dot_set()?));
+                }
+                c@(Self::OPTIONAL | Self::ZERO_OR_MORE | Self::ONE_OR_MORE) => {
+                    let quantifier = self.parse_quantifier_kind()?;
+                    if let Some(elt) = prev_elt.take() {
+                        next_elt = Some(Element::Quantifier(quantifier, Box::new(elt)));
+                    } else {
+                        return self.unexpected_char_here();
+                    }
+                }
+                Self::QUOTE => {
+                    next_elt = Some(Element::Literal(self.parse_quoted_literal()?));
+                }
+                // done parsing this section
+                c if self.is_section_end(c) => {
+                    if let Some(elt) = prev_elt.take() {
+                        section.push(elt);
+                    }
+                    break
+                }
+                _ => {
+                    next_elt = Some(Element::Literal(self.parse_literal()?));
+                }
+            }
+
+            if let Some(elt) = prev_elt {
+                section.push(elt);
+            }
+            prev_elt = next_elt;
+        }
+
+        Ok(section)
+    }
+
+    fn parse_quantifier_kind(&mut self) -> Result<QuantifierKind> {
+        match self.must_peek_char()? {
+            Self::OPTIONAL => {
+                self.iter.next();
+                Ok(QuantifierKind::ZeroOrOne)
+            }
+            Self::ZERO_OR_MORE => {
+                self.iter.next();
+                Ok(QuantifierKind::ZeroOrMore)
+            }
+            Self::ONE_OR_MORE => {
+                self.iter.next();
+                Ok(QuantifierKind::OneOrMore)
+            }
+            _ => self.unexpected_char_here(),
+        }
     }
 
     fn parse_element(&mut self) -> Result<Element> {
         todo!()
     }
 
-    fn parse_variable_or_backref(&mut self) -> Result<Element> {
-        todo!()
+    fn parse_variable_or_backref_or_anchor_end(&mut self) -> Result<Element> {
+        self.consume(Self::VAR_PREFIX)?;
+
+        match self.must_peek_char()? {
+            c if c.is_ascii_digit() => {
+                // we have a backref
+                let num = self.parse_number()?;
+                Ok(Element::BackRef(num))
+            }
+            c if self.xid_start.contains(c) => {
+                // we have a variable
+                let variable_id = self.parse_unicode_identifier()?;
+                Ok(Element::VariableRef(variable_id))
+            }
+            _ => {
+                // this was an anchor end
+                Ok(Element::AnchorEnd)
+            }
+        }
+    }
+
+    fn parse_number(&mut self) -> Result<u32> {
+        let mut buf = String::new();
+        let (first_offset, first_c) = self.must_next()?;
+        if !matches!(first_c, '1'..='9') {
+            return Err(PEK::UnexpectedChar(first_c).with_offset(first_offset));
+        }
+        buf.push(first_c);
+
+        loop {
+            let c = self.must_peek_char()?;
+            if !c.is_ascii_digit() {
+                break;
+            }
+            buf.push(c);
+            self.iter.next();
+        }
+
+        buf.parse().map_err(|_| PEK::InvalidNumber.into())
+    }
+
+    fn parse_literal(&mut self) -> Result<String> {
+        let mut buf = String::new();
+        loop {
+            self.skip_whitespace();
+            let c = self.must_peek_char()?;
+            if c == Self::ESCAPE {
+                buf.push(self.parse_escaped_char()?);
+                continue;
+            }
+            if !c.is_ascii_alphanumeric() {
+                break;
+            }
+            self.iter.next();
+            buf.push(c);
+        }
+        Ok(buf)
     }
 
     fn parse_quoted_literal(&mut self) -> Result<String> {
-        todo!()
+        // Syntax:
+        // \' [^']* \'
+
+        let mut buf = String::new();
+        self.consume(Self::QUOTE)?;
+        loop {
+            let c = self.must_next_char()?;
+            if c == Self::QUOTE {
+                break;
+            }
+            buf.push(c);
+        }
+        if buf.is_empty() {
+            // '' is the escaped version of a quote
+            buf.push(Self::QUOTE);
+        }
+        Ok(buf)
     }
 
     // parses all supported escapes. code is somewhat duplicated from icu_unicodeset_parser
@@ -607,8 +849,22 @@ where
             }
         }
 
-        let set = icu_unicodeset_parser::parse_unstable(&set, self.property_provider)?;
+        self.unicode_set_from_str(&set)
+    }
 
+    fn get_dot_set(&mut self) -> Result<UnicodeSet> {
+        match &self.dot_set {
+            Some(set) => Ok(set.clone()),
+            None => {
+                let set = self.unicode_set_from_str(Self::DOT_SET).map_err(|_| PEK::Internal)?;
+                self.dot_set = Some(set.clone());
+                Ok(set)
+            }
+        }
+    }
+
+    fn unicode_set_from_str(&self, set: &str) -> Result<UnicodeSet> {
+        let set = icu_unicodeset_parser::parse_unstable(set, self.property_provider)?;
         Ok(set)
     }
 
@@ -688,6 +944,10 @@ where
     fn unexpected_char_here<T>(&mut self) -> Result<T> {
         let (offset, char) = self.must_peek()?;
         Err(PEK::UnexpectedChar(char).with_offset(offset))
+    }
+
+    fn is_section_end(&self, c: char) -> bool {
+        matches!(c, Self::RULE_END | Self::OPEN_PAREN | Self::CLOSE_PAREN | Self::RIGHT_CONTEXT | Self::LEFT_CONTEXT | '<' | '>' | '→' | '←' | '↔')
     }
 }
 
@@ -779,13 +1039,21 @@ where
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn test_variable_rules_ok() {
-    //     let sources = [
-    //         r" $my_var = [a-z] ;",
-    //         r"$my_var = [a-z] literal ; $other_var = [A-Z] [b-z];",
-    //     ];
-    // }
+    #[test]
+    fn test_variable_rules_ok() {
+        let sources = [
+            r" $my_var = [a-z] ;",
+            r"$my_var = [a-z] literal ; $other_var = [A-Z] [b-z];",
+            r"$my_var = [a-z] ; $other_var = [A-Z] [b-z];",
+            r"$my_var = [a-z] ; $other_var = $my_var + $2222;",
+        ];
+
+        for source in sources {
+            if let Err(e) = parse(source) {
+                panic!("Failed to parse {:?}: {:?}", source, e);
+            }
+        }
+    }
 
     #[test]
     fn test_global_filters_ok() {
