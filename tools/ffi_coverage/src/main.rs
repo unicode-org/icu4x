@@ -190,7 +190,8 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         insert_ty(
                             types,
                             vec![
-                                "icu".to_string(), "locid_transform".to_string(),
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
                                 "fallback".to_string(),
                                 "LocaleFallbackConfig".to_string(),
                             ],
@@ -199,7 +200,8 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         insert_ty(
                             types,
                             vec![
-                                "icu".to_string(), "locid_transform".to_string(),
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
                                 "fallback".to_string(),
                                 "LocaleFallbackPriority".to_string(),
                             ],
@@ -208,7 +210,8 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         insert_ty(
                             types,
                             vec![
-                                "icu".to_string(), "locid_transform".to_string(),
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
                                 "fallback".to_string(),
                                 "LocaleFallbackSupplement".to_string(),
                             ],
