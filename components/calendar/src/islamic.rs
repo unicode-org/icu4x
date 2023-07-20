@@ -37,21 +37,21 @@ use crate::{astronomy::*, Iso};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
 
-#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
-#[allow(clippy::exhaustive_structs)]
 /// Islamic Observational Calendar (Default)
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)]
 pub struct IslamicObservational;
-#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
-#[allow(clippy::exhaustive_structs)]
 /// Civil / Arithmetical Islamic Calendar (Used for administrative purposes)
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)]
 pub struct IslamicCivil;
-#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
-#[allow(clippy::exhaustive_structs)]
 /// Umm-al-Qura Hijri Calendar (Used in Saudi Arabia)
-pub struct UmmAlQura;
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
+pub struct UmmAlQura;
 /// A Tabular version of the Arithmetical Islamic Calendar
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)]
 pub struct IslamicTabular;
 
 // Different islamic calendars use different epochs (Thursday vs Friday) due to disagreement on the exact date of Mohammed's migration to Mecca.
@@ -67,8 +67,9 @@ const CAIRO: Location = Location {
     zone: (1_f64 / 12_f64),
 };
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 /// The inner date type used for representing [`Date`]s of [`IslamicObservational`]. See [`Date`] and [`IslamicObservational`] for more details.
+
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct IslamicDateInner(ArithmeticDate<IslamicObservational>);
 
 impl CalendarArithmetic for IslamicObservational {
@@ -578,8 +579,9 @@ impl UmmAlQura {
     }
 }
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 /// The inner date type used for representing [`Date`]s of [`IslamicCivil`]. See [`Date`] and [`IslamicCivil`] for more details.
+
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct IslamicCivilDateInner(ArithmeticDate<IslamicCivil>);
 
 impl CalendarArithmetic for IslamicCivil {
@@ -597,8 +599,12 @@ impl CalendarArithmetic for IslamicCivil {
         12
     }
 
-    fn days_in_provided_year(_year: i32) -> u32 {
-        355
+    fn days_in_provided_year(year: i32) -> u32 {
+        if Self::is_leap_year(year) {
+            355
+        } else {
+            354
+        }
     }
 
     fn is_leap_year(year: i32) -> bool {
@@ -732,23 +738,21 @@ impl IslamicCivil {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090
     #[allow(clippy::unwrap_used)]
     fn islamic_from_fixed(date: RataDie) -> Date<IslamicCivil> {
-        let year = div_rem_euclid_f64(
-            ((date.to_f64_date() - FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()) * 30.0) + 10646.0,
-            10631.0,
-        )
-        .0 as i32;
+        let year = helpers::i64_to_saturated_i32(
+            div_rem_euclid64(((date - FIXED_ISLAMIC_EPOCH_FRIDAY) * 30) + 10646, 10631).0,
+        );
         let prior_days = date.to_f64_date()
             - ((Self::fixed_from_islamic(IslamicCivilDateInner(
                 ArithmeticDate::new_from_lunar_ordinals(year, 1, 1).unwrap(), // Safe unwrap due to hardcoded values,
             )))
             .to_f64_date());
-        let month = div_rem_euclid_f64((prior_days * 11.0) + 330.0, 325.0).0 as u8;
+        let month = div_rem_euclid_f64((prior_days * 11.0) + 330.0, 325.0).0 as u8; // Prior days will always be a number between 354-355, making the value within the bounds of a u8.
         let day = (date.to_f64_date()
             - (Self::fixed_from_islamic(IslamicCivilDateInner(
                 ArithmeticDate::new_from_lunar_ordinals(year, month, 1).unwrap(), // Safe unwrap,
             ))
             .to_f64_date())
-            + 1.0) as u8;
+            + 1.0) as u8; // The value will always be number between 1-30 because of the difference between the date and lunar ordinals function.
 
         Date::try_new_islamic_civil_date(year, month, day).unwrap() // Safe value
     }
