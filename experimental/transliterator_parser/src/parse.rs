@@ -77,6 +77,7 @@ impl From<icu_unicodeset_parser::ParseError> for ParseError {
 
 type Result<T, E = ParseError> = core::result::Result<T, E>;
 
+// the only UnicodeSets used in this crate are parsed, and thus 'static.
 type UnicodeSet = CodePointInversionListAndStringList<'static>;
 
 #[derive(Debug, Clone, Copy)]
