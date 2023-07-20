@@ -75,6 +75,10 @@ harness = false
 name = "iso"
 harness = false
 
+[[bench]]
+name = "astronomy"
+harness = false
+
 [[example]]
 name = "iso_date_manipulations"
 

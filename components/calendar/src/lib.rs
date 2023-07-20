@@ -116,12 +116,14 @@ mod date;
 mod datetime;
 
 pub mod any_calendar;
-mod astronomy;
+#[doc(hidden)] // This is unstable
+pub mod astronomy;
 pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
 pub mod chinese;
-mod chinese_based;
+#[doc(hidden)] // This is unstable
+pub mod chinese_based;
 pub mod coptic;
 mod duration;
 mod error;

@@ -174,9 +174,10 @@ impl Location {
 }
 
 #[derive(Debug)]
+#[doc(hidden)]
 /// The Astronomical struct provides functions which support astronomical
 /// calculations used by many observational calendars.
-pub(crate) struct Astronomical;
+pub struct Astronomical;
 
 impl Astronomical {
     /// Function for the ephemeris correction, which corrects the
@@ -309,7 +310,7 @@ impl Astronomical {
         ))
     }
 
-    // Calculates the obliquity of the ecliptic at a given moment
+    /// Calculates the obliquity of the ecliptic at a given moment
     pub fn obliquity(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let angle = 23.0 + 26.0 / 60.0 + 21.448 / 3600.0;
@@ -680,7 +681,7 @@ impl Astronomical {
         div_rem_euclid_f64(n, 360.0).1
     }
 
-    pub fn phasis_on_or_after(date: RataDie, location: Location) -> RataDie {
+    pub(crate) fn phasis_on_or_after(date: RataDie, location: Location) -> RataDie {
         let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
         let age = date - moon.as_rata_die();
         let tau = if age <= 4 || Self::visible_crescent((date - 1).as_moment(), location) {
@@ -691,7 +692,7 @@ impl Astronomical {
         next_moment(tau, location, Self::visible_crescent)
     }
 
-    pub fn phasis_on_or_before(date: RataDie, location: Location) -> RataDie {
+    pub(crate) fn phasis_on_or_before(date: RataDie, location: Location) -> RataDie {
         let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
         let age = date - moon.as_rata_die();
         let tau = if age <= 3 && !Self::visible_crescent((date).as_moment(), location) {
@@ -703,7 +704,7 @@ impl Astronomical {
     }
 
     #[allow(clippy::unwrap_used)]
-    pub fn month_length(date: RataDie, location: Location) -> u8 {
+    pub(crate) fn month_length(date: RataDie, location: Location) -> u8 {
         let moon = Self::phasis_on_or_after(date + 1, location);
         let prev = Self::phasis_on_or_before(date, location);
 
@@ -1038,7 +1039,8 @@ impl Astronomical {
     }
 
     /// The longitude of the Sun at a given Moment in degrees
-    pub(crate) fn solar_longitude(moment: Moment) -> f64 {
+    #[doc(hidden)]
+    pub fn solar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let coefficients: [f64; 49] = [
             403406.0, 195207.0, 119433.0, 112392.0, 3891.0, 2819.0, 1721.0, 660.0, 350.0, 334.0,
