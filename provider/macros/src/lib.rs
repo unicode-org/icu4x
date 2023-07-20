@@ -55,9 +55,15 @@ mod tests;
 /// # // because that will rebuild the whole tree in proc macro mode
 /// # // when using cargo test --all-features --all-targets.
 /// # pub mod icu {
+/// #   pub mod locid_transform {
+/// #     pub mod fallback {
+/// #       pub use icu_provider::_internal::{LocaleFallbackPriority, LocaleFallbackSupplement};
+/// #     }
+/// #   }
 /// #   pub use icu_provider::_internal::locid;
 /// # }
-/// use icu::locid::fallback::*;
+/// use icu::locid_transform::fallback::*;
+/// use icu::locid::extensions::unicode::key;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
@@ -81,18 +87,18 @@ mod tests;
 /// assert_eq!(&*BarV1Marker::KEY.path(), "demo/bar@1");
 /// assert_eq!(
 ///     BarV1Marker::KEY.metadata().fallback_priority,
-///     FallbackPriority::Language
+///     LocaleFallbackPriority::Language
 /// );
 /// assert_eq!(BarV1Marker::KEY.metadata().extension_key, None);
 ///
 /// assert_eq!(&*BazV1Marker::KEY.path(), "demo/baz@1");
 /// assert_eq!(
 ///     BazV1Marker::KEY.metadata().fallback_priority,
-///     FallbackPriority::Region
+///     LocaleFallbackPriority::Region
 /// );
 /// assert_eq!(
 ///     BazV1Marker::KEY.metadata().extension_key,
-///     Some(icu::locid::extensions::unicode::key!("ca"))
+///     Some(key!("ca"))
 /// );
 /// ```
 ///
@@ -353,35 +359,36 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             let fallback_by_expr = if let Some(fallback_by_lit) = fallback_by {
                 match fallback_by_lit.value().as_str() {
                     "region" => {
-                        quote! {icu_provider::FallbackPriority::Region}
+                        quote! {icu_provider::_internal::LocaleFallbackPriority::Region}
                     }
                     "collation" => {
-                        quote! {icu_provider::FallbackPriority::Collation}
+                        quote! {icu_provider::_internal::LocaleFallbackPriority::Collation}
                     }
                     "language" => {
-                        quote! {icu_provider::FallbackPriority::Language}
+                        quote! {icu_provider::_internal::LocaleFallbackPriority::Language}
                     }
                     _ => panic!("Invalid value for fallback_by"),
                 }
             } else {
-                quote! {icu_provider::FallbackPriority::const_default()}
+                quote! {icu_provider::_internal::LocaleFallbackPriority::const_default()}
             };
             let extension_key_expr = if let Some(extension_key_lit) = extension_key {
                 quote! {Some(icu_provider::_internal::locid::extensions::unicode::key!(#extension_key_lit))}
             } else {
                 quote! {None}
             };
-            let fallback_supplement_expr =
-                if let Some(fallback_supplement_lit) = fallback_supplement {
-                    match fallback_supplement_lit.value().as_str() {
-                        "collation" => {
-                            quote! {Some(icu_provider::FallbackSupplement::Collation)}
-                        }
-                        _ => panic!("Invalid value for fallback_supplement"),
+            let fallback_supplement_expr = if let Some(fallback_supplement_lit) =
+                fallback_supplement
+            {
+                match fallback_supplement_lit.value().as_str() {
+                    "collation" => {
+                        quote! {Some(icu_provider::_internal::LocaleFallbackSupplement::Collation)}
                     }
-                } else {
-                    quote! {None}
-                };
+                    _ => panic!("Invalid value for fallback_supplement"),
+                }
+            } else {
+                quote! {None}
+            };
             result.extend(quote!(
                 impl icu_provider::KeyedDataMarker for #marker_name {
                     const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str, icu_provider::DataKeyMetadata::construct_internal(

@@ -257,5 +257,6 @@ pub use zerofrom;
 // For macros
 #[doc(hidden)]
 pub mod _internal {
+    pub use super::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement};
     pub use icu_locid as locid;
 }
