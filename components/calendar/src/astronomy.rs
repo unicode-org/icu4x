@@ -6,8 +6,12 @@
 //! time, and astronomy; these are intended for calender calculations and based off
 //! _Calendrical Calculations_ by Reingold & Dershowitz.
 
-use crate::error::LocationError;
-use crate::helpers::*;
+use crate::error::LocationOutOfBoundsError;
+use crate::helpers::{
+    arccos_degrees, arcsin_degrees, arctan_degrees, binary_search, cos_degrees, div_rem_euclid_f64,
+    i64_to_i32, interval_mod_f64, invert_angular, mod3, next_moment, poly, signum, sin_degrees,
+    tan_degrees, I32Result,
+};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
@@ -52,21 +56,31 @@ pub(crate) const MIN_UTC_OFFSET: f64 = -0.5;
 /// The maximum allowable UTC offset (+14 hours) in fractional days (14.0 / 24.0 days)
 pub(crate) const MAX_UTC_OFFSET: f64 = 14.0 / 24.0;
 
+/// The angle of winter for the purposes of solar calculations
+pub(crate) const WINTER: f64 = 270.0;
+
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
-    /// attempting to create a location outside of these bounds will result in a LocationError.
-    #[allow(dead_code)]
+    /// attempting to create a location outside of these bounds will result in a LocationOutOfBoundsError.
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn try_new(
         latitude: f64,
         longitude: f64,
         elevation: f64,
         zone: f64,
-    ) -> Result<Location, LocationError> {
+    ) -> Result<Location, LocationOutOfBoundsError> {
         if !(-90.0..=90.0).contains(&latitude) {
-            return Err(LocationError::LatitudeOutOfBounds(latitude));
+            return Err(LocationOutOfBoundsError::Latitude(latitude));
         }
         if !(-180.0..=180.0).contains(&longitude) {
-            return Err(LocationError::LongitudeOutOfBounds(longitude));
+            return Err(LocationOutOfBoundsError::Longitude(longitude));
+        }
+        if !(MIN_UTC_OFFSET..=MAX_UTC_OFFSET).contains(&zone) {
+            return Err(LocationOutOfBoundsError::Offset(
+                zone,
+                MIN_UTC_OFFSET,
+                MAX_UTC_OFFSET,
+            ));
         }
         Ok(Location {
             latitude,
@@ -1860,13 +1874,13 @@ mod tests {
     #[test]
     fn check_location_errors() {
         let lat_too_small = Location::try_new(-90.1, 15.0, 1000.0, 0.0).unwrap_err();
-        assert_eq!(lat_too_small, LocationError::LatitudeOutOfBounds(-90.1));
+        assert_eq!(lat_too_small, LocationOutOfBoundsError::Latitude(-90.1));
         let lat_too_large = Location::try_new(90.1, -15.0, 1000.0, 0.0).unwrap_err();
-        assert_eq!(lat_too_large, LocationError::LatitudeOutOfBounds(90.1));
+        assert_eq!(lat_too_large, LocationOutOfBoundsError::Latitude(90.1));
         let long_too_small = Location::try_new(15.0, 180.1, 1000.0, 0.0).unwrap_err();
-        assert_eq!(long_too_small, LocationError::LongitudeOutOfBounds(180.1));
+        assert_eq!(long_too_small, LocationOutOfBoundsError::Longitude(180.1));
         let long_too_large = Location::try_new(-15.0, -180.1, 1000.0, 0.0).unwrap_err();
-        assert_eq!(long_too_large, LocationError::LongitudeOutOfBounds(-180.1));
+        assert_eq!(long_too_large, LocationOutOfBoundsError::Longitude(-180.1));
     }
 
     #[test]

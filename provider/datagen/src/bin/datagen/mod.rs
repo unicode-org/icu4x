@@ -109,7 +109,10 @@ fn main() -> eyre::Result<()> {
                     if config.overwrite {
                         options.overwrite = OverwriteOption::RemoveAndReplace
                     }
-                    options.fingerprint = fingerprint;
+                    #[allow(deprecated)] // obviously
+                    {
+                        options.fingerprint = fingerprint;
+                    }
                     options
                 },
             )?;

@@ -6,7 +6,7 @@
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
 version = "1.2.5"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -57,7 +57,7 @@ icu_singlenumberformatter = { version = "0.1.0", path = "../../experimental/sing
 icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder", default-features = false }
 icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde"] }
 icu_locid = { version = "1.2.0", path = "../../components/locid", features = ["std", "serde"] }
-icu_provider = { version = "1.2.0", path = "../core", features = ["std", "log_error_context", "datagen"]}
+icu_provider = { version = "1.2.0", path = "../core", features = ["std", "logging", "datagen"]}
 icu_provider_adapters = { version = "1.2.0", path = "../adapters" }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["alloc", "serde", "zerovec"], default-features = false }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
@@ -93,9 +93,9 @@ eyre = { version = "0.6", optional = true }
 simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
+crlify = { version = "1.0.1", path = "../../utils/crlify" }
 icu = { path = "../../components/icu" }
-glob = "0.3.1"
-dhat = "0.3.0"
+postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
 [features]

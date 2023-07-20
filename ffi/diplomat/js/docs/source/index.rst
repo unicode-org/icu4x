@@ -9,6 +9,7 @@ Documentation
    calendar_ffi
    casemap_ffi
    collator_ffi
+   collections_sets_ffi
    common_ffi
    data_struct_ffi
    date_ffi

@@ -300,44 +300,6 @@ pub mod vecs {
     pub use crate::flexzerovec::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use core::mem::size_of;
-
-    /// Checks that the size of the type is one of the given sizes.
-    /// The size might differ across Rust versions or channels.
-    macro_rules! check_size_of {
-        ($sizes:pat, $type:path) => {
-            assert!(
-                matches!(size_of::<$type>(), $sizes),
-                concat!(stringify!($type), " is of size {}"),
-                size_of::<$type>()
-            );
-        };
-    }
-
-    #[test]
-    fn check_sizes() {
-        check_size_of!(24, ZeroVec<u8>);
-        check_size_of!(24, ZeroVec<u32>);
-        check_size_of!(32 | 24, VarZeroVec<[u8]>);
-        check_size_of!(32 | 24, VarZeroVec<str>);
-        check_size_of!(48, ZeroMap<u32, u32>);
-        check_size_of!(56 | 48, ZeroMap<u32, str>);
-        check_size_of!(56 | 48, ZeroMap<str, u32>);
-        check_size_of!(64 | 48, ZeroMap<str, str>);
-        check_size_of!(120 | 96, ZeroMap2d<str, str, str>);
-        check_size_of!(32 | 24, vecs::FlexZeroVec);
-
-        check_size_of!(32, Option<ZeroVec<u8>>);
-        check_size_of!(32, Option<VarZeroVec<str>>);
-        check_size_of!(64 | 56, Option<ZeroMap<str, str>>);
-        check_size_of!(120 | 104, Option<ZeroMap2d<str, str, str>>);
-        check_size_of!(32, Option<vecs::FlexZeroVec>);
-    }
-}
-
 // Proc macro reexports
 //
 // These exist so that our docs can use intra-doc links.
@@ -556,3 +518,41 @@ pub use zerovec_derive::make_ule;
 /// ```
 #[cfg(feature = "derive")]
 pub use zerovec_derive::make_varule;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use core::mem::size_of;
+
+    /// Checks that the size of the type is one of the given sizes.
+    /// The size might differ across Rust versions or channels.
+    macro_rules! check_size_of {
+        ($sizes:pat, $type:path) => {
+            assert!(
+                matches!(size_of::<$type>(), $sizes),
+                concat!(stringify!($type), " is of size {}"),
+                size_of::<$type>()
+            );
+        };
+    }
+
+    #[test]
+    fn check_sizes() {
+        check_size_of!(24, ZeroVec<u8>);
+        check_size_of!(24, ZeroVec<u32>);
+        check_size_of!(32 | 24, VarZeroVec<[u8]>);
+        check_size_of!(32 | 24, VarZeroVec<str>);
+        check_size_of!(48, ZeroMap<u32, u32>);
+        check_size_of!(56 | 48, ZeroMap<u32, str>);
+        check_size_of!(56 | 48, ZeroMap<str, u32>);
+        check_size_of!(64 | 48, ZeroMap<str, str>);
+        check_size_of!(120 | 96, ZeroMap2d<str, str, str>);
+        check_size_of!(32 | 24, vecs::FlexZeroVec);
+
+        check_size_of!(32, Option<ZeroVec<u8>>);
+        check_size_of!(32, Option<VarZeroVec<str>>);
+        check_size_of!(64 | 56, Option<ZeroMap<str, str>>);
+        check_size_of!(120 | 104, Option<ZeroMap2d<str, str, str>>);
+        check_size_of!(32, Option<vecs::FlexZeroVec>);
+    }
+}

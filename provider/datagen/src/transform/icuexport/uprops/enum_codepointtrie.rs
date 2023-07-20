@@ -79,7 +79,7 @@ fn map_to_vec<'a>(
     } else {
         return Err(DataError::custom("Property has no values!").with_display_context(prop_name));
     };
-    let last = if let Some((&last, _)) = map.iter().rev().next() {
+    let last = if let Some((&last, _)) = map.iter().next_back() {
         let range = usize::from(1 + last - first);
         let count = map.len();
         let gaps = range - count;
