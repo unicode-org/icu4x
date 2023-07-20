@@ -246,9 +246,9 @@ pub mod prelude {
 
 // Additional crate re-exports for compatibility
 #[doc(hidden)]
-pub use fallback::FallbackPriority;
+pub use fallback::LocaleFallbackPriority as FallbackPriority;
 #[doc(hidden)]
-pub use fallback::FallbackSupplement;
+pub use fallback::LocaleFallbackSupplement as FallbackSupplement;
 #[doc(hidden)]
 pub use yoke;
 #[doc(hidden)]

@@ -8,7 +8,7 @@ use alloc::borrow::Cow;
 use core::fmt;
 use core::fmt::Write;
 use core::ops::Deref;
-use crate::fallback::{FallbackPriority, FallbackSupplement, LocaleFallbackConfig};
+use crate::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement, LocaleFallbackConfig};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
@@ -194,13 +194,13 @@ impl Deref for DataKeyPath {
 #[non_exhaustive]
 pub struct DataKeyMetadata {
     /// What to prioritize when fallbacking on this [`DataKey`].
-    pub fallback_priority: FallbackPriority,
+    pub fallback_priority: LocaleFallbackPriority,
     /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
     pub extension_key: Option<icu_locid::extensions::unicode::Key>,
     /// Optional choice for additional fallbacking data required for loading this marker.
     ///
     /// For more information, see `LocaleFallbackConfig::fallback_supplement`.
-    pub fallback_supplement: Option<FallbackSupplement>,
+    pub fallback_supplement: Option<LocaleFallbackSupplement>,
     /// Whether the key has a singleton value, as opposed to per-locale values. Singleton
     /// keys behave differently, e.g. they never perform fallback, and can be optimized
     /// in data providers.
@@ -211,7 +211,7 @@ impl DataKeyMetadata {
     /// Const-friendly version of [`Default::default`].
     pub const fn const_default() -> Self {
         Self {
-            fallback_priority: FallbackPriority::const_default(),
+            fallback_priority: LocaleFallbackPriority::const_default(),
             extension_key: None,
             fallback_supplement: None,
             singleton: false,
@@ -220,9 +220,9 @@ impl DataKeyMetadata {
 
     #[doc(hidden)]
     pub const fn construct_internal(
-        fallback_priority: FallbackPriority,
+        fallback_priority: LocaleFallbackPriority,
         extension_key: Option<icu_locid::extensions::unicode::Key>,
-        fallback_supplement: Option<FallbackSupplement>,
+        fallback_supplement: Option<LocaleFallbackSupplement>,
         singleton: bool,
     ) -> Self {
         Self {

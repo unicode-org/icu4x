@@ -15,7 +15,7 @@ use icu_locid::extensions::unicode::Key;
 /// on this enum.
 #[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
 #[non_exhaustive]
-pub enum FallbackPriority {
+pub enum LocaleFallbackPriority {
     /// Prioritize the language. This is the default behavior.
     ///
     /// For example, `"en-US"` should go to `"en"` and then `"und"`.
@@ -30,14 +30,14 @@ pub enum FallbackPriority {
     Collation,
 }
 
-impl FallbackPriority {
+impl LocaleFallbackPriority {
     /// Const-friendly version of [`Default::default`].
     pub const fn const_default() -> Self {
         Self::Language
     }
 }
 
-impl Default for FallbackPriority {
+impl Default for LocaleFallbackPriority {
     fn default() -> Self {
         Self::const_default()
     }
@@ -46,7 +46,7 @@ impl Default for FallbackPriority {
 /// What additional data is required to load when performing fallback.
 #[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
 #[non_exhaustive]
-pub enum FallbackSupplement {
+pub enum LocaleFallbackSupplement {
     /// Collation supplement
     Collation,
 }
@@ -63,7 +63,7 @@ pub struct LocaleFallbackConfig {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid_transform::fallback::FallbackPriority;
+    /// use icu_locid_transform::fallback::LocaleFallbackPriority;
     /// use icu_locid_transform::fallback::LocaleFallbackConfig;
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
@@ -71,7 +71,7 @@ pub struct LocaleFallbackConfig {
     /// let fallbacker =
     ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
-    /// config.priority = FallbackPriority::Language;
+    /// config.priority = LocaleFallbackPriority::Language;
     /// let mut fallback_iterator = fallbacker.for_config(config).fallback_for(locale!("ca-ES-valencia").into());
     ///
     /// // Run the algorithm and check the results.
@@ -93,7 +93,7 @@ pub struct LocaleFallbackConfig {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid_transform::fallback::FallbackPriority;
+    /// use icu_locid_transform::fallback::LocaleFallbackPriority;
     /// use icu_locid_transform::fallback::LocaleFallbackConfig;
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
@@ -101,7 +101,7 @@ pub struct LocaleFallbackConfig {
     /// let fallbacker =
     ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
-    /// config.priority = FallbackPriority::Region;
+    /// config.priority = LocaleFallbackPriority::Region;
     /// let mut fallback_iterator = fallbacker.for_config(config).fallback_for(locale!("ca-ES-valencia").into());
     ///
     /// // Run the algorithm and check the results.
@@ -124,7 +124,7 @@ pub struct LocaleFallbackConfig {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
     /// ```
-    pub priority: FallbackPriority,
+    pub priority: LocaleFallbackPriority,
     /// An extension keyword to retain during locale fallback.
     ///
     /// # Examples
@@ -162,15 +162,15 @@ pub struct LocaleFallbackConfig {
     /// For example, most data keys for collation add additional parent locales, such as
     /// "yue" to "zh-Hant", and data used for the `"-u-co"` extension keyword fallback.
     ///
-    /// Currently the only supported fallback supplement is `FallbackSupplement::Collation`, but more may be
+    /// Currently the only supported fallback supplement is `LocaleFallbackSupplement::Collation`, but more may be
     /// added in the future.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid_transform::fallback::FallbackPriority;
-    /// use icu_locid_transform::fallback::FallbackSupplement;
+    /// use icu_locid_transform::fallback::LocaleFallbackPriority;
+    /// use icu_locid_transform::fallback::LocaleFallbackSupplement;
     /// use icu_locid_transform::fallback::LocaleFallbackConfig;
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
@@ -178,8 +178,8 @@ pub struct LocaleFallbackConfig {
     /// let fallbacker =
     ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
-    /// config.priority = FallbackPriority::Collation;
-    /// config.fallback_supplement = Some(FallbackSupplement::Collation);
+    /// config.priority = LocaleFallbackPriority::Collation;
+    /// config.fallback_supplement = Some(LocaleFallbackSupplement::Collation);
     /// let mut fallback_iterator = fallbacker.for_config(config).fallback_for(locale!("yue-HK").into());
     ///
     /// // Run the algorithm and check the results.
@@ -198,14 +198,14 @@ pub struct LocaleFallbackConfig {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
     /// ```
-    pub fallback_supplement: Option<FallbackSupplement>,
+    pub fallback_supplement: Option<LocaleFallbackSupplement>,
 }
 
 impl LocaleFallbackConfig {
     /// Const version of [`Default::default`].
     pub const fn const_default() -> Self {
         Self {
-            priority: FallbackPriority::const_default(),
+            priority: LocaleFallbackPriority::const_default(),
             extension_key: None,
             fallback_supplement: None,
         }
