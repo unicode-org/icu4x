@@ -783,7 +783,14 @@ mod tests {
 
     #[test]
     fn test_global_filters_ok() {
-        let sources = [r":: [^\[$] ;", r":: ([^\[$]) ;"];
+        let sources = [
+            r":: [^\[$] ;",
+            r":: ([^\[$]) ;",
+            r":: ( [^\[$] ) ;",
+            r":: [^[a-z[]][]] ;",
+            r":: [^[a-z\[\]]\]] ;",
+            r":: [^\]] ;",
+        ];
 
         for source in &sources {
             if let Err(e) = parse(source) {
