@@ -135,7 +135,7 @@ extern crate alloc;
 
 mod data_provider;
 mod error;
-// #[doc(hidden)]
+#[doc(hidden)]
 pub mod fallback;
 mod key;
 mod request;
