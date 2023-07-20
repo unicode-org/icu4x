@@ -30,7 +30,7 @@
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{div_rem_euclid, div_rem_euclid_f64, next};
+use crate::helpers::{self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64, next};
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{astronomy::*, Iso};
@@ -349,7 +349,7 @@ impl Calendar for IslamicCivil {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "ah") {
+        let year = if era.0 == tinystr!(16, "islamic-civil") {
             // TODO: Check name and alias
             year
         } else {
@@ -592,7 +592,7 @@ impl Calendar for UmmalQura {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "ah") {
+        let year = if era.0 == tinystr!(16, "islamic-umalqura") {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
@@ -769,9 +769,10 @@ impl UmmalQura {
     fn saudi_islamic_from_fixed(date: RataDie) -> Date<UmmalQura> {
         let crescent = Self::saudi_new_month_on_or_before(date);
         let elapsed_months =
-            libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH);
-        let year = (1.0 + div_rem_euclid_f64(elapsed_months, 12.0).0) as i32;
-        let month = (1.0 + div_rem_euclid_f64(elapsed_months, 12.0).1) as u8;
+            (libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH))
+                as i64;
+        let year = helpers::i64_to_saturated_i32(1 + div_rem_euclid64(elapsed_months, 12).0);
+        let month = (1 + div_rem_euclid64(elapsed_months, 12).1) as u8;
         let day = ((date - crescent) + 1) as u8;
 
         Date::try_new_ummalqura_date(year, month, day).unwrap()
@@ -798,7 +799,7 @@ impl UmmalQura {
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "ah")),
+            era: types::Era(tinystr!(16, "islamic-umalqura")),
             number: year,
             cyclic: None,
             related_iso: None,
