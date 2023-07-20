@@ -329,6 +329,8 @@ where
         let (forward_filter, forward_basic_id, reverse_filter, reverse_basic_id, has_reverse) =
             self.parse_filter_or_transform_rule_parts()?;
 
+        self.skip_whitespace();
+
         // the offset of ';'
         let meta_err_offset = self.must_peek_index()?;
         self.consume(Self::RULE_END)?;
@@ -401,6 +403,7 @@ where
         Ok(Rule::Transform(forward_single_id, Some(reverse_single_id)))
     }
 
+    // consumes everything between '::' and ';', exclusive.
     #[allow(clippy::type_complexity)] // used internally in one place only
     fn parse_filter_or_transform_rule_parts(
         &mut self,
@@ -451,6 +454,7 @@ where
                 match self.must_peek_char()? {
                     Self::CLOSE_PAREN => {
                         // we're done parsing reverse things
+                        self.iter.next();
                         break;
                     }
                     Self::SET_START => {
@@ -490,9 +494,61 @@ where
     // TODO: factor this out for runtime ID parsing?
     fn parse_basic_id(&mut self) -> Result<BasicId> {
         // Syntax:
-        // <single-id> ('-' <single-id>)? ('/' <single-id>)?
+        // <identifier> ('-' <identifier>)? ('/' <identifier>)?
 
-        todo!()
+        // we must have at least one identifier. the implicit "Null" id is only allowed
+        // in a '::'-rule, which is handled explicitly.
+        let mut first_id = self.parse_unicode_identifier()?;
+
+        self.skip_whitespace();
+        let second_id = self.try_parse_unicode_identifier_with_sep(Self::ID_SEP)?;
+        self.skip_whitespace();
+        let variant_id = self.try_parse_unicode_identifier_with_sep(Self::VARIANT_SEP)?;
+
+        let (source, target) = match second_id {
+            None => ("Any".to_string(), first_id),
+            Some(second_id) => (first_id, second_id),
+        };
+
+        Ok(BasicId {
+            source,
+            target,
+            variant: variant_id.unwrap_or("".to_string()),
+        })
+    }
+
+    fn try_parse_unicode_identifier_with_sep(&mut self, sep: char) -> Result<Option<String>> {
+        if Some(sep) == self.peek_char() {
+            self.iter.next();
+            self.skip_whitespace();
+            return Ok(Some(self.parse_unicode_identifier()?));
+        }
+        Ok(None)
+    }
+
+    // parses an XID-based identifier
+    fn parse_unicode_identifier(&mut self) -> Result<String> {
+        // Syntax:
+        // <xid_start> (<xid_continue>)*
+
+        let mut id = String::new();
+
+        let (first_offset, first_c) = self.must_peek()?;
+        if !self.xid_start.contains(first_c) {
+            return Err(PEK::UnexpectedChar(first_c).with_offset(first_offset));
+        }
+        id.push(first_c);
+
+        loop {
+            let c = self.must_peek_char()?;
+            if !self.xid_continue.contains(c) {
+                break;
+            }
+            id.push(c);
+            self.iter.next();
+        }
+
+        Ok(id)
     }
 
     fn parse_half_rule(&mut self) -> Result<HalfRule> {
@@ -719,4 +775,46 @@ where
         provider,
     );
     parser.parse_rules()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_global_filters_ok() {
+        let sources = [r":: [^\[$] ;", r":: ([^\[$]) ;"];
+
+        for source in &sources {
+            if let Err(e) = parse(source) {
+                panic!("Failed to parse {:?}: {:?}", source, e);
+            }
+        }
+    }
+
+    #[test]
+    fn test_transform_rules_ok() {
+        let sources = [
+            ":: NFD; :: NFKC;",
+            ":: Latin ;",
+            ":: any - Latin;",
+            ":: any - Latin/bgn;",
+            ":: any - Latin/bgn ();",
+            ":: any - Latin/bgn ([a-z] a-z);",
+            ":: ([a-z] a-z);",
+            ":: (a-z);",
+            ":: (a-z / variant);",
+            ":: [a-z] latin/variant (a-z / variant);",
+            ":: [a-z] latin/variant (a-z / variant) ;",
+            ":: [a-z] latin (  );",
+            ":: [a-z] latin ;",
+            "::[];",
+        ];
+
+        for source in &sources {
+            if let Err(e) = parse(source) {
+                panic!("Failed to parse {:?}: {:?}", source, e);
+            }
+        }
+    }
 }
