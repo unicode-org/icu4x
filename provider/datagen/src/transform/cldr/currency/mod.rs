@@ -81,6 +81,7 @@ fn which_currency_pattern(
 
 impl DataProvider<CurrencyEssentialV1Maker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyEssentialV1Maker>, DataError> {
+        self.check_req::<CurrencyEssentialV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let currencies_resource: &cldr_serde::currencies::Resource = self
