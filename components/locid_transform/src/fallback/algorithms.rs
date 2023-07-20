@@ -223,7 +223,7 @@ mod tests {
         input: &'static str,
         requires_data: bool,
         extension_key: Option<Key>,
-        fallback_supplement: Option<FallbackSupplement>,
+        fallback_supplement: Option<LocaleFallbackSupplement>,
         // Note: The first entry in the chain is the normalized locale
         expected_language_chain: &'static [&'static str],
         expected_region_chain: &'static [&'static str],
@@ -400,7 +400,7 @@ mod tests {
             input: "yue-HK",
             requires_data: true,
             extension_key: None,
-            fallback_supplement: Some(FallbackSupplement::Collation),
+            fallback_supplement: Some(LocaleFallbackSupplement::Collation),
             // TODO(#1964): add "zh" as a target.
             expected_language_chain: &["yue-HK", "yue", "zh-Hant"],
             expected_region_chain: &["yue-HK", "und-HK"],
@@ -414,8 +414,11 @@ mod tests {
         let fallbacker_with_data = LocaleFallbacker::new();
         for cas in TEST_CASES {
             for (priority, expected_chain) in [
-                (FallbackPriority::Language, cas.expected_language_chain),
-                (FallbackPriority::Region, cas.expected_region_chain),
+                (
+                    LocaleFallbackPriority::Language,
+                    cas.expected_language_chain,
+                ),
+                (LocaleFallbackPriority::Region, cas.expected_region_chain),
             ] {
                 let mut config = LocaleFallbackConfig::default();
                 config.priority = priority;

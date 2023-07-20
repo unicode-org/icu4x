@@ -47,7 +47,6 @@ use icu_provider::prelude::*;
 #[doc(inline)]
 pub use icu_provider::fallback::*;
 
-
 mod algorithms;
 
 /// Entry type for locale fallbacking.
@@ -199,7 +198,7 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
             likely_subtags: self.likely_subtags,
             parents: self.parents,
             supplement: match config.fallback_supplement {
-                Some(FallbackSupplement::Collation) => self.collation_supplement,
+                Some(LocaleFallbackSupplement::Collation) => self.collation_supplement,
                 _ => None,
             },
             config,

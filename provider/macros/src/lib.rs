@@ -371,18 +371,17 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             } else {
                 quote! {None}
             };
-            let fallback_supplement_expr = if let Some(fallback_supplement_lit) =
-                fallback_supplement
-            {
-                match fallback_supplement_lit.value().as_str() {
-                    "collation" => {
-                        quote! {Some(icu_provider::FallbackSupplement::Collation)}
+            let fallback_supplement_expr =
+                if let Some(fallback_supplement_lit) = fallback_supplement {
+                    match fallback_supplement_lit.value().as_str() {
+                        "collation" => {
+                            quote! {Some(icu_provider::FallbackSupplement::Collation)}
+                        }
+                        _ => panic!("Invalid value for fallback_supplement"),
                     }
-                    _ => panic!("Invalid value for fallback_supplement"),
-                }
-            } else {
-                quote! {None}
-            };
+                } else {
+                    quote! {None}
+                };
             result.extend(quote!(
                 impl icu_provider::KeyedDataMarker for #marker_name {
                     const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str, icu_provider::DataKeyMetadata::construct_internal(

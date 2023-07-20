@@ -4,11 +4,11 @@
 
 use crate::error::{DataError, DataErrorKind};
 
+use crate::fallback::{LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbackSupplement};
 use alloc::borrow::Cow;
 use core::fmt;
 use core::fmt::Write;
 use core::ops::Deref;
-use crate::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement, LocaleFallbackConfig};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 

@@ -9,11 +9,11 @@ use icu_locid_transform::provider::*;
 use icu_provider::prelude::*;
 
 #[doc(hidden)] // moved
-pub use icu_provider::fallback::LocaleFallbackConfig;
-#[doc(hidden)] // moved
 pub use icu_locid_transform::fallback::{
     LocaleFallbackIterator, LocaleFallbacker, LocaleFallbackerWithConfig,
 };
+#[doc(hidden)] // moved
+pub use icu_provider::fallback::LocaleFallbackConfig;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.
