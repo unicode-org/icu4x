@@ -17,7 +17,7 @@ To verify that, open a terminal and check that the results are similar to:
 
 ```console
 $ cargo --version
-cargo 1.64.0 (387270bc7 2022-09-16)
+cargo 1.71.0 (cfd3bbd8f 2023-06-08)
 ```
 
 # 2. Creating an app with ICU4X as a dependency

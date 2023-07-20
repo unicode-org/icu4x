@@ -97,8 +97,10 @@ pub struct Cli {
     #[arg(help = "--format=mod, --format=dir only: pretty-print the Rust or JSON output files.")]
     pretty: bool,
 
-    #[arg(long)]
-    #[arg(help = "--format=dir only: whether to add a fingerprints file to the output.")]
+    #[arg(long, hide = true)]
+    #[arg(
+        help = "--format=dir only: whether to add a fingerprints file to the output. This feature will be removed in a future version."
+    )]
     fingerprint: bool,
 
     #[arg(short = 't', long, value_name = "TAG", default_value = "latest")]

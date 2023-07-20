@@ -233,7 +233,7 @@ fn insert_chars_from_string(set: &mut HashSet<String>, input: &str) {
     // A range of consecutive code point characters can be represented as <char_start>-<char_end>.
     if s.contains('-') && s.find('-').unwrap() > 0 {
         let (begin, end) = s.split_once('-').unwrap();
-        let begin_char = begin.chars().rev().next().unwrap();
+        let begin_char = begin.chars().next_back().unwrap();
         let end_char = end.chars().next().unwrap();
 
         for code_point in (begin_char as u32)..=(end_char as u32) {

@@ -234,7 +234,7 @@ where
     F: ForkByErrorPredicate,
 {
     fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
-        let mut last_error = DataErrorKind::MissingDataKey.with_key(key);
+        let mut last_error = F::ERROR.with_key(key);
         for provider in self.providers.iter() {
             let result = provider.supported_locales_for_key(key);
             match result {
@@ -260,7 +260,7 @@ where
         key: DataKey,
         mut from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
-        let mut last_error = DataErrorKind::MissingDataKey.with_key(key);
+        let mut last_error = F::ERROR.with_key(key);
         for provider in self.providers.iter() {
             let result = provider.convert(key, from);
             match result {

@@ -396,7 +396,7 @@ impl Chinese {
     /// let major_solar_term = Chinese::major_solar_term_from_iso(*iso_date.inner());
     /// assert_eq!(major_solar_term, 5);
     /// ```
-    pub fn major_solar_term_from_iso(iso: IsoDateInner) -> i32 {
+    pub fn major_solar_term_from_iso(iso: IsoDateInner) -> u32 {
         let fixed: RataDie = Iso::fixed_from_iso(iso);
         Inner::major_solar_term_from_fixed(fixed)
     }
@@ -412,7 +412,7 @@ impl Chinese {
     /// let minor_solar_term = Chinese::minor_solar_term_from_iso(*iso_date.inner());
     /// assert_eq!(minor_solar_term, 5);
     /// ```
-    pub fn minor_solar_term_from_iso(iso: IsoDateInner) -> i32 {
+    pub fn minor_solar_term_from_iso(iso: IsoDateInner) -> u32 {
         let fixed: RataDie = Iso::fixed_from_iso(iso);
         Inner::minor_solar_term_from_fixed(fixed)
     }
@@ -541,6 +541,30 @@ mod test {
         }
 
         let cases = [
+            TestCase {
+                fixed: -964192,
+                expected_year: -2,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            TestCase {
+                fixed: -963838,
+                expected_year: -1,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            TestCase {
+                fixed: -963129,
+                expected_year: 0,
+                expected_month: 13,
+                expected_day: 1,
+            },
+            TestCase {
+                fixed: -963100,
+                expected_year: 0,
+                expected_month: 13,
+                expected_day: 30,
+            },
             TestCase {
                 fixed: -963099,
                 expected_year: 1,
