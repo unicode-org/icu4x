@@ -16,7 +16,7 @@ all-features = true
 
 [dependencies]
 fixed_decimal = { version = "0.5", path = "../../utils/fixed_decimal" }
-icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
+icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
 icu_locid = { version = "1.0.0", path = "../../components/locid" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }

@@ -10,7 +10,7 @@
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashMap};
-use tinystr::TinyAsciiStr;
+use tinystr::UnvalidatedTinyAsciiStr;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct CurrencyPatterns {
@@ -23,7 +23,7 @@ pub struct CurrencyPatterns {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Numbers {
-    pub currencies: BTreeMap<TinyAsciiStr<3>, CurrencyPatterns>,
+    pub currencies: BTreeMap<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

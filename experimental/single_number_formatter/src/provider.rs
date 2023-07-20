@@ -11,10 +11,10 @@
 
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
-use tinystr::TinyAsciiStr;
+use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
-#[icu_provider::data_struct(CurrencyEssentialV1Maker = "currency/essential@1")]
+#[icu_provider::data_struct(CurrencyEssentialsV1Maker = "currency/essentials@1")]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -23,9 +23,9 @@ use zerovec::{VarZeroVec, ZeroMap};
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct CurrencyEssentialV1<'data> {
+pub struct CurrencyEssentialsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub currency_patterns_map: ZeroMap<'data, TinyAsciiStr<3>, CurrencyPatterns>,
+    pub currency_patterns_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub standard: Cow<'data, str>,
@@ -61,119 +61,4 @@ pub struct CurrencyPatterns {
     /// The index of the narrow pattern place holder in the place holders list.
     /// If the value is u16::MAX, this means that the narrow pattern does not have a place holder.
     pub narrow_place_holder_index: u16,
-}
-
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-#[icu_provider::data_struct(CurrencyLongUsdV1Marker = "currency/long@1")]
-#[derive(Debug, Clone, Default, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_singlenumberformatter::provider)
-)]
-#[yoke(prove_covariance_manually)]
-pub struct CurrencyLong<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: ZeroMap<'data, Count, CurrencyPatternULE>,
-}
-
-#[derive(
-    Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom, Ord, PartialOrd, Eq,
-)]
-#[zerovec::make_varule(CurrencyPatternULE)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_singlenumberformatter::provider),
-    zerovec::derive(Serialize),
-)]
-#[zerovec::derive(Debug)]
-#[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
-pub struct CurrencyPattern<'data> {
-    pub index: u8,
-
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pattern: Cow<'data, str>,
-}
-
-/// A CLDR plural keyword, or the explicit value 0 or 1.
-/// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.
-#[zerovec::make_ule(CountULE)]
-#[zerovec::derive(Debug)]
-#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_singlenumberformatter::provider)
-)]
-#[repr(u8)]
-pub enum Count {
-    /// The CLDR keyword `zero`.
-    Zero = 0,
-    /// The CLDR keyword `one`.
-    One = 1,
-    /// The CLDR keyword `two`.
-    Two = 2,
-    /// The CLDR keyword `few`.
-    Few = 3,
-    /// The CLDR keyword `many`.
-    Many = 4,
-    /// The CLDR keyword `other`.
-    Other = 5,
-    // The explicit 0 - 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
-    Explicit01 = 6,
 }

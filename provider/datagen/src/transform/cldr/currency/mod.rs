@@ -4,6 +4,7 @@ use icu_locid::LanguageIdentifier;
 use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
+use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::maps::MutableZeroVecLike;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
@@ -15,7 +16,6 @@ use icu_provider::prelude::*;
 use icu_singlenumberformatter::provider::*;
 use std::collections::HashMap;
 use tinystr::tinystr;
-use tinystr::TinyAsciiStr;
 
 fn which_currency_pattern(
     provider: &DatagenProvider,
@@ -79,9 +79,9 @@ fn which_currency_pattern(
     }
 }
 
-impl DataProvider<CurrencyEssentialV1Maker> for crate::DatagenProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyEssentialV1Maker>, DataError> {
-        self.check_req::<CurrencyEssentialV1Marker>(req)?;
+impl DataProvider<CurrencyEssentialsV1Maker> for crate::DatagenProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyEssentialsV1Maker>, DataError> {
+        self.check_req::<CurrencyEssentialsV1Maker>(req)?;
         let langid = req.locale.get_langid();
 
         let currencies_resource: &cldr_serde::currencies::Resource = self
@@ -96,20 +96,8 @@ impl DataProvider<CurrencyEssentialV1Maker> for crate::DatagenProvider {
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
 
-        // TODO: will be used in the next PR.
-        // let currency_data: &cldr_serde::currency_data::Resource = self
-        //     .source
-        //     .cldr()?
-        //     .core()
-        //     .read_and_parse("supplemental/currencyData.json")?;
-
-        let result = extract_currency_essential(
-            self,
-            &currencies_resource,
-            &numbers_resource,
-            // &currency_data,
-            &langid,
-        );
+        let result =
+            extract_currency_essentials(self, &currencies_resource, &numbers_resource, &langid);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -118,7 +106,7 @@ impl DataProvider<CurrencyEssentialV1Maker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<CurrencyEssentialV1Maker> for crate::DatagenProvider {
+impl IterableDataProvider<CurrencyEssentialsV1Maker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
@@ -130,13 +118,12 @@ impl IterableDataProvider<CurrencyEssentialV1Maker> for crate::DatagenProvider {
     }
 }
 
-fn extract_currency_essential<'data>(
+fn extract_currency_essentials<'data>(
     provider: &DatagenProvider,
     currencies_resource: &cldr_serde::currencies::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
-    // currency_data_resource: &cldr_serde::currency_data::Resource,
     langid: &LanguageIdentifier,
-) -> Result<CurrencyEssentialV1<'data>, DataError> {
+) -> Result<CurrencyEssentialsV1<'data>, DataError> {
     let currencies = &currencies_resource
         .main
         .0
@@ -144,13 +131,6 @@ fn extract_currency_essential<'data>(
         .expect("CLDR file contains the expected language")
         .numbers
         .currencies;
-
-    // TODO: will be used in the next PR.
-    // let currency_data = &currency_data_resource
-    //     .supplemental
-    //     .currency_data
-    //     .fractions
-    //     .currencies;
 
     let currency_formats = &&numbers_resource
         .main
@@ -169,8 +149,8 @@ fn extract_currency_essential<'data>(
         None => "",
     };
 
-    let mut indices_map: ZeroMap<'_, TinyAsciiStr<3>, CurrencyPatterns> =
-        ZeroMap::<TinyAsciiStr<3>, CurrencyPatterns>::new();
+    let mut currency_patterns_map: ZeroMap<'_, UnvalidatedTinyAsciiStr<3>, CurrencyPatterns> =
+        ZeroMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
     let mut place_holders = VarZeroVec::<str>::new();
     let mut place_holders_map = HashMap::<String, u16>::new();
     for (iso, currency_pattern) in currencies {
@@ -204,6 +184,8 @@ fn extract_currency_essential<'data>(
             None => narrow_place_holder_index = u16::MAX,
         }
 
+        let iso_string = iso.try_into_tinystr().unwrap().to_string();
+
         let short_pattern_standard: bool = {
             if standard_alpha_next_to_number.is_empty() {
                 true
@@ -217,7 +199,7 @@ fn extract_currency_essential<'data>(
                         .to_string(),
                 )?
             } else {
-                which_currency_pattern(provider, standard.clone(), iso.to_string())?
+                which_currency_pattern(provider, standard.clone(), iso_string)?
             }
         };
 
@@ -246,7 +228,7 @@ fn extract_currency_essential<'data>(
             continue;
         }
 
-        indices_map.insert(
+        currency_patterns_map.insert(
             iso,
             &CurrencyPatterns {
                 short_pattern_standard,
@@ -257,8 +239,8 @@ fn extract_currency_essential<'data>(
         );
     }
 
-    let result = CurrencyEssentialV1 {
-        currency_patterns_map: indices_map,
+    let result = CurrencyEssentialsV1 {
+        currency_patterns_map,
         standard: standard.to_owned().into(),
         standard_alpha_next_to_number: standard_alpha_next_to_number.to_owned().into(),
         place_holders,
@@ -270,8 +252,8 @@ fn extract_currency_essential<'data>(
 #[test]
 fn test_basic() {
     fn get_place_holders_of_currency(
-        iso_code: TinyAsciiStr<3>,
-        locale: &DataPayload<CurrencyEssentialV1Maker>,
+        iso_code: UnvalidatedTinyAsciiStr<3>,
+        locale: &DataPayload<CurrencyEssentialsV1Maker>,
         place_holders: &VarZeroVec<'_, str>,
     ) -> (String, String) {
         let default = CurrencyPatternsULE {
@@ -312,7 +294,7 @@ fn test_basic() {
 
     let provider = crate::DatagenProvider::for_test();
 
-    let en: DataPayload<CurrencyEssentialV1Maker> = provider
+    let en: DataPayload<CurrencyEssentialsV1Maker> = provider
         .load(DataRequest {
             locale: &locale!("en").into(),
             metadata: Default::default(),
@@ -329,16 +311,16 @@ fn test_basic() {
     );
 
     let (en_usd_short, en_usd_narrow) =
-        get_place_holders_of_currency(tinystr!(3, "USD"), &en, en_place_holders);
+        get_place_holders_of_currency(tinystr!(3, "USD").to_unvalidated(), &en, en_place_holders);
     assert_eq!(en_usd_short, "$");
     assert_eq!(en_usd_narrow, "$");
 
     let (en_egp_short, en_egp_narrow) =
-        get_place_holders_of_currency(tinystr!(3, "EGP"), &en, en_place_holders);
+        get_place_holders_of_currency(tinystr!(3, "EGP").to_unvalidated(), &en, en_place_holders);
     assert_eq!(en_egp_short, "");
     assert_eq!(en_egp_narrow, "E£");
 
-    let ar_eg: DataPayload<CurrencyEssentialV1Maker> = provider
+    let ar_eg: DataPayload<CurrencyEssentialsV1Maker> = provider
         .load(DataRequest {
             locale: &locale!("ar-EG").into(),
             metadata: Default::default(),
@@ -357,13 +339,19 @@ fn test_basic() {
         ar_eg.clone().get().to_owned().standard_alpha_next_to_number,
         ""
     );
-    let (ar_eg_egp_short, ar_eg_egp_narrow) =
-        get_place_holders_of_currency(tinystr!(3, "EGP"), &ar_eg, ar_eg_place_holders);
+    let (ar_eg_egp_short, ar_eg_egp_narrow) = get_place_holders_of_currency(
+        tinystr!(3, "EGP").to_unvalidated(),
+        &ar_eg,
+        ar_eg_place_holders,
+    );
     assert_eq!(ar_eg_egp_short, "ج.م.\u{200f}");
     assert_eq!(ar_eg_egp_narrow, "E£");
 
-    let (ar_eg_usd_short, ar_eg_usd_narrow) =
-        get_place_holders_of_currency(tinystr!(3, "USD"), &ar_eg, ar_eg_place_holders);
+    let (ar_eg_usd_short, ar_eg_usd_narrow) = get_place_holders_of_currency(
+        tinystr!(3, "USD").to_unvalidated(),
+        &ar_eg,
+        ar_eg_place_holders,
+    );
     assert_eq!(ar_eg_usd_short, "US$");
     assert_eq!(ar_eg_usd_narrow, "US$");
 }
