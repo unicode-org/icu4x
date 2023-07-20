@@ -65,10 +65,10 @@ where
     /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
-        Self::from_ule_slice(core::mem::transmute((
-            bytes.as_ptr(),
+        Self::from_ule_slice(core::slice::from_raw_parts(
+            bytes.as_ptr() as *const T::ULE,
             bytes.len() / core::mem::size_of::<T::ULE>(),
-        )))
+        ))
     }
 
     /// Construct a `&ZeroSlice<T>` from a slice of ULEs.
