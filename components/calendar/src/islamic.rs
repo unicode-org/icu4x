@@ -30,7 +30,7 @@
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{div_rem_euclid, div_rem_euclid_f64, next};
+use crate::helpers::{self, div_rem_euclid64, next};
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{astronomy::*, Iso};
@@ -226,9 +226,9 @@ impl IslamicObservational {
         let crescent = Astronomical::phasis_on_or_before(date, CAIRO);
         let elapsed_months =
             (libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH))
-                as i32;
-        let year = div_rem_euclid(elapsed_months, 12).0 + 1;
-        let month = div_rem_euclid(elapsed_months, 12).1 + 1;
+                as i64;
+        let year = helpers::i64_to_saturated_i32(div_rem_euclid64(elapsed_months, 12).0 + 1);
+        let month = div_rem_euclid64(elapsed_months, 12).1 + 1;
         let day = (date - crescent + 1) as u8;
 
         Date::try_new_observational_islamic_date(year, month as u8, day).unwrap()
@@ -314,10 +314,12 @@ pub struct UmmAlQuraDateInner(ArithmeticDate<UmmAlQura>);
 
 impl CalendarArithmetic for UmmAlQura {
     fn month_days(year: i32, month: u8) -> u8 {
-        let midmonth = RataDie::new(libm::floor(
-            FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
-                + (((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH),
-        ) as i64);
+        let midmonth = RataDie::new(
+            FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date()
+                + libm::floor(
+                    ((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH,
+                ) as i64,
+        );
         // TODO: Add comment explaining functionality.
         if Self::adjusted_saudi_criterion(midmonth) {
             30
@@ -541,10 +543,10 @@ impl UmmAlQura {
     fn saudi_islamic_from_fixed(date: RataDie) -> Date<UmmAlQura> {
         let crescent = Self::saudi_new_month_on_or_before(date);
         let elapsed_months =
-            libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH);
-        let year = ((div_rem_euclid_f64(elapsed_months, 12.0).0) as i32).saturating_add(1);
-        let month = ((div_rem_euclid_f64(elapsed_months, 12.0).1) as u8).saturating_add(1);
-        let day = ((date - crescent).saturating_add(1)) as u8;
+            libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH) as i64;
+        let year = helpers::i64_to_saturated_i32((div_rem_euclid64(elapsed_months, 12).0) + 1);
+        let month = ((div_rem_euclid64(elapsed_months, 12).1) + 1) as u8;
+        let day = ((date - crescent) + 1) as u8;
 
         Date::try_new_ummalqura_date(year, month, day).unwrap()
     }
