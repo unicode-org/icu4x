@@ -13,8 +13,7 @@
     "segmenter_lstm": "Latest",
     "export": {
         "Baked": {
-            "output_path": "data",
-            "use_separate_crates": true,
+            "path": "data",
             "pretty": true
         }
     },

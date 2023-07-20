@@ -113,17 +113,17 @@ macro_rules! registry {
         }
 
         #[doc(hidden)]
-        pub fn deserialize_and_discard<R>(key: DataKey, buf: DataPayload<BufferMarker>, r: impl Fn() -> R) -> Result<R, DataError> {
+        pub fn deserialize_and_measure<Measurement>(key: DataKey, buf: DataPayload<BufferMarker>, measure: impl Fn() -> Measurement) -> Result<(Measurement, DataPayload<icu_provider::datagen::ExportMarker>), DataError> {
             if key.path() == icu_provider::hello_world::HelloWorldV1Marker::KEY.path() {
-                let _reified_data: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
-                return Ok(r());
+                let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                return Ok((measure(), icu_provider::dynutil::UpcastDataPayload::upcast(deserialized)));
             }
             $(
                 $(
                     #[cfg($feature)]
                     if key == <$marker>::KEY {
-                        let _reified_data: DataPayload<$marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
-                        return Ok(r());
+                        let deserialized: DataPayload<$marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                        return Ok((measure(), icu_provider::dynutil::UpcastDataPayload::upcast(deserialized)));
                     }
                 )+
             )+

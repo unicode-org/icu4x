@@ -20,8 +20,11 @@
 //! ```
 
 use crate::{
-    astronomy::{Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
-    calendar_arithmetic::{ArithmeticDate, CalendarArithmetic},
+    astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
+    calendar_arithmetic::{
+        ArithmeticDate, CalendarArithmetic, MAX_ITERS_FOR_DAYS_OF_YEAR,
+        MAX_ITERS_FOR_MONTHS_OF_YEAR,
+    },
     helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
     types::Moment,
@@ -65,8 +68,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
-    pub(crate) fn major_solar_term_from_fixed(date: RataDie) -> i32 {
-        // TODO: Make this an unsigned int (the size isn't super important, but could fit in a u8)
+    pub(crate) fn major_solar_term_from_fixed(date: RataDie) -> u32 {
         let moment: Moment = date.as_moment();
         let location = C::location(date);
         let universal: Moment = Location::universal_from_standard(moment, location);
@@ -76,7 +78,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Solar longitude should be in range of i32"
         );
         let s = solar_longitude.saturate();
-        adjusted_rem_euclid(2 + quotient(s, 30), 12)
+        let result_signed = adjusted_rem_euclid(2 + quotient(s, 30), 12);
+        debug_assert!(result_signed >= 0);
+        result_signed as u32
     }
 
     /// Returns true if the month of a given fixed date does not have a major solar term,
@@ -92,8 +96,8 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Get the current minor solar term of a fixed date, output as an integer from 1..=12.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
-    pub(crate) fn minor_solar_term_from_fixed(date: RataDie) -> i32 {
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5303-L5316
+    pub(crate) fn minor_solar_term_from_fixed(date: RataDie) -> u32 {
         let moment: Moment = date.as_moment();
         let location = C::location(date);
         let universal: Moment = Location::universal_from_standard(moment, location);
@@ -103,7 +107,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Solar longitude should be in range of i32"
         );
         let s = solar_longitude.saturate();
-        adjusted_rem_euclid(3 + quotient(s - 15, 30), 12)
+        let result_signed = adjusted_rem_euclid(3 + quotient(s - 15, 30), 12);
+        debug_assert!(result_signed >= 0);
+        result_signed as u32
     }
 
     /// The fixed date in standard time at the observation location of the next new moon on or after a given Moment.
@@ -130,8 +136,8 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5353-L5357
-    pub(crate) fn midnight(date: Moment) -> Moment {
-        Location::universal_from_standard(date, C::location(date.as_rata_die()))
+    pub(crate) fn midnight(moment: Moment) -> Moment {
+        Location::universal_from_standard(moment, C::location(moment.as_rata_die()))
     }
 
     /// Determines the fixed date of the lunar new year in the sui4 (solar year based on the winter solstice)
@@ -165,19 +171,19 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5359-L5368
     pub(crate) fn winter_solstice_on_or_before(date: RataDie) -> RataDie {
         let approx = Astronomical::estimate_prior_solar_longitude(
-            270.0,
+            astronomy::WINTER,
             Self::midnight((date + 1).as_moment()),
         );
         let mut iters = 0;
-        let max_iters = 367;
         let mut day = Moment::new(libm::floor(approx.inner() - 1.0));
-        while iters < max_iters && 270.0 >= Astronomical::solar_longitude(Self::midnight(day + 1.0))
+        while iters < MAX_ITERS_FOR_DAYS_OF_YEAR
+            && astronomy::WINTER >= Astronomical::solar_longitude(Self::midnight(day + 1.0))
         {
             iters += 1;
             day += 1.0;
         }
         debug_assert!(
-            iters < max_iters,
+            iters < MAX_ITERS_FOR_DAYS_OF_YEAR,
             "Number of iterations was higher than expected"
         );
         day.as_rata_die()
@@ -276,12 +282,11 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     pub(crate) fn get_leap_month_in_year(date: RataDie) -> u8 {
         let mut cur = Self::new_year_on_or_before_fixed_date(date);
         let mut result = 1;
-        let max_iters = 13;
-        while result < max_iters && !Self::no_major_solar_term(cur) {
+        while result < MAX_ITERS_FOR_MONTHS_OF_YEAR && !Self::no_major_solar_term(cur) {
             cur = Self::new_moon_on_or_after((cur + 1).as_moment());
             result += 1;
         }
-        debug_assert!(result < max_iters, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
+        debug_assert!(result < MAX_ITERS_FOR_MONTHS_OF_YEAR, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
         result
     }
 }

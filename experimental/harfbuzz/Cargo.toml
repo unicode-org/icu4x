@@ -6,7 +6,7 @@
 name = "icu_harfbuzz"
 description = "HarfBuzz glue code for ICU4X"
 version = "0.1.0"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 resolver = "2"
@@ -54,6 +54,5 @@ harfbuzz = { version = "0.4.0" }
 [features]
 default = []
 compiled_data = ["icu_normalizer/compiled_data", "icu_properties/compiled_data"]
-# TODO(#3275) Make this no_std again
-# std = []
+std = []
 serde = ["icu_properties/serde", "icu_normalizer/serde", "icu_provider/serde"]

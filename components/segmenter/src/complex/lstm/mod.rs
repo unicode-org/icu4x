@@ -88,7 +88,7 @@ impl<'l> LstmSegmenter<'l> {
             timew_fw,
             timew_bw,
             time_b: MatrixZero::from(&lstm.time_b),
-            grapheme: (lstm.model == ModelType::GraphemeClusters).then(|| grapheme),
+            grapheme: (lstm.model == ModelType::GraphemeClusters).then_some(grapheme),
         }
     }
 

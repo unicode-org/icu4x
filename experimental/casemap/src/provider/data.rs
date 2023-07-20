@@ -64,8 +64,10 @@ impl CaseType {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider::data))]
+#[derive(Default)]
 pub enum DotType {
     /// Normal characters with combining class 0
+    #[default]
     NoDot = 0,
     /// Soft-dotted characters with combining class 0
     SoftDotted = 1,
@@ -73,12 +75,6 @@ pub enum DotType {
     Above = 2,
     /// Other accent characters
     OtherAccent = 3,
-}
-
-impl Default for DotType {
-    fn default() -> Self {
-        DotType::NoDot
-    }
 }
 
 impl DotType {
