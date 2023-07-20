@@ -1385,7 +1385,6 @@ mod test {
         // 622 is the correct ISO year for the Islamic Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }
-    
 
     #[test]
     fn test_fixed_from_islamic() {
