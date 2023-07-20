@@ -73,7 +73,7 @@ impl From<ParseErrorKind> for ParseError {
 impl From<icu_unicodeset_parser::ParseError> for ParseError {
     fn from(e: icu_unicodeset_parser::ParseError) -> Self {
         ParseError {
-            offset: todo!("e.offset()"),
+            offset: e.offset(),
             kind: PEK::UnicodeSetError(e.kind()),
         }
     }
@@ -414,57 +414,36 @@ where
         Option<BasicId>,
         bool,
     )> {
-        // until we encounter a Self::OPEN_PAREN, we're parsing the forward single id or global filter
-        let mut forward_filter = None;
-        let mut forward_basic_id = None;
-
-        let mut reverse_filter = None;
-        let mut reverse_basic_id = None;
-
-        let has_reverse;
-
         // parse forward things, i.e., everything until Self::OPEN_PAREN
-        loop {
-            self.skip_whitespace();
-            match self.must_peek_char()? {
-                Self::OPEN_PAREN => {
-                    // we're done parsing forward things
-                    has_reverse = true;
-                    break;
-                }
-                Self::RULE_END => {
-                    // we're done parsing completely
-                    has_reverse = false;
-                    break;
-                }
-                Self::SET_START => {
-                    forward_filter = Some(self.parse_unicode_set()?);
-                }
-                _ => {
-                    forward_basic_id = Some(self.parse_basic_id()?);
-                }
-            }
-        }
+        self.skip_whitespace();
+        let forward_filter = self.try_parse_unicode_set()?;
+        self.skip_whitespace();
+        let forward_basic_id = self.try_parse_basic_id()?;
+        self.skip_whitespace();
 
-        // if we have a reverse, parse it
+        let has_reverse = match self.must_peek_char()? {
+            // initiates a reverse id
+            Self::OPEN_PAREN => true,
+            // we're done parsing completely, no reverse id
+            Self::RULE_END => false,
+            _ => return self.unexpected_char_here(),
+        };
+
+        let reverse_filter;
+        let reverse_basic_id;
+
         if has_reverse {
+            // if we have a reverse, parse it
             self.consume(Self::OPEN_PAREN)?;
-            loop {
-                self.skip_whitespace();
-                match self.must_peek_char()? {
-                    Self::CLOSE_PAREN => {
-                        // we're done parsing reverse things
-                        self.iter.next();
-                        break;
-                    }
-                    Self::SET_START => {
-                        reverse_filter = Some(self.parse_unicode_set()?);
-                    }
-                    _ => {
-                        reverse_basic_id = Some(self.parse_basic_id()?);
-                    }
-                }
-            }
+            self.skip_whitespace();
+            reverse_filter = self.try_parse_unicode_set()?;
+            self.skip_whitespace();
+            reverse_basic_id = self.try_parse_basic_id()?;
+            self.skip_whitespace();
+            self.consume(Self::CLOSE_PAREN)?;
+        } else {
+            reverse_filter = None;
+            reverse_basic_id = None;
         }
 
         Ok((
@@ -491,6 +470,15 @@ where
         todo!()
     }
 
+    fn try_parse_basic_id(&mut self) -> Result<Option<BasicId>> {
+        if let Some(c) = self.peek_char() {
+            if self.xid_start.contains(c) {
+                return Ok(Some(self.parse_basic_id()?));
+            }
+        }
+        Ok(None)
+    }
+
     // TODO: factor this out for runtime ID parsing?
     fn parse_basic_id(&mut self) -> Result<BasicId> {
         // Syntax:
@@ -501,9 +489,9 @@ where
         let mut first_id = self.parse_unicode_identifier()?;
 
         self.skip_whitespace();
-        let second_id = self.try_parse_unicode_identifier_with_sep(Self::ID_SEP)?;
+        let second_id = self.try_parse_sep_and_unicode_identifier(Self::ID_SEP)?;
         self.skip_whitespace();
-        let variant_id = self.try_parse_unicode_identifier_with_sep(Self::VARIANT_SEP)?;
+        let variant_id = self.try_parse_sep_and_unicode_identifier(Self::VARIANT_SEP)?;
 
         let (source, target) = match second_id {
             None => ("Any".to_string(), first_id),
@@ -517,10 +505,11 @@ where
         })
     }
 
-    fn try_parse_unicode_identifier_with_sep(&mut self, sep: char) -> Result<Option<String>> {
+    fn try_parse_sep_and_unicode_identifier(&mut self, sep: char) -> Result<Option<String>> {
         if Some(sep) == self.peek_char() {
             self.iter.next();
             self.skip_whitespace();
+            // at this point we must be parsing a identifier
             return Ok(Some(self.parse_unicode_identifier()?));
         }
         Ok(None)
@@ -588,6 +577,13 @@ where
 
     fn parse_segment(&mut self) -> Result<Element> {
         todo!()
+    }
+
+    fn try_parse_unicode_set(&mut self) -> Result<Option<UnicodeSet>> {
+        if Some(Self::SET_START) == self.peek_char() {
+            return Ok(Some(self.parse_unicode_set()?));
+        }
+        Ok(None)
     }
 
     fn parse_unicode_set(&mut self) -> Result<UnicodeSet> {
@@ -691,6 +687,11 @@ where
     fn must_peek_index(&mut self) -> Result<usize> {
         self.must_peek().map(|(idx, _)| idx)
     }
+
+    fn unexpected_char_here<T>(&mut self) -> Result<T> {
+        let (offset, char) = self.must_peek()?;
+        Err(PEK::UnexpectedChar(char).with_offset(offset))
+    }
 }
 
 #[cfg(feature = "compiled_data")]
@@ -781,6 +782,14 @@ where
 mod tests {
     use super::*;
 
+    // #[test]
+    // fn test_variable_rules_ok() {
+    //     let sources = [
+    //         r" $my_var = [a-z] ;",
+    //         r"$my_var = [a-z] literal ; $other_var = [A-Z] [b-z];",
+    //     ];
+    // }
+
     #[test]
     fn test_global_filters_ok() {
         let sources = [
@@ -792,9 +801,30 @@ mod tests {
             r":: [^\]] ;",
         ];
 
-        for source in &sources {
+        for source in sources {
             if let Err(e) = parse(source) {
                 panic!("Failed to parse {:?}: {:?}", source, e);
+            }
+        }
+    }
+
+    #[test]
+    fn test_global_filters_err() {
+        let sources = [
+            r":: [^\[$ ;",
+            r":: [^[$] ;",
+            r":: [^\[$]) ;",
+            r":: ( [^\[$]  ;",
+            r":: [^[a-z[]][]] [] ;",
+            r":: [^[a-z\[\]]\]] ([a-z]);",
+            r":: [a$-^\]] ;",
+            r":: ( [] [] ) ;",
+            r":: () [] ;",
+        ];
+
+        for source in sources {
+            if let Ok(rules) = parse(source) {
+                panic!("Parsed invalid source {:?}: {:?}", source, rules);
             }
         }
     }
@@ -818,9 +848,30 @@ mod tests {
             "::[];",
         ];
 
-        for source in &sources {
+        for source in sources {
             if let Err(e) = parse(source) {
                 panic!("Failed to parse {:?}: {:?}", source, e);
+            }
+        }
+    }
+
+    #[test]
+    fn test_transform_rules_err() {
+        let sources = [
+            r":: a a ;",
+            r":: (a a) ;",
+            r":: a - z - b ;",
+            r":: ( a - z - b) ;",
+            r":: [] ( a - z) ;",
+            r":: a-z ( [] ) ;",
+            r":: a-z / ( [] a-z ) ;",
+            r":: Latin-ASCII/BGN Arab-Greek/UNGEGN ;",
+            r":: (Latin-ASCII/BGN Arab-Greek/UNGEGN) ;",
+        ];
+
+        for source in sources {
+            if let Ok(rules) = parse(source) {
+                panic!("Parsed invalid source {:?}: {:?}", source, rules);
             }
         }
     }
