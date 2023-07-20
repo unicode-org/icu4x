@@ -8,7 +8,7 @@ use alloc::borrow::Cow;
 use core::fmt;
 use core::fmt::Write;
 use core::ops::Deref;
-use icu_locid::fallback::{FallbackPriority, FallbackSupplement, LocaleFallbackConfig};
+use crate::fallback::{FallbackPriority, FallbackSupplement, LocaleFallbackConfig};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 

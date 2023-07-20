@@ -9,7 +9,7 @@ use icu_locid_transform::provider::*;
 use icu_provider::prelude::*;
 
 #[doc(hidden)] // moved
-pub use icu_locid::fallback::LocaleFallbackConfig;
+pub use icu_provider::fallback::LocaleFallbackConfig;
 #[doc(hidden)] // moved
 pub use icu_locid_transform::fallback::{
     LocaleFallbackIterator, LocaleFallbacker, LocaleFallbackerWithConfig,

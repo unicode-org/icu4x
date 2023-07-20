@@ -353,18 +353,18 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             let fallback_by_expr = if let Some(fallback_by_lit) = fallback_by {
                 match fallback_by_lit.value().as_str() {
                     "region" => {
-                        quote! {icu_provider::_internal::locid::fallback::FallbackPriority::Region}
+                        quote! {icu_provider::FallbackPriority::Region}
                     }
                     "collation" => {
-                        quote! {icu_provider::_internal::locid::fallback::FallbackPriority::Collation}
+                        quote! {icu_provider::FallbackPriority::Collation}
                     }
                     "language" => {
-                        quote! {icu_provider::_internal::locid::fallback::FallbackPriority::Language}
+                        quote! {icu_provider::FallbackPriority::Language}
                     }
                     _ => panic!("Invalid value for fallback_by"),
                 }
             } else {
-                quote! {icu_provider::_internal::locid::fallback::FallbackPriority::const_default()}
+                quote! {icu_provider::FallbackPriority::const_default()}
             };
             let extension_key_expr = if let Some(extension_key_lit) = extension_key {
                 quote! {Some(icu_provider::_internal::locid::extensions::unicode::key!(#extension_key_lit))}
@@ -376,7 +376,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             {
                 match fallback_supplement_lit.value().as_str() {
                     "collation" => {
-                        quote! {Some(icu_provider::_internal::locid::fallback::FallbackSupplement::Collation)}
+                        quote! {Some(icu_provider::FallbackSupplement::Collation)}
                     }
                     _ => panic!("Invalid value for fallback_supplement"),
                 }

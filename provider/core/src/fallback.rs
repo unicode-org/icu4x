@@ -5,10 +5,9 @@
 //! Options to define fallback behaviour.
 //!
 //! These options are consumed by the `LocaleFallbacker` in the `icu_locid_transforms` crate
-//! (or the `icu::locid_transforms` module), but are defined here because they are used in
-//! the ICU4X data pipeline, which `icu_locid_transform` depends on itself.
+//! (or the `icu::locid_transforms` module), but are defined here because they are used by `DataKey`.
 
-use crate::extensions::unicode::Key;
+use icu_locid::extensions::unicode::Key;
 
 /// Hint for which subtag to prioritize during fallback.
 ///
@@ -64,8 +63,8 @@ pub struct LocaleFallbackConfig {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid::fallback::FallbackPriority;
-    /// use icu_locid::fallback::LocaleFallbackConfig;
+    /// use icu_locid_transform::fallback::FallbackPriority;
+    /// use icu_locid_transform::fallback::LocaleFallbackConfig;
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
@@ -94,8 +93,8 @@ pub struct LocaleFallbackConfig {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid::fallback::FallbackPriority;
-    /// use icu_locid::fallback::LocaleFallbackConfig;
+    /// use icu_locid_transform::fallback::FallbackPriority;
+    /// use icu_locid_transform::fallback::LocaleFallbackConfig;
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
@@ -132,7 +131,7 @@ pub struct LocaleFallbackConfig {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid::fallback::LocaleFallbackConfig;
+    /// use icu_locid_transform::fallback::LocaleFallbackConfig;
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
@@ -170,11 +169,10 @@ pub struct LocaleFallbackConfig {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid::fallback::FallbackPriority;
-    /// use icu_locid::fallback::FallbackSupplement;
-    /// use icu_locid::fallback::LocaleFallbackConfig;
+    /// use icu_locid_transform::fallback::FallbackPriority;
+    /// use icu_locid_transform::fallback::FallbackSupplement;
+    /// use icu_locid_transform::fallback::LocaleFallbackConfig;
     /// use icu_locid_transform::fallback::LocaleFallbacker;
-    /// use tinystr::tinystr;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker =

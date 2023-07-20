@@ -135,6 +135,8 @@ extern crate alloc;
 
 mod data_provider;
 mod error;
+#[doc(hidden)]
+pub mod fallback;
 mod key;
 mod request;
 mod response;
@@ -244,9 +246,9 @@ pub mod prelude {
 
 // Additional crate re-exports for compatibility
 #[doc(hidden)]
-pub use icu_locid::fallback::FallbackPriority;
+pub use fallback::FallbackPriority;
 #[doc(hidden)]
-pub use icu_locid::fallback::FallbackSupplement;
+pub use fallback::FallbackSupplement;
 #[doc(hidden)]
 pub use yoke;
 #[doc(hidden)]

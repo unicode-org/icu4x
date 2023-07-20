@@ -81,7 +81,6 @@ pub use parser::errors::ParserError;
 pub use ParserError as Error;
 
 pub mod extensions;
-pub mod fallback;
 #[macro_use]
 pub mod subtags;
 pub mod zerovec;

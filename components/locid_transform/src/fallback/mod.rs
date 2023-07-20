@@ -41,9 +41,12 @@
 
 use crate::provider::*;
 use icu_locid::extensions::unicode::Value;
-use icu_locid::fallback::{FallbackSupplement, LocaleFallbackConfig};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
+
+#[doc(inline)]
+pub use icu_provider::fallback::*;
+
 
 mod algorithms;
 
