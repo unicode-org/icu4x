@@ -5,6 +5,7 @@
 // TODO: remove this
 #![allow(unused)]
 
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::{iter::Peekable, str::CharIndices};
 
@@ -15,7 +16,7 @@ use icu_collections::{
 use icu_properties::provider::*;
 use icu_properties::sets::{load_pattern_white_space, load_xid_continue, load_xid_start};
 use icu_provider::prelude::*;
-use icu_unicodeset_parser::VariableMap;
+use icu_unicodeset_parser::{VariableMap, VariableValue};
 
 /// The kind of error that occurred.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -39,6 +40,8 @@ pub enum ParseErrorKind {
     InvalidId,
     /// The provided number is invalid, which likely means it's too big.
     InvalidNumber,
+    /// Duplicate variable definition.
+    DuplicateVariable,
     /// Invalid UnicodeSet syntax. See `icu_unicodeset_parser`'s [`ParseError`](icu_unicodeset_parser::ParseError).
     UnicodeSetError(icu_unicodeset_parser::ParseError),
 }
@@ -197,10 +200,20 @@ pub(crate) enum Rule {
 
 type ParseVariableMap = HashMap<String, Section>;
 
+#[derive(Debug, Clone)]
+enum UsetVariableValue {
+    String(String),
+    UnicodeSet(UnicodeSet),
+}
+type UsetVariableMap = HashMap<String, UsetVariableValue>;
+
 struct TransliteratorParser<'a, 'b, P: ?Sized> {
     // TODO: if we also keep a reference to source we can pass that onto the UnicodeSet parser without allocating
     iter: &'a mut Peekable<CharIndices<'b>>,
     variable_map: ParseVariableMap,
+    // flattened variable map specifically for unicodesets, i.e., only contains variables that
+    // are chars, strings, or UnicodeSets when all variables are inlined.
+    uset_variable_map: UsetVariableMap,
     // cached set for the special set .
     dot_set: Option<UnicodeSet>,
     // for variable identifiers (XID Start, XID Continue)
@@ -325,6 +338,7 @@ where
         Self {
             iter,
             variable_map: Default::default(),
+            uset_variable_map: Default::default(),
             dot_set: None,
             xid_start,
             xid_continue,
@@ -504,9 +518,8 @@ where
         // <variable_ref> '=' <section> ';'           # variable rule
         // <half-rule> <direction> <half-rule> ';'    # conversion rule
 
-        let first_elt;
         // try parsing into a variable rule
-        if Self::VAR_PREFIX == self.must_peek_char()? {
+        let first_elt = if Self::VAR_PREFIX == self.must_peek_char()? {
             let elt = self.parse_variable_or_backref_or_anchor_end()?;
             self.skip_whitespace();
             if Self::VAR_DEF_OP == self.must_peek_char()? {
@@ -517,13 +530,15 @@ where
                 };
                 self.iter.next();
                 let section = self.parse_section(None)?;
+                let err_offset = self.must_peek_index()?;
                 self.consume(Self::RULE_END)?;
+                self.add_variable(var_name.clone(), section.clone(), err_offset);
                 return Ok(Rule::VariableDefinition(var_name, section));
             }
-            first_elt = Some(elt);
+            Some(elt)
         } else {
-            first_elt = None;
-        }
+            None
+        };
 
         // must be conversion rule
         let first_half = self.parse_half_rule(first_elt)?;
@@ -541,10 +556,7 @@ where
         let filter = self.try_parse_unicode_set()?;
         self.skip_whitespace();
         let basic_id = self.parse_basic_id()?;
-        Ok(SingleId {
-            filter,
-            basic_id,
-        })
+        Ok(SingleId { filter, basic_id })
     }
 
     fn try_parse_basic_id(&mut self) -> Result<Option<BasicId>> {
@@ -603,6 +615,7 @@ where
         if !self.xid_start.contains(first_c) {
             return Err(PEK::UnexpectedChar(first_c).with_offset(first_offset));
         }
+        self.iter.next();
         id.push(first_c);
 
         loop {
@@ -684,7 +697,7 @@ where
                     self.iter.next();
                     next_elt = Some(Element::UnicodeSet(self.get_dot_set()?));
                 }
-                c@(Self::OPTIONAL | Self::ZERO_OR_MORE | Self::ONE_OR_MORE) => {
+                c @ (Self::OPTIONAL | Self::ZERO_OR_MORE | Self::ONE_OR_MORE) => {
                     let quantifier = self.parse_quantifier_kind()?;
                     if let Some(elt) = prev_elt.take() {
                         next_elt = Some(Element::Quantifier(quantifier, Box::new(elt)));
@@ -703,7 +716,7 @@ where
                     if let Some(elt) = prev_elt.take() {
                         section.push(elt);
                     }
-                    break
+                    break;
                 }
                 _ => {
                     next_elt = Some(Element::Literal(self.parse_literal()?));
@@ -939,7 +952,9 @@ where
         match &self.dot_set {
             Some(set) => Ok(set.clone()),
             None => {
-                let set = self.unicode_set_from_str(Self::DOT_SET).map_err(|_| PEK::Internal)?;
+                let set = self
+                    .unicode_set_from_str(Self::DOT_SET)
+                    .map_err(|_| PEK::Internal)?;
                 self.dot_set = Some(set.clone());
                 Ok(set)
             }
@@ -947,7 +962,11 @@ where
     }
 
     fn unicode_set_from_str(&self, set: &str) -> Result<UnicodeSet> {
-        let set = icu_unicodeset_parser::parse_unstable(set, self.property_provider)?;
+        let set = icu_unicodeset_parser::parse_unstable_with_variables(
+            set,
+            &self.borrow_uset_variable_map(),
+            self.property_provider,
+        )?;
         Ok(set)
     }
 
@@ -994,6 +1013,66 @@ where
             return Err(PEK::UnexpectedChar(unexpected_char).with_offset(unexpected_offset));
         }
         Ok((result, end_offset))
+    }
+
+    fn add_variable(&mut self, name: String, value: Section, offset: usize) -> Result<()> {
+        if self.variable_map.contains_key(&name) {
+            return Err(PEK::DuplicateVariable.with_offset(offset));
+        }
+
+        if let Some(uset_value) = self.try_uset_flatten_section(&value) {
+            self.uset_variable_map.insert(name.to_string(), uset_value);
+        }
+
+        // TODO: actually, during parsing we might not need this one, only the flattened one
+        self.variable_map.insert(name, value);
+        Ok(())
+    }
+
+    fn try_uset_flatten_section(&self, section: &Section) -> Option<UsetVariableValue> {
+        // is this just a unicode set?
+        if let [Element::UnicodeSet(set)] = &section[..] {
+            return Some(UsetVariableValue::UnicodeSet(set.clone()));
+        }
+        // if it's just a variable that is already a valid uset variable, we return that
+        if let [Element::VariableRef(name)] = &section[..] {
+            if let Some(value) = self.uset_variable_map.get(name) {
+                return Some(value.clone());
+            }
+            return None;
+        }
+
+        // if not, must be a string literal
+        let mut combined_literal = String::new();
+        for elt in section {
+            match elt {
+                Element::Literal(s) => combined_literal.push_str(s),
+                Element::VariableRef(name) => {
+                    if let Some(UsetVariableValue::String(s)) = self.uset_variable_map.get(name) {
+                        combined_literal.push_str(s);
+                    } else {
+                        return None;
+                    }
+                }
+                _ => return None,
+            }
+        }
+        Some(UsetVariableValue::String(combined_literal))
+    }
+
+    fn borrow_uset_variable_map(&self) -> VariableMap {
+        let mut map = VariableMap::new();
+        for (name, value) in self.uset_variable_map.iter() {
+            match value {
+                UsetVariableValue::UnicodeSet(uset) => {
+                    map.insert_set(name.to_string(), uset.clone());
+                }
+                UsetVariableValue::String(s) => {
+                    map.insert_str(name.to_string(), s);
+                }
+            }
+        }
+        map
     }
 
     fn consume(&mut self, expected: char) -> Result<()> {
@@ -1071,7 +1150,19 @@ where
     }
 
     fn is_section_end(&self, c: char) -> bool {
-        matches!(c, Self::RULE_END | Self::OPEN_PAREN | Self::CLOSE_PAREN | Self::RIGHT_CONTEXT | Self::LEFT_CONTEXT | '<' | '>' | '→' | '←' | '↔')
+        matches!(
+            c,
+            Self::RULE_END
+                | Self::OPEN_PAREN
+                | Self::CLOSE_PAREN
+                | Self::RIGHT_CONTEXT
+                | Self::LEFT_CONTEXT
+                | '<'
+                | '>'
+                | '→'
+                | '←'
+                | '↔'
+        )
     }
 }
 
@@ -1200,6 +1291,11 @@ mod tests {
             r"$my_var = [a-z] ; $other_var = [A-Z] [b-z];",
             r"$my_var = [a-z] ; $other_var = $my_var + $2222;",
             r"$my_var = [a-z] ; $other_var = $my_var \+\ \$2222 \\ 'hello\';",
+            r"
+            $innerMinus = '-' ;
+            $minus = $innerMinus ;
+            $good_set = [a $minus z] ;
+            ",
         ];
 
         for source in sources {
