@@ -67,8 +67,6 @@
 mod error;
 mod registry;
 mod source;
-#[cfg(test)]
-mod testutil;
 mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
