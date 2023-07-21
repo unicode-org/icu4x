@@ -28,8 +28,6 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-dates-full/main/$LOCALES/timeZoneNames.json",
     "cldr-dates-full/main/cs/ca-gregorian.json",
     "cldr-dates-full/main/cs/timeZoneNames.json",
-    "cldr-dates-full/main/en-CA/ca-gregorian.json", // alt-variant in skeletons
-    "cldr-dates-full/main/en-CA/timeZoneNames.json", // required by en-CA/ca-gregorian.json
     "cldr-dates-full/main/haw/ca-gregorian.json",
     "cldr-dates-full/main/haw/timeZoneNames.json",
     "cldr-localenames-full/main/$LOCALES/languages.json",
