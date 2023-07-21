@@ -2,10 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// TODO: remove this
-#![allow(unused)]
-
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::{iter::Peekable, str::CharIndices};
 
@@ -16,7 +12,7 @@ use icu_collections::{
 use icu_properties::provider::*;
 use icu_properties::sets::{load_pattern_white_space, load_xid_continue, load_xid_start};
 use icu_provider::prelude::*;
-use icu_unicodeset_parser::{VariableMap, VariableValue};
+use icu_unicodeset_parser::VariableMap;
 
 /// The kind of error that occurred.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -519,6 +515,8 @@ where
         // <half-rule> <direction> <half-rule> ';'    # conversion rule
 
         // try parsing into a variable rule
+        eprintln!("here");
+
         let first_elt = if Self::VAR_PREFIX == self.must_peek_char()? {
             let elt = self.parse_variable_or_backref_or_anchor_end()?;
             self.skip_whitespace();
@@ -539,10 +537,16 @@ where
         } else {
             None
         };
+        eprintln!("here");
 
         // must be conversion rule
+        // passing down first_elt that was already parsed for the variable rule check
         let first_half = self.parse_half_rule(first_elt)?;
+        eprintln!("here");
+
         let dir = self.parse_direction()?;
+        eprintln!("here");
+
         let second_half = self.parse_half_rule(None)?;
         self.consume(Self::RULE_END)?;
         Ok(Rule::Conversion(first_half, dir, second_half))
@@ -637,8 +641,9 @@ where
         let ante;
         let key;
         let post;
-
+        eprintln!("before");
         let first = self.parse_section(prev_elt)?;
+        eprintln!("after");
         if Self::LEFT_CONTEXT == self.must_peek_char()? {
             self.iter.next();
             ante = first;
@@ -696,6 +701,7 @@ where
         loop {
             self.skip_whitespace();
             let c = self.must_peek_char()?;
+            eprintln!("next_char {c}");
             if self.is_section_end(c) {
                 if let Some(elt) = prev_elt.take() {
                     section.push(elt);
@@ -708,6 +714,7 @@ where
             if let Some(elt) = prev_elt {
                 section.push(elt);
             }
+            eprintln!("{:?}", section);
             prev_elt = Some(next_elt);
         }
 
@@ -744,10 +751,7 @@ where
             }
             Self::SET_START => Ok(Element::UnicodeSet(self.parse_unicode_set()?)),
             Self::OPEN_PAREN => {
-                self.iter.next();
-                let elt = Element::Segment(self.parse_section(None)?);
-                self.consume(Self::CLOSE_PAREN)?;
-                Ok(elt)
+                Ok(self.parse_segment()?)
             }
             Self::DOT => {
                 self.iter.next();
@@ -763,7 +767,8 @@ where
             }
             Self::FUNCTION_PREFIX => Ok(self.parse_function_call()?),
             Self::QUOTE => Ok(Element::Literal(self.parse_quoted_literal()?)),
-            _ => Ok(Element::Literal(self.parse_literal()?)),
+            c if self.is_valid_unquoted_literal(c) => Ok(Element::Literal(self.parse_literal()?)),
+            _ => self.unexpected_char_here(),
         }
     }
 
@@ -817,7 +822,7 @@ where
                 buf.push(self.parse_escaped_char()?);
                 continue;
             }
-            if !c.is_ascii_alphanumeric() {
+            if !self.is_valid_unquoted_literal(c) {
                 break;
             }
             self.iter.next();
@@ -918,7 +923,10 @@ where
     }
 
     fn parse_segment(&mut self) -> Result<Element> {
-        todo!()
+        self.consume(Self::OPEN_PAREN)?;
+        let elt = Element::Segment(self.parse_section(None)?);
+        self.consume(Self::CLOSE_PAREN)?;
+        Ok(elt)
     }
 
     fn try_parse_unicode_set(&mut self) -> Result<Option<UnicodeSet>> {
@@ -1140,13 +1148,6 @@ where
         self.iter.peek().copied().ok_or(PEK::Eof.into())
     }
 
-    // must_peek, but looks two chars ahead. use sparingly
-    fn must_peek_double(&mut self) -> Result<(usize, char)> {
-        let mut copy = self.iter.clone();
-        copy.next();
-        copy.next().ok_or(PEK::Eof.into())
-    }
-
     // see must_peek
     fn must_peek_char(&mut self) -> Result<char> {
         self.must_peek().map(|(_, c)| c)
@@ -1169,12 +1170,19 @@ where
                 | Self::CLOSE_PAREN
                 | Self::RIGHT_CONTEXT
                 | Self::LEFT_CONTEXT
+                | Self::VAR_DEF_OP
                 | '<'
                 | '>'
                 | '→'
                 | '←'
                 | '↔'
         )
+    }
+
+    fn is_valid_unquoted_literal(&self, c: char) -> bool {
+        // allowing \ since it's used for escapes, which are allowed in an unquoted context
+        c.is_ascii() && (c.is_ascii_alphanumeric() || c == '\\')
+            || (!c.is_ascii() && c != '→' && c != '←' && c != '↔')
     }
 }
 
@@ -1297,9 +1305,57 @@ mod tests {
     }
 
     #[test]
+    fn test_conversion_rules_ok() {
+        let sources = [
+            r"a > b ;",
+            r"a < b ;",
+            r"a <> b ;",
+            r"a → b ;",
+            r"a ← b ;",
+            r"a ↔ b ;",
+            r"a \> > b ;",
+            r"a \→ > b ;",
+            r"{ a > b ;",
+            r"{ a } > b ;",
+            r"{ a } > { b ;",
+            r"{ a } > { b } ;",
+            r"^ pre [a-z] { a } post [$] $ > ^ [$] pre { b [b-z] } post $ ;",
+            r"[äöü] > ;",
+            r"([äöü]) > &Remove($1) ;",
+            r"[äöü] { ([äöü]+) > &Remove($1) ;",
+        ];
+
+        for source in sources {
+            if let Err(e) = parse(source) {
+                panic!("Failed to parse {:?}: {:?}", source, e);
+            }
+        }
+    }
+
+    #[test]
+    fn test_conversion_rules_err() {
+        let sources = [
+            r"a > > b ;",
+            r"a >< b ;",
+            r"(a > b) > b ;",
+            r"a \← b ;",
+            r"a ↔ { b > } ;",
+            r"a ↔ { b > } ;",
+            r"a > b",
+        ];
+
+        for source in sources {
+            if let Ok(rules) = parse(source) {
+                panic!("Parsed invalid source {:?}: {:?}", source, rules);
+            }
+        }
+    }
+
+    #[test]
     fn test_variable_rules_ok() {
         let sources = [
             r" $my_var = [a-z] ;",
+            r"$my_var = äüöÜ ;",
             r"$my_var = [a-z] literal ; $other_var = [A-Z] [b-z];",
             r"$my_var = [a-z] ; $other_var = [A-Z] [b-z];",
             r"$my_var = [a-z] ; $other_var = $my_var + $2222;",
@@ -1314,6 +1370,22 @@ mod tests {
         for source in sources {
             if let Err(e) = parse(source) {
                 panic!("Failed to parse {:?}: {:?}", source, e);
+            }
+        }
+    }
+
+    #[test]
+    fn test_variable_rules_err() {
+        let sources = [
+            r" $ my_var = a ;",
+            r" $my_var = a_2 ;",
+            r"$my_var 2 = [a-z] literal ;",
+            r"$my_var = [$doesnt_exist] ;",
+        ];
+
+        for source in sources {
+            if let Ok(rules) = parse(source) {
+                panic!("Parsed invalid source {:?}: {:?}", source, rules);
             }
         }
     }
