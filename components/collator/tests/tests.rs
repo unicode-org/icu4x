@@ -434,7 +434,7 @@ fn test_ja_tertiary() {
     options.case_level = Some(CaseLevel::On);
 
     {
-        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
 }
@@ -449,7 +449,7 @@ fn test_ja_base() {
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Primary);
 
-    let collator = Collator::try_new(&locale.into(), options).unwrap();
+    let collator = Collator::try_new(&locale, options).unwrap();
     let mut case_iter = cases.iter();
     while let Some(lower) = case_iter.next() {
         let tail = case_iter.clone();
@@ -469,7 +469,7 @@ fn test_ja_plain_dakuten_handakuten() {
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Secondary);
 
-    let collator = Collator::try_new(&locale.into(), options).unwrap();
+    let collator = Collator::try_new(&locale, options).unwrap();
     let mut case_iter = cases.iter();
     while let Some(lower) = case_iter.next() {
         let tail = case_iter.clone();
@@ -490,7 +490,7 @@ fn test_ja_small_large() {
     options.strength = Some(Strength::Tertiary);
     options.case_level = Some(CaseLevel::On);
 
-    let collator = Collator::try_new(&locale.into(), options).unwrap();
+    let collator = Collator::try_new(&locale, options).unwrap();
     let mut case_iter = cases.iter();
     while let Some(lower) = case_iter.next() {
         let tail = case_iter.clone();
@@ -511,7 +511,7 @@ fn test_ja_hiragana_katakana() {
     options.strength = Some(Strength::Quaternary);
     options.case_level = Some(CaseLevel::On);
 
-    let collator = Collator::try_new(&locale.into(), options).unwrap();
+    let collator = Collator::try_new(&locale, options).unwrap();
     let mut case_iter = cases.iter();
     while let Some(lower) = case_iter.next() {
         let tail = case_iter.clone();
@@ -537,7 +537,7 @@ fn test_ja_hiragana_katakana_utf16() {
     options.strength = Some(Strength::Quaternary);
     options.case_level = Some(CaseLevel::On);
 
-    let collator = Collator::try_new(&locale.into(), options).unwrap();
+    let collator = Collator::try_new(&locale, options).unwrap();
     let mut case_iter = cases.iter();
     while let Some(lower) = case_iter.next() {
         let tail = case_iter.clone();
@@ -570,7 +570,7 @@ fn test_ja_chooon_kigoo() {
     options.strength = Some(Strength::Quaternary);
     options.case_level = Some(CaseLevel::On);
 
-    let collator = Collator::try_new(&locale.into(), options).unwrap();
+    let collator = Collator::try_new(&locale, options).unwrap();
     let mut case_iter = cases.iter();
     while let Some(lower) = case_iter.next() {
         let tail = case_iter.clone();
@@ -611,7 +611,7 @@ fn test_reordering() {
     }
 
     {
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("অ", "a"), Ordering::Less);
         assert_eq!(collator.compare("ऄ", "a"), Ordering::Less);
         assert_eq!(collator.compare("অ", "ऄ"), Ordering::Less);
@@ -637,7 +637,7 @@ fn test_zh() {
     }
     {
         let locale: DataLocale = langid!("zh").into(); // Defaults to -u-co-pinyin
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
@@ -746,7 +746,7 @@ fn test_es_tertiary() {
     options.strength = Some(Strength::Tertiary);
 
     {
-        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
 }
@@ -768,7 +768,7 @@ fn test_es_primary() {
     options.strength = Some(Strength::Primary);
 
     {
-        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
 }
@@ -796,7 +796,7 @@ fn test_th_dictionary() {
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Quaternary);
 
-    let collator = Collator::try_new(&locale.into(), options).unwrap();
+    let collator = Collator::try_new(&locale, options).unwrap();
     let mut lines = dict.lines();
     let mut prev = loop {
         if let Some(line) = lines.next() {
@@ -879,7 +879,7 @@ fn test_th_corner_cases() {
     let locale: DataLocale = langid!("th").into();
     {
         // TODO(#2013): Check why the commented-out cases fail
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
 }
@@ -920,7 +920,7 @@ fn test_th_reordering() {
     options.strength = Some(Strength::Secondary);
 
     {
-        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
 }
@@ -946,7 +946,7 @@ fn test_tr_tertiary() {
     options.strength = Some(Strength::Tertiary);
 
     {
-        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
 }
@@ -963,7 +963,7 @@ fn test_tr_primary() {
     options.strength = Some(Strength::Tertiary);
 
     {
-        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
 }
@@ -998,7 +998,7 @@ fn test_lt_tertiary() {
     options.strength = Some(Strength::Tertiary);
 
     {
-        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
 }
@@ -1015,7 +1015,7 @@ fn test_lt_primary() {
     options.strength = Some(Strength::Primary);
 
     {
-        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
 }
