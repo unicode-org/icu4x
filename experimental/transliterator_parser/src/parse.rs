@@ -694,59 +694,21 @@ where
         let mut prev_elt = prev_elt;
 
         loop {
-            let next_elt;
             self.skip_whitespace();
-            match self.must_peek_char()? {
-                Self::VAR_PREFIX => {
-                    let elt = self.parse_variable_or_backref_or_anchor_end()?;
-                    next_elt = Some(elt);
+            let c = self.must_peek_char()?;
+            if self.is_section_end(c) {
+                if let Some(elt) = prev_elt.take() {
+                    section.push(elt);
                 }
-                Self::ANCHOR_START => {
-                    self.iter.next();
-                    next_elt = Some(Element::AnchorStart);
-                }
-                Self::SET_START => {
-                    next_elt = Some(Element::UnicodeSet(self.parse_unicode_set()?));
-                }
-                Self::OPEN_PAREN => {
-                    self.iter.next();
-                    next_elt = Some(Element::Segment(self.parse_section(None)?));
-                    self.consume(Self::CLOSE_PAREN)?;
-                }
-                Self::DOT => {
-                    self.iter.next();
-                    next_elt = Some(Element::UnicodeSet(self.get_dot_set()?));
-                }
-                c @ (Self::OPTIONAL | Self::ZERO_OR_MORE | Self::ONE_OR_MORE) => {
-                    let quantifier = self.parse_quantifier_kind()?;
-                    if let Some(elt) = prev_elt.take() {
-                        next_elt = Some(Element::Quantifier(quantifier, Box::new(elt)));
-                    } else {
-                        return self.unexpected_char_here();
-                    }
-                }
-                Self::FUNCTION_PREFIX => {
-                    next_elt = Some(self.parse_function_call()?);
-                }
-                Self::QUOTE => {
-                    next_elt = Some(Element::Literal(self.parse_quoted_literal()?));
-                }
-                // done parsing this section
-                c if self.is_section_end(c) => {
-                    if let Some(elt) = prev_elt.take() {
-                        section.push(elt);
-                    }
-                    break;
-                }
-                _ => {
-                    next_elt = Some(Element::Literal(self.parse_literal()?));
-                }
+                break;
             }
+
+            let next_elt = self.parse_element(&mut prev_elt)?;
 
             if let Some(elt) = prev_elt {
                 section.push(elt);
             }
-            prev_elt = next_elt;
+            prev_elt = Some(next_elt);
         }
 
         Ok(section)
@@ -770,8 +732,39 @@ where
         }
     }
 
-    fn parse_element(&mut self) -> Result<Element> {
-        todo!()
+    fn parse_element(&mut self, prev_elt: &mut Option<Element>) -> Result<Element> {
+        match self.must_peek_char()? {
+            Self::VAR_PREFIX => {
+                let elt = self.parse_variable_or_backref_or_anchor_end()?;
+                Ok(elt)
+            }
+            Self::ANCHOR_START => {
+                self.iter.next();
+                Ok(Element::AnchorStart)
+            }
+            Self::SET_START => Ok(Element::UnicodeSet(self.parse_unicode_set()?)),
+            Self::OPEN_PAREN => {
+                self.iter.next();
+                let elt = Element::Segment(self.parse_section(None)?);
+                self.consume(Self::CLOSE_PAREN)?;
+                Ok(elt)
+            }
+            Self::DOT => {
+                self.iter.next();
+                Ok(Element::UnicodeSet(self.get_dot_set()?))
+            }
+            c @ (Self::OPTIONAL | Self::ZERO_OR_MORE | Self::ONE_OR_MORE) => {
+                let quantifier = self.parse_quantifier_kind()?;
+                if let Some(elt) = prev_elt.take() {
+                    Ok(Element::Quantifier(quantifier, Box::new(elt)))
+                } else {
+                    self.unexpected_char_here()
+                }
+            }
+            Self::FUNCTION_PREFIX => Ok(self.parse_function_call()?),
+            Self::QUOTE => Ok(Element::Literal(self.parse_quoted_literal()?)),
+            _ => Ok(Element::Literal(self.parse_literal()?)),
+        }
     }
 
     fn parse_variable_or_backref_or_anchor_end(&mut self) -> Result<Element> {
@@ -1173,7 +1166,6 @@ where
         matches!(
             c,
             Self::RULE_END
-                | Self::OPEN_PAREN
                 | Self::CLOSE_PAREN
                 | Self::RIGHT_CONTEXT
                 | Self::LEFT_CONTEXT
@@ -1291,6 +1283,8 @@ mod tests {
         target < source ;
         # contexts can be empty
         { 'source-or-target' } <> { 'target-or-source' } ;
+
+        (nested (sections)+ are () so fun) > ;
 
         . > ;
 
