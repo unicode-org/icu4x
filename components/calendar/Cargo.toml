@@ -83,6 +83,10 @@ harness = false
 name = "convert"
 harness = false
 
+[[bench]]
+name = "chinese_based"
+harness = false
+
 [[example]]
 name = "iso_date_manipulations"
 

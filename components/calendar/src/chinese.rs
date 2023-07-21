@@ -967,4 +967,17 @@ mod test {
             );
         }
     }
+
+    #[test]
+    fn test_iso_chinese_roundtrip() {
+        for i in -1000..=1000 {
+            let year = i;
+            let month = i as u8 % 12 + 1;
+            let day = i as u8 % 28 + 1;
+            let iso = Date::try_new_iso_date(year, month, day).unwrap();
+            let chinese = iso.to_calendar(Chinese);
+            let result = chinese.to_calendar(Iso);
+            assert_eq!(iso, result, "ISO to Chinese roundtrip failed!\nIso: {iso:?}\nChinese: {chinese:?}\nResult: {result:?}");
+        }
+    }
 }
