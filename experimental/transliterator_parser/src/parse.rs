@@ -1107,6 +1107,7 @@ where
         Some(UsetVariableValue::String(combined_literal))
     }
 
+    // TODO: Rewrite to avoid constructing a VariableMap constantly
     fn borrow_uset_variable_map(&self) -> VariableMap {
         let mut map = VariableMap::new();
         for (name, value) in self.uset_variable_map.iter() {
