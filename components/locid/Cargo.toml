@@ -47,7 +47,6 @@ litemap = { path = "../../utils/litemap", features = ["testing"]}
 postcard = { version = "1.0.0", default-features = false, features = ["use-std"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-icu_locid_transform = { path = "../locid_transform", version = "1.2" }
 
 [features]
 std = []
