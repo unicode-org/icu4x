@@ -810,8 +810,74 @@ where
     }
 
     // parses all supported escapes. code is somewhat duplicated from icu_unicodeset_parser
+    // but multi-escapes are not supported
     fn parse_escaped_char(&mut self) -> Result<char> {
-        todo!()
+        self.consume(Self::ESCAPE)?;
+
+        let (offset, next_char) = self.must_next()?;
+
+        match next_char {
+            'u' | 'x' if self.peek_char() == Some('{') => {
+                // bracketedHex
+                self.iter.next();
+                self.skip_whitespace();
+                let (hex_digits, end_offset) = self.parse_variable_length_hex()?;
+                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                let c =
+                    char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
+                self.skip_whitespace();
+                self.consume('}')?;
+                Ok(c)
+            }
+            'u' => {
+                // 'u' hex{4}
+                let exact: [char; 4] = self.parse_exact_hex_digits()?;
+                let hex_digits = exact.iter().collect::<String>();
+                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+            }
+            'x' => {
+                // 'x' hex{2}
+                let exact: [char; 2] = self.parse_exact_hex_digits()?;
+                let hex_digits = exact.iter().collect::<String>();
+                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+            }
+            'U' => {
+                // 'U00' ('0' hex{5} | '10' hex{4})
+                self.consume('0')?;
+                self.consume('0')?;
+                let hex_digits = match self.must_peek_char()? {
+                    '0' => {
+                        self.iter.next();
+                        let exact: [char; 5] = self.parse_exact_hex_digits()?;
+                        exact.iter().collect::<String>()
+                    }
+                    '1' => {
+                        self.iter.next();
+                        self.consume('0')?;
+                        let exact: [char; 4] = self.parse_exact_hex_digits()?;
+                        ['1', '0'].iter().chain(exact.iter()).collect::<String>()
+                    }
+                    _ => return self.unexpected_char_here(),
+                };
+                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
+                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+            }
+            'N' => {
+                // parse code point with name in {}
+                // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
+                Err(PEK::Unimplemented.with_offset(offset))
+            }
+            'a' => Ok('\u{0007}'),
+            'b' => Ok('\u{0008}'),
+            't' => Ok('\u{0009}'),
+            'n' => Ok('\u{000A}'),
+            'v' => Ok('\u{000B}'),
+            'f' => Ok('\u{000C}'),
+            'r' => Ok('\u{000D}'),
+            _ => Ok(next_char),
+        }
     }
 
     fn parse_segment(&mut self) -> Result<Element> {
@@ -826,24 +892,30 @@ where
     }
 
     fn parse_unicode_set(&mut self) -> Result<UnicodeSet> {
+        // TODO: we should really have a mechanism to allow the unicodeset parser to take over,
+        //  and continue where it left off
+
         let mut set = String::new();
         self.consume('[')?;
         set.push('[');
 
         let mut depth = 1;
         let mut escaped = false;
+        let mut inside_curly = false;
 
         loop {
             let c = self.must_next_char()?;
             set.push(c);
             match c {
-                '[' if !escaped => depth += 1,
-                ']' if !escaped => {
+                '[' if !escaped && !inside_curly => depth += 1,
+                ']' if !escaped && !inside_curly => {
                     depth -= 1;
                     if depth == 0 {
                         break;
                     }
                 }
+                '{' if !escaped => inside_curly = true,
+                '}' if !escaped && inside_curly => inside_curly = false,
                 '\\' if !escaped => escaped = true,
                 _ => escaped = false,
             }
@@ -870,6 +942,38 @@ where
 
     fn parse_function_call(&mut self) -> Result<Element> {
         todo!()
+    }
+
+    // parses [0-9a-fA-F]{N}
+    fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[char; N]> {
+        let mut result = [0 as char; N];
+        for slot in result.iter_mut() {
+            let (offset, c) = self.must_next()?;
+            if !c.is_ascii_hexdigit() {
+                return Err(PEK::UnexpectedChar(c).with_offset(offset));
+            }
+            *slot = c;
+        }
+        Ok(result)
+    }
+
+    // parses [0-9a-fA-F]{1..6}
+    fn parse_variable_length_hex(&mut self) -> Result<(String, usize)> {
+        let mut result = String::new();
+        let mut end_offset = 0;
+        while let Some(&(offset, c)) = self.iter.peek() {
+            if result.len() >= 6 || !c.is_ascii_hexdigit() {
+                break;
+            }
+            result.push(c);
+            end_offset = offset;
+            self.iter.next();
+        }
+        if result.is_empty() {
+            let (unexpected_offset, unexpected_char) = self.must_peek()?;
+            return Err(PEK::UnexpectedChar(unexpected_char).with_offset(unexpected_offset));
+        }
+        Ok((result, end_offset))
     }
 
     fn consume(&mut self, expected: char) -> Result<()> {
@@ -1040,12 +1144,37 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_full() {
+        let source = r##"
+        :: [a-z\]] ; :: [b-z] Latin/BGN ;
+        :: Source-Target/Variant () ;::([b-z]Target-Source/Variant) ;
+        :: [a-z] Any ([b-z] Target-Source/Variant);
+
+        $my_var = an arbitrary section ',' some quantifiers *+? 'and other variables: $var' $var  ;
+        $innerMinus = '-' ;
+        $minus = $innerMinus ;
+        $good_set = [a $minus z] ;
+
+        ^ (start) { key ' key '+ $good_set } > $1 }  post\-context$;
+        # contexts are optional
+        target < source ;
+        # contexts can be empty
+        { 'source-or-target' } <> { 'target-or-source' } ;
+
+        . > ;
+
+        :: ([{Inverse]-filter}] ;
+        "##;
+    }
+
+    #[test]
     fn test_variable_rules_ok() {
         let sources = [
             r" $my_var = [a-z] ;",
             r"$my_var = [a-z] literal ; $other_var = [A-Z] [b-z];",
             r"$my_var = [a-z] ; $other_var = [A-Z] [b-z];",
             r"$my_var = [a-z] ; $other_var = $my_var + $2222;",
+            r"$my_var = [a-z] ; $other_var = $my_var \+\ \$2222 \\ 'hello\';",
         ];
 
         for source in sources {
@@ -1059,6 +1188,9 @@ mod tests {
     fn test_global_filters_ok() {
         let sources = [
             r":: [^\[$] ;",
+            r":: [^\[${[}] ;",
+            r":: [^\[${]}] ;",
+            r":: [^\[${]\}]}] ;",
             r":: ([^\[$]) ;",
             r":: ( [^\[$] ) ;",
             r":: [^[a-z[]][]] ;",
