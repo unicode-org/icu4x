@@ -30,9 +30,5 @@ icu_properties = { path = "../../components/properties", default-features = fals
 icu_provider = { path = "../../provider/core" }
 icu_unicodeset_parser = { path = "../unicodeset_parser" }
 
-tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec",  features = ["yoke"] }
-log = "0.4"
-
 [features]
 compiled_data = ["icu_properties/compiled_data"]

@@ -1938,9 +1938,6 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_unicodeset_parser",
- "log",
- "tinystr",
- "zerovec",
 ]
 
 [[package]]
