@@ -673,7 +673,7 @@ fn test_keys_from_file() {
     assert_eq!(
         keys_from_file(concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/tests/data/work_log+keys.txt"
+            "/tests/data/tutorial_buffer+keys.txt"
         ))
         .unwrap(),
         vec![
@@ -689,13 +689,12 @@ fn test_keys_from_file() {
 
 #[test]
 fn test_keys_from_bin() {
-    // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::small_buffer`
-    // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
-    // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
+    // File obtained by running
+    // cargo +nightly --config docs/tutorials/testing/patch.toml build -p tutorial_buffer --target wasm32-unknown-unknown --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --manifest-path docs/tutorials/crates/buffer/Cargo.toml && cp docs/tutorials/target/wasm32-unknown-unknown/release/tutorial_buffer.wasm provider/datagen/tests/data/
     assert_eq!(
         keys_from_bin(concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/tests/data/work_log.wasm"
+            "/tests/data/tutorial_buffer.wasm"
         ))
         .unwrap(),
         vec![
