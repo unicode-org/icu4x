@@ -153,12 +153,8 @@ pub(crate) enum Element {
     // Example: &[a-z] Any-Remove(<element> <element> ...)
     // single id, function arguments
     FunctionCall(SingleId, Section),
-    // '|', only valid on the output side
-    // TODO: maybe model this the same way as in the prototype, i.e., the consecutive surrounding @
-    //  are represented by an integer
-    Cursor,
-    // '@', only valid on the output side
-    Placeholder,
+    // Example: @@@@ |, |@@@@
+    Cursor(u32, u32),
     // '^'
     AnchorStart,
     // '$'
@@ -325,6 +321,10 @@ where
     const QUOTE: char = '\'';
     // escape character
     const ESCAPE: char = '\\';
+    // cursor
+    const CURSOR: char = '|';
+    // before or after a cursor
+    const CURSOR_PLACEHOLDER: char = '@';
 
     fn new(
         iter: &'a mut Peekable<CharIndices<'b>>,
@@ -743,16 +743,13 @@ where
 
     fn parse_element(&mut self, prev_elt: &mut Option<Element>) -> Result<Element> {
         match self.must_peek_char()? {
-            Self::VAR_PREFIX => {
-                let elt = self.parse_variable_or_backref_or_anchor_end()?;
-                Ok(elt)
-            }
+            Self::VAR_PREFIX => self.parse_variable_or_backref_or_anchor_end(),
             Self::ANCHOR_START => {
                 self.iter.next();
                 Ok(Element::AnchorStart)
             }
             Self::SET_START => Ok(Element::UnicodeSet(self.parse_unicode_set()?)),
-            Self::OPEN_PAREN => Ok(self.parse_segment()?),
+            Self::OPEN_PAREN => self.parse_segment(),
             Self::DOT => {
                 self.iter.next();
                 Ok(Element::UnicodeSet(self.get_dot_set()?))
@@ -765,7 +762,8 @@ where
                     self.unexpected_char_here()
                 }
             }
-            Self::FUNCTION_PREFIX => Ok(self.parse_function_call()?),
+            Self::FUNCTION_PREFIX => self.parse_function_call(),
+            Self::CURSOR_PLACEHOLDER | Self::CURSOR => self.parse_cursor(),
             Self::QUOTE => Ok(Element::Literal(self.parse_quoted_literal()?)),
             c if self.is_valid_unquoted_literal(c) => Ok(Element::Literal(self.parse_literal()?)),
             _ => self.unexpected_char_here(),
@@ -1002,6 +1000,42 @@ where
         self.consume(Self::CLOSE_PAREN)?;
 
         Ok(Element::FunctionCall(single_id, section))
+    }
+
+    fn parse_cursor(&mut self) -> Result<Element> {
+        // Syntax:
+        // '@'* '|' '@'*
+
+        let mut num_pre = 0;
+        let mut num_post = 0;
+        // parse pre
+        loop {
+            self.skip_whitespace();
+            match self.must_peek_char()? {
+                Self::CURSOR_PLACEHOLDER => {
+                    self.iter.next();
+                    num_pre += 1;
+                }
+                Self::CURSOR => {
+                    self.iter.next();
+                    break;
+                }
+                _ => return self.unexpected_char_here(),
+            }
+        }
+        // parse post
+        loop {
+            self.skip_whitespace();
+            match self.must_peek_char()? {
+                Self::CURSOR_PLACEHOLDER => {
+                    self.iter.next();
+                    num_post += 1;
+                }
+                _ => break,
+            }
+        }
+
+        Ok(Element::Cursor(num_pre, num_post))
     }
 
     // parses [0-9a-fA-F]{N}
@@ -1324,6 +1358,7 @@ mod tests {
             r"([äöü]) > &Remove($1) ;",
             r"[äöü] { ([äöü]+) > &Remove($1) ;",
             r"|@@@ a <> b @@@@  @ | ;",
+            r"|a <> b ;",
         ];
 
         for source in sources {
@@ -1343,6 +1378,7 @@ mod tests {
             r"a ↔ { b > } ;",
             r"a ↔ { b > } ;",
             r"a > b",
+            r"@ a > b ;",
         ];
 
         for source in sources {
