@@ -15,6 +15,7 @@ use icu_collections::{
 use icu_properties::provider::*;
 use icu_properties::sets::{load_pattern_white_space, load_xid_continue, load_xid_start};
 use icu_provider::prelude::*;
+use icu_unicodeset_parser::VariableMap;
 
 /// The kind of error that occurred.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -536,7 +537,14 @@ where
         // Syntax:
         // <unicodeset>? <basic-id>
 
-        todo!()
+        self.skip_whitespace();
+        let filter = self.try_parse_unicode_set()?;
+        self.skip_whitespace();
+        let basic_id = self.parse_basic_id()?;
+        Ok(SingleId {
+            filter,
+            basic_id,
+        })
     }
 
     fn try_parse_basic_id(&mut self) -> Result<Option<BasicId>> {
@@ -683,6 +691,9 @@ where
                     } else {
                         return self.unexpected_char_here();
                     }
+                }
+                Self::FUNCTION_PREFIX => {
+                    next_elt = Some(self.parse_function_call()?);
                 }
                 Self::QUOTE => {
                     next_elt = Some(Element::Literal(self.parse_quoted_literal()?));
@@ -941,7 +952,16 @@ where
     }
 
     fn parse_function_call(&mut self) -> Result<Element> {
-        todo!()
+        self.consume(Self::FUNCTION_PREFIX)?;
+
+        // parse single-id
+        let single_id = self.parse_single_id()?;
+        self.skip_whitespace();
+        self.consume(Self::OPEN_PAREN)?;
+        let section = self.parse_section(None)?;
+        self.consume(Self::CLOSE_PAREN)?;
+
+        Ok(Element::FunctionCall(single_id, section))
     }
 
     // parses [0-9a-fA-F]{N}
@@ -1165,6 +1185,11 @@ mod tests {
 
         :: ([{Inverse]-filter}] ;
         "##;
+
+        let rules = match parse(source) {
+            Ok(rules) => rules,
+            Err(e) => panic!("Failed to parse {:?}: {:?}", source, e),
+        };
     }
 
     #[test]
@@ -1217,6 +1242,40 @@ mod tests {
             r":: [a$-^\]] ;",
             r":: ( [] [] ) ;",
             r":: () [] ;",
+        ];
+
+        for source in sources {
+            if let Ok(rules) = parse(source) {
+                panic!("Parsed invalid source {:?}: {:?}", source, rules);
+            }
+        }
+    }
+
+    #[test]
+    fn test_function_calls_ok() {
+        let sources = [
+            r"$fn = & Any-Any/Variant ($var literal 'quoted literal' $1) ;",
+            r"$fn = &[a-z] Any-Any/Variant ($var literal 'quoted literal' $1) ;",
+            r"$fn = &[a-z]Any-Any/Variant ($var literal 'quoted literal' $1) ;",
+            r"$fn = &[a-z]Any/Variant ($var literal 'quoted literal' $1) ;",
+            r"$fn = &Any/Variant ($var literal 'quoted literal' $1) ;",
+            r"$fn = &[a-z]Any ($var literal 'quoted literal' $1) ;",
+            r"$fn = &Any($var literal 'quoted literal' $1) ;",
+        ];
+
+        for source in sources {
+            if let Err(e) = parse(source) {
+                panic!("Failed to parse {:?}: {:?}", source, e);
+            }
+        }
+    }
+
+    #[test]
+    fn test_function_calls_err() {
+        let sources = [
+            r"$fn = &[a-z]($var literal 'quoted literal' $1) ;",
+            r"$fn = &[a-z] ($var literal 'quoted literal' $1) ;",
+            r"$fn = &($var literal 'quoted literal' $1) ;",
         ];
 
         for source in sources {
