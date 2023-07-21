@@ -154,6 +154,8 @@ pub(crate) enum Element {
     // single id, function arguments
     FunctionCall(SingleId, Section),
     // '|', only valid on the output side
+    // TODO: maybe model this the same way as in the prototype, i.e., the consecutive surrounding @
+    //  are represented by an integer
     Cursor,
     // '@', only valid on the output side
     Placeholder,
@@ -530,7 +532,7 @@ where
                 let section = self.parse_section(None)?;
                 let err_offset = self.must_peek_index()?;
                 self.consume(Self::RULE_END)?;
-                self.add_variable(var_name.clone(), section.clone(), err_offset);
+                self.add_variable(var_name.clone(), section.clone(), err_offset)?;
                 return Ok(Rule::VariableDefinition(var_name, section));
             }
             Some(elt)
@@ -579,7 +581,7 @@ where
 
         // we must have at least one identifier. the implicit "Null" id is only allowed
         // in a '::'-rule, which is handled explicitly.
-        let mut first_id = self.parse_unicode_identifier()?;
+        let first_id = self.parse_unicode_identifier()?;
 
         self.skip_whitespace();
         let second_id = self.try_parse_sep_and_unicode_identifier(Self::ID_SEP)?;
@@ -750,14 +752,12 @@ where
                 Ok(Element::AnchorStart)
             }
             Self::SET_START => Ok(Element::UnicodeSet(self.parse_unicode_set()?)),
-            Self::OPEN_PAREN => {
-                Ok(self.parse_segment()?)
-            }
+            Self::OPEN_PAREN => Ok(self.parse_segment()?),
             Self::DOT => {
                 self.iter.next();
                 Ok(Element::UnicodeSet(self.get_dot_set()?))
             }
-            c @ (Self::OPTIONAL | Self::ZERO_OR_MORE | Self::ONE_OR_MORE) => {
+            Self::OPTIONAL | Self::ZERO_OR_MORE | Self::ONE_OR_MORE => {
                 let quantifier = self.parse_quantifier_kind()?;
                 if let Some(elt) = prev_elt.take() {
                     Ok(Element::Quantifier(quantifier, Box::new(elt)))
@@ -1086,10 +1086,12 @@ where
         for (name, value) in self.uset_variable_map.iter() {
             match value {
                 UsetVariableValue::UnicodeSet(uset) => {
-                    map.insert_set(name.to_string(), uset.clone());
+                    // ignoring result because we keep track of duplicates ourselves
+                    let _ = map.insert_set(name.to_string(), uset.clone());
                 }
                 UsetVariableValue::String(s) => {
-                    map.insert_str(name.to_string(), s);
+                    // ignoring result because we keep track of duplicates ourselves
+                    let _ = map.insert_str(name.to_string(), s);
                 }
             }
         }
@@ -1127,10 +1129,6 @@ where
 
     fn peek_char(&mut self) -> Option<char> {
         self.iter.peek().map(|(_, c)| *c)
-    }
-
-    fn peek_offset(&mut self) -> Option<usize> {
-        self.iter.peek().map(|(i, _)| *i)
     }
 
     // use this whenever an empty iterator would imply an Eof error
@@ -1186,6 +1184,8 @@ where
     }
 }
 
+// used in tests
+#[allow(unused)]
 #[cfg(feature = "compiled_data")]
 pub(crate) fn parse(source: &str) -> Result<Vec<Rule>> {
     parse_unstable(source, &icu_properties::provider::Baked)
@@ -1323,6 +1323,7 @@ mod tests {
             r"[äöü] > ;",
             r"([äöü]) > &Remove($1) ;",
             r"[äöü] { ([äöü]+) > &Remove($1) ;",
+            r"|@@@ a <> b @@@@  @ | ;",
         ];
 
         for source in sources {
