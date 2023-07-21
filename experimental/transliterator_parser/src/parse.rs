@@ -53,6 +53,7 @@ impl ParseErrorKind {
 }
 
 /// The error type returned by the `parse` functions in this crate.
+#[allow(unused)] // TODO: remove when doing compilation
 #[derive(Debug, Clone, Copy)]
 pub struct ParseError {
     // offset is the index to an arbitrary byte in the last character in the source that makes sense
@@ -60,18 +61,6 @@ pub struct ParseError {
     // for an unknown property name the last character of the name.
     offset: Option<usize>,
     kind: ParseErrorKind,
-}
-
-impl ParseError {
-    fn or_with_offset(self, offset: usize) -> Self {
-        match self.offset {
-            Some(_) => self,
-            None => ParseError {
-                offset: Some(offset),
-                ..self
-            },
-        }
-    }
 }
 
 impl From<ParseErrorKind> for ParseError {
@@ -105,6 +94,7 @@ pub(crate) enum QuantifierKind {
 }
 
 // source-target/variant
+#[allow(unused)] // TODO: remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct BasicId {
     source: String,
@@ -123,6 +113,7 @@ impl Default for BasicId {
 }
 
 // [set] source-target/variant
+#[allow(unused)] // TODO: remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct SingleId {
     filter: Option<UnicodeSet>,
@@ -163,6 +154,7 @@ pub(crate) enum Element {
 
 type Section = Vec<Element>;
 
+#[allow(unused)] // TODO: remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct HalfRule {
     ante: Section,
