@@ -634,7 +634,27 @@ where
         // Syntax:
         // (<section> '{')? <section> ('}' <section>)?
 
-        todo!()
+        let ante;
+        let key;
+        let post;
+
+        let first = self.parse_section(prev_elt)?;
+        if Self::LEFT_CONTEXT == self.must_peek_char()? {
+            self.iter.next();
+            ante = first;
+            key = self.parse_section(None)?;
+        } else {
+            ante = vec![];
+            key = first;
+        }
+        if Self::RIGHT_CONTEXT == self.must_peek_char()? {
+            self.iter.next();
+            post = self.parse_section(None)?;
+        } else {
+            post = vec![];
+        }
+
+        Ok(HalfRule { ante, key, post })
     }
 
     fn parse_direction(&mut self) -> Result<Direction> {
@@ -1266,7 +1286,7 @@ mod tests {
         $minus = $innerMinus ;
         $good_set = [a $minus z] ;
 
-        ^ (start) { key ' key '+ $good_set } > $1 }  post\-context$;
+        ^ (start) { key ' key '+ $good_set } > $102 }  post\-context$;
         # contexts are optional
         target < source ;
         # contexts can be empty
@@ -1274,13 +1294,12 @@ mod tests {
 
         . > ;
 
-        :: ([{Inverse]-filter}] ;
+        :: ([{Inverse]-filter}]) ;
         "##;
 
-        let rules = match parse(source) {
-            Ok(rules) => rules,
-            Err(e) => panic!("Failed to parse {:?}: {:?}", source, e),
-        };
+        if let Err(e) = parse(source) {
+            panic!("Failed to parse {:?}: {:?}", source, e);
+        }
     }
 
     #[test]
