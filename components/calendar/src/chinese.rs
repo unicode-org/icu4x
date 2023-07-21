@@ -967,4 +967,10 @@ mod test {
             );
         }
     }
+
+    #[test]
+    fn beans() {
+        let fixed = RataDie::new(-1674257);
+        Inner::chinese_based_date_from_fixed(fixed);
+    }
 }

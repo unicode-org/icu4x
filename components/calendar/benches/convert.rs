@@ -33,12 +33,7 @@ fn bench_calendar<C: Copy + Calendar>(
 fn convert_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("convert");
 
-
-    bench_calendar(
-        &mut group,
-        "calendar/iso",
-        icu::calendar::iso::Iso,
-    );
+    bench_calendar(&mut group, "calendar/iso", icu::calendar::iso::Iso);
 
     #[cfg(feature = "bench")]
     bench_calendar(
@@ -48,11 +43,7 @@ fn convert_benches(c: &mut Criterion) {
     );
 
     #[cfg(feature = "bench")]
-    bench_calendar(
-        &mut group,
-        "calendar/coptic",
-        icu::calendar::coptic::Coptic,
-    );
+    bench_calendar(&mut group, "calendar/coptic", icu::calendar::coptic::Coptic);
 
     #[cfg(feature = "bench")]
     bench_calendar(
@@ -62,18 +53,10 @@ fn convert_benches(c: &mut Criterion) {
     );
 
     #[cfg(feature = "bench")]
-    bench_calendar(
-        &mut group,
-        "calendar/indian",
-        icu::calendar::indian::Indian,
-    );
+    bench_calendar(&mut group, "calendar/indian", icu::calendar::indian::Indian);
 
     #[cfg(feature = "bench")]
-    bench_calendar(
-        &mut group,
-        "calendar/julian",
-        icu::calendar::julian::Julian,
-    );
+    bench_calendar(&mut group, "calendar/julian", icu::calendar::julian::Julian);
 
     #[cfg(feature = "bench")]
     bench_calendar(
