@@ -20,8 +20,8 @@ use icu_segmenter::symbols::*;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
-mod dictionary;
-mod lstm;
+pub(crate) mod dictionary;
+pub(crate) mod lstm;
 
 // state machine name define by builtin name
 // [[tables]]
