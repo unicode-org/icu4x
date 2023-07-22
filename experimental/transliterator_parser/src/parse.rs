@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::HashMap;
+use std::borrow::Cow;
 use std::{iter::Peekable, str::CharIndices};
 
 use icu_collections::{
@@ -12,7 +12,7 @@ use icu_collections::{
 use icu_properties::provider::*;
 use icu_properties::sets::{load_pattern_white_space, load_xid_continue, load_xid_start};
 use icu_provider::prelude::*;
-use icu_unicodeset_parser::VariableMap;
+use icu_unicodeset_parser::{VariableMap, VariableValue};
 
 /// The kind of error that occurred.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -184,22 +184,12 @@ pub(crate) enum Rule {
     VariableDefinition(String, Section),
 }
 
-type ParseVariableMap = HashMap<String, Section>;
-
-#[derive(Debug, Clone)]
-enum UsetVariableValue {
-    String(String),
-    UnicodeSet(UnicodeSet),
-}
-type UsetVariableMap = HashMap<String, UsetVariableValue>;
-
 struct TransliteratorParser<'a, 'b, P: ?Sized> {
     // TODO: if we also keep a reference to source we can pass that onto the UnicodeSet parser without allocating
     iter: &'a mut Peekable<CharIndices<'b>>,
-    variable_map: ParseVariableMap,
     // flattened variable map specifically for unicodesets, i.e., only contains variables that
     // are chars, strings, or UnicodeSets when all variables are inlined.
-    uset_variable_map: UsetVariableMap,
+    variable_map: VariableMap<'static>,
     // cached set for the special set .
     dot_set: Option<UnicodeSet>,
     // for variable identifiers (XID Start, XID Continue)
@@ -328,7 +318,6 @@ where
         Self {
             iter,
             variable_map: Default::default(),
-            uset_variable_map: Default::default(),
             dot_set: None,
             xid_start,
             xid_continue,
@@ -975,7 +964,7 @@ where
     fn unicode_set_from_str(&self, set: &str) -> Result<UnicodeSet> {
         let set = icu_unicodeset_parser::parse_unstable_with_variables(
             set,
-            &self.borrow_uset_variable_map(),
+            &self.variable_map,
             self.property_provider,
         )?;
         Ok(set)
@@ -1063,27 +1052,24 @@ where
     }
 
     fn add_variable(&mut self, name: String, value: Section, offset: usize) -> Result<()> {
-        if self.variable_map.contains_key(&name) {
-            return Err(PEK::DuplicateVariable.with_offset(offset));
-        }
-
         if let Some(uset_value) = self.try_uset_flatten_section(&value) {
-            self.uset_variable_map.insert(name.to_string(), uset_value);
+            self.variable_map
+                .insert(name.to_string(), uset_value)
+                .map_err(|_| PEK::DuplicateVariable.with_offset(offset))?;
         }
-
-        // TODO: actually, during parsing we might not need this one, only the flattened one
-        self.variable_map.insert(name, value);
         Ok(())
     }
 
-    fn try_uset_flatten_section(&self, section: &Section) -> Option<UsetVariableValue> {
+    fn try_uset_flatten_section(&self, section: &Section) -> Option<VariableValue<'static>> {
+        // TODO: Could avoid some clones here if the VariableMap stored &T's (or both)
+
         // is this just a unicode set?
         if let [Element::UnicodeSet(set)] = &section[..] {
-            return Some(UsetVariableValue::UnicodeSet(set.clone()));
+            return Some(VariableValue::UnicodeSet(set.clone()));
         }
         // if it's just a variable that is already a valid uset variable, we return that
         if let [Element::VariableRef(name)] = &section[..] {
-            if let Some(value) = self.uset_variable_map.get(name) {
+            if let Some(value) = self.variable_map.get(name) {
                 return Some(value.clone());
             }
             return None;
@@ -1094,35 +1080,15 @@ where
         for elt in section {
             match elt {
                 Element::Literal(s) => combined_literal.push_str(s),
-                Element::VariableRef(name) => {
-                    if let Some(UsetVariableValue::String(s)) = self.uset_variable_map.get(name) {
-                        combined_literal.push_str(s);
-                    } else {
-                        return None;
-                    }
-                }
+                Element::VariableRef(name) => match self.variable_map.get(name) {
+                    Some(VariableValue::String(s)) => combined_literal.push_str(s),
+                    Some(VariableValue::Char(c)) => combined_literal.push(*c),
+                    _ => return None,
+                },
                 _ => return None,
             }
         }
-        Some(UsetVariableValue::String(combined_literal))
-    }
-
-    // TODO: Rewrite to avoid constructing a VariableMap constantly
-    fn borrow_uset_variable_map(&self) -> VariableMap {
-        let mut map = VariableMap::new();
-        for (name, value) in self.uset_variable_map.iter() {
-            match value {
-                UsetVariableValue::UnicodeSet(uset) => {
-                    // ignoring result because we keep track of duplicates ourselves
-                    let _ = map.insert_set(name.to_string(), uset.clone());
-                }
-                UsetVariableValue::String(s) => {
-                    // ignoring result because we keep track of duplicates ourselves
-                    let _ = map.insert_str(name.to_string(), s);
-                }
-            }
-        }
-        map
+        Some(VariableValue::String(Cow::Owned(combined_literal)))
     }
 
     fn consume(&mut self, expected: char) -> Result<()> {
