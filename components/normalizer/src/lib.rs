@@ -2241,7 +2241,7 @@ impl ComposingNormalizer {
         })
     }
 
-    /// See [`try_new_uts46_without_ignored_and_disallowed_unstable`].
+    /// See [`Self::try_new_uts46_without_ignored_and_disallowed_unstable`].
     #[cfg(all(feature = "experimental", feature = "compiled_data"))]
     pub const fn new_uts46_without_ignored_and_disallowed() -> Self {
         ComposingNormalizer {

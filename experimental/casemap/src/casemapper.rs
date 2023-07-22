@@ -136,7 +136,7 @@ impl CaseMapper {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::titlecase_to_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::titlecase_segment_to_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
     pub fn titlecase_segment<'a>(
         &'a self,
