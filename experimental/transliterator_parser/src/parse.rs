@@ -184,9 +184,9 @@ pub(crate) enum Rule {
     VariableDefinition(String, Section),
 }
 
-struct TransliteratorParser<'a, 'b, P: ?Sized> {
-    // TODO: if we also keep a reference to source we can pass that onto the UnicodeSet parser without allocating
-    iter: &'a mut Peekable<CharIndices<'b>>,
+struct TransliteratorParser<'a, P: ?Sized> {
+    iter: Peekable<CharIndices<'a>>,
+    source: &'a str,
     // flattened variable map specifically for unicodesets, i.e., only contains variables that
     // are chars, strings, or UnicodeSets when all variables are inlined.
     variable_map: VariableMap<'static>,
@@ -200,7 +200,7 @@ struct TransliteratorParser<'a, 'b, P: ?Sized> {
     property_provider: &'a P,
 }
 
-impl<'a, 'b, P> TransliteratorParser<'a, 'b, P>
+impl<'a, P> TransliteratorParser<'a, P>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -309,14 +309,15 @@ where
     const CURSOR_PLACEHOLDER: char = '@';
 
     fn new(
-        iter: &'a mut Peekable<CharIndices<'b>>,
+        source: &'a str,
         xid_start: &'a CodePointInversionList<'a>,
         xid_continue: &'a CodePointInversionList<'a>,
         pat_ws: &'a CodePointInversionList<'a>,
         provider: &'a P,
     ) -> Self {
         Self {
-            iter,
+            iter: source.char_indices().peekable(),
+            source,
             variable_map: Default::default(),
             dot_set: None,
             xid_start,
@@ -498,8 +499,6 @@ where
         // <half-rule> <direction> <half-rule> ';'    # conversion rule
 
         // try parsing into a variable rule
-        eprintln!("here");
-
         let first_elt = if Self::VAR_PREFIX == self.must_peek_char()? {
             let elt = self.parse_variable_or_backref_or_anchor_end()?;
             self.skip_whitespace();
@@ -520,15 +519,12 @@ where
         } else {
             None
         };
-        eprintln!("here");
 
         // must be conversion rule
         // passing down first_elt that was already parsed for the variable rule check
         let first_half = self.parse_half_rule(first_elt)?;
-        eprintln!("here");
 
         let dir = self.parse_direction()?;
-        eprintln!("here");
 
         let second_half = self.parse_half_rule(None)?;
         self.consume(Self::RULE_END)?;
@@ -624,9 +620,7 @@ where
         let ante;
         let key;
         let post;
-        eprintln!("before");
         let first = self.parse_section(prev_elt)?;
-        eprintln!("after");
         if Self::LEFT_CONTEXT == self.must_peek_char()? {
             self.iter.next();
             ante = first;
@@ -684,7 +678,6 @@ where
         loop {
             self.skip_whitespace();
             let c = self.must_peek_char()?;
-            eprintln!("next_char {c}");
             if self.is_section_end(c) {
                 if let Some(elt) = prev_elt.take() {
                     section.push(elt);
@@ -697,7 +690,6 @@ where
             if let Some(elt) = prev_elt {
                 section.push(elt);
             }
-            eprintln!("{:?}", section);
             prev_elt = Some(next_elt);
         }
 
@@ -919,40 +911,31 @@ where
         // TODO: we should really have a mechanism to allow the unicodeset parser to take over,
         //  and continue where it left off
 
-        let mut set = String::new();
-        self.consume('[')?;
-        set.push('[');
+        let pre_offset = self.must_peek_index()?;
+        // safety: pre_offset is a valid index because self.iter (used in must_peek_index)
+        // was created from self.source
+        #[allow(clippy::indexing_slicing)]
+        let set_source = &self.source[pre_offset..];
+        let (set, consumed_bytes) = self.unicode_set_from_str(set_source)?;
 
-        let mut depth = 1;
-        let mut escaped = false;
-        let mut inside_curly = false;
-
-        loop {
-            let c = self.must_next_char()?;
-            set.push(c);
-            match c {
-                '[' if !escaped && !inside_curly => depth += 1,
-                ']' if !escaped && !inside_curly => {
-                    depth -= 1;
-                    if depth == 0 {
-                        break;
-                    }
-                }
-                '{' if !escaped => inside_curly = true,
-                '}' if !escaped && inside_curly => inside_curly = false,
-                '\\' if !escaped => escaped = true,
-                _ => escaped = false,
+        // advance self.iter consumed_bytes bytes
+        while let Some(offset) = self.peek_index() {
+            // we can use equality because unicodeset_parser also lexes on char boundaries
+            // note: we must not consume this final token because it is the first non-consumed char
+            if offset == pre_offset + consumed_bytes {
+                break;
             }
+            self.iter.next();
         }
 
-        self.unicode_set_from_str(&set)
+        Ok(set)
     }
 
     fn get_dot_set(&mut self) -> Result<UnicodeSet> {
         match &self.dot_set {
             Some(set) => Ok(set.clone()),
             None => {
-                let set = self
+                let (set, _) = self
                     .unicode_set_from_str(Self::DOT_SET)
                     .map_err(|_| PEK::Internal)?;
                 self.dot_set = Some(set.clone());
@@ -961,13 +944,13 @@ where
         }
     }
 
-    fn unicode_set_from_str(&self, set: &str) -> Result<UnicodeSet> {
-        let set = icu_unicodeset_parser::parse_unstable_with_variables(
+    fn unicode_set_from_str(&self, set: &str) -> Result<(UnicodeSet, usize)> {
+        let (set, consumed_bytes) = icu_unicodeset_parser::parse_unstable_with_variables(
             set,
             &self.variable_map,
             self.property_provider,
         )?;
-        Ok(set)
+        Ok((set, consumed_bytes))
     }
 
     fn parse_function_call(&mut self) -> Result<Element> {
@@ -1124,6 +1107,10 @@ where
         self.iter.peek().map(|(_, c)| *c)
     }
 
+    fn peek_index(&mut self) -> Option<usize> {
+        self.iter.peek().map(|(idx, _)| *idx)
+    }
+
     // use this whenever an empty iterator would imply an Eof error
     fn must_next(&mut self) -> Result<(usize, char)> {
         self.iter.next().ok_or(PEK::Eof.into())
@@ -1243,8 +1230,6 @@ where
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
-    let mut iter = source.char_indices().peekable();
-
     let xid_start = load_xid_start(provider).map_err(|_| PEK::Internal)?;
     let xid_start_list = xid_start.to_code_point_inversion_list();
     let xid_continue = load_xid_continue(provider).map_err(|_| PEK::Internal)?;
@@ -1254,7 +1239,7 @@ where
     let pat_ws_list = pat_ws.to_code_point_inversion_list();
 
     let mut parser = TransliteratorParser::new(
-        &mut iter,
+        source,
         &xid_start_list,
         &xid_continue_list,
         &pat_ws_list,

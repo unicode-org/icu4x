@@ -1528,7 +1528,10 @@ where
         None => source.len(),
         Some((offset, _)) => offset,
     };
+<<<<<<< HEAD
+=======
 
+>>>>>>> 4a72d4386 (fmt)
     Ok((cpinvlistandstrlist, parsed_bytes))
 }
 
