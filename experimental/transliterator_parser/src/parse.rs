@@ -765,23 +765,27 @@ where
     }
 
     fn parse_number(&mut self) -> Result<u32> {
-        let mut buf = String::new();
         let (first_offset, first_c) = self.must_next()?;
         if !matches!(first_c, '1'..='9') {
             return Err(PEK::UnexpectedChar(first_c).with_offset(first_offset));
         }
-        buf.push(first_c);
+        // inclusive end offset
+        let mut end_offset = first_offset;
 
         loop {
-            let c = self.must_peek_char()?;
+            let (offset, c) = self.must_peek()?;
             if !c.is_ascii_digit() {
                 break;
             }
-            buf.push(c);
             self.iter.next();
+            end_offset = offset;
         }
 
-        buf.parse().map_err(|_| PEK::InvalidNumber.into())
+        // safety: first_offset is valid by `Chars`, and the inclusive end_offset
+        // is valid because we only set it to the indices of ASCII chars,
+        // which are all exactly 1 UTF-8 byte
+        #[allow(clippy::indexing_slicing)]
+        self.source[first_offset..=end_offset].parse().map_err(|_| PEK::InvalidNumber.into())
     }
 
     fn parse_literal(&mut self) -> Result<String> {
