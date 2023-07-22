@@ -394,7 +394,7 @@ where
             _ => {}
         }
 
-        // if this is not a global filter rule, this must be a transform rule
+        // if this is not a global (inverse) filter rule, this must be a transform rule
 
         // either forward_basic_id or reverse_basic_id must be nonempty
         if forward_basic_id.is_none() && reverse_basic_id.is_none() {
