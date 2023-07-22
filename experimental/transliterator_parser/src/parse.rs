@@ -785,7 +785,9 @@ where
         // is valid because we only set it to the indices of ASCII chars,
         // which are all exactly 1 UTF-8 byte
         #[allow(clippy::indexing_slicing)]
-        self.source[first_offset..=end_offset].parse().map_err(|_| PEK::InvalidNumber.into())
+        self.source[first_offset..=end_offset]
+            .parse()
+            .map_err(|_| PEK::InvalidNumber.with_offset(end_offset))
     }
 
     fn parse_literal(&mut self) -> Result<String> {
