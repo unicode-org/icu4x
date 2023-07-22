@@ -908,9 +908,6 @@ where
     }
 
     fn parse_unicode_set(&mut self) -> Result<UnicodeSet> {
-        // TODO: we should really have a mechanism to allow the unicodeset parser to take over,
-        //  and continue where it left off
-
         let pre_offset = self.must_peek_index()?;
         // safety: pre_offset is a valid index because self.iter (used in must_peek_index)
         // was created from self.source
