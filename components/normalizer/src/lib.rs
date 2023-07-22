@@ -1526,7 +1526,7 @@ pub struct DecomposingNormalizer {
 impl DecomposingNormalizer {
     /// NFD constructor.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -1604,7 +1604,7 @@ impl DecomposingNormalizer {
 
     /// NFKD constructor.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -2145,7 +2145,7 @@ pub struct ComposingNormalizer {
 impl ComposingNormalizer {
     /// NFC constructor.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -2193,7 +2193,7 @@ impl ComposingNormalizer {
 
     /// NFKC constructor.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

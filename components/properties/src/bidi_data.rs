@@ -182,7 +182,7 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
 /// assert_eq!(open_paren.mirrored, true);
 /// ```
 ///
-/// ✨ **Enabled with the `"compiled_data"` feature.**
+/// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
 #[cfg(feature = "compiled_data")]
 pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'static> {
     BidiAuxiliaryPropertiesBorrowed {

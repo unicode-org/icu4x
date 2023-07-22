@@ -97,7 +97,7 @@ impl DateFormatter {
     /// );
     /// ```
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[inline(never)]

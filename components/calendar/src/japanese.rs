@@ -112,7 +112,7 @@ pub struct JapaneseDateInner {
 impl Japanese {
     /// Creates a new [`Japanese`] using only modern eras (post-meiji).
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -169,7 +169,7 @@ impl Japanese {
 impl JapaneseExtended {
     /// Creates a new [`Japanese`] from using all eras (including pre-meiji).
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

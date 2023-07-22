@@ -291,7 +291,7 @@ pub struct LocaleFallbackIterator<'a, 'b> {
 impl LocaleFallbacker {
     /// Creates a [`LocaleFallbacker`] with fallback data (likely subtags and parent locales).
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

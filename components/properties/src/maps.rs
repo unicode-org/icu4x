@@ -326,7 +326,7 @@ macro_rules! make_map_property {
         }
         $(#[$doc])*
         ///
-        /// ✨ **Enabled with the `"compiled_data"` feature.**
+        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
         #[cfg(feature = "compiled_data")]
         pub const fn $constname() -> CodePointMapDataBorrowed<'static, $value_ty> {
             CodePointMapDataBorrowed {

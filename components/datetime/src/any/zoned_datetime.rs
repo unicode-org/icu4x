@@ -164,7 +164,7 @@ impl ZonedDateTimeFormatter {
     /// );
     /// ```
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "experimental")]
@@ -308,7 +308,7 @@ impl ZonedDateTimeFormatter {
     /// );
     /// ```
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
