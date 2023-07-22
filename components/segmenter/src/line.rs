@@ -242,7 +242,7 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_auto_with_options`].
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` and `"auto"` Cargo features.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -266,7 +266,7 @@ impl LineSegmenter {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_auto)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
     #[cfg(feature = "auto")]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
@@ -286,7 +286,7 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_lstm_with_options`].
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` and `"lstm"` Cargo features.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -330,7 +330,7 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_dictionary_with_options`].
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -370,7 +370,7 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_auto`].
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` and `"auto"` Cargo features.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "auto")]
@@ -417,7 +417,7 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_dictionary`].
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` and `"lstm"` Cargo features.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "lstm")]
@@ -474,7 +474,7 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_dictionary`].
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

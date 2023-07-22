@@ -143,7 +143,7 @@ impl Default for GraphemeClusterSegmenter {
 impl GraphemeClusterSegmenter {
     /// Constructs a [`GraphemeClusterSegmenter`] with an invariant locale.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
