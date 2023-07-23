@@ -3,8 +3,8 @@ Graduating Components from Experimental
 
 This document contains a checklist for the requirements to migrate a component from experimental.
 
-- [ ] The crate should fully conform with the [ICU4X Style Guide](style_guide.md):
-  - [ ] The crate should have a complete library header as shown in [boilerplate.md](boilerplate.md) with Clippy passing
+- [ ] The crate should fully conform with the [ICU4X Style Guide](https://github.com/unicode-org/icu4x/blob/main/docs/process/style_guide.md):
+  - [ ] The crate should have a complete library header as shown in [boilerplate.md](https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md) with Clippy passing
   - [ ] The names of exported types should conform to the recommendations in the Style Guide
   - [ ] All Error types should be `Copy`
   - [ ] All constructors should take options structs by value
