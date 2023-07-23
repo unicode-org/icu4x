@@ -343,7 +343,9 @@ enum MainToken<'data> {
 impl<'data> MainToken<'data> {
     fn from_variable_value(val: VariableValue<'data>) -> Self {
         match val {
-            VariableValue::Char(c) => MainToken::Literal(Literal::CharKind(SingleOrMultiChar::Single(c))),
+            VariableValue::Char(c) => {
+                MainToken::Literal(Literal::CharKind(SingleOrMultiChar::Single(c)))
+            }
             VariableValue::String(s) => {
                 // we know that the VariableMap only contains non-length-1 Strings.
                 MainToken::Literal(Literal::String(s.into_owned()))
@@ -547,8 +549,8 @@ where
 
             let (tok_offset, from_var, tok) = self.parse_main_token()?;
 
-            use SingleOrMultiChar as SMC;
             use MainToken as MT;
+            use SingleOrMultiChar as SMC;
             match (state, tok) {
                 // the end of this unicode set
                 (
@@ -590,8 +592,10 @@ where
                     state = AfterUnicodeSet;
                 }
                 // a literal char (either individually or as the start of a range if char)
-                (Begin | Char | AfterUnicodeSet, MT::Literal(Literal::CharKind(SMC::Single(c)))) =>
-                {
+                (
+                    Begin | Char | AfterUnicodeSet,
+                    MT::Literal(Literal::CharKind(SMC::Single(c))),
+                ) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
@@ -599,7 +603,10 @@ where
                     state = Char;
                 }
                 // a bunch of literal chars as part of a multi-escape sequence
-                (Begin | Char | AfterUnicodeSet, MT::Literal(Literal::CharKind(SMC::Multi(first_c)))) => {
+                (
+                    Begin | Char | AfterUnicodeSet,
+                    MT::Literal(Literal::CharKind(SMC::Multi(first_c))),
+                ) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
@@ -715,13 +722,9 @@ where
             }
             // note: c cannot be a whitespace, because we called skip_whitespace just before
             // (in the main parse loop), so it's safe to call this guard function
-            (c, _) if legal_char_start(c) => self.parse_char().map(|(offset, c)| {
-                (
-                    offset,
-                    false,
-                    MainToken::Literal(Literal::CharKind(c)),
-                )
-            }),
+            (c, _) if legal_char_start(c) => self
+                .parse_char()
+                .map(|(offset, c)| (offset, false, MainToken::Literal(Literal::CharKind(c)))),
             ('-', _) => {
                 self.iter.next();
                 Ok((initial_offset, false, MainToken::Minus))
@@ -794,7 +797,7 @@ where
                         SingleOrMultiChar::Multi(first) => {
                             buffer.push(first);
                             self.parse_multi_escape(|c| buffer.push(c))?;
-                        },
+                        }
                     }
                 }
                 c => return self.error_here(PEK::UnexpectedChar(c)),
@@ -878,9 +881,11 @@ where
                     (offset, '}') => {
                         self.iter.next();
                         Ok((offset, SingleOrMultiChar::Single(first_c)))
-                    },
-                    (offset, c) if c.is_ascii_hexdigit() && skipped > 0 => Ok((offset, SingleOrMultiChar::Multi(first_c))),
-                    (_, c) => self.error_here(PEK::UnexpectedChar(c))
+                    }
+                    (offset, c) if c.is_ascii_hexdigit() && skipped > 0 => {
+                        Ok((offset, SingleOrMultiChar::Multi(first_c)))
+                    }
+                    (_, c) => self.error_here(PEK::UnexpectedChar(c)),
                 }
             }
             'u' => {
