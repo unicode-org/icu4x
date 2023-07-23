@@ -308,7 +308,7 @@ fn legal_char_in_string_start(c: char) -> bool {
 #[derive(Debug)]
 enum SingleOrMultiChar {
     Single(char),
-    // Multi indicates parsing was paused and needs to be resumed using parse_multi_escape when
+    // Multi is a marker that indicates parsing was paused and needs to be resumed using parse_multi_escape* when
     // this token is consumed. The contained char is the first char of the multi sequence.
     Multi(char),
 }
