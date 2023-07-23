@@ -812,6 +812,7 @@ where
         Ok((last_offset, literal))
     }
 
+    // note: would be good to somehow merge the two multi_escape methods.
     // finishes a partial multi escape parse. in case of a parse error, self.single_set
     // may be left in an inconsistent state
     fn parse_multi_escape_into_set(&mut self) -> Result<()> {
