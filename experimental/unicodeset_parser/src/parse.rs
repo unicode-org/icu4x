@@ -1078,8 +1078,8 @@ where
         // safety: validate_hex_digits ensures that chars (including the last one) are ascii hex digits,
         // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
         #[allow(clippy::indexing_slicing)]
-        let hex_src = &self.source[first_offset..=end_offset];
-        let num = u32::from_str_radix(&hex_src, 16).map_err(|_| PEK::Internal)?;
+        let hex_source = &self.source[first_offset..=end_offset];
+        let num = u32::from_str_radix(hex_source, 16).map_err(|_| PEK::Internal)?;
         char::try_from(num)
             .map(|c| (end_offset, c))
             .map_err(|_| PEK::InvalidEscape.with_offset(end_offset))
@@ -1088,8 +1088,7 @@ where
     // validates [0-9a-fA-F]{min,max}, returns the offset of the last digit, consuming everything in the process
     fn validate_hex_digits(&mut self, min: usize, max: usize) -> Result<usize> {
         let mut last_offset = 0;
-        let mut count = 0;
-        for _ in 0..max {
+        for count in 0..max {
             let (offset, c) = self.must_peek()?;
             if !c.is_ascii_hexdigit() {
                 if count < min {
@@ -1100,7 +1099,6 @@ where
             }
             self.iter.next();
             last_offset = offset;
-            count += 1;
         }
         Ok(last_offset)
     }
