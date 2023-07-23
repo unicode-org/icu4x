@@ -5,6 +5,7 @@
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Display;
+use std::str::Chars;
 use std::{collections::HashSet, iter::Peekable, str::CharIndices};
 
 use icu_collections::{
@@ -292,6 +293,22 @@ impl<'a> VariableMap<'a> {
     }
 }
 
+
+#[derive(Debug)]
+struct MultiEscapeIter<'a>(usize, CharIndices<'a>);
+
+impl<'a> Iterator for MultiEscapeIter<'a> {
+    type Item = Result<char>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+
+        }
+    }
+}
+
+
+
 // this ignores the ambiguity between \-escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
 // returns whether the provided char signifies the start of a literal char (raw or escaped - so \ is a legal char start)
 // important: assumes c is not pattern_white_space
@@ -305,20 +322,25 @@ fn legal_char_in_string_start(c: char) -> bool {
     c != '}'
 }
 
+#[derive(Debug)]
+enum SingleOrMultiChar<'a> {
+    Single(char),
+    Multi(MultiEscapeIter<'a>),
+}
+
 // A char or a string. The Vec<char> represents multi-escapes in the 2+ case.
 // invariant: a String is either zero or 2+ chars long, a one-char-string is equivalent to a single char.
 // invariant: a char is 1+ chars long
 #[derive(Debug)]
-enum CharOrString {
-    // TODO(#3684): Avoid allocating for a small number of chars, or even just a single char
-    Char(Vec<char>),
+enum Literal<'a> {
     String(String),
+    CharKind(SingleOrMultiChar<'a>),
 }
 
 #[derive(Debug)]
-enum MainToken<'data> {
+enum MainToken<'data, 'a> {
     // to be interpreted as value
-    CharOrString(CharOrString),
+    Literal(Literal<'a>),
     // inner set
     UnicodeSet(CodePointInversionListAndStringList<'data>),
     // anchor, only at the end of a set ([... $])
@@ -333,13 +355,13 @@ enum MainToken<'data> {
     ClosingBracket,
 }
 
-impl<'a> MainToken<'a> {
-    fn from_variable_value(val: VariableValue<'a>) -> Self {
+impl<'data, 'a> MainToken<'data, 'a> {
+    fn from_variable_value(val: VariableValue<'data>) -> Self {
         match val {
-            VariableValue::Char(c) => MainToken::CharOrString(CharOrString::Char(vec![c])),
+            VariableValue::Char(c) => MainToken::Literal(Literal::CharKind(SingleOrMultiChar::Single(c))),
             VariableValue::String(s) => {
                 // we know that the VariableMap only contains non-length-1 Strings.
-                MainToken::CharOrString(CharOrString::String(s.into_owned()))
+                MainToken::Literal(Literal::String(s.into_owned()))
             }
             VariableValue::UnicodeSet(set) => MainToken::UnicodeSet(set),
         }
@@ -540,7 +562,7 @@ where
 
             let (tok_offset, from_var, tok) = self.parse_main_token()?;
 
-            use CharOrString as CS;
+            use SingleOrMultiChar as SMC;
             use MainToken as MT;
             match (state, tok) {
                 // the end of this unicode set
@@ -583,25 +605,21 @@ where
                     state = AfterUnicodeSet;
                 }
                 // a literal char (either individually or as the start of a range if char)
-                (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::Char(c_vec)))
-                    if c_vec.len() == 1 =>
+                (Begin | Char | AfterUnicodeSet, MT::Literal(Literal::CharKind(SMC::Single(c)))) =>
                 {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
-                    // safety: the match guard checks length == 1
-                    #[allow(clippy::indexing_slicing)]
-                    let c = c_vec[0];
                     prev_char = Some(c);
                     state = Char;
                 }
                 // a bunch of literal chars as part of a multi-escape sequence
-                (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::Char(c_vec))) => {
+                (Begin | Char | AfterUnicodeSet, MT::Literal(Literal::CharKind(SMC::Multi(it)))) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
-                    for c in c_vec {
-                        self.single_set.add_char(c);
+                    for c in it {
+                        self.single_set.add_char(c?);
                     }
 
                     // Note we cannot go to the Char state, because a multi-escape sequence of
@@ -609,7 +627,7 @@ where
                     state = Begin;
                 }
                 // a literal string (length != 1, by CharOrString invariant)
-                (Begin | Char | AfterUnicodeSet, MT::CharOrString(CS::String(s))) => {
+                (Begin | Char | AfterUnicodeSet, MT::Literal(Literal::String(s))) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
@@ -618,11 +636,9 @@ where
                     state = Begin;
                 }
                 // parse a literal char as the end of a range
-                (CharMinus, MT::CharOrString(CS::Char(c_vec))) if c_vec.len() == 1 => {
+                (CharMinus, MT::Literal(Literal::CharKind(SMC::Single(c)))) => {
                     let start = prev_char.ok_or(PEK::Internal.with_offset(tok_offset))?;
-                    // safety: the match guard checks length == 1
-                    #[allow(clippy::indexing_slicing)]
-                    let end = c_vec[0];
+                    let end = c;
                     if start > end {
                         // TODO(#3558): Better error message (e.g., "start greater than end in range")?
                         return Err(PEK::UnexpectedChar(end).with_offset(tok_offset));
@@ -669,7 +685,7 @@ where
         }
     }
 
-    fn parse_main_token(&mut self) -> Result<(usize, bool, MainToken<'a>)> {
+    fn parse_main_token(&mut self) -> Result<(usize, bool, MainToken<'a, 'b>)> {
         let (initial_offset, first) = self.must_peek()?;
         if first == ']' {
             self.iter.next();
@@ -688,7 +704,7 @@ where
             // string
             ('{', _) => self
                 .parse_string()
-                .map(|(offset, cs)| (offset, false, MainToken::CharOrString(cs))),
+                .map(|(offset, l)| (offset, false, MainToken::Literal(l))),
             // inner set
             ('\\', 'p' | 'P') | ('[', _) => {
                 let mut inner_builder = UnicodeSetBuilder::new_internal(
@@ -715,11 +731,11 @@ where
             }
             // note: c cannot be a whitespace, because we called skip_whitespace just before
             // (in the main parse loop), so it's safe to call this guard function
-            (c, _) if legal_char_start(c) => self.parse_char().map(|(offset, c_vec)| {
+            (c, _) if legal_char_start(c) => self.parse_char().map(|(offset, c)| {
                 (
                     offset,
                     false,
-                    MainToken::CharOrString(CharOrString::Char(c_vec)),
+                    MainToken::Literal(Literal::CharKind(c)),
                 )
             }),
             ('-', _) => {
@@ -770,7 +786,7 @@ where
     }
 
     // parses and consumes: '{' (s charInString)* s '}'
-    fn parse_string(&mut self) -> Result<(usize, CharOrString)> {
+    fn parse_string(&mut self) -> Result<(usize, Literal)> {
         self.consume('{')?;
 
         let mut buffer = String::new();
@@ -788,23 +804,30 @@ where
                 // so it's safe to call this guard function
                 c if legal_char_in_string_start(c) => {
                     // don't need the offset, because '}' will always be the last char
-                    let (_, c_vec) = self.parse_char()?;
-                    buffer.extend(c_vec.into_iter());
+                    let (_, c) = self.parse_char()?;
+                    match c {
+                        SingleOrMultiChar::Single(c) => buffer.push(c),
+                        SingleOrMultiChar::Multi(it) => {
+                            for c in it {
+                                buffer.push(c?);
+                            }
+                        },
+                    }
                 }
                 c => return self.error_here(PEK::UnexpectedChar(c)),
             }
         }
 
         let mut chars = buffer.chars();
-        let char_or_string = match (chars.next(), chars.next()) {
-            (Some(c), None) => CharOrString::Char(vec![c]),
-            _ => CharOrString::String(buffer),
+        let literal = match (chars.next(), chars.next()) {
+            (Some(c), None) => Literal::CharKind(SingleOrMultiChar::Single(c)),
+            _ => Literal::String(buffer),
         };
-        Ok((last_offset, char_or_string))
+        Ok((last_offset, literal))
     }
 
     // starts with \ and consumes the whole escape sequence
-    fn parse_escaped_char(&mut self) -> Result<(usize, Vec<char>)> {
+    fn parse_escaped_char(&mut self) -> Result<(usize, SingleOrMultiChar<'b>)> {
         self.consume('\\')?;
 
         let (offset, next_char) = self.must_next()?;
@@ -813,65 +836,58 @@ where
             'u' | 'x' if self.peek_char() == Some('{') => {
                 // bracketedHex
                 self.iter.next();
+                let begin_offset = self.must_peek_index()?;
 
-                let mut c_vec = Vec::new();
-                let last_offset;
+                self.skip_whitespace();
+                let (_, c) = self.parse_hex_digits_into_char(1, 6)?;
+                self.skip_whitespace();
 
-                loop {
-                    let skipped = self.skip_whitespace();
-                    match self.must_peek_char()? {
-                        '}' => {
-                            last_offset = self.must_peek_index()?;
-                            self.iter.next();
-                            break;
-                        }
-                        initial_c => {
-                            if skipped == 0 && !c_vec.is_empty() {
-                                // bracketed hex code points must be separated by whitespace
-                                return self.error_here(PEK::UnexpectedChar(initial_c));
+                match self.must_peek()? {
+                    (offset, '}') => Ok((self.must_peek_index()?, SingleOrMultiChar::Single(c))),
+                    (offset, _) => {
+                        // consume all chars in this multiescape and create the iterator
+                        let mut end_offset = offset;
+                        loop {
+                            let (offset, c) = self.must_next()?;
+                            if c == '}' {
+                                let escape_source = &self.source[begin_offset..=end_offset];
+                                return Ok((end_offset, SingleOrMultiChar::Multi(MultiEscapeIter(begin_offset, escape_source.char_indices()))))
                             }
-
-                            let (_, c) = self.parse_hex_digits_into_char(1, 6)?;
-                            c_vec.push(c);
+                            end_offset = offset;
                         }
                     }
                 }
-                if c_vec.is_empty() {
-                    // TODO(#3558): UnexpectedChar, or InvalidEscape?
-                    return Err(PEK::UnexpectedChar('}').with_offset(last_offset));
-                }
-                Ok((last_offset, c_vec))
             }
             'u' => {
                 // 'u' hex{4}
                 self.parse_hex_digits_into_char(4, 4)
-                    .map(|(offset, c)| (offset, vec![c]))
+                    .map(|(offset, c)| (offset, SingleOrMultiChar::Single(c)))
             }
             'x' => {
                 // 'x' hex{2}
                 self.parse_hex_digits_into_char(2, 2)
-                    .map(|(offset, c)| (offset, vec![c]))
+                    .map(|(offset, c)| (offset, SingleOrMultiChar::Single(c)))
             }
             'U' => {
                 // 'U00' ('0' hex{5} | '10' hex{4})
                 self.consume('0')?;
                 self.consume('0')?;
                 self.parse_hex_digits_into_char(6, 6)
-                    .map(|(offset, c)| (offset, vec![c]))
+                    .map(|(offset, c)| (offset, SingleOrMultiChar::Single(c)))
             }
             'N' => {
                 // parse code point with name in {}
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
                 Err(PEK::Unimplemented.with_offset(offset))
             }
-            'a' => Ok((offset, vec!['\u{0007}'])),
-            'b' => Ok((offset, vec!['\u{0008}'])),
-            't' => Ok((offset, vec!['\u{0009}'])),
-            'n' => Ok((offset, vec!['\u{000A}'])),
-            'v' => Ok((offset, vec!['\u{000B}'])),
-            'f' => Ok((offset, vec!['\u{000C}'])),
-            'r' => Ok((offset, vec!['\u{000D}'])),
-            _ => Ok((offset, vec![next_char])),
+            'a' => Ok((offset, SingleOrMultiChar::Single('\u{0007}'))),
+            'b' => Ok((offset, SingleOrMultiChar::Single('\u{0008}'))),
+            't' => Ok((offset, SingleOrMultiChar::Single('\u{0009}'))),
+            'n' => Ok((offset, SingleOrMultiChar::Single('\u{000A}'))),
+            'v' => Ok((offset, SingleOrMultiChar::Single('\u{000B}'))),
+            'f' => Ok((offset, SingleOrMultiChar::Single('\u{000C}'))),
+            'r' => Ok((offset, SingleOrMultiChar::Single('\u{000D}'))),
+            _ => Ok((offset, SingleOrMultiChar::Single(next_char))),
         }
     }
 
@@ -1060,13 +1076,13 @@ where
 
     // parses either a raw char or an escaped char. all chars are allowed, the caller must make sure to handle
     // cases where some characters are not allowed
-    fn parse_char(&mut self) -> Result<(usize, Vec<char>)> {
+    fn parse_char(&mut self) -> Result<(usize, SingleOrMultiChar<'b>)> {
         let (offset, c) = self.must_peek()?;
         match c {
             '\\' => self.parse_escaped_char(),
             _ => {
                 self.iter.next();
-                Ok((offset, vec![c]))
+                Ok((offset, SingleOrMultiChar::Single(c)))
             }
         }
     }
