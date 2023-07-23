@@ -358,6 +358,7 @@ struct UnicodeSetBuilder<'a, 'b, P: ?Sized> {
     single_set: CodePointInversionListBuilder,
     string_set: HashSet<String>,
     iter: &'a mut Peekable<CharIndices<'b>>,
+    source: &'b str,
     inverted: bool,
     variable_map: &'a VariableMap<'a>,
     xid_start: &'a CodePointInversionList<'a>,
@@ -427,6 +428,7 @@ where
 {
     fn new_internal(
         iter: &'a mut Peekable<CharIndices<'b>>,
+        source: &'b str,
         variable_map: &'a VariableMap<'a>,
         xid_start: &'a CodePointInversionList<'a>,
         xid_continue: &'a CodePointInversionList<'a>,
@@ -437,6 +439,7 @@ where
             single_set: CodePointInversionListBuilder::new(),
             string_set: Default::default(),
             iter,
+            source,
             inverted: false,
             variable_map,
             xid_start,
@@ -690,6 +693,7 @@ where
             ('\\', 'p' | 'P') | ('[', _) => {
                 let mut inner_builder = UnicodeSetBuilder::new_internal(
                     self.iter,
+                    self.source,
                     self.variable_map,
                     self.xid_start,
                     self.xid_continue,
@@ -1454,6 +1458,7 @@ where
 
     let mut builder = UnicodeSetBuilder::new_internal(
         &mut iter,
+        source,
         variable_map,
         &xid_start_list,
         &xid_continue_list,
