@@ -844,17 +844,20 @@ where
             }
             'u' => {
                 // 'u' hex{4}
-                self.parse_hex_digits_into_char(4, 4).map(|(offset, c)| (offset, vec![c]))
+                self.parse_hex_digits_into_char(4, 4)
+                    .map(|(offset, c)| (offset, vec![c]))
             }
             'x' => {
                 // 'x' hex{2}
-                self.parse_hex_digits_into_char(2, 2).map(|(offset, c)| (offset, vec![c]))
+                self.parse_hex_digits_into_char(2, 2)
+                    .map(|(offset, c)| (offset, vec![c]))
             }
             'U' => {
                 // 'U00' ('0' hex{5} | '10' hex{4})
                 self.consume('0')?;
                 self.consume('0')?;
-                self.parse_hex_digits_into_char(6, 6).map(|(offset, c)| (offset, vec![c]))
+                self.parse_hex_digits_into_char(6, 6)
+                    .map(|(offset, c)| (offset, vec![c]))
             }
             'N' => {
                 // parse code point with name in {}
