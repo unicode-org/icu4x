@@ -820,6 +820,8 @@ where
         // issue is that we cannot pass this method an argument that somehow mutates `self` in the current architecture.
         // self.lexer.parse_multi_into_charappendable(&mut self.single_set) should work because the lifetimes are separate
 
+        // whitespace before first char of this loop (ie, second char in this multi_escape) must be
+        // enforced when creating the SingleOrMultiChar::Multi.
         let mut first = true;
         loop {
             let skipped = self.skip_whitespace();
@@ -845,6 +847,8 @@ where
     // finishes a partial multi escape parse. in case of a parse error, the caller must clean up partial
     // state left behind by the callback
     fn parse_multi_escape<F: FnMut(char)>(&mut self, mut cb: F) -> Result<()> {
+        // whitespace before first char of this loop (ie, second char in this multi_escape) must be
+        // enforced when creating the SingleOrMultiChar::Multi.
         let mut first = true;
         loop {
             let skipped = self.skip_whitespace();
@@ -887,6 +891,8 @@ where
                         self.iter.next();
                         Ok((offset, SingleOrMultiChar::Single(first_c)))
                     }
+                    // note: enforcing whitespace after the first char here, because the parse_multi_escape functions
+                    // won't have access to this information anymore
                     (offset, c) if c.is_ascii_hexdigit() && skipped > 0 => {
                         Ok((offset, SingleOrMultiChar::Multi(first_c)))
                     }
