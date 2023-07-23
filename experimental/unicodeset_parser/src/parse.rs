@@ -796,7 +796,7 @@ where
                         SingleOrMultiChar::Single(c) => buffer.push(c),
                         SingleOrMultiChar::Multi(first) => {
                             buffer.push(first);
-                            self.parse_multi_escape(|c| buffer.push(c))?;
+                            self.parse_multi_escape_into_string(&mut buffer)?;
                         }
                     }
                 }
@@ -844,9 +844,9 @@ where
         }
     }
 
-    // finishes a partial multi escape parse. in case of a parse error, the caller must clean up partial
-    // state left behind by the callback
-    fn parse_multi_escape<F: FnMut(char)>(&mut self, mut cb: F) -> Result<()> {
+    // finishes a partial multi escape parse. in case of a parse error, the caller must clean up the
+    // string if necessary.
+    fn parse_multi_escape_into_string(&mut self, s: &mut String) -> Result<()> {
         // whitespace before first char of this loop (ie, second char in this multi_escape) must be
         // enforced when creating the SingleOrMultiChar::Multi.
         let mut first = true;
@@ -865,7 +865,7 @@ where
                     first = false;
 
                     let (_, c) = self.parse_hex_digits_into_char(1, 6)?;
-                    cb(c);
+                    s.push(c);
                 }
             }
         }
