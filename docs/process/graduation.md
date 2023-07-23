@@ -25,7 +25,7 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] There should be a crate-level example that illustrates a common use case for the component
   - [ ] All options and conditional code paths should have a corresponding docs test
 - [ ] The data structs should fully follow ZeroVec style
-  - [ ] Deserialization should not have a "net violation" in the [verify-zero-copy](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/tests/verify-zero-copy.rs) test
+  - [ ] Deserialization should not have a "zero-copy violation" in the [make-testdata](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/tests/make-testdata.rs) test
   - [ ] Constructors should avoid allocating memory in the common case
   - [ ] Opaque blobs of data should be avoided if possible (instead use VarZeroVec, ZeroMap, etc.)
   - [ ] Data structs should not be panicky to load/deserialize and conform to [data_safety.md](https://github.com/unicode-org/icu4x/blob/main/docs/design/data_safety.md)
