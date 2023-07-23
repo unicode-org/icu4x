@@ -17,7 +17,7 @@ To verify that, open a terminal and check that the results are similar to:
 
 ```console
 $ cargo --version
-cargo 1.64.0 (387270bc7 2022-09-16)
+cargo 1.71.0 (cfd3bbd8f 2023-06-08)
 ```
 
 # 2. Creating an app with ICU4X as a dependency
@@ -125,7 +125,7 @@ const LOCALE: Locale = locale!("ja"); // let's try some other language
 fn main() {
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = DateTimeFormatter::try_new(&LOCALE.into(), options.into())
+    let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &LOCALE.into(), options.into())
         .expect("Failed to initialize DateTimeFormatter");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)

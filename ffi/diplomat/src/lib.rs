@@ -67,8 +67,12 @@ pub mod bidi;
     feature = "icu_calendar"
 ))]
 pub mod calendar;
+#[cfg(feature = "icu_casemap")]
+pub mod casemap;
 #[cfg(feature = "icu_collator")]
 pub mod collator;
+#[cfg(feature = "icu_properties")]
+pub mod collections_sets;
 #[cfg(any(
     feature = "icu_datetime",
     feature = "icu_timezone",
@@ -133,7 +137,7 @@ pub mod time;
 pub mod timezone;
 #[cfg(feature = "icu_datetime")]
 pub mod timezone_formatter;
-#[cfg(any(feature = "icu_calendar"))]
+#[cfg(feature = "icu_calendar")]
 pub mod week;
 #[cfg(feature = "icu_datetime")]
 pub mod zoned_formatter;

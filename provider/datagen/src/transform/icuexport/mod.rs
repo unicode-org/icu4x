@@ -7,5 +7,6 @@
 
 pub mod collator;
 pub mod normalizer;
+#[cfg(feature = "icu_casemap")]
 pub mod ucase;
 pub mod uprops;

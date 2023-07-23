@@ -5,9 +5,10 @@
 use crate::manifest::Manifest;
 use icu_provider::prelude::*;
 use std::fmt::Debug;
+use std::fmt::Write;
 use std::fs;
+use std::path::Path;
 use std::path::PathBuf;
-use writeable::Writeable;
 
 /// A data provider that reads ICU4X data from a filesystem directory.
 ///
@@ -70,17 +71,24 @@ impl BufferProvider for FsDataProvider {
         key: DataKey,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let mut path_buf = self.root.join(&*key.write_to_string());
-        if !path_buf.exists() {
+        if key.metadata().singleton && !req.locale.is_empty() {
+            return Err(DataErrorKind::ExtraneousLocale.with_req(key, req));
+        }
+        let mut path = self.root.clone().into_os_string();
+        write!(&mut path, "/{key}").expect("infallible");
+        if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingDataKey.with_req(key, req));
         }
-        path_buf.push(&*req.locale.write_to_string());
-        path_buf.set_extension(self.manifest.file_extension);
-        if !path_buf.exists() {
+        write!(
+            &mut path,
+            "/{}.{}",
+            req.locale, self.manifest.file_extension
+        )
+        .expect("infallible");
+        if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingLocale.with_req(key, req));
         }
-        let buffer =
-            fs::read(&path_buf).map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
+        let buffer = fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(self.manifest.buffer_format);
         Ok(DataResponse {

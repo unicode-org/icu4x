@@ -4,34 +4,64 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
-###### CI TASKS
-
-[tasks.testdata]
-description = "Rebuild all ICU4X testdata from source data checked into the repository"
+[tasks.download-repo-sources]
+description = "Download fresh source testing data into the icu_datagen crate."
 category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=make-testdata",
+    "--bin=download-repo-sources",
+    "--",
+    "-v",
 ]
 
+[tasks.testdata]
+description = "Run the testdata generation test in icu_datagen"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "test",
+    "-p=icu_datagen",
+    "--no-default-features",
+    "--features=provider_fs,use_wasm,rayon,icu_casemap,icu_compactdecimal,icu_displaynames,icu_relativetime",
+    "generate_json_and_verify_postcard",
+    "--",
+    "--nocapture"
+]
+
+[tasks.testdata-hello-world]
+description = "Builds all hello-world testdata for use in provider/{adapters,blob,fs} tests"
+category = "ICU4X Data"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+exec --fail-on-error cargo build -p icu_datagen --no-default-features --features provider_fs,provider_blob,bin,networking
+
+configs = array provider/fs/tests/data/json.json provider/fs/tests/data/bincode.json provider/fs/tests/data/postcard.json provider/blob/tests/data/config.json provider/adapters/tests/data/config.json provider/adapters/tests/data/langtest/de.json provider/adapters/tests/data/langtest/ro.json
+
+for config in ${configs}
+    exec --fail-on-error target/debug/icu4x-datagen --config "${config}"
+end
+'''
+
 [tasks.testdata-check]
-description = "Rebuild ICU4X testdata and ensure that the working copy is clean"
+description = "Rebuild all testdata and ensure that the working copy is clean"
 category = "ICU4X Data"
 dependencies = [
+    "download-repo-sources",
     "testdata",
     "testdata-hello-world",
-    "download-repo-sources",
 ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data
+output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data provider/adapters/tests/data
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
-    array_push ${msg} "Test data needs to be updated. Please run `cargo make testdata` and `cargo make testdata-hello-world:"
+    array_push ${msg} "Test data needs to be updated. Please run `cargo make download-repo-sources`, `cargo make testdata` and `cargo make testdata-hello-world:"
     array_push ${msg} ""
     array_push ${msg} "${output.stdout}"
     msg = array_join ${msg} "\n"
@@ -39,76 +69,13 @@ if greater_than ${output_length} 0
 end
 '''
 
-[tasks.testdata-hello-world-json]
-description = "Build the Hello World JSON tree."
+[tasks.testdata-legacy]
+description = "Build the data for the legacy icu_testdata crate"
 category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys=core/helloworld@1",
-    "--locales=full",
-    "--format=dir",
-    "--out=provider/fs/tests/data/json",
-    "--overwrite",
-]
-
-[tasks.testdata-hello-world-bincode]
-description = "Build the Hello World bincode tree."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys=core/helloworld@1",
-    "--locales=full",
-    "--format=dir",
-    "--syntax=bincode",
-    "--out=provider/fs/tests/data/bincode",
-    "--overwrite",
-]
-
-[tasks.testdata-hello-world-postcard]
-description = "Build the Hello World postcard tree."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys=core/helloworld@1",
-    "--locales=full",
-    "--format=dir",
-    "--syntax=postcard",
-    "--out=provider/fs/tests/data/postcard",
-    "--overwrite",
-]
-
-[tasks.testdata-hello-world-blob]
-description = "Build the Hello World postcard testdata file."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys=core/helloworld@1",
-    "--locales=full",
-    "--format=blob",
-    "--out=provider/blob/tests/data/hello_world.postcard",
-    "--overwrite",
-]
-
-[tasks.testdata-hello-world]
-description = "Build all three the Hello World outputs."
-category = "ICU4X Data"
-dependencies = [
-    "testdata-hello-world-json",
-    "testdata-hello-world-bincode",
-    "testdata-hello-world-postcard",
-    "testdata-hello-world-blob",
+    "--bin=make-testdata-legacy",
 ]
 
 [tasks.bakeddata]
@@ -119,18 +86,17 @@ script = '''
 exit_on_error true
 
 if array_is_empty ${@}
-    mode = set "--release"
-    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemapping experimental/compactdecimal experimental/displaynames experimental/relativetime
+    exec --fail-on-error cargo build -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking,icu_casemap,icu_displaynames,icu_relativetime,icu_compactdecimal --release
+    bin = set "target/release/icu4x-datagen"
+    components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemap experimental/compactdecimal experimental/displaynames experimental/relativetime
 else
-    mode = set "--bin=icu4x-datagen" # need some valid argument
+    exec --fail-on-error cargo build -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking,icu_casemap,icu_displaynames,icu_relativetime,icu_compactdecimal
+    bin = set "target/debug/icu4x-datagen"
     components = set ${@}
 end
 
-root = pwd
 for component in ${components}
-    cd "${component}/data"
-    exec --fail-on-error cargo run -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking ${mode} -- --config config.json
-    cd "${root}"
+    exec --fail-on-error ${bin} --config "${component}/data/config.json"
 end
 '''
 
@@ -153,54 +119,3 @@ if greater_than ${output_length} 0
     trigger_error ${msg}
 end
 '''
-
-[tasks.download-repo-sources]
-description = "Download fresh CLDR JSON and icuexportdata, overwriting the existing CLDR JSON/icuexportdata."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=download-repo-sources",
-    "--",
-    "-v",
-]
-
-###### END CI TASKS
-
-[tasks.provider-adapters-hello-world-lang-de]
-description = "Build Hello World data for 'de'"
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys=core/helloworld@1",
-    "--locales=de",
-    "--format=dir",
-    "--out=provider/adapters/tests/data/langtest/de",
-    "--overwrite",
-]
-
-[tasks.provider-adapters-hello-world-lang-ro]
-description = "Build Hello World data for 'ro'"
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--keys=core/helloworld@1",
-    "--locales=ro",
-    "--format=dir",
-    "--out=provider/adapters/tests/data/langtest/ro",
-    "--overwrite",
-]
-
-[tasks.provider-adapters-testdata]
-description = "Build all testdata for the icu_provider_adapters crate."
-category = "ICU4X Data"
-dependencies = [
-    "provider-adapters-hello-world-lang-de",
-    "provider-adapters-hello-world-lang-ro",
-]

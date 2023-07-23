@@ -49,8 +49,9 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "networking")]
         config::PathOrTag::Tag(tag) => source_data.with_cldr_for_tag(&tag, Default::default())?,
-        #[cfg(not(feature = "networking"))]
         config::PathOrTag::None => source_data,
+        #[cfg(not(feature = "networking"))]
+        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
     };
 
     source_data = match config.icu_export {
@@ -61,8 +62,9 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "networking")]
         config::PathOrTag::Tag(tag) => source_data.with_icuexport_for_tag(&tag)?,
-        #[cfg(not(feature = "networking"))]
         config::PathOrTag::None => source_data,
+        #[cfg(not(feature = "networking"))]
+        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
     };
 
     source_data = match config.segmenter_lstm {
@@ -73,8 +75,9 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "networking")]
         config::PathOrTag::Tag(tag) => source_data.with_segmenter_lstm_for_tag(&tag)?,
-        #[cfg(not(feature = "networking"))]
         config::PathOrTag::None => source_data,
+        #[cfg(not(feature = "networking"))]
+        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
     };
 
     let provider = DatagenProvider::try_new(options, source_data)?;
@@ -82,9 +85,6 @@ fn main() -> eyre::Result<()> {
     let keys = match config.keys {
         config::KeyInclude::None => Default::default(),
         config::KeyInclude::All => icu_datagen::all_keys().into_iter().collect(),
-        config::KeyInclude::AllWithExperimental => icu_datagen::all_keys_with_experimental()
-            .into_iter()
-            .collect(),
         config::KeyInclude::Explicit(set) => set,
         config::KeyInclude::ForBinary(path) => {
             icu_datagen::keys_from_bin(path)?.into_iter().collect()
@@ -92,67 +92,84 @@ fn main() -> eyre::Result<()> {
     };
 
     match config.export {
-        #[cfg(feature = "provider_fs")]
         config::Export::Fs {
-            output_path,
+            path,
             syntax,
             fingerprint,
         } => {
-            use icu_provider_fs::export::{serializers::*, *};
-            let exporter = FilesystemExporter::try_new(
-                match syntax {
-                    config::FsSyntax::Bincode => Box::<bincode::Serializer>::default(),
-                    config::FsSyntax::Postcard => Box::<postcard::Serializer>::default(),
-                    config::FsSyntax::JsonPretty => Box::new(json::Serializer::pretty()),
-                    config::FsSyntax::Json => Box::<json::Serializer>::default(),
-                },
-                {
-                    let mut options = ExporterOptions::default();
-                    options.root = output_path;
-                    if config.overwrite {
-                        options.overwrite = OverwriteOption::RemoveAndReplace
-                    }
-                    options.fingerprint = fingerprint;
-                    options
-                },
-            )?;
-            Ok(provider.export(keys, exporter)?)
+            #[cfg(not(feature = "provider_fs"))]
+            eyre::bail!("Exporting to an FsProvider requires the `provider_fs` Cargo feature");
+            #[cfg(feature = "provider_fs")]
+            {
+                use icu_provider_fs::export::{serializers::*, *};
+                let exporter = FilesystemExporter::try_new(
+                    match syntax {
+                        config::FsSyntax::Bincode => Box::<bincode::Serializer>::default(),
+                        config::FsSyntax::Postcard => Box::<postcard::Serializer>::default(),
+                        config::FsSyntax::JsonPretty => Box::new(json::Serializer::pretty()),
+                        config::FsSyntax::Json => Box::<json::Serializer>::default(),
+                    },
+                    {
+                        let mut options = ExporterOptions::default();
+                        options.root = path;
+                        if config.overwrite {
+                            options.overwrite = OverwriteOption::RemoveAndReplace
+                        }
+                        #[allow(deprecated)] // obviously
+                        {
+                            options.fingerprint = fingerprint;
+                        }
+                        options
+                    },
+                )?;
+                Ok(provider.export(keys, exporter)?)
+            }
         }
-        #[cfg(feature = "provider_blob")]
-        config::Export::Blob(ref path) => {
-            let exporter = icu_provider_blob::export::BlobExporter::new_with_sink(
-                if path == std::path::Path::new("/stdout") {
-                    Box::new(std::io::stdout())
-                } else if !config.overwrite && path.exists() {
-                    eyre::bail!("Output path is present: {:?}", path);
-                } else {
-                    Box::new(
-                        std::fs::File::create(path)
-                            .with_context(|| path.to_string_lossy().to_string())?,
-                    )
-                },
-            );
-            Ok(provider.export(keys, exporter)?)
+        config::Export::Blob { ref path } => {
+            #[cfg(not(feature = "provider_blob"))]
+            eyre::bail!("Exporting to a BlobProvider requires the `provider_blob` Cargo feature");
+            #[cfg(feature = "provider_blob")]
+            {
+                let exporter = icu_provider_blob::export::BlobExporter::new_with_sink(
+                    if path == std::path::Path::new("/stdout") {
+                        Box::new(std::io::stdout())
+                    } else if !config.overwrite && path.exists() {
+                        eyre::bail!("Output path is present: {:?}", path);
+                    } else {
+                        Box::new(
+                            std::fs::File::create(path)
+                                .with_context(|| path.to_string_lossy().to_string())?,
+                        )
+                    },
+                );
+                Ok(provider.export(keys, exporter)?)
+            }
         }
-        #[cfg(feature = "provider_baked")]
         config::Export::Baked {
-            output_path,
+            path,
             pretty,
             insert_feature_gates,
-            use_separate_crates,
+            use_meta_crate,
         } => {
-            use icu_datagen::baked_exporter::*;
+            #[cfg(not(feature = "provider_baked"))]
+            eyre::bail!(
+                "Exporting to a baked provider requires the `provider_baked` Cargo feature"
+            );
+            #[cfg(feature = "provider_baked")]
+            {
+                use icu_datagen::baked_exporter::*;
 
-            let exporter = BakedExporter::new(output_path, {
-                let mut options = Options::default();
-                options.pretty = pretty;
-                options.insert_feature_gates = insert_feature_gates;
-                options.use_separate_crates = use_separate_crates;
-                options.overwrite = config.overwrite;
-                options
-            })?;
+                let exporter = BakedExporter::new(path, {
+                    let mut options = Options::default();
+                    options.pretty = pretty;
+                    options.insert_feature_gates = insert_feature_gates;
+                    options.use_separate_crates = !use_meta_crate;
+                    options.overwrite = config.overwrite;
+                    options
+                })?;
 
-            Ok(provider.export(keys, exporter)?)
+                Ok(provider.export(keys, exporter)?)
+            }
         }
     }
 }

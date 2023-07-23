@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_displaynames_scripts_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.61"]
+        #[clippy::msrv = "1.65"]
         impl icu_provider::DataProvider<icu_displaynames::provider::ScriptDisplayNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_displaynames::provider::ScriptDisplayNamesV1Marker>, icu_provider::DataError> {
                 static BS: <icu_displaynames::provider::ScriptDisplayNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu_displaynames::provider::ScriptDisplayNamesV1 {

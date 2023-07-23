@@ -213,14 +213,13 @@ lazy_static::lazy_static! {
         "icu::properties::maps::CodePointMapData::from_code_point_trie",
         "icu::properties::maps::CodePointMapData::to_code_point_trie",
         "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
-        "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",
-        "icu::properties::sets::CodePointSetData::from_code_point_inversion_list",
-        "icu::properties::sets::CodePointSetData::to_code_point_inversion_list",
         "icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list",
         "icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list",
         "icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list",
-        "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_set", // returns an inversion list
-        "icu::collections::codepointinvlist",
+        "icu::collections::codepointinvlist::CodePointInversionList",
+        "icu::collections::codepointinvlist::CodePointInversionListULE",
+        "icu::collections::codepointinvlist::CodePointInversionListError",
+        "icu::collections::codepointinvlist::Error",
         "icu::collections::codepointinvliststringlist",
         "icu::collections::codepointtrie",
         "icu::collections::char16trie",
@@ -274,7 +273,6 @@ lazy_static::lazy_static! {
         "icu::list::FormattedList",
 
         // Experimental
-        "icu::casemapping",
         "icu::compactdecimal",
         "icu::relativetime",
         "icu::displaynames",
@@ -288,6 +286,7 @@ lazy_static::lazy_static! {
         // We could potentially expose them later, but it's hard to expose them
         // uniformly especially for complex types
         "icu::calendar::provider",
+        "icu::casemap::provider",
         "icu::collator::provider",
         "icu::datetime::provider",
         "icu::decimal::provider",
@@ -427,6 +426,9 @@ lazy_static::lazy_static! {
 
         // No macros in FFI
         "icu_provider_adapters::make_forking_provider",
+
+        // Rust-specific trait abstraction, handled as individual types over FFI
+        "icu::casemap::ClosureSet",
 
     ].iter().map(|s| s.split("::").map(str::to_owned).collect()).collect();
 }

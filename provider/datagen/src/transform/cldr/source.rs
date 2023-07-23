@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(dead_code)] // features
+
 use crate::source::SerdeCache;
 use icu_locid::LanguageIdentifier;
 use icu_provider::DataError;
@@ -86,7 +88,7 @@ impl CldrCache {
             )?
             .coverage_levels
             .iter()
-            .filter_map(|(locale, c)| levels.contains(c).then(|| locale))
+            .filter_map(|(locale, c)| levels.contains(c).then_some(locale))
             .cloned()
             .collect())
     }
