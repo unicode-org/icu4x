@@ -5,7 +5,6 @@
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Display;
-use std::str::Chars;
 use std::{collections::HashSet, iter::Peekable, str::CharIndices};
 
 use icu_collections::{
@@ -293,22 +292,6 @@ impl<'a> VariableMap<'a> {
     }
 }
 
-
-#[derive(Debug)]
-struct MultiEscapeIter<'a>(usize, CharIndices<'a>);
-
-impl<'a> Iterator for MultiEscapeIter<'a> {
-    type Item = Result<char>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        loop {
-
-        }
-    }
-}
-
-
-
 // this ignores the ambiguity between \-escapes and \p{} perl properties. it assumes it is in a context where \p is just 'p'
 // returns whether the provided char signifies the start of a literal char (raw or escaped - so \ is a legal char start)
 // important: assumes c is not pattern_white_space
@@ -323,24 +306,26 @@ fn legal_char_in_string_start(c: char) -> bool {
 }
 
 #[derive(Debug)]
-enum SingleOrMultiChar<'a> {
+enum SingleOrMultiChar {
     Single(char),
-    Multi(MultiEscapeIter<'a>),
+    // Multi indicates parsing was paused and needs to be resumed using parse_multi_escape when
+    // this token is consumed. The contained char is the first char of the multi sequence.
+    Multi(char),
 }
 
 // A char or a string. The Vec<char> represents multi-escapes in the 2+ case.
 // invariant: a String is either zero or 2+ chars long, a one-char-string is equivalent to a single char.
 // invariant: a char is 1+ chars long
 #[derive(Debug)]
-enum Literal<'a> {
+enum Literal {
     String(String),
-    CharKind(SingleOrMultiChar<'a>),
+    CharKind(SingleOrMultiChar),
 }
 
 #[derive(Debug)]
-enum MainToken<'data, 'a> {
+enum MainToken<'data> {
     // to be interpreted as value
-    Literal(Literal<'a>),
+    Literal(Literal),
     // inner set
     UnicodeSet(CodePointInversionListAndStringList<'data>),
     // anchor, only at the end of a set ([... $])
@@ -355,7 +340,7 @@ enum MainToken<'data, 'a> {
     ClosingBracket,
 }
 
-impl<'data, 'a> MainToken<'data, 'a> {
+impl<'data> MainToken<'data> {
     fn from_variable_value(val: VariableValue<'data>) -> Self {
         match val {
             VariableValue::Char(c) => MainToken::Literal(Literal::CharKind(SingleOrMultiChar::Single(c))),
@@ -614,13 +599,12 @@ where
                     state = Char;
                 }
                 // a bunch of literal chars as part of a multi-escape sequence
-                (Begin | Char | AfterUnicodeSet, MT::Literal(Literal::CharKind(SMC::Multi(it)))) => {
+                (Begin | Char | AfterUnicodeSet, MT::Literal(Literal::CharKind(SMC::Multi(first_c)))) => {
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
-                    for c in it {
-                        self.single_set.add_char(c?);
-                    }
+                    self.single_set.add_char(first_c);
+                    self.parse_multi_escape_into_set()?;
 
                     // Note we cannot go to the Char state, because a multi-escape sequence of
                     // length > 1 cannot initiate a range
@@ -685,7 +669,7 @@ where
         }
     }
 
-    fn parse_main_token(&mut self) -> Result<(usize, bool, MainToken<'a, 'b>)> {
+    fn parse_main_token(&mut self) -> Result<(usize, bool, MainToken<'a>)> {
         let (initial_offset, first) = self.must_peek()?;
         if first == ']' {
             self.iter.next();
@@ -807,10 +791,9 @@ where
                     let (_, c) = self.parse_char()?;
                     match c {
                         SingleOrMultiChar::Single(c) => buffer.push(c),
-                        SingleOrMultiChar::Multi(it) => {
-                            for c in it {
-                                buffer.push(c?);
-                            }
+                        SingleOrMultiChar::Multi(first) => {
+                            buffer.push(first);
+                            self.parse_multi_escape(|c| buffer.push(c))?;
                         },
                     }
                 }
@@ -826,8 +809,58 @@ where
         Ok((last_offset, literal))
     }
 
+    // finishes a partial multi escape parse. in case of a parse error, self.single_set
+    // may be left in an inconsistent state
+    fn parse_multi_escape_into_set(&mut self) -> Result<()> {
+        let mut first = true;
+        loop {
+            let skipped = self.skip_whitespace();
+            match self.must_peek_char()? {
+                '}' => {
+                    self.iter.next();
+                    return Ok(());
+                }
+                initial_c => {
+                    if skipped == 0 && !first {
+                        // bracketed hex code points must be separated by whitespace
+                        return self.error_here(PEK::UnexpectedChar(initial_c));
+                    }
+                    first = false;
+
+                    let (_, c) = self.parse_hex_digits_into_char(1, 6)?;
+                    self.single_set.add_char(c);
+                }
+            }
+        }
+    }
+
+    // finishes a partial multi escape parse. in case of a parse error, the caller must clean up partial
+    // state left behind by the callback
+    fn parse_multi_escape<F: FnMut(char)>(&mut self, mut cb: F) -> Result<()> {
+        let mut first = true;
+        loop {
+            let skipped = self.skip_whitespace();
+            match self.must_peek_char()? {
+                '}' => {
+                    self.iter.next();
+                    return Ok(());
+                }
+                initial_c => {
+                    if skipped == 0 && !first {
+                        // bracketed hex code points must be separated by whitespace
+                        return self.error_here(PEK::UnexpectedChar(initial_c));
+                    }
+                    first = false;
+
+                    let (_, c) = self.parse_hex_digits_into_char(1, 6)?;
+                    cb(c);
+                }
+            }
+        }
+    }
+
     // starts with \ and consumes the whole escape sequence
-    fn parse_escaped_char(&mut self) -> Result<(usize, SingleOrMultiChar<'b>)> {
+    fn parse_escaped_char(&mut self) -> Result<(usize, SingleOrMultiChar)> {
         self.consume('\\')?;
 
         let (offset, next_char) = self.must_next()?;
@@ -836,26 +869,18 @@ where
             'u' | 'x' if self.peek_char() == Some('{') => {
                 // bracketedHex
                 self.iter.next();
-                let begin_offset = self.must_peek_index()?;
 
                 self.skip_whitespace();
-                let (_, c) = self.parse_hex_digits_into_char(1, 6)?;
-                self.skip_whitespace();
+                let (_, first_c) = self.parse_hex_digits_into_char(1, 6)?;
+                let skipped = self.skip_whitespace();
 
                 match self.must_peek()? {
-                    (offset, '}') => Ok((self.must_peek_index()?, SingleOrMultiChar::Single(c))),
-                    (offset, _) => {
-                        // consume all chars in this multiescape and create the iterator
-                        let mut end_offset = offset;
-                        loop {
-                            let (offset, c) = self.must_next()?;
-                            if c == '}' {
-                                let escape_source = &self.source[begin_offset..=end_offset];
-                                return Ok((end_offset, SingleOrMultiChar::Multi(MultiEscapeIter(begin_offset, escape_source.char_indices()))))
-                            }
-                            end_offset = offset;
-                        }
-                    }
+                    (offset, '}') => {
+                        self.iter.next();
+                        Ok((offset, SingleOrMultiChar::Single(first_c)))
+                    },
+                    (offset, c) if c.is_ascii_hexdigit() && skipped > 0 => Ok((offset, SingleOrMultiChar::Multi(first_c))),
+                    (_, c) => self.error_here(PEK::UnexpectedChar(c))
                 }
             }
             'u' => {
@@ -1076,7 +1101,7 @@ where
 
     // parses either a raw char or an escaped char. all chars are allowed, the caller must make sure to handle
     // cases where some characters are not allowed
-    fn parse_char(&mut self) -> Result<(usize, SingleOrMultiChar<'b>)> {
+    fn parse_char(&mut self) -> Result<(usize, SingleOrMultiChar)> {
         let (offset, c) = self.must_peek()?;
         match c {
             '\\' => self.parse_escaped_char(),
@@ -1574,6 +1599,7 @@ mod tests {
             source.escape_debug()
         );
         let mut expected_size = cpinvlistandstrlist.code_points().size();
+        eprintln!("{:?}", cpinvlistandstrlist.strings());
         for s in strings {
             expected_size += 1;
             assert!(
