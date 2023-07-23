@@ -548,6 +548,9 @@ where
             let (immediate_offset, immediate_char) = self.must_peek()?;
 
             let (tok_offset, from_var, tok) = self.parse_main_token()?;
+            // warning: self.iter should not be advanced any more after this point on any path to
+            // MT::Literal(Literal::CharKind(SingleOrMultiChar::Multi)), because that variant
+            // expects a certain self.iter state
 
             use MainToken as MT;
             use SingleOrMultiChar as SMC;
