@@ -1963,6 +1963,14 @@ mod tests {
                 r"[\x{10ffff0}]",
                 r"[\x{10ffff0← error: unexpected character '0'",
             ),
+            (
+                r"[\x{11ffff}]",
+                r"[\x{11ffff← error: invalid escape sequence",
+            ),
+            (
+                r"[\x{10ffff 1 10ffff0}]",
+                r"[\x{10ffff 1 10ffff0← error: unexpected character '0'",
+            ),
             // > 1 byte in UTF-8 edge case
             (r"ä", r"ä← error: unexpected character 'ä'"),
             (r"\p{gc=ä}", r"\p{gc=ä← error: unknown property"),
