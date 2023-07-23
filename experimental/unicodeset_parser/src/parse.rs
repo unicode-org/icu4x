@@ -812,10 +812,14 @@ where
         Ok((last_offset, literal))
     }
 
-    // note: would be good to somehow merge the two multi_escape methods.
     // finishes a partial multi escape parse. in case of a parse error, self.single_set
     // may be left in an inconsistent state
     fn parse_multi_escape_into_set(&mut self) -> Result<()> {
+        // note: would be good to somehow merge the two multi_escape methods. splitting up the UnicodeSetBuilder into a more
+        // conventional parser + lexer combo might allow this.
+        // issue is that we cannot pass this method an argument that somehow mutates `self` in the current architecture.
+        // self.lexer.parse_multi_into_charappendable(&mut self.single_set) should work because the lifetimes are separate
+
         let mut first = true;
         loop {
             let skipped = self.skip_whitespace();
