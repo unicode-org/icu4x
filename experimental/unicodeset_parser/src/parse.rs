@@ -1528,6 +1528,7 @@ where
         None => source.len(),
         Some((offset, _)) => offset,
     };
+
     Ok((cpinvlistandstrlist, parsed_bytes))
 }
 
