@@ -381,12 +381,12 @@ where
             reverse_basic_id.is_some(),
         ) {
             (true, false, false, false) => {
-                // safety: by match, forward_filter.is_some() is true
+                // by match, forward_filter.is_some() is true
                 #[allow(clippy::unwrap_used)]
                 return Ok(Rule::GlobalFilter(forward_filter.unwrap()));
             }
             (false, false, true, false) => {
-                // safety: by match, reverse_filter.is_some() is true
+                // by match, reverse_filter.is_some() is true
                 #[allow(clippy::unwrap_used)]
                 return Ok(Rule::GlobalInverseFilter(reverse_filter.unwrap()));
             }
@@ -782,7 +782,7 @@ where
             end_offset = offset;
         }
 
-        // safety: first_offset is valid by `Chars`, and the inclusive end_offset
+        // first_offset is valid by `Chars`, and the inclusive end_offset
         // is valid because we only set it to the indices of ASCII chars,
         // which are all exactly 1 UTF-8 byte
         #[allow(clippy::indexing_slicing)]
@@ -898,7 +898,7 @@ where
         let first_offset = self.must_peek_index()?;
         let end_offset = self.validate_hex_digits(min, max)?;
 
-        // safety: validate_hex_digits ensures that chars (including the last one) are ascii hex digits,
+        // validate_hex_digits ensures that chars (including the last one) are ascii hex digits,
         // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
         #[allow(clippy::indexing_slicing)]
         let hex_source = &self.source[first_offset..=end_offset];
@@ -940,7 +940,7 @@ where
 
     fn parse_unicode_set(&mut self) -> Result<UnicodeSet> {
         let pre_offset = self.must_peek_index()?;
-        // safety: pre_offset is a valid index because self.iter (used in must_peek_index)
+        // pre_offset is a valid index because self.iter (used in must_peek_index)
         // was created from self.source
         #[allow(clippy::indexing_slicing)]
         let set_source = &self.source[pre_offset..];
