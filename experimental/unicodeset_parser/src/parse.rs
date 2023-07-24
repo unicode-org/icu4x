@@ -1071,6 +1071,8 @@ where
         }
     }
 
+    // note: could turn this from the current two-pass approach into a one-pass approach
+    // by manually parsing the digits instead of using u32::from_str_radix.
     fn parse_hex_digits_into_char(&mut self, min: usize, max: usize) -> Result<(usize, char)> {
         let first_offset = self.must_peek_index()?;
         let end_offset = self.validate_hex_digits(min, max)?;
