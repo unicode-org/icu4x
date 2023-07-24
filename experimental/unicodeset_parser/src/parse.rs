@@ -68,7 +68,7 @@ impl From<ParseErrorKind> for ParseError {
 ///
 /// See [`ParseError::fmt_with_source`] for pretty-printing and [`ParseErrorKind`] of the
 /// different types of errors represented by this struct.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ParseError {
     // offset is the index to an arbitrary byte in the last character in the source that makes sense
     // to display as location for the error, e.g., the unexpected character itself or
@@ -173,6 +173,11 @@ impl ParseError {
     /// Returns the [`ParseErrorKind`] of this error.
     pub fn kind(&self) -> ParseErrorKind {
         self.kind
+    }
+
+    /// Returns the offset of this error in the source string, if it was specified.
+    pub fn offset(&self) -> Option<usize> {
+        self.offset
     }
 
     fn or_with_offset(self, offset: usize) -> Self {
@@ -1275,7 +1280,8 @@ where
     }
 }
 
-/// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList).
+/// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList),
+/// as well as the number of bytes consumed from the source string.
 ///
 /// Supports UnicodeSets as described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
 ///
@@ -1299,19 +1305,21 @@ where
 /// ```
 /// use icu_unicodeset_parser::parse;
 ///
-/// let set = parse("[a-zA-Z0-9]").unwrap();
+/// let source = "[a-zA-Z0-9]";
+/// let (set, consumed) = parse(source).unwrap();
 /// let code_points = set.code_points();
 ///
 /// assert!(code_points.contains_range(&('a'..='z')));
 /// assert!(code_points.contains_range(&('A'..='Z')));
 /// assert!(code_points.contains_range(&('0'..='9')));
+/// assert_eq!(consumed, source.len());
 /// ```
 ///
 /// Parse properties, set operations, inner sets
 /// ```
 /// use icu_unicodeset_parser::parse;
 ///
-/// let set = parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]").unwrap();
+/// let (set, _) = parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]").unwrap();
 /// let elements = 'a'..='z';
 /// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(elements.count(), set.size());
@@ -1321,7 +1329,7 @@ where
 /// ```
 /// use icu_unicodeset_parser::parse;
 ///
-/// let set = parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
+/// let (set, _) = parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
 /// assert!(set.contains_char('z'));
 /// assert_eq!(set.size(), 1);
 /// assert!(!set.has_strings());
@@ -1331,13 +1339,28 @@ where
 /// ```
 /// use icu_unicodeset_parser::parse;
 ///
-/// let set = parse("[[ace][bdf] - [abc][def]]").unwrap();
+/// let (set, _) = parse("[[ace][bdf] - [abc][def]]").unwrap();
 /// let elements = 'd'..='f';
 /// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(set.size(), elements.count());
 /// ```
+///
+/// Supports partial parses
+/// ```
+/// use icu_unicodeset_parser::parse;
+///
+/// let (set, consumed) = parse("[a-c][x-z]").unwrap();
+/// let code_points = set.code_points();
+/// let elements = 'a'..='c';
+/// let elements_unparsed = 'x'..='z';
+/// assert!(code_points.contains_range(&elements));
+/// assert!(!code_points.contains_range(&elements_unparsed));
+/// assert_eq!(set.size(), elements.count());
+/// // only the first UnicodeSet is parsed
+/// assert_eq!(consumed, "[a-c]".len());
+/// ```
 #[cfg(feature = "compiled_data")]
-pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static>> {
+pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'static>, usize)> {
     parse_unstable(source, &icu_properties::provider::Baked)
 }
 
@@ -1350,7 +1373,7 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
 /// ```
 /// use icu_unicodeset_parser::*;
 ///
-/// let my_set = parse("[abc]").unwrap();
+/// let (my_set, _) = parse("[abc]").unwrap();
 ///
 /// let mut variable_map = VariableMap::new();
 /// variable_map.insert_char("start".into(), 'a').unwrap();
@@ -1361,7 +1384,9 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
 /// // If a variable already exists, `Err` is returned, and the map is not updated.
 /// variable_map.insert_char("end".into(), 'Ω').unwrap_err();
 ///
-/// let set = parse_with_variables("[[$start-$end]-$the_set $str]", &variable_map).unwrap();
+/// let source = "[[$start-$end]-$the_set $str]";
+/// let (set, consumed) = parse_with_variables(source, &variable_map).unwrap();
+/// assert_eq!(consumed, source.len());
 /// assert!(set.code_points().contains_range(&('d'..='z')));
 /// assert!(set.contains("Hello World"));
 /// assert_eq!(set.size(), 1 + ('d'..='z').count());
@@ -1370,7 +1395,7 @@ pub fn parse(source: &str) -> Result<CodePointInversionListAndStringList<'static
 pub fn parse_with_variables(
     source: &str,
     variable_map: &VariableMap<'_>,
-) -> Result<CodePointInversionListAndStringList<'static>> {
+) -> Result<(CodePointInversionListAndStringList<'static>, usize)> {
     parse_unstable_with_variables(source, variable_map, &icu_properties::provider::Baked)
 }
 
@@ -1379,7 +1404,7 @@ pub fn parse_unstable_with_variables<P>(
     source: &str,
     variable_map: &VariableMap<'_>,
     provider: &P,
-) -> Result<CodePointInversionListAndStringList<'static>>
+) -> Result<(CodePointInversionListAndStringList<'static>, usize)>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -1440,7 +1465,6 @@ where
 {
     // TODO(#3550): Add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly?
     // ^ will likely need a different iterator type on UnicodeSetBuilder
-    // TODO(#3550): Think about returning byte-length of the parsed UnicodeSet for use in the transliterator parser, or add public function that accepts a peekable char iterator?
 
     let mut iter = source.char_indices().peekable();
 
@@ -1472,14 +1496,19 @@ where
     let cpinvlistandstrlist = CodePointInversionListAndStringList::try_from(built_single, zerovec)
         .map_err(|_| PEK::Internal)?;
 
-    Ok(cpinvlistandstrlist)
+    let parsed_bytes = match iter.peek().copied() {
+        None => source.len(),
+        Some((offset, _)) => offset,
+    };
+
+    Ok((cpinvlistandstrlist, parsed_bytes))
 }
 
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse)]
 pub fn parse_unstable<P>(
     source: &str,
     provider: &P,
-) -> Result<CodePointInversionListAndStringList<'static>>
+) -> Result<(CodePointInversionListAndStringList<'static>, usize)>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -1631,7 +1660,7 @@ mod tests {
             .insert_string("var2".to_string(), "abc".to_string())
             .unwrap();
 
-        let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
+        let (set, _) = parse(r"[a-z {Hello,\ World!}]").unwrap();
         let mut map_char_set = VariableMap::default();
         map_char_set.insert_char("a".to_string(), 'a').unwrap();
         map_char_set.insert_set("set".to_string(), set).unwrap();
@@ -1648,7 +1677,7 @@ mod tests {
             (&map_headache, "[a $hehe z]", "aazz--", vec![]),
             (
                 &map_char_char,
-                "[[$]var2]]",
+                "[[$]var2]",
                 "\u{ffff}\u{ffff}vvaarr22",
                 vec![],
             ),
@@ -1677,10 +1706,11 @@ mod tests {
                     err.fmt_with_source(source)
                 );
             }
-            let parsed = parsed.unwrap();
+            let (set, consumed) = parsed.unwrap();
+            assert_eq!(consumed, source.len(), "{source:?} is not fully consumed");
             assert_set_equality(
                 source,
-                &parsed,
+                &set,
                 range_iter_from_str(single),
                 strings.into_iter(),
             );
@@ -1846,10 +1876,11 @@ mod tests {
                     err.fmt_with_source(source)
                 );
             }
-            let parsed = parsed.unwrap();
+            let (set, consumed) = parsed.unwrap();
+            assert_eq!(consumed, source.len());
             assert_set_equality(
                 source,
-                &parsed,
+                &set,
                 range_iter_from_str(single),
                 strings.into_iter(),
             );
@@ -1868,7 +1899,7 @@ mod tests {
             .insert_string("var2".to_string(), "abc".to_string())
             .unwrap();
 
-        let set = parse(r"[a-z {Hello,\ World!}]").unwrap();
+        let (set, _) = parse(r"[a-z {Hello,\ World!}]").unwrap();
         let mut map_char_set = VariableMap::default();
         map_char_set.insert_char("a".to_string(), 'a').unwrap();
         map_char_set.insert_set("set".to_string(), set).unwrap();
@@ -1976,6 +2007,26 @@ mod tests {
         let vm = Default::default();
         for (source, expected_err) in cases {
             assert_is_error_and_message_eq(source, expected_err, &vm);
+        }
+    }
+
+    #[test]
+    fn test_consumed() {
+        let cases = [
+            (r"[a-z\]{[}]".len(), r"[a-z\]{[}][]"),
+            (r"[a-z\]{[}]".len(), r"[a-z\]{[}] []"),
+            (r"[a-z\]{[}]".len(), r"[a-z\]{]}] []"),
+            (r"[a-z\]{{[}]".len(), r"[a-z\]{{]}] []"),
+            (r"[a-z\]{[}]".len(), r"[a-z\]{]}]\p{L}"),
+            (r"[a-z\]{[}]".len(), r"[a-z\]{]}]$var"),
+        ];
+
+        let vm = Default::default();
+        for (expected_consumed, source) in cases {
+            let (_, consumed) = parse(source).unwrap();
+            assert_eq!(expected_consumed, consumed);
+            let (_, consumed) = parse_with_variables(source, &vm).unwrap();
+            assert_eq!(expected_consumed, consumed);
         }
     }
 }
