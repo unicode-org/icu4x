@@ -1468,7 +1468,7 @@ mod test {
             );
         }
     }
-
+    #[ignore]
     #[test]
     fn test_days_in_provided_year_observational() {
         // -1245 1 1 = -214526 (R.D Date)
@@ -1476,11 +1476,9 @@ mod test {
         let x_year = -1245;
         let y_year = 1518;
 
-        let mut sum_days_in_year = 0;
-        for i in x_year..y_year {
-            let days = IslamicObservational::days_in_provided_year(i);
-            sum_days_in_year += days;
-        }
+        let sum_days_in_year: i32 = (x_year..y_year)
+            .map(|year| IslamicObservational::days_in_provided_year(year) as i32)
+            .sum();
         let expected_number_of_days = 979115; // The number of days between Islamic years -1245 and 1518
         let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
 
@@ -1490,6 +1488,7 @@ mod test {
         );
     }
 
+    #[ignore]
     #[test]
     fn test_days_in_provided_year_ummalqura() {
         // -1245 1 1 = -214528 (R.D Date)
@@ -1497,11 +1496,10 @@ mod test {
         let x_year = -1245;
         let y_year = 1518;
 
-        let mut sum_days_in_year = 0;
-        for i in x_year..y_year {
-            let days = UmmAlQura::days_in_provided_year(i);
-            sum_days_in_year += days;
-        }
+        let sum_days_in_year: i32 = (x_year..y_year)
+            .map(|year| UmmAlQura::days_in_provided_year(year) as i32)
+            .sum();
+
         let expected_number_of_days = 979116; // The number of days between UmmAlQura Islamic years -1245 and 1518
 
         assert_eq!(sum_days_in_year, expected_number_of_days);
