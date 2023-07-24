@@ -56,6 +56,10 @@ fn generate_json_and_verify_postcard() {
 
     let mut options = options::Options::default();
     options.locales = options::LocaleInclude::Explicit(LOCALES.iter().cloned().collect());
+    options.segmenter_models = options::SegmenterModelInclude::Explicit(vec![
+        "thaidict".into(),
+        "Thai_codepoints_exclusive_model4_heavy".into(),
+    ]);
 
     DatagenProvider::try_new(options, source)
         .unwrap()
@@ -78,7 +82,7 @@ struct PostcardTestingExporter {
 //
 // Such types contain some data that was allocated during deserializations
 //
-// Every entry in this list is a bug that needs to be addressed before ICU4X 1.0.
+// Every entry in this list is a bug that needs to be addressed before stabilization.
 const EXPECTED_VIOLATIONS: &[DataKey] = &[
     // https://github.com/unicode-org/icu4x/issues/1678
     icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
@@ -90,7 +94,9 @@ const EXPECTED_VIOLATIONS: &[DataKey] = &[
 // Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
 // in this list since it does not affect databake.
 const EXPECTED_TRANSIENT_VIOLATIONS: &[DataKey] = &[
-    // Regex DFAs need to be validated, which involved creating a BTreeMap
+    // Regex DFAs need to be validated, which involved creating a BTreeMap.
+    // If required we could avoid this using one of the approaches in
+    // https://github.com/unicode-org/icu4x/pulls/3697.
     icu_list::provider::AndListV1Marker::KEY,
     icu_list::provider::OrListV1Marker::KEY,
     icu_list::provider::UnitListV1Marker::KEY,

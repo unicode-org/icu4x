@@ -870,11 +870,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             let mut left_prop = self.get_linebreak_property(left_codepoint);
             self.advance_iter();
 
-            // Initializing right_codepoint can be simplified with a let-else statement in Rust 1.65.
-            // https://blog.rust-lang.org/2022/11/03/Rust-1.65.0.html#let-else-statements
-            let right_codepoint = if let Some(right_codepoint) = self.get_current_codepoint() {
-                right_codepoint
-            } else {
+            let Some(right_codepoint) = self.get_current_codepoint() else {
                 return Some(self.len);
             };
             let right_prop = self.get_linebreak_property(right_codepoint);
@@ -944,11 +940,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 loop {
                     self.advance_iter();
 
-                    // Initializing prop can be simplified with a let-else statement in Rust 1.65.
-                    // https://blog.rust-lang.org/2022/11/03/Rust-1.65.0.html#let-else-statements
-                    let prop = if let Some(prop) = self.get_current_linebreak_property() {
-                        prop
-                    } else {
+                    let Some(prop) = self.get_current_linebreak_property() else {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
                         let break_state = self
                             .get_break_state_from_table(break_state as u8, self.data.eot_property);
