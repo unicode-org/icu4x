@@ -874,7 +874,8 @@ where
         }
     }
 
-    // starts with \ and consumes the whole escape sequence
+    // starts with \ and consumes the whole escape sequence if a single
+    // char is escaped, otherwise pauses the parse after the first char
     fn parse_escaped_char(&mut self) -> Result<(usize, SingleOrMultiChar)> {
         self.consume('\\')?;
 
