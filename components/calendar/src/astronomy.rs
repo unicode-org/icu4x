@@ -723,7 +723,6 @@ impl Astronomical {
     /// Altitude of the moon (in degrees) at a given moment
     ///
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4537
-
     #[allow(clippy::unwrap_used)]
     pub(crate) fn lunar_altitude(moment: Moment, location: Location) -> f64 {
         let phi = location.latitude;
@@ -966,14 +965,15 @@ impl Astronomical {
         }
     }
 
-    #[allow(dead_code)]
     pub(crate) fn sunset(date: Moment, location: Location) -> Option<Moment> {
         let alpha = Self::refraction(location) + (16.0 / 60.0);
 
         Self::dusk(date.inner(), location, alpha)
     }
 
-    #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
+    #[allow(clippy::unwrap_used, clippy::eq_op)]
+    // Time between sunset and moonset on date at location. Returns None if there is no sunset or moonset on said date.
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6770
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
         if let Some(sun) = Self::sunset(date, location) {
             if let Some(moon) = Self::moonset(date, location) {

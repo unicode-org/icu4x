@@ -687,4 +687,17 @@ mod tests {
         assert_eq!(cm.uppercase_to_string("i", &tr), "İ");
         assert_eq!(cm.uppercase_to_string("i", &az), "İ");
     }
+
+    #[test]
+    fn test_cherokee_case_folding() {
+        let case_mapping = CaseMapper::new();
+        assert_eq!(case_mapping.simple_fold('Ꭰ'), 'Ꭰ');
+        assert_eq!(case_mapping.simple_fold('ꭰ'), 'Ꭰ');
+        assert_eq!(case_mapping.simple_fold_turkic('Ꭰ'), 'Ꭰ');
+        assert_eq!(case_mapping.simple_fold_turkic('ꭰ'), 'Ꭰ');
+        assert_eq!(case_mapping.fold_string("Ꭰ"), "Ꭰ");
+        assert_eq!(case_mapping.fold_string("ꭰ"), "Ꭰ");
+        assert_eq!(case_mapping.fold_turkic_string("Ꭰ"), "Ꭰ");
+        assert_eq!(case_mapping.fold_turkic_string("ꭰ"), "Ꭰ");
+    }
 }
