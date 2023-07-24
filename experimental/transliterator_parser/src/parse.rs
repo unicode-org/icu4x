@@ -1040,7 +1040,8 @@ where
     }
 
     fn try_uset_flatten_section(&self, section: &Section) -> Option<VariableValue<'static>> {
-        // TODO: Could avoid some clones here if the VariableMap stored &T's (or both)
+        // note: could avoid some clones here if the VariableMap stored &T's (or both), but that is
+        // quite the edge case in transliterator source files
 
         // is this just a unicode set?
         if let [Element::UnicodeSet(set)] = &section[..] {
