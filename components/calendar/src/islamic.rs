@@ -87,11 +87,9 @@ impl CalendarArithmetic for IslamicObservational {
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
-        let days = (1..=12)
+        (1..=12)
             .map(|month| IslamicObservational::month_days(year, month) as u32)
-            .sum();
-        debug_assert!(days < 356);
-        days
+            .sum()
     }
 
     // As an observational-lunar calendar, it does not have leap years.
@@ -328,10 +326,9 @@ impl CalendarArithmetic for UmmAlQura {
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
-        let days = (1..=12)
+        (1..=12)
             .map(|month| UmmAlQura::month_days(year, month) as u32)
-            .sum();
-        days
+            .sum()
     }
 
     // As an observational-lunar calendar, it does not have leap years.
@@ -1482,7 +1479,7 @@ mod test {
         let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
 
         assert!(
-            (sum_days_in_year as i32 - expected_number_of_days).abs() <= tolerance,
+            (sum_days_in_year - expected_number_of_days).abs() <= tolerance,
             "Difference between sum_days_in_year and expected_number_of_days is more than the tolerance"
         );
     }
