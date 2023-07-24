@@ -33,7 +33,6 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64, next};
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
-use crate::types::Moment;
 use crate::{astronomy::*, Iso};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
@@ -78,13 +77,9 @@ impl CalendarArithmetic for IslamicObservational {
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
 
-        let next_midmonth =  FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
-        + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH + (30.0); // Adds 30 to fall in the middle of the next month
+        let f_date = Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO);
 
-        let month_1 = Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO);
-        let month_2 = Astronomical::phasis_on_or_before(RataDie::new(next_midmonth as i64), CAIRO);
-
-        (month_2 - month_1) as u8
+        Astronomical::month_length(f_date, CAIRO)
     }
 
     fn months_for_every_year(_year: i32) -> u8 {
@@ -321,18 +316,12 @@ pub struct UmmAlQuraDateInner(ArithmeticDate<UmmAlQura>);
 
 impl CalendarArithmetic for UmmAlQura {
     fn month_days(year: i32, month: u8) -> u8 {
-        let midmonth = RataDie::new(
-            FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date()
-                + libm::floor(
-                    ((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH,
-                ) as i64,
-        );
-        // TODO: Add comment explaining functionality.
-        if Self::adjusted_saudi_criterion(midmonth) {
-            30
-        } else {
-            29
-        }
+        let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
+            + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
+
+        let f_date = Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), MECCA);
+
+        Astronomical::month_length(f_date, MECCA)
     }
 
     fn months_for_every_year(_year: i32) -> u8 {
@@ -344,7 +333,6 @@ impl CalendarArithmetic for UmmAlQura {
         for i in 1..=12 {
             days += Self::month_days(year, i) as u32;
         }
-        debug_assert!(days <= 355);
         days
     }
 
@@ -841,8 +829,6 @@ impl DateTime<IslamicCivil> {
 
 #[cfg(test)]
 mod test {
-    use core::f32::consts::E;
-
     use super::*;
 
     #[derive(Debug)]
@@ -1484,40 +1470,40 @@ mod test {
     }
 
     #[test]
-    fn test_days_in_month() {
+    fn test_days_in_provided_year_observational() {
+        // -1245 1 1 = -214526 (R.D Date)
+        // 1518 1 1 = 764589 (R.D Date)
+        let x_year = -1245;
+        let y_year = 1518;
 
-        // let start_year = 1091;
-        // let end_year = 1128;
-        // for i in start_year..end_year {
-        //     for y in 1..12 {
-        //         let days = IslamicObservational::month_days(i, y);
-        //         debug_assert!(days < 31, "{}", i);
-        //     }
-        // }
-
-        for i in 0..12 {
-            let days = IslamicObservational::month_days(1105, i);
-            println!("{}", days);
-            debug_assert!(days < 31);
-        }
-
-
-    }
-    //#[test]
-    fn test_days_in_provided_year() {
-        // 1091 1 1 = 613275
-        // 1128 1 1 = 626386
-        // number of days between both years: 13111
-        let x_year = 1091;
-        let y_year = 1128;
-        let number_of_days = 13111;
-        
-        let mut sum_days = 0;
+        let mut sum_days_in_year = 0;
         for i in x_year..y_year {
             let days = IslamicObservational::days_in_provided_year(i);
-            sum_days += days;
+            sum_days_in_year += days;
         }
-        assert_eq!(sum_days, number_of_days);
+        let expected_number_of_days = 979115; // The number of days between Islamic years -1245 and 1518
+        let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
+
+        assert!(
+            (sum_days_in_year as i32 - expected_number_of_days).abs() <= tolerance,
+            "Difference between sum_days_in_year and expected_number_of_days is more than the tolerance"
+        );
     }
 
+    #[test]
+    fn test_days_in_provided_year_ummalqura() {
+        // -1245 1 1 = -214528 (R.D Date)
+        // 1518 1 1 = 764588 (R.D Date)
+        let x_year = -1245;
+        let y_year = 1518;
+
+        let mut sum_days_in_year = 0;
+        for i in x_year..y_year {
+            let days = UmmAlQura::days_in_provided_year(i);
+            sum_days_in_year += days;
+        }
+        let expected_number_of_days = 979116; // The number of days between UmmAlQura Islamic years -1245 and 1518
+
+        assert_eq!(sum_days_in_year, expected_number_of_days);
+    }
 }

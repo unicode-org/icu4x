@@ -702,9 +702,17 @@ impl Astronomical {
         next_moment(Moment::new(tau), location, Self::visible_crescent)
     }
 
+    // Calculates the month length for the Islamic Observational Calendar
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L7068
+    // Can return 31 days due to the imprecise nature of trying to approximate an observational calendar. (See page 294 of the Calendrical Calculations book)
     #[allow(clippy::unwrap_used)]
     pub fn month_length(date: RataDie, location: Location) -> u8 {
-        u8::default()
+        let moon = Self::phasis_on_or_after(date + 1, location);
+        let prev = Self::phasis_on_or_before(date, location);
+
+        debug_assert!(moon > prev);
+        debug_assert!(moon - prev < u8::MAX.into());
+        (moon - prev) as u8
     }
 
     // Lunar elongation (the moon's angular distance east of the Sun) at a given Moment in Julian centuries
