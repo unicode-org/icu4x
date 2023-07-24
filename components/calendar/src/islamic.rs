@@ -1472,10 +1472,14 @@ mod test {
         let x_year = -1245;
         let y_year = 1518;
 
-        let sum_days_in_year: i32 = (x_year..y_year)
-            .map(|year| IslamicObservational::days_in_provided_year(year) as i32)
+        let sum_days_in_year: i64 = (x_year..y_year)
+            .map(|year| IslamicObservational::days_in_provided_year(year) as i64)
             .sum();
-        let expected_number_of_days = 979115; // The number of days between Islamic years -1245 and 1518
+        let expected_number_of_days = IslamicObservational::fixed_from_islamic(IslamicDateInner(
+            ArithmeticDate::new_from_lunar_ordinals(1518, 1, 1).unwrap(),
+        )) - IslamicObservational::fixed_from_islamic(
+            IslamicDateInner(ArithmeticDate::new_from_lunar_ordinals(-1245, 1, 1).unwrap()),
+        ); // The number of days between Islamic years -1245 and 1518
         let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
 
         assert!(
@@ -1492,11 +1496,15 @@ mod test {
         let x_year = -1245;
         let y_year = 1518;
 
-        let sum_days_in_year: i32 = (x_year..y_year)
-            .map(|year| UmmAlQura::days_in_provided_year(year) as i32)
+        let sum_days_in_year: i64 = (x_year..y_year)
+            .map(|year| UmmAlQura::days_in_provided_year(year) as i64)
             .sum();
 
-        let expected_number_of_days = 979116; // The number of days between UmmAlQura Islamic years -1245 and 1518
+        let expected_number_of_days = UmmAlQura::fixed_from_saudi_islamic(UmmAlQuraDateInner(
+            ArithmeticDate::new_from_lunar_ordinals(1518, 1, 1).unwrap(),
+        )) - UmmAlQura::fixed_from_saudi_islamic(UmmAlQuraDateInner(
+            ArithmeticDate::new_from_lunar_ordinals(-1245, 1, 1).unwrap(),
+        )); // The number of days between UmmAlQura Islamic years -1245 and 1518
 
         assert_eq!(sum_days_in_year, expected_number_of_days);
     }
