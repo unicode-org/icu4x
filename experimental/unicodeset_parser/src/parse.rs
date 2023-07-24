@@ -222,7 +222,7 @@ impl<'a> VariableMap<'a> {
     pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
-            // safety: we just checked that this key exists
+            // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
@@ -237,7 +237,7 @@ impl<'a> VariableMap<'a> {
     pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
-            // safety: we just checked that this key exists
+            // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
@@ -258,7 +258,7 @@ impl<'a> VariableMap<'a> {
     pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
-            // safety: we just checked that this key exists
+            // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
@@ -283,7 +283,7 @@ impl<'a> VariableMap<'a> {
     ) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
-            // safety: we just checked that this key exists
+            // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
@@ -589,7 +589,7 @@ where
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
-                    // safety: the match guard checks length == 1
+                    // the match guard checks length == 1
                     #[allow(clippy::indexing_slicing)]
                     let c = c_vec[0];
                     prev_char = Some(c);
@@ -620,7 +620,7 @@ where
                 // parse a literal char as the end of a range
                 (CharMinus, MT::CharOrString(CS::Char(c_vec))) if c_vec.len() == 1 => {
                     let start = prev_char.ok_or(PEK::Internal.with_offset(tok_offset))?;
-                    // safety: the match guard checks length == 1
+                    // the match guard checks length == 1
                     #[allow(clippy::indexing_slicing)]
                     let end = c_vec[0];
                     if start > end {
@@ -1075,7 +1075,7 @@ where
         let first_offset = self.must_peek_index()?;
         let end_offset = self.validate_hex_digits(min, max)?;
 
-        // safety: validate_hex_digits ensures that chars (including the last one) are ascii hex digits,
+        // validate_hex_digits ensures that chars (including the last one) are ascii hex digits,
         // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
         #[allow(clippy::indexing_slicing)]
         let hex_source = &self.source[first_offset..=end_offset];
