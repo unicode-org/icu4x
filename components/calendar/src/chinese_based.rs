@@ -18,8 +18,6 @@
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //! ```
-//!
-//! TODO(#3709): Address inconsistencies with ICU code for extreme dates
 
 use crate::{
     astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR},
@@ -27,7 +25,7 @@ use crate::{
         ArithmeticDate, CalendarArithmetic, MAX_ITERS_FOR_DAYS_OF_YEAR,
         MAX_ITERS_FOR_MONTHS_OF_YEAR,
     },
-    helpers::{adjusted_rem_euclid, div_rem_euclid_f64, i64_to_i32, quotient, I32Result},
+    helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
     types::Moment,
     Calendar,
@@ -55,7 +53,7 @@ pub(crate) trait ChineseBased: CalendarArithmetic + Sized {
     /// may not track years ordinally in the same way many western calendars do.
     const EPOCH: RataDie;
 
-    /// Given a year, month, and day, create a ChineseBasedDateInner<C> where C is a Chinese-based calendar.
+    /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
     ///
     /// This function should just call try_new_C_date where C is the name of the calendar.
     fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Self>;
@@ -154,13 +152,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let month_after_twelfth =
             Self::new_moon_on_or_after((month_after_eleventh + 1).as_moment()); // m13
         let next_eleventh_month = Self::new_moon_before((following_solstice + 1).as_moment()); // next-m11
-        let lhs_argument = libm::round(
-            div_rem_euclid_f64(
-                (next_eleventh_month - month_after_eleventh) as f64,
-                MEAN_SYNODIC_MONTH,
-            )
-            .0,
-        ) as i64;
+        let lhs_argument =
+            libm::round((next_eleventh_month - month_after_eleventh) as f64 / MEAN_SYNODIC_MONTH)
+                as i64;
         if lhs_argument == 12
             && (Self::no_major_solar_term(month_after_eleventh)
                 || Self::no_major_solar_term(month_after_twelfth))
@@ -208,13 +202,13 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
     }
 
-    /// Get a ChineseBasedDateInner<C> from a fixed date
+    /// Get a Date<C> from a fixed date
     ///
     /// Months are calculated by iterating through the dates of new moons until finding the last month which
     /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
     /// from the fixed date of the beginning of the month.
     ///
-    /// The calculation for `elapsed_years` in this function is based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// The calculation for `elapsed_years` and `month` in this function are based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
     pub(crate) fn chinese_based_date_from_fixed(date: RataDie) -> ChineseBasedDateInner<C> {
         let first_day_of_year = Self::new_year_on_or_before_fixed_date(date);
@@ -227,17 +221,20 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Year should be in range of i32"
         );
         let year = year_int.saturate();
-        let mut month = 1;
-        let max_months = 14;
-        let mut cur_month = first_day_of_year;
-        let mut next_month = Self::new_moon_on_or_after((cur_month + 1).as_moment());
-        while next_month <= date && month < max_months {
-            month += 1;
-            cur_month = next_month;
-            next_month = Self::new_moon_on_or_after((cur_month + 1).as_moment());
-        }
-        debug_assert!(month < max_months, "Unexpectedly large number of months");
-        let day = (date - cur_month + 1) as u8;
+        let new_moon = Self::new_moon_before((date + 1).as_moment());
+        let month_i64 =
+            libm::round((new_moon - first_day_of_year) as f64 / MEAN_SYNODIC_MONTH) as i64 + 1;
+        debug_assert!(
+            ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
+            "Month should be in range of u8! Value {month_i64} failed for RD {date:?}"
+        );
+        let month = month_i64 as u8;
+        let day_i64 = date - new_moon + 1;
+        debug_assert!(
+            ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
+            "Day should be in range of u8! Value {month_i64} failed for RD {date:?}"
+        );
+        let day = day_i64 as u8;
         C::new_chinese_based_date(year, month, day)
     }
 

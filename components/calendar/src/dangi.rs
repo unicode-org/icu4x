@@ -390,9 +390,8 @@ impl ChineseBased for Dangi {
 
     const EPOCH: RataDie = KOREAN_EPOCH;
 
-    // Unwrap can be used for this function because it is only called internally when
-    // generating dates from a valid year, month, and day
-    #[allow(clippy::unwrap_used)]
+    // Unchecked can be used since this function is only ever called when generating dates from
+    // a valid year, month, and day.
     fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Dangi> {
         ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
