@@ -36,11 +36,13 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::Location;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::chinese_based::{ChineseBased, ChineseBasedDateInner};
+use crate::chinese_based::{
+    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedDateInner,
+};
 use crate::helpers::div_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
-use crate::types::{Era, FormattableYear, MonthCode};
+use crate::types::{Era, FormattableYear};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
@@ -124,7 +126,9 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let month = if let Some(ordinal) = Self::ordinal_lunar_month_from_code(year, month_code) {
+        let month = if let Some(ordinal) =
+            chinese_based_ordinal_lunar_month_from_code::<Chinese>(year, month_code)
+        {
             ordinal
         } else {
             return Err(CalendarError::UnknownMonthCode(
@@ -455,61 +459,14 @@ impl Chinese {
             related_iso,
         }
     }
-
-    /// Get the ordinal lunar month from a code
-    ///
-    /// TODO: The behavior of this fn is calendar specific, but this needs to be implemented in every lunar
-    /// calendar; consider abstracting this function to a Lunar trait
-    fn ordinal_lunar_month_from_code(year: i32, code: MonthCode) -> Option<u8> {
-        if code.0.len() < 3 {
-            return None;
-        }
-        let mid_year = Inner::fixed_mid_year_from_year(year);
-        let leap_month = if Self::is_leap_year(year) {
-            Inner::get_leap_month_in_year(mid_year)
-        } else {
-            // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
-            // it is impossible to actually have 14 months in a year.
-            14
-        };
-        let bytes = code.0.all_bytes();
-        if bytes[0] != b'M' {
-            return None;
-        }
-        if code.0.len() == 4 && bytes[3] != b'L' {
-            return None;
-        }
-        let mut unadjusted = 0;
-        if bytes[1] == b'0' {
-            if bytes[2] >= b'1' && bytes[2] <= b'9' {
-                unadjusted = bytes[2] - b'0';
-            }
-        } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'2' {
-            unadjusted = 10 + bytes[2] - b'0';
-        }
-        if bytes[3] == b'L' {
-            if unadjusted + 1 != leap_month {
-                return None;
-            } else {
-                return Some(unadjusted + 1);
-            }
-        }
-        if unadjusted != 0 {
-            if unadjusted + 1 > leap_month {
-                return Some(unadjusted + 1);
-            } else {
-                return Some(unadjusted);
-            }
-        }
-        None
-    }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::types::Moment;
 
     use super::*;
+    use crate::types::Moment;
+    use crate::types::MonthCode;
 
     #[test]
     fn test_chinese_new_moon_directionality() {
@@ -929,7 +886,7 @@ mod test {
         ];
         for ordinal_code_pair in codes {
             let code = MonthCode(ordinal_code_pair.1);
-            let ordinal = Chinese::ordinal_lunar_month_from_code(year, code);
+            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(year, code);
             assert_eq!(
                 ordinal,
                 Some(ordinal_code_pair.0),
@@ -955,7 +912,7 @@ mod test {
         for year_code_pair in invalid_codes {
             let year = year_code_pair.0;
             let code = MonthCode(year_code_pair.1);
-            let ordinal = Chinese::ordinal_lunar_month_from_code(year, code);
+            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(year, code);
             assert_eq!(
                 ordinal, None,
                 "Invalid month code failed for year: {year}, code: {code}"

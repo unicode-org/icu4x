@@ -34,13 +34,14 @@
 //! ```
 
 use crate::calendar_arithmetic::CalendarArithmetic;
+use crate::chinese_based::chinese_based_ordinal_lunar_month_from_code;
 use crate::{
     astronomy::Location,
     calendar_arithmetic::ArithmeticDate,
     chinese_based::{ChineseBased, ChineseBasedDateInner},
     helpers::div_rem_euclid,
     rata_die::RataDie,
-    types::{self, Era, FormattableYear, MonthCode},
+    types::{self, Era, FormattableYear},
     AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
 };
 use tinystr::tinystr;
@@ -151,7 +152,9 @@ impl Calendar for Dangi {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, crate::Error> {
-        let month = if let Some(ordinal) = Self::ordinal_lunar_month_from_code(year, month_code) {
+        let month = if let Some(ordinal) =
+            chinese_based_ordinal_lunar_month_from_code::<Dangi>(year, month_code)
+        {
             ordinal
         } else {
             return Err(CalendarError::UnknownMonthCode(
@@ -436,54 +439,6 @@ impl Dangi {
             cyclic,
             related_iso,
         }
-    }
-
-    /// Get the ordinal lunar month from a code
-    ///
-    /// TODO: This code is exactly the same as in `Chinese`; consider abstracting this function
-    /// to a trait shared by Lunar calendars.
-    fn ordinal_lunar_month_from_code(year: i32, code: MonthCode) -> Option<u8> {
-        if code.0.len() < 3 {
-            return None;
-        }
-        let mid_year = Inner::fixed_mid_year_from_year(year);
-        let leap_month = if Self::is_leap_year(year) {
-            Inner::get_leap_month_in_year(mid_year)
-        } else {
-            // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
-            // it is impossible to actually have 14 months in a year.
-            14
-        };
-        let bytes = code.0.all_bytes();
-        if bytes[0] != b'M' {
-            return None;
-        }
-        if code.0.len() == 4 && bytes[3] != b'L' {
-            return None;
-        }
-        let mut unadjusted = 0;
-        if bytes[1] == b'0' {
-            if bytes[2] >= b'1' && bytes[2] <= b'9' {
-                unadjusted = bytes[2] - b'0';
-            }
-        } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'2' {
-            unadjusted = 10 + bytes[2] - b'0';
-        }
-        if bytes[3] == b'L' {
-            if unadjusted + 1 != leap_month {
-                return None;
-            } else {
-                return Some(unadjusted + 1);
-            }
-        }
-        if unadjusted != 0 {
-            if unadjusted + 1 > leap_month {
-                return Some(unadjusted + 1);
-            } else {
-                return Some(unadjusted);
-            }
-        }
-        None
     }
 }
 
