@@ -268,7 +268,6 @@ where
     // initiates a filter or transform rule, as part of '::'
     const SPECIAL_START: char = ':';
     // initiates a UnicodeSet
-    // TODO: does \p (and \P) work to initiate a UnicodeSet?
     const SET_START: char = '[';
     // equivalent to the UnicodeSet [^[:Zp:][:Zl:]\r\n$]
     const DOT: char = '.';
