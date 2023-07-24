@@ -964,7 +964,7 @@ impl IslamicTabular {
     // The fixed date algorithms are from
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     //
-    // Lisp code reference:https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2076
+    // Lisp code reference:https: //github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2076
     fn fixed_from_islamic(i_date: IslamicTabularDateInner) -> RataDie {
         let year = i64::from(i_date.0.year);
         let month = i64::from(i_date.0.month);
@@ -1801,6 +1801,7 @@ mod test {
         // 622 is the correct ISO year for the Islamic Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }
+
     #[test]
     fn test_islamic_epoch_thursday() {
         let epoch = FIXED_ISLAMIC_EPOCH_THURSDAY.to_i64_date();
@@ -1823,6 +1824,7 @@ mod test {
             );
         }
     }
+
     #[test]
     fn test_islamic_from_fixed() {
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
@@ -1848,6 +1850,7 @@ mod test {
             );
         }
     }
+
     #[test]
     fn test_islamic_tbla_from_fixed() {
         for (case, f_date) in TABULAR_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
@@ -1859,6 +1862,7 @@ mod test {
             );
         }
     }
+
     #[test]
     fn test_saudi_criterion() {
         for (boolean, f_date) in SAUDI_CRITERION_EXPECTED.iter().zip(TEST_FIXED_DATE.iter()) {
