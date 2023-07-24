@@ -796,7 +796,7 @@ where
             self.skip_whitespace();
             let c = self.must_peek_char()?;
             if c == Self::ESCAPE {
-                buf.push(self.parse_escaped_char()?);
+                self.parse_escaped_char_into_buf(&mut buf)?;
                 continue;
             }
             if !self.is_valid_unquoted_literal(c) {
@@ -829,8 +829,8 @@ where
     }
 
     // parses all supported escapes. code is somewhat duplicated from icu_unicodeset_parser
-    // but multi-escapes are not supported
-    fn parse_escaped_char(&mut self) -> Result<char> {
+    // might want to deduplicate this with unicodeset_parser somehow
+    fn parse_escaped_char_into_buf(&mut self, buf: &mut String) -> Result<()> {
         self.consume(Self::ESCAPE)?;
 
         let (offset, next_char) = self.must_next()?;
@@ -839,64 +839,88 @@ where
             'u' | 'x' if self.peek_char() == Some('{') => {
                 // bracketedHex
                 self.iter.next();
+
+                // the first codepoint is mandatory
                 self.skip_whitespace();
-                let (hex_digits, end_offset) = self.parse_variable_length_hex()?;
-                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                let c =
-                    char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
-                self.skip_whitespace();
-                self.consume('}')?;
-                Ok(c)
+                let c = self.parse_hex_digits_into_char(1, 6)?;
+                buf.push(c);
+
+                loop {
+                    let skipped = self.skip_whitespace();
+                    let next_char = self.must_peek_char()?;
+                    if next_char == '}' {
+                        self.iter.next();
+                        break;
+                    }
+                    if skipped == 0 {
+                        // multiple code points must be separated in multi escapes
+                        return self.unexpected_char_here();
+                    }
+
+                    let c = self.parse_hex_digits_into_char(1, 6)?;
+                    buf.push(c);
+                }
             }
             'u' => {
                 // 'u' hex{4}
-                let exact: [char; 4] = self.parse_exact_hex_digits()?;
-                let hex_digits = exact.iter().collect::<String>();
-                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                let c = self.parse_hex_digits_into_char(4, 4)?;
+                buf.push(c);
             }
             'x' => {
                 // 'x' hex{2}
-                let exact: [char; 2] = self.parse_exact_hex_digits()?;
-                let hex_digits = exact.iter().collect::<String>();
-                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                let c = self.parse_hex_digits_into_char(2, 2)?;
+                buf.push(c);
             }
             'U' => {
                 // 'U00' ('0' hex{5} | '10' hex{4})
-                self.consume('0')?;
-                self.consume('0')?;
-                let hex_digits = match self.must_peek_char()? {
-                    '0' => {
-                        self.iter.next();
-                        let exact: [char; 5] = self.parse_exact_hex_digits()?;
-                        exact.iter().collect::<String>()
-                    }
-                    '1' => {
-                        self.iter.next();
-                        self.consume('0')?;
-                        let exact: [char; 4] = self.parse_exact_hex_digits()?;
-                        ['1', '0'].iter().chain(exact.iter()).collect::<String>()
-                    }
-                    _ => return self.unexpected_char_here(),
-                };
-                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                let c = self.parse_hex_digits_into_char(6, 6)?;
+                buf.push(c);
             }
             'N' => {
                 // parse code point with name in {}
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
-                Err(PEK::Unimplemented.with_offset(offset))
+                return Err(PEK::Unimplemented.with_offset(offset));
             }
-            'a' => Ok('\u{0007}'),
-            'b' => Ok('\u{0008}'),
-            't' => Ok('\u{0009}'),
-            'n' => Ok('\u{000A}'),
-            'v' => Ok('\u{000B}'),
-            'f' => Ok('\u{000C}'),
-            'r' => Ok('\u{000D}'),
-            _ => Ok(next_char),
+            'a' => buf.push('\u{0007}'),
+            'b' => buf.push('\u{0008}'),
+            't' => buf.push('\u{0009}'),
+            'n' => buf.push('\u{000A}'),
+            'v' => buf.push('\u{000B}'),
+            'f' => buf.push('\u{000C}'),
+            'r' => buf.push('\u{000D}'),
+            _ => buf.push(next_char),
         }
+        Ok(())
+    }
+
+    fn parse_hex_digits_into_char(&mut self, min: usize, max: usize) -> Result<char> {
+        let first_offset = self.must_peek_index()?;
+        let end_offset = self.validate_hex_digits(min, max)?;
+
+        // safety: validate_hex_digits ensures that chars (including the last one) are ascii hex digits,
+        // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
+        #[allow(clippy::indexing_slicing)]
+        let hex_source = &self.source[first_offset..=end_offset];
+        let num = u32::from_str_radix(hex_source, 16).map_err(|_| PEK::Internal)?;
+        char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))
+    }
+
+    // validates [0-9a-fA-F]{min,max}, returns the offset of the last digit, consuming everything in the process
+    fn validate_hex_digits(&mut self, min: usize, max: usize) -> Result<usize> {
+        let mut last_offset = 0;
+        for count in 0..max {
+            let (offset, c) = self.must_peek()?;
+            if !c.is_ascii_hexdigit() {
+                if count < min {
+                    return self.unexpected_char_here();
+                } else {
+                    break;
+                }
+            }
+            self.iter.next();
+            last_offset = offset;
+        }
+        Ok(last_offset)
     }
 
     fn parse_segment(&mut self) -> Result<Element> {
@@ -1005,38 +1029,6 @@ where
         Ok(Element::Cursor(num_pre, num_post))
     }
 
-    // parses [0-9a-fA-F]{N}
-    fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<[char; N]> {
-        let mut result = [0 as char; N];
-        for slot in result.iter_mut() {
-            let (offset, c) = self.must_next()?;
-            if !c.is_ascii_hexdigit() {
-                return Err(PEK::UnexpectedChar(c).with_offset(offset));
-            }
-            *slot = c;
-        }
-        Ok(result)
-    }
-
-    // parses [0-9a-fA-F]{1..6}
-    fn parse_variable_length_hex(&mut self) -> Result<(String, usize)> {
-        let mut result = String::new();
-        let mut end_offset = 0;
-        while let Some(&(offset, c)) = self.iter.peek() {
-            if result.len() >= 6 || !c.is_ascii_hexdigit() {
-                break;
-            }
-            result.push(c);
-            end_offset = offset;
-            self.iter.next();
-        }
-        if result.is_empty() {
-            let (unexpected_offset, unexpected_char) = self.must_peek()?;
-            return Err(PEK::UnexpectedChar(unexpected_char).with_offset(unexpected_offset));
-        }
-        Ok((result, end_offset))
-    }
-
     fn add_variable(&mut self, name: String, value: Section, offset: usize) -> Result<()> {
         if let Some(uset_value) = self.try_uset_flatten_section(&value) {
             self.variable_map
@@ -1084,26 +1076,34 @@ where
         }
     }
 
-    // skips whitespace and comments
-    fn skip_whitespace(&mut self) {
+    // skips whitespace and comments, returns the number of skipped chars
+    fn skip_whitespace(&mut self) -> usize {
+        let mut count = 0;
         while let Some(c) = self.peek_char() {
             if c == Self::COMMENT {
-                self.skip_until(Self::COMMENT_END);
+                count += self.skip_until(Self::COMMENT_END);
+                continue;
             }
             if !self.pat_ws.contains(c) {
                 break;
             }
             self.iter.next();
+            count += 1;
         }
+        count
     }
 
     // skips until the next occurrence of c, which is also consumed
-    fn skip_until(&mut self, end: char) {
+    // returns the number of skipped chars
+    fn skip_until(&mut self, end: char) -> usize {
+        let mut count = 0;
         for (_, c) in self.iter.by_ref() {
+            count += 1;
             if c == end {
                 break;
             }
         }
+        count
     }
 
     fn peek_char(&mut self) -> Option<char> {
