@@ -721,7 +721,6 @@ where
                 self.iter.next();
                 Ok(Element::AnchorStart)
             }
-            Self::SET_START => Ok(Element::UnicodeSet(self.parse_unicode_set()?)),
             Self::OPEN_PAREN => self.parse_segment(),
             Self::DOT => {
                 self.iter.next();
@@ -738,6 +737,9 @@ where
             Self::FUNCTION_PREFIX => self.parse_function_call(),
             Self::CURSOR_PLACEHOLDER | Self::CURSOR => self.parse_cursor(),
             Self::QUOTE => Ok(Element::Literal(self.parse_quoted_literal()?)),
+            _ if self.peek_is_unicode_set_start() => {
+                Ok(Element::UnicodeSet(self.parse_unicode_set()?))
+            }
             c if self.is_valid_unquoted_literal(c) => Ok(Element::Literal(self.parse_literal()?)),
             _ => self.unexpected_char_here(),
         }
@@ -931,7 +933,7 @@ where
     }
 
     fn try_parse_unicode_set(&mut self) -> Result<Option<UnicodeSet>> {
-        if Some(Self::SET_START) == self.peek_char() {
+        if self.peek_is_unicode_set_start() {
             return Ok(Some(self.parse_unicode_set()?));
         }
         Ok(None)
@@ -1104,6 +1106,19 @@ where
             }
         }
         count
+    }
+
+    fn peek_is_unicode_set_start(&mut self) -> bool {
+        match self.peek_char() {
+            Some(Self::SET_START) => true,
+            Some(Self::ESCAPE) => {
+                let mut it = self.iter.clone();
+                // skip past the ESCAPE
+                it.next();
+                matches!(it.next(), Some((_, 'p' | 'P')))
+            }
+            _ => false,
+        }
     }
 
     fn peek_char(&mut self) -> Option<char> {
@@ -1378,6 +1393,7 @@ mod tests {
     fn test_global_filters_ok() {
         let sources = [
             r":: [^\[$] ;",
+            r":: \p{L} ;",
             r":: [^\[{[}$] ;",
             r":: [^\[{]}$] ;",
             r":: [^\[{]\}]}$] ;",
@@ -1399,6 +1415,7 @@ mod tests {
     fn test_global_filters_err() {
         let sources = [
             r":: [^\[$ ;",
+            r":: \p{L  ;",
             r":: [^[$] ;",
             r":: [^\[$]) ;",
             r":: ( [^\[$]  ;",
