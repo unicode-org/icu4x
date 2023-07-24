@@ -87,10 +87,9 @@ impl CalendarArithmetic for IslamicObservational {
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
-        let mut days: u32 = 0;
-        for i in 1..=12 {
-            days += Self::month_days(year, i) as u32;
-        }
+        let days = (1..=12)
+            .map(|month| IslamicObservational::month_days(year, month) as u32)
+            .sum();
         debug_assert!(days < 356);
         days
     }
@@ -329,10 +328,9 @@ impl CalendarArithmetic for UmmAlQura {
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
-        let mut days: u32 = 0;
-        for i in 1..=12 {
-            days += Self::month_days(year, i) as u32;
-        }
+        let days = (1..=12)
+            .map(|month| UmmAlQura::month_days(year, month) as u32)
+            .sum();
         days
     }
 
