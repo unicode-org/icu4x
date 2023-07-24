@@ -422,7 +422,11 @@ impl Dangi {
     fn format_dangi_year(year: i32) -> FormattableYear {
         let era = Era(tinystr!(16, "dangi"));
         let number = year;
-        let cyclic = Some(div_rem_euclid(number - 1 + 364, 60).1 + 1);
+        let cyclic = Some(
+            div_rem_euclid(number.saturating_sub(1).saturating_add(364), 60)
+                .1
+                .saturating_add(1),
+        );
         let mid_year = Inner::fixed_mid_year_from_year(number);
         let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
         let related_iso = Some(iso_formattable_year.number);

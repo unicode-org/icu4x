@@ -202,7 +202,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
     }
 
-    /// Get a Date<C> from a fixed date
+    /// Get a ChineseBasedDateInner from a fixed date
     ///
     /// Months are calculated by iterating through the dates of new moons until finding the last month which
     /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
