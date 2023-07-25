@@ -97,7 +97,7 @@ impl DataProvider<CurrencyEssentialsV1Maker> for crate::DatagenProvider {
             .read_and_parse(&langid, "numbers.json")?;
 
         let result =
-            extract_currency_essentials(self, &currencies_resource, &numbers_resource, &langid);
+            extract_currency_essentials(self, currencies_resource, numbers_resource, &langid);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -127,7 +127,7 @@ fn extract_currency_essentials<'data>(
     let currencies = &currencies_resource
         .main
         .0
-        .get(&langid)
+        .get(langid)
         .expect("CLDR file contains the expected language")
         .numbers
         .currencies;
@@ -135,7 +135,7 @@ fn extract_currency_essentials<'data>(
     let currency_formats = &&numbers_resource
         .main
         .0
-        .get(&langid)
+        .get(langid)
         .expect("CLDR file contains the expected language")
         .numbers
         .numsys_data
@@ -164,7 +164,7 @@ fn extract_currency_essentials<'data>(
                 None => {
                     short_place_holder_index = place_holders.len() as u16;
                     place_holders_map.insert(short_place_holder.clone(), short_place_holder_index);
-                    place_holders.zvl_push(&short_place_holder);
+                    place_holders.zvl_push(short_place_holder);
                 }
             },
             None => short_place_holder_index = u16::MAX,
@@ -178,7 +178,7 @@ fn extract_currency_essentials<'data>(
                     narrow_place_holder_index = place_holders.len() as u16;
                     place_holders_map
                         .insert(narrow_place_holder.clone(), narrow_place_holder_index);
-                    place_holders.zvl_push(&narrow_place_holder);
+                    place_holders.zvl_push(narrow_place_holder);
                 }
             },
             None => narrow_place_holder_index = u16::MAX,
