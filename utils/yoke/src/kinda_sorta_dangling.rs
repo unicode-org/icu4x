@@ -86,8 +86,8 @@ impl<T: 'static> Drop for KindaSortaDangling<T> {
             // because MaybeUninit has no drop.
             //
             // We use `drop_in_place()` instead of `let _ = ... .assume_init_read()` to avoid creating a move
-            // of a maybe-dangling type into a local, which is *probably* safe in this context but it is better to avoid
-            // having to think about it.
+            // of the inner `T` (without `KindaSortaDangling` protection!) type into a local -- we don't want to
+            // assert any of `T`'s memory-related validity properties here.
             self.dangle.as_mut_ptr().drop_in_place();
         }
     }
