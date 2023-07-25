@@ -4,7 +4,7 @@
 
 use yoke::Yoke;
 
-// Test for strong protection, should pass under miri with -Zretag-fields
+// Test for strong protection, should pass under miri with -Zmiri-retag-fields
 // See https://github.com/unicode-org/icu4x/issues/3696
 
 fn example(_: Yoke<&'static [u8], Vec<u8>>) {}
