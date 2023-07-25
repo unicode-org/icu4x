@@ -53,7 +53,7 @@ impl ParseErrorKind {
 }
 
 /// The error type returned by the `parse` functions in this crate.
-#[allow(unused)] // TODO: remove when doing compilation
+#[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone, Copy)]
 pub struct ParseError {
     // offset is the index to an arbitrary byte in the last character in the source that makes sense
@@ -94,7 +94,7 @@ pub(crate) enum QuantifierKind {
 }
 
 // source-target/variant
-#[allow(unused)] // TODO: remove when doing compilation
+#[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct BasicId {
     source: String,
@@ -113,7 +113,7 @@ impl Default for BasicId {
 }
 
 // [set] source-target/variant
-#[allow(unused)] // TODO: remove when doing compilation
+#[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct SingleId {
     filter: Option<UnicodeSet>,
@@ -154,7 +154,7 @@ pub(crate) enum Element {
 
 type Section = Vec<Element>;
 
-#[allow(unused)] // TODO: remove when doing compilation
+#[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct HalfRule {
     ante: Section,
@@ -550,7 +550,7 @@ where
         Ok(None)
     }
 
-    // TODO: factor this out for runtime ID parsing?
+    // TODO(#3736): factor this out for runtime ID parsing?
     fn parse_basic_id(&mut self) -> Result<BasicId> {
         // Syntax:
         // <identifier> ('-' <identifier>)? ('/' <identifier>)?
