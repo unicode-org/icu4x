@@ -20,6 +20,7 @@ use core::ops::{Deref, DerefMut};
 ///
 /// [RFC 3336]: https://github.com/rust-lang/rfcs/pull/3336
 /// [#3696]: https://github.com/unicode-org/icu4x/issues/3696
+#[repr(transparent)]
 pub(crate) struct KindaSortaDangling<T: 'static> {
     /// Safety invariant: This is always an initialized T, never uninit or other
     /// invalid bit patterns
