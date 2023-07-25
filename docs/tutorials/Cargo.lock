@@ -1106,7 +1106,6 @@ dependencies = [
  "serde",
  "serde-json-core",
  "serde_json",
- "writeable",
 ]
 
 [[package]]

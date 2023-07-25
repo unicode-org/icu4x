@@ -728,7 +728,6 @@ impl Astronomical {
     /// Altitude of the moon (in degrees) at a given moment
     ///
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4537
-
     #[allow(clippy::unwrap_used)]
     pub(crate) fn lunar_altitude(moment: Moment, location: Location) -> f64 {
         let phi = location.latitude;
@@ -932,7 +931,6 @@ impl Astronomical {
         .1
     }
 
-    #[allow(dead_code)]
     fn moonset(date: Moment, location: Location) -> Option<Moment> {
         let moment = Location::universal_from_standard(date, location);
         let waxing = Self::lunar_phase(date) < 180.0;
@@ -954,7 +952,7 @@ impl Astronomical {
             approx.inner() - (6.0 / 24.0),
             approx.inner() + (6.0 / 24.0),
             |x| Self::observed_lunar_altitude(Moment::new(x), location) < 0.0,
-            |u, l| (u - l) < 1.0 / (24.0 * 60.0),
+            |u, l| (u - l) < 1.0 / 24.0 / 60.0,
         ));
 
         if set < moment + 1.0 {
@@ -972,19 +970,25 @@ impl Astronomical {
         }
     }
 
-    #[allow(dead_code)]
     pub(crate) fn sunset(date: Moment, location: Location) -> Option<Moment> {
         let alpha = Self::refraction(location) + (16.0 / 60.0);
 
         Self::dusk(date.inner(), location, alpha)
     }
 
-    #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)]
+    #[allow(clippy::unwrap_used, clippy::eq_op)]
+    // Time between sunset and moonset on date at location. Returns None if there is no sunset or moonset on said date.
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6770
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
-        let sun = Self::sunset(date, location)?;
-        let moon = Self::moonset(date, location)?;
-
-        Some(moon - sun)
+        if let Some(sun) = Self::sunset(date, location) {
+            if let Some(moon) = Self::moonset(date, location) {
+                Some(moon - sun)
+            } else {
+                Some(1.0)
+            }
+        } else {
+            None
+        }
     }
 
     // Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment

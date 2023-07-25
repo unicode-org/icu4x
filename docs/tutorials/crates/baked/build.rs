@@ -14,6 +14,7 @@ fn main() {
     let mut options = BakedOptions::default();
     // Overwrite the baked data if it was already present:
     options.overwrite = true;
+    options.use_separate_crates = false;
 
 
     icu_datagen::datagen(

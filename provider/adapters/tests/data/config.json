@@ -9,10 +9,12 @@
     },
     "locales": "All",
     "cldr": "Latest",
-    "icu_export": "Latest",
-    "segmenter_lstm": "Latest",
+    "icu_export": "None",
+    "segmenter_lstm": "None",
     "export": {
-        "Blob": "blob.postcard"
+        "Blob": {
+            "path": "blob.postcard"
+        }
     },
     "fallback": "Legacy",
     "overwrite": true
