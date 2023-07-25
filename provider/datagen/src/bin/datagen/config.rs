@@ -23,6 +23,8 @@ pub struct Config {
     pub collation_han_database: CollationHanDatabase,
     #[serde(default, skip_serializing_if = "is_default")]
     pub collations: HashSet<String>,
+    #[serde(default, skip_serializing_if = "is_default")]
+    pub segmenter_models: SegmenterModelInclude,
     pub export: Export,
     #[serde(default, skip_serializing_if = "is_default")]
     pub fallback: FallbackMode,

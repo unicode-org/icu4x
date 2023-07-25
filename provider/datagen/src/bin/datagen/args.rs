@@ -236,6 +236,13 @@ pub struct Cli {
 
     #[arg(short, long, value_enum, default_value_t = Fallback::Legacy)]
     fallback: Fallback,
+
+    #[arg(long, num_args = 0.., default_value = "recommended")]
+    #[arg(
+        help = "Include these segmenter models in the output. Accepts multiple arguments. \
+                Defaults to 'recommended' for the recommended set of models. Use 'none' for no models"
+    )]
+    segmenter_models: Vec<String>,
 }
 
 impl Cli {
@@ -307,6 +314,7 @@ impl Cli {
                     .iter()
                     .map(|c| c.to_datagen_value().to_owned())
                     .collect(),
+                segmenter_models: self.make_segmenter_models()?,
                 export: self.make_exporter()?,
                 fallback: match self.fallback {
                     Fallback::Legacy => config::FallbackMode::Legacy,
@@ -402,6 +410,16 @@ impl Cli {
             (_, tag) => config::PathOrTag::Tag(String::from(tag)),
             #[cfg(not(feature = "networking"))]
             _ => config::PathOrTag::None,
+        })
+    }
+
+    fn make_segmenter_models(&self) -> eyre::Result<options::SegmenterModelInclude> {
+        Ok(if self.segmenter_models.as_slice() == ["none"] {
+            config::SegmenterModelInclude::None
+        } else if self.segmenter_models.as_slice() == ["recommended"] {
+            config::SegmenterModelInclude::Recommended
+        } else {
+            config::SegmenterModelInclude::Explicit(self.segmenter_models.clone())
         })
     }
 
