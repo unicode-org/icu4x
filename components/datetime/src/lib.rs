@@ -216,7 +216,10 @@ mod tests {
         check_size_of!(200, FormattedDateTime);
         check_size_of!(16, FormattedTimeZone::<CustomTimeZone>);
         check_size_of!(184, FormattedZonedDateTime);
-        check_size_of!(2, DateTimeFormatterOptions);
+
+        if cfg!(feature = "experimental") {
+            check_size_of!(13, DateTimeFormatterOptions);
+        }
 
         type DP<M> = DataPayload<M>;
         check_size_of!(216, DP::<PatternPluralsFromPatternsV1Marker>);
