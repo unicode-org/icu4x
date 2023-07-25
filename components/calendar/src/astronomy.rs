@@ -487,122 +487,122 @@ impl Astronomical {
 
         let mut correction = -0.00017 * libm::sin(omega.to_radians());
 
-        st.0 += v0
+        st.0 = v0
             * libm::pow(e, w0)
             * libm::sin(
                 (x0 * solar_anomaly + y0 * lunar_anomaly + z0 * moon_argument).to_radians(),
             );
-        st.1 += v1
+        st.1 = v1
             * libm::pow(e, w1)
             * libm::sin(
                 (x1 * solar_anomaly + y1 * lunar_anomaly + z1 * moon_argument).to_radians(),
             );
-        st.2 += v2
+        st.2 = v2
             * libm::pow(e, w2)
             * libm::sin(
                 (x2 * solar_anomaly + y2 * lunar_anomaly + z2 * moon_argument).to_radians(),
             );
-        st.3 += v3
+        st.3 = v3
             * libm::pow(e, w3)
             * libm::sin(
                 (x3 * solar_anomaly + y3 * lunar_anomaly + z3 * moon_argument).to_radians(),
             );
-        st.4 += v4
+        st.4 = v4
             * libm::pow(e, w4)
             * libm::sin(
                 (x4 * solar_anomaly + y4 * lunar_anomaly + z4 * moon_argument).to_radians(),
             );
-        st.5 += v5
+        st.5 = v5
             * libm::pow(e, w5)
             * libm::sin(
                 (x5 * solar_anomaly + y5 * lunar_anomaly + z5 * moon_argument).to_radians(),
             );
-        st.6 += v6
+        st.6 = v6
             * libm::pow(e, w6)
             * libm::sin(
                 (x6 * solar_anomaly + y6 * lunar_anomaly + z6 * moon_argument).to_radians(),
             );
-        st.7 += v7
+        st.7 = v7
             * libm::pow(e, w7)
             * libm::sin(
                 (x7 * solar_anomaly + y7 * lunar_anomaly + z7 * moon_argument).to_radians(),
             );
-        st.8 += v8
+        st.8 = v8
             * libm::pow(e, w8)
             * libm::sin(
                 (x8 * solar_anomaly + y8 * lunar_anomaly + z8 * moon_argument).to_radians(),
             );
-        st.9 += v9
+        st.9 = v9
             * libm::pow(e, w9)
             * libm::sin(
                 (x9 * solar_anomaly + y9 * lunar_anomaly + z9 * moon_argument).to_radians(),
             );
-        st.10 += v10
+        st.10 = v10
             * libm::pow(e, w10)
             * libm::sin(
                 (x10 * solar_anomaly + y10 * lunar_anomaly + z10 * moon_argument).to_radians(),
             );
-        st.11 += v11
+        st.11 = v11
             * libm::pow(e, w11)
             * libm::sin(
                 (x11 * solar_anomaly + y11 * lunar_anomaly + z11 * moon_argument).to_radians(),
             );
-        st.12 += v12
+        st.12 = v12
             * libm::pow(e, w12)
             * libm::sin(
                 (x12 * solar_anomaly + y12 * lunar_anomaly + z12 * moon_argument).to_radians(),
             );
-        st.13 += v13
+        st.13 = v13
             * libm::pow(e, w13)
             * libm::sin(
                 (x13 * solar_anomaly + y13 * lunar_anomaly + z13 * moon_argument).to_radians(),
             );
-        st.14 += v14
+        st.14 = v14
             * libm::pow(e, w14)
             * libm::sin(
                 (x14 * solar_anomaly + y14 * lunar_anomaly + z14 * moon_argument).to_radians(),
             );
-        st.15 += v15
+        st.15 = v15
             * libm::pow(e, w15)
             * libm::sin(
                 (x15 * solar_anomaly + y15 * lunar_anomaly + z15 * moon_argument).to_radians(),
             );
-        st.16 += v16
+        st.16 = v16
             * libm::pow(e, w16)
             * libm::sin(
                 (x16 * solar_anomaly + y16 * lunar_anomaly + z16 * moon_argument).to_radians(),
             );
-        st.17 += v17
+        st.17 = v17
             * libm::pow(e, w17)
             * libm::sin(
                 (x17 * solar_anomaly + y17 * lunar_anomaly + z17 * moon_argument).to_radians(),
             );
-        st.18 += v18
+        st.18 = v18
             * libm::pow(e, w18)
             * libm::sin(
                 (x18 * solar_anomaly + y18 * lunar_anomaly + z18 * moon_argument).to_radians(),
             );
-        st.19 += v19
+        st.19 = v19
             * libm::pow(e, w19)
             * libm::sin(
                 (x19 * solar_anomaly + y19 * lunar_anomaly + z19 * moon_argument).to_radians(),
             );
-        st.20 += v20
+        st.20 = v20
             * libm::pow(e, w20)
             * libm::sin(
                 (x20 * solar_anomaly + y20 * lunar_anomaly + z20 * moon_argument).to_radians(),
             );
-        st.21 += v21
+        st.21 = v21
             * libm::pow(e, w21)
             * libm::sin(
                 (x21 * solar_anomaly + y21 * lunar_anomaly + z21 * moon_argument).to_radians(),
             );
-        st.22 += v22
+        st.22 = v22
             * libm::pow(e, w22)
             * libm::sin(
                 (x22 * solar_anomaly + y22 * lunar_anomaly + z22 * moon_argument).to_radians(),
             );
-        st.23 += v23
+        st.23 = v23
             * libm::pow(e, w23)
             * libm::sin(
                 (x23 * solar_anomaly + y23 * lunar_anomaly + z23 * moon_argument).to_radians(),
@@ -637,19 +637,19 @@ impl Astronomical {
         let extra = 0.000325
             * libm::sin((299.77 + (132.8475848 * c) - (0.009173 * libm::pow(c, 2.0))).to_radians());
 
-        at.0 += l0 * libm::sin((i0 + j0 * k).to_radians());
-        at.1 += l1 * libm::sin((i1 + j1 * k).to_radians());
-        at.2 += l2 * libm::sin((i2 + j2 * k).to_radians());
-        at.3 += l3 * libm::sin((i3 + j3 * k).to_radians());
-        at.4 += l4 * libm::sin((i4 + j4 * k).to_radians());
-        at.5 += l5 * libm::sin((i5 + j5 * k).to_radians());
-        at.6 += l6 * libm::sin((i6 + j6 * k).to_radians());
-        at.7 += l7 * libm::sin((i7 + j7 * k).to_radians());
-        at.8 += l8 * libm::sin((i8 + j8 * k).to_radians());
-        at.9 += l9 * libm::sin((i9 + j9 * k).to_radians());
-        at.10 += l10 * libm::sin((i10 + j10 * k).to_radians());
-        at.11 += l11 * libm::sin((i11 + j11 * k).to_radians());
-        at.12 += l12 * libm::sin((i12 + j12 * k).to_radians());
+        at.0 = l0 * libm::sin((i0 + j0 * k).to_radians());
+        at.1 = l1 * libm::sin((i1 + j1 * k).to_radians());
+        at.2 = l2 * libm::sin((i2 + j2 * k).to_radians());
+        at.3 = l3 * libm::sin((i3 + j3 * k).to_radians());
+        at.4 = l4 * libm::sin((i4 + j4 * k).to_radians());
+        at.5 = l5 * libm::sin((i5 + j5 * k).to_radians());
+        at.6 = l6 * libm::sin((i6 + j6 * k).to_radians());
+        at.7 = l7 * libm::sin((i7 + j7 * k).to_radians());
+        at.8 = l8 * libm::sin((i8 + j8 * k).to_radians());
+        at.9 = l9 * libm::sin((i9 + j9 * k).to_radians());
+        at.10 = l10 * libm::sin((i10 + j10 * k).to_radians());
+        at.11 = l11 * libm::sin((i11 + j11 * k).to_radians());
+        at.12 = l12 * libm::sin((i12 + j12 * k).to_radians());
 
         let additional = at.0
             + at.1
@@ -692,35 +692,43 @@ impl Astronomical {
         let ml = Self::lunar_anomaly(c);
         let f = Self::moon_node(c);
         let e = 1.0 - (0.002516 * c) - (0.0000074 * libm::pow(c, 2.0));
-        let args_lunar_elongation: [f64; 60] = [
+
+        let mut ct = (
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        );
+
+        let [w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15, w16, w17, w18, w19, w20, w21, w22, w23, w24, w25, w26, w27, w28, w29, w30, w31, w32, w33, w34, w35, w36, w37, w38, w39, w40, w41, w42, w43, w44, w45, w46, w47, w48, w49, w50, w51, w52, w53, w54, w55, w56, w57, w58, w59] = [
             0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 0.0, 2.0, 0.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
             0.0, 4.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 4.0, 4.0, 0.0, 4.0, 2.0, 2.0,
             2.0, 2.0, 0.0, 2.0, 2.0, 2.0, 2.0, 4.0, 2.0, 2.0, 0.0, 2.0, 1.0, 1.0, 0.0, 2.0, 1.0,
             2.0, 0.0, 4.0, 4.0, 1.0, 4.0, 1.0, 4.0, 2.0,
         ];
 
-        let args_solar_anomaly: [f64; 60] = [
+        let [x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36, x37, x38, x39, x40, x41, x42, x43, x44, x45, x46, x47, x48, x49, x50, x51, x52, x53, x54, x55, x56, x57, x58, x59] = [
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, -1.0, -1.0,
             -1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
             0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, -1.0, -2.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0,
             0.0, -1.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0, -2.0,
         ];
 
-        let args_lunar_anomaly: [f64; 60] = [
+        let [y0, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, y30, y31, y32, y33, y34, y35, y36, y37, y38, y39, y40, y41, y42, y43, y44, y45, y46, y47, y48, y49, y50, y51, y52, y53, y54, y55, y56, y57, y58, y59] = [
             0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 2.0, 1.0, 2.0, 0.0, -2.0, 1.0, 0.0, -1.0, 0.0,
             -1.0, -1.0, -1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 3.0, 0.0, -1.0, 1.0, -2.0,
             0.0, 2.0, 1.0, -2.0, 3.0, 2.0, -3.0, -1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0,
             -2.0, -1.0, 1.0, -2.0, 2.0, -2.0, -1.0, 1.0, 1.0, -1.0, 0.0, 0.0,
         ];
 
-        let args_moon_node: [f64; 60] = [
+        let [z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14, z15, z16, z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29, z30, z31, z32, z33, z34, z35, z36, z37, z38, z39, z40, z41, z42, z43, z44, z45, z46, z47, z48, z49, z50, z51, z52, z53, z54, z55, z56, z57, z58, z59] = [
             1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0,
             -1.0, -1.0, -1.0, 1.0, 3.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -3.0, 1.0,
             -3.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 3.0, -1.0, -1.0, 1.0,
             -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0,
         ];
 
-        let sine_coeff: [f64; 60] = [
+        let [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46, v47, v48, v49, v50, v51, v52, v53, v54, v55, v56, v57, v58, v59] = [
             5128122.0, 280602.0, 277693.0, 173237.0, 55413.0, 46271.0, 32573.0, 17198.0, 9266.0,
             8822.0, 8216.0, 4324.0, 4200.0, -3359.0, 2463.0, 2211.0, 2065.0, -1870.0, 1828.0,
             -1794.0, -1749.0, -1565.0, -1491.0, -1475.0, -1410.0, -1344.0, -1335.0, 1107.0, 1021.0,
@@ -729,21 +737,228 @@ impl Astronomical {
             -177.0, 176.0, 166.0, -164.0, 132.0, -119.0, 115.0, 107.0,
         ];
 
-        let mut correction = 0.0;
-        for (v, w, x, y, z) in sine_coeff
-            .iter()
-            .zip(
-                args_lunar_elongation.iter().zip(
-                    args_solar_anomaly
-                        .iter()
-                        .zip(args_lunar_anomaly.iter().zip(args_moon_node.iter())),
-                ),
-            )
-            .map(|(v, (w, (x, (y, z))))| (v, w, x, y, z))
-        {
-            correction +=
-                v * libm::pow(e, libm::fabs(*x)) * sin_degrees(w * d + x * ms + y * ml + z * f);
-        }
+        ct.0 = v0 * libm::pow(e, libm::fabs(x0)) * sin_degrees(w0 * d + x0 * ms + y0 * ml + z0 * f);
+        ct.1 = v1 * libm::pow(e, libm::fabs(x1)) * sin_degrees(w1 * d + x1 * ms + y1 * ml + z1 * f);
+        ct.2 = v2 * libm::pow(e, libm::fabs(x2)) * sin_degrees(w2 * d + x2 * ms + y2 * ml + z2 * f);
+        ct.3 = v3 * libm::pow(e, libm::fabs(x3)) * sin_degrees(w3 * d + x3 * ms + y3 * ml + z3 * f);
+        ct.4 = v4 * libm::pow(e, libm::fabs(x4)) * sin_degrees(w4 * d + x4 * ms + y4 * ml + z4 * f);
+        ct.5 = v5 * libm::pow(e, libm::fabs(x5)) * sin_degrees(w5 * d + x5 * ms + y5 * ml + z5 * f);
+        ct.6 = v6 * libm::pow(e, libm::fabs(x6)) * sin_degrees(w6 * d + x6 * ms + y6 * ml + z6 * f);
+        ct.7 = v7 * libm::pow(e, libm::fabs(x7)) * sin_degrees(w7 * d + x7 * ms + y7 * ml + z7 * f);
+        ct.8 = v8 * libm::pow(e, libm::fabs(x8)) * sin_degrees(w8 * d + x8 * ms + y8 * ml + z8 * f);
+        ct.9 = v9 * libm::pow(e, libm::fabs(x9)) * sin_degrees(w9 * d + x9 * ms + y9 * ml + z9 * f);
+        ct.10 = v10
+            * libm::pow(e, libm::fabs(x10))
+            * sin_degrees(w10 * d + x10 * ms + y10 * ml + z10 * f);
+        ct.11 = v11
+            * libm::pow(e, libm::fabs(x11))
+            * sin_degrees(w11 * d + x11 * ms + y11 * ml + z11 * f);
+        ct.12 = v12
+            * libm::pow(e, libm::fabs(x12))
+            * sin_degrees(w12 * d + x12 * ms + y12 * ml + z12 * f);
+        ct.13 = v13
+            * libm::pow(e, libm::fabs(x13))
+            * sin_degrees(w13 * d + x13 * ms + y13 * ml + z13 * f);
+        ct.14 = v14
+            * libm::pow(e, libm::fabs(x14))
+            * sin_degrees(w14 * d + x14 * ms + y14 * ml + z14 * f);
+        ct.15 = v15
+            * libm::pow(e, libm::fabs(x15))
+            * sin_degrees(w15 * d + x15 * ms + y15 * ml + z15 * f);
+        ct.16 = v16
+            * libm::pow(e, libm::fabs(x16))
+            * sin_degrees(w16 * d + x16 * ms + y16 * ml + z16 * f);
+        ct.17 = v17
+            * libm::pow(e, libm::fabs(x17))
+            * sin_degrees(w17 * d + x17 * ms + y17 * ml + z17 * f);
+        ct.18 = v18
+            * libm::pow(e, libm::fabs(x18))
+            * sin_degrees(w18 * d + x18 * ms + y18 * ml + z18 * f);
+        ct.19 = v19
+            * libm::pow(e, libm::fabs(x19))
+            * sin_degrees(w19 * d + x19 * ms + y19 * ml + z19 * f);
+        ct.20 = v20
+            * libm::pow(e, libm::fabs(x20))
+            * sin_degrees(w20 * d + x20 * ms + y20 * ml + z20 * f);
+        ct.21 = v21
+            * libm::pow(e, libm::fabs(x21))
+            * sin_degrees(w21 * d + x21 * ms + y21 * ml + z21 * f);
+        ct.22 = v22
+            * libm::pow(e, libm::fabs(x22))
+            * sin_degrees(w22 * d + x22 * ms + y22 * ml + z22 * f);
+        ct.23 = v23
+            * libm::pow(e, libm::fabs(x23))
+            * sin_degrees(w23 * d + x23 * ms + y23 * ml + z23 * f);
+        ct.24 = v24
+            * libm::pow(e, libm::fabs(x24))
+            * sin_degrees(w24 * d + x24 * ms + y24 * ml + z24 * f);
+        ct.25 = v25
+            * libm::pow(e, libm::fabs(x25))
+            * sin_degrees(w25 * d + x25 * ms + y25 * ml + z25 * f);
+        ct.26 = v26
+            * libm::pow(e, libm::fabs(x26))
+            * sin_degrees(w26 * d + x26 * ms + y26 * ml + z26 * f);
+        ct.27 = v27
+            * libm::pow(e, libm::fabs(x27))
+            * sin_degrees(w27 * d + x27 * ms + y27 * ml + z27 * f);
+        ct.28 = v28
+            * libm::pow(e, libm::fabs(x28))
+            * sin_degrees(w28 * d + x28 * ms + y28 * ml + z28 * f);
+        ct.29 = v29
+            * libm::pow(e, libm::fabs(x29))
+            * sin_degrees(w29 * d + x29 * ms + y29 * ml + z29 * f);
+        ct.30 = v30
+            * libm::pow(e, libm::fabs(x30))
+            * sin_degrees(w30 * d + x30 * ms + y30 * ml + z30 * f);
+        ct.31 = v31
+            * libm::pow(e, libm::fabs(x31))
+            * sin_degrees(w31 * d + x31 * ms + y31 * ml + z31 * f);
+        ct.32 = v32
+            * libm::pow(e, libm::fabs(x32))
+            * sin_degrees(w32 * d + x32 * ms + y32 * ml + z32 * f);
+        ct.33 = v33
+            * libm::pow(e, libm::fabs(x33))
+            * sin_degrees(w33 * d + x33 * ms + y33 * ml + z33 * f);
+        ct.34 = v34
+            * libm::pow(e, libm::fabs(x34))
+            * sin_degrees(w34 * d + x34 * ms + y34 * ml + z34 * f);
+        ct.35 = v35
+            * libm::pow(e, libm::fabs(x35))
+            * sin_degrees(w35 * d + x35 * ms + y35 * ml + z35 * f);
+        ct.36 = v36
+            * libm::pow(e, libm::fabs(x36))
+            * sin_degrees(w36 * d + x36 * ms + y36 * ml + z36 * f);
+        ct.37 = v37
+            * libm::pow(e, libm::fabs(x37))
+            * sin_degrees(w37 * d + x37 * ms + y37 * ml + z37 * f);
+        ct.38 = v38
+            * libm::pow(e, libm::fabs(x38))
+            * sin_degrees(w38 * d + x38 * ms + y38 * ml + z38 * f);
+        ct.39 = v39
+            * libm::pow(e, libm::fabs(x39))
+            * sin_degrees(w39 * d + x39 * ms + y39 * ml + z39 * f);
+        ct.40 = v40
+            * libm::pow(e, libm::fabs(x40))
+            * sin_degrees(w40 * d + x40 * ms + y40 * ml + z40 * f);
+        ct.41 = v41
+            * libm::pow(e, libm::fabs(x41))
+            * sin_degrees(w41 * d + x41 * ms + y41 * ml + z41 * f);
+        ct.42 = v42
+            * libm::pow(e, libm::fabs(x42))
+            * sin_degrees(w42 * d + x42 * ms + y42 * ml + z42 * f);
+        ct.43 = v43
+            * libm::pow(e, libm::fabs(x43))
+            * sin_degrees(w43 * d + x43 * ms + y43 * ml + z43 * f);
+        ct.44 = v44
+            * libm::pow(e, libm::fabs(x44))
+            * sin_degrees(w44 * d + x44 * ms + y44 * ml + z44 * f);
+        ct.45 = v45
+            * libm::pow(e, libm::fabs(x45))
+            * sin_degrees(w45 * d + x45 * ms + y45 * ml + z45 * f);
+        ct.46 = v46
+            * libm::pow(e, libm::fabs(x46))
+            * sin_degrees(w46 * d + x46 * ms + y46 * ml + z46 * f);
+        ct.47 = v47
+            * libm::pow(e, libm::fabs(x47))
+            * sin_degrees(w47 * d + x47 * ms + y47 * ml + z47 * f);
+        ct.48 = v48
+            * libm::pow(e, libm::fabs(x48))
+            * sin_degrees(w48 * d + x48 * ms + y48 * ml + z48 * f);
+        ct.49 = v49
+            * libm::pow(e, libm::fabs(x49))
+            * sin_degrees(w49 * d + x49 * ms + y49 * ml + z49 * f);
+        ct.50 = v50
+            * libm::pow(e, libm::fabs(x50))
+            * sin_degrees(w50 * d + x50 * ms + y50 * ml + z50 * f);
+        ct.51 = v51
+            * libm::pow(e, libm::fabs(x51))
+            * sin_degrees(w51 * d + x51 * ms + y51 * ml + z51 * f);
+        ct.52 = v52
+            * libm::pow(e, libm::fabs(x52))
+            * sin_degrees(w52 * d + x52 * ms + y52 * ml + z52 * f);
+        ct.53 = v53
+            * libm::pow(e, libm::fabs(x53))
+            * sin_degrees(w53 * d + x53 * ms + y53 * ml + z53 * f);
+        ct.54 = v54
+            * libm::pow(e, libm::fabs(x54))
+            * sin_degrees(w54 * d + x54 * ms + y54 * ml + z54 * f);
+        ct.55 = v55
+            * libm::pow(e, libm::fabs(x55))
+            * sin_degrees(w55 * d + x55 * ms + y55 * ml + z55 * f);
+        ct.56 = v56
+            * libm::pow(e, libm::fabs(x56))
+            * sin_degrees(w56 * d + x56 * ms + y56 * ml + z56 * f);
+        ct.57 = v57
+            * libm::pow(e, libm::fabs(x57))
+            * sin_degrees(w57 * d + x57 * ms + y57 * ml + z57 * f);
+        ct.58 = v58
+            * libm::pow(e, libm::fabs(x58))
+            * sin_degrees(w58 * d + x58 * ms + y58 * ml + z58 * f);
+        ct.59 = v59
+            * libm::pow(e, libm::fabs(x59))
+            * sin_degrees(w59 * d + x59 * ms + y59 * ml + z59 * f);
+
+        let mut correction = ct.0
+            + ct.1
+            + ct.2
+            + ct.3
+            + ct.4
+            + ct.5
+            + ct.6
+            + ct.7
+            + ct.8
+            + ct.9
+            + ct.10
+            + ct.11
+            + ct.12
+            + ct.13
+            + ct.14
+            + ct.15
+            + ct.16
+            + ct.17
+            + ct.18
+            + ct.19
+            + ct.20
+            + ct.21
+            + ct.22
+            + ct.23
+            + ct.24
+            + ct.25
+            + ct.26
+            + ct.27
+            + ct.28
+            + ct.29
+            + ct.30
+            + ct.31
+            + ct.32
+            + ct.33
+            + ct.34
+            + ct.35
+            + ct.36
+            + ct.37
+            + ct.38
+            + ct.39
+            + ct.40
+            + ct.41
+            + ct.42
+            + ct.43
+            + ct.44
+            + ct.45
+            + ct.46
+            + ct.47
+            + ct.48
+            + ct.49
+            + ct.50
+            + ct.51
+            + ct.52
+            + ct.53
+            + ct.54
+            + ct.55
+            + ct.56
+            + ct.57
+            + ct.58
+            + ct.59;
+
         correction /= 1_000_000.0;
 
         let venus = (175.0
@@ -770,7 +985,15 @@ impl Astronomical {
         let ml = Self::lunar_anomaly(c);
         let f = Self::moon_node(c);
         let e = 1.0 - (0.002516 * c) - (0.0000074 * libm::pow(c, 2.0));
-        let sine_coeff: [f64; 59] = [
+
+        let mut ct = (
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        );
+
+        let [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46, v47, v48, v49, v50, v51, v52, v53, v54, v55, v56, v57, v58] = [
             6288774.0, 1274027.0, 658314.0, 213618.0, -185116.0, -114332.0, 58793.0, 57066.0,
             53322.0, 45758.0, -40923.0, -34720.0, -30383.0, 15327.0, -12528.0, 10980.0, 10675.0,
             10034.0, 8548.0, -7888.0, -6766.0, -5163.0, 4987.0, 4036.0, 3994.0, 3861.0, 3665.0,
@@ -778,46 +1001,269 @@ impl Astronomical {
             1215.0, -1110.0, -892.0, -810.0, 759.0, -713.0, -700.0, 691.0, 596.0, 549.0, 537.0,
             520.0, -487.0, -399.0, -381.0, 351.0, -340.0, 330.0, 327.0, -323.0, 299.0, 294.0,
         ];
-        let args_lunar_elongation: [f64; 59] = [
+        let [w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15, w16, w17, w18, w19, w20, w21, w22, w23, w24, w25, w26, w27, w28, w29, w30, w31, w32, w33, w34, w35, w36, w37, w38, w39, w40, w41, w42, w43, w44, w45, w46, w47, w48, w49, w50, w51, w52, w53, w54, w55, w56, w57, w58] = [
             0.0, 2.0, 2.0, 0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 4.0,
             0.0, 4.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 4.0, 2.0, 0.0, 2.0, 2.0, 1.0, 2.0, 0.0, 0.0,
             2.0, 2.0, 2.0, 4.0, 0.0, 3.0, 2.0, 4.0, 0.0, 2.0, 2.0, 2.0, 4.0, 0.0, 4.0, 1.0, 2.0,
             0.0, 1.0, 3.0, 4.0, 2.0, 0.0, 1.0, 2.0,
         ];
-        let args_solar_anomaly: [f64; 59] = [
+        let [x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36, x37, x38, x39, x40, x41, x42, x43, x44, x45, x46, x47, x48, x49, x50, x51, x52, x53, x54, x55, x56, x57, x58] = [
             0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
             0.0, 0.0, 1.0, 1.0, 0.0, 1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, -2.0, 1.0, 2.0,
             -2.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, -1.0, 2.0, 2.0, 1.0, -1.0, 0.0, 0.0, -1.0, 0.0,
             1.0, 0.0, 1.0, 0.0, 0.0, -1.0, 2.0, 1.0, 0.0,
         ];
-        let args_lunar_anomaly: [f64; 59] = [
+        let [y0, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, y30, y31, y32, y33, y34, y35, y36, y37, y38, y39, y40, y41, y42, y43, y44, y45, y46, y47, y48, y49, y50, y51, y52, y53, y54, y55, y56, y57, y58] = [
             1.0, -1.0, 0.0, 2.0, 0.0, 0.0, -2.0, -1.0, 1.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 1.0,
             -1.0, 3.0, -2.0, -1.0, 0.0, -1.0, 0.0, 1.0, 2.0, 0.0, -3.0, -2.0, -1.0, -2.0, 1.0, 0.0,
             2.0, 0.0, -1.0, 1.0, 0.0, -1.0, 2.0, -1.0, 1.0, -2.0, -1.0, -1.0, -2.0, 0.0, 1.0, 4.0,
             0.0, -2.0, 0.0, 2.0, 1.0, -2.0, -3.0, 2.0, 1.0, -1.0, 3.0,
         ];
-        let args_moon_node: [f64; 59] = [
+        let [z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14, z15, z16, z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29, z30, z31, z32, z33, z34, z35, z36, z37, z38, z39, z40, z41, z42, z43, z44, z45, z46, z47, z48, z49, z50, z51, z52, z53, z54, z55, z56, z57, z58] = [
             0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 2.0, -2.0, 0.0,
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0,
             0.0, -2.0, 2.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0,
             -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
         ];
-        let mut correction = 0.0;
-        for (v, w, x, y, z) in sine_coeff
-            .iter()
-            .zip(
-                args_lunar_elongation.iter().zip(
-                    args_solar_anomaly
-                        .iter()
-                        .zip(args_lunar_anomaly.iter().zip(args_moon_node.iter())),
-                ),
-            )
-            .map(|(v, (w, (x, (y, z))))| (v, w, x, y, z))
-        {
-            correction += v
-                * libm::pow(e, libm::fabs(*x))
-                * libm::sin((w * d + x * ms + y * ml + z * f).to_radians());
-        }
+
+        ct.0 = v0
+            * libm::pow(e, libm::fabs(x0))
+            * libm::sin((w0 * d + x0 * ms + y0 * ml + z0 * f).to_radians());
+        ct.1 = v1
+            * libm::pow(e, libm::fabs(x1))
+            * libm::sin((w1 * d + x1 * ms + y1 * ml + z1 * f).to_radians());
+        ct.2 = v2
+            * libm::pow(e, libm::fabs(x2))
+            * libm::sin((w2 * d + x2 * ms + y2 * ml + z2 * f).to_radians());
+        ct.3 = v3
+            * libm::pow(e, libm::fabs(x3))
+            * libm::sin((w3 * d + x3 * ms + y3 * ml + z3 * f).to_radians());
+        ct.4 = v4
+            * libm::pow(e, libm::fabs(x4))
+            * libm::sin((w4 * d + x4 * ms + y4 * ml + z4 * f).to_radians());
+        ct.5 = v5
+            * libm::pow(e, libm::fabs(x5))
+            * libm::sin((w5 * d + x5 * ms + y5 * ml + z5 * f).to_radians());
+        ct.6 = v6
+            * libm::pow(e, libm::fabs(x6))
+            * libm::sin((w6 * d + x6 * ms + y6 * ml + z6 * f).to_radians());
+        ct.7 = v7
+            * libm::pow(e, libm::fabs(x7))
+            * libm::sin((w7 * d + x7 * ms + y7 * ml + z7 * f).to_radians());
+        ct.8 = v8
+            * libm::pow(e, libm::fabs(x8))
+            * libm::sin((w8 * d + x8 * ms + y8 * ml + z8 * f).to_radians());
+        ct.9 = v9
+            * libm::pow(e, libm::fabs(x9))
+            * libm::sin((w9 * d + x9 * ms + y9 * ml + z9 * f).to_radians());
+        ct.10 = v10
+            * libm::pow(e, libm::fabs(x10))
+            * libm::sin((w10 * d + x10 * ms + y10 * ml + z10 * f).to_radians());
+        ct.11 = v11
+            * libm::pow(e, libm::fabs(x11))
+            * libm::sin((w11 * d + x11 * ms + y11 * ml + z11 * f).to_radians());
+        ct.12 = v12
+            * libm::pow(e, libm::fabs(x12))
+            * libm::sin((w12 * d + x12 * ms + y12 * ml + z12 * f).to_radians());
+        ct.13 = v13
+            * libm::pow(e, libm::fabs(x13))
+            * libm::sin((w13 * d + x13 * ms + y13 * ml + z13 * f).to_radians());
+        ct.14 = v14
+            * libm::pow(e, libm::fabs(x14))
+            * libm::sin((w14 * d + x14 * ms + y14 * ml + z14 * f).to_radians());
+        ct.15 = v15
+            * libm::pow(e, libm::fabs(x15))
+            * libm::sin((w15 * d + x15 * ms + y15 * ml + z15 * f).to_radians());
+        ct.16 = v16
+            * libm::pow(e, libm::fabs(x16))
+            * libm::sin((w16 * d + x16 * ms + y16 * ml + z16 * f).to_radians());
+        ct.17 = v17
+            * libm::pow(e, libm::fabs(x17))
+            * libm::sin((w17 * d + x17 * ms + y17 * ml + z17 * f).to_radians());
+        ct.18 = v18
+            * libm::pow(e, libm::fabs(x18))
+            * libm::sin((w18 * d + x18 * ms + y18 * ml + z18 * f).to_radians());
+        ct.19 = v19
+            * libm::pow(e, libm::fabs(x19))
+            * libm::sin((w19 * d + x19 * ms + y19 * ml + z19 * f).to_radians());
+        ct.20 = v20
+            * libm::pow(e, libm::fabs(x20))
+            * libm::sin((w20 * d + x20 * ms + y20 * ml + z20 * f).to_radians());
+        ct.21 = v21
+            * libm::pow(e, libm::fabs(x21))
+            * libm::sin((w21 * d + x21 * ms + y21 * ml + z21 * f).to_radians());
+        ct.22 = v22
+            * libm::pow(e, libm::fabs(x22))
+            * libm::sin((w22 * d + x22 * ms + y22 * ml + z22 * f).to_radians());
+        ct.23 = v23
+            * libm::pow(e, libm::fabs(x23))
+            * libm::sin((w23 * d + x23 * ms + y23 * ml + z23 * f).to_radians());
+        ct.24 = v24
+            * libm::pow(e, libm::fabs(x24))
+            * libm::sin((w24 * d + x24 * ms + y24 * ml + z24 * f).to_radians());
+        ct.25 = v25
+            * libm::pow(e, libm::fabs(x25))
+            * libm::sin((w25 * d + x25 * ms + y25 * ml + z25 * f).to_radians());
+        ct.26 = v26
+            * libm::pow(e, libm::fabs(x26))
+            * libm::sin((w26 * d + x26 * ms + y26 * ml + z26 * f).to_radians());
+        ct.27 = v27
+            * libm::pow(e, libm::fabs(x27))
+            * libm::sin((w27 * d + x27 * ms + y27 * ml + z27 * f).to_radians());
+        ct.28 = v28
+            * libm::pow(e, libm::fabs(x28))
+            * libm::sin((w28 * d + x28 * ms + y28 * ml + z28 * f).to_radians());
+        ct.29 = v29
+            * libm::pow(e, libm::fabs(x29))
+            * libm::sin((w29 * d + x29 * ms + y29 * ml + z29 * f).to_radians());
+        ct.30 = v30
+            * libm::pow(e, libm::fabs(x30))
+            * libm::sin((w30 * d + x30 * ms + y30 * ml + z30 * f).to_radians());
+        ct.31 = v31
+            * libm::pow(e, libm::fabs(x31))
+            * libm::sin((w31 * d + x31 * ms + y31 * ml + z31 * f).to_radians());
+        ct.32 = v32
+            * libm::pow(e, libm::fabs(x32))
+            * libm::sin((w32 * d + x32 * ms + y32 * ml + z32 * f).to_radians());
+        ct.33 = v33
+            * libm::pow(e, libm::fabs(x33))
+            * libm::sin((w33 * d + x33 * ms + y33 * ml + z33 * f).to_radians());
+        ct.34 = v34
+            * libm::pow(e, libm::fabs(x34))
+            * libm::sin((w34 * d + x34 * ms + y34 * ml + z34 * f).to_radians());
+        ct.35 = v35
+            * libm::pow(e, libm::fabs(x35))
+            * libm::sin((w35 * d + x35 * ms + y35 * ml + z35 * f).to_radians());
+        ct.36 = v36
+            * libm::pow(e, libm::fabs(x36))
+            * libm::sin((w36 * d + x36 * ms + y36 * ml + z36 * f).to_radians());
+        ct.37 = v37
+            * libm::pow(e, libm::fabs(x37))
+            * libm::sin((w37 * d + x37 * ms + y37 * ml + z37 * f).to_radians());
+        ct.38 = v38
+            * libm::pow(e, libm::fabs(x38))
+            * libm::sin((w38 * d + x38 * ms + y38 * ml + z38 * f).to_radians());
+        ct.39 = v39
+            * libm::pow(e, libm::fabs(x39))
+            * libm::sin((w39 * d + x39 * ms + y39 * ml + z39 * f).to_radians());
+        ct.40 = v40
+            * libm::pow(e, libm::fabs(x40))
+            * libm::sin((w40 * d + x40 * ms + y40 * ml + z40 * f).to_radians());
+        ct.41 = v41
+            * libm::pow(e, libm::fabs(x41))
+            * libm::sin((w41 * d + x41 * ms + y41 * ml + z41 * f).to_radians());
+        ct.42 = v42
+            * libm::pow(e, libm::fabs(x42))
+            * libm::sin((w42 * d + x42 * ms + y42 * ml + z42 * f).to_radians());
+        ct.43 = v43
+            * libm::pow(e, libm::fabs(x43))
+            * libm::sin((w43 * d + x43 * ms + y43 * ml + z43 * f).to_radians());
+        ct.44 = v44
+            * libm::pow(e, libm::fabs(x44))
+            * libm::sin((w44 * d + x44 * ms + y44 * ml + z44 * f).to_radians());
+        ct.45 = v45
+            * libm::pow(e, libm::fabs(x45))
+            * libm::sin((w45 * d + x45 * ms + y45 * ml + z45 * f).to_radians());
+        ct.46 = v46
+            * libm::pow(e, libm::fabs(x46))
+            * libm::sin((w46 * d + x46 * ms + y46 * ml + z46 * f).to_radians());
+        ct.47 = v47
+            * libm::pow(e, libm::fabs(x47))
+            * libm::sin((w47 * d + x47 * ms + y47 * ml + z47 * f).to_radians());
+        ct.48 = v48
+            * libm::pow(e, libm::fabs(x48))
+            * libm::sin((w48 * d + x48 * ms + y48 * ml + z48 * f).to_radians());
+        ct.49 = v49
+            * libm::pow(e, libm::fabs(x49))
+            * libm::sin((w49 * d + x49 * ms + y49 * ml + z49 * f).to_radians());
+        ct.50 = v50
+            * libm::pow(e, libm::fabs(x50))
+            * libm::sin((w50 * d + x50 * ms + y50 * ml + z50 * f).to_radians());
+        ct.51 = v51
+            * libm::pow(e, libm::fabs(x51))
+            * libm::sin((w51 * d + x51 * ms + y51 * ml + z51 * f).to_radians());
+        ct.52 = v52
+            * libm::pow(e, libm::fabs(x52))
+            * libm::sin((w52 * d + x52 * ms + y52 * ml + z52 * f).to_radians());
+        ct.53 = v53
+            * libm::pow(e, libm::fabs(x53))
+            * libm::sin((w53 * d + x53 * ms + y53 * ml + z53 * f).to_radians());
+        ct.54 = v54
+            * libm::pow(e, libm::fabs(x54))
+            * libm::sin((w54 * d + x54 * ms + y54 * ml + z54 * f).to_radians());
+        ct.55 = v55
+            * libm::pow(e, libm::fabs(x55))
+            * libm::sin((w55 * d + x55 * ms + y55 * ml + z55 * f).to_radians());
+        ct.56 = v56
+            * libm::pow(e, libm::fabs(x56))
+            * libm::sin((w56 * d + x56 * ms + y56 * ml + z56 * f).to_radians());
+        ct.57 = v57
+            * libm::pow(e, libm::fabs(x57))
+            * libm::sin((w57 * d + x57 * ms + y57 * ml + z57 * f).to_radians());
+        ct.58 = v58
+            * libm::pow(e, libm::fabs(x58))
+            * libm::sin((w58 * d + x58 * ms + y58 * ml + z58 * f).to_radians());
+
+        let mut correction = ct.0
+            + ct.1
+            + ct.2
+            + ct.3
+            + ct.4
+            + ct.5
+            + ct.6
+            + ct.7
+            + ct.8
+            + ct.9
+            + ct.10
+            + ct.11
+            + ct.12
+            + ct.13
+            + ct.14
+            + ct.15
+            + ct.16
+            + ct.17
+            + ct.18
+            + ct.19
+            + ct.20
+            + ct.21
+            + ct.22
+            + ct.23
+            + ct.24
+            + ct.25
+            + ct.26
+            + ct.27
+            + ct.28
+            + ct.29
+            + ct.30
+            + ct.31
+            + ct.32
+            + ct.33
+            + ct.34
+            + ct.35
+            + ct.36
+            + ct.37
+            + ct.38
+            + ct.39
+            + ct.40
+            + ct.41
+            + ct.42
+            + ct.43
+            + ct.44
+            + ct.45
+            + ct.46
+            + ct.47
+            + ct.48
+            + ct.49
+            + ct.50
+            + ct.51
+            + ct.52
+            + ct.53
+            + ct.54
+            + ct.55
+            + ct.56
+            + ct.57
+            + ct.58;
+
         correction /= 1000000.0;
         let venus = 3958.0 / 1000000.0 * libm::sin((119.75 + c * 131.849).to_radians());
         let jupiter = 318.0 / 1000000.0 * libm::sin((53.09 + c * 479264.29).to_radians());
@@ -1201,20 +1647,25 @@ impl Astronomical {
     #[doc(hidden)]
     pub fn solar_longitude(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
-        let coefficients: [f64; 49] = [
+        let mut lt = (
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        );
+        let [x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36, x37, x38, x39, x40, x41, x42, x43, x44, x45, x46, x47, x48] = [
             403406.0, 195207.0, 119433.0, 112392.0, 3891.0, 2819.0, 1721.0, 660.0, 350.0, 334.0,
             314.0, 268.0, 242.0, 234.0, 158.0, 132.0, 129.0, 114.0, 99.0, 93.0, 86.0, 78.0, 72.0,
             68.0, 64.0, 46.0, 38.0, 37.0, 32.0, 29.0, 28.0, 27.0, 27.0, 25.0, 24.0, 21.0, 21.0,
             20.0, 18.0, 17.0, 14.0, 13.0, 13.0, 13.0, 12.0, 10.0, 10.0, 10.0, 10.0,
         ];
-        let addends: [f64; 49] = [
+        let [y0, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, y30, y31, y32, y33, y34, y35, y36, y37, y38, y39, y40, y41, y42, y43, y44, y45, y46, y47, y48] = [
             270.54861, 340.19128, 63.91854, 331.26220, 317.843, 86.631, 240.052, 310.26, 247.23,
             260.87, 297.82, 343.14, 166.79, 81.53, 3.50, 132.75, 182.95, 162.03, 29.8, 266.4,
             249.2, 157.6, 257.8, 185.1, 69.9, 8.0, 197.1, 250.4, 65.3, 162.7, 341.5, 291.6, 98.5,
             146.7, 110.0, 5.2, 342.6, 230.9, 256.1, 45.3, 242.9, 115.2, 151.8, 285.3, 53.3, 126.6,
             205.7, 85.9, 146.1,
         ];
-        let multipliers: [f64; 49] = [
+        let [z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14, z15, z16, z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29, z30, z31, z32, z33, z34, z35, z36, z37, z38, z39, z40, z41, z42, z43, z44, z45, z46, z47, z48] = [
             0.9287892,
             35999.1376958,
             35999.4089666,
@@ -1265,14 +1716,106 @@ impl Astronomical {
             12297.536,
             90073.778,
         ];
-        let mut lambda = 0.0;
-        for (x, y, z) in coefficients
-            .iter()
-            .zip(addends.iter().zip(multipliers.iter()))
-            .map(|(x, (y, z))| (x, y, z))
-        {
-            lambda += x * libm::sin((y + z * c).to_radians());
-        }
+
+        lt.0 = x0 * libm::sin((y0 + z0 * c).to_radians());
+        lt.1 = x1 * libm::sin((y1 + z1 * c).to_radians());
+        lt.2 = x2 * libm::sin((y2 + z2 * c).to_radians());
+        lt.3 = x3 * libm::sin((y3 + z3 * c).to_radians());
+        lt.4 = x4 * libm::sin((y4 + z4 * c).to_radians());
+        lt.5 = x5 * libm::sin((y5 + z5 * c).to_radians());
+        lt.6 = x6 * libm::sin((y6 + z6 * c).to_radians());
+        lt.7 = x7 * libm::sin((y7 + z7 * c).to_radians());
+        lt.8 = x8 * libm::sin((y8 + z8 * c).to_radians());
+        lt.9 = x9 * libm::sin((y9 + z9 * c).to_radians());
+        lt.10 = x10 * libm::sin((y10 + z10 * c).to_radians());
+        lt.11 = x11 * libm::sin((y11 + z11 * c).to_radians());
+        lt.12 = x12 * libm::sin((y12 + z12 * c).to_radians());
+        lt.13 = x13 * libm::sin((y13 + z13 * c).to_radians());
+        lt.14 = x14 * libm::sin((y14 + z14 * c).to_radians());
+        lt.15 = x15 * libm::sin((y15 + z15 * c).to_radians());
+        lt.16 = x16 * libm::sin((y16 + z16 * c).to_radians());
+        lt.17 = x17 * libm::sin((y17 + z17 * c).to_radians());
+        lt.18 = x18 * libm::sin((y18 + z18 * c).to_radians());
+        lt.19 = x19 * libm::sin((y19 + z19 * c).to_radians());
+        lt.20 = x20 * libm::sin((y20 + z20 * c).to_radians());
+        lt.21 = x21 * libm::sin((y21 + z21 * c).to_radians());
+        lt.22 = x22 * libm::sin((y22 + z22 * c).to_radians());
+        lt.23 = x23 * libm::sin((y23 + z23 * c).to_radians());
+        lt.24 = x24 * libm::sin((y24 + z24 * c).to_radians());
+        lt.25 = x25 * libm::sin((y25 + z25 * c).to_radians());
+        lt.26 = x26 * libm::sin((y26 + z26 * c).to_radians());
+        lt.27 = x27 * libm::sin((y27 + z27 * c).to_radians());
+        lt.28 = x28 * libm::sin((y28 + z28 * c).to_radians());
+        lt.29 = x29 * libm::sin((y29 + z29 * c).to_radians());
+        lt.30 = x30 * libm::sin((y30 + z30 * c).to_radians());
+        lt.31 = x31 * libm::sin((y31 + z31 * c).to_radians());
+        lt.32 = x32 * libm::sin((y32 + z32 * c).to_radians());
+        lt.33 = x33 * libm::sin((y33 + z33 * c).to_radians());
+        lt.34 = x34 * libm::sin((y34 + z34 * c).to_radians());
+        lt.35 = x35 * libm::sin((y35 + z35 * c).to_radians());
+        lt.36 = x36 * libm::sin((y36 + z36 * c).to_radians());
+        lt.37 = x37 * libm::sin((y37 + z37 * c).to_radians());
+        lt.38 = x38 * libm::sin((y38 + z38 * c).to_radians());
+        lt.39 = x39 * libm::sin((y39 + z39 * c).to_radians());
+        lt.40 = x40 * libm::sin((y40 + z40 * c).to_radians());
+        lt.41 = x41 * libm::sin((y41 + z41 * c).to_radians());
+        lt.42 = x42 * libm::sin((y42 + z42 * c).to_radians());
+        lt.43 = x43 * libm::sin((y43 + z43 * c).to_radians());
+        lt.44 = x44 * libm::sin((y44 + z44 * c).to_radians());
+        lt.45 = x45 * libm::sin((y45 + z45 * c).to_radians());
+        lt.46 = x46 * libm::sin((y46 + z46 * c).to_radians());
+        lt.47 = x47 * libm::sin((y47 + z47 * c).to_radians());
+        lt.48 = x48 * libm::sin((y48 + z48 * c).to_radians());
+
+        let mut lambda = lt.0
+            + lt.1
+            + lt.2
+            + lt.3
+            + lt.4
+            + lt.5
+            + lt.6
+            + lt.7
+            + lt.8
+            + lt.9
+            + lt.10
+            + lt.11
+            + lt.12
+            + lt.13
+            + lt.14
+            + lt.15
+            + lt.16
+            + lt.17
+            + lt.18
+            + lt.19
+            + lt.20
+            + lt.21
+            + lt.22
+            + lt.23
+            + lt.24
+            + lt.25
+            + lt.26
+            + lt.27
+            + lt.28
+            + lt.29
+            + lt.30
+            + lt.31
+            + lt.32
+            + lt.33
+            + lt.34
+            + lt.35
+            + lt.36
+            + lt.37
+            + lt.38
+            + lt.39
+            + lt.40
+            + lt.41
+            + lt.42
+            + lt.43
+            + lt.44
+            + lt.45
+            + lt.46
+            + lt.47
+            + lt.48;
         lambda *= 0.000005729577951308232;
         lambda += 282.7771834 + 36000.76953744 * c;
         div_rem_euclid_f64(lambda + Self::aberration(c) + Self::nutation(moment), 360.0).1
