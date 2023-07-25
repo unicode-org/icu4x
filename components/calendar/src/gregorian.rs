@@ -96,7 +96,7 @@ impl Calendar for Gregorian {
         Iso.months_in_year(&date.0)
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         Iso.days_in_year(&date.0)
     }
 

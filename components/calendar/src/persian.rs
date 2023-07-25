@@ -90,7 +90,7 @@ impl CalendarArithmetic for Persian {
         div_rem_euclid64((year + 38) * 31, 128).1 < 31
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -139,7 +139,7 @@ impl Calendar for Persian {
         date.0.months_in_year()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year()
     }
 
@@ -556,7 +556,7 @@ mod tests {
         Persian::fixed_from_persian_integers(_year, 1, 1).unwrap()
     }
 
-    fn days_in_provided_year_core(year: i32) -> u32 {
+    fn days_in_provided_year_core(year: i32) -> u16 {
         #[allow(clippy::unwrap_used)] // valid month and day
         let fixed_year = Persian::fixed_from_persian_integers(year, 1, 1)
             .unwrap()
@@ -566,7 +566,7 @@ mod tests {
             .unwrap()
             .to_i64_date();
 
-        (next_fixed_year - fixed_year) as u32
+        (next_fixed_year - fixed_year) as u16
     }
 
     #[test]
