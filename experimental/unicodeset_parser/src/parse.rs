@@ -221,7 +221,7 @@ impl<'a> VariableMap<'a> {
         self.0.remove(key)
     }
 
-    /// Get a reference to the value associated to this key, if it exists.
+    /// Get a reference to the value associated with this key, if it exists.
     pub fn get(&self, key: &str) -> Option<&VariableValue<'a>> {
         self.0.get(key)
     }
@@ -232,7 +232,7 @@ impl<'a> VariableMap<'a> {
     pub fn insert(&mut self, key: String, value: VariableValue<'a>) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
-            // safety: we just checked that this key exists
+            // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
