@@ -826,6 +826,9 @@ impl DateTime<IslamicCivil> {
 mod test {
     use super::*;
 
+    const START_YEAR: i32 = -1245;
+    const END_YEAR: i32 = 1518;
+
     #[derive(Debug)]
     struct DateCase {
         year: i32,
@@ -1469,16 +1472,13 @@ mod test {
     fn test_days_in_provided_year_observational() {
         // -1245 1 1 = -214526 (R.D Date)
         // 1518 1 1 = 764589 (R.D Date)
-        let x_year = -1245;
-        let y_year = 1518;
-
-        let sum_days_in_year: i64 = (x_year..y_year)
+        let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
             .map(|year| IslamicObservational::days_in_provided_year(year) as i64)
             .sum();
         let expected_number_of_days = IslamicObservational::fixed_from_islamic(IslamicDateInner(
-            ArithmeticDate::new_from_lunar_ordinals(1518, 1, 1).unwrap(),
+            ArithmeticDate::new_from_lunar_ordinals(END_YEAR, 1, 1).unwrap(),
         )) - IslamicObservational::fixed_from_islamic(
-            IslamicDateInner(ArithmeticDate::new_from_lunar_ordinals(-1245, 1, 1).unwrap()),
+            IslamicDateInner(ArithmeticDate::new_from_lunar_ordinals(START_YEAR, 1, 1).unwrap()),
         ); // The number of days between Islamic years -1245 and 1518
         let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
 
@@ -1493,17 +1493,14 @@ mod test {
     fn test_days_in_provided_year_ummalqura() {
         // -1245 1 1 = -214528 (R.D Date)
         // 1518 1 1 = 764588 (R.D Date)
-        let x_year = -1245;
-        let y_year = 1518;
-
-        let sum_days_in_year: i64 = (x_year..y_year)
+        let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
             .map(|year| UmmAlQura::days_in_provided_year(year) as i64)
             .sum();
 
         let expected_number_of_days = UmmAlQura::fixed_from_saudi_islamic(UmmAlQuraDateInner(
-            ArithmeticDate::new_from_lunar_ordinals(1518, 1, 1).unwrap(),
+            ArithmeticDate::new_from_lunar_ordinals(END_YEAR, 1, 1).unwrap(),
         )) - UmmAlQura::fixed_from_saudi_islamic(UmmAlQuraDateInner(
-            ArithmeticDate::new_from_lunar_ordinals(-1245, 1, 1).unwrap(),
+            ArithmeticDate::new_from_lunar_ordinals(START_YEAR, 1, 1).unwrap(),
         )); // The number of days between UmmAlQura Islamic years -1245 and 1518
 
         assert_eq!(sum_days_in_year, expected_number_of_days);
