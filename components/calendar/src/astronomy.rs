@@ -59,6 +59,9 @@ pub(crate) const MAX_UTC_OFFSET: f64 = 14.0 / 24.0;
 /// The angle of winter for the purposes of solar calculations
 pub(crate) const WINTER: f64 = 270.0;
 
+/// The moment of the first new moon of the CE, which occurred on January 11, 1 CE.
+pub(crate) const NEW_MOON_ZERO: Moment = Moment::new(11.458922815770109);
+
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
     /// attempting to create a location outside of these bounds will result in a LocationOutOfBoundsError.
@@ -1001,7 +1004,7 @@ impl Astronomical {
     /// The phase of the moon at a given Moment, defined as the difference in longitudes
     /// of the sun and the moon.
     pub(crate) fn lunar_phase(moment: Moment) -> f64 {
-        let t0 = Self::nth_new_moon(0);
+        let t0 = NEW_MOON_ZERO;
         let maybe_n =
             i64_to_i32(libm::round(div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0) as i64);
         debug_assert!(
@@ -1201,7 +1204,7 @@ impl Astronomical {
     // Function to find the number of the new moon at or after a given moment;
     // helper function for new_moon_before and new_moon_at_or_after
     fn num_of_new_moon_at_or_after(moment: Moment) -> i32 {
-        let t0: Moment = Self::nth_new_moon(0);
+        let t0: Moment = NEW_MOON_ZERO;
         let phi = Self::lunar_phase(moment);
         let maybe_n =
             i64_to_i32(libm::round((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0) as i64);
