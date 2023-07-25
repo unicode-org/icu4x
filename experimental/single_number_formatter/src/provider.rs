@@ -37,6 +37,7 @@ pub struct CurrencyEssentialsV1<'data> {
     pub place_holders: VarZeroVec<'data, str>,
 }
 
+// TODO(https://github.com/unicode-org/icu4x/issues/3737): Reduce the size of CurrencyPatternsULE.
 #[zerovec::make_ule(CurrencyPatternsULE)]
 #[cfg_attr(
     feature = "datagen",
