@@ -320,9 +320,9 @@ impl DatagenProvider {
                 ) {
                     (options::FallbackMode::Auto, pref) => pref,
                     (options::FallbackMode::Runtime, _) => {
-                        icu_provider::datagen::FallbackMode::Full
+                        icu_provider::datagen::FallbackMode::Internal
                     }
-                    (_, _) => icu_provider::datagen::FallbackMode::None,
+                    (_, _) => icu_provider::datagen::FallbackMode::External,
                 };
 
                 match (
@@ -330,7 +330,7 @@ impl DatagenProvider {
                     exporter.preferred_fallback_mode(),
                 ) {
                     (options::FallbackMode::Hybrid, _)
-                    | (options::FallbackMode::Auto, icu_provider::datagen::FallbackMode::None) => {
+                    | (options::FallbackMode::Auto, icu_provider::datagen::FallbackMode::External) => {
                         supported_locales
                             .into_par_iter()
                             .try_for_each(|locale| {
@@ -341,7 +341,7 @@ impl DatagenProvider {
                     }
                     (options::FallbackMode::Runtime, _)
                     | (options::FallbackMode::RuntimeManual, _)
-                    | (options::FallbackMode::Auto, icu_provider::datagen::FallbackMode::Full) => {
+                    | (options::FallbackMode::Auto, icu_provider::datagen::FallbackMode::Internal) => {
                         let payloads =
                             RwLock::new(HashMap::<DataLocale, DataPayload<ExportMarker>>::new());
                         locale_groups.into_par_iter().try_for_each(|group| {

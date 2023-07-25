@@ -26,15 +26,15 @@ use crate::prelude::*;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum FallbackMode {
-    /// No fallback
-    None,
-    /// Full fallback
-    Full,
+    /// No fallback, or fallback needs to be specified externally
+    External,
+    /// Full fallback automatically included
+    Internal,
 }
 
 impl Default for FallbackMode {
     fn default() -> Self {
-        Self::None
+        Self::External
     }
 }
 
@@ -57,7 +57,7 @@ pub trait DataExporter: Sync {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         self.put_payload(key, &Default::default(), payload)?;
-        self.flush_with_fallback(key, FallbackMode::None)
+        self.flush_with_fallback(key, FallbackMode::External)
     }
 
     /// Function called after a non-singleton key has been fully dumped.
@@ -89,7 +89,7 @@ pub trait DataExporter: Sync {
     /// Providers capable of automatically including runtime fallback should return
     /// [`FallbackMode::Full`]; all others should return [`FallbackMode::None`].
     fn preferred_fallback_mode(&self) -> FallbackMode {
-        FallbackMode::None
+        FallbackMode::External
     }
 }
 

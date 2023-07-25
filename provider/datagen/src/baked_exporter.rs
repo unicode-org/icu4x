@@ -471,7 +471,7 @@ impl DataExporter for BakedExporter {
             };
 
             match fallback_mode {
-                FallbackMode::None => {
+                FallbackMode::External => {
                     let search = search(quote!(req.locale));
                     quote! {
                         #(#statics)*
@@ -485,7 +485,7 @@ impl DataExporter for BakedExporter {
                         }
                     }
                 }
-                FallbackMode::Full => {
+                FallbackMode::Internal => {
                     self.dependencies.insert("icu_locid_transform/data");
                     let search_direct = search(quote!(req.locale));
                     let search_iterator = search(quote!(fallback_iterator.get()));
@@ -698,6 +698,6 @@ impl DataExporter for BakedExporter {
     }
 
     fn preferred_fallback_mode(&self) -> FallbackMode {
-        FallbackMode::Full
+        FallbackMode::Internal
     }
 }
