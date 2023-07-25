@@ -154,7 +154,7 @@ impl DatagenProvider {
 
         source.options = options;
 
-        if matches!(source.options.fallback, options::FallbackMode::Expand)
+        if matches!(source.options.fallback, options::FallbackMode::Preresolved)
             && !matches!(source.options.locales, options::LocaleInclude::Explicit(_))
         {
             return Err(DataError::custom(
@@ -242,7 +242,7 @@ impl DatagenProvider {
                     }
                 })
                 .collect(),
-            _ => unreachable!("resolved"),
+            _ => unreachable!("resolved: {:?}", self.source.options.locales),
         }
     }
 
@@ -314,10 +314,23 @@ impl DatagenProvider {
                         .map_err(|e| e.with_req(key, req))
                 }
 
-                let resolved_fallback_mode;
+                let resolved_fallback_mode = match (
+                    provider.source.options.fallback,
+                    exporter.preferred_fallback_mode(),
+                ) {
+                    (options::FallbackMode::Auto, pref) => pref,
+                    (options::FallbackMode::Runtime, _) => {
+                        icu_provider::datagen::FallbackMode::Full
+                    }
+                    (_, _) => icu_provider::datagen::FallbackMode::None,
+                };
 
-                match provider.source.options.fallback {
-                    options::FallbackMode::Legacy => {
+                match (
+                    provider.source.options.fallback,
+                    exporter.preferred_fallback_mode(),
+                ) {
+                    (options::FallbackMode::Hybrid, _)
+                    | (options::FallbackMode::Auto, icu_provider::datagen::FallbackMode::None) => {
                         supported_locales
                             .into_par_iter()
                             .try_for_each(|locale| {
@@ -325,9 +338,10 @@ impl DatagenProvider {
                                 exporter.put_payload(key, &locale, &payload)
                             })
                             .map_err(|e| e.with_key(key))?;
-                        resolved_fallback_mode = icu_provider::datagen::FallbackMode::None;
                     }
-                    options::FallbackMode::Runtime => {
+                    (options::FallbackMode::Runtime, _)
+                    | (options::FallbackMode::RuntimeManual, _)
+                    | (options::FallbackMode::Auto, icu_provider::datagen::FallbackMode::Full) => {
                         let payloads =
                             RwLock::new(HashMap::<DataLocale, DataPayload<ExportMarker>>::new());
                         locale_groups.into_par_iter().try_for_each(|group| {
@@ -357,9 +371,12 @@ impl DatagenProvider {
                         {
                             exporter.put_payload(key, &locale, &payload)?;
                         }
-                        resolved_fallback_mode = icu_provider::datagen::FallbackMode::Full;
                     }
-                    options::FallbackMode::Expand => match &provider.source.options.locales {
+                    (options::FallbackMode::Preresolved, _) => match &provider
+                        .source
+                        .options
+                        .locales
+                    {
                         options::LocaleInclude::Explicit(requested_locales) => {
                             requested_locales.into_par_iter().try_for_each(|locale| {
                                 let mut iter = fallbacker_with_config.fallback_for(locale.into());
@@ -385,10 +402,13 @@ impl DatagenProvider {
                                     iter.step();
                                 }
                             })?;
-                            resolved_fallback_mode = icu_provider::datagen::FallbackMode::None;
                         }
                         _ => unreachable!("checked in constructor"),
                     },
+                    // Because icu_provider::datagen::FallbackMode is non_exhaustive
+                    (options::FallbackMode::Auto, _) => {
+                        panic!("Unexpected preferred fallback mode needs to be handled")
+                    }
                 };
                 exporter
                     .flush_with_fallback(key, resolved_fallback_mode)

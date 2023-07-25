@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::options::Options;
+use crate::options::{LocaleInclude, Options};
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
@@ -70,6 +70,8 @@ impl SourceData {
 
     /// Creates a `SourceData` that does not have CLDR or ICU export sources set.
     pub fn offline() -> Self {
+        let mut options = Options::default();
+        options.locales = LocaleInclude::All;
         Self {
             cldr_paths: None,
             icuexport_paths: None,
@@ -77,7 +79,7 @@ impl SourceData {
                 AbstractFs::new_icuexport_fallback(),
             )),
             segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
-            options: Default::default(),
+            options,
             fallbacker: None,
         }
     }

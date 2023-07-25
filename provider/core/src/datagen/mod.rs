@@ -83,6 +83,14 @@ pub trait DataExporter: Sync {
     fn close(&mut self) -> Result<(), DataError> {
         Ok(())
     }
+
+    /// Returns the preferred fallback mode for this provider.
+    /// 
+    /// Providers capable of automatically including runtime fallback should return
+    /// [`FallbackMode::Full`]; all others should return [`FallbackMode::None`].
+    fn preferred_fallback_mode(&self) -> FallbackMode {
+        FallbackMode::None
+    }
 }
 
 /// A [`DynamicDataProvider`] that can be used for exporting data.

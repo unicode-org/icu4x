@@ -48,9 +48,11 @@ enum CollationTable {
 // Mirrors crate::options::FallbackMode
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Fallback {
-    Legacy,
+    Auto,
+    Hybrid,
     Runtime,
-    Expand,
+    RuntimeManual,
+    Preresolved,
 }
 
 impl CollationTable {
@@ -234,7 +236,8 @@ pub struct Cli {
     #[arg(help = "Load a TOML config")]
     config: Option<PathBuf>,
 
-    #[arg(short, long, value_enum, default_value_t = Fallback::Legacy)]
+    // TODO(#2856): Change the default to Auto in 2.0
+    #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
     fallback: Fallback,
 
     #[arg(long, num_args = 0.., default_value = "recommended")]
@@ -317,9 +320,11 @@ impl Cli {
                 segmenter_models: self.make_segmenter_models()?,
                 export: self.make_exporter()?,
                 fallback: match self.fallback {
-                    Fallback::Legacy => config::FallbackMode::Legacy,
+                    Fallback::Auto => config::FallbackMode::Auto,
+                    Fallback::Hybrid => config::FallbackMode::Hybrid,
                     Fallback::Runtime => config::FallbackMode::Runtime,
-                    Fallback::Expand => config::FallbackMode::Expand,
+                    Fallback::RuntimeManual => config::FallbackMode::RuntimeManual,
+                    Fallback::Preresolved => config::FallbackMode::Preresolved,
                 },
                 overwrite: self.overwrite,
             }

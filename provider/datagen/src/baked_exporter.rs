@@ -696,4 +696,8 @@ impl DataExporter for BakedExporter {
 
         Ok(())
     }
+
+    fn preferred_fallback_mode(&self) -> FallbackMode {
+        FallbackMode::Full
+    }
 }
