@@ -49,6 +49,7 @@ exec --fail-on-error cargo --config patch.toml check -p tutorial_default
 exec --fail-on-error cargo --config patch.toml check -p tutorial_buffer
 exec --fail-on-error cargo --config patch.toml check -p tutorial_experimental
 exec --fail-on-error cargo --config patch.toml check -p tutorial_lazy_static
+# tutorial_custom_compiled doesn't compile without data
 '''
 
 [tasks.test-tutorials-local]
@@ -73,7 +74,7 @@ exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_default
 exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_experimental
 exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_lazy_static
 
-# Copy our own icu4x-datagen and tutorial_buffer to speed up the task
+# Copy our own tutorial_buffer to speed up the task
 exec --fail-on-error cargo --config testing/patch.toml build -p tutorial_buffer
 mkdir crates/buffer/bin
 cp ${project_dir}/target/debug/tutorial_buffer crates/buffer/bin/tutorial_buffer
