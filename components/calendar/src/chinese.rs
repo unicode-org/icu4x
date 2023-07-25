@@ -218,8 +218,9 @@ impl Calendar for Chinese {
     /// month, the month codes for ordinal monts 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month = if Self::is_leap_year(date.0 .0.year) {
-            Inner::get_leap_month_in_year(Inner::fixed_mid_year_from_year(date.0 .0.year))
+        let mid_year = Inner::fixed_mid_year_from_year(date.0 .0.year);
+        let leap_month = if Inner::fixed_date_is_in_leap_year(mid_year) {
+            Inner::get_leap_month_in_year(mid_year)
         } else {
             14
         };
