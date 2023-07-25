@@ -14,12 +14,18 @@ use core::ops::{Deref, DerefMut};
 /// See [#3696] for a testcase where `Yoke` fails this under miri's field-retagging mode.
 ///
 /// This has `T: 'static` since we don't need anything
-/// else and we don't want to have to think (more) about variance.
+/// else and we don't want to have to think (more) about variance over lifetimes or dropck.
 ///
 /// After [RFC 3336] lands we can use `MaybeDangling` instead.
 ///
+/// Note that a version of this type also exists publicly as the [`maybe_dangling`]
+/// crate; which also exports a patched `ManuallyDrop` with similar semantics and
+/// does not require `T: 'static`. Consider using this if you need something more general
+/// and are okay with adding dependencies.
+///
 /// [RFC 3336]: https://github.com/rust-lang/rfcs/pull/3336
 /// [#3696]: https://github.com/unicode-org/icu4x/issues/3696
+/// [`maybe_dangling`](https://docs.rs/maybe-dangling/0.1.0/maybe_dangling/struct.MaybeDangling.html)
 #[repr(transparent)]
 pub(crate) struct KindaSortaDangling<T: 'static> {
     /// Safety invariant: This is always an initialized T, never uninit or other
@@ -74,11 +80,15 @@ impl<T: 'static> Drop for KindaSortaDangling<T> {
         unsafe {
             // Safety: We are reading and dropping a valid initialized T.
             //
-            // As read() is a duplication operation we must be careful that the original value isn't
+            // As `drop_in_place()` is a `read()`-like duplication operation we must be careful that the original value isn't
             // used afterwards. It won't be because this is drop and the only
             // code that will run after this is `self`'s drop glue, and that drop glue is empty
             // because MaybeUninit has no drop.
-            let _drop = self.dangle.assume_init_read();
+            //
+            // We use `drop_in_place()` instead of `let _ = ... .assume_init_read()` to avoid creating a move
+            // of a maybe-dangling type into a local, which is *probably* safe in this context but it is better to avoid
+            // having to think about it.
+            self.dangle.as_mut_ptr().drop_in_place();
         }
     }
 }
