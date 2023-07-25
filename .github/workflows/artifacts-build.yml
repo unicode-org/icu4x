@@ -75,12 +75,23 @@ jobs:
           --exclude zerofrom-derive
           --exclude zerovec-derive
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.6.2
+    - id: gcp-auth
+      name: "Authenticate to Google Cloud"
+      uses: google-github-actions/auth@v1
       with:
-        project_id: ${{ env.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
-        export_default_credentials: true
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-github-actions@dev-infra-273822.iam.gserviceaccount.com"
+
+    - name: "Set up Google Cloud SDK"
+      uses: google-github-actions/setup-gcloud@v1
+
+#     - name: Authenticate to Google Cloud
+#       uses: google-github-actions/setup-gcloud@v0.6.2
+#       with:
+#         project_id: ${{ env.GCP_PROJECT_ID }}
+#         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+#         export_default_credentials: true
+
     - name: Upload docs to Google Cloud Storage
       run: |
         gsutil -m cp -r target/doc gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs
