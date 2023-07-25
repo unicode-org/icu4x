@@ -391,6 +391,7 @@ registry!(
         "relativetime/short/year@1",
     icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/year@1",
+    #[cfg(feature = "icu_singlenumberformatter")]
     icu_singlenumberformatter::provider::CurrencyEssentialsV1Maker = "currency/essentials@1",
     #[cfg(any(all(), feature = "icu_segmenter"))]
     icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker =
