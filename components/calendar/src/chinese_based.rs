@@ -267,10 +267,65 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
 
     /// Returns true if the fixed date given is in a leap year, false otherwise
     pub(crate) fn fixed_date_is_in_leap_year(date: RataDie) -> bool {
-        let prev_new_year = Self::new_year_on_or_before_fixed_date(date);
-        let next_new_year = Self::new_year_on_or_before_fixed_date(prev_new_year + 400);
+        let (prev_new_year, next_new_year) = Self::new_years_bounding_fixed_date(date);
         let difference = next_new_year - prev_new_year;
         difference > 365
+    }
+
+    /// Get the (prev_new_year, next_new_year) RataDies bounding the given date.
+    fn new_years_bounding_fixed_date(date: RataDie) -> (RataDie, RataDie) {
+        let new_years = Self::new_years_bounding_date_in_sui(date);
+        if date >= new_years.0 {
+            new_years
+        } else {
+            Self::new_years_bounding_date_in_sui(date - 180)
+        }
+    }
+
+    /// Get the (prev_new_year, next_new_year) RataDies in the sui containing the given date.
+    fn new_years_bounding_date_in_sui(date: RataDie) -> (RataDie, RataDie) {
+        let prior_solstice = Self::winter_solstice_on_or_before(date); // s1
+        let following_solstice = Self::winter_solstice_on_or_before(prior_solstice + 370); // s2
+        let month_after_eleventh_prior =
+            Self::new_moon_on_or_after((prior_solstice + 1).as_moment()); // m12
+        let month_after_twelfth_prior =
+            Self::new_moon_on_or_after((month_after_eleventh_prior + 1).as_moment()); // m13
+        let next_eleventh_month = Self::new_moon_before((following_solstice + 1).as_moment()); // next-m11
+
+        let lhs_argument_prior = libm::round(
+            (next_eleventh_month - month_after_eleventh_prior) as f64 / MEAN_SYNODIC_MONTH,
+        ) as i64;
+        let new_year_prior = if lhs_argument_prior == 12
+            && (Self::no_major_solar_term(month_after_eleventh_prior)
+                || Self::no_major_solar_term(month_after_twelfth_prior))
+        {
+            Self::new_moon_on_or_after((month_after_twelfth_prior + 1).as_moment())
+        } else {
+            month_after_twelfth_prior
+        };
+
+        let following_following_solstice =
+            Self::winter_solstice_on_or_before(following_solstice + 370);
+        let month_after_eleventh_following =
+            Self::new_moon_on_or_after((following_solstice + 1).as_moment());
+        let month_after_twelfth_following =
+            Self::new_moon_on_or_after((month_after_eleventh_following + 1).as_moment());
+        let next_next_eleventh_month =
+            Self::new_moon_before((following_following_solstice + 1).as_moment());
+
+        let lhs_argument_after = libm::round(
+            (next_next_eleventh_month - month_after_eleventh_following) as f64 / MEAN_SYNODIC_MONTH,
+        ) as i64;
+        let new_year_following = if lhs_argument_after == 12
+            && (Self::no_major_solar_term(month_after_eleventh_following)
+                || Self::no_major_solar_term(month_after_twelfth_following))
+        {
+            Self::new_moon_on_or_after((month_after_twelfth_following + 1).as_moment())
+        } else {
+            month_after_twelfth_following
+        };
+
+        (new_year_prior, new_year_following)
     }
 
     /// Given that a date is in a leap year, find which month in the year is a leap month.

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_calendar::{Date, chinese::Chinese};
+use icu_calendar::{chinese::Chinese, Date};
 
 fn chinese_from_fixed_bench(c: &mut Criterion) {
     c.bench_function("chinese_based/chinese_from_fixed", |b| {
