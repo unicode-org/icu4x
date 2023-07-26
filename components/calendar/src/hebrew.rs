@@ -208,6 +208,11 @@ impl Hebrew {
                 + Self::hebrew_year_length_correction(h_year) as i64,
         )
     }
+
+    #[allow(dead_code)]
+    pub fn days_in_hebrew_year(h_year: i32) -> u16 {
+        (Self::hebrew_new_year(1 + h_year) - Self::hebrew_new_year(h_year)) as u16
+    }
 }
 
 #[cfg(test)]
@@ -454,6 +459,12 @@ mod tests {
         469963, 473624, 507583, 524033, 544468, 567118, 569302, 601462, 613127, 626296, 645285,
         663919, 671213, 694600, 704080, 708835, 709190, 709573, 727084, 728561, 744272, 764352,
     ];
+
+    static EXPECTED_DAYS_IN_HEBREW_YEAR: [u16; 33] = [
+        354, 354, 355, 355, 355, 355, 355, 353, 383, 354, 383, 354, 354, 355, 353, 383, 353, 385,
+        353, 383, 355, 354, 354, 354, 355, 385, 355, 383, 354, 385, 355, 354, 355,
+    ];
+
     #[test]
     fn test_hebrew_epoch() {
         // page 119 of the Calendrical Calculations book
@@ -522,6 +533,14 @@ mod tests {
         {
             let f_date = Hebrew::hebrew_new_year(case.year);
             assert_eq!(f_date.to_i64_date(), *expected);
+        }
+    }
+
+    #[test]
+    fn test_days_in_hebrew_year() {
+        for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_DAYS_IN_HEBREW_YEAR.iter()) {
+            let days_in_year = Hebrew::days_in_hebrew_year(case.year);
+            assert_eq!(days_in_year, *expected);
         }
     }
 }
