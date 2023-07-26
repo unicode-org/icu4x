@@ -188,9 +188,6 @@ impl Hebrew {
 mod tests {
 
     use super::*;
-
-    const lisp_reduced: f64 = 0.999999;
-
     #[derive(Debug)]
     struct DateCase {
         year: i32,
