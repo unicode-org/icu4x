@@ -6,6 +6,7 @@ use crate::options::{LocaleInclude, Options};
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
+use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::any::Any;
 use std::collections::{BTreeMap, HashSet};
@@ -33,6 +34,7 @@ pub struct SourceData {
     // TODO: move this out when we decide we can break the exhaustiveness of DatagenProvider
     pub(crate) options: Options,
     pub(crate) fallbacker: Option<icu_locid_transform::fallback::LocaleFallbacker>,
+    pub(crate) implied_locales: Vec<LanguageIdentifier>,
 }
 
 #[cfg(feature = "networking")]
@@ -70,8 +72,7 @@ impl SourceData {
 
     /// Creates a `SourceData` that does not have CLDR or ICU export sources set.
     pub fn offline() -> Self {
-        let mut options = Options::default();
-        options.locales = LocaleInclude::All;
+        let options = Options::default();
         Self {
             cldr_paths: None,
             icuexport_paths: None,
@@ -81,6 +82,7 @@ impl SourceData {
             segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
             options,
             fallbacker: None,
+            implied_locales: Vec::new(),
         }
     }
 

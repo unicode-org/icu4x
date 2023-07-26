@@ -70,7 +70,7 @@ syn = {version = "2", features = ["parsing"], optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
-elsa = "1.7"
+elsa = { path = "../../../elsa" }
 itertools = "0.10"
 lazy_static = "1"
 log = "0.4"
