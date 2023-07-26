@@ -412,6 +412,12 @@ mod tests {
         12, 12, 13, 12, 13, 12, 13, 12, 12, 12,
     ];
 
+    static EXPECTED_HEBREW_SABBATICAL_YEAR: [bool; 33] = [
+        false, false, false, false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, true, false, false, false, false, true, false, true, false,
+        false, false, false, false, false, false, false,
+    ];
+
     #[test]
     fn test_hebrew_epoch() {
         // page 119 of the Calendrical Calculations book
@@ -435,6 +441,17 @@ mod tests {
         for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_LAST_HEBREW_MONTH.iter()) {
             let last_month = Hebrew::last_month_of_hebrew_year(case.year);
             assert_eq!(last_month, *expected);
+        }
+    }
+
+    #[test]
+    fn test_hebrew_sabbatical_year() {
+        for (case, expected) in HEBREW_DATES
+            .iter()
+            .zip(EXPECTED_HEBREW_SABBATICAL_YEAR.iter())
+        {
+            let boolean = Hebrew::hebrew_sabbatical_year(case.year);
+            assert_eq!(boolean, *expected);
         }
     }
 }
