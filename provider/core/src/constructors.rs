@@ -15,7 +15,7 @@
 //! 3. Reduced overhead and code size (data is resolved locally at each call site).
 //! 4. Explicit support for multiple ICU4X instances sharing data.
 //!
-//! However, as manual data management can be tedious, ICU4X also has a `compiled_data` 
+//! However, as manual data management can be tedious, ICU4X also has a `compiled_data`
 //! default Cargo feature that includes data and makes ICU4X work out-of-the box.
 //!
 //! Subsequently, there are 4 versions of all Rust ICU4X functions that use data:
