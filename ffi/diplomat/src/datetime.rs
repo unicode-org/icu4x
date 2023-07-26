@@ -185,7 +185,7 @@ pub mod ffi {
 
         /// Returns the number of days in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::days_in_year, FnInStruct)]
-        pub fn days_in_year(&self) -> u32 {
+        pub fn days_in_year(&self) -> u16 {
             self.0.date.days_in_year()
         }
     }
@@ -394,7 +394,7 @@ pub mod ffi {
 
         /// Returns the number of days in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::days_in_year, FnInStruct)]
-        pub fn days_in_year(&self) -> u32 {
+        pub fn days_in_year(&self) -> u16 {
             self.0.date.days_in_year()
         }
 
