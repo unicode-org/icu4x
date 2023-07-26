@@ -166,10 +166,12 @@ impl Hebrew {
             ADAR
         }
     }
+
     #[allow(dead_code)]
     pub fn hebrew_sabbatical_year(h_year: i32) -> bool {
         div_rem_euclid(h_year, 7).1 == 0
     }
+
     #[allow(dead_code)]
     pub fn hebrew_calendar_elapsed_days(h_year: i32) -> i32 {
         let months_elapsed = libm::floor((1.0 / 19.0) * (235.0 * h_year as f64 - 234.0));
@@ -405,6 +407,11 @@ mod tests {
         660655045f64 / 864f64,
     ];
 
+    static EXPECTED_LAST_HEBREW_MONTH: [u8; 33] = [
+        12, 12, 12, 12, 12, 12, 12, 12, 13, 12, 13, 12, 12, 12, 12, 13, 12, 13, 12, 13, 12, 12, 12,
+        12, 12, 13, 12, 13, 12, 13, 12, 12, 12,
+    ];
+
     #[test]
     fn test_hebrew_epoch() {
         // page 119 of the Calendrical Calculations book
@@ -420,6 +427,14 @@ mod tests {
                 (Hebrew::molad(case.year, case.month).inner() * precision).round() / precision;
             let final_expected = (expected * precision).round() / precision;
             assert_eq!(molad, final_expected, "{case:?}");
+        }
+    }
+
+    #[test]
+    fn test_last_hebrew_month() {
+        for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_LAST_HEBREW_MONTH.iter()) {
+            let last_month = Hebrew::last_month_of_hebrew_year(case.year);
+            assert_eq!(last_month, *expected);
         }
     }
 }
