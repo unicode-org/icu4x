@@ -177,10 +177,9 @@ impl Location {
 }
 
 #[derive(Debug)]
-#[doc(hidden)]
 /// The Astronomical struct provides functions which support astronomical
 /// calculations used by many observational calendars.
-pub struct Astronomical;
+pub(crate) struct Astronomical;
 
 impl Astronomical {
     /// Function for the ephemeris correction, which corrects the
