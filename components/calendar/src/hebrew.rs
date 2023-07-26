@@ -68,7 +68,10 @@ impl CalendarArithmetic for Hebrew {
     }
 
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        todo!()
+        let month = Self::last_month_of_hebrew_year(h_year);
+        let day = Self::last_day_of_hebrew_month(year, month);
+
+        (month,day)
     }
 }
 
@@ -82,62 +85,70 @@ impl Calendar for Hebrew {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        todo!()
+        let year = if era.0 == tinystr!(16, "am") {
+            year
+        } else {
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+        };
+
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(HebrewDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        todo!()
+        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        Self::hebrew_from_fixed(fixed_iso).inner
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        todo!()
+        let fixed_hebrew = Self::fixed_from_hebrew(*date);
+        Iso::iso_from_fixed(fixed_hebrew)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        todo!()
+        date.0.months_in_year()
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        todo!()
+        date.0.days_in_year()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        todo!()
+        date.0.days_in_month()
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        todo!()
+        date.0.offset_date(offset)
     }
 
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        calendar2: &Self,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
+        _calendar2: &Self,
+        _largest_unit: DateDurationUnit,
+        _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        todo!()
+        date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
     fn debug_name(&self) -> &'static str {
-        todo!()
+        "Hebrew"
     }
 
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        todo!()
+        Self::year_as_hebrew(date.0.year)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        todo!()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        todo!()
+        date.0.day_of_month()
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        todo!()
+        date.0.day_of_month()
     }
 }
 
@@ -315,6 +326,15 @@ impl Hebrew {
             + 1;
 
         Date::try_new_hebrew_date(year, month as u8, day as u8).unwrap() // safe unwrap
+    }
+
+    fn year_as_hebrew(year: i32) -> types::FormattableYear {
+        types::FormattableYear {
+            era: types::Era(tinystr!(16, "hebrew")),
+            number: year,
+            cyclic: None,
+            related_iso: None,
+        }
     }
 }
 
