@@ -187,7 +187,7 @@ class ICU4XIsoDateTime {
    * 
    * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
    */
-  uint32_t days_in_year() const;
+  uint16_t days_in_year() const;
   inline const capi::ICU4XIsoDateTime* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XIsoDateTime* AsFFIMut() { return this->inner.get(); }
   inline ICU4XIsoDateTime(capi::ICU4XIsoDateTime* i) : inner(i) {}
@@ -280,7 +280,7 @@ inline uint8_t ICU4XIsoDateTime::months_in_year() const {
 inline uint8_t ICU4XIsoDateTime::days_in_month() const {
   return capi::ICU4XIsoDateTime_days_in_month(this->inner.get());
 }
-inline uint32_t ICU4XIsoDateTime::days_in_year() const {
+inline uint16_t ICU4XIsoDateTime::days_in_year() const {
   return capi::ICU4XIsoDateTime_days_in_year(this->inner.get());
 }
 #endif
