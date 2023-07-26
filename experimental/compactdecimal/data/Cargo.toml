@@ -26,4 +26,3 @@ include = [
 ]
 
 [dependencies]
-icu_provider = { path = "../../../provider/core" } # For doc links
