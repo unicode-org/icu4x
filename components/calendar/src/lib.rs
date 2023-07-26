@@ -139,6 +139,7 @@ mod rata_die;
 pub mod roc;
 pub mod types;
 mod week_of;
+mod hebrew;
 
 pub mod week {
     //! Functions for week-of-month and week-of-year arithmetic.
