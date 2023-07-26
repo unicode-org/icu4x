@@ -236,6 +236,28 @@ where
     }
 }
 
+pub(crate) fn next_u8<F>(mut index: u8, condition: F) -> u8
+where
+    F: Fn(u8) -> bool,
+{
+    loop {
+        if condition(index) {
+            return index;
+        }
+        index += 1;
+    }
+}
+
+pub(crate) fn final_func<F>(mut index: i32, condition: F) -> i32
+where
+    F: Fn(i32) -> bool,
+{
+    while condition(index) {
+        index += 1;
+    }
+    index - 1
+}
+
 #[test]
 fn test_binary_search() {
     struct TestCase {

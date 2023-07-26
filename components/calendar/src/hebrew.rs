@@ -1,5 +1,7 @@
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64, next};
+use crate::helpers::{
+    self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64, final_func, next, next_u8,
+};
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
@@ -50,15 +52,15 @@ pub struct HebrewDateInner(ArithmeticDate<Hebrew>);
 
 impl CalendarArithmetic for Hebrew {
     fn month_days(year: i32, month: u8) -> u8 {
-        todo!()
+        Self::last_day_of_hebrew_month(year, month)
     }
 
     fn months_for_every_year(year: i32) -> u8 {
-        todo!()
+        Self::last_month_of_hebrew_year(year)
     }
 
-    fn days_in_provided_year(_year: i32) -> u16 {
-        todo!()
+    fn days_in_provided_year(year: i32) -> u16 {
+        Self::days_in_hebrew_year(year)
     }
 
     fn is_leap_year(year: i32) -> bool {
@@ -250,7 +252,7 @@ impl Hebrew {
                 } else {
                     30
                 }
-            },
+            }
             _ => 30,
         }
     }
@@ -278,7 +280,41 @@ impl Hebrew {
 
     #[allow(dead_code)]
     fn hebrew_from_fixed(date: RataDie) -> Date<Hebrew> {
-        todo!()
+        let approx = helpers::i64_to_i32(
+            (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0) as i64,
+        )
+        .saturate()
+            + 1;
+
+        // Search forward for the year
+        let year_condition = |year: i32| Self::hebrew_new_year(year) <= date;
+        let year = final_func(approx, year_condition);
+
+        let start = if date
+            < Self::fixed_from_hebrew(HebrewDateInner(ArithmeticDate::new_unchecked(
+                year, NISAN, 1,
+            ))) {
+            TISHRI
+        } else {
+            NISAN
+        };
+
+        let month_condition = |m: u8| {
+            date <= Self::fixed_from_hebrew(HebrewDateInner(ArithmeticDate::new_unchecked(
+                year,
+                m,
+                Self::last_day_of_hebrew_month(year, m),
+            )))
+        };
+        let month = next_u8(start, month_condition);
+
+        let day = (date
+            - Self::fixed_from_hebrew(HebrewDateInner(ArithmeticDate::new_unchecked(
+                year, month, 1,
+            ))))
+            + 1;
+
+        Date::try_new_hebrew_date(year, month as u8, day as u8).unwrap() // safe unwrap
     }
 }
 
@@ -332,7 +368,7 @@ impl DateTime<Hebrew> {
         second: u8,
     ) -> Result<DateTime<Hebrew>, CalendarError> {
         Ok(DateTime {
-            date: Date::try_new_hebrew_datetime(year, month, day)?,
+            date: Date::try_new_hebrew_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -710,7 +746,7 @@ mod tests {
 
     #[test]
     fn test_fixed_from_hebrew() {
-        for(case, f_date) in HEBREW_DATES.iter().zip(TEST_FIXED_DATE.iter()) {
+        for (case, f_date) in HEBREW_DATES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date = HebrewDateInner(ArithmeticDate::new_unchecked(
                 case.year, case.month, case.day,
             ));
@@ -722,15 +758,15 @@ mod tests {
         }
     }
 
-    //#[test]
-    // fn test_hebrew_from_fixed() {
-    //     for(case, f_date) in HEBREW_DATES.iter().zip(TEST_FIXED_DATE.iter()) {
-    //         let date = Date::try_new_hebrew_date(case.year, case.month, case.day).unwrap();
-    //         assert_eq!(
-    //             Hebrew::hebrew_from_fixed(RataDie::new(*f_date)),
-    //             date,
-    //             "{case:?}"
-    //         );
-    //     }
-    // }
+    #[test]
+    fn test_hebrew_from_fixed() {
+        for (case, f_date) in HEBREW_DATES.iter().zip(TEST_FIXED_DATE.iter()) {
+            let date = Date::try_new_hebrew_date(case.year, case.month, case.day).unwrap();
+            assert_eq!(
+                Hebrew::hebrew_from_fixed(RataDie::new(*f_date)),
+                date,
+                "{case:?}"
+            );
+        }
+    }
 }
