@@ -184,6 +184,21 @@ impl Hebrew {
             days as i32
         }
     }
+
+    #[allow(dead_code)]
+    pub fn hebrew_year_length_correction(h_year: i32) -> u8 {
+        let ny0 = Self::hebrew_calendar_elapsed_days(h_year - 1);
+        let ny1 = Self::hebrew_calendar_elapsed_days(h_year);
+        let ny2 = Self::hebrew_calendar_elapsed_days(h_year + 1);
+
+        if (ny2 - ny1) == 356 {
+            2
+        } else if (ny1 - ny0) == 382 {
+            1
+        } else {
+            0
+        }
+    }
 }
 
 #[cfg(test)]
@@ -470,6 +485,18 @@ mod tests {
         {
             let elapsed_days = Hebrew::hebrew_calendar_elapsed_days(case.year);
             assert_eq!(elapsed_days, *expected);
+        }
+    }
+
+    #[test]
+    fn test_hebrew_year_length_correction() {
+        let year_length_correction: [u8; 33] = [
+            2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0,
+        ];
+        for (case, expected) in HEBREW_DATES.iter().zip(year_length_correction.iter()) {
+            let correction = Hebrew::hebrew_year_length_correction(case.year);
+            assert_eq!(correction, *expected);
         }
     }
 }
