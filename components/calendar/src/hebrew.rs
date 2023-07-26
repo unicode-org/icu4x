@@ -418,6 +418,13 @@ mod tests {
         false, false, false, false, false, false, false,
     ];
 
+    static EXPECTED_HEBREW_ELASPED_CALENDAR_DAYS: [i32; 33] = [
+        1158928, 1311957, 1398894, 1422636, 1544627, 1583342, 1626812, 1742956, 1773254, 1807597,
+        1825848, 1843388, 1847051, 1881010, 1897460, 1917895, 1940545, 1942729, 1974889, 1986554,
+        1999723, 2018712, 2037346, 2044640, 2068027, 2077507, 2082262, 2082617, 2083000, 2100511,
+        2101988, 2117699, 2137779,
+    ];
+
     #[test]
     fn test_hebrew_epoch() {
         // page 119 of the Calendrical Calculations book
@@ -452,6 +459,17 @@ mod tests {
         {
             let boolean = Hebrew::hebrew_sabbatical_year(case.year);
             assert_eq!(boolean, *expected);
+        }
+    }
+
+    #[test]
+    fn test_hebrew_calendar_elapsed_days() {
+        for (case, expected) in HEBREW_DATES
+            .iter()
+            .zip(EXPECTED_HEBREW_ELASPED_CALENDAR_DAYS.iter())
+        {
+            let elapsed_days = Hebrew::hebrew_calendar_elapsed_days(case.year);
+            assert_eq!(elapsed_days, *expected);
         }
     }
 }
