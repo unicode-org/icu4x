@@ -142,7 +142,12 @@ category = "CI"
 script_runner = "@duckscript"
 script = '''
 exec --fail-on-error rustup install 1.65 --profile minimal
-exec --fail-on-error cargo +1.65 make check-all-features
+exec --fail-on-error cargo +1.65 make check-all-features 0
+exec --fail-on-error cargo +1.65 make check-all-features 1
+exec --fail-on-error cargo +1.65 make check-all-features 2
+exec --fail-on-error rm -r target
+exec --fail-on-error cargo +1.65 make check-all-features 3
+exec --fail-on-error cargo +1.65 make check-all-features 4
 '''
 
 [tasks.ci-job-fmt]
