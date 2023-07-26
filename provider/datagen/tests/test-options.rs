@@ -42,7 +42,10 @@ impl<'a> DataExporter for &'a mut TestingExporter {
 
 impl TestingExporter {
     pub fn take_map_and_reset(&mut self) -> HashMap<(DataKey, DataLocale), Vec<u8>> {
-        core::mem::take(&mut self.data).into_tuple_vec().into_iter().collect()
+        core::mem::take(&mut self.data)
+            .into_tuple_vec()
+            .into_iter()
+            .collect()
     }
 }
 

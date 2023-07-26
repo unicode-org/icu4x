@@ -77,6 +77,7 @@ use icu_locid::langid;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbacker;
+use icu_locid_transform::fallback::LocaleFallbackerBorrowed;
 use icu_locid_transform::fallback::LocaleFallbackerWithConfig;
 use options::{FallbackMode, LocaleInclude};
 #[allow(deprecated)] // ugh
@@ -131,98 +132,6 @@ pub(crate) mod rayon_prelude {
         }
     }
     impl<T: IntoIterator> IntoParallelIterator for T {}
-}
-
-enum LocaleIncluderInner {
-    All,
-    ExplicitWithExtensions {
-        explicit: HashSet<LanguageIdentifier>,
-    },
-    AncestorsAndDescendants {
-        explicit: HashSet<DataLocale>,
-        implicit: HashSet<DataLocale>,
-    },
-}
-
-struct LocaleIncluder<'a> {
-    fallbacker_with_config: &'a LocaleFallbackerWithConfig<'a>,
-    inner: LocaleIncluderInner,
-}
-
-impl<'a> LocaleIncluder<'a> {
-    pub fn new(
-        fallbacker_with_config: &'a LocaleFallbackerWithConfig<'a>,
-        locale_include: LocaleInclude,
-        fallback_mode: FallbackMode,
-    ) -> Self {
-        if matches!(locale_include, LocaleInclude::All) {
-            return Self {
-                fallbacker_with_config,
-                inner: LocaleIncluderInner::All,
-            };
-        }
-        let LocaleInclude::Explicit(explicit) = locale_include else {
-            unreachable!("Pre-processed LocaleInclued has only 2 variants")
-        };
-        if matches!(fallback_mode, FallbackMode::Preresolved) {
-            return Self {
-                fallbacker_with_config,
-                inner: LocaleIncluderInner::ExplicitWithExtensions { explicit },
-            };
-        }
-        let explicit: HashSet<DataLocale> = explicit.into_iter().map(|d| d.into()).collect();
-        let mut implicit = HashSet::new();
-        // TODO: Make including the default locale configurable
-        implicit.insert(DataLocale::default());
-        for locale in explicit.iter() {
-            let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-            while !iter.get().is_empty() {
-                implicit.insert(iter.get().clone());
-            }
-        }
-        Self {
-            fallbacker_with_config,
-            inner: LocaleIncluderInner::AncestorsAndDescendants { explicit, implicit },
-        }
-    }
-
-    pub fn get_locales_for_possible_inclusion(
-        &self,
-        supported_locales: HashSet<DataLocale>,
-    ) -> HashSet<DataLocale> {
-        match &self.inner {
-            LocaleIncluderInner::All => supported_locales,
-            LocaleIncluderInner::ExplicitWithExtensions { explicit } => supported_locales
-                .into_iter()
-                .chain(explicit.iter().map(|langid| langid.into()))
-                .collect(),
-            LocaleIncluderInner::AncestorsAndDescendants { explicit, .. } => supported_locales
-                .into_iter()
-                .chain(explicit.iter().cloned())
-                .collect(),
-        }
-    }
-
-    pub fn matches(&self, probe: &DataLocale) -> bool {
-        match &self.inner {
-            LocaleIncluderInner::All => true,
-            LocaleIncluderInner::ExplicitWithExtensions { explicit } => {
-                explicit.contains(&probe.get_langid())
-            }
-            LocaleIncluderInner::AncestorsAndDescendants { explicit, implicit } => {
-                if implicit.contains(probe) {
-                    return true;
-                }
-                let mut iter = self.fallbacker_with_config.fallback_for(probe.clone());
-                while !iter.get().is_empty() {
-                    if explicit.contains(iter.get()) {
-                        return true;
-                    }
-                }
-                false
-            }
-        }
-    }
 }
 
 /// [`DataProvider`] backed by [`SourceData`]
@@ -316,6 +225,76 @@ impl DatagenProvider {
         supported
     }
 
+    /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
+    /// provider's options bag. The locales may be later optionally deduplicated for fallback.
+    pub(crate) fn select_locales_for_key(
+        &self,
+        key: DataKey,
+        fallbacker_with_config: LocaleFallbackerWithConfig,
+    ) -> Result<HashSet<DataLocale>, DataError> {
+        let supported_locales: HashSet<DataLocale> = self
+            .supported_locales_for_key(key)
+            .map_err(|e| e.with_key(key))?
+            .into_iter()
+            .collect();
+
+        let locale_include = self.source.options.locales.clone();
+        let fallback_mode = self.source.options.fallback;
+
+        // Case 1: `LocaleInclude::All` simply exports all supported locales for this key.
+        if matches!(locale_include, LocaleInclude::All) {
+            return Ok(supported_locales);
+        }
+
+        let LocaleInclude::Explicit(explicit) = locale_include else {
+            unreachable!("Pre-processed LocaleInclued has only 2 variants")
+        };
+
+        // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
+        // one of the explicit locales. This ensures extensions are included. In addition, any
+        // explicit locales are added to the list, even if they themselves don't contain data;
+        // fallback should be performed upon exporting.
+        if matches!(fallback_mode, FallbackMode::Preresolved) {
+            let result = supported_locales
+                .into_iter()
+                .chain(explicit.iter().map(|langid| langid.into()))
+                .filter(|locale| explicit.contains(&locale.get_langid()))
+                .collect();
+            return Ok(result);
+        }
+
+        // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
+        let explicit: HashSet<DataLocale> = explicit.into_iter().map(|d| d.into()).collect();
+        let mut implicit = HashSet::new();
+        // TODO: Make including the default locale configurable
+        implicit.insert(DataLocale::default());
+        for locale in explicit.iter() {
+            let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+            while !iter.get().is_empty() {
+                implicit.insert(iter.get().clone());
+            }
+        }
+
+        let result = supported_locales
+            .into_iter()
+            .chain(explicit.iter().cloned())
+            .filter(|locale| {
+                if implicit.contains(locale) {
+                    return true;
+                }
+                let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                while !iter.get().is_empty() {
+                    if explicit.contains(iter.get()) {
+                        return true;
+                    }
+                }
+                false
+            })
+            .collect();
+
+        Ok(result)
+    }
+
     /// Exports data for the set of keys to the given exporter.
     ///
     /// See
@@ -356,23 +335,11 @@ impl DatagenProvider {
                         .map_err(|e| e.with_req(key, Default::default()));
                 }
 
-                let supported_locales: HashSet<DataLocale> = provider
-                    .supported_locales_for_key(key)
-                    .map_err(|e| e.with_key(key))?
-                    .into_iter()
-                    .collect();
-
                 let fallbacker_with_config =
                     fallbacker.for_config(LocaleFallbackConfig::from_key(key));
 
-                let locale_includer = LocaleIncluder::new(
-                    &fallbacker_with_config,
-                    provider.source.options.locales.clone(),
-                    provider.source.options.fallback,
-                );
-
-                let locales_for_possible_inclusion =
-                    locale_includer.get_locales_for_possible_inclusion(supported_locales);
+                let locales_to_export =
+                    provider.select_locales_for_key(key, fallbacker_with_config)?;
 
                 fn get_payload(
                     provider: &DatagenProvider,
@@ -394,17 +361,6 @@ impl DatagenProvider {
                     provider.source.options.fallback,
                     exporter.preferred_built_in_fallback_mode(),
                 ) {
-                    (options::FallbackMode::Hybrid, _)
-                    | (options::FallbackMode::PreferredForExporter, None) => {
-                        locales_for_possible_inclusion
-                            .into_par_iter()
-                            .filter(|locale| locale_includer.matches(locale))
-                            .try_for_each(|locale| {
-                                let payload = get_payload(provider, key, &locale)?;
-                                exporter.put_payload(key, &locale, &payload)
-                            })
-                            .map_err(|e| e.with_key(key))?;
-                    }
                     (options::FallbackMode::Runtime, _)
                     | (options::FallbackMode::RuntimeManual, _)
                     | (
@@ -413,16 +369,18 @@ impl DatagenProvider {
                     ) => {
                         let payloads =
                             FrozenMap::<DataLocale, Box<DataPayload<ExportMarker>>>::new();
-                        locales_for_possible_inclusion
+                        locales_to_export
                             .into_par_iter()
-                            .filter(|locale| locale_includer.matches(locale))
                             .try_for_each(|locale| {
                                 let payload = get_payload(provider, key, &locale)?;
                                 payloads.insert(locale, Box::new(payload));
                                 Ok::<(), DataError>(())
                             })
                             .map_err(|e| e.with_key(key))?;
-                        let payloads = payloads.into_tuple_vec().into_iter().collect::<HashMap<_, _>>();
+                        let payloads = payloads
+                            .into_tuple_vec()
+                            .into_iter()
+                            .collect::<HashMap<_, _>>();
                         'outer: for (locale, payload) in payloads.iter() {
                             let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                             while !iter.get().is_empty() {
@@ -436,10 +394,11 @@ impl DatagenProvider {
                             exporter.put_payload(key, locale, payload)?;
                         }
                     }
-                    (options::FallbackMode::Preresolved, _) => {
-                        locales_for_possible_inclusion
+                    (options::FallbackMode::Hybrid, _)
+                    | (options::FallbackMode::PreferredForExporter, None)
+                    | (options::FallbackMode::Preresolved, _) => {
+                        locales_to_export
                             .into_par_iter()
-                            .filter(|locale| locale_includer.matches(locale))
                             .try_for_each(|locale| {
                                 let payload = get_payload(provider, key, &locale)?;
                                 exporter.put_payload(key, &locale, &payload)
