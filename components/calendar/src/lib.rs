@@ -121,7 +121,7 @@ pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
 pub mod chinese;
- mod chinese_based;
+mod chinese_based;
 pub mod coptic;
 mod duration;
 mod error;
