@@ -254,6 +254,88 @@ impl Hebrew {
             _ => 30,
         }
     }
+
+    #[allow(dead_code)]
+    fn fixed_from_hebrew(date: HebrewDateInner) -> RataDie {
+        let year = date.0.year;
+        let month = date.0.month;
+        let day = date.0.day;
+
+        let mut total_days = Self::hebrew_new_year(year) + day.into() - 1;
+
+        if month < TISHRI {
+            for m in (TISHRI..=Self::last_month_of_hebrew_year(year)).chain(NISAN..month) {
+                total_days += Self::last_day_of_hebrew_month(year, m).into();
+            }
+        } else {
+            for m in TISHRI..month {
+                total_days += Self::last_day_of_hebrew_month(year, m).into();
+            }
+        }
+
+        total_days
+    }
+
+    #[allow(dead_code)]
+    fn hebrew_from_fixed(date: RataDie) -> Date<Hebrew> {
+        todo!()
+    }
+}
+
+impl Date<Hebrew> {
+    /// Construct new Hebrew Date.
+    ///
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_hebrew = Date::try_new_hebrew_date(1392, 4, 25)
+    ///     .expect("Failed to initialize Hebrew Date instance.");
+    ///
+    /// assert_eq!(date_hebrew.year().number, 1392);
+    /// assert_eq!(date_hebrew.month().ordinal, 4);
+    /// assert_eq!(date_hebrew.day_of_month().0, 25);
+    /// ```
+    pub fn try_new_hebrew_date(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<Hebrew>, CalendarError> {
+        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+            .map(HebrewDateInner)
+            .map(|inner| Date::from_raw(inner, Hebrew))
+    }
+}
+
+impl DateTime<Hebrew> {
+    /// Construct a new Hebrew datetime from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let datetime_hebrew = DateTime::try_new_hebrew_datetime(474, 10, 11, 13, 1, 0)
+    ///     .expect("Failed to initialize Hebrew DateTime instance.");
+    ///
+    /// assert_eq!(datetime_hebrew.date.year().number, 474);
+    /// assert_eq!(datetime_hebrew.date.month().ordinal, 10);
+    /// assert_eq!(datetime_hebrew.date.day_of_month().0, 11);
+    /// assert_eq!(datetime_hebrew.time.hour.number(), 13);
+    /// assert_eq!(datetime_hebrew.time.minute.number(), 1);
+    /// assert_eq!(datetime_hebrew.time.second.number(), 0);
+    /// ```
+    pub fn try_new_hebrew_datetime(
+        year: i32,
+        month: u8,
+        day: u8,
+        hour: u8,
+        minute: u8,
+        second: u8,
+    ) -> Result<DateTime<Hebrew>, CalendarError> {
+        Ok(DateTime {
+            date: Date::try_new_hebrew_datetime(year, month, day)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
+        })
+    }
 }
 
 #[cfg(test)]
@@ -625,4 +707,30 @@ mod tests {
             assert_eq!(days_in_month, *expected);
         }
     }
+
+    #[test]
+    fn test_fixed_from_hebrew() {
+        for(case, f_date) in HEBREW_DATES.iter().zip(TEST_FIXED_DATE.iter()) {
+            let date = HebrewDateInner(ArithmeticDate::new_unchecked(
+                case.year, case.month, case.day,
+            ));
+            assert_eq!(
+                Hebrew::fixed_from_hebrew(date),
+                RataDie::new(*f_date),
+                "{case:?}"
+            );
+        }
+    }
+
+    //#[test]
+    // fn test_hebrew_from_fixed() {
+    //     for(case, f_date) in HEBREW_DATES.iter().zip(TEST_FIXED_DATE.iter()) {
+    //         let date = Date::try_new_hebrew_date(case.year, case.month, case.day).unwrap();
+    //         assert_eq!(
+    //             Hebrew::hebrew_from_fixed(RataDie::new(*f_date)),
+    //             date,
+    //             "{case:?}"
+    //         );
+    //     }
+    // }
 }
