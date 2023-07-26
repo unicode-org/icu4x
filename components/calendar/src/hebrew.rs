@@ -1,4 +1,3 @@
-
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64, next};
 use crate::julian::Julian;
@@ -18,10 +17,10 @@ pub struct Hebrew;
 pub struct ObservationalHebrew;
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206
-const FIXED_HEBREW_EPOCH: RataDie = Julian::fixed_from_julian_integers(-3761,10,8);
+const FIXED_HEBREW_EPOCH: RataDie = Julian::fixed_from_julian_integers(-3761, 10, 8);
 
 // Hebrew Location
-// Lisp code reference: 
+// Lisp code reference:
 const HAIFA: Location = Location {
     latitude: 32.82,
     longitude: 35.0,
@@ -43,7 +42,6 @@ const TEVET: u8 = 10;
 const SHEVAT: u8 = 11;
 const ADAR: u8 = 12;
 const ADARII: u8 = 13;
-
 
 /// The inner date type used for representing [`Date`]s of [`Hebrew`]. See [`Date`] and [`Hebrew`] for more details.
 
@@ -146,22 +144,20 @@ impl Hebrew {
     pub fn new() -> Self {
         Self
     }
-    // Hebrew New Moon 
+    // Hebrew New Moon
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2244
     pub(crate) fn molad(h_year: i32, h_month: u8) -> Moment {
-        let y = if h_month < TISHRI {
-            h_year + 1
-        } else {
-            h_year
-        };
+        let y = if h_month < TISHRI { h_year + 1 } else { h_year };
 
-    
         let months_elapsed = (h_month as f64 - TISHRI as f64)
-            + (libm::floor((1.0/19.0) * (235.0 * y as f64 - 234.0)));
-    
-        Moment::new(FIXED_HEBREW_EPOCH.to_f64_date() - (876.0 / 25920.0) + months_elapsed * (29.0 + (1.0/2.0) + (793.0/25920.0)))
+            + (libm::floor((1.0 / 19.0) * (235.0 * y as f64 - 234.0)));
+
+        Moment::new(
+            FIXED_HEBREW_EPOCH.to_f64_date() - (876.0 / 25920.0)
+                + months_elapsed * (29.0 + (1.0 / 2.0) + (793.0 / 25920.0)),
+        )
     }
-    
+
     #[allow(dead_code)]
     pub fn last_month_of_hebrew_year(h_year: i32) -> u8 {
         if Self::is_leap_year(h_year) {
@@ -176,7 +172,7 @@ impl Hebrew {
     }
     #[allow(dead_code)]
     pub fn hebrew_calendar_elapsed_days(h_year: i32) -> i32 {
-        let months_elapsed = libm::floor((1.0/19.0) * (235.0 * h_year as f64  - 234.0));
+        let months_elapsed = libm::floor((1.0 / 19.0) * (235.0 * h_year as f64 - 234.0));
         let parts_elapsed = 12084.0 + 13753.0 * months_elapsed;
         let days = 29.0 * months_elapsed + libm::floor(parts_elapsed / 25920.0);
 
@@ -186,11 +182,7 @@ impl Hebrew {
             days as i32
         }
     }
-
-
 }
-
-
 
 #[cfg(test)]
 mod tests {
@@ -374,10 +366,46 @@ mod tests {
             day: 12,
         },
         DateCase {
-            year : 5854,
+            year: 5854,
             month: 5,
             day: 5,
         },
+    ];
+
+    static EXPECTED_MOLAD_DATES: [f64; 33] = [
+        -1850718767f64 / 8640f64,
+        -1591805959f64 / 25920f64,
+        660097927f64 / 25920f64,
+        1275506059f64 / 25920f64,
+        4439806081f64 / 25920f64,
+        605235101f64 / 2880f64,
+        3284237627f64 / 12960f64,
+        9583515841f64 / 25920f64,
+        2592403883f64 / 6480f64,
+        2251656649f64 / 5184f64,
+        11731320839f64 / 25920f64,
+        12185988041f64 / 25920f64,
+        6140833583f64 / 12960f64,
+        6581722991f64 / 12960f64,
+        6792982499f64 / 12960f64,
+        4705980311f64 / 8640f64,
+        14699670013f64 / 25920f64,
+        738006961f64 / 1296f64,
+        1949499007f64 / 3240f64,
+        5299956319f64 / 8640f64,
+        3248250415f64 / 5184f64,
+        16732660061f64 / 25920f64,
+        17216413717f64 / 25920f64,
+        1087650871f64 / 1620f64,
+        2251079609f64 / 3240f64,
+        608605601f64 / 864f64,
+        306216383f64 / 432f64,
+        18387526207f64 / 25920f64,
+        3678423761f64 / 5184f64,
+        1570884431f64 / 2160f64,
+        18888119389f64 / 25920f64,
+        19292268013f64 / 25920f64,
+        660655045f64 / 864f64,
     ];
 
     #[test]
@@ -388,13 +416,13 @@ mod tests {
     }
 
     #[test]
-fn test_hebrew_molad() {
-    let precision = 1_00000f64;
-    let molad = (Hebrew::molad(3174, 5).inner() * precision).round() / precision;
-    let expected = -214203.560995;
-    let expected = (expected * precision).round() / precision;
-    assert_eq!(molad, expected);
+    fn test_hebrew_molad() {
+        let precision = 1_00000f64;
+        for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_MOLAD_DATES.iter()) {
+            let molad =
+                (Hebrew::molad(case.year, case.month).inner() * precision).round() / precision;
+            let final_expected = (expected * precision).round() / precision;
+            assert_eq!(molad, final_expected, "{case:?}");
+        }
+    }
 }
-
-}
-
