@@ -37,7 +37,6 @@ use crate::types::Moment;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
-use alloc::vec::Vec;
 
 /// Hebrew Arithmetical Calendar
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
@@ -271,14 +270,14 @@ impl Hebrew {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2321
     #[allow(dead_code)]
     fn long_marheshvan(h_year: i32) -> bool {
-        let coll: Vec<u16> = vec![355, 385];
+        let coll = [355, 385];
         coll.contains(&Self::days_in_hebrew_year(h_year))
     }
     // True if the month Kislve is going to be short in given Hebrew year
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2326
     #[allow(dead_code)]
     fn short_kislev(h_year: i32) -> bool {
-        let coll: Vec<u16> = vec![353, 383];
+        let coll = [353, 383];
         coll.contains(&Self::days_in_hebrew_year(h_year))
     }
 
