@@ -38,7 +38,7 @@
 //! ```
 //!
 //! Using compiled data data has several benefits:
-//! * Simple code, as clients don't have to manage [`DataProvider`]s
+//! * Simple code, no need to manage [`DataProvider`]s
 //! * No deserialization, improves binary size and performance
 //! * The compiler can discard data for unused APIs. As ICU4X's APIs are very fine-grained, you only
 //!   have to carry a minimal amount of data
@@ -100,7 +100,7 @@
 //! - `compiled_data` (default): Whether to include compiled data. Without this flag, only constructors with
 //!    explicit `provider` arguments are available.
 //! - `std`: Whether to include `std` support. Without this Cargo feature, `icu` is `#[no_std]`-compatible.
-//! - `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with deserializing providers.
+//! - `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with non-static data.
 //! - `logging`: Enables logging through the `log` crate.
 //! - `serde`: Activates `serde` implementations for core library types, such as [`Locale`], as well
 //!    as `*_with_buffer_provider` constructors for explicit data management.
