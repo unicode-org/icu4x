@@ -283,7 +283,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     }
 
     /// Get the (prev_new_year, next_new_year) RataDies in the sui containing the given date.
-    /// 
+    ///
     /// This function combines calls to new_year_in_sui for dates in consecutive sui to share code.
     fn new_years_bounding_date_in_sui(date: RataDie) -> (RataDie, RataDie) {
         let prior_solstice = Self::winter_solstice_on_or_before(date); // s1

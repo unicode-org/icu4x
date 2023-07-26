@@ -25,7 +25,7 @@ fn bench_calendar<C: Copy + Calendar>(
         b.iter(|| {
             let iso = Date::try_new_iso_date(1970, 1, 2).unwrap();
             let converted = iso.to_calendar(calendar);
-            black_box(bench_date(converted));
+            bench_date(converted);
         })
     });
 }
