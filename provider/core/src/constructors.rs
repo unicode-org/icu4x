@@ -126,7 +126,7 @@ macro_rules! gen_any_buffer_unstable_docs {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
             "provided by a [`BufferProvider`](", stringify!($crate), "::BufferProvider).\n\n",
-            "✨ **Enabled with the `\"serde\"` feature.**\n\n",
+            "✨ *Enabled with the `serde` Cargo feature.*\n\n",
             "[📚 Help choosing a constructor](", stringify!($crate), "::constructors)",
         )
     };
@@ -162,7 +162,7 @@ macro_rules! gen_any_buffer_data_constructors {
     (locale: skip, options: skip, error: $error_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
         #[cfg(feature = "compiled_data")]
         $(#[$doc])+
-        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked() -> Result<Self, $error_ty> {
@@ -186,7 +186,7 @@ macro_rules! gen_any_buffer_data_constructors {
         #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked() -> $result_ty {
@@ -224,7 +224,7 @@ macro_rules! gen_any_buffer_data_constructors {
         #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked($options_arg: $options_ty) -> $result_ty {
@@ -246,7 +246,7 @@ macro_rules! gen_any_buffer_data_constructors {
         #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked($options_arg: $options_ty) -> Result<Self, $error_ty> {
@@ -283,7 +283,7 @@ macro_rules! gen_any_buffer_data_constructors {
         #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
@@ -322,7 +322,7 @@ macro_rules! gen_any_buffer_data_constructors {
         #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
@@ -360,7 +360,7 @@ macro_rules! gen_any_buffer_data_constructors {
         #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale, $options_arg: $options_ty) -> Result<Self, $error_ty> {

@@ -181,7 +181,7 @@ impl WordSegmenter {
     /// assert_eq!(ja_bps, [0, 15, 21]);
     /// ```
     ///
-    /// ✨ ***Enabled with the `"compiled_data"` and `"auto"` Cargo features.***
+    /// ✨ *Enabled with the `compiled_data` and `auto` Cargo features.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -235,7 +235,7 @@ impl WordSegmenter {
     /// Warning: there is not currently an LSTM model for Chinese or Japanese, so the [`WordSegmenter`]
     /// created by this function will have unexpected behavior in spans of those scripts.
     ///
-    /// ✨ ***Enabled with the `"compiled_data"` and `"lstm"` Cargo features.***
+    /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
     ///
     /// # Examples
     ///
@@ -306,7 +306,7 @@ impl WordSegmenter {
     /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
     /// faster than the LSTM model but requires more data.
     ///
-    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///

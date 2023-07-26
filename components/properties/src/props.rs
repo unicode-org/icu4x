@@ -596,7 +596,7 @@ macro_rules! impl_value_getter {
         impl $ty {
             $(#[$attr_n2e])*
             ///
-            /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+            /// ✨ *Enabled with the `compiled_data` Cargo feature.*
             #[cfg(feature = "compiled_data")]
             $vis_n2e fn $cname_n2e() -> PropertyValueNameToEnumMapperBorrowed<'static, $ty> {
                 PropertyValueNameToEnumMapperBorrowed {
@@ -615,7 +615,7 @@ macro_rules! impl_value_getter {
             $(
                 $(#[$attr_e2sn])*
                 ///
-                /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+                /// ✨ *Enabled with the `compiled_data` Cargo feature.*
                 #[cfg(feature = "compiled_data")]
                 $vis_e2sn fn $cname_e2sn() -> $mapper_e2snb<'static, $ty> {
                     $mapper_e2snb {
@@ -633,7 +633,7 @@ macro_rules! impl_value_getter {
 
                 $(#[$attr_e2ln])*
                 ///
-                /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+                /// ✨ *Enabled with the `compiled_data` Cargo feature.*
                 #[cfg(feature = "compiled_data")]
                 $vis_e2ln fn $cname_e2ln() -> $mapper_e2lnb<'static, $ty> {
                     $mapper_e2lnb {

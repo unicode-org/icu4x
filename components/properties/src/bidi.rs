@@ -6,7 +6,7 @@
 //!
 //! `BidiClassAdapter` enables ICU4X to provide data to [`unicode-bidi`], an external crate implementing UAX #9.
 //!
-//! ✨ ***Enabled with the `"bidi"` Cargo feature.***
+//! ✨ *Enabled with the `bidi` Cargo feature.*
 //!
 //! # Examples
 //!
@@ -59,7 +59,7 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 
 /// An adapter to convert from icu4x `BidiClass` to `unicode_bidi::BidiClass`.
 ///
-/// ✨ ***Enabled with the `"bidi"` Cargo feature.***
+/// ✨ *Enabled with the `bidi` Cargo feature.*
 ///
 /// # Example
 ///

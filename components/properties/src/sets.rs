@@ -352,7 +352,7 @@ macro_rules! make_code_point_set_property {
 
         $(#[$doc])*
         ///
-        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         #[cfg(feature = "compiled_data")]
         $cvis const fn $constname() -> CodePointSetDataBorrowed<'static> {
             CodePointSetDataBorrowed {
@@ -1736,7 +1736,7 @@ macro_rules! make_unicode_set_property {
         }
         $(#[$doc])*
         ///
-        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         #[cfg(feature = "compiled_data")]
         $cvis const fn $constname() -> UnicodeSetDataBorrowed<'static> {
             UnicodeSetDataBorrowed {

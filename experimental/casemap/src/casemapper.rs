@@ -58,7 +58,7 @@ impl CaseMapper {
     /// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
     /// ```
     ///
-    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

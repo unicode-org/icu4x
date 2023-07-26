@@ -61,7 +61,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         }
         $(#[$attr])*
         ///
-        /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         #[cfg(feature = "compiled_data")]
         $vis2 fn $constname(
             locale: &DataLocale,

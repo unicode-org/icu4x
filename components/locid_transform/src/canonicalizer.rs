@@ -218,7 +218,7 @@ impl Default for LocaleCanonicalizer {
 impl LocaleCanonicalizer {
     /// A constructor which creates a [`LocaleCanonicalizer`].
     ///
-    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -259,7 +259,7 @@ impl LocaleCanonicalizer {
 
     /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] object.
     ///
-    /// ✨ ***Enabled with the `"compiled_data"` Cargo feature.***
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
