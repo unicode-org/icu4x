@@ -199,6 +199,15 @@ impl Hebrew {
             0
         }
     }
+
+    #[allow(dead_code)]
+    pub(crate) fn hebrew_new_year(h_year: i32) -> RataDie {
+        RataDie::new(
+            FIXED_HEBREW_EPOCH.to_i64_date()
+                + Self::hebrew_calendar_elapsed_days(h_year) as i64
+                + Self::hebrew_year_length_correction(h_year) as i64,
+        )
+    }
 }
 
 #[cfg(test)]
@@ -440,6 +449,11 @@ mod tests {
         2101988, 2117699, 2137779,
     ];
 
+    static EXPECTED_FIXED_HEBREW_NEW_YEAR: [i64; 33] = [
+        -214497, -61470, 25467, 49209, 171200, 209915, 253385, 369529, 399827, 434172, 452421,
+        469963, 473624, 507583, 524033, 544468, 567118, 569302, 601462, 613127, 626296, 645285,
+        663919, 671213, 694600, 704080, 708835, 709190, 709573, 727084, 728561, 744272, 764352,
+    ];
     #[test]
     fn test_hebrew_epoch() {
         // page 119 of the Calendrical Calculations book
@@ -497,6 +511,17 @@ mod tests {
         for (case, expected) in HEBREW_DATES.iter().zip(year_length_correction.iter()) {
             let correction = Hebrew::hebrew_year_length_correction(case.year);
             assert_eq!(correction, *expected);
+        }
+    }
+
+    #[test]
+    fn test_hebrew_new_year() {
+        for (case, expected) in HEBREW_DATES
+            .iter()
+            .zip(EXPECTED_FIXED_HEBREW_NEW_YEAR.iter())
+        {
+            let f_date = Hebrew::hebrew_new_year(case.year);
+            assert_eq!(f_date.to_i64_date(), *expected);
         }
     }
 }
