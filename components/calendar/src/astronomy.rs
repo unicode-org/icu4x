@@ -213,18 +213,21 @@ impl Astronomical {
         } else if (2006..=2050).contains(&year_int) {
             (62.92 + 0.32217 * y2000 + 0.005589 * y2000 * y2000) / 86400.0
         } else if (1987..=2005).contains(&year_int) {
+            // This polynomial is written out manually instead of using libm::pow for optimization, see #3743
             (63.86 + 0.3345 * y2000 - 0.060374 * y2000 * y2000
                 + 0.0017275 * y2000 * y2000 * y2000
                 + 0.000651814 * y2000 * y2000 * y2000 * y2000
                 + 0.00002373599 * y2000 * y2000 * y2000 * y2000 * y2000)
                 / 86400.0
         } else if (1900..=1986).contains(&year_int) {
+            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
             -0.00002 + 0.000297 * c + 0.025184 * c * c - 0.181133 * c * c * c
                 + 0.553040 * c * c * c * c
                 - 0.861938 * c * c * c * c * c
                 + 0.677066 * c * c * c * c * c * c
                 - 0.212591 * c * c * c * c * c * c * c
         } else if (1800..=1899).contains(&year_int) {
+            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
             -0.000009
                 + 0.003844 * c
                 + 0.083563 * c * c
@@ -237,20 +240,24 @@ impl Astronomical {
                 + 11.636204 * c * c * c * c * c * c * c * c * c
                 + 2.043794 * c * c * c * c * c * c * c * c * c * c
         } else if (1700..=1799).contains(&year_int) {
+            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
             (8.118780842 - 0.005092142 * y1700 + 0.003336121 * y1700 * y1700
                 - 0.0000266484 * y1700 * y1700 * y1700)
                 / 86400.0
         } else if (1600..=1699).contains(&year_int) {
+            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
             (120.0 - 0.9808 * y1600 - 0.01532 * y1600 * y1600
                 + 0.000140272128 * y1600 * y1600 * y1600)
                 / 86400.0
         } else if (500..=1599).contains(&year_int) {
+            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
             (1574.2 - 556.01 * y1000 + 71.23472 * y1000 * y1000 + 0.319781 * y1000 * y1000 * y1000
                 - 0.8503463 * y1000 * y1000 * y1000 * y1000
                 - 0.005050998 * y1000 * y1000 * y1000 * y1000 * y1000
                 + 0.0083572073 * y1000 * y1000 * y1000 * y1000 * y1000 * y1000)
                 / 86400.0
         } else if (-499..=499).contains(&year_int) {
+            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
             (10583.6 - 1014.41 * y0 + 33.78311 * y0 * y0
                 - 5.952053 * y0 * y0 * y0
                 - 0.1798452 * y0 * y0 * y0 * y0
@@ -418,6 +425,7 @@ impl Astronomical {
     ///
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4288-L4377
     pub(crate) fn nth_new_moon(n: i32) -> Moment {
+        // The following polynomials are written out instead of using libm::pow for optimization, see #3743
         let n0 = 24724.0;
         let k = (n as f64) - n0;
         let c = k / 1236.85;
@@ -480,6 +488,7 @@ impl Astronomical {
 
         let mut correction = -0.00017 * libm::sin(omega.to_radians());
 
+        // This summation is unrolled for optimization, see #3743
         st.0 = v0
             * libm::sin(
                 (x0 * solar_anomaly + y0 * lunar_anomaly + z0 * moon_argument).to_radians(),
@@ -715,6 +724,7 @@ impl Astronomical {
             -177.0, 176.0, 166.0, -164.0, 132.0, -119.0, 115.0, 107.0,
         ];
 
+        // This summation is unrolled for optimization, see #3743
         ct.0 = v0 * sin_degrees(w0 * d + x0 * ms + y0 * ml + z0 * f);
         ct.1 = v1 * sin_degrees(w1 * d + x1 * ms + y1 * ml + z1 * f);
         ct.2 = v2 * sin_degrees(w2 * d + x2 * ms + y2 * ml + z2 * f);
@@ -904,6 +914,7 @@ impl Astronomical {
             -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
         ];
 
+        // This summation is unrolled for optimization, see #3743
         ct.0 = v0 * libm::sin((w0 * d + x0 * ms + y0 * ml + z0 * f).to_radians());
         ct.1 = v1 * libm::sin((w1 * d + x1 * ms + y1 * ml + z1 * f).to_radians());
         ct.2 = v2 * libm::sin((w2 * d + x2 * ms + y2 * ml + z2 * f).to_radians());
@@ -1039,6 +1050,7 @@ impl Astronomical {
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4148-L4158
     fn mean_lunar_longitude(c: f64) -> f64 {
+        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         let n = 218.3164477
             + c * (481267.88123421 - 0.0015786 * c + c * c / 538841.0 - c * c * c / 65194000.0);
 
@@ -1081,6 +1093,7 @@ impl Astronomical {
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4160-L4170
     fn lunar_elongation(c: f64) -> f64 {
+        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         div_rem_euclid_f64(
             297.85019021 + 445267.1114034 * c - 0.0018819 * c * c + c * c * c / 545868.0
                 - c * c * c * c / 113065000.0,
@@ -1261,6 +1274,7 @@ impl Astronomical {
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4172-L4182
     fn solar_anomaly(c: f64) -> f64 {
+        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         div_rem_euclid_f64(
             357.5291092 + 35999.0502909 * c - 0.0001536 * c * c + c * c * c / 24490000.0,
             360.0,
@@ -1272,6 +1286,7 @@ impl Astronomical {
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4184-L4194
     fn lunar_anomaly(c: f64) -> f64 {
+        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         div_rem_euclid_f64(
             134.9633964 + 477198.8675055 * c + 0.0087414 * c * c + c * c * c / 69699.0
                 - c * c * c * c / 14712000.0,
@@ -1282,6 +1297,7 @@ impl Astronomical {
 
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4196-L4206
     fn moon_node(c: f64) -> f64 {
+        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         div_rem_euclid_f64(
             93.2720950 + 483202.0175233 * c - 0.0036539 * c * c - c * c * c / 3526000.0
                 + c * c * c * c / 863310000.0,
@@ -1349,6 +1365,7 @@ impl Astronomical {
     //
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4037-L4047
     fn nutation(moment: Moment) -> f64 {
+        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         let c = Self::julian_centuries(moment);
         let a = 124.90 - 1934.134 * c + 0.002063 * c * c;
         let b = 201.11 + 72001.5377 * c + 0.00057 * c * c;
@@ -1469,6 +1486,7 @@ impl Astronomical {
             90073.778,
         ];
 
+        // This summation is unrolled for optimization, see #3743
         lt.0 = x0 * libm::sin((y0 + z0 * c).to_radians());
         lt.1 = x1 * libm::sin((y1 + z1 * c).to_radians());
         lt.2 = x2 * libm::sin((y2 + z2 * c).to_radians());
@@ -1666,7 +1684,7 @@ impl Astronomical {
         let n = maybe_n.saturate();
         let mut result = n;
         let mut iters = 0;
-        let max_iters = 245_000_000;
+        let max_iters = 31;
         while iters < max_iters && Self::nth_new_moon(result) < moment {
             iters += 1;
             result += 1;
