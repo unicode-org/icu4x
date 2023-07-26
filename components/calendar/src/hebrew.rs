@@ -429,8 +429,8 @@ impl DateTime<Hebrew> {
     ///     .expect("Failed to initialize Hebrew DateTime instance");
     ///
     /// assert_eq!(datetime_hebrew.date.year().number, 4201);
-    /// assert_eq!(datetime_hebrew.date.month().ordinal, 7);
-    /// assert_eq!(datetime_hebrew.date.day_of_month().0, 10);
+    /// assert_eq!(datetime_hebrew.date.month().ordinal, 10);
+    /// assert_eq!(datetime_hebrew.date.day_of_month().0, 11);
     /// assert_eq!(datetime_hebrew.time.hour.number(), 13);
     /// assert_eq!(datetime_hebrew.time.minute.number(), 1);
     /// assert_eq!(datetime_hebrew.time.second.number(), 0);
