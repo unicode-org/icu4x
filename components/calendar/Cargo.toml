@@ -76,15 +76,7 @@ name = "iso"
 harness = false
 
 [[bench]]
-name = "astronomy"
-harness = false
-
-[[bench]]
 name = "convert"
-harness = false
-
-[[bench]]
-name = "chinese_based"
 harness = false
 
 [[example]]
