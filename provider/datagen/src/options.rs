@@ -33,9 +33,10 @@ use std::collections::HashSet;
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
 pub enum FallbackMode {
-    /// Selects the fallback mode most appropriate for the chosen data provider.
+    /// Selects the fallback mode based on [`DataExporter::preferred_built_in_fallback_mode()`](
+    /// icu_provider::datagen::DataExporter::preferred_built_in_fallback_mode()).
     #[default]
-    Auto,
+    PreferredForExporter,
     /// This mode generates the minimal set of locales that cover the requested locales when
     /// fallback is used at runtime. For example, if "en" and "en-US" are both requested but
     /// they contain the same value, only "en" will be included, since "en-US" falls back to

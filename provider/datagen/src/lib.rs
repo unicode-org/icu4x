@@ -314,23 +314,12 @@ impl DatagenProvider {
                         .map_err(|e| e.with_req(key, req))
                 }
 
-                let resolved_fallback_mode = match (
-                    provider.source.options.fallback,
-                    exporter.preferred_fallback_mode(),
-                ) {
-                    (options::FallbackMode::Auto, pref) => pref,
-                    (options::FallbackMode::Runtime, _) => {
-                        icu_provider::datagen::FallbackMode::Internal
-                    }
-                    (_, _) => icu_provider::datagen::FallbackMode::External,
-                };
-
                 match (
                     provider.source.options.fallback,
-                    exporter.preferred_fallback_mode(),
+                    exporter.preferred_built_in_fallback_mode(),
                 ) {
                     (options::FallbackMode::Hybrid, _)
-                    | (options::FallbackMode::Auto, icu_provider::datagen::FallbackMode::External) => {
+                    | (options::FallbackMode::PreferredForExporter, None) => {
                         supported_locales
                             .into_par_iter()
                             .try_for_each(|locale| {
@@ -341,7 +330,10 @@ impl DatagenProvider {
                     }
                     (options::FallbackMode::Runtime, _)
                     | (options::FallbackMode::RuntimeManual, _)
-                    | (options::FallbackMode::Auto, icu_provider::datagen::FallbackMode::Internal) => {
+                    | (
+                        options::FallbackMode::PreferredForExporter,
+                        Some(BuiltInFallbackMode::Standard),
+                    ) => {
                         let payloads =
                             RwLock::new(HashMap::<DataLocale, DataPayload<ExportMarker>>::new());
                         locale_groups.into_par_iter().try_for_each(|group| {
@@ -406,13 +398,23 @@ impl DatagenProvider {
                         _ => unreachable!("checked in constructor"),
                     },
                     // Because icu_provider::datagen::FallbackMode is non_exhaustive
-                    (options::FallbackMode::Auto, _) => {
+                    (options::FallbackMode::PreferredForExporter, _) => {
                         panic!("Unexpected preferred fallback mode needs to be handled")
                     }
                 };
-                exporter
-                    .flush_with_fallback(key, resolved_fallback_mode)
-                    .map_err(|e| e.with_key(key))
+
+                match (
+                    provider.source.options.fallback,
+                    exporter.preferred_built_in_fallback_mode(),
+                ) {
+                    (options::FallbackMode::Runtime, _)
+                    | (
+                        options::FallbackMode::PreferredForExporter,
+                        Some(BuiltInFallbackMode::Standard),
+                    ) => exporter.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard),
+                    (_, _) => exporter.flush(key),
+                }
+                .map_err(|e| e.with_key(key))
             })?;
 
             exporter.close()

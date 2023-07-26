@@ -387,10 +387,32 @@ impl DataExporter for BakedExporter {
         }, key, marker, ident)
     }
 
-    fn flush_with_fallback(
+    fn flush(&self, key: DataKey) -> Result<(), DataError> {
+        self.flush_internal(key, None)
+    }
+
+    fn flush_with_built_in_fallback(
         &self,
         key: DataKey,
-        fallback_mode: FallbackMode,
+        fallback_mode: BuiltInFallbackMode,
+    ) -> Result<(), DataError> {
+        self.flush_internal(key, Some(fallback_mode))
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        self.close_internal()
+    }
+
+    fn preferred_built_in_fallback_mode(&self) -> Option<BuiltInFallbackMode> {
+        Some(BuiltInFallbackMode::Standard)
+    }
+}
+
+impl BakedExporter {
+    fn flush_internal(
+        &self,
+        key: DataKey,
+        fallback_mode: Option<BuiltInFallbackMode>,
     ) -> Result<(), DataError> {
         let marker =
             syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
@@ -471,7 +493,7 @@ impl DataExporter for BakedExporter {
             };
 
             match fallback_mode {
-                FallbackMode::External => {
+                Some(BuiltInFallbackMode::Standard) => {
                     let search = search(quote!(req.locale));
                     quote! {
                         #(#statics)*
@@ -485,7 +507,7 @@ impl DataExporter for BakedExporter {
                         }
                     }
                 }
-                FallbackMode::Internal => {
+                None => {
                     self.dependencies.insert("icu_locid_transform/data");
                     let search_direct = search(quote!(req.locale));
                     let search_iterator = search(quote!(fallback_iterator.get()));
@@ -555,7 +577,7 @@ impl DataExporter for BakedExporter {
         )
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close_internal(&mut self) -> Result<(), DataError> {
         log::info!("Writing macros module...");
 
         let data = move_out!(self.impl_data).into_inner().expect("poison");
@@ -695,9 +717,5 @@ impl DataExporter for BakedExporter {
         self.print_deps();
 
         Ok(())
-    }
-
-    fn preferred_fallback_mode(&self) -> FallbackMode {
-        FallbackMode::Internal
     }
 }

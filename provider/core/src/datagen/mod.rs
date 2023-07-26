@@ -21,21 +21,12 @@ pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;
 
-/// The type of fallback that the data was generated for. Data size can be reduced as
-/// long as the data consumers know how this was done.
+/// The type of built-in fallback that the data was generated for, if applicable.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
-pub enum FallbackMode {
-    /// No fallback, or fallback needs to be specified externally
-    External,
-    /// Full fallback automatically included
-    Internal,
-}
-
-impl Default for FallbackMode {
-    fn default() -> Self {
-        Self::External
-    }
+pub enum BuiltInFallbackMode {
+    /// Data uses full UTS 35 fallbacking.
+    Standard,
 }
 
 /// An object capable of exporting data payloads in some form.
@@ -57,22 +48,25 @@ pub trait DataExporter: Sync {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         self.put_payload(key, &Default::default(), payload)?;
-        self.flush_with_fallback(key, FallbackMode::External)
-    }
-
-    /// Function called after a non-singleton key has been fully dumped.
-    /// Takes non-mut self as it can be called concurrently.
-    fn flush_with_fallback(
-        &self,
-        key: DataKey,
-        _fallback_mode: FallbackMode,
-    ) -> Result<(), DataError> {
-        #[allow(deprecated)]
         self.flush(key)
     }
 
-    /// Use `self.flush_with_fallback(key, FallbackMode::None)`
-    #[deprecated(since = "1.3.0", note = "Use `self.flush_with_fallback`")]
+    /// Function called after a non-singleton key has been fully enumerated,
+    /// flushing that key with built-in fallback.
+    ///
+    /// Takes non-mut self as it can be called concurrently.
+    fn flush_with_built_in_fallback(
+        &self,
+        _key: DataKey,
+        _fallback_mode: BuiltInFallbackMode,
+    ) -> Result<(), DataError> {
+        Err(DataError::custom("Exporter does not implement built-in fallback"))
+    }
+
+    /// Function called after a non-singleton key has been fully enumerated.
+    /// Does not include built-in fallback.
+    ///
+    /// Takes non-mut self as it can be called concurrently.
     fn flush(&self, _key: DataKey) -> Result<(), DataError> {
         Ok(())
     }
@@ -84,12 +78,11 @@ pub trait DataExporter: Sync {
         Ok(())
     }
 
-    /// Returns the preferred fallback mode for this provider.
-    /// 
-    /// Providers capable of automatically including runtime fallback should return
-    /// [`FallbackMode::Full`]; all others should return [`FallbackMode::None`].
-    fn preferred_fallback_mode(&self) -> FallbackMode {
-        FallbackMode::External
+    /// Returns the preferred built-in fallback mode for this provider.
+    ///
+    /// If a provider does not support built-in fallback, `None` should be returned.
+    fn preferred_built_in_fallback_mode(&self) -> Option<BuiltInFallbackMode> {
+        None
     }
 }
 
@@ -182,14 +175,14 @@ impl DataExporter for MultiExporter {
             .try_for_each(|e| e.flush_singleton(key, payload))
     }
 
-    fn flush_with_fallback(
+    fn flush_with_built_in_fallback(
         &self,
         key: DataKey,
-        fallback_mode: FallbackMode,
+        fallback_mode: BuiltInFallbackMode,
     ) -> Result<(), DataError> {
         self.0
             .iter()
-            .try_for_each(|e| e.flush_with_fallback(key, fallback_mode))
+            .try_for_each(|e| e.flush_with_built_in_fallback(key, fallback_mode))
     }
 
     fn close(&mut self) -> Result<(), DataError> {

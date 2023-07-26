@@ -320,7 +320,7 @@ impl Cli {
                 segmenter_models: self.make_segmenter_models()?,
                 export: self.make_exporter()?,
                 fallback: match self.fallback {
-                    Fallback::Auto => config::FallbackMode::Auto,
+                    Fallback::Auto => config::FallbackMode::PreferredForExporter,
                     Fallback::Hybrid => config::FallbackMode::Hybrid,
                     Fallback::Runtime => config::FallbackMode::Runtime,
                     Fallback::RuntimeManual => config::FallbackMode::RuntimeManual,
