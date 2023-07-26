@@ -1,11 +1,42 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+//! This module contains types and implementations for the Hebrew calendars.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime};
+//!
+//! // `Date` type
+//! let hebrew_date = Date::try_new_hebrew_date(3425, 10, 11)
+//!     .expect("Failed to initialize hebrew Date instance.");
+//!
+//! // `DateTime` type
+//! let hebrew_datetime = DateTime::try_new_hebrew_datetime(3425, 10, 11, 13, 1, 0)
+//!     .expect("Failed to initialize hebrew DateTime instance.");
+//!
+//! // `Date` checks
+//! assert_eq!(hebrew_date.year().number, 3425);
+//! assert_eq!(hebrew_date.month().ordinal, 10);
+//! assert_eq!(hebrew_date.day_of_month().0, 11);
+//!
+//! // `DateTime` checks
+//! assert_eq!(hebrew_datetime.date.year().number, 3425);
+//! assert_eq!(hebrew_datetime.date.month().ordinal, 10);
+//! assert_eq!(hebrew_datetime.date.day_of_month().0, 11);
+//! assert_eq!(hebrew_datetime.time.hour.number(), 13);
+//! assert_eq!(hebrew_datetime.time.minute.number(), 1);
+//! assert_eq!(hebrew_datetime.time.second.number(), 0);
+//! ```
+
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{
-    self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64, final_func, next, next_u8,
+    self, div_rem_euclid, div_rem_euclid_f64, final_func, next_u8,
 };
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
-use crate::{astronomy::*, Iso};
+use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
 
@@ -13,40 +44,29 @@ use ::tinystr::tinystr;
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct Hebrew;
-/// Observational Hebrew Calendar
-#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
-#[allow(clippy::exhaustive_structs)]
-pub struct ObservationalHebrew;
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206
 const FIXED_HEBREW_EPOCH: RataDie = Julian::fixed_from_julian_integers(-3761, 10, 8);
 
-// Hebrew Location
-// Lisp code reference:
-const HAIFA: Location = Location {
-    latitude: 32.82,
-    longitude: 35.0,
-    elevation: 0.0,
-    zone: (1_f64 / 12_f64),
-};
-
 // The Hebrew Months
 const NISAN: u8 = 1;
 const IYYAR: u8 = 2;
+#[allow(dead_code)]
 const SIVAN: u8 = 3;
 const TAMMUZ: u8 = 4;
+#[allow(dead_code)]
 const AV: u8 = 5;
 const ELUL: u8 = 6;
 const TISHRI: u8 = 7;
 const MARHESHVAN: u8 = 8;
 const KISLEV: u8 = 9;
 const TEVET: u8 = 10;
+#[allow(dead_code)]
 const SHEVAT: u8 = 11;
 const ADAR: u8 = 12;
 const ADARII: u8 = 13;
 
 /// The inner date type used for representing [`Date`]s of [`Hebrew`]. See [`Date`] and [`Hebrew`] for more details.
-
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct HebrewDateInner(ArithmeticDate<Hebrew>);
 
@@ -68,10 +88,10 @@ impl CalendarArithmetic for Hebrew {
     }
 
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        let month = Self::last_month_of_hebrew_year(h_year);
+        let month = Self::last_month_of_hebrew_year(year);
         let day = Self::last_day_of_hebrew_month(year, month);
 
-        (month,day)
+        (month, day)
     }
 }
 
@@ -85,7 +105,7 @@ impl Calendar for Hebrew {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "am") {
+        let year = if era.0 == tinystr!(16, "hebrew") {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
@@ -148,7 +168,15 @@ impl Calendar for Hebrew {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        date.0.day_of_month()
+        let prev_year = date.0.year.saturating_sub(1);
+        let next_year = date.0.year.saturating_add(1);
+        types::DayOfYearInfo {
+            day_of_year: date.0.day_of_year(),
+            days_in_year: date.0.days_in_year(),
+            prev_year: Self::year_as_hebrew(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            next_year: Self::year_as_hebrew(next_year),
+        }
     }
 }
 
@@ -157,8 +185,10 @@ impl Hebrew {
     pub fn new() -> Self {
         Self
     }
+
     // Hebrew New Moon
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2244
+    #[allow(dead_code)]
     pub(crate) fn molad(h_year: i32, h_month: u8) -> Moment {
         let y = if h_month < TISHRI { h_year + 1 } else { h_year };
 
@@ -171,8 +201,10 @@ impl Hebrew {
         )
     }
 
+    // ADAR = 12, ADARII = 13
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2217
     #[allow(dead_code)]
-    pub fn last_month_of_hebrew_year(h_year: i32) -> u8 {
+    fn last_month_of_hebrew_year(h_year: i32) -> u8 {
         if Self::is_leap_year(h_year) {
             ADARII
         } else {
@@ -180,13 +212,17 @@ impl Hebrew {
         }
     }
 
+    // Sabbatical Year of the Hebrew Calendar
+    // Lisp code refernence: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2224
     #[allow(dead_code)]
-    pub fn hebrew_sabbatical_year(h_year: i32) -> bool {
+    fn hebrew_sabbatical_year(h_year: i32) -> bool {
         div_rem_euclid(h_year, 7).1 == 0
     }
 
+    // Number of days elapsed from the (Sunday) noon prior to the epoch of the Hebrew Calendar to the molad of Tishri of Hebrew year (h_year) or one day later
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2261
     #[allow(dead_code)]
-    pub fn hebrew_calendar_elapsed_days(h_year: i32) -> i32 {
+    fn hebrew_calendar_elapsed_days(h_year: i32) -> i32 {
         let months_elapsed = libm::floor((1.0 / 19.0) * (235.0 * h_year as f64 - 234.0));
         let parts_elapsed = 12084.0 + 13753.0 * months_elapsed;
         let days = 29.0 * months_elapsed + libm::floor(parts_elapsed / 25920.0);
@@ -198,8 +234,10 @@ impl Hebrew {
         }
     }
 
+    // Delays to start of Hebrew year to keep ordinary year in range 353-356 and leap year in range 383-386
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2301
     #[allow(dead_code)]
-    pub fn hebrew_year_length_correction(h_year: i32) -> u8 {
+    fn hebrew_year_length_correction(h_year: i32) -> u8 {
         let ny0 = Self::hebrew_calendar_elapsed_days(h_year - 1);
         let ny1 = Self::hebrew_calendar_elapsed_days(h_year);
         let ny2 = Self::hebrew_calendar_elapsed_days(h_year + 1);
@@ -213,6 +251,8 @@ impl Hebrew {
         }
     }
 
+    // Fixed date of Hebrew new year
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2294
     #[allow(dead_code)]
     pub(crate) fn hebrew_new_year(h_year: i32) -> RataDie {
         RataDie::new(
@@ -222,25 +262,31 @@ impl Hebrew {
         )
     }
 
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2315
     #[allow(dead_code)]
-    pub fn days_in_hebrew_year(h_year: i32) -> u16 {
+    fn days_in_hebrew_year(h_year: i32) -> u16 {
         (Self::hebrew_new_year(1 + h_year) - Self::hebrew_new_year(h_year)) as u16
     }
 
+    // True if the month Marheshvan is going to be long in given Hebrew year
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2321
     #[allow(dead_code)]
-    pub fn long_marheshvan(h_year: i32) -> bool {
+    fn long_marheshvan(h_year: i32) -> bool {
         let coll: Vec<u16> = vec![355, 385];
         coll.contains(&Self::days_in_hebrew_year(h_year))
     }
-
+    // True if the month Kislve is going to be short in given Hebrew year
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2326
     #[allow(dead_code)]
-    pub fn short_kislev(h_year: i32) -> bool {
+    fn short_kislev(h_year: i32) -> bool {
         let coll: Vec<u16> = vec![353, 383];
         coll.contains(&Self::days_in_hebrew_year(h_year))
     }
 
+    // Last day of month (h_month) in Hebrew year (h_year)
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2230
     #[allow(dead_code)]
-    pub fn last_day_of_hebrew_month(h_year: i32, h_month: u8) -> u8 {
+    fn last_day_of_hebrew_month(h_year: i32, h_month: u8) -> u8 {
         match h_month {
             IYYAR | TAMMUZ | ELUL | TEVET | ADARII => 29,
             ADAR => {
@@ -268,19 +314,27 @@ impl Hebrew {
         }
     }
 
+    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
+    // The fixed date algorithms are from
+    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
+    //
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2331
     #[allow(dead_code)]
     fn fixed_from_hebrew(date: HebrewDateInner) -> RataDie {
         let year = date.0.year;
         let month = date.0.month;
         let day = date.0.day;
 
+        // Days so far this month.
         let mut total_days = Self::hebrew_new_year(year) + day.into() - 1;
 
         if month < TISHRI {
+            // Then add days in prior months this year before
             for m in (TISHRI..=Self::last_month_of_hebrew_year(year)).chain(NISAN..month) {
                 total_days += Self::last_day_of_hebrew_month(year, m).into();
             }
         } else {
+            // Else add days in prior months this year
             for m in TISHRI..month {
                 total_days += Self::last_day_of_hebrew_month(year, m).into();
             }
@@ -289,10 +343,11 @@ impl Hebrew {
         total_days
     }
 
-    #[allow(dead_code)]
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352
+    #[allow(dead_code, clippy::unwrap_used)]
     fn hebrew_from_fixed(date: RataDie) -> Date<Hebrew> {
         let approx = helpers::i64_to_i32(
-            (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0) as i64,
+            (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0) as i64, //  The value 35975351/98496, the average length of a Hebrew year, can be approximated by 365.25
         )
         .saturate()
             + 1;
@@ -301,6 +356,7 @@ impl Hebrew {
         let year_condition = |year: i32| Self::hebrew_new_year(year) <= date;
         let year = final_func(approx, year_condition);
 
+        // Starting month for search for month.
         let start = if date
             < Self::fixed_from_hebrew(HebrewDateInner(ArithmeticDate::new_unchecked(
                 year, NISAN, 1,
@@ -317,15 +373,17 @@ impl Hebrew {
                 Self::last_day_of_hebrew_month(year, m),
             )))
         };
+        // Search forward from either Tishri or Nisan.
         let month = next_u8(start, month_condition);
 
+        // Calculate the day by subtraction.
         let day = (date
             - Self::fixed_from_hebrew(HebrewDateInner(ArithmeticDate::new_unchecked(
                 year, month, 1,
             ))))
             + 1;
 
-        Date::try_new_hebrew_date(year, month as u8, day as u8).unwrap() // safe unwrap
+        Date::try_new_hebrew_date(year, month, day as u8).unwrap() // Safe unwrap
     }
 
     fn year_as_hebrew(year: i32) -> types::FormattableYear {
@@ -345,10 +403,10 @@ impl Date<Hebrew> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_hebrew = Date::try_new_hebrew_date(1392, 4, 25)
+    /// let date_hebrew = Date::try_new_hebrew_date(3425, 4, 25)
     ///     .expect("Failed to initialize Hebrew Date instance.");
     ///
-    /// assert_eq!(date_hebrew.year().number, 1392);
+    /// assert_eq!(date_hebrew.year().number, 3425);
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
@@ -369,12 +427,12 @@ impl DateTime<Hebrew> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_hebrew = DateTime::try_new_hebrew_datetime(474, 10, 11, 13, 1, 0)
-    ///     .expect("Failed to initialize Hebrew DateTime instance.");
+    /// let datetime_hebrew = DateTime::try_new_hebrew_datetime(4201, 10, 11, 13, 1, 0)
+    ///     .expect("Failed to initialize Hebrew DateTime instance");
     ///
-    /// assert_eq!(datetime_hebrew.date.year().number, 474);
-    /// assert_eq!(datetime_hebrew.date.month().ordinal, 10);
-    /// assert_eq!(datetime_hebrew.date.day_of_month().0, 11);
+    /// assert_eq!(datetime_hebrew.date.year().number, 4201);
+    /// assert_eq!(datetime_hebrew.date.month().ordinal, 7);
+    /// assert_eq!(datetime_hebrew.date.day_of_month().0, 10);
     /// assert_eq!(datetime_hebrew.time.hour.number(), 13);
     /// assert_eq!(datetime_hebrew.time.minute.number(), 1);
     /// assert_eq!(datetime_hebrew.time.second.number(), 0);
