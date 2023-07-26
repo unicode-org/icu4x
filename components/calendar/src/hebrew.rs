@@ -30,9 +30,7 @@
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{
-    self, div_rem_euclid, div_rem_euclid_f64, final_func, next_u8,
-};
+use crate::helpers::{self, div_rem_euclid, div_rem_euclid_f64, final_func, next_u8};
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
