@@ -422,7 +422,7 @@ impl DatagenProvider {
                                 Ok::<(), DataError>(())
                             })
                             .map_err(|e| e.with_key(key))?;
-                        let payloads = payloads.into_iter().collect::<HashMap<_, _>>();
+                        let payloads = payloads.into_tuple_vec().into_iter().collect::<HashMap<_, _>>();
                         'outer: for (locale, payload) in payloads.iter() {
                             let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                             while !iter.get().is_empty() {

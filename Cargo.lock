@@ -834,6 +834,8 @@ checksum = "7fcaabb2fef8c910e7f4c7ce9f67a1283a1715879a7c230ca9d6d1ae31f16d91"
 [[package]]
 name = "elsa"
 version = "1.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b5e0aca8dce8856e420195bd13b6a64de3334235ccc9214e824b86b12bf26283"
 dependencies = [
  "stable_deref_trait",
 ]
@@ -841,8 +843,7 @@ dependencies = [
 [[package]]
 name = "elsa"
 version = "1.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5e0aca8dce8856e420195bd13b6a64de3334235ccc9214e824b86b12bf26283"
+source = "git+https://github.com/Manishearth/elsa?rev=56d05375eea36596432a0843721d26edf3b0ec75#56d05375eea36596432a0843721d26edf3b0ec75"
 dependencies = [
  "stable_deref_trait",
 ]
@@ -1459,7 +1460,7 @@ dependencies = [
  "crlify",
  "databake",
  "displaydoc",
- "elsa 1.8.1",
+ "elsa 1.8.1 (git+https://github.com/Manishearth/elsa?rev=56d05375eea36596432a0843721d26edf3b0ec75)",
  "eyre",
  "icu",
  "icu_calendar",
