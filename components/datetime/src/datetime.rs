@@ -68,10 +68,9 @@ impl TimeFormatter {
     /// compiled data necessary to format date and time values into the given locale,
     /// using the given style.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
     ///
     /// # Examples
     ///
@@ -85,10 +84,6 @@ impl TimeFormatter {
     /// )
     /// .unwrap();
     /// ```
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
         locale: &DataLocale,
@@ -234,8 +229,12 @@ impl TimeFormatter {
 pub struct TypedDateFormatter<C>(pub(super) raw::DateFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedDateFormatter<C> {
-    /// Constructor that takes a selected locale and a list of options, then collects all data
-    /// necessary to format date and time values into the given locale.
+    /// Constructor that takes a selected locale and a list of options, then collects all
+    /// compiled data necessary to format date and time values into the given locale.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -284,10 +283,6 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// ```
     ///
     /// [`DateFormatter`]: crate::DateFormatter
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
         locale: &DataLocale,
@@ -493,7 +488,12 @@ where {
         ))
     }
 
-    /// Constructor that takes a selected locale, then uses compiled data to format date and time values into the given locale.
+    /// Constructor that takes a selected locale, then collects all
+    /// compiled data necessary to format date and time values into the given locale.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -521,10 +521,6 @@ where {
     /// ```
     ///
     /// [data provider]: icu_provider
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         locale: &DataLocale,
@@ -605,6 +601,10 @@ where {
 
     /// Constructor that supports experimental options using compiled data.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
@@ -639,10 +639,6 @@ where {
     /// ```
     ///
     /// [data provider]: icu_provider
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "experimental")]
     #[inline]
     #[cfg(feature = "compiled_data")]

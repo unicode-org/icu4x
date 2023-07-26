@@ -1524,7 +1524,7 @@ pub struct DecomposingNormalizer {
 }
 
 impl DecomposingNormalizer {
-    /// NFD constructor.
+    /// NFD constructor using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -1602,7 +1602,7 @@ impl DecomposingNormalizer {
         })
     }
 
-    /// NFKD constructor.
+    /// NFKD constructor using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -2143,7 +2143,7 @@ pub struct ComposingNormalizer {
 }
 
 impl ComposingNormalizer {
-    /// NFC constructor.
+    /// NFC constructor using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -2191,7 +2191,7 @@ impl ComposingNormalizer {
         })
     }
 
-    /// NFKC constructor.
+    /// NFKC constructor using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

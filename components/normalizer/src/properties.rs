@@ -84,7 +84,11 @@ impl CanonicalComposition {
         )
     }
 
-    /// Constructs a new `CanonicalComposition`.
+    /// Constructs a new `CanonicalComposition` using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
@@ -338,7 +342,11 @@ impl CanonicalDecomposition {
         Decomposed::Default
     }
 
-    /// Construct from built-in data.
+    /// Construct from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         const _: () = assert!(
@@ -452,7 +460,11 @@ impl CanonicalCombiningClassMap {
         }
     }
 
-    /// Construct from built-in data.
+    /// Construct from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         CanonicalCombiningClassMap {

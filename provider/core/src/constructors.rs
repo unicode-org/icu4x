@@ -118,23 +118,23 @@ macro_rules! gen_any_buffer_unstable_docs {
     (ANY, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
-            "provided by an [`AnyProvider`](", stringify!($crate), "::AnyProvider).\n\n",
-            "[📚 Help choosing a constructor](", stringify!($crate), "::constructors)",
+            "provided by an [`AnyProvider`](icu_provider::AnyProvider).\n\n",
+            "[📚 Help choosing a constructor](icu_provider::constructors)",
         )
     };
     (BUFFER, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
-            "provided by a [`BufferProvider`](", stringify!($crate), "::BufferProvider).\n\n",
-            "✨ *Enabled with the `serde` Cargo feature.*\n\n",
-            "[📚 Help choosing a constructor](", stringify!($crate), "::constructors)",
+            "provided by a [`BufferProvider`](icu_provider::BufferProvider).\n\n",
+            "✨ *Enabled with the `serde` feature.*\n\n",
+            "[📚 Help choosing a constructor](icu_provider::constructors)",
         )
     };
     (UNSTABLE, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
-            "provided by a [`DataProvider`](", stringify!($crate), "::DataProvider).\n\n",
-            "[📚 Help choosing a constructor](", stringify!($crate), "::constructors)\n\n",
+            "provided by a [`DataProvider`](icu_provider::DataProvider).\n\n",
+            "[📚 Help choosing a constructor](icu_provider::constructors)\n\n",
             "<div class=\"stab unstable\">⚠️ The bounds on <tt>provider</tt> may change over time, including in SemVer minor releases.</div>"
         )
     };
@@ -162,9 +162,6 @@ macro_rules! gen_any_buffer_data_constructors {
     (locale: skip, options: skip, error: $error_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
         #[cfg(feature = "compiled_data")]
         $(#[$doc])+
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked() -> Result<Self, $error_ty> {
             $($struct :: )? $unstable(&crate::provider::Baked)
         }

@@ -116,7 +116,7 @@ pub struct RelativeTimeFormatter {
 macro_rules! constructor {
     ($unstable: ident, $baked: ident, $any: ident, $buffer: ident, $marker: ty) => {
 
-        /// Create a new [`RelativeTimeFormatter`]
+        /// Create a new [`RelativeTimeFormatter`] from compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///

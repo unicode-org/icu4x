@@ -325,9 +325,13 @@ impl Drop for UnicodeFuncs {
     }
 }
 
-/// Sets up a `hb_unicode_funcs_t` with ICU4X as the back end as the Unicode
+/// Sets up a `hb_unicode_funcs_t` with ICU4X compiled data as the back end as the Unicode
 /// Database operations that HarfBuzz needs. The `hb_unicode_funcs_t` held
 /// by the returned `UnicodeFuncs` is marked immutable.
+///
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
+///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
 #[cfg(feature = "compiled_data")]
 pub fn new_hb_unicode_funcs() -> Result<UnicodeFuncs, HarfBuzzError> {
     create_ufuncs(

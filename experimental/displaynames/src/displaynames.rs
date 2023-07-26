@@ -39,7 +39,11 @@ impl RegionDisplayNames {
         locale: include,
         options: DisplayNamesOptions,
         error: DataError,
-        /// Creates a new [`RegionDisplayNames`] from locale data and an options bag.
+        /// Creates a new [`RegionDisplayNames`] from locale data and an options bag using compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,
@@ -112,7 +116,11 @@ impl ScriptDisplayNames {
         locale: include,
         options: DisplayNamesOptions,
         error: DataError,
-        /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag.
+        /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag using compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,
@@ -186,7 +194,11 @@ impl VariantDisplayNames {
         locale: include,
         options: DisplayNamesOptions,
         error: DataError,
-        /// Creates a new [`VariantDisplayNames`] from locale data and an options bag.
+        /// Creates a new [`VariantDisplayNames`] from locale data and an options bag using compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,
@@ -252,7 +264,11 @@ impl LanguageDisplayNames {
         locale: include,
         options: DisplayNamesOptions,
         error: DataError,
-        /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag.
+        /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag using compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,
@@ -345,7 +361,11 @@ impl LocaleDisplayNamesFormatter {
         locale: include,
         options: DisplayNamesOptions,
         error: DataError,
-        /// Creates a new [`LocaleDisplayNamesFormatter`] from locale data and an options bag.
+        /// Creates a new [`LocaleDisplayNamesFormatter`] from locale data and an options bag using compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,

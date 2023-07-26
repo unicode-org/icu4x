@@ -235,7 +235,7 @@ pub struct LineSegmenter {
 }
 
 impl LineSegmenter {
-    /// Constructs a [`LineSegmenter`] with an invariant locale and the best available data for
+    /// Constructs a [`LineSegmenter`] with an invariant locale and the best available compiled data for
     /// complex scripts (Khmer, Lao, Myanmar, and Thai).
     ///
     /// The current behavior, which is subject to change, is to use the LSTM model when available.
@@ -278,7 +278,7 @@ impl LineSegmenter {
         Self::try_new_auto_with_options_unstable(provider, Default::default())
     }
 
-    /// Constructs a [`LineSegmenter`] with an invariant locale and LSTM data for
+    /// Constructs a [`LineSegmenter`] with an invariant locale and compiled LSTM data for
     /// complex scripts (Khmer, Lao, Myanmar, and Thai).
     ///
     /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
@@ -322,7 +322,7 @@ impl LineSegmenter {
         Self::try_new_lstm_with_options_unstable(provider, Default::default())
     }
 
-    /// Constructs a [`LineSegmenter`] with an invariant locale and dictionary data for
+    /// Constructs a [`LineSegmenter`] with an invariant locale and compiled dictionary data for
     /// complex scripts (Khmer, Lao, Myanmar, and Thai).
     ///
     /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
@@ -364,7 +364,7 @@ impl LineSegmenter {
     }
 
     /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
-    /// the best available data for complex scripts (Khmer, Lao, Myanmar, and Thai).
+    /// the best available compiled data for complex scripts (Khmer, Lao, Myanmar, and Thai).
     ///
     /// The current behavior, which is subject to change, is to use the LSTM model when available.
     ///
@@ -410,7 +410,7 @@ impl LineSegmenter {
     }
 
     /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
-    /// LSTM data for complex scripts (Khmer, Lao, Myanmar, and Thai).
+    /// compiled LSTM data for complex scripts (Khmer, Lao, Myanmar, and Thai).
     ///
     /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
     /// the full dictionary but more expensive during segmentation (inference).
@@ -467,7 +467,7 @@ impl LineSegmenter {
     }
 
     /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
-    /// dictionary data for complex scripts (Khmer, Lao, Myanmar, and Thai).
+    /// compiled dictionary data for complex scripts (Khmer, Lao, Myanmar, and Thai).
     ///
     /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
     /// faster than the LSTM model but requires more data.

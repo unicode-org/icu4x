@@ -216,7 +216,7 @@ impl Default for LocaleCanonicalizer {
 }
 
 impl LocaleCanonicalizer {
-    /// A constructor which creates a [`LocaleCanonicalizer`].
+    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -257,7 +257,7 @@ impl LocaleCanonicalizer {
         Self::try_new_with_expander_unstable(provider, expander)
     }
 
-    /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] object.
+    /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] and compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

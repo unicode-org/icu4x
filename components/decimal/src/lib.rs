@@ -133,7 +133,11 @@ impl FixedDecimalFormatter {
         locale: include,
         options: options::FixedDecimalFormatterOptions,
         error: DecimalError,
-        /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
+        /// Creates a new [`FixedDecimalFormatter`] from compiled locale data and an options bag.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]

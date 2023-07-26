@@ -290,7 +290,11 @@ impl PluralRules {
         locale: include,
         rule_type: PluralRuleType,
         error: PluralsError,
-        /// Constructs a new `PluralRules` for a given locale and type.
+        /// Constructs a new `PluralRules` for a given locale and type using compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -324,7 +328,7 @@ impl PluralRules {
         locale: include,
         options: skip,
         error: PluralsError,
-        /// Constructs a new `PluralRules` for a given locale for cardinal numbers.
+        /// Constructs a new `PluralRules` for a given locale for cardinal numbers using compiled data.
         ///
         /// Cardinal plural forms express quantities of units such as time, currency or distance,
         /// used in conjunction with a number expressed in decimal digits (i.e. "2", not "two").
@@ -333,6 +337,10 @@ impl PluralRules {
         ///
         /// * [`One`]: `1 day`
         /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -376,7 +384,7 @@ impl PluralRules {
         locale: include,
         options: skip,
         error: PluralsError,
-        /// Constructs a new `PluralRules` for a given locale for ordinal numbers.
+        /// Constructs a new `PluralRules` for a given locale for ordinal numbers using compiled data.
         ///
         /// Ordinal plural forms denote the order of items in a set and are always integers.
         ///
@@ -386,6 +394,10 @@ impl PluralRules {
         /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
         /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
         /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///

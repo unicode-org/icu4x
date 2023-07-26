@@ -68,7 +68,7 @@ pub struct Collator {
 }
 
 impl Collator {
-    /// Instantiates a collator for a given locale with the given options
+    /// Creates a collator for the given locale and options from compiled data.
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, CollatorError> {
         Self::try_new_unstable_internal(

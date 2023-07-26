@@ -99,8 +99,12 @@ pub struct CompactDecimalFormatter {
 
 impl CompactDecimalFormatter {
     /// Constructor that takes a selected locale and a list of preferences,
-    /// then collects all data necessary to format numbers in short compact
+    /// then collects all compiled data necessary to format numbers in short compact
     /// decimal notation for the given locale.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -140,7 +144,7 @@ impl CompactDecimalFormatter {
         locale: include,
         options: CompactDecimalFormatterOptions,
         error: CompactDecimalError,
-        #[cfg(skip_new)]
+        #[cfg(skip)]
         functions: [
             try_new_short,
             try_new_short_with_any_provider,
@@ -182,8 +186,12 @@ impl CompactDecimalFormatter {
     }
 
     /// Constructor that takes a selected locale and a list of preferences,
-    /// then collects all data necessary to format numbers in short compact
+    /// then collects all compiled data necessary to format numbers in short compact
     /// decimal notation for the given locale.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
