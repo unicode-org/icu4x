@@ -314,13 +314,13 @@ impl PluralRules {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable(
-        data_provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized),
+        provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized),
         locale: &DataLocale,
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralsError> {
         match rule_type {
-            PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(data_provider, locale),
-            PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(data_provider, locale),
+            PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, locale),
+            PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, locale),
         }
     }
 
@@ -366,11 +366,11 @@ impl PluralRules {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
     pub fn try_new_cardinal_unstable(
-        data_provider: &(impl DataProvider<CardinalV1Marker> + ?Sized),
+        provider: &(impl DataProvider<CardinalV1Marker> + ?Sized),
         locale: &DataLocale,
     ) -> Result<Self, PluralsError> {
         Ok(Self(
-            data_provider
+            provider
                 .load(DataRequest {
                     locale,
                     metadata: Default::default(),
@@ -428,11 +428,11 @@ impl PluralRules {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
     pub fn try_new_ordinal_unstable(
-        data_provider: &(impl DataProvider<OrdinalV1Marker> + ?Sized),
+        provider: &(impl DataProvider<OrdinalV1Marker> + ?Sized),
         locale: &DataLocale,
     ) -> Result<Self, PluralsError> {
         Ok(Self(
-            data_provider
+            provider
                 .load(DataRequest {
                     locale,
                     metadata: Default::default(),

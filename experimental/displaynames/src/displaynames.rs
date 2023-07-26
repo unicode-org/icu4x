@@ -55,11 +55,11 @@ impl RegionDisplayNames {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<RegionDisplayNamesV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let region_data = data_provider
+        let region_data = provider
             .load(DataRequest {
                 locale,
                 metadata: Default::default(),
@@ -132,11 +132,11 @@ impl ScriptDisplayNames {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<ScriptDisplayNamesV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let script_data = data_provider
+        let script_data = provider
             .load(DataRequest {
                 locale,
                 metadata: Default::default(),
@@ -210,11 +210,11 @@ impl VariantDisplayNames {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<VariantDisplayNamesV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let variant_data = data_provider
+        let variant_data = provider
             .load(DataRequest {
                 locale,
                 metadata: Default::default(),
@@ -280,11 +280,11 @@ impl LanguageDisplayNames {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<LanguageDisplayNamesV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let language_data = data_provider
+        let language_data = provider
             .load(DataRequest {
                 locale,
                 metadata: Default::default(),
@@ -377,7 +377,7 @@ impl LocaleDisplayNamesFormatter {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: ?Sized>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError>
@@ -395,11 +395,11 @@ impl LocaleDisplayNamesFormatter {
 
         Ok(Self {
             options,
-            language_data: data_provider.load(req)?.take_payload()?,
-            locale_data: data_provider.load(req)?.take_payload()?,
-            script_data: data_provider.load(req)?.take_payload()?,
-            region_data: data_provider.load(req)?.take_payload()?,
-            variant_data: data_provider.load(req)?.take_payload()?,
+            language_data: provider.load(req)?.take_payload()?,
+            locale_data: provider.load(req)?.take_payload()?,
+            script_data: provider.load(req)?.take_payload()?,
+            region_data: provider.load(req)?.take_payload()?,
+            variant_data: provider.load(req)?.take_payload()?,
         })
     }
 

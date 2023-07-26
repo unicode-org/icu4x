@@ -99,7 +99,7 @@ impl Collator {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: CollatorOptions,
     ) -> Result<Self, CollatorError>
@@ -115,18 +115,18 @@ impl Collator {
             + ?Sized,
     {
         Self::try_new_unstable_internal(
-            data_provider,
-            data_provider.load(Default::default())?.take_payload()?,
-            data_provider.load(Default::default())?.take_payload()?,
-            data_provider.load(Default::default())?.take_payload()?,
-            || data_provider.load(Default::default())?.take_payload(),
+            provider,
+            provider.load(Default::default())?.take_payload()?,
+            provider.load(Default::default())?.take_payload()?,
+            provider.load(Default::default())?.take_payload()?,
+            || provider.load(Default::default())?.take_payload(),
             locale,
             options,
         )
     }
 
     fn try_new_unstable_internal<D>(
-        data_provider: &D,
+        provider: &D,
         decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
         tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
         jamo: DataPayload<CollationJamoV1Marker>,
@@ -150,20 +150,20 @@ impl Collator {
         };
 
         let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
-            data_provider.load(req)?.take_payload()?;
+            provider.load(req)?.take_payload()?;
 
         let metadata = metadata_payload.get();
 
         let tailoring: Option<DataPayload<crate::provider::CollationDataV1Marker>> =
             if metadata.tailored() {
-                Some(data_provider.load(req)?.take_payload()?)
+                Some(provider.load(req)?.take_payload()?)
             } else {
                 None
             };
 
         let reordering: Option<DataPayload<crate::provider::CollationReorderingV1Marker>> =
             if metadata.reordering() {
-                Some(data_provider.load(req)?.take_payload()?)
+                Some(provider.load(req)?.take_payload()?)
             } else {
                 None
             };
@@ -175,10 +175,10 @@ impl Collator {
         }
 
         let root: DataPayload<CollationDataV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         let tailored_diacritics = metadata.tailored_diacritics();
-        let diacritics: DataPayload<CollationDiacriticsV1Marker> = data_provider
+        let diacritics: DataPayload<CollationDiacriticsV1Marker> = provider
             .load(if tailored_diacritics {
                 req
             } else {

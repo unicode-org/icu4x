@@ -136,10 +136,10 @@ impl Japanese {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<JapaneseErasV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
     ) -> Result<Self, CalendarError> {
         Ok(Self {
-            eras: data_provider.load(Default::default())?.take_payload()?,
+            eras: provider.load(Default::default())?.take_payload()?,
         })
     }
 
@@ -193,13 +193,10 @@ impl JapaneseExtended {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
     ) -> Result<Self, CalendarError> {
         Ok(Self(Japanese {
-            eras: data_provider
-                .load(Default::default())?
-                .take_payload()?
-                .cast(),
+            eras: provider.load(Default::default())?.take_payload()?.cast(),
         }))
     }
 }

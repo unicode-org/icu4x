@@ -156,7 +156,7 @@ impl CompactDecimalFormatter {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
     pub fn try_new_short_unstable<D>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError>
@@ -168,13 +168,13 @@ impl CompactDecimalFormatter {
     {
         Ok(Self {
             fixed_decimal_format: FixedDecimalFormatter::try_new_unstable(
-                data_provider,
+                provider,
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal_unstable(data_provider, locale)?,
+            plural_rules: PluralRules::try_new_cardinal_unstable(provider, locale)?,
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
-                data_provider,
+                provider,
                 DataRequest {
                     locale,
                     metadata: Default::default(),
@@ -243,7 +243,7 @@ impl CompactDecimalFormatter {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_long)]
     pub fn try_new_long_unstable<D>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError>
@@ -255,13 +255,13 @@ impl CompactDecimalFormatter {
     {
         Ok(Self {
             fixed_decimal_format: FixedDecimalFormatter::try_new_unstable(
-                data_provider,
+                provider,
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal_unstable(data_provider, locale)?,
+            plural_rules: PluralRules::try_new_cardinal_unstable(provider, locale)?,
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
-                data_provider,
+                provider,
                 DataRequest {
                     locale,
                     metadata: Default::default(),
