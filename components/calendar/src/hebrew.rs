@@ -57,7 +57,7 @@ impl CalendarArithmetic for Hebrew {
         todo!()
     }
 
-    fn days_in_provided_year(_year: i32) -> u32 {
+    fn days_in_provided_year(_year: i32) -> u16 {
         todo!()
     }
 
@@ -95,7 +95,7 @@ impl Calendar for Hebrew {
         todo!()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         todo!()
     }
 
@@ -212,6 +212,18 @@ impl Hebrew {
     #[allow(dead_code)]
     pub fn days_in_hebrew_year(h_year: i32) -> u16 {
         (Self::hebrew_new_year(1 + h_year) - Self::hebrew_new_year(h_year)) as u16
+    }
+
+    #[allow(dead_code)]
+    pub fn long_marheshvan(h_year: i32) -> bool {
+        let coll: Vec<u16> = vec![355, 385];
+        coll.contains(&Self::days_in_hebrew_year(h_year))
+    }
+
+    #[allow(dead_code)]
+    pub fn short_kislev(h_year: i32) -> bool {
+        let coll: Vec<u16> = vec![353, 383];
+        coll.contains(&Self::days_in_hebrew_year(h_year))
     }
 }
 
@@ -465,6 +477,18 @@ mod tests {
         353, 383, 355, 354, 354, 354, 355, 385, 355, 383, 354, 385, 355, 354, 355,
     ];
 
+    static EXPECTED_MARHESHVAN_VALUES: [bool; 33] = [
+        false, false, true, true, true, true, true, false, false, false, false, false, false, true,
+        false, false, false, true, false, false, true, false, false, false, true, true, true,
+        false, false, true, true, false, true,
+    ];
+
+    static EXPECTED_KISLEV_VALUES: [bool; 33] = [
+        false, false, false, false, false, false, false, true, true, false, true, false, false,
+        false, true, true, true, false, true, true, false, false, false, false, false, false,
+        false, true, false, false, false, false, false,
+    ];
+
     #[test]
     fn test_hebrew_epoch() {
         // page 119 of the Calendrical Calculations book
@@ -541,6 +565,22 @@ mod tests {
         for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_DAYS_IN_HEBREW_YEAR.iter()) {
             let days_in_year = Hebrew::days_in_hebrew_year(case.year);
             assert_eq!(days_in_year, *expected);
+        }
+    }
+
+    #[test]
+    fn test_long_marheshvan() {
+        for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_MARHESHVAN_VALUES.iter()) {
+            let marsheshvan = Hebrew::long_marheshvan(case.year);
+            assert_eq!(marsheshvan, *expected);
+        }
+    }
+
+    #[test]
+    fn test_short_kislev() {
+        for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_KISLEV_VALUES.iter()) {
+            let kislev = Hebrew::short_kislev(case.year);
+            assert_eq!(kislev, *expected);
         }
     }
 }
