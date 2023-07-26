@@ -39,7 +39,7 @@ jobs:
     # be killed if check fails.
     strategy:
       matrix: 
-        behavior: [check, features]
+        behavior: [check, features-1, features-2, features-3]
       fail-fast: true
     steps:
     - uses: actions/checkout@v3
