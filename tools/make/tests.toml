@@ -9,8 +9,8 @@ description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
 install_crate_args = ["--git", "https://github.com/manishearth/cargo-all-features", "--branch", "chunking"]
-command = "cargo-check-all-features"
-args = ["--n-chunks", "5", "--chunk", "${@}"]
+command = "cargo"
+args = ["check-all-features", "--n-chunks", "5", "--chunk", "${@}"]
 
 [tasks.build-all-features]
 description = "Build all permutations of all features"
