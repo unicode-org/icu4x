@@ -225,6 +225,35 @@ impl Hebrew {
         let coll: Vec<u16> = vec![353, 383];
         coll.contains(&Self::days_in_hebrew_year(h_year))
     }
+
+    #[allow(dead_code)]
+    pub fn last_day_of_hebrew_month(h_year: i32, h_month: u8) -> u8 {
+        match h_month {
+            IYYAR | TAMMUZ | ELUL | TEVET | ADARII => 29,
+            ADAR => {
+                if !Self::is_leap_year(h_year) {
+                    29
+                } else {
+                    30
+                }
+            }
+            MARHESHVAN => {
+                if !Self::long_marheshvan(h_year) {
+                    29
+                } else {
+                    30
+                }
+            }
+            KISLEV => {
+                if Self::short_kislev(h_year) {
+                    29
+                } else {
+                    30
+                }
+            },
+            _ => 30,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -489,6 +518,11 @@ mod tests {
         false, true, false, false, false, false, false,
     ];
 
+    static EXPECTED_DAY_IN_MONTH: [u8; 33] = [
+        30, 30, 30, 30, 29, 30, 30, 29, 29, 30, 29, 30, 29, 29, 30, 30, 30, 30, 30, 29, 30, 29, 30,
+        30, 30, 30, 30, 30, 30, 29, 29, 29, 30,
+    ];
+
     #[test]
     fn test_hebrew_epoch() {
         // page 119 of the Calendrical Calculations book
@@ -581,6 +615,14 @@ mod tests {
         for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_KISLEV_VALUES.iter()) {
             let kislev = Hebrew::short_kislev(case.year);
             assert_eq!(kislev, *expected);
+        }
+    }
+
+    #[test]
+    fn test_last_day_in_hebrew_month() {
+        for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_DAY_IN_MONTH.iter()) {
+            let days_in_month = Hebrew::last_day_of_hebrew_month(case.year, case.month);
+            assert_eq!(days_in_month, *expected);
         }
     }
 }
