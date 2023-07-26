@@ -236,7 +236,7 @@ impl Astronomical {
                 + 38.291999 * c * c * c * c * c * c * c
                 + 28.316289 * c * c * c * c * c * c * c * c
                 + 11.636204 * c * c * c * c * c * c * c * c * c
-                + 2.043794 *  c * c * c * c * c * c * c * c * c * c
+                + 2.043794 * c * c * c * c * c * c * c * c * c * c
         } else if (1700..=1799).contains(&year_int) {
             (8.118780842 - 0.005092142 * y1700 + 0.003336121 * y1700 * y1700
                 - 0.0000266484 * y1700 * y1700 * y1700)
@@ -246,9 +246,7 @@ impl Astronomical {
                 + 0.000140272128 * y1600 * y1600 * y1600)
                 / 86400.0
         } else if (500..=1599).contains(&year_int) {
-            (1574.2 - 556.01 * y1000
-                + 71.23472 * y1000 * y1000
-                + 0.319781 * y1000 * y1000 * y1000
+            (1574.2 - 556.01 * y1000 + 71.23472 * y1000 * y1000 + 0.319781 * y1000 * y1000 * y1000
                 - 0.8503463 * y1000 * y1000 * y1000 * y1000
                 - 0.005050998 * y1000 * y1000 * y1000 * y1000 * y1000
                 + 0.0083572073 * y1000 * y1000 * y1000 * y1000 * y1000 * y1000)
@@ -429,9 +427,8 @@ impl Astronomical {
                 - (0.00000015 * c * c * c)
                 + (0.00000000073 * c * c * c * c));
         let e = 1.0 - (0.002516 * c) - (0.0000074 * c * c);
-        let solar_anomaly = 2.5534 + (1236.85 * 29.10535670 * c)
-            - (0.0000014 * c * c)
-            - (0.00000011 * c * c * c);
+        let solar_anomaly =
+            2.5534 + (1236.85 * 29.10535670 * c) - (0.0000014 * c * c) - (0.00000011 * c * c * c);
         let lunar_anomaly = 201.5643
             + (385.81693528 * 1236.85 * c)
             + (0.0107582 * c * c)
@@ -441,10 +438,8 @@ impl Astronomical {
             - (0.0016118 * c * c)
             - (0.00000227 * c * c * c)
             + (0.000000011 * c * c * c * c);
-        let omega = 124.7746
-            + (-1.56375588 * 1236.85 * c)
-            + (0.0020672 * c * c)
-            + (0.00000215 * c * c * c);
+        let omega =
+            124.7746 + (-1.56375588 * 1236.85 * c) + (0.0020672 * c * c) + (0.00000215 * c * c * c);
 
         let mut st = (
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -1283,8 +1278,7 @@ impl Astronomical {
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4148-L4158
     fn mean_lunar_longitude(c: f64) -> f64 {
         let n = 218.3164477
-            + c * (481267.88123421 - 0.0015786 * c + c * c / 538841.0
-                - c * c * c / 65194000.0);
+            + c * (481267.88123421 - 0.0015786 * c + c * c / 538841.0 - c * c * c / 65194000.0);
 
         div_rem_euclid_f64(n, 360.0).1
     }
@@ -1326,8 +1320,7 @@ impl Astronomical {
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4160-L4170
     fn lunar_elongation(c: f64) -> f64 {
         div_rem_euclid_f64(
-            297.85019021 + 445267.1114034 * c - 0.0018819 * c * c
-                + c * c * c / 545868.0
+            297.85019021 + 445267.1114034 * c - 0.0018819 * c * c + c * c * c / 545868.0
                 - c * c * c * c / 113065000.0,
             360.0,
         )
@@ -1507,8 +1500,7 @@ impl Astronomical {
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4172-L4182
     fn solar_anomaly(c: f64) -> f64 {
         div_rem_euclid_f64(
-            357.5291092 + 35999.0502909 * c - 0.0001536 * c * c
-                + c * c * c / 24490000.0,
+            357.5291092 + 35999.0502909 * c - 0.0001536 * c * c + c * c * c / 24490000.0,
             360.0,
         )
         .1
@@ -1519,10 +1511,7 @@ impl Astronomical {
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4184-L4194
     fn lunar_anomaly(c: f64) -> f64 {
         div_rem_euclid_f64(
-            134.9633964
-                + 477198.8675055 * c
-                + 0.0087414 * c * c
-                + c * c * c / 69699.0
+            134.9633964 + 477198.8675055 * c + 0.0087414 * c * c + c * c * c / 69699.0
                 - c * c * c * c / 14712000.0,
             360.0,
         )
@@ -1532,9 +1521,7 @@ impl Astronomical {
     // Reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4196-L4206
     fn moon_node(c: f64) -> f64 {
         div_rem_euclid_f64(
-            93.2720950 + 483202.0175233 * c
-                - 0.0036539 * c * c
-                - c * c * c / 3526000.0
+            93.2720950 + 483202.0175233 * c - 0.0036539 * c * c - c * c * c / 3526000.0
                 + c * c * c * c / 863310000.0,
             360.0,
         )
