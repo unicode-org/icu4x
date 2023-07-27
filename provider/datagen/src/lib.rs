@@ -71,6 +71,7 @@ mod transform;
 
 use elsa::sync::FrozenMap;
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
+use icu_collator::provider::CollationReorderingV1Marker;
 use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::datagen::*;
@@ -182,6 +183,11 @@ impl DatagenProvider {
             ),
         };
 
+        log::debug!(
+            "Datagen configured with fallback mode: {:?}",
+            source.options.fallback
+        );
+
         let mut provider = Self { source };
 
         // TODO: Consider figuring out the cases where we don't need the fallbacker.
@@ -231,6 +237,12 @@ impl DatagenProvider {
 
         // Case 1: `LocaleInclude::All` simply exports all supported locales for this key.
         if matches!(locale_include, LocaleInclude::All) {
+            return Ok(supported_locales);
+        }
+
+        // Special case: collator/reord@1 does not have root data
+        // FIXME
+        if key == CollationReorderingV1Marker::KEY {
             return Ok(supported_locales);
         }
 
@@ -297,7 +309,7 @@ impl DatagenProvider {
         key: DataKey,
         locale: &DataLocale,
     ) -> Result<DataPayload<ExportMarker>, DataError> {
-        log::trace!("Generating for key/locale: {key} {locale:?}");
+        log::trace!("Generating key/locale: {key}/{locale:}");
         struct DatagenProviderForFallback<'a>(&'a DatagenProvider);
         impl DynamicDataProvider<ExportMarker> for DatagenProviderForFallback<'_> {
             fn load_data(
@@ -305,7 +317,6 @@ impl DatagenProvider {
                 key: DataKey,
                 req: DataRequest,
             ) -> Result<DataResponse<ExportMarker>, DataError> {
-                log::trace!("Generating for key/locale: {key} {req:?} [might be fallback]");
                 self.0.load_data(key, req)
             }
         }
@@ -396,6 +407,10 @@ impl DatagenProvider {
                                 if let Some(parent_payload) = payloads.get(iter.get()) {
                                     if parent_payload == payload {
                                         // Found a match: don't need to write anything
+                                        log::trace!(
+                                            "Deduplicating {key}/{locale} (inherits from {})",
+                                            iter.get()
+                                        );
                                         continue 'outer;
                                     }
                                 }
@@ -677,6 +692,7 @@ pub fn datagen(
                     models
                 }),
             },
+            fallback: FallbackMode::Hybrid,
             ..source.options.clone()
         },
         {

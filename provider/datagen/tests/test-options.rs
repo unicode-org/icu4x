@@ -58,7 +58,7 @@ impl TestingExporter {
 fn test_fallback_options() {
     simple_logger::SimpleLogger::new()
         .env()
-        .with_level(log::LevelFilter::Info)
+        .with_level(log::LevelFilter::Trace)
         .init()
         .unwrap();
 
