@@ -7,7 +7,9 @@
 //! This crate provides parsing functionality for [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
 //! Parses into [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList).
 //!
-//! See [`parse`](crate::parse) for more information.
+//! See [`parse`](crate::parse()) for more information.
+//!
+//! [`ICU4X`]: ../icu/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(

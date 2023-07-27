@@ -13,7 +13,7 @@ pub mod ffi {
     ///
     /// This can be used via `maybe_calculate_metazone()` on [`ICU4XCustomTimeZone`].
     ///
-    /// [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone;
+    /// [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::MetazoneCalculator, Struct)]
     pub struct ICU4XMetazoneCalculator(pub MetazoneCalculator);
