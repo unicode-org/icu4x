@@ -6,7 +6,7 @@
 name = "icu_capi"
 description = "C interface to ICU4X"
 version = "1.2.2"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 resolver = "2"
@@ -62,7 +62,7 @@ buffer_provider = [
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider"]
 provider_test = []
-logging = ["icu_provider/log_error_context", "dep:log"]
+logging = ["icu_provider/logging", "dep:log"]
 # Use the env_logger functionality to log based on environment variables
 simple_logger = ["dep:simple_logger"]
 
@@ -82,7 +82,7 @@ default_components = ["icu_calendar", "icu_collator", "icu_datetime", "icu_decim
 icu_calendar = ["dep:icu_calendar"]
 icu_casemap = ["dep:icu_casemap"]
 icu_collator = ["dep:icu_collator"]
-# icu_collections = ["dep:icu_collections"] # Not useful on its own
+# icu_collections = ["dep:icu_collections"] # Not useful on its own: use icu_properties
 icu_datetime = ["dep:icu_datetime", "dep:icu_calendar", "dep:icu_timezone", "dep:icu_decimal", "dep:icu_plurals"]
 icu_decimal = ["dep:icu_decimal", "dep:fixed_decimal"]
 icu_displaynames = ["dep:icu_displaynames"]

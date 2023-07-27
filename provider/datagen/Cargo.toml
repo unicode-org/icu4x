@@ -6,7 +6,7 @@
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
 version = "1.2.5"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -55,7 +55,7 @@ icu_timezone = { version = "1.2.0", path = "../../components/timezone", default-
 icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder", default-features = false }
 icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde"] }
 icu_locid = { version = "1.2.0", path = "../../components/locid", features = ["std", "serde"] }
-icu_provider = { version = "1.2.0", path = "../core", features = ["std", "log_error_context", "datagen"]}
+icu_provider = { version = "1.2.0", path = "../core", features = ["std", "logging", "datagen"]}
 icu_provider_adapters = { version = "1.2.0", path = "../adapters" }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["alloc", "serde", "zerovec"], default-features = false }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
@@ -91,9 +91,9 @@ eyre = { version = "0.6", optional = true }
 simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
+crlify = { version = "1.0.1", path = "../../utils/crlify" }
 icu = { path = "../../components/icu" }
-glob = "0.3.1"
-dhat = "0.3.0"
+postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
 [features]
@@ -103,6 +103,7 @@ provider_blob = ["dep:icu_provider_blob"]
 provider_fs = ["dep:icu_provider_fs"]
 legacy_api = ["provider_fs", "provider_blob", "provider_baked"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
+rayon = ["dep:rayon"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_codepointtrie_builder/wasm"]
 # Use local ICU4C libraries for building codepointtries
@@ -111,6 +112,12 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
+
+# experimental deps
+icu_casemap = ["dep:icu_casemap"]
+icu_compactdecimal = ["dep:icu_compactdecimal"]
+icu_displaynames = ["dep:icu_displaynames"]
+icu_relativetime = ["dep:icu_relativetime"]
 
 [[bin]]
 name = "icu4x-datagen"
@@ -125,5 +132,9 @@ required-features = ["provider_fs", "use_wasm"]
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
+skip_optional_dependencies = true
+# Always the experimental deps because we want to all-or-nothing them
+# and the nothing case is already tested in regular check CI
 always_include_features = ["icu_casemap", "icu_compactdecimal", "icu_displaynames", "icu_relativetime"]
-max_combination_size = 3
+# We have a *lot* of features here
+max_combination_size = 2

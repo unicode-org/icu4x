@@ -6,7 +6,7 @@
 name = "zerovec"
 description = "Zero-copy vector backed by a byte array"
 version = "0.9.4"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -65,10 +65,15 @@ std = []
 derive = ["dep:zerovec-derive"]
 hashmap = ["dep:t1ha"]
 bench = []
+yoke = ["dep:yoke"]
+serde = ["dep:serde"]
+databake = ["dep:databake"]
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI
 denylist = ["bench"]
+# We have tons of features here, limit the amount of tests we run
+max_combination_size = 3
 
 [[bench]]
 name = "zerovec"

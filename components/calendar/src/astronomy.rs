@@ -6,8 +6,12 @@
 //! many of these are based on or similar to calculations from _Calendrical Calculations_ by
 //! Reingold & Dershowitz and its companion lisp code.
 
-use crate::error::LocationError;
-use crate::helpers::*;
+use crate::error::LocationOutOfBoundsError;
+use crate::helpers::{
+    arccos_degrees, arcsin_degrees, arctan_degrees, binary_search, cos_degrees, div_rem_euclid_f64,
+    i64_to_i32, interval_mod_f64, invert_angular, mod3, next_moment, poly, signum, sin_degrees,
+    tan_degrees, I32Result,
+};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::Moment;
@@ -58,21 +62,31 @@ pub(crate) const MIN_UTC_OFFSET: f64 = -0.5;
 /// The maximum allowable UTC offset (+14 hours) in fractional days (14.0 / 24.0 days)
 pub(crate) const MAX_UTC_OFFSET: f64 = 14.0 / 24.0;
 
+/// The angle of winter for the purposes of solar calculations
+pub(crate) const WINTER: f64 = 270.0;
+
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
-    /// attempting to create a location outside of these bounds will result in a LocationError.
-    #[allow(dead_code)]
+    /// attempting to create a location outside of these bounds will result in a LocationOutOfBoundsError.
+    #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub(crate) fn try_new(
         latitude: f64,
         longitude: f64,
         elevation: f64,
         zone: f64,
-    ) -> Result<Location, LocationError> {
+    ) -> Result<Location, LocationOutOfBoundsError> {
         if !(-90.0..=90.0).contains(&latitude) {
-            return Err(LocationError::LatitudeOutOfBounds(latitude));
+            return Err(LocationOutOfBoundsError::Latitude(latitude));
         }
         if !(-180.0..=180.0).contains(&longitude) {
-            return Err(LocationError::LongitudeOutOfBounds(longitude));
+            return Err(LocationOutOfBoundsError::Longitude(longitude));
+        }
+        if !(MIN_UTC_OFFSET..=MAX_UTC_OFFSET).contains(&zone) {
+            return Err(LocationOutOfBoundsError::Offset(
+                zone,
+                MIN_UTC_OFFSET,
+                MAX_UTC_OFFSET,
+            ));
         }
         Ok(Location {
             latitude,
@@ -773,14 +787,14 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6883-L6896
     pub fn phasis_on_or_after(date: RataDie, location: Location) -> RataDie {
-        let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
-        let age = date - moon.as_rata_die();
-        let tau = if age <= 4 || Self::visible_crescent((date - 1).as_moment(), location) {
+        let moon = libm::floor(Self::lunar_phase_at_or_before(0.0, date.as_moment()).inner());
+        let age = date.to_f64_date() - moon;
+        let tau = if age <= 4.0 || Self::visible_crescent((date - 1).as_moment(), location) {
             moon + 29.0 // Next new moon
         } else {
-            date.as_moment()
+            date.to_f64_date()
         };
-        next_moment(tau, location, Self::visible_crescent)
+        next_moment(Moment::new(tau), location, Self::visible_crescent)
     }
 
     /// Closest fixed date on or before `date` when crescent moon first became visible at `location`.
@@ -788,22 +802,24 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6868-L6881
     pub fn phasis_on_or_before(date: RataDie, location: Location) -> RataDie {
-        let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
-        let age = date - moon.as_rata_die();
-        let tau = if age <= 3 && !Self::visible_crescent((date).as_moment(), location) {
+        let moon: f64 = libm::floor(Self::lunar_phase_at_or_before(0.0, date.as_moment()).inner());
+        let age = date.to_f64_date() - moon;
+        let tau = if age <= 3.0 && !Self::visible_crescent((date).as_moment(), location) {
             moon - 30.0 // Next new moon
         } else {
             moon
         };
-        next_moment(tau, location, Self::visible_crescent)
+        next_moment(Moment::new(tau), location, Self::visible_crescent)
     }
 
     /// Length of the lunar month containing `date` in days, based on observability at `location`.
+    /// Calculates the month length for the Islamic Observational Calendar
+    /// Can return 31 days due to the imprecise nature of trying to approximate an observational calendar. (See page 294 of the Calendrical Calculations book)
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7068-L7074
     #[allow(clippy::unwrap_used)]
-    pub fn month_length(date: RataDie, location: Location) -> u8 {
+    pub(crate) fn month_length(date: RataDie, location: Location) -> u8 {
         let moon = Self::phasis_on_or_after(date + 1, location);
         let prev = Self::phasis_on_or_before(date, location);
 
@@ -1087,7 +1103,7 @@ impl Astronomical {
             approx.inner() - (6.0 / 24.0),
             approx.inner() + (6.0 / 24.0),
             |x| Self::observed_lunar_altitude(Moment::new(x), location) < 0.0,
-            |u, l| (u - l) < 1.0 / (24.0 * 60.0),
+            |u, l| (u - l) < 1.0 / 24.0 / 60.0,
         ));
 
         if set < moment + 1.0 {
@@ -1107,13 +1123,11 @@ impl Astronomical {
 
     /// Standard time of sunset on the date of the given moment and at the given location.
     /// Returns None if there is no such sunset.
-    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3700-L3706
     #[allow(dead_code)]
     pub(crate) fn sunset(date: Moment, location: Location) -> Option<Moment> {
         let alpha = Self::refraction(location) + (16.0 / 60.0);
-
         Self::dusk(date.inner(), location, alpha)
     }
 
@@ -1122,12 +1136,17 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6770-L6778
-    #[allow(dead_code, clippy::unwrap_used, clippy::eq_op)] // TODO: Remove dead code tag after use
+    #[allow(clippy::unwrap_used, clippy::eq_op)] // TODO: Remove dead code tag after use
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
-        let sun = Self::sunset(date, location)?;
-        let moon = Self::moonset(date, location)?;
-
-        Some(moon - sun)
+        if let Some(sun) = Self::sunset(date, location) {
+            if let Some(moon) = Self::moonset(date, location) {
+                Some(moon - sun)
+            } else {
+                Some(1.0)
+            }
+        } else {
+            None
+        }
     }
 
     /// Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment.
@@ -1178,11 +1197,7 @@ impl Astronomical {
         let tau = moment.inner()
             - (MEAN_SYNODIC_MONTH / 360.0) * ((Self::lunar_phase(moment) - phase) % 360.0);
         let a = tau - 2.0;
-        let b = if moment.inner() <= (tau + 2.0) {
-            moment.inner()
-        } else {
-            Moment::new(tau + 2.0).inner()
-        };
+        let b = libm::fmin(moment.inner(), tau + 2.0);
 
         let lunar_phase_f64 = |x: f64| -> f64 { Self::lunar_phase(Moment::new(x)) };
 
@@ -1301,7 +1316,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7306-L7317
-    fn shaukat_criterion(date: Moment, location: Location) -> bool {
+    pub(crate) fn shaukat_criterion(date: Moment, location: Location) -> bool {
         let tee = Self::simple_best_view((date - 1.0).as_rata_die(), location);
         let phase = Self::lunar_phase(tee);
         let h = Self::lunar_altitude(tee, location);
@@ -2068,13 +2083,13 @@ mod tests {
     #[test]
     fn check_location_errors() {
         let lat_too_small = Location::try_new(-90.1, 15.0, 1000.0, 0.0).unwrap_err();
-        assert_eq!(lat_too_small, LocationError::LatitudeOutOfBounds(-90.1));
+        assert_eq!(lat_too_small, LocationOutOfBoundsError::Latitude(-90.1));
         let lat_too_large = Location::try_new(90.1, -15.0, 1000.0, 0.0).unwrap_err();
-        assert_eq!(lat_too_large, LocationError::LatitudeOutOfBounds(90.1));
+        assert_eq!(lat_too_large, LocationOutOfBoundsError::Latitude(90.1));
         let long_too_small = Location::try_new(15.0, 180.1, 1000.0, 0.0).unwrap_err();
-        assert_eq!(long_too_small, LocationError::LongitudeOutOfBounds(180.1));
+        assert_eq!(long_too_small, LocationOutOfBoundsError::Longitude(180.1));
         let long_too_large = Location::try_new(-15.0, -180.1, 1000.0, 0.0).unwrap_err();
-        assert_eq!(long_too_large, LocationError::LongitudeOutOfBounds(-180.1));
+        assert_eq!(long_too_large, LocationOutOfBoundsError::Longitude(-180.1));
     }
 
     #[test]

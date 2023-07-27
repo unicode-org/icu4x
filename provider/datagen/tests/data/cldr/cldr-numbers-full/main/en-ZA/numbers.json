@@ -15,8 +15,8 @@
         },
         "minimumGroupingDigits": "1",
         "symbols-numberSystem-latn": {
-          "decimal": ",",
-          "group": " ",
+          "decimal": ".",
+          "group": ",",
           "list": ";",
           "percentSign": "%",
           "plusSign": "+",

@@ -6,7 +6,7 @@
 name = "databake"
 description = "Trait that lets structs represent themselves as (const) Rust expressions"
 version = "0.1.5"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

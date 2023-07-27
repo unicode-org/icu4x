@@ -22,7 +22,7 @@
 //! assert_eq!(date_gregorian.month().ordinal, 1);
 //! assert_eq!(date_gregorian.day_of_month().0, 2);
 //!
-//! // `DateTime` type
+//! // `DateTime` checks
 //! assert_eq!(datetime_gregorian.date.year().number, 1970);
 //! assert_eq!(datetime_gregorian.date.month().ordinal, 1);
 //! assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
@@ -96,7 +96,7 @@ impl Calendar for Gregorian {
         Iso.months_in_year(&date.0)
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         Iso.days_in_year(&date.0)
     }
 
@@ -165,7 +165,6 @@ impl Date<Gregorian> {
     ///
     /// ```rust
     /// use icu::calendar::Date;
-    /// use std::convert::TryFrom;
     ///
     /// // Conversion from ISO to Gregorian
     /// let date_gregorian = Date::try_new_gregorian_date(1970, 1, 2)
