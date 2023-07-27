@@ -16,6 +16,6 @@
             "path": "blob.postcard"
         }
     },
-    "fallback": "Legacy",
+    "fallback": "Hybrid",
     "overwrite": true
 }
