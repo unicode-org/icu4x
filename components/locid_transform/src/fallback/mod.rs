@@ -40,10 +40,10 @@
 //! ```
 
 use crate::provider::*;
+use alloc::vec::Vec;
 use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
-use alloc::vec::Vec;
 
 pub use icu_provider::{FallbackPriority, FallbackSupplement};
 

@@ -9,7 +9,7 @@ use elsa::sync::FrozenMap;
 use icu_datagen::options::{FallbackMode, LocaleInclude, Options};
 use icu_datagen::{DatagenProvider, SourceData};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::langid;
+use icu_locid::{langid, LanguageIdentifier};
 use icu_provider::datagen::{DataExporter, ExportMarker};
 use icu_provider::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
@@ -76,6 +76,19 @@ fn test_fallback_options() {
 
     let mut options = Options::default();
 
+    let explicit_locales: HashSet<LanguageIdentifier> = [
+        langid!("en-GB"),
+        langid!("sr-ME"),
+        langid!("ar-EG"),
+        langid!("es"),
+    ]
+    .into_iter()
+    .collect();
+
+    //
+    // All+Hybrid
+    //
+
     options.locales = LocaleInclude::All;
     options.fallback = FallbackMode::Hybrid;
     DatagenProvider::try_new(options.clone(), source.clone())
@@ -83,44 +96,6 @@ fn test_fallback_options() {
         .export(decimal_symbols_key.clone(), &mut testing_exporter)
         .unwrap();
     let data_all_hybrid = testing_exporter.take_map_and_reset();
-
-    options.fallback = FallbackMode::RuntimeManual;
-    DatagenProvider::try_new(options.clone(), source.clone())
-        .unwrap()
-        .export(decimal_symbols_key.clone(), &mut testing_exporter)
-        .unwrap();
-    let data_all_runtime = testing_exporter.take_map_and_reset();
-
-    options.locales = LocaleInclude::Explicit(
-        [
-            langid!("en-GB"),
-            langid!("sr-ME"),
-            langid!("ar-EG"),
-            langid!("es"),
-        ]
-        .into_iter()
-        .collect(),
-    );
-    options.fallback = FallbackMode::Hybrid;
-    DatagenProvider::try_new(options.clone(), source.clone())
-        .unwrap()
-        .export(decimal_symbols_key.clone(), &mut testing_exporter)
-        .unwrap();
-    let data_explicit_hybrid = testing_exporter.take_map_and_reset();
-
-    options.fallback = FallbackMode::RuntimeManual;
-    DatagenProvider::try_new(options.clone(), source.clone())
-        .unwrap()
-        .export(decimal_symbols_key.clone(), &mut testing_exporter)
-        .unwrap();
-    let data_explicit_runtime = testing_exporter.take_map_and_reset();
-
-    options.fallback = FallbackMode::Preresolved;
-    DatagenProvider::try_new(options, source)
-        .unwrap()
-        .export(decimal_symbols_key, &mut testing_exporter)
-        .unwrap();
-    let data_explicit_preresolved = testing_exporter.take_map_and_reset();
 
     // These are all of the supported locales for DecimalSymbolsV1 in tests/data.
     let all_locales: Vec<&str> = vec![
@@ -152,6 +127,17 @@ fn test_fallback_options() {
 
     // All+Hybrid should return exactly the supported locales set.
     itertools::assert_equal(data_all_hybrid.keys(), all_locales.iter());
+
+    //
+    // All+Runtime
+    //
+
+    options.fallback = FallbackMode::RuntimeManual;
+    DatagenProvider::try_new(options.clone(), source.clone())
+        .unwrap()
+        .export(decimal_symbols_key.clone(), &mut testing_exporter)
+        .unwrap();
+    let data_all_runtime = testing_exporter.take_map_and_reset();
 
     // These are all of the supported locales with deduplication applied.
     let all_locales_dedup: Vec<&str> = vec![
@@ -218,6 +204,18 @@ fn test_fallback_options() {
     // All+Runtime should return the supported locales set with deduplication.
     itertools::assert_equal(data_all_runtime.keys(), all_locales_dedup.iter());
 
+    //
+    // Explicit+Hybrid
+    //
+
+    options.locales = LocaleInclude::Explicit(explicit_locales.clone());
+    options.fallback = FallbackMode::Hybrid;
+    DatagenProvider::try_new(options.clone(), source.clone())
+        .unwrap()
+        .export(decimal_symbols_key.clone(), &mut testing_exporter)
+        .unwrap();
+    let data_explicit_hybrid = testing_exporter.take_map_and_reset();
+
     // Explicit locales are "en-GB", "sr-ME", "ar-EG", "es"
     let explicit_hybrid_locales: Vec<&str> = vec![
         "ar",              // ancestor of ar-EG
@@ -240,6 +238,18 @@ fn test_fallback_options() {
     // Explicit+Hybrid should return the expanded explicit locales set above.
     itertools::assert_equal(data_explicit_hybrid.keys(), explicit_hybrid_locales.iter());
 
+    //
+    // Explicit+Runtime
+    //
+
+    options.locales = LocaleInclude::Explicit(explicit_locales.clone());
+    options.fallback = FallbackMode::RuntimeManual;
+    DatagenProvider::try_new(options.clone(), source.clone())
+        .unwrap()
+        .export(decimal_symbols_key.clone(), &mut testing_exporter)
+        .unwrap();
+    let data_explicit_runtime = testing_exporter.take_map_and_reset();
+
     // Explicit locales are "en-GB", "sr-ME", "ar-EG", "es"
     let explicit_hybrid_locales_dedup: Vec<&str> = vec![
         "ar",
@@ -260,6 +270,18 @@ fn test_fallback_options() {
         data_explicit_runtime.keys(),
         explicit_hybrid_locales_dedup.iter(),
     );
+
+    //
+    // Explicit+Preresolved
+    //
+
+    options.locales = LocaleInclude::Explicit(explicit_locales.clone());
+    options.fallback = FallbackMode::Preresolved;
+    DatagenProvider::try_new(options, source)
+        .unwrap()
+        .export(decimal_symbols_key, &mut testing_exporter)
+        .unwrap();
+    let data_explicit_preresolved = testing_exporter.take_map_and_reset();
 
     // Explicit locales are "en-GB", "sr-ME", "ar-EG", "es"
     let explicit_preresolved_locales: Vec<&str> = vec![

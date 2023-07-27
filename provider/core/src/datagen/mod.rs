@@ -60,7 +60,9 @@ pub trait DataExporter: Sync {
         _key: DataKey,
         _fallback_mode: BuiltInFallbackMode,
     ) -> Result<(), DataError> {
-        Err(DataError::custom("Exporter does not implement built-in fallback"))
+        Err(DataError::custom(
+            "Exporter does not implement built-in fallback",
+        ))
     }
 
     /// Function called after a non-singleton key has been fully enumerated.

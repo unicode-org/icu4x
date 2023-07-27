@@ -155,9 +155,7 @@ mod test {
         {
             let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
-            exporter
-                .flush(HelloWorldV1Marker::KEY)
-                .unwrap();
+            exporter.flush(HelloWorldV1Marker::KEY).unwrap();
 
             exporter.close().unwrap();
         }
@@ -180,9 +178,7 @@ mod test {
         {
             let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
-            exporter
-                .flush(HelloSingletonV1Marker::KEY)
-                .unwrap();
+            exporter.flush(HelloSingletonV1Marker::KEY).unwrap();
 
             exporter.close().unwrap();
         }
