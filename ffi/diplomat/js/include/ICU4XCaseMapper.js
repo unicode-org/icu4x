@@ -143,6 +143,17 @@ export class ICU4XCaseMapper {
     return diplomat_out;
   }
 
+  add_case_closure(arg_c, arg_builder) {
+    wasm.ICU4XCaseMapper_add_case_closure(this.underlying, diplomatRuntime.extractCodePoint(arg_c, 'arg_c'), arg_builder.underlying);
+  }
+
+  add_string_case_closure(arg_s, arg_builder) {
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const diplomat_out = wasm.ICU4XCaseMapper_add_string_case_closure(this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_builder.underlying);
+    buf_arg_s.free();
+    return diplomat_out;
+  }
+
   simple_lowercase(arg_ch) {
     return wasm.ICU4XCaseMapper_simple_lowercase(this.underlying, diplomatRuntime.extractCodePoint(arg_ch, 'arg_ch'));
   }

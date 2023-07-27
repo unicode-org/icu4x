@@ -70,7 +70,7 @@ uint8_t ICU4XDateTime_months_in_year(const ICU4XDateTime* self);
 
 uint8_t ICU4XDateTime_days_in_month(const ICU4XDateTime* self);
 
-uint32_t ICU4XDateTime_days_in_year(const ICU4XDateTime* self);
+uint16_t ICU4XDateTime_days_in_year(const ICU4XDateTime* self);
 
 ICU4XCalendar* ICU4XDateTime_calendar(const ICU4XDateTime* self);
 void ICU4XDateTime_destroy(ICU4XDateTime* self);

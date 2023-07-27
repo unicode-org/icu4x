@@ -6,7 +6,7 @@
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
 version = "0.8.0"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

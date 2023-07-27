@@ -151,7 +151,7 @@ impl Japanese {
         day: u8,
         debug_name: &'static str,
     ) -> Result<JapaneseDateInner, CalendarError> {
-        let month = crate::calendar_arithmetic::ordinal_solar_month_from_code(month_code);
+        let month = crate::calendar_arithmetic::ordinal_month_from_code(month_code);
         let month = if let Some(month) = month {
             month
         } else {
@@ -234,7 +234,7 @@ impl Calendar for Japanese {
         Iso.months_in_year(&date.inner)
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         Iso.days_in_year(&date.inner)
     }
 
@@ -338,7 +338,7 @@ impl Calendar for JapaneseExtended {
         Japanese::months_in_year(&self.0, date)
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         Japanese::days_in_year(&self.0, date)
     }
 

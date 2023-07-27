@@ -96,3 +96,10 @@
 
         See the `Rust documentation for has_script <https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script>`__ for more information.
 
+
+    .. js:method:: get_script_extensions_set(script)
+
+        Build the CodePointSetData corresponding to a codepoints matching a particular script in their Script_Extensions
+
+        See the `Rust documentation for get_script_extensions_set <https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set>`__ for more information.
+

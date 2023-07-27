@@ -14,6 +14,18 @@ use writeable::Writeable;
 /// A struct with the ability to convert characters and strings to uppercase or lowercase,
 /// or fold them to a normalized form for case-insensitive comparison.
 ///
+/// # Examples
+///
+/// ```rust
+/// use icu_casemap::CaseMapper;
+/// use icu_locid::langid;
+///
+/// let cm = CaseMapper::new();
+///
+/// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
+/// assert_eq!(cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und")), "γειά σου κόσμε");
+/// ```
+///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
@@ -35,7 +47,7 @@ impl Default for CaseMapper {
 impl CaseMapper {
     /// A constructor which creates a [`CaseMapper`].
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -175,7 +187,7 @@ impl CaseMapper {
     ///
     /// See [`Self::lowercase()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -213,7 +225,7 @@ impl CaseMapper {
     ///
     /// See [`Self::uppercase()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -259,7 +271,7 @@ impl CaseMapper {
     ///
     /// See [`Self::titlecase_segment()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -304,7 +316,7 @@ impl CaseMapper {
     ///
     /// See [`Self::fold()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///s s
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -335,7 +347,7 @@ impl CaseMapper {
     ///
     /// See [`Self::fold_turkic()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -374,7 +386,7 @@ impl CaseMapper {
     /// - for sharp s include ss
     /// - for k include the Kelvin sign
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -405,7 +417,7 @@ impl CaseMapper {
     ///
     /// Returns true if the string was found
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -436,7 +448,7 @@ impl CaseMapper {
     /// which can map one `char` to a string, are not included.
     /// For full mappings, use [`CaseMapper::lowercase`].
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -457,7 +469,7 @@ impl CaseMapper {
     /// which can map one `char` to a string, are not included.
     /// For full mappings, use [`CaseMapper::uppercase`].
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -479,7 +491,7 @@ impl CaseMapper {
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -517,7 +529,7 @@ impl CaseMapper {
     /// under simple case folding, but are equivalent under
     /// default (full) case folding.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -552,7 +564,7 @@ impl CaseMapper {
     /// convert to a string and use [`CaseMapper::fold_turkic`].
     ///
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```rust
     /// use icu_casemap::CaseMapper;
@@ -674,5 +686,18 @@ mod tests {
         assert_eq!(cm.titlecase_segment_to_string("i", &az), "İ");
         assert_eq!(cm.uppercase_to_string("i", &tr), "İ");
         assert_eq!(cm.uppercase_to_string("i", &az), "İ");
+    }
+
+    #[test]
+    fn test_cherokee_case_folding() {
+        let case_mapping = CaseMapper::new();
+        assert_eq!(case_mapping.simple_fold('Ꭰ'), 'Ꭰ');
+        assert_eq!(case_mapping.simple_fold('ꭰ'), 'Ꭰ');
+        assert_eq!(case_mapping.simple_fold_turkic('Ꭰ'), 'Ꭰ');
+        assert_eq!(case_mapping.simple_fold_turkic('ꭰ'), 'Ꭰ');
+        assert_eq!(case_mapping.fold_string("Ꭰ"), "Ꭰ");
+        assert_eq!(case_mapping.fold_string("ꭰ"), "Ꭰ");
+        assert_eq!(case_mapping.fold_turkic_string("Ꭰ"), "Ꭰ");
+        assert_eq!(case_mapping.fold_turkic_string("ꭰ"), "Ꭰ");
     }
 }

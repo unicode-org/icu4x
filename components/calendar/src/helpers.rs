@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::astronomy::PI;
-use alloc::vec::Vec;
+use crate::{
+    astronomy::{Location, PI},
+    rata_die::RataDie,
+    types::Moment,
+};
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///
@@ -86,16 +89,19 @@ pub const fn quotient64(n: i64, d: i64) -> i64 {
         a - 1
     }
 }
+
 // cosine of x in radians
 pub fn cos_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
     libm::cos(radians)
 }
+
 // sine of x in radians
 pub fn sin_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
     libm::sin(radians)
 }
+
 // tan of x in radians
 pub fn tan_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
@@ -146,13 +152,15 @@ pub fn arctan_degrees(y: f64, x: f64) -> Result<f64, &'static str> {
         Ok(mod_degrees(if x >= 0.0 { alpha } else { alpha + 180.0 }))
     }
 }
+
 // TODO: convert recursive into iterative
-pub fn poly(x: f64, coeffs: Vec<f64>) -> f64 {
+pub fn poly(x: f64, coeffs: &[f64]) -> f64 {
     match coeffs.split_first() {
-        Some((first, rest)) => first + x * poly(x, rest.to_vec()),
+        Some((first, rest)) => first + x * poly(x, rest),
         None => 0.0,
     }
 }
+
 // A generic function that finds a value within an interval
 // where a certain condition is satisfied.
 pub fn binary_search<F, G>(mut l: f64, mut h: f64, test: F, end: G) -> f64
@@ -177,6 +185,7 @@ where
         }
     }
 }
+
 // Returns a number that represents the sign of `self`.
 // - `1.0` if the number is positive, `+0.0` or `INFINITY`
 // - `-1.0` if the number is negative, `-0.0` or `NEG_INFINITY`
@@ -202,6 +211,31 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
         |u, l| (u - l) < varepsilon,
     )
 }
+
+pub(crate) fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
+where
+    F: Fn(Moment, Location) -> bool,
+{
+    loop {
+        if condition(index, location) {
+            return index.as_rata_die();
+        }
+        index += 1.0;
+    }
+}
+
+pub(crate) fn next<F>(mut index: RataDie, condition: F) -> RataDie
+where
+    F: Fn(RataDie) -> bool,
+{
+    loop {
+        if condition(index) {
+            return index;
+        }
+        index += 1;
+    }
+}
+
 #[test]
 fn test_binary_search() {
     struct TestCase {
@@ -318,7 +352,57 @@ pub fn adjusted_rem_euclid(x: i32, y: i32) -> i32 {
     }
 }
 
-/// The value of x shifted into the range (a..b); returns x if a == b; for f64 types
+#[test]
+fn test_adjusted_rem_euclid() {
+    #[derive(Debug)]
+    struct TestCase {
+        x: i32,
+        y: i32,
+        expected: i32,
+    }
+
+    let cases = [
+        TestCase {
+            x: 3,
+            y: 7,
+            expected: 3,
+        },
+        TestCase {
+            x: 7,
+            y: 3,
+            expected: 1,
+        },
+        TestCase {
+            x: -11,
+            y: 9,
+            expected: 7,
+        },
+        TestCase {
+            x: 11,
+            y: 9,
+            expected: 2,
+        },
+        TestCase {
+            x: 11,
+            y: 11,
+            expected: 11,
+        },
+        TestCase {
+            x: -22,
+            y: 11,
+            expected: 11,
+        },
+    ];
+    for case in cases {
+        let result = adjusted_rem_euclid(case.x, case.y);
+        assert_eq!(
+            case.expected, result,
+            "Adjusted rem euclid failed for case: {case:?}"
+        );
+    }
+}
+
+/// The value of x shifted into the range [a..b); returns x if a == b; for f64 types
 pub fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
     if a == b {
         x
@@ -329,8 +413,66 @@ pub fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
 
 #[test]
 fn test_interval_mod() {
-    assert_eq!(interval_mod_f64(5.0, 10.0, 20.0), 15.0);
-    assert_eq!(interval_mod_f64(-5.0, 10.0, 20.0), 15.0);
+    #[derive(Debug)]
+    struct TestCase {
+        x: f64,
+        a: f64,
+        b: f64,
+        expected: f64,
+    }
+
+    let cases = [
+        TestCase {
+            x: 5.0,
+            a: 10.0,
+            b: 20.0,
+            expected: 15.0,
+        },
+        TestCase {
+            x: -5.0,
+            a: 10.0,
+            b: 20.0,
+            expected: 15.0,
+        },
+        TestCase {
+            x: 2.0,
+            a: 12.0,
+            b: 17.0,
+            expected: 12.0,
+        },
+        TestCase {
+            x: 9.0,
+            a: 9.0,
+            b: 10.0,
+            expected: 9.0,
+        },
+        TestCase {
+            x: 16.5,
+            a: 13.5,
+            b: 20.0,
+            expected: 16.5,
+        },
+        TestCase {
+            x: 9.0,
+            a: 3.0,
+            b: 9.0,
+            expected: 3.0,
+        },
+        TestCase {
+            x: 17.0,
+            a: 1.0,
+            b: 5.5,
+            expected: 3.5,
+        },
+    ];
+
+    for case in cases {
+        let result = interval_mod_f64(case.x, case.a, case.b);
+        assert_eq!(
+            case.expected, result,
+            "Interval mod test failed for case: {case:?}"
+        );
+    }
 }
 
 #[test]

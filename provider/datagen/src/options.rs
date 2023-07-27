@@ -55,6 +55,8 @@ pub struct Options {
     /// The type of fallback that the data should be generated for. If locale fallback is
     /// used at runtime, smaller data can be generated.
     pub fallback: FallbackMode,
+    /// The segmentation models to include
+    pub segmenter_models: SegmenterModelInclude,
 }
 
 /// Defines the locales to include
@@ -136,5 +138,45 @@ impl std::fmt::Display for TrieType {
 impl Default for TrieType {
     fn default() -> Self {
         Self::Small
+    }
+}
+
+#[non_exhaustive]
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+/// The segmentation models to include
+pub enum SegmenterModelInclude {
+    /// Include the recommended set of models. This will cover all languages supported
+    /// by ICU4X: Thai, Burmese, Khmer, Lao, Chinese, and Japanese. Both dictionary
+    /// and LSTM models will be included, to the extent required by the chosen data keys.
+    Recommended,
+    /// Include no dictionary or LSTM models. This will make line and word segmenters
+    /// behave like simple rule-based segmenters, which will be incorrect when handling text
+    /// that contains Thai, Burmese, Khmer, Lao, Chinese, or Japanese.
+    None,
+    /// Include an explicit list of LSTM or dictionary models, to the extent required by the
+    /// chosen data keys.
+    ///
+    /// The currently supported dictionary models are
+    /// * `cjdict`
+    /// * `burmesedict`
+    /// * `khmerdict`
+    /// * `laodict`
+    /// * `thaidict`
+    ///
+    /// The currently supported LSTM models are
+    /// * `Burmese_codepoints_exclusive_model4_heavy`
+    /// * `Khmer_codepoints_exclusive_model4_heavy`
+    /// * `Lao_codepoints_exclusive_model4_heavy`
+    /// * `Thai_codepoints_exclusive_model4_heavy`
+    ///
+    /// If a model is not included, the resulting line or word segmenter will apply rule-based
+    /// segmentation when encountering text in a script that requires the model, which will be
+    /// incorrect.
+    Explicit(Vec<String>),
+}
+
+impl Default for SegmenterModelInclude {
+    fn default() -> Self {
+        Self::Recommended
     }
 }

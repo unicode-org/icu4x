@@ -90,7 +90,7 @@ impl CalendarArithmetic for Persian {
         div_rem_euclid64((year + 38) * 31, 128).1 < 31
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -122,7 +122,7 @@ impl Calendar for Persian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(PersianDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(PersianDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> PersianDateInner {
@@ -139,7 +139,7 @@ impl Calendar for Persian {
         date.0.months_in_year()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year()
     }
 
@@ -172,7 +172,7 @@ impl Calendar for Persian {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -319,7 +319,7 @@ impl Date<Persian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Persian>, CalendarError> {
-        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(PersianDateInner)
             .map(|inner| Date::from_raw(inner, Persian))
     }
@@ -556,7 +556,7 @@ mod tests {
         Persian::fixed_from_persian_integers(_year, 1, 1).unwrap()
     }
 
-    fn days_in_provided_year_core(year: i32) -> u32 {
+    fn days_in_provided_year_core(year: i32) -> u16 {
         #[allow(clippy::unwrap_used)] // valid month and day
         let fixed_year = Persian::fixed_from_persian_integers(year, 1, 1)
             .unwrap()
@@ -566,7 +566,7 @@ mod tests {
             .unwrap()
             .to_i64_date();
 
-        (next_fixed_year - fixed_year) as u32
+        (next_fixed_year - fixed_year) as u16
     }
 
     #[test]

@@ -85,7 +85,7 @@ impl CalendarArithmetic for Indian {
         (12, 30)
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -96,7 +96,7 @@ impl CalendarArithmetic for Indian {
 
 /// The Saka calendar starts on the 81st day of the Gregorian year (March 22 or 21)
 /// which is an 80 day offset. This number should be subtracted from Gregorian dates
-const DAY_OFFSET: u32 = 80;
+const DAY_OFFSET: u16 = 80;
 /// The Saka calendar is 78 years behind Gregorian. This number should be added to Gregorian dates
 const YEAR_OFFSET: i32 = 78;
 
@@ -113,7 +113,7 @@ impl Calendar for Indian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(IndianDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
     }
 
     //
@@ -132,7 +132,10 @@ impl Calendar for Indian {
         } else {
             day_of_year_iso - DAY_OFFSET
         };
-        IndianDateInner(ArithmeticDate::date_from_year_day(year, day_of_year_indian))
+        IndianDateInner(ArithmeticDate::date_from_year_day(
+            year,
+            day_of_year_indian as u32,
+        ))
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
@@ -155,7 +158,7 @@ impl Calendar for Indian {
         date.0.months_in_year()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year()
     }
 
@@ -193,7 +196,7 @@ impl Calendar for Indian {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -237,7 +240,7 @@ impl Indian {
         Self
     }
 
-    fn days_in_year_direct(year: i32) -> u32 {
+    fn days_in_year_direct(year: i32) -> u16 {
         if Indian::is_leap_year(year) {
             366
         } else {
@@ -264,7 +267,7 @@ impl Date<Indian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Indian>, CalendarError> {
-        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IndianDateInner)
             .map(|inner| Date::from_raw(inner, Indian))
     }

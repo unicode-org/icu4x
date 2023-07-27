@@ -86,7 +86,7 @@ impl CalendarArithmetic for Julian {
         (12, 31)
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -118,7 +118,7 @@ impl Calendar for Julian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(JulianDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(JulianDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> JulianDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
@@ -134,7 +134,7 @@ impl Calendar for Julian {
         date.0.months_in_year()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year()
     }
 
@@ -170,7 +170,7 @@ impl Calendar for Julian {
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     /// The calendar-specific day-of-month represented by `date`
@@ -246,7 +246,7 @@ impl Julian {
 
     /// Convenience function so we can call days_in_year without
     /// needing to construct a full ArithmeticDate
-    fn days_in_year_direct(year: i32) -> u32 {
+    fn days_in_year_direct(year: i32) -> u16 {
         if Julian::is_leap_year(year) {
             366
         } else {
@@ -299,7 +299,7 @@ impl Date<Julian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Julian>, CalendarError> {
-        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(JulianDateInner)
             .map(|inner| Date::from_raw(inner, Julian))
     }

@@ -81,7 +81,7 @@ impl<'data> BlobSchemaV1<'data> {
         // Note: We could check that every index occurs at least once, but that's a more expensive
         // operation, so we will just check for the min and max index.
         let mut seen_min = false;
-        let mut seen_max = false;
+        let mut seen_max = self.buffers.is_empty();
         for cursor in self.keys.iter0() {
             for (locale, idx) in cursor.iter1_copied() {
                 debug_assert!(idx < self.buffers.len() || locale == Index32U8::SENTINEL);
@@ -126,5 +126,6 @@ impl<'a> ZeroMapKV<'a> for Index32U8 {
 }
 
 impl Index32U8 {
-    pub(crate) const SENTINEL: &'static Self = unsafe { core::mem::transmute::<&[u8], _>(&[]) };
+    #[allow(dead_code)]
+    pub(crate) const SENTINEL: &'static Self = unsafe { &*(&[] as *const [u8] as *const Self) };
 }

@@ -84,7 +84,7 @@ impl CalendarArithmetic for Iso {
         (12, 31)
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -107,7 +107,7 @@ impl Calendar for Iso {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        ArithmeticDate::new_from_solar_codes(self, year, month_code, day).map(IsoDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> IsoDateInner {
@@ -122,7 +122,7 @@ impl Calendar for Iso {
         date.0.months_in_year()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year()
     }
 
@@ -199,7 +199,7 @@ impl Calendar for Iso {
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     /// The calendar-specific day-of-month represented by `date`
@@ -242,7 +242,7 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, CalendarError> {
-        ArithmeticDate::new_from_solar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IsoDateInner)
             .map(|inner| Date::from_raw(inner, Iso))
     }
@@ -368,7 +368,7 @@ impl Iso {
         }
     }
 
-    pub(crate) fn days_in_year_direct(year: i32) -> u32 {
+    pub(crate) fn days_in_year_direct(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -411,7 +411,7 @@ impl Iso {
             .map(Self::fixed_from_iso)
     }
 
-    pub(crate) fn iso_from_year_day(year: i32, year_day: u32) -> Date<Iso> {
+    pub(crate) fn iso_from_year_day(year: i32, year_day: u16) -> Date<Iso> {
         let mut month = 1;
         let mut day = year_day as i32;
         while month <= 12 {
@@ -489,7 +489,7 @@ impl Iso {
         Date::try_new_iso_date(year, month, day).unwrap()
     }
 
-    pub(crate) fn day_of_year(date: IsoDateInner) -> u32 {
+    pub(crate) fn day_of_year(date: IsoDateInner) -> u16 {
         // Cumulatively how much are dates in each month
         // offset from "30 days in each month" (in non leap years)
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
@@ -499,9 +499,9 @@ impl Iso {
             // Months after February in a leap year are offset by one less
             offset += 1;
         }
-        let prev_month_days = (30 * (date.0.month as i32 - 1) + offset) as u32;
+        let prev_month_days = (30 * (date.0.month as i32 - 1) + offset) as u16;
 
-        prev_month_days + date.0.day as u32
+        prev_month_days + date.0.day as u16
     }
 
     /// Wrap the year in the appropriate era code

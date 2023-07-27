@@ -6,7 +6,7 @@
 name = "yoke"
 version = "0.7.1"
 description = "Abstraction allowing borrowed data to be carried along with the backing data it borrows from"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
@@ -26,12 +26,18 @@ include = [
 independent = true
 
 [features]
+default = ["alloc", "zerofrom"]
 derive = ["dep:yoke-derive", "zerofrom/derive"]
 alloc = ["stable_deref_trait/alloc", "serde?/alloc", "zerofrom/alloc"]
-default = ["alloc", "zerofrom"]
+serde = ["dep:serde"]
+zerofrom = ["dep:zerofrom"]
 
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+# We have tons of features here, limit the amount of tests we run
+max_combination_size = 3
 
 [dependencies]
 stable_deref_trait = { version = "1.2.0", default-features = false }

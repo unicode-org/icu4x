@@ -148,13 +148,13 @@ pub struct FormattableMonth {
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
-    pub day_of_year: u32,
+    pub day_of_year: u16,
     /// The number of days in a year.
-    pub days_in_year: u32,
+    pub days_in_year: u16,
     /// The previous year.
     pub prev_year: FormattableYear,
     /// The number of days in the previous year.
-    pub days_in_prev_year: u32,
+    pub days_in_prev_year: u16,
     /// The next year.
     pub next_year: FormattableYear,
 }
@@ -766,6 +766,7 @@ impl Moment {
     pub const fn inner(&self) -> f64 {
         self.0
     }
+
     /// Get the RataDie of a Moment
     pub fn as_rata_die(&self) -> RataDie {
         RataDie::new(libm::floor(self.0) as i64)

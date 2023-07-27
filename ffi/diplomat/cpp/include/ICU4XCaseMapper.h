@@ -18,6 +18,7 @@ typedef struct ICU4XCaseMapper ICU4XCaseMapper;
 #include "diplomat_result_box_ICU4XCaseMapper_ICU4XError.h"
 #include "ICU4XLocale.h"
 #include "diplomat_result_void_ICU4XError.h"
+#include "ICU4XCodePointSetBuilder.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -34,6 +35,10 @@ diplomat_result_void_ICU4XError ICU4XCaseMapper_titlecase_segment(const ICU4XCas
 diplomat_result_void_ICU4XError ICU4XCaseMapper_fold(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, DiplomatWriteable* write);
 
 diplomat_result_void_ICU4XError ICU4XCaseMapper_fold_turkic(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, DiplomatWriteable* write);
+
+void ICU4XCaseMapper_add_case_closure(const ICU4XCaseMapper* self, char32_t c, ICU4XCodePointSetBuilder* builder);
+
+bool ICU4XCaseMapper_add_string_case_closure(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, ICU4XCodePointSetBuilder* builder);
 
 char32_t ICU4XCaseMapper_simple_lowercase(const ICU4XCaseMapper* self, char32_t ch);
 
