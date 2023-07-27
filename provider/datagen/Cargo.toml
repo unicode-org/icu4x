@@ -134,6 +134,6 @@ required-features = ["provider_fs", "use_wasm"]
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # Always enable wasm and the experimental deps
-always_include_features = ["use_wasm", icu_casemap", "icu_compactdecimal", "icu_displaynames", "icu_relativetime"]
+always_include_features = ["use_wasm", "icu_casemap", "icu_compactdecimal", "icu_displaynames", "icu_relativetime"]
 # We have a *lot* of features here
 max_combination_size = 2
