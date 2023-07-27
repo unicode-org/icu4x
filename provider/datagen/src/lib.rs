@@ -71,6 +71,7 @@ mod transform;
 
 use elsa::sync::FrozenMap;
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
+use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::datagen::*;
@@ -166,6 +167,7 @@ impl DatagenProvider {
                 source
                     .locales(levels.iter().copied().collect::<Vec<_>>().as_slice())?
                     .into_iter()
+                    .chain(core::iter::once(LanguageIdentifier::UND))
                     .collect(),
             ),
             options::LocaleInclude::Explicit(set) => options::LocaleInclude::Explicit(set),
@@ -178,6 +180,7 @@ impl DatagenProvider {
                         options::CoverageLevel::Basic,
                     ])?
                     .into_iter()
+                    .chain(core::iter::once(LanguageIdentifier::UND))
                     .collect(),
             ),
         };
@@ -268,6 +271,7 @@ impl DatagenProvider {
             .as_ref()
             .unwrap()
             .for_config(LocaleFallbackConfig::from_key(key));
+        let include_und = explicit.contains(&LanguageIdentifier::UND);
         let explicit: HashSet<DataLocale> = explicit.into_iter().map(|d| d.into()).collect();
         let mut implicit = HashSet::new();
         // TODO: Make including the default locale configurable
@@ -285,6 +289,9 @@ impl DatagenProvider {
             .chain(explicit.iter().cloned())
             .filter(|locale| {
                 if implicit.contains(locale) {
+                    return true;
+                }
+                if locale.is_langid_und() && include_und {
                     return true;
                 }
                 let mut iter = fallbacker_with_config.fallback_for(locale.clone());
