@@ -106,7 +106,7 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
 ///
 /// The Dangi Calendar is a lunisolar calendar used traditionally in North and South Korea.
 /// It is often used today to track important cultural events and holidays like Seollal
-/// (Korean lunar new year). It is similar to the Chinese lunar calendar (see [`Chinese`]),
+/// (Korean lunar new year). It is similar to the Chinese lunar calendar (see `Chinese`),
 /// except that observations are based in Korea (currently UTC+9) rather than China (UTC+8).
 /// This can cause some differences; for example, 2012 was a leap year, but in the Dangi
 /// calendar the leap month was 3, while in the Chinese calendar the leap month was 4.
