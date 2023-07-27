@@ -112,7 +112,7 @@ impl CalendarArithmetic for Ethiopian {
         }
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -162,7 +162,7 @@ impl Calendar for Ethiopian {
         date.0.months_in_year()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year()
     }
 
@@ -278,7 +278,7 @@ impl Ethiopian {
         .inner()
     }
 
-    fn days_in_year_direct(year: i32) -> u32 {
+    fn days_in_year_direct(year: i32) -> u16 {
         if Ethiopian::is_leap_year(year) {
             366
         } else {

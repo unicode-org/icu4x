@@ -149,7 +149,7 @@ impl<A: AsCalendar> Date<A> {
 
     /// The number of days in the year of this date
     #[inline]
-    pub fn days_in_year(&self) -> u32 {
+    pub fn days_in_year(&self) -> u16 {
         self.calendar.as_calendar().days_in_year(self.inner())
     }
 

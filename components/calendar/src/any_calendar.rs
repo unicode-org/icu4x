@@ -225,7 +225,7 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.months_in_year(d))
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         match_cal_and_date!(match (self, date): (c, d) => c.days_in_year(d))
     }
 
