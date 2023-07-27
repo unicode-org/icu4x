@@ -67,8 +67,6 @@
 mod error;
 mod registry;
 mod source;
-#[cfg(test)]
-mod testutil;
 mod transform;
 
 use elsa::sync::FrozenMap;
