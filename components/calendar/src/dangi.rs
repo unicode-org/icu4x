@@ -201,7 +201,7 @@ impl Calendar for Dangi {
         Self::months_for_every_year(date.0 .0.year)
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         Self::days_in_provided_year(date.0 .0.year)
     }
 
