@@ -316,7 +316,7 @@ impl DatagenProvider {
             self.source.fallbacker.clone().unwrap(),
         );
         let req = DataRequest {
-            locale: &locale,
+            locale,
             metadata: Default::default(),
         };
         provider_with_fallback

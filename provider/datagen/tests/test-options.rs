@@ -77,10 +77,10 @@ fn test_fallback_options() {
     let mut options = Options::default();
 
     let explicit_locales: HashSet<LanguageIdentifier> = [
-        langid!("en-GB"),
-        langid!("sr-ME"),
         langid!("ar-EG"),
+        langid!("en-GB"),
         langid!("es"),
+        langid!("sr-ME"),
     ]
     .into_iter()
     .collect();
@@ -216,7 +216,7 @@ fn test_fallback_options() {
         .unwrap();
     let data_explicit_hybrid = testing_exporter.take_map_and_reset();
 
-    // Explicit locales are "en-GB", "sr-ME", "ar-EG", "es"
+    // Explicit locales are "ar-EG", "en-GB", "es", "sr-ME"
     let explicit_hybrid_locales: Vec<&str> = vec![
         "ar",              // ancestor of ar-EG
         "ar-EG",           // explicit locale
@@ -250,7 +250,7 @@ fn test_fallback_options() {
         .unwrap();
     let data_explicit_runtime = testing_exporter.take_map_and_reset();
 
-    // Explicit locales are "en-GB", "sr-ME", "ar-EG", "es"
+    // Explicit locales are "ar-EG", "en-GB", "es", "sr-ME"
     let explicit_hybrid_locales_dedup: Vec<&str> = vec![
         "ar",
         // "ar-EG", (same as 'ar')
@@ -283,7 +283,7 @@ fn test_fallback_options() {
         .unwrap();
     let data_explicit_preresolved = testing_exporter.take_map_and_reset();
 
-    // Explicit locales are "en-GB", "sr-ME", "ar-EG", "es"
+    // Explicit locales are "ar-EG", "en-GB", "es", "sr-ME"
     let explicit_preresolved_locales: Vec<&str> = vec![
         "ar-EG",
         "ar-EG-u-nu-latn", // extensions included even in preresolved mode
