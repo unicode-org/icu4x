@@ -35,11 +35,11 @@
 
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::chinese_based::chinese_based_ordinal_lunar_month_from_code;
+use crate::helpers::div_rem_euclid64;
 use crate::{
     astronomy::Location,
     calendar_arithmetic::ArithmeticDate,
     chinese_based::{ChineseBased, ChineseBasedDateInner},
-    helpers::div_rem_euclid,
     rata_die::RataDie,
     types::{self, Era, FormattableYear},
     AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
@@ -425,11 +425,7 @@ impl Dangi {
     fn format_dangi_year(year: i32) -> FormattableYear {
         let era = Era(tinystr!(16, "dangi"));
         let number = year;
-        let cyclic = Some(
-            div_rem_euclid(number.saturating_sub(1).saturating_add(364), 60)
-                .1
-                .saturating_add(1),
-        );
+        let cyclic = Some(div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32 + 1);
         let mid_year = Inner::fixed_mid_year_from_year(number);
         let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
         let related_iso = Some(iso_formattable_year.number);
