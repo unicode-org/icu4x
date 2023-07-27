@@ -86,8 +86,10 @@ impl CalendarArithmetic for IslamicObservational {
         12
     }
 
-    fn days_in_provided_year(_year: i32) -> u16 {
-        355
+    fn days_in_provided_year(year: i32) -> u16 {
+        (1..=12)
+            .map(|month| IslamicObservational::month_days(year, month) as u16)
+            .sum()
     }
 
     // As an observational-lunar calendar, it does not have leap years.
@@ -311,26 +313,22 @@ pub struct UmmAlQuraDateInner(ArithmeticDate<UmmAlQura>);
 
 impl CalendarArithmetic for UmmAlQura {
     fn month_days(year: i32, month: u8) -> u8 {
-        let midmonth = RataDie::new(
-            FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date()
-                + libm::floor(
-                    ((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH,
-                ) as i64,
-        );
-        // TODO: Add comment explaining functionality.
-        if Self::adjusted_saudi_criterion(midmonth) {
-            30
-        } else {
-            29
-        }
+        let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
+            + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
+
+        let f_date = Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), MECCA);
+
+        Astronomical::month_length(f_date, MECCA)
     }
 
     fn months_for_every_year(_year: i32) -> u8 {
         12
     }
 
-    fn days_in_provided_year(_year: i32) -> u16 {
-        355
+    fn days_in_provided_year(year: i32) -> u16 {
+        (1..=12)
+            .map(|month| UmmAlQura::month_days(year, month) as u16)
+            .sum()
     }
 
     // As an observational-lunar calendar, it does not have leap years.
@@ -1071,6 +1069,9 @@ impl DateTime<IslamicTabular> {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    const START_YEAR: i32 = -1245;
+    const END_YEAR: i32 = 1518;
 
     #[derive(Debug)]
     struct DateCase {
@@ -1913,5 +1914,44 @@ mod test {
                 "{case:?}"
             );
         }
+    }
+
+    #[ignore]
+    #[test]
+    fn test_days_in_provided_year_observational() {
+        // -1245 1 1 = -214526 (R.D Date)
+        // 1518 1 1 = 764589 (R.D Date)
+        let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
+            .map(|year| IslamicObservational::days_in_provided_year(year) as i64)
+            .sum();
+        let expected_number_of_days = IslamicObservational::fixed_from_islamic(IslamicDateInner(
+            ArithmeticDate::new_from_lunar_ordinals(END_YEAR, 1, 1).unwrap(),
+        )) - IslamicObservational::fixed_from_islamic(
+            IslamicDateInner(ArithmeticDate::new_from_lunar_ordinals(START_YEAR, 1, 1).unwrap()),
+        ); // The number of days between Islamic years -1245 and 1518
+        let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
+
+        assert!(
+            (sum_days_in_year - expected_number_of_days).abs() <= tolerance,
+            "Difference between sum_days_in_year and expected_number_of_days is more than the tolerance"
+        );
+    }
+
+    #[ignore]
+    #[test]
+    fn test_days_in_provided_year_ummalqura() {
+        // -1245 1 1 = -214528 (R.D Date)
+        // 1518 1 1 = 764588 (R.D Date)
+        let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
+            .map(|year| UmmAlQura::days_in_provided_year(year) as i64)
+            .sum();
+
+        let expected_number_of_days = UmmAlQura::fixed_from_saudi_islamic(UmmAlQuraDateInner(
+            ArithmeticDate::new_from_lunar_ordinals(END_YEAR, 1, 1).unwrap(),
+        )) - UmmAlQura::fixed_from_saudi_islamic(UmmAlQuraDateInner(
+            ArithmeticDate::new_from_lunar_ordinals(START_YEAR, 1, 1).unwrap(),
+        )); // The number of days between UmmAlQura Islamic years -1245 and 1518
+
+        assert_eq!(sum_days_in_year, expected_number_of_days);
     }
 }
