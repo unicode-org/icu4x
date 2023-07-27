@@ -71,7 +71,6 @@ mod transform;
 
 use elsa::sync::FrozenMap;
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
-use icu_collator::provider::CollationReorderingV1Marker;
 use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::datagen::*;
@@ -240,12 +239,6 @@ impl DatagenProvider {
             return Ok(supported_locales);
         }
 
-        // Special case: collator/reord@1 does not have root data
-        // FIXME
-        if key == CollationReorderingV1Marker::KEY {
-            return Ok(supported_locales);
-        }
-
         let LocaleInclude::Explicit(explicit) = locale_include else {
             unreachable!("Pre-processed LocaleInclued has only 2 variants")
         };
@@ -308,7 +301,7 @@ impl DatagenProvider {
         &self,
         key: DataKey,
         locale: &DataLocale,
-    ) -> Result<DataPayload<ExportMarker>, DataError> {
+    ) -> Result<Option<DataPayload<ExportMarker>>, DataError> {
         log::trace!("Generating key/locale: {key}/{locale:}");
         struct DatagenProviderForFallback<'a>(&'a DatagenProvider);
         impl DynamicDataProvider<ExportMarker> for DatagenProviderForFallback<'_> {
@@ -328,10 +321,27 @@ impl DatagenProvider {
             locale,
             metadata: Default::default(),
         };
-        provider_with_fallback
+        match provider_with_fallback
             .load_data(key, req)
-            .and_then(DataResponse::take_payload)
             .map_err(|e| e.with_req(key, req))
+        {
+            Ok(data_response) => {
+                #[allow(clippy::unwrap_used)] // LocaleFallbackProvider populates it
+                if data_response.metadata.locale.as_ref().unwrap().is_empty() && !locale.is_empty()
+                {
+                    log::warn!("Falling back to und: {key}/{locale}");
+                }
+                Ok(Some(data_response.take_payload()?))
+            }
+            Err(DataError {
+                kind: DataErrorKind::MissingLocale,
+                ..
+            }) => {
+                log::warn!("Could not find data for: {key}/{locale}");
+                Ok(None)
+            }
+            Err(e) => Err(e),
+        }
     }
 
     /// Exports data for the set of keys to the given exporter.
@@ -382,14 +392,13 @@ impl DatagenProvider {
                     | (options::FallbackMode::PreferredForExporter, true) => {
                         let payloads =
                             FrozenMap::<DataLocale, Box<DataPayload<ExportMarker>>>::new();
-                        locales_to_export
-                            .into_par_iter()
-                            .try_for_each(|locale| {
-                                let payload = provider.load_with_fallback(key, &locale)?;
+                        locales_to_export.into_par_iter().try_for_each(|locale| {
+                            let payload = provider.load_with_fallback(key, &locale)?;
+                            if let Some(payload) = payload {
                                 payloads.insert(locale, Box::new(payload));
-                                Ok::<(), DataError>(())
-                            })
-                            .map_err(|e| e.with_key(key))?;
+                            }
+                            Ok::<(), DataError>(())
+                        })?;
                         let payloads = payloads
                             .into_tuple_vec()
                             .into_iter()
@@ -422,13 +431,13 @@ impl DatagenProvider {
                     (options::FallbackMode::Hybrid, _)
                     | (options::FallbackMode::PreferredForExporter, false)
                     | (options::FallbackMode::Preresolved, _) => {
-                        locales_to_export
-                            .into_par_iter()
-                            .try_for_each(|locale| {
-                                let payload = provider.load_with_fallback(key, &locale)?;
-                                exporter.put_payload(key, &locale, &payload)
-                            })
-                            .map_err(|e| e.with_key(key))?;
+                        locales_to_export.into_par_iter().try_for_each(|locale| {
+                            let payload = provider.load_with_fallback(key, &locale)?;
+                            if let Some(payload) = payload {
+                                exporter.put_payload(key, &locale, &payload)?;
+                            }
+                            Ok::<(), DataError>(())
+                        })?;
                     }
                 };
 

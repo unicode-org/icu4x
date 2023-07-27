@@ -77,6 +77,7 @@ fn test_fallback_options() {
     let mut options = Options::default();
 
     let explicit_locales: HashSet<LanguageIdentifier> = [
+        langid!("arc"), // Aramaic, not in CLDR
         langid!("ar-EG"),
         langid!("en-GB"),
         langid!("es"),
@@ -222,6 +223,7 @@ fn test_fallback_options() {
         "ar-EG",           // explicit locale
         "ar-EG-u-nu-latn", // descendant of ar-EG
         // "ar-u-nu-latn", // ??? should this be included?
+        "arc",    // Aramaic, inheriting from und
         "en",     // ancestor of en-GB
         "en-001", // ancestor of en-GB
         "en-GB",  // explicit locale not in supported locales
@@ -255,6 +257,7 @@ fn test_fallback_options() {
         "ar",
         // "ar-EG", (same as 'ar')
         "ar-EG-u-nu-latn",
+        // "arc", (same as 'und')
         // "en", (same as 'und')
         // "en-001", (same as 'und')
         // "en-GB", (same as 'und')
@@ -287,6 +290,7 @@ fn test_fallback_options() {
     let explicit_preresolved_locales: Vec<&str> = vec![
         "ar-EG",
         "ar-EG-u-nu-latn", // extensions included even in preresolved mode
+        "arc",
         "en-GB",
         "es",
         "sr-ME",
