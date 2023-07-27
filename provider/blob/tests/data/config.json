@@ -1,0 +1,16 @@
+{
+  "keys": {
+    "Explicit": [
+      "core/helloworld@1"
+    ]
+  },
+  "cldr": "None",
+  "icu_export": "None",
+  "segmenter_lstm": "None",
+  "export": {
+    "Blob": {
+      "path": "hello_world.postcard"
+    }
+  },
+  "overwrite": true
+}

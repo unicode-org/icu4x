@@ -177,8 +177,12 @@ impl DataExporter for FilesystemExporter {
         let mut path_buf = self.root.clone().into_os_string();
         write!(&mut path_buf, "/{key}").expect("infallible");
 
-        fs::create_dir_all(&path_buf)
-            .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
+        if !Path::new(&path_buf).exists() {
+            fs::create_dir_all(&path_buf)
+                .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
+            write!(&mut path_buf, "/.empty").expect("infallible");
+            fs::File::create(Path::new(&path_buf))?;
+        }
 
         Ok(())
     }

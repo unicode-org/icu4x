@@ -5,6 +5,7 @@
 use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
+use crate::kinda_sorta_dangling::KindaSortaDangling;
 use crate::trait_hack::YokeTraitHack;
 use crate::Yokeable;
 use core::marker::PhantomData;
@@ -77,7 +78,7 @@ use alloc::sync::Arc;
 pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     // must be the first field for drop order
     // this will have a 'static lifetime parameter, that parameter is a lie
-    yokeable: Y,
+    yokeable: KindaSortaDangling<Y>,
     cart: C,
 }
 
@@ -154,7 +155,7 @@ where
     {
         let deserialized = f(cart.deref());
         Self {
-            yokeable: unsafe { Y::make(deserialized) },
+            yokeable: KindaSortaDangling::new(unsafe { Y::make(deserialized) }),
             cart,
         }
     }
@@ -170,7 +171,7 @@ where
     {
         let deserialized = f(cart.deref())?;
         Ok(Self {
-            yokeable: unsafe { Y::make(deserialized) },
+            yokeable: KindaSortaDangling::new(unsafe { Y::make(deserialized) }),
             cart,
         })
     }
@@ -443,7 +444,10 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// assert_eq!(yoke.get(), "hello");
     /// ```
     pub fn new_always_owned(yokeable: Y) -> Self {
-        Self { yokeable, cart: () }
+        Self {
+            yokeable: KindaSortaDangling::new(yokeable),
+            cart: (),
+        }
     }
 
     /// Obtain the yokeable out of a `Yoke<Y, ()>`
@@ -452,7 +456,7 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// fine for `Yoke<Y, ()>` since there are no actual internal
     /// references
     pub fn into_yokeable(self) -> Y {
-        self.yokeable
+        self.yokeable.into_inner()
     }
 }
 
@@ -483,7 +487,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     /// ```
     pub const fn new_owned(yokeable: Y) -> Self {
         Self {
-            yokeable,
+            yokeable: KindaSortaDangling::new(yokeable),
             cart: None,
         }
     }
@@ -495,7 +499,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     pub fn try_into_yokeable(self) -> Result<Y, Self> {
         match self.cart {
             Some(_) => Err(self),
-            None => Ok(self.yokeable),
+            None => Ok(self.yokeable.into_inner()),
         }
     }
 }
@@ -541,7 +545,7 @@ where
         // We have an &T not a T, and we can clone YokeTraitHack<T>
         let this_hack = YokeTraitHack(this).into_ref();
         Yoke {
-            yokeable: unsafe { Y::make(this_hack.clone().0) },
+            yokeable: KindaSortaDangling::new(unsafe { Y::make(this_hack.clone().0) }),
             cart: self.cart.clone(),
         }
     }
@@ -655,9 +659,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
             PhantomData<&'a ()>,
         ) -> <P as Yokeable<'a>>::Output,
     {
-        let p = f(self.yokeable.transform_owned(), PhantomData);
+        let p = f(self.yokeable.into_inner().transform_owned(), PhantomData);
         Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart,
         }
     }
@@ -678,7 +682,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     {
         let p = f(self.get(), PhantomData);
         Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart.clone(),
         }
     }
@@ -753,9 +757,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
             PhantomData<&'a ()>,
         ) -> Result<<P as Yokeable<'a>>::Output, E>,
     {
-        let p = f(self.yokeable.transform_owned(), PhantomData)?;
+        let p = f(self.yokeable.into_inner().transform_owned(), PhantomData)?;
         Ok(Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart,
         })
     }
@@ -776,7 +780,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     {
         let p = f(self.get(), PhantomData)?;
         Ok(Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart.clone(),
         })
     }
@@ -797,9 +801,13 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     where
         P: for<'a> Yokeable<'a>,
     {
-        let p = f(self.yokeable.transform_owned(), capture, PhantomData);
+        let p = f(
+            self.yokeable.into_inner().transform_owned(),
+            capture,
+            PhantomData,
+        );
         Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart,
         }
     }
@@ -824,7 +832,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     {
         let p = f(self.get(), capture, PhantomData);
         Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart.clone(),
         }
     }
@@ -847,9 +855,13 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     where
         P: for<'a> Yokeable<'a>,
     {
-        let p = f(self.yokeable.transform_owned(), capture, PhantomData)?;
+        let p = f(
+            self.yokeable.into_inner().transform_owned(),
+            capture,
+            PhantomData,
+        )?;
         Ok(Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart,
         })
     }
@@ -875,7 +887,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     {
         let p = f(self.get(), capture, PhantomData)?;
         Ok(Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart.clone(),
         })
     }

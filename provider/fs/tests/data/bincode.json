@@ -1,0 +1,17 @@
+{
+    "keys": {
+      "Explicit": [
+        "core/helloworld@1"
+      ]
+    },
+    "cldr": "None",
+    "icu_export": "None",
+    "segmenter_lstm": "None",
+    "export": {
+      "Fs": {
+        "path": "bincode",
+        "syntax": "Bincode"
+      }
+    },
+    "overwrite": true
+  }

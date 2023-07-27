@@ -45,66 +45,73 @@ fn overview_bench(c: &mut Criterion) {
     });
 }
 fn greek_uppercasing(c: &mut Criterion) {
-    let casemapper = CaseMapper::new();
-    let root = langid!("und");
-    let el = langid!("el");
+    #[cfg(feature = "bench")]
+    {
+        let casemapper = CaseMapper::new();
+        let root = langid!("und");
+        let el = langid!("el");
 
-    let iliad_lowercase = casemapper.lowercase_to_string(ILIAD, &root);
-    let decomposer = DecomposingNormalizer::new_nfd();
-    let nfd = decomposer.normalize_utf8(ILIAD.as_bytes());
-    let nfd_lowercase = decomposer.normalize_utf8(iliad_lowercase.as_bytes());
+        let iliad_lowercase = casemapper.lowercase_to_string(ILIAD, &root);
+        let decomposer = DecomposingNormalizer::new_nfd();
+        let nfd = decomposer.normalize_utf8(ILIAD.as_bytes());
+        let nfd_lowercase = decomposer.normalize_utf8(iliad_lowercase.as_bytes());
 
-    let mut group = c.benchmark_group("icu_casemap/greek_uppercasing/precomposed/upper_from_title");
-    group.bench_function("root", |b| {
-        b.iter(|| {
-            black_box(casemapper.uppercase_to_string(black_box(ILIAD), &root));
+        let mut group =
+            c.benchmark_group("icu_casemap/greek_uppercasing/precomposed/upper_from_title");
+        group.bench_function("root", |b| {
+            b.iter(|| {
+                black_box(casemapper.uppercase_to_string(black_box(ILIAD), &root));
+            });
         });
-    });
-    group.bench_function("greek", |b| {
-        b.iter(|| {
-            black_box(casemapper.uppercase_to_string(black_box(ILIAD), &el));
+        group.bench_function("greek", |b| {
+            b.iter(|| {
+                black_box(casemapper.uppercase_to_string(black_box(ILIAD), &el));
+            });
         });
-    });
-    group.finish();
+        group.finish();
 
-    let mut group = c.benchmark_group("icu_casemap/greek_uppercasing/precomposed/upper_from_lower");
-    group.bench_function("root", |b| {
-        b.iter(|| {
-            black_box(casemapper.uppercase_to_string(black_box(&iliad_lowercase), &root));
+        let mut group =
+            c.benchmark_group("icu_casemap/greek_uppercasing/precomposed/upper_from_lower");
+        group.bench_function("root", |b| {
+            b.iter(|| {
+                black_box(casemapper.uppercase_to_string(black_box(&iliad_lowercase), &root));
+            });
         });
-    });
-    group.bench_function("greek", |b| {
-        b.iter(|| {
-            black_box(casemapper.uppercase_to_string(black_box(&iliad_lowercase), &el));
+        group.bench_function("greek", |b| {
+            b.iter(|| {
+                black_box(casemapper.uppercase_to_string(black_box(&iliad_lowercase), &el));
+            });
         });
-    });
-    group.finish();
+        group.finish();
 
-    let mut group = c.benchmark_group("icu_casemap/greek_uppercasing/decomposed/upper_from_title");
-    group.bench_function("root", |b| {
-        b.iter(|| {
-            black_box(casemapper.uppercase_to_string(black_box(&nfd), &root));
+        let mut group =
+            c.benchmark_group("icu_casemap/greek_uppercasing/decomposed/upper_from_title");
+        group.bench_function("root", |b| {
+            b.iter(|| {
+                black_box(casemapper.uppercase_to_string(black_box(&nfd), &root));
+            });
         });
-    });
-    group.bench_function("greek", |b| {
-        b.iter(|| {
-            black_box(casemapper.uppercase_to_string(black_box(&nfd), &el));
+        group.bench_function("greek", |b| {
+            b.iter(|| {
+                black_box(casemapper.uppercase_to_string(black_box(&nfd), &el));
+            });
         });
-    });
-    group.finish();
+        group.finish();
 
-    let mut group = c.benchmark_group("icu_casemap/greek_uppercasing/decomposed/upper_from_lower");
-    group.bench_function("root", |b| {
-        b.iter(|| {
-            black_box(casemapper.uppercase_to_string(black_box(&nfd_lowercase), &root));
+        let mut group =
+            c.benchmark_group("icu_casemap/greek_uppercasing/decomposed/upper_from_lower");
+        group.bench_function("root", |b| {
+            b.iter(|| {
+                black_box(casemapper.uppercase_to_string(black_box(&nfd_lowercase), &root));
+            });
         });
-    });
-    group.bench_function("greek", |b| {
-        b.iter(|| {
-            black_box(casemapper.uppercase_to_string(black_box(&nfd_lowercase), &el));
+        group.bench_function("greek", |b| {
+            b.iter(|| {
+                black_box(casemapper.uppercase_to_string(black_box(&nfd_lowercase), &el));
+            });
         });
-    });
-    group.finish();
+        group.finish();
+    }
 }
 criterion_group!(benches, overview_bench, greek_uppercasing);
 criterion_main!(benches);

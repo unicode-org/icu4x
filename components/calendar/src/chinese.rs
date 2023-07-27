@@ -172,7 +172,7 @@ impl Calendar for Chinese {
 
     //Count the number of months in a given year, specified by providing a date
     // from that year
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         Self::days_in_provided_year(date.0 .0.year)
     }
 

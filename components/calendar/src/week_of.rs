@@ -128,9 +128,9 @@ impl WeekCalculator {
     ) -> Result<WeekOf, CalendarError> {
         week_of(
             self,
-            day_of_year_info.days_in_prev_year as u16,
-            day_of_year_info.days_in_year as u16,
-            day_of_year_info.day_of_year as u16,
+            day_of_year_info.days_in_prev_year,
+            day_of_year_info.days_in_year,
+            day_of_year_info.day_of_year,
             iso_weekday,
         )
     }

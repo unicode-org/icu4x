@@ -24,9 +24,6 @@ mod collator_serde;
 // Collations removed by default from ICU4X data, plus all starting with "search".
 static DEFAULT_REMOVED_COLLATIONS: &[&str] = &["big5han", "gb2312"];
 
-#[cfg(test)]
-mod test;
-
 /// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
 fn has_legacy_swedish_variants(source: &crate::SourceData) -> bool {
     source
@@ -254,3 +251,105 @@ collation_provider!(
     ),
     toml_data
 );
+
+#[test]
+fn test_collation_filtering() {
+    use icu_locid::langid;
+    use std::collections::BTreeSet;
+
+    #[derive(Debug)]
+    struct TestCase<'a> {
+        include_collations: &'a [&'a str],
+        language: LanguageIdentifier,
+        expected: &'a [&'a str],
+    }
+    let cases = [
+        TestCase {
+            include_collations: &[],
+            language: langid!("zh"),
+            expected: &["zh", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"],
+        },
+        TestCase {
+            include_collations: &["gb2312"],
+            language: langid!("zh"),
+            expected: &[
+                "zh",
+                "zh-u-co-gb2312",
+                "zh-u-co-stroke",
+                "zh-u-co-unihan",
+                "zh-u-co-zhuyin",
+            ],
+        },
+        TestCase {
+            include_collations: &["big5han"],
+            language: langid!("zh"),
+            expected: &[
+                "zh",
+                "zh-u-co-big5han",
+                "zh-u-co-stroke",
+                "zh-u-co-unihan",
+                "zh-u-co-zhuyin",
+            ],
+        },
+        TestCase {
+            include_collations: &["gb2312", "search*"],
+            language: langid!("zh"),
+            expected: &[
+                "zh",
+                "zh-u-co-gb2312",
+                "zh-u-co-stroke",
+                "zh-u-co-unihan",
+                "zh-u-co-zhuyin",
+            ],
+        },
+        TestCase {
+            include_collations: &[],
+            language: langid!("ko"),
+            expected: &["ko", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search"],
+            language: langid!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["searchjl"],
+            language: langid!("ko"),
+            expected: &["ko", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search", "searchjl"],
+            language: langid!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search*", "big5han"],
+            language: langid!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+    ];
+    for cas in cases {
+        let mut provider = crate::DatagenProvider::for_test();
+        provider.source.options.collations = cas
+            .include_collations
+            .iter()
+            .copied()
+            .map(String::from)
+            .collect();
+        provider.source.options.locales =
+            crate::options::LocaleInclude::Explicit([cas.language.clone()].into_iter().collect());
+        let resolved_locales =
+            IterableDataProvider::<CollationDataV1Marker>::supported_locales(&provider)
+                .unwrap()
+                .into_iter()
+                .map(|l| l.to_string())
+                .collect::<BTreeSet<_>>();
+        let expected_locales = cas
+            .expected
+            .iter()
+            .copied()
+            .map(String::from)
+            .collect::<BTreeSet<_>>();
+        assert_eq!(resolved_locales, expected_locales, "{cas:?}");
+    }
+}
