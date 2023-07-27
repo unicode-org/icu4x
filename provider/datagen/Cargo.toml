@@ -131,13 +131,10 @@ required-features = ["provider_fs", "use_wasm"]
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
-skip_feature_sets = [["use_icu4c"]]
+skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
-# Always enable wasm and the experimental deps
-# wasm because no-wasm mode is basically just panicky and wasm pulls in a lot of deps which we don't want
-# to have contribute to thrashing incremental caches, the experimental deps because we want to all-or-nothing them
+# Always the experimental deps because we want to all-or-nothing them
 # and the nothing case is already tested in regular check CI
-# If use_wasm is ever removed from here, please add it to skip_feature_sets with icu4c
-always_include_features = ["use_wasm", "icu_casemap", "icu_compactdecimal", "icu_displaynames", "icu_relativetime"]
+always_include_features = ["icu_casemap", "icu_compactdecimal", "icu_displaynames", "icu_relativetime"]
 # We have a *lot* of features here
 max_combination_size = 2
