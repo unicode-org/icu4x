@@ -344,7 +344,7 @@ impl Date<Dangi> {
 }
 
 impl DateTime<Dangi> {
-    /// Construct a new Dangi DateTime from integers. See [`try_new_dangi_date`].
+    /// Construct a new Dangi DateTime from integers. See `try_new_dangi_date`.
     ///
     /// ```rust
     /// use icu::calendar::DateTime;
