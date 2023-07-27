@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! This file contains important structs and functions relating to location,
-//! time, and astronomy; these are intended for calender calculations and based off
-//! _Calendrical Calculations_ by Reingold & Dershowitz.
+//! time, and astronomy; these are intended for calender calculations and mostly
+//! based on _Calendrical Calculations_ by Reingold & Dershowitz.
 
 use crate::error::LocationOutOfBoundsError;
 use crate::helpers::{
