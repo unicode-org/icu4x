@@ -7,6 +7,7 @@ use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
 use icu_locid::LanguageIdentifier;
+use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::prelude::*;
 use std::any::Any;
 use std::collections::{BTreeMap, HashSet};
@@ -33,7 +34,7 @@ pub struct SourceData {
     segmenter_lstm_paths: Arc<SerdeCache>,
     // TODO: move this out when we decide we can break the exhaustiveness of DatagenProvider
     pub(crate) options: Options,
-    pub(crate) fallbacker: Option<icu_locid_transform::fallback::LocaleFallbacker>,
+    pub(crate) fallbacker: Option<LocaleFallbacker>,
     pub(crate) implied_locales: Vec<LanguageIdentifier>,
 }
 

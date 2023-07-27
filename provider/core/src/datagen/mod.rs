@@ -78,11 +78,10 @@ pub trait DataExporter: Sync {
         Ok(())
     }
 
-    /// Returns the preferred built-in fallback mode for this provider.
-    ///
-    /// If a provider does not support built-in fallback, `None` should be returned.
-    fn preferred_built_in_fallback_mode(&self) -> Option<BuiltInFallbackMode> {
-        None
+    /// Returns whether the provider supports built-in fallback. If `true`, the provider must
+    /// implement [`Self::flush_with_built_in_fallback()`] for [`BuiltInFallbackMode::Standard`].
+    fn supports_built_in_fallback(&self) -> bool {
+        false
     }
 }
 

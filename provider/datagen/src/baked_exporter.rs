@@ -403,8 +403,8 @@ impl DataExporter for BakedExporter {
         self.close_internal()
     }
 
-    fn preferred_built_in_fallback_mode(&self) -> Option<BuiltInFallbackMode> {
-        Some(BuiltInFallbackMode::Standard)
+    fn supports_built_in_fallback(&self) -> bool {
+        true
     }
 }
 

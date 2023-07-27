@@ -79,6 +79,7 @@ use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_locid_transform::fallback::LocaleFallbackerBorrowed;
 use icu_locid_transform::fallback::LocaleFallbackerWithConfig;
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use options::{FallbackMode, LocaleInclude};
 #[allow(deprecated)] // ugh
 pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
@@ -192,9 +193,9 @@ impl DatagenProvider {
 
         let mut provider = Self { source };
 
-        if provider.source.options.fallback != options::FallbackMode::Preresolved {
-            provider.source.fallbacker = Some(LocaleFallbacker::try_new_unstable(&provider)?);
-        }
+        // TODO: Consider figuring out the cases where we don't need the fallbacker.
+        // We need it most of the time, so just pre-compute it here.
+        provider.source.fallbacker = Some(LocaleFallbacker::try_new_unstable(&provider)?);
 
         Ok(provider)
     }
@@ -227,11 +228,7 @@ impl DatagenProvider {
 
     /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
     /// provider's options bag. The locales may be later optionally deduplicated for fallback.
-    pub(crate) fn select_locales_for_key(
-        &self,
-        key: DataKey,
-        fallbacker_with_config: LocaleFallbackerWithConfig,
-    ) -> Result<HashSet<DataLocale>, DataError> {
+    fn select_locales_for_key(&self, key: DataKey) -> Result<HashSet<DataLocale>, DataError> {
         let supported_locales: HashSet<DataLocale> = self
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?
@@ -264,6 +261,12 @@ impl DatagenProvider {
         }
 
         // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
+        let fallbacker_with_config = self
+            .source
+            .fallbacker
+            .as_ref()
+            .unwrap()
+            .for_config(LocaleFallbackConfig::from_key(key));
         let explicit: HashSet<DataLocale> = explicit.into_iter().map(|d| d.into()).collect();
         let mut implicit = HashSet::new();
         // TODO: Make including the default locale configurable
@@ -295,6 +298,37 @@ impl DatagenProvider {
         Ok(result)
     }
 
+    fn load_with_fallback(
+        &self,
+        key: DataKey,
+        locale: &DataLocale,
+    ) -> Result<DataPayload<ExportMarker>, DataError> {
+        log::trace!("Generating for key/locale: {key} {locale:?}");
+        struct DatagenProviderForFallback<'a>(&'a DatagenProvider);
+        impl DynamicDataProvider<ExportMarker> for DatagenProviderForFallback<'_> {
+            fn load_data(
+                &self,
+                key: DataKey,
+                req: DataRequest,
+            ) -> Result<DataResponse<ExportMarker>, DataError> {
+                log::trace!("Generating for key/locale: {key} {req:?} [might be fallback]");
+                self.0.load_data(key, req)
+            }
+        }
+        let provider_with_fallback = LocaleFallbackProvider::new_with_fallbacker(
+            DatagenProviderForFallback(self),
+            self.source.fallbacker.clone().unwrap(),
+        );
+        let req = DataRequest {
+            locale: &locale,
+            metadata: Default::default(),
+        };
+        provider_with_fallback
+            .load_data(key, req)
+            .and_then(DataResponse::take_payload)
+            .map_err(|e| e.with_req(key, req))
+    }
+
     /// Exports data for the set of keys to the given exporter.
     ///
     /// See
@@ -318,9 +352,6 @@ impl DatagenProvider {
         ) -> Result<(), DataError> {
             use rayon_prelude::*;
 
-            // TODO: Lazy-initialize the fallbacker?
-            let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
-
             keys.into_par_iter().try_for_each(|key| {
                 log::info!("Generating key {key}");
 
@@ -335,44 +366,21 @@ impl DatagenProvider {
                         .map_err(|e| e.with_req(key, Default::default()));
                 }
 
-                let fallbacker_with_config =
-                    fallbacker.for_config(LocaleFallbackConfig::from_key(key));
-
-                let locales_to_export =
-                    provider.select_locales_for_key(key, fallbacker_with_config)?;
-
-                fn get_payload(
-                    provider: &DatagenProvider,
-                    key: DataKey,
-                    locale: &DataLocale,
-                ) -> Result<DataPayload<ExportMarker>, DataError> {
-                    log::trace!("Generating for key/locale: {key} {locale:?}");
-                    let req = DataRequest {
-                        locale: &locale,
-                        metadata: Default::default(),
-                    };
-                    provider
-                        .load_data(key, req)
-                        .and_then(DataResponse::take_payload)
-                        .map_err(|e| e.with_req(key, req))
-                }
+                let locales_to_export = provider.select_locales_for_key(key)?;
 
                 match (
                     provider.source.options.fallback,
-                    exporter.preferred_built_in_fallback_mode(),
+                    exporter.supports_built_in_fallback(),
                 ) {
                     (options::FallbackMode::Runtime, _)
                     | (options::FallbackMode::RuntimeManual, _)
-                    | (
-                        options::FallbackMode::PreferredForExporter,
-                        Some(BuiltInFallbackMode::Standard),
-                    ) => {
+                    | (options::FallbackMode::PreferredForExporter, true) => {
                         let payloads =
                             FrozenMap::<DataLocale, Box<DataPayload<ExportMarker>>>::new();
                         locales_to_export
                             .into_par_iter()
                             .try_for_each(|locale| {
-                                let payload = get_payload(provider, key, &locale)?;
+                                let payload = provider.load_with_fallback(key, &locale)?;
                                 payloads.insert(locale, Box::new(payload));
                                 Ok::<(), DataError>(())
                             })
@@ -381,6 +389,12 @@ impl DatagenProvider {
                             .into_tuple_vec()
                             .into_iter()
                             .collect::<HashMap<_, _>>();
+                        let fallbacker_with_config = provider
+                            .source
+                            .fallbacker
+                            .as_ref()
+                            .unwrap()
+                            .for_config(LocaleFallbackConfig::from_key(key));
                         'outer: for (locale, payload) in payloads.iter() {
                             let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                             while !iter.get().is_empty() {
@@ -395,31 +409,26 @@ impl DatagenProvider {
                         }
                     }
                     (options::FallbackMode::Hybrid, _)
-                    | (options::FallbackMode::PreferredForExporter, None)
+                    | (options::FallbackMode::PreferredForExporter, false)
                     | (options::FallbackMode::Preresolved, _) => {
                         locales_to_export
                             .into_par_iter()
                             .try_for_each(|locale| {
-                                let payload = get_payload(provider, key, &locale)?;
+                                let payload = provider.load_with_fallback(key, &locale)?;
                                 exporter.put_payload(key, &locale, &payload)
                             })
                             .map_err(|e| e.with_key(key))?;
-                    }
-                    // Because icu_provider::datagen::FallbackMode is non_exhaustive
-                    (options::FallbackMode::PreferredForExporter, _) => {
-                        panic!("Unexpected preferred fallback mode needs to be handled")
                     }
                 };
 
                 match (
                     provider.source.options.fallback,
-                    exporter.preferred_built_in_fallback_mode(),
+                    exporter.supports_built_in_fallback(),
                 ) {
                     (options::FallbackMode::Runtime, _)
-                    | (
-                        options::FallbackMode::PreferredForExporter,
-                        Some(BuiltInFallbackMode::Standard),
-                    ) => exporter.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard),
+                    | (options::FallbackMode::PreferredForExporter, true) => {
+                        exporter.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard)
+                    }
                     (_, _) => exporter.flush(key),
                 }
                 .map_err(|e| e.with_key(key))
