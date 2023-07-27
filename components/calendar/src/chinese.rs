@@ -434,7 +434,7 @@ impl Chinese {
     pub fn chinese_new_year_on_or_before_iso(iso: Date<Iso>) -> Date<Iso> {
         let iso_inner = iso.inner;
         let fixed = Iso::fixed_from_iso(iso_inner);
-        let result_fixed = Inner::new_year_on_or_before_fixed_date(fixed);
+        let result_fixed = Inner::new_year_on_or_before_fixed_date(fixed, None).0;
         Iso::iso_from_fixed(result_fixed)
     }
 

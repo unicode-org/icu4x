@@ -7,25 +7,21 @@ mod fixtures;
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
-use icu_calendar::{AsCalendar, Calendar, Date};
-
-fn bench_date<A: AsCalendar>(date: Date<A>) {
-    // Retrieving vals
-    let _ = black_box(date.year().number);
-    let _ = black_box(date.month().ordinal);
-    let _ = black_box(date.day_of_month().0);
-}
+use icu_calendar::{Calendar, Date};
 
 fn bench_calendar<C: Copy + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,
     name: &str,
     calendar: C,
 ) {
+    let iso = Date::try_new_iso_date(1970, 1, 2).unwrap();
     group.bench_function(name, |b| {
         b.iter(|| {
-            let iso = Date::try_new_iso_date(1970, 1, 2).unwrap();
-            let converted = iso.to_calendar(calendar);
-            bench_date(converted);
+            let converted = black_box(iso).to_calendar(calendar);
+            let year = black_box(converted.year().number);
+            let month = black_box(converted.month().ordinal);
+            let day = black_box(converted.day_of_month().0);
+            black_box((year, month, day))
         })
     });
 }
