@@ -2,11 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::options::{LocaleInclude, Options};
+use crate::options::Options;
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
-use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::prelude::*;
 use std::any::Any;
@@ -35,7 +34,6 @@ pub struct SourceData {
     // TODO: move this out when we decide we can break the exhaustiveness of DatagenProvider
     pub(crate) options: Options,
     pub(crate) fallbacker: Option<LocaleFallbacker>,
-    pub(crate) implied_locales: Vec<LanguageIdentifier>,
 }
 
 #[cfg(feature = "networking")]
@@ -83,7 +81,6 @@ impl SourceData {
             segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
             options,
             fallbacker: None,
-            implied_locales: Vec::new(),
         }
     }
 

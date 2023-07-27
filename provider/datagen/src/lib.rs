@@ -73,17 +73,19 @@ mod transform;
 
 use elsa::sync::FrozenMap;
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
-use icu_locid::langid;
-use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbacker;
-use icu_locid_transform::fallback::LocaleFallbackerBorrowed;
-use icu_locid_transform::fallback::LocaleFallbackerWithConfig;
+use icu_provider::datagen::*;
+use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
+use memchr::memmem;
 use options::{FallbackMode, LocaleInclude};
 #[allow(deprecated)] // ugh
 pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
 pub use source::SourceData;
+use std::collections::HashMap;
+use std::collections::HashSet;
+use std::path::Path;
 
 #[cfg(feature = "provider_baked")]
 pub mod baked_exporter;
@@ -112,15 +114,6 @@ pub mod prelude {
     #[doc(hidden)]
     pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out};
 }
-
-use icu_locid::subtags::Language;
-use icu_provider::datagen::*;
-use icu_provider::prelude::*;
-use memchr::memmem;
-use std::collections::HashMap;
-use std::collections::HashSet;
-use std::path::Path;
-use std::sync::RwLock;
 
 #[cfg(feature = "rayon")]
 pub(crate) use rayon::prelude as rayon_prelude;
@@ -275,6 +268,7 @@ impl DatagenProvider {
             let mut iter = fallbacker_with_config.fallback_for(locale.clone());
             while !iter.get().is_empty() {
                 implicit.insert(iter.get().clone());
+                iter.step();
             }
         }
 
@@ -290,6 +284,7 @@ impl DatagenProvider {
                     if explicit.contains(iter.get()) {
                         return true;
                     }
+                    iter.step();
                 }
                 false
             })
@@ -298,6 +293,7 @@ impl DatagenProvider {
         Ok(result)
     }
 
+    /// Loads a `DataPayload<ExportMarker>` with locale fallback enabled.
     fn load_with_fallback(
         &self,
         key: DataKey,
@@ -400,8 +396,10 @@ impl DatagenProvider {
                             while !iter.get().is_empty() {
                                 iter.step();
                                 if let Some(parent_payload) = payloads.get(iter.get()) {
-                                    // Found a match: don't need to write anything
-                                    continue 'outer;
+                                    if parent_payload == payload {
+                                        // Found a match: don't need to write anything
+                                        continue 'outer;
+                                    }
                                 }
                             }
                             // Did not find a match: export this payload
