@@ -493,7 +493,7 @@ impl BakedExporter {
             };
 
             match fallback_mode {
-                Some(BuiltInFallbackMode::Standard) => {
+                None => {
                     let search = search(quote!(req.locale));
                     quote! {
                         #(#statics)*
@@ -507,7 +507,7 @@ impl BakedExporter {
                         }
                     }
                 }
-                None => {
+                Some(BuiltInFallbackMode::Standard) => {
                     self.dependencies.insert("icu_locid_transform/data");
                     let search_direct = search(quote!(req.locale));
                     let search_iterator = search(quote!(fallback_iterator.get()));

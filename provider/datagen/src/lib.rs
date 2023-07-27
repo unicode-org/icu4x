@@ -235,7 +235,12 @@ impl DatagenProvider {
         let fallback_mode = self.source.options.fallback;
 
         // Case 1: `LocaleInclude::All` simply exports all supported locales for this key.
-        if matches!(locale_include, LocaleInclude::All) {
+        // Also include special cases like Segmenter that should skip the rest of this function.
+        if matches!(locale_include, LocaleInclude::All)
+            || key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
+            || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
+            || key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY
+        {
             return Ok(supported_locales);
         }
 
@@ -321,15 +326,12 @@ impl DatagenProvider {
             locale,
             metadata: Default::default(),
         };
-        match provider_with_fallback
-            .load_data(key, req)
-            .map_err(|e| e.with_req(key, req))
-        {
+        match provider_with_fallback.load_data(key, req) {
             Ok(data_response) => {
                 #[allow(clippy::unwrap_used)] // LocaleFallbackProvider populates it
                 if data_response.metadata.locale.as_ref().unwrap().is_empty() && !locale.is_empty()
                 {
-                    log::warn!("Falling back to und: {key}/{locale}");
+                    log::debug!("Falling back to und: {key}/{locale}");
                 }
                 Ok(Some(data_response.take_payload()?))
             }
@@ -337,10 +339,10 @@ impl DatagenProvider {
                 kind: DataErrorKind::MissingLocale,
                 ..
             }) => {
-                log::warn!("Could not find data for: {key}/{locale}");
+                log::debug!("Could not find data for: {key}/{locale}");
                 Ok(None)
             }
-            Err(e) => Err(e),
+            Err(e) => Err(e.with_req(key, req)),
         }
     }
 
