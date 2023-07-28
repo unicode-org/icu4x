@@ -332,7 +332,7 @@ impl Julian {
 impl Date<Julian> {
     /// Construct new Julian Date.
     ///
-    /// Zero and negative years are in BC, with year 0 = 1 BC
+    /// Years are arithmetic, meaning there is a year 0. Zero and negative years are in BC, with year 0 = 1 BC
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -358,7 +358,7 @@ impl Date<Julian> {
 impl DateTime<Julian> {
     /// Construct a new Julian datetime from integers.
     ///
-    /// Zero and negative years are in BC, with year 0 = 1 BC
+    /// Years are arithmetic, meaning there is a year 0. Zero and negative years are in BC, with year 0 = 1 BC
     ///
     /// ```rust
     /// use icu::calendar::DateTime;
