@@ -182,7 +182,7 @@ dependencies = [
 [tasks.ci-job-doc]
 description = "Runs rustdoc generation for the CI 'doc' job"
 category = "CI"
-env = { RUSTFLAGS = "-Dwarnings" }
+env = { RUSTDOCFLAGS = "-Dwarnings" }
 command = "cargo"
 args = ["doc", "--workspace", "--release", "--all-features", "--no-deps", "--lib"]
 

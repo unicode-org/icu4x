@@ -65,6 +65,7 @@
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
+//! [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 //! [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
 
 #![cfg_attr(
@@ -128,7 +129,9 @@ where
     /// Under the hood, this function runs ICU4C code compiled into WASM,
     /// or links natively to ICU4C as specified by the `ICU4C_LIB_PATH` env var
     ///
-    /// This function needs either the `"wasm"` or `"icu4c"` feature
+    /// ✨ *Enabled with either the `wasm` or the `icu4c` Cargo feature.*
+    ///
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     #[cfg(any(feature = "wasm", feature = "icu4c"))]
     pub fn build(self) -> icu_collections::codepointtrie::CodePointTrie<'static, T> {
         #[cfg(feature = "wasm")]

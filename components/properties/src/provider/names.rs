@@ -173,7 +173,7 @@ impl NormalizedPropertyNameStr {
         unsafe { core::mem::transmute(value) }
     }
 
-    /// Get a [`NormalizedPropertyName`] box from a byte slice.
+    /// Get a [`NormalizedPropertyNameStr`] box from a byte slice.
     pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
         Self::cast_box(UnvalidatedStr::from_boxed_bytes(b.into()))
     }
