@@ -293,7 +293,7 @@ impl Julian {
             year
         };
         let adjusted_prior_days = div_rem_euclid64(prior_days, 365).1;
-        debug_assert!(adjusted_prior_days >= 0 && adjusted_prior_days < 365);
+        debug_assert!((0..365).contains(&adjusted_prior_days));
         let month = if adjusted_prior_days < 31 {
             1
         } else if adjusted_prior_days < 59 {
