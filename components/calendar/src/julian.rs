@@ -33,7 +33,8 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{i64_to_i32, quotient64, I32Result, div_rem_euclid};
+use crate::gregorian::year_as_gregorian;
+use crate::helpers::{div_rem_euclid, div_rem_euclid64, i64_to_i32, quotient64, I32Result};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
@@ -165,7 +166,7 @@ impl Calendar for Julian {
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        crate::gregorian::year_as_gregorian(date.0.year)
+        year_as_gregorian(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -208,40 +209,55 @@ impl Julian {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1684-L1687
     #[inline(always)]
     const fn is_leap_year_const(year: i32) -> bool {
-        // This does not match Dershowitz, Nachum, and Edward M. Reingold
-        // year % 4 == 0
-        div_rem_euclid(year, 4).1 == if year > 0 { 0 } else { 3 }
+        div_rem_euclid(year, 4).1 == 0
     }
 
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
-    // The fixed date algorithms are from
-    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-    //
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1709
     pub(crate) const fn fixed_from_julian(date: ArithmeticDate<Julian>) -> RataDie {
-        let year = if date.year < 0 {
-            date.year + 1
-        } else {
-            date.year
-        };
-        let mut fixed: i64 = JULIAN_EPOCH.to_i64_date() - 1
+        let year = date.year;
+        let mut fixed = JULIAN_EPOCH.to_i64_date() - 1
             + 365 * (year as i64 - 1)
             + quotient64(year as i64 - 1, 4);
-        fixed += quotient64(367 * (date.month as i64) - 362, 12);
-        fixed += if date.month <= 2 {
-            0
-        } else if Self::is_leap_year_const(date.year) {
-            -1
-        } else {
-            -2
+        let month = date.month;
+        debug_assert!(month > 0 && month < 13, "Month should be in range 1..=12.");
+        fixed += match month {
+            1 => 0,
+            2 => 31,
+            3 => 59,
+            4 => 90,
+            5 => 120,
+            6 => 151,
+            7 => 181,
+            8 => 212,
+            9 => 243,
+            10 => 273,
+            11 => 304,
+            12 => 334,
+            _ => -1,
         };
-
+        if month > 2 && Self::is_leap_year_const(year) {
+            fixed += 1;
+        }
         RataDie::new(fixed + (date.day as i64))
     }
 
+    // Get a fixed date from the ymd of a Julian date; years are counted arithmetically (there is a year 0), in contrast to `fixed_from_julian_book_version`
     pub(crate) const fn fixed_from_julian_integers(year: i32, month: u8, day: u8) -> RataDie {
         // TODO: Should we check bounds here?
         Self::fixed_from_julian(ArithmeticDate::new_unchecked(year, month, day))
+    }
+
+    // Get a fixed date from the ymd of a Julian date; years are counted as in _Calendrical Calculations_ by Reingold & Dershowitz,
+    // meaning there is no year 0. For instance, near the epoch date, years are counted: -3, -2, -1, 1, 2, 3 instead of -2, -1, 0, 1, 2, 3.
+    #[allow(dead_code)] // TODO: Remove dead code tag after use
+    pub(crate) const fn fixed_from_julian_book_version(year: i32, month: u8, day: u8) -> RataDie {
+        debug_assert!(year != 0);
+        // TODO: Should we check the bounds here?
+        Self::fixed_from_julian(ArithmeticDate::new_unchecked(
+            if year < 0 { year + 1 } else { year },
+            month,
+            day,
+        ))
     }
 
     /// Convenience function so we can call days_in_year without
@@ -256,26 +272,60 @@ impl Julian {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738
     fn julian_from_fixed(date: RataDie) -> JulianDateInner {
-        let approx = quotient64((4 * date.to_i64_date()) + 1464, 1461);
-        let year = if approx <= 0 { approx - 1 } else { approx };
-        let year = match i64_to_i32(year) {
+        let approx = quotient64(4 * date.to_i64_date(), 1461) + 1;
+        let year = match i64_to_i32(approx) {
             I32Result::BelowMin(_) => return JulianDateInner(ArithmeticDate::min_date()),
             I32Result::AboveMax(_) => return JulianDateInner(ArithmeticDate::max_date()),
             I32Result::WithinRange(y) => y,
         };
-        let prior_days = date - Self::fixed_from_julian_integers(year, 1, 1);
-        let correction = if date < Self::fixed_from_julian_integers(year, 3, 1) {
-            0
-        } else if Julian::is_leap_year(year) {
-            1
+        let prior_days = date
+            - Self::fixed_from_julian_integers(year, 1, 1)
+            - if Self::is_leap_year_const(year)
+                && date > Self::fixed_from_julian_integers(year, 2, 28)
+            {
+                1
+            } else {
+                0
+            };
+        let adjusted_year = if prior_days >= 365 {
+            year.saturating_add(1)
         } else {
-            2
+            year
         };
-        let month = quotient64(12 * (prior_days + correction) + 373, 367) as u8; // this expression is in 1..=12
-        let day = (date - Self::fixed_from_julian_integers(year, month, 1) + 1) as u8; // as days_in_month is < u8::MAX
+        let adjusted_prior_days = div_rem_euclid64(prior_days, 365).1;
+        debug_assert!(adjusted_prior_days >= 0 && adjusted_prior_days < 365);
+        let month = if adjusted_prior_days < 31 {
+            1
+        } else if adjusted_prior_days < 59 {
+            2
+        } else if adjusted_prior_days < 90 {
+            3
+        } else if adjusted_prior_days < 120 {
+            4
+        } else if adjusted_prior_days < 151 {
+            5
+        } else if adjusted_prior_days < 181 {
+            6
+        } else if adjusted_prior_days < 212 {
+            7
+        } else if adjusted_prior_days < 243 {
+            8
+        } else if adjusted_prior_days < 273 {
+            9
+        } else if adjusted_prior_days < 304 {
+            10
+        } else if adjusted_prior_days < 334 {
+            11
+        } else {
+            12
+        };
+        let day = (date - Self::fixed_from_julian_integers(adjusted_year, month, 1) + 1) as u8; // as days_in_month is < u8::MAX
+        debug_assert!(day <= 31, "Day assertion failed; date: {date:?}, adjusted_year: {adjusted_year}, prior_days: {prior_days}, month: {month}, day: {day}");
 
         #[allow(clippy::unwrap_used)] // day and month have the correct bounds
-        *Date::try_new_julian_date(year, month, day).unwrap().inner()
+        *Date::try_new_julian_date(adjusted_year, month, day)
+            .unwrap()
+            .inner()
     }
 }
 
@@ -579,5 +629,13 @@ mod test {
                 );
             }
         }
+    }
+
+    #[test]
+    fn test_hebrew_epoch() {
+        assert_eq!(
+            Julian::fixed_from_julian_book_version(-3761, 10, 7),
+            RataDie::new(-1373427)
+        );
     }
 }
