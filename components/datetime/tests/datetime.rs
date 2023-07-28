@@ -12,6 +12,7 @@ use icu_calendar::{
     ethiopian::{Ethiopian, EthiopianEraStyle},
     indian::Indian,
     japanese::{Japanese, JapaneseExtended},
+    persian::Persian,
     provider::WeekDataV1Marker,
     AsCalendar, DateTime, Gregorian, Iso,
 };
@@ -70,6 +71,7 @@ fn test_fixture(fixture_name: &str) {
         let input_japanext = input_value.to_calendar(japanext);
         let input_coptic = input_value.to_calendar(Coptic);
         let input_indian = input_value.to_calendar(Indian);
+        let input_persian = input_value.to_calendar(Persian);
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
 
         let input_ethioaa =
@@ -120,6 +122,14 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Indian => assert_fixture_element(
                         &locale,
                         &input_indian,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Persian => assert_fixture_element(
+                        &locale,
+                        &input_persian,
                         &input_iso,
                         &output_value,
                         options,
