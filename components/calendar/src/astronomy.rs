@@ -681,27 +681,30 @@ impl Astronomical {
     }
 
     pub fn phasis_on_or_after(date: RataDie, location: Location) -> RataDie {
-        let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
-        let age = date - moon.as_rata_die();
-        let tau = if age <= 4 || Self::visible_crescent((date - 1).as_moment(), location) {
+        let moon = libm::floor(Self::lunar_phase_at_or_before(0.0, date.as_moment()).inner());
+        let age = date.to_f64_date() - moon;
+        let tau = if age <= 4.0 || Self::visible_crescent((date - 1).as_moment(), location) {
             moon + 29.0 // Next new moon
         } else {
-            date.as_moment()
+            date.to_f64_date()
         };
-        next_moment(tau, location, Self::visible_crescent)
+        next_moment(Moment::new(tau), location, Self::visible_crescent)
     }
 
     pub fn phasis_on_or_before(date: RataDie, location: Location) -> RataDie {
-        let moon = Self::lunar_phase_at_or_before(0.0, date.as_moment());
-        let age = date - moon.as_rata_die();
-        let tau = if age <= 3 && !Self::visible_crescent((date).as_moment(), location) {
+        let moon: f64 = libm::floor(Self::lunar_phase_at_or_before(0.0, date.as_moment()).inner());
+        let age = date.to_f64_date() - moon;
+        let tau = if age <= 3.0 && !Self::visible_crescent((date).as_moment(), location) {
             moon - 30.0 // Next new moon
         } else {
             moon
         };
-        next_moment(tau, location, Self::visible_crescent)
+        next_moment(Moment::new(tau), location, Self::visible_crescent)
     }
 
+    // Calculates the month length for the Islamic Observational Calendar
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L7068
+    // Can return 31 days due to the imprecise nature of trying to approximate an observational calendar. (See page 294 of the Calendrical Calculations book)
     #[allow(clippy::unwrap_used)]
     pub fn month_length(date: RataDie, location: Location) -> u8 {
         let moon = Self::phasis_on_or_after(date + 1, location);
@@ -1030,11 +1033,7 @@ impl Astronomical {
         let tau = moment.inner()
             - (MEAN_SYNODIC_MONTH / 360.0) * ((Self::lunar_phase(moment) - phase) % 360.0);
         let a = tau - 2.0;
-        let b = if moment.inner() <= (tau + 2.0) {
-            moment.inner()
-        } else {
-            Moment::new(tau + 2.0).inner()
-        };
+        let b = libm::fmin(moment.inner(), tau + 2.0);
 
         let lunar_phase_f64 = |x: f64| -> f64 { Self::lunar_phase(Moment::new(x)) };
 
@@ -1136,7 +1135,7 @@ impl Astronomical {
         )
     }
 
-    fn shaukat_criterion(date: Moment, location: Location) -> bool {
+    pub(crate) fn shaukat_criterion(date: Moment, location: Location) -> bool {
         let tee = Self::simple_best_view((date - 1.0).as_rata_die(), location);
         let phase = Self::lunar_phase(tee);
         let h = Self::lunar_altitude(tee, location);

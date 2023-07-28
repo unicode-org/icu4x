@@ -4,8 +4,8 @@
 
 //! Options for [`DisplayNames`](crate::DisplayNames).
 
-/// A bag of options defining how region or language codes will be translated by
-/// [`DisplayNames`](crate::DisplayNames).
+/// A bag of options defining how region or language codes will be translated.
+///
 /// # Example
 ///
 /// ```

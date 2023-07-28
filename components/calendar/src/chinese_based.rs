@@ -340,11 +340,11 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
         (month, day as u8)
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(year: i32) -> u16 {
         let months_in_year = Self::months_for_every_year(year);
-        let mut days: u32 = 0;
+        let mut days: u16 = 0;
         for month in 1..=months_in_year {
-            days += Self::month_days(year, month) as u32;
+            days += Self::month_days(year, month) as u16;
         }
         days
     }

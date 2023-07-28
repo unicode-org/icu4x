@@ -596,7 +596,7 @@ macro_rules! impl_value_getter {
         impl $ty {
             $(#[$attr_n2e])*
             ///
-            /// ✨ **Enabled with the `"compiled_data"` feature.**
+            /// ✨ *Enabled with the `compiled_data` Cargo feature.*
             #[cfg(feature = "compiled_data")]
             $vis_n2e fn $cname_n2e() -> PropertyValueNameToEnumMapperBorrowed<'static, $ty> {
                 PropertyValueNameToEnumMapperBorrowed {
@@ -605,7 +605,7 @@ macro_rules! impl_value_getter {
                 }
             }
 
-            #[doc = concat!("[`", stringify!($cname_n2e), "()`] with a runtime data provider argument.")]
+            #[doc = concat!("[`", stringify!($ty), "::", stringify!($cname_n2e), "()`] with a runtime data provider argument.")]
             $vis_n2e fn $name_n2e(
                 provider: &(impl DataProvider<$marker_n2e> + ?Sized)
             ) -> Result<PropertyValueNameToEnumMapper<$ty>, PropertiesError> {
@@ -615,7 +615,7 @@ macro_rules! impl_value_getter {
             $(
                 $(#[$attr_e2sn])*
                 ///
-                /// ✨ **Enabled with the `"compiled_data"` feature.**
+                /// ✨ *Enabled with the `compiled_data` Cargo feature.*
                 #[cfg(feature = "compiled_data")]
                 $vis_e2sn fn $cname_e2sn() -> $mapper_e2snb<'static, $ty> {
                     $mapper_e2snb {
@@ -624,7 +624,7 @@ macro_rules! impl_value_getter {
                     }
                 }
 
-                #[doc = concat!("[`", stringify!($cname_e2sn), "()`] with a runtime data provider argument.")]
+                #[doc = concat!("[`", stringify!($ty), "::", stringify!($cname_e2sn), "()`] with a runtime data provider argument.")]
                 $vis_e2sn fn $name_e2sn(
                     provider: &(impl DataProvider<$marker_e2sn> + ?Sized)
                 ) -> Result<$mapper_e2sn<$ty>, PropertiesError> {
@@ -633,7 +633,7 @@ macro_rules! impl_value_getter {
 
                 $(#[$attr_e2ln])*
                 ///
-                /// ✨ **Enabled with the `"compiled_data"` feature.**
+                /// ✨ *Enabled with the `compiled_data` Cargo feature.*
                 #[cfg(feature = "compiled_data")]
                 $vis_e2ln fn $cname_e2ln() -> $mapper_e2lnb<'static, $ty> {
                     $mapper_e2lnb {
@@ -642,7 +642,7 @@ macro_rules! impl_value_getter {
                     }
                 }
 
-                #[doc = concat!("[`", stringify!($cname_e2ln), "()`] with a runtime data provider argument.")]
+                #[doc = concat!("[`", stringify!($ty), "::", stringify!($cname_e2ln), "()`] with a runtime data provider argument.")]
                 $vis_e2ln fn $name_e2ln(
                     provider: &(impl DataProvider<$marker_e2ln> + ?Sized)
                 ) -> Result<$mapper_e2ln<$ty>, PropertiesError> {

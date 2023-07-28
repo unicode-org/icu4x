@@ -48,6 +48,7 @@ rand_pcg = "0.3"
 [features]
 std = []
 bench = []
+ryu = ["dep:ryu"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

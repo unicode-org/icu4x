@@ -317,10 +317,12 @@ jobs:
 
     # Job-specific dependencies
     - name: Set up Clang-15
+#       run: |
+#         wget https://apt.llvm.org/llvm.sh
+#         chmod +x llvm.sh
+#         sudo ./llvm.sh 15
       run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 15
+        sudo apt-get install clang-15 lld-15 llvm-15-dev libc++-15-dev
     - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
       with:

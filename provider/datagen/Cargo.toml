@@ -105,6 +105,7 @@ provider_blob = ["dep:icu_provider_blob"]
 provider_fs = ["dep:icu_provider_fs"]
 legacy_api = ["provider_fs", "provider_blob", "provider_baked"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
+rayon = ["dep:rayon"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_codepointtrie_builder/wasm"]
 # Use local ICU4C libraries for building codepointtries
@@ -113,6 +114,12 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
+
+# experimental deps
+icu_casemap = ["dep:icu_casemap"]
+icu_compactdecimal = ["dep:icu_compactdecimal"]
+icu_displaynames = ["dep:icu_displaynames"]
+icu_relativetime = ["dep:icu_relativetime"]
 
 [[bin]]
 name = "icu4x-datagen"
@@ -127,5 +134,9 @@ required-features = ["provider_fs", "use_wasm"]
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
+skip_optional_dependencies = true
+# Always the experimental deps because we want to all-or-nothing them
+# and the nothing case is already tested in regular check CI
 always_include_features = ["icu_casemap", "icu_compactdecimal", "icu_displaynames", "icu_relativetime"]
-max_combination_size = 3
+# We have a *lot* of features here
+max_combination_size = 2

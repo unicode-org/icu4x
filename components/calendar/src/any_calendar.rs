@@ -216,7 +216,7 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.months_in_year(d))
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         match_cal_and_date!(match (self, date): (c, d) => c.days_in_year(d))
     }
 
@@ -401,7 +401,7 @@ impl AnyCalendar {
     /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
     /// fallbacking. If this is desired, use [`Self::new_for_locale()`].
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -529,7 +529,7 @@ impl AnyCalendar {
     /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
     /// calendar for the locale, falling back to gregorian.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
