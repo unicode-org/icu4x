@@ -228,10 +228,24 @@ impl DatagenProvider {
     /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
     /// provider's options bag. The locales may be later optionally deduplicated for fallback.
     fn select_locales_for_key(&self, key: DataKey) -> Result<HashSet<DataLocale>, DataError> {
+        let fallbacker_with_config = self
+            .source
+            .fallbacker
+            .as_ref()
+            .unwrap()
+            .for_config(LocaleFallbackConfig::from_key(key));
+
+        // Pre-process the supported locales into their normalized forms. For example, CLDR has
+        // "sr-Latn-ME", but ICU4X wants that to be "sr-ME". In order to load the data later, we
+        // use the `visit_default_script` option during fallback.
         let supported_locales: HashSet<DataLocale> = self
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?
             .into_iter()
+            .map(|locale| {
+                // Perform the normalization:
+                fallbacker_with_config.fallback_for(locale).take()
+            })
             .collect();
 
         let locale_include = self.source.options.locales.clone();
@@ -265,14 +279,8 @@ impl DatagenProvider {
         }
 
         // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
-        let fallbacker_with_config = self
-            .source
-            .fallbacker
-            .as_ref()
-            .unwrap()
-            .for_config(LocaleFallbackConfig::from_key(key));
         let include_und = explicit.contains(&LanguageIdentifier::UND);
-        let explicit: HashSet<DataLocale> = explicit.into_iter().map(|d| d.into()).collect();
+        let explicit: HashSet<DataLocale> = explicit.into_iter().map(DataLocale::from).collect();
         let mut implicit = HashSet::new();
         // TODO: Make including the default locale configurable
         implicit.insert(DataLocale::default());
@@ -291,12 +299,17 @@ impl DatagenProvider {
                 if implicit.contains(locale) {
                     return true;
                 }
+                if explicit.contains(locale) {
+                    return true;
+                }
                 if locale.is_langid_und() && include_und {
                     return true;
                 }
                 // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
                 // This would get caught later on, but it makes datagen faster and quieter to catch it here
-                if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY && !locale.has_unicode_ext() {
+                if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
+                    && !locale.has_unicode_ext()
+                {
                     return false;
                 }
                 let mut iter = fallbacker_with_config.fallback_for(locale.clone());
@@ -320,42 +333,46 @@ impl DatagenProvider {
         locale: &DataLocale,
     ) -> Result<Option<DataPayload<ExportMarker>>, DataError> {
         log::trace!("Generating key/locale: {key}/{locale:}");
-        struct DatagenProviderForFallback<'a>(&'a DatagenProvider);
-        impl DynamicDataProvider<ExportMarker> for DatagenProviderForFallback<'_> {
-            fn load_data(
-                &self,
-                key: DataKey,
-                req: DataRequest,
-            ) -> Result<DataResponse<ExportMarker>, DataError> {
-                self.0.load_data(key, req)
-            }
-        }
-        let provider_with_fallback = LocaleFallbackProvider::new_with_fallbacker(
-            DatagenProviderForFallback(self),
-            self.source.fallbacker.clone().unwrap(),
-        );
-        let req = DataRequest {
-            locale,
-            metadata: Default::default(),
-        };
-        // TODO: Use visit_default_script here. Need to expand the LocaleFallbackProvider.
-        match provider_with_fallback.load_data(key, req) {
-            Ok(data_response) => {
-                #[allow(clippy::unwrap_used)] // LocaleFallbackProvider populates it
-                if data_response.metadata.locale.as_ref().unwrap().is_empty() && !locale.is_empty()
-                {
-                    log::debug!("Falling back to und: {key}/{locale}");
+        let mut metadata = DataRequestMetadata::default();
+        metadata.silent = true;
+        let mut config = LocaleFallbackConfig::from_key(key);
+        // Enable the `visit_default_script` option here, since some raw CLDR data needs it.
+        // However, we don't use it for evaluating runtime fallback, since this option is
+        // normally disabled at runtime.
+        config.visit_default_script = true;
+        let mut iter = self
+            .source
+            .fallbacker
+            .as_ref()
+            .unwrap()
+            .for_config(config)
+            .fallback_for(locale.clone());
+        loop {
+            let req = DataRequest {
+                locale: iter.get(),
+                metadata,
+            };
+            let result = self.load_data(key, req);
+            match result {
+                Ok(data_response) => {
+                    #[allow(clippy::unwrap_used)] // LocaleFallbackProvider populates it
+                    if iter.get().is_empty() && !locale.is_empty() {
+                        log::debug!("Falling back to und: {key}/{locale}");
+                    }
+                    return Ok(Some(data_response.take_payload()?));
                 }
-                Ok(Some(data_response.take_payload()?))
+                Err(DataError {
+                    kind: DataErrorKind::MissingLocale,
+                    ..
+                }) => {
+                    if iter.get().is_empty() {
+                        log::debug!("Could not find data for: {key}/{locale}");
+                        return Ok(None);
+                    }
+                    iter.step();
+                }
+                Err(e) => return Err(e.with_req(key, req)),
             }
-            Err(DataError {
-                kind: DataErrorKind::MissingLocale,
-                ..
-            }) => {
-                log::debug!("Could not find data for: {key}/{locale}");
-                Ok(None)
-            }
-            Err(e) => Err(e.with_req(key, req)),
         }
     }
 
@@ -429,7 +446,7 @@ impl DatagenProvider {
                             while !iter.get().is_empty() {
                                 iter.step();
                                 if let Some(parent_payload) = payloads.get(iter.get()) {
-                                    if parent_payload == payload {
+                                    if parent_payload == payload && locale != iter.get() {
                                         // Found a match: don't need to write anything
                                         log::trace!(
                                             "Deduplicating {key}/{locale} (inherits from {})",

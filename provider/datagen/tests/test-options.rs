@@ -82,6 +82,7 @@ fn test_fallback_options() {
         langid!("en-GB"),
         langid!("es"),
         langid!("sr-ME"),
+        langid!("ru-Cyrl-RU"),
     ]
     .into_iter()
     .collect();
@@ -118,7 +119,7 @@ fn test_fallback_options() {
         "ja",
         "ru",
         "sr",
-        "sr-Cyrl",
+        // "sr-Cyrl", (normalizes to 'sr')
         "sr-Latn",
         "th",
         "th-u-nu-thai",
@@ -159,8 +160,7 @@ fn test_fallback_options() {
         "fr",
         // "ja", (same as 'und')
         "ru",
-        "sr", // Note: the three 'sr' locales are the same, but they don't inherit from each other
-        "sr-Cyrl",
+        "sr", // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
         "sr-Latn",
         // "th", (same as 'und')
         "th-u-nu-thai",
@@ -217,7 +217,7 @@ fn test_fallback_options() {
         .unwrap();
     let data_explicit_hybrid = testing_exporter.take_map_and_reset();
 
-    // Explicit locales are "ar-EG", "en-GB", "es", "sr-ME"
+    // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let explicit_hybrid_locales: Vec<&str> = vec![
         "ar",              // ancestor of ar-EG
         "ar-EG",           // explicit locale
@@ -228,10 +228,11 @@ fn test_fallback_options() {
         "en-001", // ancestor of en-GB
         "en-GB",  // explicit locale not in supported locales
         // "en-ZA", // not reachable
-        "es",    // explicit and supported
-        "es-AR", // descendant of es
+        "es",         // explicit and supported
+        "es-AR",      // descendant of es
+        "ru",         // ancestor of ru-Cyrl-RU
+        "ru-Cyrl-RU", // explicit locale, even though it is not normalized
         // "sr", // not reachable from sr-ME
-        // "sr-Cyrl", not reachable from sr-ME
         "sr-Latn", // ancestor of sr-ME
         "sr-ME",   // explicit locale not in supported locales
         "und",     // ancestor of everything
@@ -252,9 +253,10 @@ fn test_fallback_options() {
         .unwrap();
     let data_explicit_runtime = testing_exporter.take_map_and_reset();
 
-    // Explicit locales are "ar-EG", "en-GB", "es", "sr-ME"
+    // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let explicit_hybrid_locales_dedup: Vec<&str> = vec![
         "ar",
+        // "ar-Arab-EG", (same as 'ar')
         // "ar-EG", (same as 'ar')
         "ar-EG-u-nu-latn",
         // "arc", (same as 'und')
@@ -263,6 +265,8 @@ fn test_fallback_options() {
         // "en-GB", (same as 'und')
         "es",
         "es-AR",
+        "ru",
+        // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn",
         // "sr-ME", (same as 'sr-Latn')
         "und",
@@ -286,13 +290,14 @@ fn test_fallback_options() {
         .unwrap();
     let data_explicit_preresolved = testing_exporter.take_map_and_reset();
 
-    // Explicit locales are "ar-EG", "en-GB", "es", "sr-ME"
+    // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let explicit_preresolved_locales: Vec<&str> = vec![
         "ar-EG",
         "ar-EG-u-nu-latn", // extensions included even in preresolved mode
         "arc",
         "en-GB",
         "es",
+        "ru-Cyrl-RU",
         "sr-ME",
     ];
 
