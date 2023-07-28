@@ -305,6 +305,14 @@ impl DatagenProvider {
                 if locale.is_langid_und() && include_und {
                     return true;
                 }
+                if locale.language().is_empty()
+                    && matches!(
+                        key.metadata().fallback_priority,
+                        icu_provider::FallbackPriority::Region
+                    )
+                {
+                    return true;
+                }
                 // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
                 // This would get caught later on, but it makes datagen faster and quieter to catch it here
                 if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
@@ -319,6 +327,7 @@ impl DatagenProvider {
                     }
                     iter.step();
                 }
+                log::trace!("Filtered out: {key}/{locale}");
                 false
             })
             .collect();
