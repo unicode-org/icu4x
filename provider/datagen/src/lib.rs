@@ -294,6 +294,11 @@ impl DatagenProvider {
                 if locale.is_langid_und() && include_und {
                     return true;
                 }
+                // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
+                // This would get caught later on, but it makes datagen faster and quieter to catch it here
+                if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY && !locale.has_unicode_ext() {
+                    return false;
+                }
                 let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                 while !iter.get().is_empty() {
                     if explicit.contains(iter.get()) {
@@ -333,6 +338,7 @@ impl DatagenProvider {
             locale,
             metadata: Default::default(),
         };
+        // TODO: Use visit_default_script here. Need to expand the LocaleFallbackProvider.
         match provider_with_fallback.load_data(key, req) {
             Ok(data_response) => {
                 #[allow(clippy::unwrap_used)] // LocaleFallbackProvider populates it
