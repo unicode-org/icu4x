@@ -248,6 +248,7 @@ where
     }
 }
 
+// "Final" is a reserved keyword in rust, which explains the naming convention here.
 pub(crate) fn final_func<F>(mut index: i32, condition: F) -> i32
 where
     F: Fn(i32) -> bool,

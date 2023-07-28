@@ -81,6 +81,8 @@ impl CalendarArithmetic for Hebrew {
         Self::days_in_hebrew_year(year)
     }
 
+    // Hebrew Leap Years occur in years 3,6,9,11,14,17 and 19 of the 19 year Metonic cycle, this computation takes care of this.
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2212
     fn is_leap_year(year: i32) -> bool {
         div_rem_euclid(7 * year + 1, 19).1 < 7
     }
@@ -184,14 +186,14 @@ impl Hebrew {
         Self
     }
 
-    // Hebrew New Moon
+    // Moment of mean conjunction (New Moon) of h_month in Hebrew
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2244
     #[allow(dead_code)]
     pub(crate) fn molad(h_year: i32, h_month: u8) -> Moment {
-        let y = if h_month < TISHRI { h_year + 1 } else { h_year };
+        let y = if h_month < TISHRI { h_year + 1 } else { h_year }; // Treat Nisan as start of year
 
-        let months_elapsed = (h_month as f64 - TISHRI as f64)
-            + (libm::floor((1.0 / 19.0) * (235.0 * y as f64 - 234.0)));
+        let months_elapsed = (h_month as f64 - TISHRI as f64) // Months this year
+            + (libm::floor((235.0 * y as f64 - 234.0) / 19.0)); // Months until New Year.
 
         Moment::new(
             FIXED_HEBREW_EPOCH.to_f64_date() - (876.0 / 25920.0)
@@ -213,7 +215,7 @@ impl Hebrew {
     // Sabbatical Year of the Hebrew Calendar
     // Lisp code refernence: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2224
     #[allow(dead_code)]
-    fn hebrew_sabbatical_year(h_year: i32) -> bool {
+    fn is_hebrew_sabbatical_year(h_year: i32) -> bool {
         div_rem_euclid(h_year, 7).1 == 0
     }
 
@@ -221,7 +223,7 @@ impl Hebrew {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2261
     #[allow(dead_code)]
     fn hebrew_calendar_elapsed_days(h_year: i32) -> i32 {
-        let months_elapsed = libm::floor((1.0 / 19.0) * (235.0 * h_year as f64 - 234.0));
+        let months_elapsed = libm::floor((235.0 * h_year as f64 - 234.0) / 19.0);
         let parts_elapsed = 12084.0 + 13753.0 * months_elapsed;
         let days = 29.0 * months_elapsed + libm::floor(parts_elapsed / 25920.0);
 
@@ -269,16 +271,16 @@ impl Hebrew {
     // True if the month Marheshvan is going to be long in given Hebrew year
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2321
     #[allow(dead_code)]
-    fn long_marheshvan(h_year: i32) -> bool {
-        let coll = [355, 385];
-        coll.contains(&Self::days_in_hebrew_year(h_year))
+    fn is_long_marheshvan(h_year: i32) -> bool {
+        let long_marheshavan_year_lengths = [355, 385];
+        long_marheshavan_year_lengths.contains(&Self::days_in_hebrew_year(h_year))
     }
     // True if the month Kislve is going to be short in given Hebrew year
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2326
     #[allow(dead_code)]
-    fn short_kislev(h_year: i32) -> bool {
-        let coll = [353, 383];
-        coll.contains(&Self::days_in_hebrew_year(h_year))
+    fn is_short_kislev(h_year: i32) -> bool {
+        let short_kislev_year_lengths = [353, 383];
+        short_kislev_year_lengths.contains(&Self::days_in_hebrew_year(h_year))
     }
 
     // Last day of month (h_month) in Hebrew year (h_year)
@@ -295,14 +297,14 @@ impl Hebrew {
                 }
             }
             MARHESHVAN => {
-                if !Self::long_marheshvan(h_year) {
+                if !Self::is_long_marheshvan(h_year) {
                     29
                 } else {
                     30
                 }
             }
             KISLEV => {
-                if Self::short_kislev(h_year) {
+                if Self::is_short_kislev(h_year) {
                     29
                 } else {
                     30
@@ -323,8 +325,7 @@ impl Hebrew {
         let month = date.0.month;
         let day = date.0.day;
 
-        // Days so far this month.
-        let mut total_days = Self::hebrew_new_year(year) + day.into() - 1;
+        let mut total_days = Self::hebrew_new_year(year) + day.into() - 1; // (day - 1) Days so far this month.
 
         if month < TISHRI {
             // Then add days in prior months this year before
@@ -352,7 +353,7 @@ impl Hebrew {
 
         // Search forward for the year
         let year_condition = |year: i32| Self::hebrew_new_year(year) <= date;
-        let year = final_func(approx, year_condition);
+        let year = final_func(approx - 1, year_condition);
 
         // Starting month for search for month.
         let start = if date
@@ -749,7 +750,7 @@ mod tests {
             .iter()
             .zip(EXPECTED_HEBREW_SABBATICAL_YEAR.iter())
         {
-            let boolean = Hebrew::hebrew_sabbatical_year(case.year);
+            let boolean = Hebrew::is_hebrew_sabbatical_year(case.year);
             assert_eq!(boolean, *expected);
         }
     }
@@ -799,7 +800,7 @@ mod tests {
     #[test]
     fn test_long_marheshvan() {
         for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_MARHESHVAN_VALUES.iter()) {
-            let marsheshvan = Hebrew::long_marheshvan(case.year);
+            let marsheshvan = Hebrew::is_long_marheshvan(case.year);
             assert_eq!(marsheshvan, *expected);
         }
     }
@@ -807,7 +808,7 @@ mod tests {
     #[test]
     fn test_short_kislev() {
         for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_KISLEV_VALUES.iter()) {
-            let kislev = Hebrew::short_kislev(case.year);
+            let kislev = Hebrew::is_short_kislev(case.year);
             assert_eq!(kislev, *expected);
         }
     }
@@ -844,5 +845,10 @@ mod tests {
                 "{case:?}"
             );
         }
+    }
+
+    #[test]
+    fn test_icu_bug() {
+        println!("{}", Hebrew::days_in_hebrew_year(88369));
     }
 }
