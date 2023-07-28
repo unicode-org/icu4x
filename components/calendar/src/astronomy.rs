@@ -1136,7 +1136,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6770-L6778
-    #[allow(clippy::unwrap_used, clippy::eq_op)] // TODO: Remove dead code tag after use
+    #[allow(clippy::unwrap_used, clippy::eq_op)]
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
         if let Some(sun) = Self::sunset(date, location) {
             if let Some(moon) = Self::moonset(date, location) {
