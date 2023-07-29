@@ -70,7 +70,7 @@ const ADARII: u8 = 13;
 
 /// The inner date type used for representing [`Date`]s of [`BookHebrew`]. See [`Date`] and [`BookHebrew`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub struct BookHebrewDateInner(ArithmeticDate<BookHebrew>);
+struct BookHebrewDateInner;
 /// The inner date type used for representing [`Date`]s of [`CivilHebrew`]. See [`Date`] and [`CivilHebrew`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct CivilHebrewDateInner(ArithmeticDate<CivilHebrew>);
@@ -189,9 +189,11 @@ impl CivilHebrew {
     pub fn new() -> Self {
         Self
     }
-
-    fn convert_to_civil_hebrew(year: i32, month: u8, day: u8) -> Date<CivilHebrew> {
-        let mut civil_year = year;
+    
+    // Converts a Biblical Hebrew Date (which considers Tishri the start of the year) to a Civil Hebrew Year (year starts at Nisan).
+    fn biblical_to_civil_date(biblical_date: BookHebrewDateInner) -> Date<CivilHebrew> {
+        let month = biblical_date.0.month;
+        let mut civil_year = biblical_date.0.year;
         let mut civil_month;
 
         if month >= TISHRI {
@@ -372,120 +374,11 @@ impl DateTime<CivilHebrew> {
     }
 }
 
-// BIBLICAL HEBREW CALENDAR
-
-impl CalendarArithmetic for BookHebrew {
-    fn month_days(year: i32, month: u8) -> u8 {
-        Self::last_day_of_book_hebrew_month(year, month)
-    }
-
-    fn months_for_every_year(year: i32) -> u8 {
-        Self::last_month_of_book_hebrew_year(year)
-    }
-
-    fn days_in_provided_year(year: i32) -> u16 {
-        Self::days_in_hebrew_year(year)
-    }
-
-    fn is_leap_year(year: i32) -> bool {
-        div_rem_euclid(7 * year + 1, 19).1 < 7
-    }
-
-    fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        let month = Self::last_month_of_book_hebrew_year(year);
-        let day = Self::last_day_of_book_hebrew_month(year, month);
-
-        (month, day)
-    }
-}
-
-impl Calendar for BookHebrew {
-    type DateInner = BookHebrewDateInner;
-
-    fn date_from_codes(
-        &self,
-        era: types::Era,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "hebrew") {
-            year
-        } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
-        };
-
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(BookHebrewDateInner)
-    }
-
-    fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
-        Self::book_hebrew_from_fixed(fixed_iso).inner
-    }
-
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed_hebrew = Self::fixed_from_book_hebrew(*date);
-        Iso::iso_from_fixed(fixed_hebrew)
-    }
-
-    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
-    }
-
-    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
-    }
-
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
-    }
-
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset)
-    }
-
-    fn until(
-        &self,
-        date1: &Self::DateInner,
-        date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        date1.0.until(date2.0, _largest_unit, _smallest_unit)
-    }
-
-    fn debug_name(&self) -> &'static str {
-        "BookHebrew"
-    }
-
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::year_as_hebrew(date.0.year)
-    }
-
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.month()
-    }
-
-    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day_of_month()
-    }
-
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year.saturating_sub(1);
-        let next_year = date.0.year.saturating_add(1);
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_hebrew(prev_year),
-            days_in_prev_year: Self::days_in_provided_year(prev_year),
-            next_year: Self::year_as_hebrew(next_year),
-        }
-    }
-}
+// BIBLICAL HEBREW CALENDAR FUNCTIONS
 
 impl BookHebrew {
-    /// Constructs a new BookHebrew Calendar
+
+    /// Constructs a new BookHebrew Object
     pub fn new() -> Self {
         Self
     }
@@ -509,7 +402,7 @@ impl BookHebrew {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2217
     #[allow(dead_code)]
     fn last_month_of_book_hebrew_year(h_year: i32) -> u8 {
-        if Self::is_leap_year(h_year) {
+        if Self::is_hebrew_leap_year(h_year) {
             ADARII
         } else {
             ADAR
@@ -572,6 +465,10 @@ impl BookHebrew {
         (Self::book_hebrew_new_year(1 + h_year) - Self::book_hebrew_new_year(h_year)) as u16
     }
 
+    #[allow(dead_code)]
+    fn is_hebrew_leap_year(h_year: i32) -> bool {
+        div_rem_euclid(7 * year + 1, 19).1 < 7
+    }
     // True if the month Marheshvan is going to be long in given BookHebrew year
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2321
     #[allow(dead_code)]
@@ -594,7 +491,7 @@ impl BookHebrew {
         match h_month {
             IYYAR | TAMMUZ | ELUL | TEVET | ADARII => 29,
             ADAR => {
-                if !Self::is_leap_year(h_year) {
+                if !Self::is_hebrew_leap_year(h_year) {
                     29
                 } else {
                     30
@@ -688,7 +585,7 @@ impl BookHebrew {
             ))))
             + 1;
 
-        Date::try_new_hebrew_date(year, month, day as u8).unwrap() // Safe unwrap
+        Date::try_new_civil_hebrew_date(year, month, day as u8).unwrap() // Safe unwrap
     }
 
     fn year_as_hebrew(year: i32) -> types::FormattableYear {
@@ -698,62 +595,6 @@ impl BookHebrew {
             cyclic: None,
             related_iso: None,
         }
-    }
-}
-
-impl Date<BookHebrew> {
-    /// Construct new BookHebrew Date.
-    ///
-    ///
-    /// ```rust
-    /// use icu::calendar::Date;
-    ///
-    /// let date_hebrew = Date::try_new_hebrew_date(3425, 4, 25)
-    ///     .expect("Failed to initialize BookHebrew Date instance.");
-    ///
-    /// assert_eq!(date_hebrew.year().number, 3425);
-    /// assert_eq!(date_hebrew.month().ordinal, 4);
-    /// assert_eq!(date_hebrew.day_of_month().0, 25);
-    /// ```
-    pub fn try_new_hebrew_date(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<BookHebrew>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
-            .map(BookHebrewDateInner)
-            .map(|inner| Date::from_raw(inner, BookHebrew))
-    }
-}
-
-impl DateTime<BookHebrew> {
-    /// Construct a new BookHebrew datetime from integers.
-    ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
-    ///
-    /// let datetime_hebrew = DateTime::try_new_hebrew_datetime(4201, 10, 11, 13, 1, 0)
-    ///     .expect("Failed to initialize BookHebrew DateTime instance");
-    ///
-    /// assert_eq!(datetime_hebrew.date.year().number, 4201);
-    /// assert_eq!(datetime_hebrew.date.month().ordinal, 10);
-    /// assert_eq!(datetime_hebrew.date.day_of_month().0, 11);
-    /// assert_eq!(datetime_hebrew.time.hour.number(), 13);
-    /// assert_eq!(datetime_hebrew.time.minute.number(), 1);
-    /// assert_eq!(datetime_hebrew.time.second.number(), 0);
-    /// ```
-    pub fn try_new_hebrew_datetime(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-    ) -> Result<DateTime<BookHebrew>, CalendarError> {
-        Ok(DateTime {
-            date: Date::try_new_hebrew_date(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 
@@ -1212,7 +1053,7 @@ mod tests {
     }
 
     #[test]
-    fn test_icu_bug() {
-        println!("{}", BookHebrew::days_in_hebrew_year(88369));
+    fn test_icu_bug_22441() {
+        assert_wq!(BookHebrew::days_in_hebrew_year(88369), 383);
     }
 }
