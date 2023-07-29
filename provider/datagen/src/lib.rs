@@ -201,13 +201,7 @@ impl DatagenProvider {
             }
         );
 
-        let mut provider = Self { source };
-
-        // TODO: Consider figuring out the cases where we don't need the fallbacker.
-        // We need it most of the time, so just pre-compute it here.
-        provider.source.fallbacker = Some(LocaleFallbacker::try_new_unstable(&provider)?);
-
-        Ok(provider)
+        Ok(Self { source })
     }
 
     #[cfg(test)]
@@ -216,29 +210,46 @@ impl DatagenProvider {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = {
                 let data_root = std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
-                let mut provider = DatagenProvider {
+                DatagenProvider {
                     // This is equivalent to `latest_tested` for the files defined in
                     // `tools/testdata-scripts/globs.rs.data`.
                     source: SourceData::offline()
                         .with_cldr(data_root.join("cldr"), Default::default()).unwrap()
                         .with_icuexport(data_root.join("icuexport")).unwrap(),
-                };
-                provider.source.fallbacker = Some(LocaleFallbacker::try_new_unstable(&provider).unwrap());
-                provider
+                }
             };
         }
         TEST_PROVIDER.clone()
     }
 
+    /// Gets a [`LocaleFallbacker`].
+    /// This should start returning references when we can use `std::sync::OnceLock`.
+    pub(crate) fn fallbacker(&self) -> Result<LocaleFallbacker, DataError> {
+        {
+            let lock = self.source.fallbacker_rwlock.read().unwrap();
+            match &*lock {
+                Some(fallbacker) => return Ok(fallbacker.clone()),
+                None => ()
+            }
+        }
+        let new_fallbacker = LocaleFallbacker::try_new_unstable(self)?;
+        {
+            let mut lock = self.source.fallbacker_rwlock.write().unwrap();
+            match &*lock {
+                Some(fallbacker) => return Ok(fallbacker.clone()),
+                None => {
+                    lock.replace(new_fallbacker.clone());
+                    return Ok(new_fallbacker);
+                }
+            }
+        }
+    }
+
     /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
     /// provider's options bag. The locales may be later optionally deduplicated for fallback.
     fn select_locales_for_key(&self, key: DataKey) -> Result<HashSet<DataLocale>, DataError> {
-        let fallbacker_with_config = self
-            .source
-            .fallbacker
-            .as_ref()
-            .unwrap()
-            .for_config(LocaleFallbackConfig::from_key(key));
+        let fallbacker = self.fallbacker()?;
+        let fallbacker_with_config = fallbacker.for_config(LocaleFallbackConfig::from_key(key));
 
         // Pre-process the supported locales into their normalized forms. For example, CLDR has
         // "sr-Latn-ME", but ICU4X wants that to be "sr-ME". In order to load the data later, we
@@ -354,11 +365,8 @@ impl DatagenProvider {
         // However, we don't use it for evaluating runtime fallback, since this option is
         // normally disabled at runtime.
         config.visit_default_script = true;
-        let mut iter = self
-            .source
-            .fallbacker
-            .as_ref()
-            .unwrap()
+        let fallbacker = self.fallbacker()?;
+        let mut iter = fallbacker
             .for_config(config)
             .fallback_for(locale.clone());
         loop {
@@ -449,12 +457,8 @@ impl DatagenProvider {
                             .into_tuple_vec()
                             .into_iter()
                             .collect::<HashMap<_, _>>();
-                        let fallbacker_with_config = provider
-                            .source
-                            .fallbacker
-                            .as_ref()
-                            .unwrap()
-                            .for_config(LocaleFallbackConfig::from_key(key));
+                        let fallbacker = provider.fallbacker()?;
+                        let fallbacker_with_config = fallbacker.for_config(LocaleFallbackConfig::from_key(key));
                         'outer: for (locale, payload) in payloads.iter() {
                             let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                             while !iter.get().is_empty() {
