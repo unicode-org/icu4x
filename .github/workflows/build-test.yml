@@ -286,6 +286,10 @@ jobs:
   # ci-job-ffi
   ffi:
     runs-on: ubuntu-latest
+    container:
+      image: debian:stable
+      volumes:
+        - $GITHUB_WORKSPACE:/workspace
 
     steps:
     - uses: actions/checkout@v3
@@ -319,7 +323,6 @@ jobs:
     - name: Set up Clang-15
       run: |
         sudo apt-get update
-        sudo apt-get remove libc++
         sudo apt-get install clang-15 lld-15 llvm-15-dev libc++-15-dev
     - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
