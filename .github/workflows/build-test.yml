@@ -292,6 +292,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    # Essential software installation in the container
+    - name: Install Rust
+      run: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
     # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
