@@ -288,8 +288,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: debian:stable
-      volumes:
-        - $GITHUB_WORKSPACE:/workspace
 
     steps:
     - uses: actions/checkout@v3
