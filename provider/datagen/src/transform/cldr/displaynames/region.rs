@@ -38,23 +38,22 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.filter_data_locales(
-            self.source
-                .cldr()?
-                .displaynames()
-                .list_langs()?
-                .filter(|langid| {
-                    // The directory might exist without territories.json
-                    self.source
-                        .cldr()
-                        .unwrap()
-                        .displaynames()
-                        .file_exists(langid, "territories.json")
-                        .unwrap_or_default()
-                })
-                .map(DataLocale::from)
-                .collect(),
-        ))
+        Ok(self
+            .source
+            .cldr()?
+            .displaynames()
+            .list_langs()?
+            .filter(|langid| {
+                // The directory might exist without territories.json
+                self.source
+                    .cldr()
+                    .unwrap()
+                    .displaynames()
+                    .file_exists(langid, "territories.json")
+                    .unwrap_or_default()
+            })
+            .map(DataLocale::from)
+            .collect())
     }
 }
 

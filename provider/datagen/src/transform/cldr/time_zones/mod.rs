@@ -84,15 +84,14 @@ macro_rules! impl_data_provider {
                         // MetazonePeriodV1 does not require localized time zone data
                         Ok(vec![Default::default()])
                     } else {
-
-                    Ok(self.filter_data_locales(self
-                        .source
-                        .cldr()?
-                        .dates("gregorian")
-                        .list_langs()?
-                        .map(DataLocale::from)
-                        .collect()))
-}
+                        Ok(self
+                            .source
+                            .cldr()?
+                            .dates("gregorian")
+                            .list_langs()?
+                            .map(DataLocale::from)
+                            .collect())
+                    }
                 }
             }
         )+

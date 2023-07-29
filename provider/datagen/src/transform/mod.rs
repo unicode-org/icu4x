@@ -20,7 +20,7 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.filter_data_locales(HelloWorldProvider.supported_locales()?))
+        HelloWorldProvider.supported_locales()
     }
 }
 
@@ -54,11 +54,20 @@ fn test_missing_locale() {
         }
     )
     .is_ok());
-    // HelloWorldProvider supports Portuguese, so the error must correctly come from `check_req`
+    // HelloWorldProvider supports Portuguese. LocaleInclude::Explicit has no impact on this.
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {
             locale: &langid!("pt").into(),
+            metadata: Default::default()
+        }
+    )
+    .is_ok());
+    // HelloWorldProvider does NOT support Aramaic.
+    assert!(DataProvider::<HelloWorldV1Marker>::load(
+        &provider,
+        DataRequest {
+            locale: &langid!("arc").into(),
             metadata: Default::default()
         }
     )

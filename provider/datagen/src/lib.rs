@@ -230,14 +230,6 @@ impl DatagenProvider {
         TEST_PROVIDER.clone()
     }
 
-    // TODO: Get rid of this function and do all filtering in a centralized location
-    pub(crate) fn filter_data_locales(
-        &self,
-        supported: Vec<icu_provider::DataLocale>,
-    ) -> Vec<icu_provider::DataLocale> {
-        supported
-    }
-
     /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
     /// provider's options bag. The locales may be later optionally deduplicated for fallback.
     fn select_locales_for_key(&self, key: DataKey) -> Result<HashSet<DataLocale>, DataError> {
