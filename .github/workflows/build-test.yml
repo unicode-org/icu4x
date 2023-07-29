@@ -299,9 +299,9 @@ jobs:
     - name: Install Clang-15
       run: |
         apt-get install -y clang-15 lld-15 llvm-15-dev libc++-15-dev
-    - name: Install GCC 10
+    - name: Install GCC 11
       run: |
-        apt-get install -y gcc-10 g++-10
+        apt-get install -y gcc-11 g++-11
     - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
       with:
