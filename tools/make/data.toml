@@ -96,7 +96,7 @@ else
 end
 
 for component in ${components}
-    exec --fail-on-error ${bin} --config "${component}/data/config.json"
+    exec --fail-on-error ${bin} -v --config "${component}/data/config.json"
 end
 '''
 
