@@ -292,10 +292,20 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    # Software setup/installation
+    # Software setup/installation for the container
     - name: Install Rust toolchains
       run: |
         rustup toolchain install stable
+    - name: Set up Clang-15
+      run: |
+        apt-get update
+        apt-get install clang-15 lld-15 llvm-15-dev libc++-15-dev
+    - name: Install Node.js v16.18.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -310,7 +320,8 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}-ffi
+        # Since this is inside a container, use a different key than the other jobs
+        key: ${{ runner.os }}-make-ffi-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
@@ -323,16 +334,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Set up Clang-15
-      run: |
-        sudo apt-get update
-        sudo apt-get install clang-15 lld-15 llvm-15-dev libc++-15-dev
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
     - name: Attempt to load download cache
       uses: actions/cache@v3
       with:
