@@ -338,12 +338,13 @@ fn test_collation_filtering() {
             .collect();
         provider.source.options.locales =
             crate::options::LocaleInclude::Explicit([cas.language.clone()].into_iter().collect());
-        let resolved_locales =
-            IterableDataProvider::<CollationDataV1Marker>::supported_locales(&provider)
-                .unwrap()
-                .into_iter()
-                .map(|l| l.to_string())
-                .collect::<BTreeSet<_>>();
+        provider.source.options.fallback = crate::options::FallbackMode::Preresolved;
+        let resolved_locales = provider
+            .select_locales_for_key(CollationDataV1Marker::KEY)
+            .unwrap()
+            .into_iter()
+            .map(|l| l.to_string())
+            .collect::<BTreeSet<_>>();
         let expected_locales = cas
             .expected
             .iter()

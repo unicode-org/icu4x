@@ -216,13 +216,15 @@ impl DatagenProvider {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = {
                 let data_root = std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
-                DatagenProvider {
+                let mut provider = DatagenProvider {
                     // This is equivalent to `latest_tested` for the files defined in
                     // `tools/testdata-scripts/globs.rs.data`.
                     source: SourceData::offline()
                         .with_cldr(data_root.join("cldr"), Default::default()).unwrap()
                         .with_icuexport(data_root.join("icuexport")).unwrap(),
-                }
+                };
+                provider.source.fallbacker = Some(LocaleFallbacker::try_new_unstable(&provider).unwrap());
+                provider
             };
         }
         TEST_PROVIDER.clone()
