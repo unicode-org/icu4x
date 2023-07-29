@@ -291,6 +291,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
+    # Software setup/installation
+    - name: Install Rust toolchains
+      run: |
+        rustup toolchain install stable
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -305,7 +310,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}-ffi
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
