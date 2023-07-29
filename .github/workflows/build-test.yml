@@ -353,7 +353,7 @@ jobs:
     - name: Run `cargo make ci-job-ffi`
       run: cargo make ci-job-ffi
       env:
-        CXX: "g++-10"
+        CXX: "g++-11"
 
   # ci-job-verify-ffi
   verify-ffi:
