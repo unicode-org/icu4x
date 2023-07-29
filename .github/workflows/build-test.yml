@@ -318,7 +318,7 @@ jobs:
     # Job-specific dependencies
     - name: Set up Clang-15
       run: |
-        sudo apt-get remove clang lld llvm-dev libc++-dev
+        sudo apt-get remove libc++ libunwind
         sudo apt-get update
         sudo apt-get install clang-15 lld-15 llvm-15-dev libc++-15-dev
     - name: Install Node.js v16.18.0
