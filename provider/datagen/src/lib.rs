@@ -21,7 +21,8 @@
 //! use std::fs::File;
 //!
 //! fn main() {
-//!     DatagenProvider::default()
+//!     DatagenProvider::try_new(options::Options::default(), SourceData::latest_tested())
+//!         .unwrap()
 //!         .export(
 //!             [icu::list::provider::AndListV1Marker::KEY].into_iter().collect(),
 //!             BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())),
@@ -135,7 +136,6 @@ pub(crate) mod rayon_prelude {
 /// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)) if the data is
 /// required for that key.
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "networking", derive(Default))]
 #[cfg_attr(not(doc), allow(clippy::exhaustive_structs))]
 #[cfg_attr(doc, non_exhaustive)]
 pub struct DatagenProvider {
