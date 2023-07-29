@@ -88,15 +88,21 @@ exit_on_error true
 if array_is_empty ${@}
     exec --fail-on-error cargo build -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking,icu_casemap,icu_displaynames,icu_relativetime,icu_compactdecimal --release
     bin = set "target/release/icu4x-datagen"
+    verbose = set false
     components = array components/calendar components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/casemap experimental/compactdecimal experimental/displaynames experimental/relativetime
 else
     exec --fail-on-error cargo build -p icu_datagen --no-default-features --features rayon,provider_baked,bin,use_wasm,networking,icu_casemap,icu_displaynames,icu_relativetime,icu_compactdecimal
     bin = set "target/debug/icu4x-datagen"
+    verbose = set true
     components = set ${@}
 end
 
 for component in ${components}
-    exec --fail-on-error ${bin} -v --config "${component}/data/config.json"
+    if ${verbose}
+        exec --fail-on-error ${bin} -v --config "${component}/data/config.json"
+    else
+        exec --fail-on-error ${bin} --config "${component}/data/config.json"
+    end
 end
 '''
 

@@ -76,15 +76,16 @@ use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use memchr::memmem;
 use options::{FallbackMode, LocaleInclude};
 #[allow(deprecated)] // ugh
 pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
 pub use source::SourceData;
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::path::Path;
+use writeable::Writeable;
 
 #[cfg(feature = "provider_baked")]
 pub mod baked_exporter;
@@ -185,9 +186,19 @@ impl DatagenProvider {
             ),
         };
 
-        log::debug!(
-            "Datagen configured with fallback mode: {:?}",
-            source.options.fallback
+        log::info!(
+            "Datagen configured with fallback mode {:?} and these locales: {}",
+            source.options.fallback,
+            match source.options.locales {
+                options::LocaleInclude::All => "ALL".to_string(),
+                options::LocaleInclude::Explicit(ref set) => {
+                    let mut list: Vec<Cow<str>> =
+                        set.iter().map(Writeable::write_to_string).collect();
+                    list.sort();
+                    format!("{:?}", list)
+                }
+                _ => unreachable!(),
+            }
         );
 
         let mut provider = Self { source };
