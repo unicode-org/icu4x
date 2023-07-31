@@ -23,7 +23,8 @@
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export something
-//! DatagenProvider::default()
+//! DatagenProvider::try_new(options::Options::default(), SourceData::latest_tested())
+//!     .unwrap()
 //!     .export(
 //!         [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect(),
 //!         exporter
