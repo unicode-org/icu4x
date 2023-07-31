@@ -254,20 +254,15 @@ impl SourceData {
     }
 
     pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
-        self.cldr_paths.as_deref().ok_or_else(|| {
-            debug_assert!(false, "Missing CLDR error! See stack trace for more info.");
-            crate::error::MISSING_CLDR_ERROR
-        })
+        self.cldr_paths
+            .as_deref()
+            .ok_or(crate::error::MISSING_CLDR_ERROR)
     }
 
     pub(crate) fn icuexport(&self) -> Result<&SerdeCache, DataError> {
-        self.icuexport_paths.as_deref().ok_or_else(|| {
-            debug_assert!(
-                false,
-                "Missing icuexport error! See stack trace for more info."
-            );
-            crate::error::MISSING_ICUEXPORT_ERROR
-        })
+        self.icuexport_paths
+            .as_deref()
+            .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
     }
 
     pub(crate) fn icuexport_fallback(&self) -> &SerdeCache {

@@ -248,7 +248,8 @@ impl DatagenProvider {
     /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
     /// provider's options bag. The locales may be later optionally deduplicated for fallback.
     fn select_locales_for_key(&self, key: DataKey) -> Result<HashSet<DataLocale>, DataError> {
-        let mut fallbacker: Option<LocaleFallbacker> = None;
+        let fallbacker = self.fallbacker()?;
+        let fallbacker_with_config = fallbacker.for_config(LocaleFallbackConfig::from_key(key));
 
         let supported_locales: HashSet<DataLocale> = self
             .supported_locales_for_key(key)
@@ -258,20 +259,9 @@ impl DatagenProvider {
                 // Pre-process the supported locales into their normalized forms. For example, CLDR has
                 // "sr-Latn-ME", but ICU4X wants that to be "sr-ME". In order to load the data later, we
                 // use the `visit_default_script` option during fallback.
-                if locale.script().is_some() && locale.region().is_some() {
-                    let fallbacker = match &mut fallbacker {
-                        Some(fallbacker) => fallbacker,
-                        None => fallbacker.insert(self.fallbacker()?),
-                    };
-                    Ok(fallbacker
-                        .for_config(LocaleFallbackConfig::from_key(key))
-                        .fallback_for(locale)
-                        .take())
-                } else {
-                    Ok(locale)
-                }
+                fallbacker_with_config.fallback_for(locale).take()
             })
-            .collect::<Result<_, DataError>>()?;
+            .collect();
 
         let locale_include = self.source.options.locales.clone();
         let fallback_mode = self.source.options.fallback;
@@ -304,11 +294,6 @@ impl DatagenProvider {
         }
 
         // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
-        let fallbacker = match fallbacker {
-            Some(fallbacker) => fallbacker,
-            None => self.fallbacker()?,
-        };
-        let fallbacker_with_config = fallbacker.for_config(LocaleFallbackConfig::from_key(key));
         let include_und = explicit.contains(&LanguageIdentifier::UND);
         let explicit: HashSet<DataLocale> = explicit.into_iter().map(DataLocale::from).collect();
         let mut implicit = HashSet::new();
@@ -374,19 +359,6 @@ impl DatagenProvider {
         log::trace!("Generating key/locale: {key}/{locale:}");
         let mut metadata = DataRequestMetadata::default();
         metadata.silent = true;
-        // First try without fallback so we can lazy-init the fallbacker
-        let req = DataRequest { locale, metadata };
-        match self.load_data(key, req) {
-            Ok(data_response) => return Ok(Some(data_response.take_payload()?)),
-            Err(DataError {
-                kind: DataErrorKind::MissingLocale,
-                ..
-            }) if !locale.is_empty() => {
-                // continue below
-            }
-            Err(e) => return Err(e.with_req(key, req)),
-        };
-        // Now try with fallback.
         let mut config = LocaleFallbackConfig::from_key(key);
         // Enable the `visit_default_script` option here, since some raw CLDR data needs it.
         // However, we don't use it for evaluating runtime fallback, since this option is
@@ -394,8 +366,6 @@ impl DatagenProvider {
         config.visit_default_script = true;
         let fallbacker = self.fallbacker()?;
         let mut iter = fallbacker.for_config(config).fallback_for(locale.clone());
-        // Even though we made a loading attempt above, the locale wasn't normalized yet, so
-        // we should start at the top of the iterator again.
         loop {
             let req = DataRequest {
                 locale: iter.get(),

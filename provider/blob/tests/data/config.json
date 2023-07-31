@@ -4,7 +4,6 @@
       "core/helloworld@1"
     ]
   },
-  "locales": "All",
   "cldr": "None",
   "icu_export": "None",
   "segmenter_lstm": "None",
