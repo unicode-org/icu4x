@@ -134,6 +134,7 @@ where
         + DataProvider<CopticDateLengthsV1Marker>
         + DataProvider<IndianDateLengthsV1Marker>
         + DataProvider<EthiopianDateLengthsV1Marker>
+        + DataProvider<RocDateLengthsV1Marker>
         + ?Sized,
 {
     let req = DataRequest {
@@ -181,6 +182,11 @@ where
                 .take_payload()?
                 .cast()
         }
+        AnyCalendarKind::Roc => {
+            DataProvider::<<Roc as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
         _ => {
             return Err(
                 DataError::custom("Don't know how to load data for specified calendar")
@@ -204,6 +210,7 @@ where
         + DataProvider<CopticDateSymbolsV1Marker>
         + DataProvider<IndianDateSymbolsV1Marker>
         + DataProvider<EthiopianDateSymbolsV1Marker>
+        + DataProvider<RocDateSymbolsV1Marker>
         + ?Sized,
 {
     let req = DataRequest {
@@ -248,6 +255,11 @@ where
         }
         AnyCalendarKind::EthiopianAmeteAlem => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Roc => {
+            DataProvider::<<Roc as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }

@@ -97,7 +97,10 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         ]
         .into_iter()
         .collect(),
-        "roc" => vec![("0".to_string(), tinystr!(16, "roc"))]
+        "roc" => vec![
+            ("0".to_string(), tinystr!(16, "roc-inverse")),
+            ("1".to_string(), tinystr!(16, "roc"))
+        ]
             .into_iter()
             .collect(),
         _ => panic!("Era map unknown for {calendar}"),
