@@ -143,7 +143,7 @@ impl Default for GraphemeClusterSegmenter {
 impl GraphemeClusterSegmenter {
     /// Constructs a [`GraphemeClusterSegmenter`] with an invariant locale.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -165,7 +165,7 @@ impl GraphemeClusterSegmenter {
             Self,
     ]);
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,

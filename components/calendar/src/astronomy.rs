@@ -2,9 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This file contains important structs and functions relating to location, time, and astronomy;
-//! many of these are based on or similar to calculations from _Calendrical Calculations_ by
-//! Reingold & Dershowitz and its companion lisp code.
+//! This file contains important structs and functions relating to location,
+//! time, and astronomy; these are intended for calender calculations and based off
+//! _Calendrical Calculations_ by Reingold & Dershowitz.
+//!
+//! TODO(#3709): Address inconcistencies with existing ICU code for extreme dates.
 
 use crate::error::LocationOutOfBoundsError;
 use crate::helpers::{
@@ -1180,7 +1182,11 @@ impl Astronomical {
         )
         .1;
         let b = 360.0
-            * (div_rem_euclid_f64((moment - Self::nth_new_moon(n)) / MEAN_SYNODIC_MONTH, 1.0).1);
+            * (div_rem_euclid_f64(
+                div_rem_euclid_f64(moment - Self::nth_new_moon(n), MEAN_SYNODIC_MONTH).0,
+                1.0,
+            )
+            .1);
         if libm::fabs(a - b) > 180.0 {
             b
         } else {
@@ -1405,8 +1411,9 @@ impl Astronomical {
     fn num_of_new_moon_at_or_after(moment: Moment) -> i32 {
         let t0: Moment = Self::nth_new_moon(0);
         let phi = Self::lunar_phase(moment);
-        let maybe_n =
-            i64_to_i32(libm::round((moment - t0) / MEAN_SYNODIC_MONTH - phi / 360.0) as i64);
+        let maybe_n = i64_to_i32(libm::round(
+            div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0 - phi / 360.0,
+        ) as i64);
         debug_assert!(
             matches!(maybe_n, I32Result::WithinRange(_)),
             "Num of new moon should be in range of i32"
