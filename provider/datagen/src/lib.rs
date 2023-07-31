@@ -443,12 +443,26 @@ impl DatagenProvider {
                     | (options::FallbackMode::PreferredForExporter, true) => {
                         let payloads = locales_to_export
                             .into_par_iter()
-                            .flat_map(|locale| match provider.load_with_fallback(key, &locale) {
-                                Ok(Some(payload)) => Some(Ok((locale, Box::new(payload)))),
-                                Ok(None) => None,
-                                Err(e) => Some(Err(e)),
-                            })
-                            .collect::<Result<HashMap<_, _>, _>>()?;
+                            .try_fold(
+                                || HashMap::new(),
+                                |mut hash_map, locale| match provider
+                                    .load_with_fallback(key, &locale)
+                                {
+                                    Ok(Some(payload)) => {
+                                        hash_map.insert(locale, Box::new(payload));
+                                        Ok(hash_map)
+                                    }
+                                    Ok(None) => Ok(hash_map),
+                                    Err(e) => Err(e),
+                                },
+                            )
+                            .try_reduce(
+                                || HashMap::new(),
+                                |mut hash_map_1, hash_map_2| {
+                                    hash_map_1.extend(hash_map_2);
+                                    Ok(hash_map_1)
+                                },
+                            )?;
                         let fallbacker = provider.fallbacker()?;
                         let fallbacker_with_config =
                             fallbacker.for_config(LocaleFallbackConfig::from_key(key));
