@@ -230,7 +230,7 @@ impl DatagenProvider {
             let lock = self.source.fallbacker_rwlock.read().unwrap();
             match &*lock {
                 Some(fallbacker) => return Ok(fallbacker.clone()),
-                None => ()
+                None => (),
             }
         }
         let new_fallbacker = LocaleFallbacker::try_new_unstable(self)?;
@@ -366,9 +366,7 @@ impl DatagenProvider {
         // normally disabled at runtime.
         config.visit_default_script = true;
         let fallbacker = self.fallbacker()?;
-        let mut iter = fallbacker
-            .for_config(config)
-            .fallback_for(locale.clone());
+        let mut iter = fallbacker.for_config(config).fallback_for(locale.clone());
         loop {
             let req = DataRequest {
                 locale: iter.get(),
@@ -458,7 +456,8 @@ impl DatagenProvider {
                             .into_iter()
                             .collect::<HashMap<_, _>>();
                         let fallbacker = provider.fallbacker()?;
-                        let fallbacker_with_config = fallbacker.for_config(LocaleFallbackConfig::from_key(key));
+                        let fallbacker_with_config =
+                            fallbacker.for_config(LocaleFallbackConfig::from_key(key));
                         'outer: for (locale, payload) in payloads.iter() {
                             let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                             while !iter.get().is_empty() {
