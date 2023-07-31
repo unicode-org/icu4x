@@ -1,0 +1,36 @@
+{
+  "day_periods": {
+    "format": {
+      "abbreviated": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "podne",
+        "midnight": "ponoć"
+      },
+      "narrow": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "podne",
+        "midnight": "ponoć"
+      },
+      "short": null,
+      "wide": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "podne",
+        "midnight": "ponoć"
+      }
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": {
+        "am": "pre podne",
+        "pm": "po podne",
+        "noon": "podne",
+        "midnight": "ponoć"
+      },
+      "short": null,
+      "wide": null
+    }
+  }
+}

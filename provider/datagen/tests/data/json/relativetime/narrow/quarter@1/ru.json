@@ -1,0 +1,47 @@
+{
+  "relatives": {
+    "-1": "посл. кв.",
+    "0": "тек. кв.",
+    "1": "след. кв."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "- кв.",
+      "index": 1
+    },
+    "two": null,
+    "few": {
+      "pattern": "- кв.",
+      "index": 1
+    },
+    "many": {
+      "pattern": "- кв.",
+      "index": 1
+    },
+    "other": {
+      "pattern": "- кв.",
+      "index": 1
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "+ кв.",
+      "index": 1
+    },
+    "two": null,
+    "few": {
+      "pattern": "+ кв.",
+      "index": 1
+    },
+    "many": {
+      "pattern": "+ кв.",
+      "index": 1
+    },
+    "other": {
+      "pattern": "+ кв.",
+      "index": 1
+    }
+  }
+}

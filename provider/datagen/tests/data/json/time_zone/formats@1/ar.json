@@ -1,0 +1,15 @@
+{
+  "hour_format": [
+    "+HH:mm",
+    "-HH:mm"
+  ],
+  "gmt_format": "غرينتش{0}",
+  "gmt_zero_format": "غرينتش",
+  "region_format": "توقيت {0}",
+  "region_format_variants": {
+    "daylight": "توقيت {0} الصيفي",
+    "standard": "توقيت {0} الرسمي"
+  },
+  "fallback_format": "{1} ({0})",
+  "gmt_offset_fallback": "GMT+?"
+}

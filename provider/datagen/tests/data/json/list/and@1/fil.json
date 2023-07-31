@@ -1,0 +1,50 @@
+[
+  {
+    "default": {
+      "string": ", ",
+      "index_1": 2
+    },
+    "special_case": null
+  },
+  [
+    0
+  ],
+  {
+    "default": {
+      "string": ", at ",
+      "index_1": 5
+    },
+    "special_case": null
+  },
+  {
+    "default": {
+      "string": " at ",
+      "index_1": 4
+    },
+    "special_case": null
+  },
+  [
+    0
+  ],
+  [
+    0
+  ],
+  [
+    2
+  ],
+  [
+    3
+  ],
+  [
+    0
+  ],
+  [
+    0
+  ],
+  [
+    0
+  ],
+  [
+    0
+  ]
+]

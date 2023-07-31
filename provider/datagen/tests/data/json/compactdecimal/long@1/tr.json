@@ -1,0 +1,32 @@
+{
+  "patterns": {
+    "3": {
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " bin"
+      }
+    },
+    "6": {
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " milyon"
+      }
+    },
+    "9": {
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " milyar"
+      }
+    },
+    "12": {
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " trilyon"
+      }
+    }
+  }
+}

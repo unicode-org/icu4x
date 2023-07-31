@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "-1": "last month",
+    "0": "this month",
+    "1": "next month"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "- m",
+      "index": 1
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "+ m",
+      "index": 1
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "-1": "ไตรมาสที่แล้ว",
+    "0": "ไตรมาสนี้",
+    "1": "ไตรมาสหน้า"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " ไตรมาสที่แล้ว",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "ในอีก  ไตรมาส",
+      "index": 16
+    }
+  }
+}

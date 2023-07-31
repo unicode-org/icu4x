@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "-1": "สัปดาห์ที่แล้ว",
+    "0": "สัปดาห์นี้",
+    "1": "สัปดาห์หน้า"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " สัปดาห์ที่แล้ว",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "ใน  สัปดาห์",
+      "index": 7
+    }
+  }
+}

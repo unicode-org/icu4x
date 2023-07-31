@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "last qtr.",
+    "0": "this qtr.",
+    "1": "next qtr."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " qtr. ago",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " qtrs. ago",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "in  qtr.",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "in  qtrs.",
+      "index": 3
+    }
+  }
+}

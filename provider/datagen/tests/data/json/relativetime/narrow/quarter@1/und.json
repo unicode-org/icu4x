@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "-1": "last quarter",
+    "0": "this quarter",
+    "1": "next quarter"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "- Q",
+      "index": 1
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "+ Q",
+      "index": 1
+    }
+  }
+}

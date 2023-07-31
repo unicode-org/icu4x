@@ -1,0 +1,21 @@
+{
+  "map": [
+    "Other",
+    "Control",
+    "CR",
+    "Extend",
+    "L",
+    "LF",
+    "LV",
+    "LVT",
+    "T",
+    "V",
+    "SpacingMark",
+    "Prepend",
+    "Regional_Indicator",
+    "E_Base",
+    "E_Base_GAZ",
+    "E_Modifier",
+    "Glue_After_Zwj"
+  ]
+}

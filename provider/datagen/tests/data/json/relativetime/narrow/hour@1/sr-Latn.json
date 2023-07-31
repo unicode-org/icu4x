@@ -1,0 +1,39 @@
+{
+  "relatives": {
+    "0": "ovog sata"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre  č.",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre  č.",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre  č.",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "za  č.",
+      "index": 3
+    },
+    "two": null,
+    "few": {
+      "pattern": "za  č.",
+      "index": 3
+    },
+    "many": null,
+    "other": {
+      "pattern": "za  č.",
+      "index": 3
+    }
+  }
+}

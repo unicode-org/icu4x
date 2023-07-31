@@ -1,0 +1,41 @@
+{
+  "relatives": {
+    "-1": "прошле год.",
+    "0": "ове год.",
+    "1": "следеће год."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "пре  год.",
+      "index": 7
+    },
+    "two": null,
+    "few": {
+      "pattern": "пре  год.",
+      "index": 7
+    },
+    "many": null,
+    "other": {
+      "pattern": "пре  год.",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "за  год.",
+      "index": 5
+    },
+    "two": null,
+    "few": {
+      "pattern": "за  год.",
+      "index": 5
+    },
+    "many": null,
+    "other": {
+      "pattern": "за  год.",
+      "index": 5
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "relatives": {
+    "-2": "เมื่อวานซืน",
+    "-1": "เมื่อวาน",
+    "0": "วันนี้",
+    "1": "พรุ่งนี้",
+    "2": "มะรืนนี้"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " วันที่ผ่านมา",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "ในอีก  วัน",
+      "index": 16
+    }
+  }
+}

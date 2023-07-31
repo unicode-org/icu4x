@@ -1,0 +1,37 @@
+{
+  "relatives": {
+    "-2": "evvelsi gün",
+    "-1": "dün",
+    "0": "bugün",
+    "1": "yarın",
+    "2": "öbür gün"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " gün önce",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " gün önce",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " gün sonra",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " gün sonra",
+      "index": 0
+    }
+  }
+}

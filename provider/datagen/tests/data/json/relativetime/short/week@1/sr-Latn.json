@@ -1,0 +1,41 @@
+{
+  "relatives": {
+    "-1": "prošle ned.",
+    "0": "ove ned.",
+    "1": "sledeće ned."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre  ned.",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre  ned.",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre  ned.",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "za  ned.",
+      "index": 3
+    },
+    "two": null,
+    "few": {
+      "pattern": "za  ned.",
+      "index": 3
+    },
+    "many": null,
+    "other": {
+      "pattern": "za  ned.",
+      "index": 3
+    }
+  }
+}

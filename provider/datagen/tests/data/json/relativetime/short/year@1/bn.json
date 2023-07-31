@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "গত বছর",
+    "0": "এই বছর",
+    "1": "পরের বছর"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " বছর পূর্বে",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " বছর পূর্বে",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " বছরে",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " বছরে",
+      "index": 0
+    }
+  }
+}

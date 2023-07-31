@@ -1,0 +1,543 @@
+{
+  "defaults": {
+    "afce": {
+      "st": "Oras sa Gitnang Africa"
+    },
+    "afea": {
+      "st": "Oras sa Silangang Africa"
+    },
+    "afgh": {
+      "st": "Oras sa Afghanistan"
+    },
+    "afso": {
+      "st": "Oras sa Timog Africa"
+    },
+    "afwe": {
+      "dt": "Oras sa Tag-init ng Kanlurang Africa",
+      "st": "Standard na Oras sa Kanlurang Africa"
+    },
+    "alas": {
+      "dt": "Daylight Time sa Alaska",
+      "st": "Standard na Oras sa Alaska"
+    },
+    "amaz": {
+      "dt": "Oras sa Tag-init ng Amazon",
+      "st": "Standard na Oras sa Amazon"
+    },
+    "amce": {
+      "dt": "Sentral na Daylight na Oras sa North America",
+      "st": "Sentral na Standard na Oras sa North America"
+    },
+    "amea": {
+      "dt": "Daylight na Oras sa Silangan ng Hilagang Amerika",
+      "st": "Standard na Oras sa Silangan ng Hilangang Amerika"
+    },
+    "ammo": {
+      "dt": "Daylight na Oras sa Bundok sa Hilagang Amerika",
+      "st": "Standard na Oras sa Bundok sa Hilagang Amerika"
+    },
+    "ampa": {
+      "dt": "Daylight na Oras sa Pasipiko sa Hilagang Amerika",
+      "st": "Standard na Oras sa Pasipiko sa Hilagang Amerika"
+    },
+    "anad": {
+      "dt": "Summer Time sa Anadyr",
+      "st": "Standard Time sa Anadyr"
+    },
+    "apia": {
+      "dt": "Daylight Time sa Apia",
+      "st": "Standard na Oras sa Apia"
+    },
+    "arab": {
+      "dt": "Daylight Time sa Arabia",
+      "st": "Standard na Oras sa Arabia"
+    },
+    "arge": {
+      "dt": "Oras sa Tag-init ng Argentina",
+      "st": "Standard na Oras sa Argentina"
+    },
+    "arme": {
+      "dt": "Oras sa Tag-init ng Armenia",
+      "st": "Standard na Oras sa Armenia"
+    },
+    "arwe": {
+      "dt": "Oras sa Tag-init ng Kanlurang Argentina",
+      "st": "Standard na Oras sa Kanlurang Argentina"
+    },
+    "atla": {
+      "dt": "Daylight na Oras sa Atlantiko",
+      "st": "Standard na Oras sa Atlantiko"
+    },
+    "auce": {
+      "dt": "Daylight Time sa Gitnang Australya",
+      "st": "Standard na Oras sa Gitnang Australya"
+    },
+    "aucw": {
+      "dt": "Daylight Time sa Gitnang Kanlurang Australya",
+      "st": "Standard Time ng Gitnang Kanluran ng Australya"
+    },
+    "auea": {
+      "dt": "Daylight Time sa Silangang Australya",
+      "st": "Standard na Oras sa Silangang Australya"
+    },
+    "auwe": {
+      "dt": "Daylight Time sa Kanlurang Australya",
+      "st": "Standard na Oras sa Kanlurang Australya"
+    },
+    "azer": {
+      "dt": "Oras sa Tag-init ng Azerbaijan",
+      "st": "Standard na Oras sa Azerbaijan"
+    },
+    "azor": {
+      "dt": "Oras sa Tag-init ng Azores",
+      "st": "Standard na Oras sa Azores"
+    },
+    "bang": {
+      "dt": "Oras sa Tag-init ng Bangladesh",
+      "st": "Standard na Oras sa Bangladesh"
+    },
+    "bhut": {
+      "st": "Oras sa Bhutan"
+    },
+    "boli": {
+      "st": "Oras sa Bolivia"
+    },
+    "bras": {
+      "dt": "Oras sa Tag-init ng Brasilia",
+      "st": "Standard na Oras sa Brasilia"
+    },
+    "brun": {
+      "st": "Oras sa Brunei Darussalam"
+    },
+    "cave": {
+      "dt": "Oras sa Tag-init ng Cape Verde",
+      "st": "Standard na Oras sa Cape Verde"
+    },
+    "cham": {
+      "st": "Standard na Oras sa Chamorro"
+    },
+    "chat": {
+      "dt": "Daylight Time sa Chatham",
+      "st": "Standard na Oras sa Chatham"
+    },
+    "chil": {
+      "dt": "Oras sa Tag-init ng Chile",
+      "st": "Standard na Oras sa Chile"
+    },
+    "chin": {
+      "dt": "Daylight Time sa China",
+      "st": "Standard na Oras sa China"
+    },
+    "choi": {
+      "dt": "Oras sa Tag-init ng Choibalsan",
+      "st": "Standard na Oras sa Choibalsan"
+    },
+    "chri": {
+      "st": "Oras sa Christmas Island"
+    },
+    "coco": {
+      "st": "Oras sa Cocos Islands"
+    },
+    "colo": {
+      "dt": "Oras sa Tag-init ng Colombia",
+      "st": "Standard na Oras sa Colombia"
+    },
+    "cook": {
+      "dt": "Oras sa Kalahati ng Tag-init ng Cook Islands",
+      "st": "Standard na Oras sa Cook Islands"
+    },
+    "cuba": {
+      "dt": "Daylight na Oras sa Cuba",
+      "st": "Standard na Oras sa Cuba"
+    },
+    "davi": {
+      "st": "Oras sa Davis"
+    },
+    "dumo": {
+      "st": "Oras sa Dumont-d’Urville"
+    },
+    "east": {
+      "dt": "Oras sa Tag-init ng Easter Island",
+      "st": "Standard na Oras sa Easter Island"
+    },
+    "eati": {
+      "st": "Oras sa East Timor"
+    },
+    "ecua": {
+      "st": "Oras sa Ecuador"
+    },
+    "euce": {
+      "dt": "Oras sa Tag-init ng Gitnang Europe",
+      "st": "Standard na Oras sa Gitnang Europe"
+    },
+    "euea": {
+      "dt": "Oras sa Tag-init ng Silangang Europe",
+      "st": "Standard na Oras sa Silangang Europe"
+    },
+    "eufe": {
+      "st": "Oras sa Pinaka-silangang Europe"
+    },
+    "euwe": {
+      "dt": "Oras sa Tag-init ng Kanlurang Europe",
+      "st": "Standard na Oras sa Kanlurang Europe"
+    },
+    "falk": {
+      "dt": "Oras sa Tag-init ng Falkland Islands",
+      "st": "Standard na Oras sa Falkland Islands"
+    },
+    "fiji": {
+      "dt": "Oras sa Tag-init ng Fiji",
+      "st": "Standard na Oras sa Fiji"
+    },
+    "frgu": {
+      "st": "Oras sa French Guiana"
+    },
+    "frso": {
+      "st": "Oras sa Katimugang France at Antartiko"
+    },
+    "gala": {
+      "st": "Oras sa Galapagos"
+    },
+    "gamb": {
+      "st": "Oras sa Gambier"
+    },
+    "geor": {
+      "dt": "Oras sa Tag-init ng Georgia",
+      "st": "Standard na Oras sa Georgia"
+    },
+    "giis": {
+      "st": "Oras sa Gilbert Islands"
+    },
+    "grea": {
+      "dt": "Oras sa Tag-init ng Silangang Greenland",
+      "st": "Standard na Oras sa Silangang Greenland"
+    },
+    "grwe": {
+      "dt": "Oras sa Tag-init ng Kanlurang Greenland",
+      "st": "Standard na Oras sa Kanlurang Greenland"
+    },
+    "gulf": {
+      "st": "Oras sa Gulf"
+    },
+    "guya": {
+      "st": "Oras sa Guyana"
+    },
+    "haal": {
+      "dt": "Oras sa Tag-init ng Hawaii-Aleutian",
+      "st": "Standard na Oras sa Hawaii-Aleutian"
+    },
+    "hoko": {
+      "dt": "Oras sa Tag-init ng Hong Kong",
+      "st": "Standard na Oras sa Hong Kong"
+    },
+    "hovd": {
+      "dt": "Oras sa Tag-init ng Hovd",
+      "st": "Standard na Oras sa Hovd"
+    },
+    "ince": {
+      "st": "Oras sa Gitnang Indonesia"
+    },
+    "indi": {
+      "st": "Standard na Oras sa India"
+    },
+    "indo": {
+      "st": "Oras sa Indochina"
+    },
+    "inea": {
+      "st": "Oras sa Silangang Indonesia"
+    },
+    "inoc": {
+      "st": "Oras sa Indian Ocean"
+    },
+    "inwe": {
+      "st": "Oras sa Kanlurang Indonesia"
+    },
+    "iran": {
+      "dt": "Daylight Time sa Iran",
+      "st": "Standard na Oras sa Iran"
+    },
+    "irku": {
+      "dt": "Oras sa Tag-init ng Irkutsk",
+      "st": "Standard na Oras sa Irkutsk"
+    },
+    "isra": {
+      "dt": "Daylight Time sa Israel",
+      "st": "Standard na Oras sa Israel"
+    },
+    "japa": {
+      "dt": "Daylight Time sa Japan",
+      "st": "Standard na Oras sa Japan"
+    },
+    "kaea": {
+      "st": "Oras sa Silangang Kazakhstan"
+    },
+    "kamc": {
+      "dt": "Summer Time sa Petropavlovsk-Kamchatski",
+      "st": "Standard Time sa Petropavlovsk-Kamchatski"
+    },
+    "kawe": {
+      "st": "Oras sa Kanlurang Kazakhstan"
+    },
+    "kore": {
+      "dt": "Daylight Time sa Korea",
+      "st": "Standard na Oras sa Korea"
+    },
+    "kosr": {
+      "st": "Oras sa Kosrae"
+    },
+    "kras": {
+      "dt": "Oras sa Tag-init ng Krasnoyarsk",
+      "st": "Standard na Oras sa Krasnoyarsk"
+    },
+    "kyrg": {
+      "st": "Oras sa Kyrgystan"
+    },
+    "liis": {
+      "st": "Oras sa Line Islands"
+    },
+    "loho": {
+      "dt": "Daylight Time sa Lorde Howe",
+      "st": "Standard na Oras sa Lord Howe"
+    },
+    "macq": {
+      "st": "Oras sa Macquarie Island"
+    },
+    "maga": {
+      "dt": "Oras sa Tag-init ng Magadan",
+      "st": "Standard na Oras sa Magadan"
+    },
+    "mais": {
+      "st": "Oras sa Marshall Islands"
+    },
+    "mala": {
+      "st": "Oras sa Malaysia"
+    },
+    "mald": {
+      "st": "Oras sa Maldives"
+    },
+    "marq": {
+      "st": "Oras sa Marquesas"
+    },
+    "maur": {
+      "dt": "Oras sa Tag-init ng Mauritius",
+      "st": "Standard na Oras sa Mauritius"
+    },
+    "maws": {
+      "st": "Oras sa Mawson"
+    },
+    "meno": {
+      "dt": "Daylight na Oras sa Hilagang-kanlurang Mexico",
+      "st": "Standard na Oras sa Hilagang-kanlurang Mexico"
+    },
+    "mepa": {
+      "dt": "Daylight na Oras sa Pasipiko ng Mexico",
+      "st": "Standard na Oras sa Pasipiko ng Mexico"
+    },
+    "mgmt": {
+      "st": "Greenwich Mean Time"
+    },
+    "mong": {
+      "dt": "Oras sa Tag-init ng Ulan Bator",
+      "st": "Standard na Oras sa Ulan Bator"
+    },
+    "mosc": {
+      "dt": "Oras sa Tag-init ng Moscow",
+      "st": "Standard na Oras sa Moscow"
+    },
+    "myan": {
+      "st": "Oras sa Myanmar"
+    },
+    "naur": {
+      "st": "Oras sa Nauru"
+    },
+    "neca": {
+      "dt": "Oras sa Tag-init ng New Caledonia",
+      "st": "Standard na Oras sa New Caledonia"
+    },
+    "nepa": {
+      "st": "Oras sa Nepal"
+    },
+    "newf": {
+      "dt": "Daylight na Oras sa Newfoundland",
+      "st": "Standard na Oras sa Newfoundland"
+    },
+    "neze": {
+      "dt": "Daylight Time sa New Zealand",
+      "st": "Standard na Oras sa New Zealand"
+    },
+    "niue": {
+      "st": "Oras sa Niue"
+    },
+    "norf": {
+      "dt": "Daylight Time sa Norfolk Island",
+      "st": "Standard na Oras sa Norfolk Island"
+    },
+    "noro": {
+      "dt": "Oras sa Tag-init ng Fernando de Noronha",
+      "st": "Standard na Oras sa Fernando de Noronha"
+    },
+    "novo": {
+      "dt": "Oras sa Tag-init ng Novosibirsk",
+      "st": "Standard na Oras sa Novosibirsk"
+    },
+    "omsk": {
+      "dt": "Oras sa Tag-init ng Omsk",
+      "st": "Standard na Oras sa Omsk"
+    },
+    "paki": {
+      "dt": "Oras sa Tag-init ng Pakistan",
+      "st": "Standard na Oras sa Pakistan"
+    },
+    "pala": {
+      "st": "Oras sa Palau"
+    },
+    "pang": {
+      "st": "Oras sa Papua New Guinea"
+    },
+    "para": {
+      "dt": "Oras sa Tag-init ng Paraguay",
+      "st": "Standard na Oras sa Paraguay"
+    },
+    "peru": {
+      "dt": "Oras sa Tag-init ng Peru",
+      "st": "Standard na Oras sa Peru"
+    },
+    "phil": {
+      "dt": "Oras sa Tag-init ng Pilipinas",
+      "st": "Standard na Oras sa Pilipinas"
+    },
+    "phis": {
+      "st": "Oras sa Phoenix Islands"
+    },
+    "pimi": {
+      "dt": "Daylight na Oras sa Saint Pierre & Miquelon",
+      "st": "Standard na Oras sa Saint Pierre & Miquelon"
+    },
+    "pitc": {
+      "st": "Oras sa Pitcairn"
+    },
+    "pona": {
+      "st": "Oras sa Ponape"
+    },
+    "pyon": {
+      "st": "Oras sa Pyongyang"
+    },
+    "reun": {
+      "st": "Oras sa Reunion"
+    },
+    "roth": {
+      "st": "Oras sa Rothera"
+    },
+    "sakh": {
+      "dt": "Oras sa Tag-init ng Sakhalin",
+      "st": "Standard na Oras sa Sakhalin"
+    },
+    "sama": {
+      "dt": "Samara Daylight",
+      "st": "Standard Time sa Samara"
+    },
+    "samo": {
+      "dt": "Daylight Time sa Samoa",
+      "st": "Standard na Oras sa Samoa"
+    },
+    "seyc": {
+      "st": "Oras sa Seychelles"
+    },
+    "sing": {
+      "st": "Standard na Oras sa Singapore"
+    },
+    "soge": {
+      "st": "Oras sa Timog Georgia"
+    },
+    "solo": {
+      "st": "Oras sa Solomon Islands"
+    },
+    "suri": {
+      "st": "Oras sa Suriname"
+    },
+    "syow": {
+      "st": "Oras sa Syowa"
+    },
+    "tahi": {
+      "st": "Oras sa Tahiti"
+    },
+    "taip": {
+      "dt": "Daylight Time sa Taipei",
+      "st": "Standard na Oras sa Taipei"
+    },
+    "taji": {
+      "st": "Oras sa Tajikistan"
+    },
+    "toke": {
+      "st": "Oras sa Tokelau"
+    },
+    "tong": {
+      "dt": "Oras sa Tag-init ng Tonga",
+      "st": "Standard na Oras sa Tonga"
+    },
+    "truk": {
+      "st": "Oras sa Chuuk"
+    },
+    "turk": {
+      "dt": "Oras sa Tag-init ng Turkmenistan",
+      "st": "Standard na Oras sa Turkmenistan"
+    },
+    "tuva": {
+      "st": "Oras sa Tuvalu"
+    },
+    "urug": {
+      "dt": "Oras sa Tag-init ng Uruguay",
+      "st": "Standard na Oras sa Uruguay"
+    },
+    "uzbe": {
+      "dt": "Oras sa Tag-init ng Uzbekistan",
+      "st": "Standard na Oras sa Uzbekistan"
+    },
+    "vanu": {
+      "dt": "Oras sa Tag-init ng Vanuatu",
+      "st": "Standard na Oras sa Vanuatu"
+    },
+    "vene": {
+      "st": "Oras sa Venezuela"
+    },
+    "vlad": {
+      "dt": "Oras sa Tag-init ng Vladivostok",
+      "st": "Standard na Oras sa Vladivostok"
+    },
+    "volg": {
+      "dt": "Oras sa Tag-init ng Volgograd",
+      "st": "Standard na Oras sa Volgograd"
+    },
+    "vost": {
+      "st": "Oras sa Vostok"
+    },
+    "wake": {
+      "st": "Oras sa Wake Island"
+    },
+    "wall": {
+      "st": "Oras sa Wallis & Futuna"
+    },
+    "yaku": {
+      "dt": "Oras sa Tag-init ng Yakutsk",
+      "st": "Standard na Oras sa Yakutsk"
+    },
+    "yeka": {
+      "dt": "Oras sa Tag-init ng Yekaterinburg",
+      "st": "Standard na Oras sa Yekaterinburg"
+    },
+    "yuko": {
+      "st": "Oras sa Yukon"
+    }
+  },
+  "overrides": {
+    "gblon": {
+      "dt": "Oras sa Tag-init ng Britain"
+    },
+    "iedub": {
+      "dt": "Standard na Oras sa Ireland"
+    },
+    "utc": {
+      "st": "Coordinated Universal Time"
+    }
+  }
+}

@@ -1,0 +1,6633 @@
+{
+  "trie": {
+    "header": {
+      "high_start": 120832,
+      "shifted12_high_start": 30,
+      "index3_null_offset": 3,
+      "data_null_offset": 186,
+      "null_value": 0,
+      "trie_type": "Small"
+    },
+    "index": [
+      0,
+      64,
+      126,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      192,
+      186,
+      186,
+      186,
+      421,
+      446,
+      446,
+      447,
+      446,
+      446,
+      446,
+      479,
+      0,
+      16,
+      32,
+      48,
+      64,
+      80,
+      96,
+      112,
+      126,
+      142,
+      158,
+      174,
+      186,
+      202,
+      218,
+      234,
+      186,
+      202,
+      218,
+      234,
+      186,
+      202,
+      218,
+      234,
+      186,
+      202,
+      218,
+      234,
+      186,
+      202,
+      218,
+      234,
+      186,
+      202,
+      218,
+      234,
+      186,
+      202,
+      218,
+      234,
+      186,
+      202,
+      218,
+      234,
+      192,
+      208,
+      224,
+      240,
+      186,
+      202,
+      218,
+      234,
+      186,
+      202,
+      218,
+      234,
+      186,
+      202,
+      218,
+      234,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      254,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      267,
+      278,
+      186,
+      186,
+      285,
+      300,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      316,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      331,
+      346,
+      362,
+      374,
+      388,
+      402,
+      417,
+      433,
+      449,
+      465,
+      479,
+      495,
+      511,
+      527,
+      543,
+      559,
+      575,
+      186,
+      591,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      602,
+      618,
+      186,
+      186,
+      186,
+      186,
+      634,
+      648,
+      663,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      679,
+      695,
+      711,
+      727,
+      743,
+      759,
+      774,
+      786,
+      800,
+      810,
+      824,
+      839,
+      186,
+      854,
+      866,
+      881,
+      897,
+      913,
+      929,
+      945,
+      961,
+      977,
+      992,
+      1007,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      1021,
+      1036,
+      1050,
+      1066,
+      186,
+      186,
+      1077,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      1090,
+      1106,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      1118,
+      1133,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      1141,
+      1151,
+      186,
+      1166,
+      186,
+      1180,
+      1196,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      1201,
+      186,
+      186,
+      186,
+      1207,
+      186,
+      186,
+      317,
+      186,
+      186,
+      186,
+      1203,
+      186,
+      186,
+      186,
+      1209,
+      186,
+      186,
+      186,
+      72,
+      84,
+      84,
+      84,
+      84,
+      84,
+      84,
+      100,
+      3,
+      3,
+      3,
+      132,
+      3,
+      3,
+      3,
+      3,
+      161,
+      193,
+      3,
+      212,
+      243,
+      275,
+      3,
+      307,
+      339,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      366,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      389,
+      65518
+    ],
+    "data": [
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": ")",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "(",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": ">",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "<",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "]",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "[",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "}",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "{",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "»",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "«",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "༻",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "༺",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "༽",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "༼",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "᚜",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "᚛",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "›",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "‹",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⁆",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⁅",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⁾",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⁽",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "₎",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "₍",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∋",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∌",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∍",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∈",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∉",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∊",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧵",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⯾",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦣",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦛",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦠",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫮",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∽",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∼",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋍",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≌",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≅",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≓",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≒",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≕",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≔",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≥",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≤",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≧",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≦",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≩",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≨",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≫",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≪",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≯",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≮",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≱",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≰",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≳",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≲",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≵",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≴",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≷",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≶",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≹",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≸",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≻",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≺",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≽",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≼",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≿",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≾",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊁",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊀",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊃",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊂",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊅",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊄",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊇",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊆",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊉",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊈",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊋",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊊",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊐",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊏",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊒",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊑",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦸",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊣",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊢",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫞",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫤",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫣",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫥",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊱",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊰",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊳",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊲",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊵",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊴",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊷",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊶",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟜",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋊",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋉",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋌",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋋",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "≃",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋑",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋐",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋗",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋖",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋙",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋘",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋛",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋚",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋝",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋜",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋟",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋞",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋡",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋠",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋣",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋢",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋥",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋤",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋧",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋦",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋩",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋨",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋫",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋪",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋭",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋬",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋱",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋰",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋺",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋻",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋼",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋽",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋾",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋲",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋳",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋴",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋶",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⋷",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⌉",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⌈",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⌋",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⌊",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "〉",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "〈",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "❩",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "❨",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "❫",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "❪",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "❭",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "❬",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "❯",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "❮",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "❱",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "❰",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "❳",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "❲",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "❵",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "❴",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟄",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟃",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟆",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⟅",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟉",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟈",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟍",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟋",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟖",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟕",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊸",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟞",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟝",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟣",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟢",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟥",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟤",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⟧",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⟦",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⟩",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⟨",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⟫",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⟪",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⟭",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⟬",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⟯",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⟮",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦄",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦃",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⦆",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦅",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⦈",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦇",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⦊",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦉",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⦌",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦋",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⦐",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦏",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⦎",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦍",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⦒",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦑",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⦔",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦓",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⦖",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦕",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⦘",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⦗",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∡",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∢",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∠",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦥",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦤",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦩",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦨",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦫",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦪",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦭",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦬",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦯",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⦮",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊘",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧁",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧀",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧅",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧄",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧐",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧏",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧒",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧑",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧕",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧔",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧙",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⧘",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⧛",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⧚",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧩",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧨",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∕",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧹",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧸",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⧽",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⧼",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⨬",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⨫",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⨮",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⨭",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⨵",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⨴",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⨽",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⨼",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⩥",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⩤",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⩺",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⩹",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⩼",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⩻",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⩾",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⩽",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪀",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⩿",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪂",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪁",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪄",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪃",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪆",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪅",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪈",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪇",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪊",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪉",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪌",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪋",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪎",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪍",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪐",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪏",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪒",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪑",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪔",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪓",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪖",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪕",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪘",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪗",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪚",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪙",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪜",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪛",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪞",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪝",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪠",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪟",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪢",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪡",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪧",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪦",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪩",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪨",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪫",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪪",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪭",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪬",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪰",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪯",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪲",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪱",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪴",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪳",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪶",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪵",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪸",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪷",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪺",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪹",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪼",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪻",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪾",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪽",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫀",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⪿",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫂",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫁",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫄",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫃",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫆",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫅",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫈",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫇",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫊",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫉",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫌",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫋",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫎",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫍",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫐",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫏",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫒",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫑",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫔",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫓",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫖",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫕",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊦",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊩",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊨",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⊫",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫭",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫬",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∤",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫸",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫷",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫺",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⫹",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∟",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸃",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸂",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸅",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸄",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸊",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸉",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸍",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸌",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸝",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸜",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸡",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸠",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⸣",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⸢",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⸥",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⸤",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⸧",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⸦",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⸩",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⸨",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "⹖",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⹕",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⹘",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⹗",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⹚",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⹙",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "⹜",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⹛",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "〉",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "〈",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "》",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "《",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "」",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "「",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "』",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "『",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "】",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "【",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "〕",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "〔",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "〗",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "〖",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "〙",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "〘",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "〛",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "〚",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "﹚",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "﹙",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "﹜",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "﹛",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "﹞",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "﹝",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "﹥",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "﹤",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "）",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "（",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "＞",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "＜",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "］",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "［",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "｝",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "｛",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "｠",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "｟",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "｣",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "｢",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "\u0000",
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "alas": "AKT",
+    "amce": "CT",
+    "amea": "ET",
+    "ammo": "MT",
+    "ampa": "PT",
+    "atla": "AT",
+    "haal": "HAT",
+    "mgmt": "GMT"
+  },
+  "overrides": {
+    "ushnl": "HST",
+    "utc": "UTC"
+  }
+}

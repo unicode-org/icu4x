@@ -1,0 +1,579 @@
+{
+  "defaults": {
+    "acre": {
+      "dt": "Acre Summer Time",
+      "st": "Acre Standard Time"
+    },
+    "afce": {
+      "st": "Central Africa Time"
+    },
+    "afea": {
+      "st": "East Africa Time"
+    },
+    "afgh": {
+      "st": "Afghanistan Time"
+    },
+    "afso": {
+      "st": "South Africa Standard Time"
+    },
+    "afwe": {
+      "dt": "West Africa Summer Time",
+      "st": "West Africa Standard Time"
+    },
+    "alam": {
+      "dt": "Almaty Summer Time",
+      "st": "Almaty Standard Time"
+    },
+    "alas": {
+      "dt": "Alaska Daylight Time",
+      "st": "Alaska Standard Time"
+    },
+    "amaz": {
+      "dt": "Amazon Summer Time",
+      "st": "Amazon Standard Time"
+    },
+    "amce": {
+      "dt": "Central Daylight Time",
+      "st": "Central Standard Time"
+    },
+    "amea": {
+      "dt": "Eastern Daylight Time",
+      "st": "Eastern Standard Time"
+    },
+    "ammo": {
+      "dt": "Mountain Daylight Time",
+      "st": "Mountain Standard Time"
+    },
+    "ampa": {
+      "dt": "Pacific Daylight Time",
+      "st": "Pacific Standard Time"
+    },
+    "anad": {
+      "dt": "Anadyr Summer Time",
+      "st": "Anadyr Standard Time"
+    },
+    "apia": {
+      "dt": "Apia Daylight Time",
+      "st": "Apia Standard Time"
+    },
+    "aqta": {
+      "dt": "Aqtau Summer Time",
+      "st": "Aqtau Standard Time"
+    },
+    "aqto": {
+      "dt": "Aqtobe Summer Time",
+      "st": "Aqtobe Standard Time"
+    },
+    "arab": {
+      "dt": "Arabian Daylight Time",
+      "st": "Arabian Standard Time"
+    },
+    "arge": {
+      "dt": "Argentina Summer Time",
+      "st": "Argentina Standard Time"
+    },
+    "arme": {
+      "dt": "Armenia Summer Time",
+      "st": "Armenia Standard Time"
+    },
+    "arwe": {
+      "dt": "Western Argentina Summer Time",
+      "st": "Western Argentina Standard Time"
+    },
+    "atla": {
+      "dt": "Atlantic Daylight Time",
+      "st": "Atlantic Standard Time"
+    },
+    "auce": {
+      "dt": "Australian Central Daylight Time",
+      "st": "Australian Central Standard Time"
+    },
+    "aucw": {
+      "dt": "Australian Central Western Daylight Time",
+      "st": "Australian Central Western Standard Time"
+    },
+    "auea": {
+      "dt": "Australian Eastern Daylight Time",
+      "st": "Australian Eastern Standard Time"
+    },
+    "auwe": {
+      "dt": "Australian Western Daylight Time",
+      "st": "Australian Western Standard Time"
+    },
+    "azer": {
+      "dt": "Azerbaijan Summer Time",
+      "st": "Azerbaijan Standard Time"
+    },
+    "azor": {
+      "dt": "Azores Summer Time",
+      "st": "Azores Standard Time"
+    },
+    "bang": {
+      "dt": "Bangladesh Summer Time",
+      "st": "Bangladesh Standard Time"
+    },
+    "bhut": {
+      "st": "Bhutan Time"
+    },
+    "boli": {
+      "st": "Bolivia Time"
+    },
+    "bras": {
+      "dt": "Brasilia Summer Time",
+      "st": "Brasilia Standard Time"
+    },
+    "brun": {
+      "st": "Brunei Darussalam Time"
+    },
+    "case": {
+      "st": "Casey Time"
+    },
+    "cave": {
+      "dt": "Cape Verde Summer Time",
+      "st": "Cape Verde Standard Time"
+    },
+    "cham": {
+      "st": "Chamorro Standard Time"
+    },
+    "chat": {
+      "dt": "Chatham Daylight Time",
+      "st": "Chatham Standard Time"
+    },
+    "chil": {
+      "dt": "Chile Summer Time",
+      "st": "Chile Standard Time"
+    },
+    "chin": {
+      "dt": "China Daylight Time",
+      "st": "China Standard Time"
+    },
+    "choi": {
+      "dt": "Choibalsan Summer Time",
+      "st": "Choibalsan Standard Time"
+    },
+    "chri": {
+      "st": "Christmas Island Time"
+    },
+    "coco": {
+      "st": "Cocos Islands Time"
+    },
+    "colo": {
+      "dt": "Colombia Summer Time",
+      "st": "Colombia Standard Time"
+    },
+    "cook": {
+      "dt": "Cook Islands Half Summer Time",
+      "st": "Cook Islands Standard Time"
+    },
+    "cuba": {
+      "dt": "Cuba Daylight Time",
+      "st": "Cuba Standard Time"
+    },
+    "davi": {
+      "st": "Davis Time"
+    },
+    "dumo": {
+      "st": "Dumont-d’Urville Time"
+    },
+    "east": {
+      "dt": "Easter Island Summer Time",
+      "st": "Easter Island Standard Time"
+    },
+    "eati": {
+      "st": "East Timor Time"
+    },
+    "ecua": {
+      "st": "Ecuador Time"
+    },
+    "euce": {
+      "dt": "Central European Summer Time",
+      "st": "Central European Standard Time"
+    },
+    "euea": {
+      "dt": "Eastern European Summer Time",
+      "st": "Eastern European Standard Time"
+    },
+    "eufe": {
+      "st": "Further-eastern European Time"
+    },
+    "euwe": {
+      "dt": "Western European Summer Time",
+      "st": "Western European Standard Time"
+    },
+    "falk": {
+      "dt": "Falkland Islands Summer Time",
+      "st": "Falkland Islands Standard Time"
+    },
+    "fiji": {
+      "dt": "Fiji Summer Time",
+      "st": "Fiji Standard Time"
+    },
+    "frgu": {
+      "st": "French Guiana Time"
+    },
+    "frso": {
+      "st": "French Southern & Antarctic Time"
+    },
+    "gala": {
+      "st": "Galapagos Time"
+    },
+    "gamb": {
+      "st": "Gambier Time"
+    },
+    "geor": {
+      "dt": "Georgia Summer Time",
+      "st": "Georgia Standard Time"
+    },
+    "giis": {
+      "st": "Gilbert Islands Time"
+    },
+    "grea": {
+      "dt": "East Greenland Summer Time",
+      "st": "East Greenland Standard Time"
+    },
+    "grwe": {
+      "dt": "West Greenland Summer Time",
+      "st": "West Greenland Standard Time"
+    },
+    "guam": {
+      "st": "Guam Standard Time"
+    },
+    "gulf": {
+      "st": "Gulf Standard Time"
+    },
+    "guya": {
+      "st": "Guyana Time"
+    },
+    "haal": {
+      "dt": "Hawaii-Aleutian Daylight Time",
+      "st": "Hawaii-Aleutian Standard Time"
+    },
+    "hoko": {
+      "dt": "Hong Kong Summer Time",
+      "st": "Hong Kong Standard Time"
+    },
+    "hovd": {
+      "dt": "Hovd Summer Time",
+      "st": "Hovd Standard Time"
+    },
+    "ince": {
+      "st": "Central Indonesia Time"
+    },
+    "indi": {
+      "st": "India Standard Time"
+    },
+    "indo": {
+      "st": "Indochina Time"
+    },
+    "inea": {
+      "st": "Eastern Indonesia Time"
+    },
+    "inoc": {
+      "st": "Indian Ocean Time"
+    },
+    "inwe": {
+      "st": "Western Indonesia Time"
+    },
+    "iran": {
+      "dt": "Iran Daylight Time",
+      "st": "Iran Standard Time"
+    },
+    "irku": {
+      "dt": "Irkutsk Summer Time",
+      "st": "Irkutsk Standard Time"
+    },
+    "isra": {
+      "dt": "Israel Daylight Time",
+      "st": "Israel Standard Time"
+    },
+    "japa": {
+      "dt": "Japan Daylight Time",
+      "st": "Japan Standard Time"
+    },
+    "kaea": {
+      "st": "East Kazakhstan Time"
+    },
+    "kamc": {
+      "dt": "Petropavlovsk-Kamchatski Summer Time",
+      "st": "Petropavlovsk-Kamchatski Standard Time"
+    },
+    "kawe": {
+      "st": "West Kazakhstan Time"
+    },
+    "kore": {
+      "dt": "Korean Daylight Time",
+      "st": "Korean Standard Time"
+    },
+    "kosr": {
+      "st": "Kosrae Time"
+    },
+    "kras": {
+      "dt": "Krasnoyarsk Summer Time",
+      "st": "Krasnoyarsk Standard Time"
+    },
+    "kyrg": {
+      "st": "Kyrgyzstan Time"
+    },
+    "lank": {
+      "st": "Lanka Time"
+    },
+    "liis": {
+      "st": "Line Islands Time"
+    },
+    "loho": {
+      "dt": "Lord Howe Daylight Time",
+      "st": "Lord Howe Standard Time"
+    },
+    "maca": {
+      "dt": "Macao Summer Time",
+      "st": "Macao Standard Time"
+    },
+    "macq": {
+      "st": "Macquarie Island Time"
+    },
+    "maga": {
+      "dt": "Magadan Summer Time",
+      "st": "Magadan Standard Time"
+    },
+    "mais": {
+      "st": "Marshall Islands Time"
+    },
+    "mala": {
+      "st": "Malaysia Time"
+    },
+    "mald": {
+      "st": "Maldives Time"
+    },
+    "marq": {
+      "st": "Marquesas Time"
+    },
+    "maur": {
+      "dt": "Mauritius Summer Time",
+      "st": "Mauritius Standard Time"
+    },
+    "maws": {
+      "st": "Mawson Time"
+    },
+    "meno": {
+      "dt": "Northwest Mexico Daylight Time",
+      "st": "Northwest Mexico Standard Time"
+    },
+    "mepa": {
+      "dt": "Mexican Pacific Daylight Time",
+      "st": "Mexican Pacific Standard Time"
+    },
+    "mgmt": {
+      "st": "Greenwich Mean Time"
+    },
+    "mong": {
+      "dt": "Ulaanbaatar Summer Time",
+      "st": "Ulaanbaatar Standard Time"
+    },
+    "mosc": {
+      "dt": "Moscow Summer Time",
+      "st": "Moscow Standard Time"
+    },
+    "myan": {
+      "st": "Myanmar Time"
+    },
+    "naur": {
+      "st": "Nauru Time"
+    },
+    "neca": {
+      "dt": "New Caledonia Summer Time",
+      "st": "New Caledonia Standard Time"
+    },
+    "nepa": {
+      "st": "Nepal Time"
+    },
+    "newf": {
+      "dt": "Newfoundland Daylight Time",
+      "st": "Newfoundland Standard Time"
+    },
+    "neze": {
+      "dt": "New Zealand Daylight Time",
+      "st": "New Zealand Standard Time"
+    },
+    "niue": {
+      "st": "Niue Time"
+    },
+    "noma": {
+      "st": "North Mariana Islands Time"
+    },
+    "norf": {
+      "dt": "Norfolk Island Daylight Time",
+      "st": "Norfolk Island Standard Time"
+    },
+    "noro": {
+      "dt": "Fernando de Noronha Summer Time",
+      "st": "Fernando de Noronha Standard Time"
+    },
+    "novo": {
+      "dt": "Novosibirsk Summer Time",
+      "st": "Novosibirsk Standard Time"
+    },
+    "omsk": {
+      "dt": "Omsk Summer Time",
+      "st": "Omsk Standard Time"
+    },
+    "paki": {
+      "dt": "Pakistan Summer Time",
+      "st": "Pakistan Standard Time"
+    },
+    "pala": {
+      "st": "Palau Time"
+    },
+    "pang": {
+      "st": "Papua New Guinea Time"
+    },
+    "para": {
+      "dt": "Paraguay Summer Time",
+      "st": "Paraguay Standard Time"
+    },
+    "peru": {
+      "dt": "Peru Summer Time",
+      "st": "Peru Standard Time"
+    },
+    "phil": {
+      "dt": "Philippine Summer Time",
+      "st": "Philippine Standard Time"
+    },
+    "phis": {
+      "st": "Phoenix Islands Time"
+    },
+    "pimi": {
+      "dt": "St. Pierre & Miquelon Daylight Time",
+      "st": "St. Pierre & Miquelon Standard Time"
+    },
+    "pitc": {
+      "st": "Pitcairn Time"
+    },
+    "pona": {
+      "st": "Ponape Time"
+    },
+    "pyon": {
+      "st": "Pyongyang Time"
+    },
+    "qyzy": {
+      "dt": "Qyzylorda Summer Time",
+      "st": "Qyzylorda Standard Time"
+    },
+    "reun": {
+      "st": "Réunion Time"
+    },
+    "roth": {
+      "st": "Rothera Time"
+    },
+    "sakh": {
+      "dt": "Sakhalin Summer Time",
+      "st": "Sakhalin Standard Time"
+    },
+    "sama": {
+      "dt": "Samara Summer Time",
+      "st": "Samara Standard Time"
+    },
+    "samo": {
+      "dt": "Samoa Daylight Time",
+      "st": "Samoa Standard Time"
+    },
+    "seyc": {
+      "st": "Seychelles Time"
+    },
+    "sing": {
+      "st": "Singapore Standard Time"
+    },
+    "soge": {
+      "st": "South Georgia Time"
+    },
+    "solo": {
+      "st": "Solomon Islands Time"
+    },
+    "suri": {
+      "st": "Suriname Time"
+    },
+    "syow": {
+      "st": "Syowa Time"
+    },
+    "tahi": {
+      "st": "Tahiti Time"
+    },
+    "taip": {
+      "dt": "Taipei Daylight Time",
+      "st": "Taipei Standard Time"
+    },
+    "taji": {
+      "st": "Tajikistan Time"
+    },
+    "toke": {
+      "st": "Tokelau Time"
+    },
+    "tong": {
+      "dt": "Tonga Summer Time",
+      "st": "Tonga Standard Time"
+    },
+    "truk": {
+      "st": "Chuuk Time"
+    },
+    "turk": {
+      "dt": "Turkmenistan Summer Time",
+      "st": "Turkmenistan Standard Time"
+    },
+    "tuva": {
+      "st": "Tuvalu Time"
+    },
+    "urug": {
+      "dt": "Uruguay Summer Time",
+      "st": "Uruguay Standard Time"
+    },
+    "uzbe": {
+      "dt": "Uzbekistan Summer Time",
+      "st": "Uzbekistan Standard Time"
+    },
+    "vanu": {
+      "dt": "Vanuatu Summer Time",
+      "st": "Vanuatu Standard Time"
+    },
+    "vene": {
+      "st": "Venezuela Time"
+    },
+    "vlad": {
+      "dt": "Vladivostok Summer Time",
+      "st": "Vladivostok Standard Time"
+    },
+    "volg": {
+      "dt": "Volgograd Summer Time",
+      "st": "Volgograd Standard Time"
+    },
+    "vost": {
+      "st": "Vostok Time"
+    },
+    "wake": {
+      "st": "Wake Island Time"
+    },
+    "wall": {
+      "st": "Wallis & Futuna Time"
+    },
+    "yaku": {
+      "dt": "Yakutsk Summer Time",
+      "st": "Yakutsk Standard Time"
+    },
+    "yeka": {
+      "dt": "Yekaterinburg Summer Time",
+      "st": "Yekaterinburg Standard Time"
+    },
+    "yuko": {
+      "st": "Yukon Time"
+    }
+  },
+  "overrides": {
+    "gblon": {
+      "dt": "British Summer Time"
+    },
+    "iedub": {
+      "dt": "Irish Standard Time"
+    },
+    "utc": {
+      "st": "Coordinated Universal Time"
+    }
+  }
+}

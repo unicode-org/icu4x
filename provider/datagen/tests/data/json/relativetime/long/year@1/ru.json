@@ -1,0 +1,47 @@
+{
+  "relatives": {
+    "-1": "в прошлом году",
+    "0": "в этом году",
+    "1": "в следующем году"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " год назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": " года назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": " лет назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": " года назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "через  год",
+      "index": 11
+    },
+    "two": null,
+    "few": {
+      "pattern": "через  года",
+      "index": 11
+    },
+    "many": {
+      "pattern": "через  лет",
+      "index": 11
+    },
+    "other": {
+      "pattern": "через  года",
+      "index": 11
+    }
+  }
+}

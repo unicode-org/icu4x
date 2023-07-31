@@ -1,0 +1,108 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "Oca",
+          "Şub",
+          "Mar",
+          "Nis",
+          "May",
+          "Haz",
+          "Tem",
+          "Ağu",
+          "Eyl",
+          "Eki",
+          "Kas",
+          "Ara"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "O",
+          "Ş",
+          "M",
+          "N",
+          "M",
+          "H",
+          "T",
+          "A",
+          "E",
+          "E",
+          "K",
+          "A"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "Ocak",
+          "Şubat",
+          "Mart",
+          "Nisan",
+          "Mayıs",
+          "Haziran",
+          "Temmuz",
+          "Ağustos",
+          "Eylül",
+          "Ekim",
+          "Kasım",
+          "Aralık"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Paz",
+        "Pzt",
+        "Sal",
+        "Çar",
+        "Per",
+        "Cum",
+        "Cmt"
+      ],
+      "narrow": [
+        "P",
+        "P",
+        "S",
+        "Ç",
+        "P",
+        "C",
+        "C"
+      ],
+      "short": [
+        "Pa",
+        "Pt",
+        "Sa",
+        "Ça",
+        "Pe",
+        "Cu",
+        "Ct"
+      ],
+      "wide": [
+        "Pazar",
+        "Pazartesi",
+        "Salı",
+        "Çarşamba",
+        "Perşembe",
+        "Cuma",
+        "Cumartesi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "be": "BE"
+    },
+    "abbr": {
+      "be": "BE"
+    },
+    "narrow": {
+      "be": "BE"
+    }
+  }
+}

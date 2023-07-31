@@ -1,0 +1,43 @@
+{
+  "relatives": {
+    "-2": "прекјуче",
+    "-1": "јуче",
+    "0": "данас",
+    "1": "сутра",
+    "2": "прекосутра"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "пре  дана",
+      "index": 7
+    },
+    "two": null,
+    "few": {
+      "pattern": "пре  дана",
+      "index": 7
+    },
+    "many": null,
+    "other": {
+      "pattern": "пре  дана",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "за  дан",
+      "index": 5
+    },
+    "two": null,
+    "few": {
+      "pattern": "за  дана",
+      "index": 5
+    },
+    "many": null,
+    "other": {
+      "pattern": "за  дана",
+      "index": 5
+    }
+  }
+}

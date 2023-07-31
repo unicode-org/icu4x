@@ -1,0 +1,664 @@
+{
+  "parents": {
+    "en-150": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-AG": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-AI": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-AT": [
+      "en",
+      null,
+      "150"
+    ],
+    "en-AU": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-BB": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-BE": [
+      "en",
+      null,
+      "150"
+    ],
+    "en-BM": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-BS": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-BW": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-BZ": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-CC": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-CH": [
+      "en",
+      null,
+      "150"
+    ],
+    "en-CK": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-CM": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-CX": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-CY": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-DE": [
+      "en",
+      null,
+      "150"
+    ],
+    "en-DG": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-DK": [
+      "en",
+      null,
+      "150"
+    ],
+    "en-DM": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-ER": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-FI": [
+      "en",
+      null,
+      "150"
+    ],
+    "en-FJ": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-FK": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-FM": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-GB": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-GD": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-GG": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-GH": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-GI": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-GM": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-GY": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-HK": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-IE": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-IL": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-IM": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-IN": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-IO": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-JE": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-JM": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-KE": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-KI": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-KN": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-KY": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-LC": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-LR": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-LS": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-MG": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-MO": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-MS": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-MT": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-MU": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-MV": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-MW": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-MY": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-NA": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-NF": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-NG": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-NL": [
+      "en",
+      null,
+      "150"
+    ],
+    "en-NR": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-NU": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-NZ": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-PG": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-PK": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-PN": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-PW": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-RW": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-SB": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-SC": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-SD": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-SE": [
+      "en",
+      null,
+      "150"
+    ],
+    "en-SG": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-SH": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-SI": [
+      "en",
+      null,
+      "150"
+    ],
+    "en-SL": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-SS": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-SX": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-SZ": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-TC": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-TK": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-TO": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-TT": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-TV": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-TZ": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-UG": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-VC": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-VG": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-VU": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-WS": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-ZA": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-ZM": [
+      "en",
+      null,
+      "001"
+    ],
+    "en-ZW": [
+      "en",
+      null,
+      "001"
+    ],
+    "es-AR": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-BO": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-BR": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-BZ": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-CL": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-CO": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-CR": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-CU": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-DO": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-EC": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-GT": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-HN": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-MX": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-NI": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-PA": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-PE": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-PR": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-PY": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-SV": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-US": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-UY": [
+      "es",
+      null,
+      "419"
+    ],
+    "es-VE": [
+      "es",
+      null,
+      "419"
+    ],
+    "hi-Latn": [
+      "en",
+      null,
+      "IN"
+    ],
+    "ht": [
+      "fr",
+      null,
+      "HT"
+    ],
+    "nb": [
+      "no",
+      null,
+      null
+    ],
+    "nn": [
+      "no",
+      null,
+      null
+    ],
+    "no-NO": [
+      "no",
+      null,
+      null
+    ],
+    "pt-AO": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "pt-CH": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "pt-CV": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "pt-FR": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "pt-GQ": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "pt-GW": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "pt-LU": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "pt-MO": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "pt-MZ": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "pt-ST": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "pt-TL": [
+      "pt",
+      null,
+      "PT"
+    ],
+    "zh-Hant-MO": [
+      "zh",
+      "Hant",
+      "HK"
+    ]
+  }
+}

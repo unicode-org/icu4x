@@ -1,0 +1,11 @@
+{
+  "CPInversionListStrList": {
+    "cp_inv_list": [
+      "a-z",
+      "ñ"
+    ],
+    "str_list": [
+      "ng"
+    ]
+  }
+}

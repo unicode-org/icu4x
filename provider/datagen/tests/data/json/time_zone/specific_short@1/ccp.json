@@ -1,0 +1,12 @@
+{
+  "defaults": {
+    "indi": {
+      "st": "IST"
+    }
+  },
+  "overrides": {
+    "utc": {
+      "st": "UTC"
+    }
+  }
+}
