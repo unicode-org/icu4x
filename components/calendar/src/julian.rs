@@ -235,6 +235,7 @@ impl Julian {
             12 => 334,
             _ => -1,
         };
+        // Only add one if the month is after February (month > 2), since leap days are added to the end of February
         if month > 2 && Self::is_leap_year_const(year) {
             fixed += 1;
         }
@@ -485,36 +486,36 @@ mod test {
         }
 
         let cases = [
-            // TestCase {
-            //     fixed_date: 1,
-            //     iso_year: 1,
-            //     iso_month: 1,
-            //     iso_day: 1,
-            //     expected_year: 1,
-            //     expected_era: Era(tinystr!(16, "ce")),
-            //     expected_month: 1,
-            //     expected_day: 3,
-            // },
-            // TestCase {
-            //     fixed_date: 0,
-            //     iso_year: 0,
-            //     iso_month: 12,
-            //     iso_day: 31,
-            //     expected_year: 1,
-            //     expected_era: Era(tinystr!(16, "ce")),
-            //     expected_month: 1,
-            //     expected_day: 2,
-            // },
-            // TestCase {
-            //     fixed_date: -1,
-            //     iso_year: 0,
-            //     iso_month: 12,
-            //     iso_day: 30,
-            //     expected_year: 1,
-            //     expected_era: Era(tinystr!(16, "ce")),
-            //     expected_month: 1,
-            //     expected_day: 1,
-            // },
+            TestCase {
+                fixed_date: 1,
+                iso_year: 1,
+                iso_month: 1,
+                iso_day: 1,
+                expected_year: 1,
+                expected_era: Era(tinystr!(16, "ce")),
+                expected_month: 1,
+                expected_day: 3,
+            },
+            TestCase {
+                fixed_date: 0,
+                iso_year: 0,
+                iso_month: 12,
+                iso_day: 31,
+                expected_year: 1,
+                expected_era: Era(tinystr!(16, "ce")),
+                expected_month: 1,
+                expected_day: 2,
+            },
+            TestCase {
+                fixed_date: -1,
+                iso_year: 0,
+                iso_month: 12,
+                iso_day: 30,
+                expected_year: 1,
+                expected_era: Era(tinystr!(16, "ce")),
+                expected_month: 1,
+                expected_day: 1,
+            },
             TestCase {
                 fixed_date: -2,
                 iso_year: 0,
@@ -637,5 +638,14 @@ mod test {
             Julian::fixed_from_julian_book_version(-3761, 10, 7),
             RataDie::new(-1373427)
         );
+    }
+
+    #[test]
+    fn test_julian_leap_years() {
+        assert!(Julian::is_leap_year(4));
+        assert!(Julian::is_leap_year(0));
+        assert!(Julian::is_leap_year(-4));
+
+        Date::try_new_julian_date(2020, 2, 29).unwrap();
     }
 }
