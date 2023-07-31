@@ -332,12 +332,7 @@ impl Calendar for AnyCalendar {
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
-            (
-                Self::Roc(c1),
-                Self::Roc(c2),
-                AnyDateInner::Roc(d1),
-                AnyDateInner::Roc(d2),
-            ) => c1
+            (Self::Roc(c1), Self::Roc(c2), AnyDateInner::Roc(d1), AnyDateInner::Roc(d2)) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
@@ -718,9 +713,9 @@ impl AnyCalendarKind {
             b"roc" => AnyCalendarKind::Roc,
             _ => {
                 // Log a warning when a calendar value is passed in but doesn't match any calendars
-                DataError::custom("bcp47_bytes did not match any calendars").with_debug_context(x);    
+                DataError::custom("bcp47_bytes did not match any calendars").with_debug_context(x);
                 return None;
-            },
+            }
         })
     }
     /// Construct from a BCP-47 [`Value`]
@@ -748,12 +743,11 @@ impl AnyCalendarKind {
             AnyCalendarKind::EthiopianAmeteAlem
         } else if *x == value!("persian") {
             AnyCalendarKind::Persian
-        }  else if *x == value!("roc") {
+        } else if *x == value!("roc") {
             AnyCalendarKind::Roc
-        }
-        else {
-            // Log a warning when a calendar value is passed in but doesn't match any calendars 
-            DataError::custom("bcp47_value did not match any calendars").with_display_context(x);    
+        } else {
+            // Log a warning when a calendar value is passed in but doesn't match any calendars
+            DataError::custom("bcp47_value did not match any calendars").with_display_context(x);
             return None;
         })
     }

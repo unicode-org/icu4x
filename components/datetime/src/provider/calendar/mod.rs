@@ -29,7 +29,7 @@ pub use symbols::*;
     marker(CopticDateLengthsV1Marker, "datetime/coptic/datelengths@1"),
     marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
     marker(EthiopianDateLengthsV1Marker, "datetime/ethiopic/datelengths@1"),
-    marker(RocDateLengthsV1Marker, "datetime/roc/datelengths@1"),
+    marker(RocDateLengthsV1Marker, "datetime/roc/datelengths@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
