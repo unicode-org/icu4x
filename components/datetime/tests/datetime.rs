@@ -14,6 +14,7 @@ use icu_calendar::{
     japanese::{Japanese, JapaneseExtended},
     provider::WeekDataV1Marker,
     AsCalendar, DateTime, Gregorian, Iso,
+    roc::Roc,
 };
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1Marker, MetazoneGenericNamesLongV1Marker, MetazoneGenericNamesShortV1Marker,
@@ -71,6 +72,7 @@ fn test_fixture(fixture_name: &str) {
         let input_coptic = input_value.to_calendar(Coptic);
         let input_indian = input_value.to_calendar(Indian);
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
+        let input_roc = input_value.to_calendar(Roc);
 
         let input_ethioaa =
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
@@ -136,6 +138,14 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::EthiopianAmeteAlem => assert_fixture_element(
                         &locale,
                         &input_ethioaa,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Roc => assert_fixture_element(
+                        &locale,
+                        &input_roc,
                         &input_iso,
                         &output_value,
                         options,

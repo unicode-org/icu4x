@@ -952,6 +952,18 @@ impl IntoAnyCalendar for Iso {
     }
 }
 
+impl IntoAnyCalendar for Roc {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Roc(Roc)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Roc(Roc)
+    }
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Roc(*d)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

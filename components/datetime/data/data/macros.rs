@@ -70,6 +70,16 @@ mod datetime_japanext_datesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_japanext_datesymbols_v1 as impl_datetime_japanext_datesymbols_v1;
 #[macro_use]
+#[path = "macros/datetime_roc_datelengths_v1.data.rs"]
+mod datetime_roc_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_roc_datelengths_v1 as impl_datetime_roc_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_roc_datesymbols_v1.data.rs"]
+mod datetime_roc_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_roc_datesymbols_v1 as impl_datetime_roc_datesymbols_v1;
+#[macro_use]
 #[path = "macros/datetime_skeletons_v1.data.rs"]
 mod datetime_skeletons_v1;
 #[doc(inline)]

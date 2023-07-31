@@ -4,6 +4,7 @@
 
 use crate::provider::calendar::*;
 use icu_calendar::any_calendar::AnyCalendarKind;
+use icu_calendar::roc::Roc;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, japanese::Japanese,
     japanese::JapaneseExtended, Gregorian,
@@ -78,6 +79,12 @@ impl CldrCalendar for Ethiopian {
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("ethiopic") || *value == value!("ethioaa")
     }
+}
+
+impl CldrCalendar for Roc {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("roc");
+    type DateSymbolsV1Marker = RocDateSymbolsV1Marker;
+    type DateLengthsV1Marker = RocDateLengthsV1Marker;
 }
 
 pub(crate) fn load_lengths_for_cldr_calendar<C, P>(

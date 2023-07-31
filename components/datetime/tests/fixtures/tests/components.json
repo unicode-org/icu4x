@@ -26,7 +26,9 @@
                 "en-u-ca-indian": "Tuesday, Magha 01, 1941 Saka, 08:25:07",
                 "en-u-ca-ethiopic": "Tuesday, Ter 12, 2012 ERA0, 08:25:07",
                 "fr-u-ca-ethiopic": "mardi 12 ter 2012 avant l’Incarnation 08:25:07",
-                "fr-u-ca-ethioaa": "mardi 12 ter 7512 ERA0 08:25:07"
+                "fr-u-ca-ethioaa": "mardi 12 ter 7512 ERA0 08:25:07",
+                "en-u-ca-roc": "ENGLISH",
+                "fr-u-ca-roc": "FRENCH"
             }
         }
     },

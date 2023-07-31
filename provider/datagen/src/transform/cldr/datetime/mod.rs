@@ -31,6 +31,7 @@ lazy_static! {
         (value!("coptic"), "coptic"),
         (value!("indian"), "indian"),
         (value!("ethiopic"), "ethiopic"),
+        (value!("roc"), "roc"),
     ]
     .into_iter()
     .collect();
@@ -319,6 +320,11 @@ impl_data_provider!(
     calendared = "ethiopic"
 );
 impl_data_provider!(
+    RocDateSymbolsV1Marker,
+    symbols::convert_dates,
+    calendared = "roc"
+);
+impl_data_provider!(
     TimeSymbolsV1Marker,
     |dates, _| { symbols::convert_times(dates) },
     calendared = "false"
@@ -357,6 +363,11 @@ impl_data_provider!(
     IndianDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
     calendared = "indian"
+);
+impl_data_provider!(
+    RocDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    calendared = "roc"
 );
 impl_data_provider!(
     EthiopianDateLengthsV1Marker,
