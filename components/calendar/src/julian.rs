@@ -273,7 +273,7 @@ impl Julian {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738
     fn julian_from_fixed(date: RataDie) -> JulianDateInner {
-        let approx = quotient64(4 * date.to_i64_date(), 1461) + 1;
+        let approx = quotient64(4 * date.to_i64_date() + 1464, 1461);
         let year = match i64_to_i32(approx) {
             I32Result::BelowMin(_) => return JulianDateInner(ArithmeticDate::min_date()),
             I32Result::AboveMax(_) => return JulianDateInner(ArithmeticDate::max_date()),
