@@ -18,7 +18,8 @@ use icu_provider_blob::export::*;
 use std::fs::File;
 
 fn main() {
-    DatagenProvider::default()
+    DatagenProvider::try_new(options::Options::default(), SourceData::latest_tested())
+        .unwrap()
         .export(
             [icu::list::provider::AndListV1Marker::KEY].into_iter().collect(),
             BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())),
