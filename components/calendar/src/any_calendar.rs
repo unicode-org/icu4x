@@ -23,7 +23,7 @@ use icu_locid::subtags::language;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
-use core::{fmt, panic};
+use core::fmt;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
 ///
@@ -997,7 +997,7 @@ mod tests {
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
         let date = Date::try_new_from_codes(era, year, month, day, calendar).unwrap_or_else(|e| {
-            core::panic!(
+            panic!(
                 "Failed to construct date for {} with {:?}, {}, {}, {}: {}",
                 calendar.debug_name(),
                 era,
