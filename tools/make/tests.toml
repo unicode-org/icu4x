@@ -8,7 +8,6 @@
 description = "Build all permutations of all features for the provided chunk index (3 chunks)"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
-install_crate_args = ["--git", "https://github.com/manishearth/cargo-all-features", "--branch", "chunking"]
 command = "cargo"
 args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
 
@@ -16,7 +15,6 @@ args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
-install_crate_args = ["--git", "https://github.com/manishearth/cargo-all-features", "--branch", "chunking"]
 command = "cargo"
 args = ["check-all-features"]
 
@@ -24,7 +22,6 @@ args = ["check-all-features"]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
-install_crate_args = ["--git", "https://github.com/manishearth/cargo-all-features", "--branch", "chunking"]
 command = "cargo"
 args = ["build-all-features"]
 
