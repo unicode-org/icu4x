@@ -70,8 +70,12 @@ mod registry;
 mod source;
 mod transform;
 
-use elsa::sync::FrozenMap;
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
+#[allow(deprecated)] // ugh
+pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
+pub use source::SourceData;
+
+use elsa::sync::FrozenMap;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbacker;
@@ -79,9 +83,6 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use memchr::memmem;
 use options::{FallbackMode, LocaleInclude};
-#[allow(deprecated)] // ugh
-pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
-pub use source::SourceData;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -158,7 +159,7 @@ impl DatagenProvider {
             && !matches!(source.options.locales, options::LocaleInclude::Explicit(_))
         {
             return Err(DataError::custom(
-                "FallbackMode::Expand requires LocaleInclude::Explicit",
+                "FallbackMode::Preresolved requires LocaleInclude::Explicit",
             ));
         }
 
@@ -251,15 +252,14 @@ impl DatagenProvider {
         let fallbacker = self.fallbacker()?;
         let fallbacker_with_config = fallbacker.for_config(LocaleFallbackConfig::from_key(key));
 
-        // Pre-process the supported locales into their normalized forms. For example, CLDR has
-        // "sr-Latn-ME", but ICU4X wants that to be "sr-ME". In order to load the data later, we
-        // use the `visit_default_script` option during fallback.
         let supported_locales: HashSet<DataLocale> = self
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?
             .into_iter()
             .map(|locale| {
-                // Perform the normalization:
+                // Pre-process the supported locales into their normalized forms. For example, CLDR has
+                // "sr-Latn-ME", but ICU4X wants that to be "sr-ME". In order to load the data later, we
+                // use the `visit_default_script` option during fallback.
                 fallbacker_with_config.fallback_for(locale).take()
             })
             .collect();
@@ -278,7 +278,7 @@ impl DatagenProvider {
         }
 
         let LocaleInclude::Explicit(explicit) = locale_include else {
-            unreachable!("Pre-processed LocaleInclued has only 2 variants")
+            unreachable!("Pre-processed LocaleInclude has only 2 variants")
         };
 
         // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches

@@ -81,7 +81,7 @@ pub trait DataExporter: Sync {
     }
 
     /// Returns whether the provider supports built-in fallback. If `true`, the provider must
-    /// implement [`Self::flush_with_built_in_fallback()`] for [`BuiltInFallbackMode::Standard`].
+    /// implement [`Self::flush_with_built_in_fallback()`].
     fn supports_built_in_fallback(&self) -> bool {
         false
     }
