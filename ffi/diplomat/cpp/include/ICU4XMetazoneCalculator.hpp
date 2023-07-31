@@ -29,7 +29,7 @@ struct ICU4XMetazoneCalculatorDeleter {
  * 
  * This can be used via `maybe_calculate_metazone()` on [`ICU4XCustomTimeZone`].
  * 
- * [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone;
+ * [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone
  * 
  * See the [Rust documentation for `MetazoneCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html) for more information.
  */

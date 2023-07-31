@@ -92,7 +92,7 @@ impl CalendarArithmetic for Coptic {
         }
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -140,7 +140,7 @@ impl Calendar for Coptic {
         date.0.months_in_year()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year()
     }
 
@@ -237,7 +237,7 @@ impl Coptic {
         *Date::try_new_coptic_date(year, month, day).unwrap().inner()
     }
 
-    fn days_in_year_direct(year: i32) -> u32 {
+    fn days_in_year_direct(year: i32) -> u16 {
         if Coptic::is_leap_year(year) {
             366
         } else {

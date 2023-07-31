@@ -86,7 +86,7 @@ impl TimeFormatter {
     /// .unwrap();
     /// ```
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -285,7 +285,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///
     /// [`DateFormatter`]: crate::DateFormatter
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -522,7 +522,7 @@ where {
     ///
     /// [data provider]: icu_provider
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -640,7 +640,7 @@ where {
     ///
     /// [data provider]: icu_provider
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "experimental")]

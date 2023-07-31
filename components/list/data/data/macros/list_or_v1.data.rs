@@ -1,5 +1,5 @@
 // @generated
-/// Implement [`DataProvider<OrListV1Marker>`](icu_provider::DataProvider) on the given struct using the data
+/// Implement `DataProvider<OrListV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]

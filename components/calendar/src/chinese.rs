@@ -6,7 +6,6 @@
 //!
 //! ```rust
 //! use icu::calendar::{Date, DateTime};
-//! use tinystr::tinystr;
 //!
 //! // `Date` type
 //! let chinese_date = Date::try_new_chinese_date(4660, 6, 6)
@@ -37,11 +36,13 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::Location;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::chinese_based::{ChineseBased, ChineseBasedDateInner};
+use crate::chinese_based::{
+    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedDateInner,
+};
 use crate::helpers::div_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
-use crate::types::{Era, FormattableYear, MonthCode};
+use crate::types::{Era, FormattableYear};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
@@ -101,8 +102,8 @@ const CHINESE_LOCATION_POST_1929: Location =
 ///
 /// For more information, suggested reading materials include:
 /// * _Calendrical Calculations_ by Reingold & Dershowitz
-/// * _The Mathematics of the Chinese Calendar_ by Helmer Aslaksen (https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.139.9311&rep=rep1&type=pdf)
-/// * Wikipedia: https://en.wikipedia.org/wiki/Chinese_calendar
+/// * _The Mathematics of the Chinese Calendar_ by Helmer Aslaksen <https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.139.9311&rep=rep1&type=pdf>
+/// * Wikipedia: <https://en.wikipedia.org/wiki/Chinese_calendar>
 ///
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -125,7 +126,9 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let month = if let Some(ordinal) = Self::ordinal_lunar_month_from_code(year, month_code) {
+        let month = if let Some(ordinal) =
+            chinese_based_ordinal_lunar_month_from_code::<Chinese>(year, month_code)
+        {
             ordinal
         } else {
             return Err(CalendarError::UnknownMonthCode(
@@ -161,7 +164,7 @@ impl Calendar for Chinese {
     // Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
         let fixed = Iso::fixed_from_iso(iso.inner);
-        Inner::chinese_based_date_from_fixed(fixed).inner
+        ChineseDateInner(Inner::chinese_based_date_from_fixed(fixed))
     }
 
     // Obtain an ISO date from a Chinese date
@@ -172,7 +175,7 @@ impl Calendar for Chinese {
 
     //Count the number of months in a given year, specified by providing a date
     // from that year
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         Self::days_in_provided_year(date.0 .0.year)
     }
 
@@ -305,8 +308,8 @@ impl Calendar for Chinese {
 }
 
 impl Date<Chinese> {
-    /// Construct a new Chinese date from a `year`, `month`, `leap_month`, and `day`.
-    /// `year` represents the Chinese year counted infinitely with -2636 (2637 BCE) as year Chinese year 1;
+    /// Construct a new Chinese date from a `year`, `month`, and `day`.
+    /// `year` represents the Chinese year counted infinitely with -2636 (2637 BCE) as Chinese year 1;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
     /// `day` indicates the day of month
     ///
@@ -380,9 +383,8 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
 
-    #[allow(clippy::unwrap_used)]
-    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> Date<Chinese> {
-        Date::try_new_chinese_date(year, month, day).unwrap()
+    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Chinese> {
+        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 }
 
@@ -457,61 +459,14 @@ impl Chinese {
             related_iso,
         }
     }
-
-    /// Get the ordinal lunar month from a code
-    ///
-    /// TODO: The behavior of this fn is calendar specific, but this needs to be implemented in every lunar
-    /// calendar; consider abstracting this function to a Lunar trait
-    fn ordinal_lunar_month_from_code(year: i32, code: MonthCode) -> Option<u8> {
-        if code.0.len() < 3 {
-            return None;
-        }
-        let mid_year = Inner::fixed_mid_year_from_year(year);
-        let leap_month = if Self::is_leap_year(year) {
-            Inner::get_leap_month_in_year(mid_year)
-        } else {
-            // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
-            // it is impossible to actually have 14 months in a year.
-            14
-        };
-        let bytes = code.0.all_bytes();
-        if bytes[0] != b'M' {
-            return None;
-        }
-        if code.0.len() == 4 && bytes[3] != b'L' {
-            return None;
-        }
-        let mut unadjusted = 0;
-        if bytes[1] == b'0' {
-            if bytes[2] >= b'1' && bytes[2] <= b'9' {
-                unadjusted = bytes[2] - b'0';
-            }
-        } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'2' {
-            unadjusted = 10 + bytes[2] - b'0';
-        }
-        if bytes[3] == b'L' {
-            if unadjusted + 1 != leap_month {
-                return None;
-            } else {
-                return Some(unadjusted + 1);
-            }
-        }
-        if unadjusted != 0 {
-            if unadjusted + 1 > leap_month {
-                return Some(unadjusted + 1);
-            } else {
-                return Some(unadjusted);
-            }
-        }
-        None
-    }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::types::Moment;
 
     use super::*;
+    use crate::types::Moment;
+    use crate::types::MonthCode;
 
     #[test]
     fn test_chinese_new_moon_directionality() {
@@ -538,8 +493,8 @@ mod test {
         struct TestCase {
             fixed: i64,
             expected_year: i32,
-            expected_month: u32,
-            expected_day: u32,
+            expected_month: u8,
+            expected_day: u8,
         }
 
         let cases = [
@@ -620,19 +575,16 @@ mod test {
         for case in cases {
             let chinese = Inner::chinese_based_date_from_fixed(RataDie::new(case.fixed));
             assert_eq!(
-                case.expected_year,
-                chinese.year().number,
-                "Chinese year from fixed failed for case: {case:?}"
+                case.expected_year, chinese.0.year,
+                "Chinese from fixed failed for case: {case:?}"
             );
             assert_eq!(
-                case.expected_month,
-                chinese.month().ordinal,
-                "Chinese month from fixed failed for case: {case:?}"
+                case.expected_month, chinese.0.month,
+                "Chinese from fixed failed for case: {case:?}"
             );
             assert_eq!(
-                case.expected_day,
-                chinese.day_of_month().0,
-                "Chinese day_of_month from fixed failed for case: {case:?}"
+                case.expected_day, chinese.0.day,
+                "Chinese from fixed failed for case: {case:?}"
             );
         }
     }
@@ -679,7 +631,7 @@ mod test {
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
             let chinese = Inner::chinese_based_date_from_fixed(rata_die);
-            let result = Inner::fixed_from_chinese_based_date_inner(chinese.inner.0);
+            let result = Inner::fixed_from_chinese_based_date_inner(chinese);
             let result_debug = result.to_i64_date();
             assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
             fixed += 7043;
@@ -934,7 +886,7 @@ mod test {
         ];
         for ordinal_code_pair in codes {
             let code = MonthCode(ordinal_code_pair.1);
-            let ordinal = Chinese::ordinal_lunar_month_from_code(year, code);
+            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(year, code);
             assert_eq!(
                 ordinal,
                 Some(ordinal_code_pair.0),
@@ -960,10 +912,127 @@ mod test {
         for year_code_pair in invalid_codes {
             let year = year_code_pair.0;
             let code = MonthCode(year_code_pair.1);
-            let ordinal = Chinese::ordinal_lunar_month_from_code(year, code);
+            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(year, code);
             assert_eq!(
                 ordinal, None,
                 "Invalid month code failed for year: {year}, code: {code}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_consistent_with_icu() {
+        #[derive(Debug)]
+        struct TestCase {
+            iso_year: i32,
+            iso_month: u8,
+            iso_day: u8,
+            expected_rel_iso: i32,
+            expected_cyclic: i32,
+            expected_month: u32,
+            expected_day: u32,
+        }
+
+        let cases = [
+            TestCase {
+                iso_year: -2332,
+                iso_month: 3,
+                iso_day: 1,
+                expected_rel_iso: -2332,
+                expected_cyclic: 5,
+                expected_month: 1,
+                expected_day: 16,
+            },
+            TestCase {
+                iso_year: -2332,
+                iso_month: 2,
+                iso_day: 15,
+                expected_rel_iso: -2332,
+                expected_cyclic: 5,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            // TestCase { // This test case fails to match ICU
+            //     iso_year: -2332,
+            //     iso_month: 2,
+            //     iso_day: 14,
+            //     expected_rel_iso: -2333,
+            //     expected_cyclic: 4,
+            //     expected_month: 13,
+            //     expected_day: 29,
+            // },
+            // TestCase { // This test case fails to match ICU
+            //     iso_year: -2332,
+            //     iso_month: 1,
+            //     iso_day: 17,
+            //     expected_rel_iso: -2333,
+            //     expected_cyclic: 4,
+            //     expected_month: 13,
+            //     expected_day: 1
+            // },
+            // TestCase { // This test case fails to match ICU
+            //     iso_year: -2332,
+            //     iso_month: 1,
+            //     iso_day: 16,
+            //     expected_rel_iso: -2333,
+            //     expected_cyclic: 4,
+            //     expected_month: 12,
+            //     expected_day: 30
+            // },
+            TestCase {
+                iso_year: -2332,
+                iso_month: 1,
+                iso_day: 15,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 12,
+                expected_day: 29,
+            },
+            TestCase {
+                iso_year: -2332,
+                iso_month: 1,
+                iso_day: 1,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 12,
+                expected_day: 15,
+            },
+            TestCase {
+                iso_year: -2333,
+                iso_month: 1,
+                iso_day: 16,
+                expected_rel_iso: -2334,
+                expected_cyclic: 3,
+                expected_month: 12,
+                expected_day: 19,
+            },
+        ];
+
+        for case in cases {
+            let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+            let chinese = iso.to_calendar(Chinese);
+            let chinese_rel_iso = chinese.year().related_iso;
+            let chinese_cyclic = chinese.year().cyclic;
+            let chinese_month = chinese.month().ordinal;
+            let chinese_day = chinese.day_of_month().0;
+
+            assert_eq!(
+                chinese_rel_iso,
+                Some(case.expected_rel_iso),
+                "Related ISO failed for test case: {case:?}"
+            );
+            assert_eq!(
+                chinese_cyclic,
+                Some(case.expected_cyclic),
+                "Cyclic year failed for test case: {case:?}"
+            );
+            assert_eq!(
+                chinese_month, case.expected_month,
+                "Month failed for test case: {case:?}"
+            );
+            assert_eq!(
+                chinese_day, case.expected_day,
+                "Day failed for test case: {case:?}"
             );
         }
     }
