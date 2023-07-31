@@ -10,7 +10,8 @@ use icu_locid::LanguageIdentifier;
 use std::collections::HashSet;
 
 /// Defines how fallback will apply to the generated data. If in doubt, use
-/// [`FallbackMode::Auto`], which selects the best mode for your chosen data provider.
+/// [`FallbackMode::PreferredForExporter`], which selects the best mode for your
+/// chosen data provider.
 ///
 /// # Fallback Mode Comparison
 ///
@@ -33,8 +34,12 @@ use std::collections::HashSet;
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
 pub enum FallbackMode {
-    /// Selects the fallback mode based on [`DataExporter::preferred_built_in_fallback_mode()`](
-    /// icu_provider::datagen::DataExporter::preferred_built_in_fallback_mode()).
+    /// Selects the fallback mode based on [`DataExporter::supports_built_in_fallback()`](
+    /// icu_provider::datagen::DataExporter::supports_built_in_fallback()), resolving to either
+    /// [`Runtime`] or [`Hybrid`].
+    ///
+    /// [`Runtime`]: Self::Runtime
+    /// [`Hybrid`]: Self::Hybrid
     #[default]
     PreferredForExporter,
     /// This mode generates the minimal set of locales that cover the requested locales when
