@@ -16,7 +16,7 @@ CLANG := clang-15
 LLD := lld-15
 
 baked_data/macros.rs:
-	cargo run -p icu_datagen -- --locales en bn --keys all --fallback expand --format mod --use-separate-crates --out baked_data
+	cargo run -p icu_datagen -- --locales en bn --keys all --fallback preresolved --format mod --use-separate-crates --out baked_data
 
 ../../../../../target/debug/libicu_capi_staticlib.a: FORCE
 	cargo build -p icu_capi_staticlib --no-default-features --features compiled_data,default_components
