@@ -23,6 +23,7 @@ use zerovec::{ule::UnvalidatedStr, ZeroMap};
 #[icu_provider::data_struct(
     marker(GregorianDateSymbolsV1Marker, "datetime/gregory/datesymbols@1"),
     marker(BuddhistDateSymbolsV1Marker, "datetime/buddhist/datesymbols@1"),
+    marker(ChineseDateSymbolsV1Marker, "datetime/chinese/datesymbols@1"),
     marker(JapaneseDateSymbolsV1Marker, "datetime/japanese/datesymbols@1"),
     marker(JapaneseExtendedDateSymbolsV1Marker, "datetime/japanext/datesymbols@1"),
     marker(CopticDateSymbolsV1Marker, "datetime/coptic/datesymbols@1"),

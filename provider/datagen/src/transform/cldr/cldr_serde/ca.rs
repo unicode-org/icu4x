@@ -100,7 +100,7 @@ impl LengthPattern {
     }
 }
 
-#[derive(PartialEq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, Debug, Deserialize, Clone, Default)]
 pub struct Eras {
     #[serde(rename = "eraNames")]
     pub names: HashMap<String, String>,
@@ -140,6 +140,7 @@ pub struct AvailableFormats(pub HashMap<String, String>);
 pub struct Dates {
     pub months: months::Contexts,
     pub days: days::Contexts,
+    #[serde(default)]
     pub eras: Eras,
     #[serde(rename = "dayPeriods")]
     pub day_periods: day_periods::Contexts,

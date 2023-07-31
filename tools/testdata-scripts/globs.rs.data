@@ -7,6 +7,7 @@
 const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-bcp47/bcp47/timezone.json",
     "cldr-cal-buddhist-full/main/$LOCALES/ca-buddhist.json",
+    "cldr-cal-chinese-full/main/$LOCALES/ca-chinese.json",
     "cldr-cal-coptic-full/main/$LOCALES/ca-coptic.json",
     "cldr-cal-ethiopic-full/main/$LOCALES/ca-ethiopic-amete-alem.json",
     "cldr-cal-ethiopic-full/main/$LOCALES/ca-ethiopic.json",

@@ -24,6 +24,7 @@ pub use symbols::*;
 #[icu_provider::data_struct(
     marker(GregorianDateLengthsV1Marker, "datetime/gregory/datelengths@1"),
     marker(BuddhistDateLengthsV1Marker, "datetime/buddhist/datelengths@1"),
+    marker(ChineseDateLengthsV1Marker, "datetime/chinese/datelengths@1"),
     marker(JapaneseDateLengthsV1Marker, "datetime/japanese/datelengths@1"),
     marker(JapaneseExtendedDateLengthsV1Marker, "datetime/japanext/datelengths@1"),
     marker(CopticDateLengthsV1Marker, "datetime/coptic/datelengths@1"),

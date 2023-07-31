@@ -315,7 +315,7 @@ pub fn ordinal_month_from_code(code: types::MonthCode) -> Option<u8> {
         if bytes[2] >= b'1' && bytes[2] <= b'9' {
             return Some(bytes[2] - b'0');
         }
-    } else if bytes[1] == b'1' && bytes[2] >= b'1' && bytes[2] <= b'3' {
+    } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'3' {
         return Some(10 + bytes[2] - b'0');
     }
     None

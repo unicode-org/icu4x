@@ -29,6 +29,8 @@ const _: () = {
     use crate as icu_datetime;
     icu_datetime_data::impl_datetime_buddhist_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_buddhist_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_chinese_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_chinese_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_coptic_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_coptic_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_ethiopic_datelengths_v1!(Baked);

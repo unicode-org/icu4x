@@ -8,6 +8,7 @@ mod patterns;
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     buddhist::Buddhist,
+    chinese::Chinese,
     coptic::Coptic,
     ethiopian::{Ethiopian, EthiopianEraStyle},
     indian::Indian,
@@ -66,6 +67,7 @@ fn test_fixture(fixture_name: &str) {
         let input_value = mock::parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);
         let input_buddhist = input_value.to_calendar(Buddhist);
+        let input_chinese = input_value.to_calendar(Chinese);
         let input_japanese = input_value.to_calendar(japanese);
         let input_japanext = input_value.to_calendar(japanext);
         let input_coptic = input_value.to_calendar(Coptic);
@@ -88,6 +90,14 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
                         &locale,
                         &input_buddhist,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Chinese => assert_fixture_element(
+                        &locale,
+                        &input_chinese,
                         &input_iso,
                         &output_value,
                         options,

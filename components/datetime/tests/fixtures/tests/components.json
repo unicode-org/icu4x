@@ -19,6 +19,8 @@
             "values": {
                 "en": "Tuesday, January 21, 2020 Anno Domini, 08:25:07",
                 "en-u-ca-buddhist": "Tuesday, January 21, 2563 BE, 08:25:07",
+                "en-u-ca-chinese": "ENGLISH",
+                "zh-u-ca-chinese": "CHINESE",
                 "en-u-ca-japanese": "Tuesday, January 21, 2 Reiwa, 08:25:07",
                 "ja-u-ca-japanese": "令和2年1月21日火曜日 8:25:07",
                 "en-u-ca-coptic": "Tuesday, Toba 12, 1736 ERA1, 08:25:07",
