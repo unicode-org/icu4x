@@ -75,7 +75,6 @@ pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
 pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
 pub use source::SourceData;
 
-use elsa::sync::FrozenMap;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbacker;
@@ -442,19 +441,14 @@ impl DatagenProvider {
                     (options::FallbackMode::Runtime, _)
                     | (options::FallbackMode::RuntimeManual, _)
                     | (options::FallbackMode::PreferredForExporter, true) => {
-                        let payloads =
-                            FrozenMap::<DataLocale, Box<DataPayload<ExportMarker>>>::new();
-                        locales_to_export.into_par_iter().try_for_each(|locale| {
-                            let payload = provider.load_with_fallback(key, &locale)?;
-                            if let Some(payload) = payload {
-                                payloads.insert(locale, Box::new(payload));
-                            }
-                            Ok::<(), DataError>(())
-                        })?;
-                        let payloads = payloads
-                            .into_tuple_vec()
-                            .into_iter()
-                            .collect::<HashMap<_, _>>();
+                        let payloads = locales_to_export
+                            .into_par_iter()
+                            .flat_map(|locale| match provider.load_with_fallback(key, &locale) {
+                                Ok(Some(payload)) => Some(Ok((locale, Box::new(payload)))),
+                                Ok(None) => None,
+                                Err(e) => Some(Err(e)),
+                            })
+                            .collect::<Result<HashMap<_, _>, _>>()?;
                         let fallbacker = provider.fallbacker()?;
                         let fallbacker_with_config =
                             fallbacker.for_config(LocaleFallbackConfig::from_key(key));
