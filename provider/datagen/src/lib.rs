@@ -237,10 +237,10 @@ impl DatagenProvider {
         {
             let mut lock = self.source.fallbacker_rwlock.write().unwrap();
             match &*lock {
-                Some(fallbacker) => return Ok(fallbacker.clone()),
+                Some(fallbacker) => Ok(fallbacker.clone()),
                 None => {
                     lock.replace(new_fallbacker.clone());
-                    return Ok(new_fallbacker);
+                    Ok(new_fallbacker)
                 }
             }
         }
