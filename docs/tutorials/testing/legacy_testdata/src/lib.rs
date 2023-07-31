@@ -58,6 +58,9 @@ __impl_datetime_japanext_datelengths_v1!(UnstableDataProvider);
 include!("../data/baked/macros/datetime_japanext_datesymbols_v1.data.rs");
 __impl_datetime_japanext_datesymbols_v1!(UnstableDataProvider);
 
+include!("../data/baked/macros/datetime_roc_datesymbols_v1.data.rs");
+__impl_datetime_roc_datesymbols_v1!(UnstableDataProvider);
+
 include!("../data/baked/macros/datetime_timelengths_v1.data.rs");
 __impl_datetime_timelengths_v1!(UnstableDataProvider);
 
