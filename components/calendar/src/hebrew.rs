@@ -205,12 +205,9 @@ impl CivilHebrew {
 
         if month >= TISHRI {
             civil_month = (month - 6) % 12;
-            if civil_month == 0 {
-                civil_month = 12;
-            }
+            civil_year -= 1;
         } else {
             civil_month = month + 6;
-            civil_year -= 1;
         }
 
         if Self::is_leap_year(civil_year) && civil_month > 6 {
