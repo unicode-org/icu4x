@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::{CaseMapUnfoldV1Marker, CaseMapV1Marker};
-use crate::set::ClosureSet;
+use crate::set::ClosureSink;
 use crate::CaseMapper;
 
 use icu_provider::prelude::*;
@@ -175,7 +175,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     /// assert!(set.contains('ſ'));
     /// assert!(!set.contains('s')); // does not contain itself
     /// ```
-    pub fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
+    pub fn add_case_closure<S: ClosureSink>(&self, c: char, set: &mut S) {
         self.cm.as_ref().add_case_closure(c, set);
     }
 
@@ -211,7 +211,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     /// assert!(set.contains('ß'));
     /// assert!(set.contains('ẞ'));
     /// ```
-    pub fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
+    pub fn add_string_case_closure<S: ClosureSink>(&self, s: &str, set: &mut S) -> bool {
         self.cm
             .as_ref()
             .data

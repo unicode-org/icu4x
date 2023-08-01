@@ -58,4 +58,4 @@ mod internals;
 
 pub use casemapper::CaseMapper;
 pub use closer::CaseMapCloser;
-pub use set::ClosureSet;
+pub use set::ClosureSink;

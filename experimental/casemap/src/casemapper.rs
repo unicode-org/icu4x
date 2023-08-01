@@ -5,7 +5,7 @@
 use crate::internals::{CaseMapLocale, FoldOptions};
 use crate::provider::data::MappingKind;
 use crate::provider::CaseMapV1Marker;
-use crate::set::ClosureSet;
+use crate::set::ClosureSink;
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -406,7 +406,7 @@ impl CaseMapper {
     ///
     /// [`CaseMapCloser::add_case_closure()`]: crate::CaseMapCloser::add_case_closure
     /// [`CaseMapCloser::add_string_case_closure()`]: crate::CaseMapCloser::add_string_case_closure
-    pub fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
+    pub fn add_case_closure<S: ClosureSink>(&self, c: char, set: &mut S) {
         self.data.get().add_case_closure(c, set);
     }
 

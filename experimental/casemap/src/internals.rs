@@ -10,7 +10,7 @@ use crate::greek_to_me::{self, GreekCombiningCharacterSequenceDiacritics, GreekD
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
-use crate::set::ClosureSet;
+use crate::set::ClosureSink;
 use core::fmt;
 use icu_locid::LanguageIdentifier;
 use writeable::Writeable;
@@ -506,7 +506,7 @@ impl<'data> CaseMapV1<'data> {
     /// - for s include long s
     /// - for sharp s include ss
     /// - for k include the Kelvin sign
-    pub(crate) fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
+    pub(crate) fn add_case_closure<S: ClosureSink>(&self, c: char, set: &mut S) {
         // Hardcode the case closure of i and its relatives and ignore the
         // data file data for these characters.
         // The Turkic dotless i and dotted I with their case mapping conditions
@@ -578,7 +578,7 @@ impl<'data> CaseMapV1<'data> {
     /// mappings.
     ///
     /// (see docs on CaseMapper::add_string_case_closure)
-    pub(crate) fn add_string_case_closure<S: ClosureSet>(
+    pub(crate) fn add_string_case_closure<S: ClosureSink>(
         &self,
         s: &str,
         set: &mut S,
@@ -642,7 +642,7 @@ pub enum FullMappingResult<'a> {
 
 impl<'a> FullMappingResult<'a> {
     #[allow(dead_code)]
-    fn add_to_set<S: ClosureSet>(&self, set: &mut S) {
+    fn add_to_set<S: ClosureSink>(&self, set: &mut S) {
         match *self {
             FullMappingResult::CodePoint(c) => set.add_char(c),
             FullMappingResult::String(s) => set.add_string(s),
