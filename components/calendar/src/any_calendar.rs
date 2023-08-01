@@ -7,6 +7,7 @@
 use crate::buddhist::Buddhist;
 use crate::chinese::Chinese;
 use crate::coptic::Coptic;
+use crate::dangi::Dangi;
 use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
 use crate::gregorian::Gregorian;
 use crate::indian::Indian;
@@ -95,6 +96,8 @@ pub enum AnyCalendar {
     Chinese(Chinese),
     /// A [`Roc`] calendar
     Roc(Roc),
+    /// A [`Dangi`] calendar
+    Dangi(Dangi),
 }
 
 // TODO(#3469): Decide on the best way to implement Ord.
@@ -122,6 +125,8 @@ pub enum AnyDateInner {
     Coptic(<Coptic as Calendar>::DateInner),
     /// A date for a [`Roc`] calendar
     Roc(<Roc as Calendar>::DateInner),
+    /// A date for a [`Dangi`] calendar
+    Dangi(<Dangi as Calendar>::DateInner),
     /// A date for an [`Iso`] calendar
     Iso(<Iso as Calendar>::DateInner),
 }
@@ -185,6 +190,9 @@ impl Calendar for AnyCalendar {
             Self::Chinese(ref c) => {
                 AnyDateInner::Chinese(c.date_from_codes(era, year, month_code, day)?)
             }
+            Self::Dangi(ref c) => {
+                AnyDateInner::Dangi(c.date_from_codes(era, year, month_code, day)?)
+            }
             Self::Coptic(ref c) => {
                 AnyDateInner::Coptic(c.date_from_codes(era, year, month_code, day)?)
             }
@@ -206,6 +214,7 @@ impl Calendar for AnyCalendar {
             Self::Persian(ref c) => AnyDateInner::Persian(c.date_from_iso(iso)),
             Self::Chinese(ref c) => AnyDateInner::Chinese(c.date_from_iso(iso)),
             Self::Roc(ref c) => AnyDateInner::Roc(c.date_from_iso(iso)),
+            Self::Dangi(ref c) => AnyDateInner::Dangi(c.date_from_iso(iso)),
         }
     }
 
@@ -394,6 +403,7 @@ impl Calendar for AnyCalendar {
             Self::Persian(_) => "AnyCalendar (Persian)",
             Self::Chinese(_) => "AnyCalendar (Chinese)",
             Self::Roc(_) => "AnyCalendar (Roc)",
+            Self::Dangi(_) => "AnyCalendar (Dangi)",
         }
     }
 
@@ -424,6 +434,7 @@ impl AnyCalendar {
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -456,6 +467,7 @@ impl AnyCalendar {
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -489,6 +501,7 @@ impl AnyCalendar {
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -520,6 +533,7 @@ impl AnyCalendar {
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -586,6 +600,7 @@ impl AnyCalendar {
             Self::Persian(_) => "Persian",
             Self::Chinese(_) => "Chinese",
             Self::Roc(_) => "Roc",
+            Self::Dangi(_) => "Dangi",
         }
     }
 
@@ -606,6 +621,7 @@ impl AnyCalendar {
             Self::Persian(_) => AnyCalendarKind::Persian,
             Self::Chinese(_) => AnyCalendarKind::Chinese,
             Self::Roc(_) => AnyCalendarKind::Roc,
+            Self::Dangi(_) => AnyCalendarKind::Dangi,
         }
     }
 
@@ -652,6 +668,7 @@ impl AnyDateInner {
             AnyDateInner::Persian(_) => "Persian",
             AnyDateInner::Chinese(_) => "Chinese",
             AnyDateInner::Roc(_) => "Roc",
+            AnyDateInner::Dangi(_) => "Dangi",
         }
     }
 }
@@ -684,6 +701,8 @@ pub enum AnyCalendarKind {
     Chinese,
     /// The kind of a [`Roc`] calendar
     Roc,
+    /// The kind of a [`Dangi`] calendar
+    Dangi,
 }
 
 impl AnyCalendarKind {
@@ -767,6 +786,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Persian => "persian",
             AnyCalendarKind::Chinese => "chinese",
             AnyCalendarKind::Roc => "roc",
+            AnyCalendarKind::Dangi => "dangi",
         }
     }
 
@@ -785,6 +805,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Persian => value!("persian"),
             AnyCalendarKind::Chinese => value!("chinese"),
             AnyCalendarKind::Roc => value!("roc"),
+            AnyCalendarKind::Dangi => value!("dangi"),
         }
     }
 
