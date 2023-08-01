@@ -6,7 +6,7 @@ use crate::provider::calendar::*;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, japanese::Japanese,
-    japanese::JapaneseExtended, Gregorian,
+    japanese::JapaneseExtended, persian::Persian, Gregorian,
 };
 use icu_locid::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
@@ -71,6 +71,12 @@ impl CldrCalendar for Indian {
     type DateLengthsV1Marker = IndianDateLengthsV1Marker;
 }
 
+impl CldrCalendar for Persian {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("persian");
+    type DateSymbolsV1Marker = PersianDateSymbolsV1Marker;
+    type DateLengthsV1Marker = PersianDateLengthsV1Marker;
+}
+
 impl CldrCalendar for Ethiopian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopic");
     type DateSymbolsV1Marker = EthiopianDateSymbolsV1Marker;
@@ -126,6 +132,7 @@ where
         + DataProvider<JapaneseExtendedDateLengthsV1Marker>
         + DataProvider<CopticDateLengthsV1Marker>
         + DataProvider<IndianDateLengthsV1Marker>
+        + DataProvider<PersianDateLengthsV1Marker>
         + DataProvider<EthiopianDateLengthsV1Marker>
         + ?Sized,
 {
@@ -156,6 +163,11 @@ where
         .cast(),
         AnyCalendarKind::Indian => {
             DataProvider::<<Indian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Persian => {
+            DataProvider::<<Persian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }
@@ -196,6 +208,7 @@ where
         + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
         + DataProvider<CopticDateSymbolsV1Marker>
         + DataProvider<IndianDateSymbolsV1Marker>
+        + DataProvider<PersianDateSymbolsV1Marker>
         + DataProvider<EthiopianDateSymbolsV1Marker>
         + ?Sized,
 {
@@ -226,6 +239,11 @@ where
         .cast(),
         AnyCalendarKind::Indian => {
             DataProvider::<<Indian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Persian => {
+            DataProvider::<<Persian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }

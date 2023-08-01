@@ -266,7 +266,7 @@ impl BakedExporter {
         ident: String,
     ) -> Result<(), DataError> {
         let doc = format!(
-            " Implement [`DataProvider<{}>`](icu_provider::DataProvider) on the given struct using the data",
+            " Implement `DataProvider<{}>` on the given struct using the data",
             marker.segments.iter().next_back().unwrap().ident
         );
 
@@ -616,7 +616,7 @@ impl DataExporter for BakedExporter {
             quote! {
                 include!("macros.rs");
 
-                /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
+                /// Implement `DataProvider<M>` on the given struct using the data
                 /// hardcoded in this module. This allows the struct to be used with
                 /// `icu`'s `_unstable` constructors.
                 ///
@@ -638,7 +638,7 @@ impl DataExporter for BakedExporter {
                 #[doc(inline)]
                 pub use __impl_data_provider as impl_data_provider;
 
-                /// Implement [`AnyProvider`](icu_provider::AnyProvider) on the given struct using the data
+                /// Implement `AnyProvider` on the given struct using the data
                 /// hardcoded in this module. This allows the struct to be used with
                 /// `icu`'s `_any` constructors.
                 ///

@@ -11,6 +11,13 @@ use icu_provider::prelude::*;
 /// Represents the direction of a script.
 ///
 /// [`LocaleDirectionality`] can be used to get this information.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/3722">#3722</a>
+/// </div>
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[non_exhaustive]
 pub enum Direction {
@@ -22,6 +29,13 @@ pub enum Direction {
 
 /// The `LocaleDirectionality` provides methods to determine the direction of a locale based
 /// on [`CLDR`] data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/3722">#3722</a>
+/// </div>
 ///
 /// # Examples
 ///

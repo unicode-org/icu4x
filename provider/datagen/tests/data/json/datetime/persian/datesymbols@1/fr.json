@@ -1,0 +1,108 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "far.",
+          "ord.",
+          "kho.",
+          "tir",
+          "mor.",
+          "šah.",
+          "mehr",
+          "âbân",
+          "âzar",
+          "dey",
+          "bah.",
+          "esf."
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "farvardin",
+          "ordibehešt",
+          "khordâd",
+          "tir",
+          "mordâd",
+          "šahrivar",
+          "mehr",
+          "âbân",
+          "âzar",
+          "dey",
+          "bahman",
+          "esfand"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dim.",
+        "lun.",
+        "mar.",
+        "mer.",
+        "jeu.",
+        "ven.",
+        "sam."
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "M",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "di",
+        "lu",
+        "ma",
+        "me",
+        "je",
+        "ve",
+        "sa"
+      ],
+      "wide": [
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "ah": "Anno Persico"
+    },
+    "abbr": {
+      "ah": "A. P."
+    },
+    "narrow": {
+      "ah": "A. P."
+    }
+  }
+}

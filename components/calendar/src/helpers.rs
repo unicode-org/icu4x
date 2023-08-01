@@ -11,7 +11,7 @@ use crate::{
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///
 /// Also see [`i32::div_euclid`], [`i32::rem_euclid`].
-pub fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
+pub const fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
     debug_assert!(d > 0);
     let (a, b) = (n / d, n % d);
     if n >= 0 || b == 0 {
@@ -202,6 +202,7 @@ pub fn signum(x: f64) -> f64 {
     }
 }
 
+#[allow(dead_code)] // TODO: Remove dead_code tag after use
 pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     let varepsilon = 1.0 / 100000.0; // Desired accuracy
     binary_search(
