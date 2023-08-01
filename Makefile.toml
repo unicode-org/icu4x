@@ -136,13 +136,31 @@ dependencies = [
     "verify-gn-gen",
 ]
 
-[tasks.ci-job-msrv-features]
-description = "Run all tests for the CI 'features' job"
+[tasks.ci-job-msrv-features-1]
+description = "Run all tests for the CI 'msrv-features-1' job"
 category = "CI"
 script_runner = "@duckscript"
 script = '''
 exec --fail-on-error rustup install 1.65 --profile minimal
-exec --fail-on-error cargo +1.65 make check-all-features
+exec --fail-on-error cargo +1.65 make check-all-features-chunked 1
+'''
+
+[tasks.ci-job-msrv-features-2]
+description = "Run all tests for the CI 'msrv-features-2' job"
+category = "CI"
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup install 1.65 --profile minimal
+exec --fail-on-error cargo +1.65 make check-all-features-chunked 2
+'''
+
+[tasks.ci-job-msrv-features-3]
+description = "Run all tests for the CI 'msrv-features-3' job"
+category = "CI"
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup install 1.65 --profile minimal
+exec --fail-on-error cargo +1.65 make check-all-features-chunked 3
 '''
 
 [tasks.ci-job-fmt]
