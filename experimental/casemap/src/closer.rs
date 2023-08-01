@@ -2,16 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::internals::{CaseMapLocale, FoldOptions};
-use crate::provider::data::MappingKind;
 use crate::provider::{CaseMapUnfoldV1Marker, CaseMapV1Marker};
 use crate::set::ClosureSet;
 use crate::CaseMapper;
 use alloc::borrow::Borrow;
-use alloc::string::String;
-use icu_locid::LanguageIdentifier;
+
 use icu_provider::prelude::*;
-use writeable::Writeable;
 
 /// A wrapper around [`CaseMapper`] that can produce case mapping closures
 /// over a character or string. This wrapper can be constructed directly, or
