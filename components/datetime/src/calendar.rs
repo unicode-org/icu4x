@@ -4,6 +4,7 @@
 
 use crate::provider::calendar::*;
 use icu_calendar::any_calendar::AnyCalendarKind;
+use icu_calendar::roc::Roc;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, japanese::Japanese,
     japanese::JapaneseExtended, persian::Persian, Gregorian,
@@ -86,6 +87,12 @@ impl CldrCalendar for Ethiopian {
     }
 }
 
+impl CldrCalendar for Roc {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("roc");
+    type DateSymbolsV1Marker = RocDateSymbolsV1Marker;
+    type DateLengthsV1Marker = RocDateLengthsV1Marker;
+}
+
 pub(crate) fn load_lengths_for_cldr_calendar<C, P>(
     provider: &P,
     locale: &DataLocale,
@@ -134,6 +141,7 @@ where
         + DataProvider<IndianDateLengthsV1Marker>
         + DataProvider<PersianDateLengthsV1Marker>
         + DataProvider<EthiopianDateLengthsV1Marker>
+        + DataProvider<RocDateLengthsV1Marker>
         + ?Sized,
 {
     let req = DataRequest {
@@ -186,6 +194,11 @@ where
                 .take_payload()?
                 .cast()
         }
+        AnyCalendarKind::Roc => {
+            DataProvider::<<Roc as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
         _ => {
             return Err(
                 DataError::custom("Don't know how to load data for specified calendar")
@@ -210,6 +223,7 @@ where
         + DataProvider<IndianDateSymbolsV1Marker>
         + DataProvider<PersianDateSymbolsV1Marker>
         + DataProvider<EthiopianDateSymbolsV1Marker>
+        + DataProvider<RocDateSymbolsV1Marker>
         + ?Sized,
 {
     let req = DataRequest {
@@ -259,6 +273,11 @@ where
         }
         AnyCalendarKind::EthiopianAmeteAlem => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Roc => {
+            DataProvider::<<Roc as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }

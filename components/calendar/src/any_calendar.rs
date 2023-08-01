@@ -145,6 +145,7 @@ macro_rules! match_cal_and_date {
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
             (&Self::Persian(ref $cal_matched), &AnyDateInner::Persian(ref $date_matched)) => $e,
             (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
+            (&Self::Roc(ref $cal_matched), &AnyDateInner::Roc(ref $date_matched)) => $e,
             (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $e,
             _ => panic!(
                 "Found AnyCalendar with mixed calendar type {} and date type {}!",
@@ -262,6 +263,9 @@ impl Calendar for AnyCalendar {
             (Self::Persian(c), &mut AnyDateInner::Persian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
+            (Self::Roc(c), &mut AnyDateInner::Roc(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
             // This is only reached from misuse of from_raw, a semi-internal api
             #[allow(clippy::panic)]
             (_, d) => panic!(
@@ -335,6 +339,9 @@ impl Calendar for AnyCalendar {
                 AnyDateInner::Persian(d1),
                 AnyDateInner::Persian(d2),
             ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
+            (Self::Roc(c1), Self::Roc(c2), AnyDateInner::Roc(d1), AnyDateInner::Roc(d2)) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
@@ -722,7 +729,12 @@ impl AnyCalendarKind {
             b"ethiopic" => AnyCalendarKind::Ethiopian,
             b"ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
             b"persian" => AnyCalendarKind::Persian,
-            _ => return None,
+            b"roc" => AnyCalendarKind::Roc,
+            _ => {
+                // Log a warning when a calendar value is passed in but doesn't match any calendars
+                DataError::custom("bcp47_bytes did not match any calendars").with_debug_context(x);
+                return None;
+            }
         })
     }
     /// Construct from a BCP-47 [`Value`]
@@ -750,7 +762,11 @@ impl AnyCalendarKind {
             AnyCalendarKind::EthiopianAmeteAlem
         } else if *x == value!("persian") {
             AnyCalendarKind::Persian
+        } else if *x == value!("roc") {
+            AnyCalendarKind::Roc
         } else {
+            // Log a warning when a calendar value is passed in but doesn't match any calendars
+            DataError::custom("bcp47_value did not match any calendars").with_display_context(x);
             return None;
         })
     }
@@ -973,6 +989,18 @@ impl IntoAnyCalendar for Iso {
     }
 }
 
+impl IntoAnyCalendar for Roc {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Roc(Roc)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Roc(Roc)
+    }
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Roc(*d)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1057,6 +1085,7 @@ mod tests {
         let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
         let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
         let persian = AnyCalendar::new(AnyCalendarKind::Persian);
+        let roc = AnyCalendar::new(AnyCalendarKind::Roc);
         let buddhist = Ref(&buddhist);
         let coptic = Ref(&coptic);
         let ethiopian = Ref(&ethiopian);
@@ -1066,6 +1095,7 @@ mod tests {
         let japanese = Ref(&japanese);
         let japanext = Ref(&japanext);
         let persian = Ref(&persian);
+        let roc = Ref(&roc);
 
         single_test_roundtrip(buddhist, "be", 100, "M03", 1);
         single_test_roundtrip(buddhist, "be", 2000, "M03", 1);
@@ -1207,5 +1237,9 @@ mod tests {
             1,
             CalendarError::UnknownMonthCode("M9".parse().unwrap(), "Persian"),
         );
+
+        single_test_roundtrip(roc, "roc", 10, "M05", 3);
+        single_test_roundtrip(roc, "roc-inverse", 15, "M01", 10);
+        single_test_roundtrip(roc, "roc", 100, "M10", 30);
     }
 }

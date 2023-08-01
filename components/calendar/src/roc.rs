@@ -89,7 +89,7 @@ impl Calendar for Roc {
             if year <= 0 {
                 return Err(CalendarError::OutOfRange);
             }
-            1 - (year + ROC_ERA_OFFSET)
+            1 - year + ROC_ERA_OFFSET
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
