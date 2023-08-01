@@ -61,7 +61,9 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     ];
 
     match calendar {
-        "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" => &SOLAR_MONTH_CODES[0..12],
+        "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" => {
+            &SOLAR_MONTH_CODES[0..12]
+        }
         "coptic" | "ethiopic" => SOLAR_MONTH_CODES,
         _ => panic!("Month map unknown for {calendar}"),
     }
