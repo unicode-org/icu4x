@@ -121,27 +121,14 @@ class ICU4XCaseMapper {
    * well as all characters that may casemap to this one.
    * 
    * Note that since ICU4XCodePointSetBuilder does not contain strings, this will
-   * ignore string mappings
+   * ignore string mappings.
+   * 
+   * Identical to the similarly named method on `ICU4XCaseMapCloser`, use that if you
+   * plan on using string case closure mappings too.
    * 
    * See the [Rust documentation for `add_case_closure`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure) for more information.
    */
   void add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const;
-
-  /**
-   * Maps the string to single code points and adds the associated case closure
-   * mappings, if they exist.
-   * 
-   * The string is mapped to code points if it is their full case folding string.
-   * In other words, this performs a reverse full case folding and then
-   * adds the case closure items of the resulting code points.
-   * If the string is found and its closure applied, then
-   * the string itself is added as well as part of its code points' closure.
-   * 
-   * Returns true if the string was found
-   * 
-   * See the [Rust documentation for `add_string_case_closure`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_string_case_closure) for more information.
-   */
-  bool add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const;
 
   /**
    * Returns the simple lowercase mapping of the given character.
@@ -336,9 +323,6 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::fold_turkic(co
 }
 inline void ICU4XCaseMapper::add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const {
   capi::ICU4XCaseMapper_add_case_closure(this->inner.get(), c, builder.AsFFIMut());
-}
-inline bool ICU4XCaseMapper::add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const {
-  return capi::ICU4XCaseMapper_add_string_case_closure(this->inner.get(), s.data(), s.size(), builder.AsFFIMut());
 }
 inline char32_t ICU4XCaseMapper::simple_lowercase(char32_t ch) const {
   return capi::ICU4XCaseMapper_simple_lowercase(this->inner.get(), ch);

@@ -1,6 +1,42 @@
 ``casemap::ffi``
 ================
 
+.. cpp:class:: ICU4XCaseMapCloser
+
+    See the `Rust documentation for CaseMapCloser <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XCaseMapCloser, ICU4XError> create(const ICU4XDataProvider& provider)
+
+        Construct a new ICU4XCaseMapper instance for NFC
+
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new>`__ for more information.
+
+
+    .. cpp:function:: void add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const
+
+        Adds all simple case mappings and the full case folding for ``c`` to ``builder``. Also adds special case closure mappings.
+
+        In other words, this adds all characters that this casemaps to, as well as all characters that may casemap to this one.
+
+        Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings
+
+        Identical to the similarly named method on ``ICU4XCaseMapCloser``, use that if you do not plan on using string case closure mappings to limit the amount of data loaded.
+
+        See the `Rust documentation for add_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure>`__ for more information.
+
+
+    .. cpp:function:: bool add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const
+
+        Maps the string to single code points and adds the associated case closure mappings, if they exist.
+
+        The string is mapped to code points if it is their full case folding string. In other words, this performs a reverse full case folding and then adds the case closure items of the resulting code points. If the string is found and its closure applied, then the string itself is added as well as part of its code points' closure.
+
+        Returns true if the string was found
+
+        See the `Rust documentation for add_string_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure>`__ for more information.
+
+
 .. cpp:class:: ICU4XCaseMapper
 
     See the `Rust documentation for CaseMapper <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html>`__ for more information.
@@ -89,20 +125,11 @@
 
         In other words, this adds all characters that this casemaps to, as well as all characters that may casemap to this one.
 
-        Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings
+        Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings.
+
+        Identical to the similarly named method on ``ICU4XCaseMapCloser``, use that if you plan on using string case closure mappings too.
 
         See the `Rust documentation for add_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure>`__ for more information.
-
-
-    .. cpp:function:: bool add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const
-
-        Maps the string to single code points and adds the associated case closure mappings, if they exist.
-
-        The string is mapped to code points if it is their full case folding string. In other words, this performs a reverse full case folding and then adds the case closure items of the resulting code points. If the string is found and its closure applied, then the string itself is added as well as part of its code points' closure.
-
-        Returns true if the string was found
-
-        See the `Rust documentation for add_string_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_string_case_closure>`__ for more information.
 
 
     .. cpp:function:: char32_t simple_lowercase(char32_t ch) const

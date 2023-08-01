@@ -71,23 +71,13 @@ export class ICU4XCaseMapper {
 
    * In other words, this adds all characters that this casemaps to, as well as all characters that may casemap to this one.
 
-   * Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings
+   * Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings.
+
+   * Identical to the similarly named method on `ICU4XCaseMapCloser`, use that if you plan on using string case closure mappings too.
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure Rust documentation for `add_case_closure`} for more information.
    */
   add_case_closure(c: char, builder: ICU4XCodePointSetBuilder): void;
-
-  /**
-
-   * Maps the string to single code points and adds the associated case closure mappings, if they exist.
-
-   * The string is mapped to code points if it is their full case folding string. In other words, this performs a reverse full case folding and then adds the case closure items of the resulting code points. If the string is found and its closure applied, then the string itself is added as well as part of its code points' closure.
-
-   * Returns true if the string was found
-
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_string_case_closure Rust documentation for `add_string_case_closure`} for more information.
-   */
-  add_string_case_closure(s: string, builder: ICU4XCodePointSetBuilder): boolean;
 
   /**
 
