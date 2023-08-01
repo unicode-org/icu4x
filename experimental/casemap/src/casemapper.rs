@@ -5,7 +5,7 @@
 use crate::internals::{CaseMapLocale, FoldOptions};
 use crate::provider::data::MappingKind;
 use crate::provider::CaseMapV1Marker;
-use crate::set::ClosureSet;
+use crate::set::ClosureSink;
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -34,13 +34,19 @@ use writeable::Writeable;
 /// </div>
 #[derive(Clone, Debug)]
 pub struct CaseMapper {
-    data: DataPayload<CaseMapV1Marker>,
+    pub(crate) data: DataPayload<CaseMapV1Marker>,
 }
 
 #[cfg(feature = "compiled_data")]
 impl Default for CaseMapper {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl AsRef<CaseMapper> for CaseMapper {
+    fn as_ref(&self) -> &CaseMapper {
+        self
     }
 }
 
@@ -376,15 +382,10 @@ impl CaseMapper {
     /// Adds all simple case mappings and the full case folding for `c` to `set`.
     /// Also adds special case closure mappings.
     ///
-    /// In other words, this adds all strings/characters that this casemaps to, as
-    /// well as all characters that may casemap to this one.
+    /// Identical to [`CaseMapCloser::add_case_closure_to()`], see docs there for more information.
+    /// This method is duplicated so that one does not need to load extra unfold data
+    /// if they only need this and not also [`CaseMapCloser::add_string_case_closure_to()`].
     ///
-    /// The character itself is not added.
-    ///
-    /// For example, the mappings
-    /// - for s include long s
-    /// - for sharp s include ss
-    /// - for k include the Kelvin sign
     ///
     /// # Examples
     ///
@@ -394,7 +395,7 @@ impl CaseMapper {
     ///
     /// let cm = CaseMapper::new();
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// cm.add_case_closure('s', &mut builder);
+    /// cm.add_case_closure_to('s', &mut builder);
     ///
     /// let set = builder.build();
     ///
@@ -402,45 +403,11 @@ impl CaseMapper {
     /// assert!(set.contains('ſ'));
     /// assert!(!set.contains('s')); // does not contain itself
     /// ```
-    pub fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
-        self.data.get().add_case_closure(c, set);
-    }
-
-    /// Maps the string to single code points and adds the associated case closure
-    /// mappings, if they exist.
     ///
-    /// The string is mapped to code points if it is their full case folding string.
-    /// In other words, this performs a reverse full case folding and then
-    /// adds the case closure items of the resulting code points.
-    /// If the string is found and its closure applied, then
-    /// the string itself is added as well as part of its code points' closure.
-    ///
-    /// Returns true if the string was found
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use icu_casemap::CaseMapper;
-    /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-    ///
-    /// let cm = CaseMapper::new();
-    /// let mut builder = CodePointInversionListBuilder::new();
-    /// let found = cm.add_string_case_closure("ffi", &mut builder);
-    /// assert!(found);
-    /// let set = builder.build();
-    ///
-    /// assert!(set.contains('ﬃ'));
-    ///
-    /// let mut builder = CodePointInversionListBuilder::new();
-    /// let found = cm.add_string_case_closure("ss", &mut builder);
-    /// assert!(found);
-    /// let set = builder.build();
-    ///
-    /// assert!(set.contains('ß'));
-    /// assert!(set.contains('ẞ'));
-    /// ```
-    pub fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
-        self.data.get().add_string_case_closure(s, set)
+    /// [`CaseMapCloser::add_case_closure_to()`]: crate::CaseMapCloser::add_case_closure_to
+    /// [`CaseMapCloser::add_string_case_closure_to()`]: crate::CaseMapCloser::add_string_case_closure_to
+    pub fn add_case_closure_to<S: ClosureSink>(&self, c: char, set: &mut S) {
+        self.data.get().add_case_closure_to(c, set);
     }
 
     /// Returns the lowercase mapping of the given `char`.
