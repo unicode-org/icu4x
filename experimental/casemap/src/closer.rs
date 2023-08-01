@@ -179,7 +179,11 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
         self.cm.as_ref().add_case_closure(c, set);
     }
 
-    /// Finds all characters and strings which may casemap to `s` and adds them to the set.
+    /// Finds all characters and strings which may casemap to `s` as their full case folding string
+    /// and adds them to the set.
+    ///
+    /// In other words, this performs a reverse full case folding and then
+    /// adds the case closure items of the resulting code points.
     ///
     /// The string itself is not added to the set.
     ///

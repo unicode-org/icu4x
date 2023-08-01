@@ -87,7 +87,7 @@ impl CaseMapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapper, DataError>
     where
-        P: DataProvider<CaseMapV1Marker> + DataProvider<CaseMapUnfoldV1Marker> + ?Sized,
+        P: DataProvider<CaseMapV1Marker> + ?Sized,
     {
         let data = provider.load(Default::default())?.take_payload()?;
         Ok(Self { data })
