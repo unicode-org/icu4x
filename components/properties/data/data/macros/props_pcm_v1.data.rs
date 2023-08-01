@@ -1,5 +1,5 @@
 // @generated
-/// Implement [`DataProvider<PrependedConcatenationMarkV1Marker>`](icu_provider::DataProvider) on the given struct using the data
+/// Implement `DataProvider<PrependedConcatenationMarkV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]

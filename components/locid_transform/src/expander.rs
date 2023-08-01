@@ -195,7 +195,7 @@ impl LocaleExpander {
     /// Use this constructor if you are using likely subtags for comprehensive support of all
     /// languages and regions, including ones that may not have CLDR data.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -249,7 +249,7 @@ impl LocaleExpander {
     /// Use this constructor if you are using likely subtags for comprehensive support of all
     /// languages and regions, including ones that may not have CLDR data.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

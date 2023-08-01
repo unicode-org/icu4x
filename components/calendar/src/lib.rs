@@ -123,6 +123,7 @@ mod calendar_arithmetic;
 pub mod chinese;
 mod chinese_based;
 pub mod coptic;
+pub mod dangi;
 mod duration;
 mod error;
 pub mod ethiopian;
