@@ -120,9 +120,9 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     #[cfg(skip)]
     functions: [
         try_new_from_casemapper_unstable,
-        try_new_from_casemapper_with_any_provider,
-        try_new_from_casemapper_with_buffer_provider,
-        try_new_from_casemapper_unstable,
+        try_new_with_mapper_with_any_provider,
+        try_new_with_mapper_with_buffer_provider,
+        try_new_with_mapper_unstable,
         Self,
     ]);
 
@@ -131,10 +131,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// <div class="stab unstable">⚠️ The bounds on <tt>provider</tt> may change over time, including in SemVer minor releases.</div>
-    pub fn try_new_from_casemapper_unstable<P>(
-        provider: &P,
-        casemapper: CM,
-    ) -> Result<Self, DataError>
+    pub fn try_new_with_mapper_unstable<P>(provider: &P, casemapper: CM) -> Result<Self, DataError>
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<CaseMapUnfoldV1Marker> + ?Sized,
     {
