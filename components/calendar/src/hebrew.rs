@@ -210,7 +210,7 @@ impl CivilHebrew {
             civil_month = month + 6;
         }
 
-        if Self::is_leap_year(civil_year) && civil_month > 6 {
+        if Self::is_leap_year(civil_year) && civil_month == 6 {
             civil_month += 1;
         }
 
