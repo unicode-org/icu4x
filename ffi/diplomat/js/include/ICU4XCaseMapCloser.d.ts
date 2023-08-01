@@ -12,7 +12,7 @@ export class ICU4XCaseMapCloser {
 
   /**
 
-   * Construct a new ICU4XCaseMapper instance for NFC
+   * Construct a new ICU4XCaseMapper instance
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>

@@ -35,7 +35,7 @@ class ICU4XCaseMapper {
  public:
 
   /**
-   * Construct a new ICU4XCaseMapper instance for NFC
+   * Construct a new ICU4XCaseMapper instance
    * 
    * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
    */

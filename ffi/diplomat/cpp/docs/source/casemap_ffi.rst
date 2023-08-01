@@ -8,7 +8,7 @@
 
     .. cpp:function:: static diplomat::result<ICU4XCaseMapCloser, ICU4XError> create(const ICU4XDataProvider& provider)
 
-        Construct a new ICU4XCaseMapper instance for NFC
+        Construct a new ICU4XCaseMapper instance
 
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new>`__ for more information.
 
@@ -44,7 +44,7 @@
 
     .. cpp:function:: static diplomat::result<ICU4XCaseMapper, ICU4XError> create(const ICU4XDataProvider& provider)
 
-        Construct a new ICU4XCaseMapper instance for NFC
+        Construct a new ICU4XCaseMapper instance
 
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new>`__ for more information.
 

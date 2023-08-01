@@ -17,7 +17,7 @@ pub mod ffi {
     pub struct ICU4XCaseMapper(pub CaseMapper);
 
     impl ICU4XCaseMapper {
-        /// Construct a new ICU4XCaseMapper instance for NFC
+        /// Construct a new ICU4XCaseMapper instance
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
         pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XCaseMapper>, ICU4XError> {
             Ok(Box::new(ICU4XCaseMapper(call_constructor!(
@@ -190,7 +190,7 @@ pub mod ffi {
     pub struct ICU4XCaseMapCloser(pub CaseMapCloser<CaseMapper>);
 
     impl ICU4XCaseMapCloser {
-        /// Construct a new ICU4XCaseMapper instance for NFC
+        /// Construct a new ICU4XCaseMapper instance
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XCaseMapCloser>, ICU4XError> {
             Ok(Box::new(ICU4XCaseMapCloser(call_constructor!(
