@@ -479,6 +479,7 @@ impl<'a> DecodedException<'a> {
             slot_presence.add_slot(ExceptionSlot::Closure);
             if self.full.is_some() {
                 // GIGO: if the closure length is more than 0xD800 this will error. Plenty of space.
+                debug_assert!(closure.len() < 0xD800, "Found overlarge closure value when encoding exception");
                 let len_char = u32::try_from(closure.len())
                     .ok()
                     .and_then(|c| char::try_from(c).ok())
