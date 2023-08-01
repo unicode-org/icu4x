@@ -521,11 +521,7 @@ impl BookHebrew {
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2331
     #[allow(dead_code)]
-    fn fixed_from_book_hebrew(date: BookHebrewDateInner) -> RataDie {
-        let year = date.0.year;
-        let month = date.0.month;
-        let day = date.0.day;
-
+    fn fixed_from_book_hebrew(year: i32, month: u8, day: u8) -> RataDie {
         let mut total_days = Self::book_hebrew_new_year(year) + day.into() - 1; // (day - 1) Days so far this month.
 
         if month < TISHRI {
@@ -545,7 +541,7 @@ impl BookHebrew {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352
     #[allow(dead_code, clippy::unwrap_used)]
-    fn book_hebrew_from_fixed(date: RataDie) -> Date<BookHebrew> {
+    fn book_hebrew_from_fixed(date: RataDie) -> BookHebrewDateInner {
         let approx = helpers::i64_to_i32(
             (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0) as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
         )
