@@ -75,9 +75,9 @@ export class ICU4XCaseMapper {
 
    * Identical to the similarly named method on `ICU4XCaseMapCloser`, use that if you plan on using string case closure mappings too.
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure Rust documentation for `add_case_closure`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to Rust documentation for `add_case_closure_to`} for more information.
    */
-  add_case_closure(c: char, builder: ICU4XCodePointSetBuilder): void;
+  add_case_closure_to(c: char, builder: ICU4XCodePointSetBuilder): void;
 
   /**
 

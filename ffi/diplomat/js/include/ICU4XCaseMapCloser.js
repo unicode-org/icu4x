@@ -33,13 +33,13 @@ export class ICU4XCaseMapCloser {
     })();
   }
 
-  add_case_closure(arg_c, arg_builder) {
-    wasm.ICU4XCaseMapCloser_add_case_closure(this.underlying, diplomatRuntime.extractCodePoint(arg_c, 'arg_c'), arg_builder.underlying);
+  add_case_closure_to(arg_c, arg_builder) {
+    wasm.ICU4XCaseMapCloser_add_case_closure_to(this.underlying, diplomatRuntime.extractCodePoint(arg_c, 'arg_c'), arg_builder.underlying);
   }
 
-  add_string_case_closure(arg_s, arg_builder) {
+  add_string_case_closure_to(arg_s, arg_builder) {
     const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
-    const diplomat_out = wasm.ICU4XCaseMapCloser_add_string_case_closure(this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_builder.underlying);
+    const diplomat_out = wasm.ICU4XCaseMapCloser_add_string_case_closure_to(this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_builder.underlying);
     buf_arg_s.free();
     return diplomat_out;
   }

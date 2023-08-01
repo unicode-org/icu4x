@@ -44,9 +44,9 @@ class ICU4XCaseMapCloser {
    * Adds all simple case mappings and the full case folding for `c` to `builder`.
    * Also adds special case closure mappings.
    * 
-   * See the [Rust documentation for `add_case_closure`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure) for more information.
+   * See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to) for more information.
    */
-  void add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const;
+  void add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const;
 
   /**
    * Finds all characters and strings which may casemap to `s` as their full case folding string
@@ -54,9 +54,9 @@ class ICU4XCaseMapCloser {
    * 
    * Returns true if the string was found
    * 
-   * See the [Rust documentation for `add_string_case_closure`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure) for more information.
+   * See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to) for more information.
    */
-  bool add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const;
+  bool add_string_case_closure_to(const std::string_view s, ICU4XCodePointSetBuilder& builder) const;
   inline const capi::ICU4XCaseMapCloser* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCaseMapCloser* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCaseMapCloser(capi::ICU4XCaseMapCloser* i) : inner(i) {}
@@ -80,10 +80,10 @@ inline diplomat::result<ICU4XCaseMapCloser, ICU4XError> ICU4XCaseMapCloser::crea
   }
   return diplomat_result_out_value;
 }
-inline void ICU4XCaseMapCloser::add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const {
-  capi::ICU4XCaseMapCloser_add_case_closure(this->inner.get(), c, builder.AsFFIMut());
+inline void ICU4XCaseMapCloser::add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const {
+  capi::ICU4XCaseMapCloser_add_case_closure_to(this->inner.get(), c, builder.AsFFIMut());
 }
-inline bool ICU4XCaseMapCloser::add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const {
-  return capi::ICU4XCaseMapCloser_add_string_case_closure(this->inner.get(), s.data(), s.size(), builder.AsFFIMut());
+inline bool ICU4XCaseMapCloser::add_string_case_closure_to(const std::string_view s, ICU4XCodePointSetBuilder& builder) const {
+  return capi::ICU4XCaseMapCloser_add_string_case_closure_to(this->inner.get(), s.data(), s.size(), builder.AsFFIMut());
 }
 #endif

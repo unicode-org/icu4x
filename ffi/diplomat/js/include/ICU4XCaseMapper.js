@@ -143,8 +143,8 @@ export class ICU4XCaseMapper {
     return diplomat_out;
   }
 
-  add_case_closure(arg_c, arg_builder) {
-    wasm.ICU4XCaseMapper_add_case_closure(this.underlying, diplomatRuntime.extractCodePoint(arg_c, 'arg_c'), arg_builder.underlying);
+  add_case_closure_to(arg_c, arg_builder) {
+    wasm.ICU4XCaseMapper_add_case_closure_to(this.underlying, diplomatRuntime.extractCodePoint(arg_c, 'arg_c'), arg_builder.underlying);
   }
 
   simple_lowercase(arg_ch) {

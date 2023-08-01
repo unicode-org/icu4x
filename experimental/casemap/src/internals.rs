@@ -506,7 +506,7 @@ impl<'data> CaseMapV1<'data> {
     /// - for s include long s
     /// - for sharp s include ss
     /// - for k include the Kelvin sign
-    pub(crate) fn add_case_closure<S: ClosureSink>(&self, c: char, set: &mut S) {
+    pub(crate) fn add_case_closure_to<S: ClosureSink>(&self, c: char, set: &mut S) {
         // Hardcode the case closure of i and its relatives and ignore the
         // data file data for these characters.
         // The Turkic dotless i and dotted I with their case mapping conditions
@@ -577,8 +577,8 @@ impl<'data> CaseMapV1<'data> {
     /// Maps the string to single code points and adds the associated case closure
     /// mappings.
     ///
-    /// (see docs on CaseMapper::add_string_case_closure)
-    pub(crate) fn add_string_case_closure<S: ClosureSink>(
+    /// (see docs on CaseMapper::add_string_case_closure_to)
+    pub(crate) fn add_string_case_closure_to<S: ClosureSink>(
         &self,
         s: &str,
         set: &mut S,
@@ -592,7 +592,7 @@ impl<'data> CaseMapV1<'data> {
             Some(closure_string) => {
                 for c in closure_string.chars() {
                     set.add_char(c);
-                    self.add_case_closure(c, set);
+                    self.add_case_closure_to(c, set);
                 }
                 true
             }

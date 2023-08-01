@@ -24,9 +24,9 @@ extern "C" {
 
 diplomat_result_box_ICU4XCaseMapCloser_ICU4XError ICU4XCaseMapCloser_create(const ICU4XDataProvider* provider);
 
-void ICU4XCaseMapCloser_add_case_closure(const ICU4XCaseMapCloser* self, char32_t c, ICU4XCodePointSetBuilder* builder);
+void ICU4XCaseMapCloser_add_case_closure_to(const ICU4XCaseMapCloser* self, char32_t c, ICU4XCodePointSetBuilder* builder);
 
-bool ICU4XCaseMapCloser_add_string_case_closure(const ICU4XCaseMapCloser* self, const char* s_data, size_t s_len, ICU4XCodePointSetBuilder* builder);
+bool ICU4XCaseMapCloser_add_string_case_closure_to(const ICU4XCaseMapCloser* self, const char* s_data, size_t s_len, ICU4XCodePointSetBuilder* builder);
 void ICU4XCaseMapCloser_destroy(ICU4XCaseMapCloser* self);
 
 #ifdef __cplusplus

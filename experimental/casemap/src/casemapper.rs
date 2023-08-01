@@ -382,9 +382,9 @@ impl CaseMapper {
     /// Adds all simple case mappings and the full case folding for `c` to `set`.
     /// Also adds special case closure mappings.
     ///
-    /// Identical to [`CaseMapCloser::add_case_closure()`], see docs there for more information.
+    /// Identical to [`CaseMapCloser::add_case_closure_to()`], see docs there for more information.
     /// This method is duplicated so that one does not need to load extra unfold data
-    /// if they only need this and not also [`CaseMapCloser::add_string_case_closure()`].
+    /// if they only need this and not also [`CaseMapCloser::add_string_case_closure_to()`].
     ///
     ///
     /// # Examples
@@ -395,7 +395,7 @@ impl CaseMapper {
     ///
     /// let cm = CaseMapper::new();
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// cm.add_case_closure('s', &mut builder);
+    /// cm.add_case_closure_to('s', &mut builder);
     ///
     /// let set = builder.build();
     ///
@@ -404,10 +404,10 @@ impl CaseMapper {
     /// assert!(!set.contains('s')); // does not contain itself
     /// ```
     ///
-    /// [`CaseMapCloser::add_case_closure()`]: crate::CaseMapCloser::add_case_closure
-    /// [`CaseMapCloser::add_string_case_closure()`]: crate::CaseMapCloser::add_string_case_closure
-    pub fn add_case_closure<S: ClosureSink>(&self, c: char, set: &mut S) {
-        self.data.get().add_case_closure(c, set);
+    /// [`CaseMapCloser::add_case_closure_to()`]: crate::CaseMapCloser::add_case_closure_to
+    /// [`CaseMapCloser::add_string_case_closure_to()`]: crate::CaseMapCloser::add_string_case_closure_to
+    pub fn add_case_closure_to<S: ClosureSink>(&self, c: char, set: &mut S) {
+        self.data.get().add_case_closure_to(c, set);
     }
 
     /// Returns the lowercase mapping of the given `char`.

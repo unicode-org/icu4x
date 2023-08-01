@@ -20,14 +20,14 @@ use icu_provider::prelude::*;
 ///
 /// let cm = CaseMapCloser::new();
 /// let mut builder = CodePointInversionListBuilder::new();
-/// let found = cm.add_string_case_closure("ffi", &mut builder);
+/// let found = cm.add_string_case_closure_to("ffi", &mut builder);
 /// assert!(found);
 /// let set = builder.build();
 ///
 /// assert!(set.contains('ﬃ'));
 ///
 /// let mut builder = CodePointInversionListBuilder::new();
-/// let found = cm.add_string_case_closure("ss", &mut builder);
+/// let found = cm.add_string_case_closure_to("ss", &mut builder);
 /// assert!(found);
 /// let set = builder.build();
 ///
@@ -65,14 +65,14 @@ impl CaseMapCloser<CaseMapper> {
     ///
     /// let cm = CaseMapCloser::new();
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let found = cm.add_string_case_closure("ffi", &mut builder);
+    /// let found = cm.add_string_case_closure_to("ffi", &mut builder);
     /// assert!(found);
     /// let set = builder.build();
     ///
     /// assert!(set.contains('ﬃ'));
     ///
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let found = cm.add_string_case_closure("ss", &mut builder);
+    /// let found = cm.add_string_case_closure_to("ss", &mut builder);
     /// assert!(found);
     /// let set = builder.build();
     ///
@@ -169,8 +169,8 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     /// - for sharp s include ss
     /// - for k include the Kelvin sign
     ///
-    /// This function is identical to [`CaseMapper::add_case_closure()`]; if you don't
-    /// need [`Self::add_string_case_closure()`] consider using a [`CaseMapper`] to avoid
+    /// This function is identical to [`CaseMapper::add_case_closure_to()`]; if you don't
+    /// need [`Self::add_string_case_closure_to()`] consider using a [`CaseMapper`] to avoid
     /// loading additional data.
     ///
     /// # Examples
@@ -181,7 +181,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     ///
     /// let cm = CaseMapCloser::new();
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// cm.add_case_closure('s', &mut builder);
+    /// cm.add_case_closure_to('s', &mut builder);
     ///
     /// let set = builder.build();
     ///
@@ -189,8 +189,8 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     /// assert!(set.contains('ſ'));
     /// assert!(!set.contains('s')); // does not contain itself
     /// ```
-    pub fn add_case_closure<S: ClosureSink>(&self, c: char, set: &mut S) {
-        self.cm.as_ref().add_case_closure(c, set);
+    pub fn add_case_closure_to<S: ClosureSink>(&self, c: char, set: &mut S) {
+        self.cm.as_ref().add_case_closure_to(c, set);
     }
 
     /// Finds all characters and strings which may casemap to `s` as their full case folding string
@@ -211,25 +211,25 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     ///
     /// let cm = CaseMapCloser::new();
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let found = cm.add_string_case_closure("ffi", &mut builder);
+    /// let found = cm.add_string_case_closure_to("ffi", &mut builder);
     /// assert!(found);
     /// let set = builder.build();
     ///
     /// assert!(set.contains('ﬃ'));
     ///
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let found = cm.add_string_case_closure("ss", &mut builder);
+    /// let found = cm.add_string_case_closure_to("ss", &mut builder);
     /// assert!(found);
     /// let set = builder.build();
     ///
     /// assert!(set.contains('ß'));
     /// assert!(set.contains('ẞ'));
     /// ```
-    pub fn add_string_case_closure<S: ClosureSink>(&self, s: &str, set: &mut S) -> bool {
+    pub fn add_string_case_closure_to<S: ClosureSink>(&self, s: &str, set: &mut S) -> bool {
         self.cm
             .as_ref()
             .data
             .get()
-            .add_string_case_closure(s, set, self.unfold.get())
+            .add_string_case_closure_to(s, set, self.unfold.get())
     }
 }

@@ -126,9 +126,9 @@ class ICU4XCaseMapper {
    * Identical to the similarly named method on `ICU4XCaseMapCloser`, use that if you
    * plan on using string case closure mappings too.
    * 
-   * See the [Rust documentation for `add_case_closure`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure) for more information.
+   * See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to) for more information.
    */
-  void add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const;
+  void add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const;
 
   /**
    * Returns the simple lowercase mapping of the given character.
@@ -321,8 +321,8 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::fold_turkic(co
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
-inline void ICU4XCaseMapper::add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const {
-  capi::ICU4XCaseMapper_add_case_closure(this->inner.get(), c, builder.AsFFIMut());
+inline void ICU4XCaseMapper::add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const {
+  capi::ICU4XCaseMapper_add_case_closure_to(this->inner.get(), c, builder.AsFFIMut());
 }
 inline char32_t ICU4XCaseMapper::simple_lowercase(char32_t ch) const {
   return capi::ICU4XCaseMapper_simple_lowercase(this->inner.get(), ch);

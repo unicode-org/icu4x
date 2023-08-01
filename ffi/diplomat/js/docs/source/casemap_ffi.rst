@@ -13,20 +13,20 @@
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new>`__ for more information.
 
 
-    .. js:method:: add_case_closure(c, builder)
+    .. js:method:: add_case_closure_to(c, builder)
 
         Adds all simple case mappings and the full case folding for ``c`` to ``builder``. Also adds special case closure mappings.
 
-        See the `Rust documentation for add_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure>`__ for more information.
+        See the `Rust documentation for add_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to>`__ for more information.
 
 
-    .. js:method:: add_string_case_closure(s, builder)
+    .. js:method:: add_string_case_closure_to(s, builder)
 
         Finds all characters and strings which may casemap to ``s`` as their full case folding string and adds them to the set.
 
         Returns true if the string was found
 
-        See the `Rust documentation for add_string_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure>`__ for more information.
+        See the `Rust documentation for add_string_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to>`__ for more information.
 
 
 .. js:class:: ICU4XCaseMapper
@@ -76,7 +76,7 @@
         See the `Rust documentation for fold_turkic <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic>`__ for more information.
 
 
-    .. js:method:: add_case_closure(c, builder)
+    .. js:method:: add_case_closure_to(c, builder)
 
         Adds all simple case mappings and the full case folding for ``c`` to ``builder``. Also adds special case closure mappings.
 
@@ -86,7 +86,7 @@
 
         Identical to the similarly named method on ``ICU4XCaseMapCloser``, use that if you plan on using string case closure mappings too.
 
-        See the `Rust documentation for add_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure>`__ for more information.
+        See the `Rust documentation for add_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to>`__ for more information.
 
 
     .. js:method:: simple_lowercase(ch)

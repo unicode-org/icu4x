@@ -23,9 +23,9 @@ export class ICU4XCaseMapCloser {
 
    * Adds all simple case mappings and the full case folding for `c` to `builder`. Also adds special case closure mappings.
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure Rust documentation for `add_case_closure`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to Rust documentation for `add_case_closure_to`} for more information.
    */
-  add_case_closure(c: char, builder: ICU4XCodePointSetBuilder): void;
+  add_case_closure_to(c: char, builder: ICU4XCodePointSetBuilder): void;
 
   /**
 
@@ -33,7 +33,7 @@ export class ICU4XCaseMapCloser {
 
    * Returns true if the string was found
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure Rust documentation for `add_string_case_closure`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to Rust documentation for `add_string_case_closure_to`} for more information.
    */
-  add_string_case_closure(s: string, builder: ICU4XCodePointSetBuilder): boolean;
+  add_string_case_closure_to(s: string, builder: ICU4XCodePointSetBuilder): boolean;
 }

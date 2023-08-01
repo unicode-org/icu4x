@@ -128,13 +128,13 @@ pub mod ffi {
         /// Identical to the similarly named method on `ICU4XCaseMapCloser`, use that if you
         /// plan on using string case closure mappings too.
         #[cfg(feature = "icu_properties")]
-        #[diplomat::rust_link(icu::casemap::CaseMapper::add_case_closure, FnInStruct)]
-        pub fn add_case_closure(
+        #[diplomat::rust_link(icu::casemap::CaseMapper::add_case_closure_to, FnInStruct)]
+        pub fn add_case_closure_to(
             &self,
             c: char,
             builder: &mut crate::collections_sets::ffi::ICU4XCodePointSetBuilder,
         ) {
-            self.0.add_case_closure(c, &mut builder.0)
+            self.0.add_case_closure_to(c, &mut builder.0)
         }
 
         /// Returns the simple lowercase mapping of the given character.
@@ -204,13 +204,13 @@ pub mod ffi {
         /// Adds all simple case mappings and the full case folding for `c` to `builder`.
         /// Also adds special case closure mappings.
         #[cfg(feature = "icu_properties")]
-        #[diplomat::rust_link(icu::casemap::CaseMapCloser::add_case_closure, FnInStruct)]
-        pub fn add_case_closure(
+        #[diplomat::rust_link(icu::casemap::CaseMapCloser::add_case_closure_to, FnInStruct)]
+        pub fn add_case_closure_to(
             &self,
             c: char,
             builder: &mut crate::collections_sets::ffi::ICU4XCodePointSetBuilder,
         ) {
-            self.0.add_case_closure(c, &mut builder.0)
+            self.0.add_case_closure_to(c, &mut builder.0)
         }
 
         /// Finds all characters and strings which may casemap to `s` as their full case folding string
@@ -218,8 +218,8 @@ pub mod ffi {
         ///
         /// Returns true if the string was found
         #[cfg(feature = "icu_properties")]
-        #[diplomat::rust_link(icu::casemap::CaseMapCloser::add_string_case_closure, FnInStruct)]
-        pub fn add_string_case_closure(
+        #[diplomat::rust_link(icu::casemap::CaseMapCloser::add_string_case_closure_to, FnInStruct)]
+        pub fn add_string_case_closure_to(
             &self,
             s: &str,
             builder: &mut crate::collections_sets::ffi::ICU4XCodePointSetBuilder,
@@ -227,7 +227,7 @@ pub mod ffi {
             // #2520
             // In the future we should be able to make assumptions based on backend
             let s = core::str::from_utf8(s.as_bytes()).unwrap_or("");
-            self.0.add_string_case_closure(s, &mut builder.0)
+            self.0.add_string_case_closure_to(s, &mut builder.0)
         }
     }
 }

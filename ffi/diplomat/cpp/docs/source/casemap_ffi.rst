@@ -13,20 +13,20 @@
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new>`__ for more information.
 
 
-    .. cpp:function:: void add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const
+    .. cpp:function:: void add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const
 
         Adds all simple case mappings and the full case folding for ``c`` to ``builder``. Also adds special case closure mappings.
 
-        See the `Rust documentation for add_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure>`__ for more information.
+        See the `Rust documentation for add_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to>`__ for more information.
 
 
-    .. cpp:function:: bool add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const
+    .. cpp:function:: bool add_string_case_closure_to(const std::string_view s, ICU4XCodePointSetBuilder& builder) const
 
         Finds all characters and strings which may casemap to ``s`` as their full case folding string and adds them to the set.
 
         Returns true if the string was found
 
-        See the `Rust documentation for add_string_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure>`__ for more information.
+        See the `Rust documentation for add_string_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to>`__ for more information.
 
 
 .. cpp:class:: ICU4XCaseMapper
@@ -111,7 +111,7 @@
         See the `Rust documentation for fold_turkic <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic>`__ for more information.
 
 
-    .. cpp:function:: void add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const
+    .. cpp:function:: void add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const
 
         Adds all simple case mappings and the full case folding for ``c`` to ``builder``. Also adds special case closure mappings.
 
@@ -121,7 +121,7 @@
 
         Identical to the similarly named method on ``ICU4XCaseMapCloser``, use that if you plan on using string case closure mappings too.
 
-        See the `Rust documentation for add_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure>`__ for more information.
+        See the `Rust documentation for add_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to>`__ for more information.
 
 
     .. cpp:function:: char32_t simple_lowercase(char32_t ch) const
