@@ -175,6 +175,8 @@ registry!(
         "datetime/japanext/datelengths@1",
     icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker =
         "datetime/japanext/datesymbols@1",
+    icu_datetime::provider::calendar::PersianDateLengthsV1Marker = "datetime/persian/datelengths@1",
+    icu_datetime::provider::calendar::PersianDateSymbolsV1Marker = "datetime/persian/datesymbols@1",
     icu_datetime::provider::calendar::TimeLengthsV1Marker = "datetime/timelengths@1",
     icu_datetime::provider::calendar::TimeSymbolsV1Marker = "datetime/timesymbols@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker =
