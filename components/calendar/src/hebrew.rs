@@ -41,14 +41,18 @@ use ::tinystr::tinystr;
 /// Biblical Hebrew Calendar
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
-pub struct BookHebrew;
+pub struct BookHebrew {
+    year: i32,
+    month: u8,
+    day: u8,
+}
 /// Civil Hebrew Calendar
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct CivilHebrew;
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206
-const FIXED_HEBREW_EPOCH: RataDie = Julian::fixed_from_julian_integers(-3761, 10, 8);
+const FIXED_HEBREW_EPOCH: RataDie = Julian::fix(-3761, 10, 7);
 
 // The BookHebrew Months
 const NISAN: u8 = 1;
@@ -115,7 +119,7 @@ impl Calendar for CivilHebrew {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(BookHebrewDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(CivilHebrewDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
@@ -189,11 +193,11 @@ impl CivilHebrew {
     pub fn new() -> Self {
         Self
     }
-    
+
     // Converts a Biblical Hebrew Date (which considers Tishri the start of the year) to a Civil Hebrew Year (year starts at Nisan).
-    fn biblical_to_civil_date(biblical_date: BookHebrewDateInner) -> Date<CivilHebrew> {
-        let month = biblical_date.0.month;
-        let mut civil_year = biblical_date.0.year;
+    fn biblical_to_civil_date(biblical_date: BookHebrew) -> Date<CivilHebrew> {
+        let month = biblical_date.month;
+        let mut civil_year = biblical_date.year;
         let mut civil_month;
 
         if month >= TISHRI {
@@ -210,7 +214,8 @@ impl CivilHebrew {
             civil_month += 1;
         }
 
-        Date::try_new_civil_hebrew_date(civil_year, civil_month, day).unwrap() // Safe unwrap
+        Date::try_new_civil_hebrew_date(civil_year, civil_month, biblical_date.day).unwrap()
+        // Safe unwrap
     }
 
     // ADAR = 12, ADARII = 13
@@ -336,10 +341,10 @@ impl Date<CivilHebrew> {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<CiivlHebrew>, CalendarError> {
+    ) -> Result<Date<CivilHebrew>, CalendarError> {
         ArithmeticDate::new_from_lunar_ordinals(year, month, day)
-            .map(CiivlHebrewDateInner)
-            .map(|inner| Date::from_raw(inner, CiivlHebrew))
+            .map(CivilHebrewDateInner)
+            .map(|inner| Date::from_raw(inner, CivilHebrew))
     }
 }
 
@@ -377,11 +382,6 @@ impl DateTime<CivilHebrew> {
 // BIBLICAL HEBREW CALENDAR FUNCTIONS
 
 impl BookHebrew {
-
-    /// Constructs a new BookHebrew Object
-    pub fn new() -> Self {
-        Self
-    }
 
     // Moment of mean conjunction (New Moon) of h_month in BookHebrew
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2244
@@ -467,7 +467,7 @@ impl BookHebrew {
 
     #[allow(dead_code)]
     fn is_hebrew_leap_year(h_year: i32) -> bool {
-        div_rem_euclid(7 * year + 1, 19).1 < 7
+        div_rem_euclid(7 * h_year + 1, 19).1 < 7
     }
     // True if the month Marheshvan is going to be long in given BookHebrew year
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2321
@@ -521,7 +521,11 @@ impl BookHebrew {
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2331
     #[allow(dead_code)]
-    fn fixed_from_book_hebrew(year: i32, month: u8, day: u8) -> RataDie {
+    fn fixed_from_book_hebrew(date: BookHebrew) -> RataDie {
+        let year = date.year;
+        let month = date.month;
+        let day = date.day;
+
         let mut total_days = Self::book_hebrew_new_year(year) + day.into() - 1; // (day - 1) Days so far this month.
 
         if month < TISHRI {
@@ -541,7 +545,7 @@ impl BookHebrew {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352
     #[allow(dead_code, clippy::unwrap_used)]
-    fn book_hebrew_from_fixed(date: RataDie) -> BookHebrewDateInner {
+    fn book_hebrew_from_fixed(date: RataDie) -> BookHebrew {
         let approx = helpers::i64_to_i32(
             (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0) as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
         )
@@ -554,34 +558,37 @@ impl BookHebrew {
 
         // Starting month for search for month.
         let start = if date
-            < Self::fixed_from_book_hebrew(BookHebrewDateInner(ArithmeticDate::new_unchecked(
-                year, NISAN, 1,
-            ))) {
+            < Self::fixed_from_book_hebrew(BookHebrew {
+                year,
+                month: NISAN,
+                day: 1,
+            }) {
             TISHRI
         } else {
             NISAN
         };
 
         let month_condition = |m: u8| {
-            date <= Self::fixed_from_book_hebrew(BookHebrewDateInner(
-                ArithmeticDate::new_unchecked(
-                    year,
-                    m,
-                    Self::last_day_of_book_hebrew_month(year, m),
-                ),
-            ))
+            date <= Self::fixed_from_book_hebrew(BookHebrew {
+                year: year,
+                month: m,
+                day: Self::last_day_of_book_hebrew_month(year, m),
+            })
         };
         // Search forward from either Tishri or Nisan.
         let month = next_u8(start, month_condition);
 
         // Calculate the day by subtraction.
         let day = (date
-            - Self::fixed_from_book_hebrew(BookHebrewDateInner(ArithmeticDate::new_unchecked(
-                year, month, 1,
-            ))))
+            - Self::fixed_from_book_hebrew(BookHebrew {
+                year,
+                month,
+                day: 1,
+            }))
             + 1;
 
-        Date::try_new_civil_hebrew_date(year, month, day as u8).unwrap() // Safe unwrap
+        BookHebrew { year: year, month: month, day: day as u8 }
+
     }
 
     fn year_as_hebrew(year: i32) -> types::FormattableYear {
@@ -967,11 +974,8 @@ mod tests {
     #[test]
     fn test_fixed_from_hebrew() {
         for (case, f_date) in HEBREW_DATES.iter().zip(TEST_FIXED_DATE.iter()) {
-            let date = BookHebrewDateInner(ArithmeticDate::new_unchecked(
-                case.year, case.month, case.day,
-            ));
             assert_eq!(
-                BookHebrew::fixed_from_book_hebrew(date),
+                BookHebrew::fixed_from_book_hebrew(BookHebrew{year: case.year, month: case.month, day: case.day }),
                 RataDie::new(*f_date),
                 "{case:?}"
             );
@@ -981,10 +985,9 @@ mod tests {
     #[test]
     fn test_hebrew_from_fixed() {
         for (case, f_date) in HEBREW_DATES.iter().zip(TEST_FIXED_DATE.iter()) {
-            let date = Date::try_new_hebrew_date(case.year, case.month, case.day).unwrap();
             assert_eq!(
                 BookHebrew::book_hebrew_from_fixed(RataDie::new(*f_date)),
-                date,
+                BookHebrew{ year: case.year, month: case.month , day: case.day },
                 "{case:?}"
             );
         }
@@ -993,7 +996,7 @@ mod tests {
     #[test]
     fn test_book_month() {
         let iso_dates: [Date<Iso>; 48] = [
-            *Date::try_new_iso_date(2021, 1, 10).unwrap(),
+            Date::try_new_iso_date(2021, 1, 10).unwrap(),
             Date::try_new_iso_date(2021, 1, 25).unwrap(),
             Date::try_new_iso_date(2021, 2, 10).unwrap(),
             Date::try_new_iso_date(2021, 2, 25).unwrap(),
@@ -1044,12 +1047,12 @@ mod tests {
         ];
 
         for date in iso_dates.iter() {
-            println!("{:?}", Date::to_calendar(date, BookHebrew))
+            println!("{:?}", date)
         }
     }
 
     #[test]
     fn test_icu_bug_22441() {
-        assert_wq!(BookHebrew::days_in_hebrew_year(88369), 383);
+        assert_eq!(BookHebrew::days_in_hebrew_year(88369), 383);
     }
 }
