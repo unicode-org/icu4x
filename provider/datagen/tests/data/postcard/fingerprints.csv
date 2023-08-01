@@ -132,6 +132,44 @@ datetime/buddhist/datesymbols@1, sr-Latn, 335B, 5f9c0fc2b5c6c767
 datetime/buddhist/datesymbols@1, th, 911B, e46dceeb3e50445
 datetime/buddhist/datesymbols@1, tr, 341B, 6fc2721a65ea9e3a
 datetime/buddhist/datesymbols@1, und, 282B, 7218b6570e4e1d53
+datetime/chinese/datelengths@1, ar, 135B, 638cab234df63645
+datetime/chinese/datelengths@1, ar-EG, 135B, 638cab234df63645
+datetime/chinese/datelengths@1, bn, 135B, 638cab234df63645
+datetime/chinese/datelengths@1, ccp, 135B, 638cab234df63645
+datetime/chinese/datelengths@1, en, 156B, 891a3af48911d143
+datetime/chinese/datelengths@1, en-001, 147B, 5779024b93e71967
+datetime/chinese/datelengths@1, en-ZA, 147B, 5779024b93e71967
+datetime/chinese/datelengths@1, es, 117B, f08d68f15e5d498f
+datetime/chinese/datelengths@1, es-AR, 117B, f08d68f15e5d498f
+datetime/chinese/datelengths@1, fil, 135B, 638cab234df63645
+datetime/chinese/datelengths@1, fr, 114B, df7d9daa8e5e8fdd
+datetime/chinese/datelengths@1, ja, 111B, bd200e3bde197f77
+datetime/chinese/datelengths@1, ru, 117B, a075e302f9b52b31
+datetime/chinese/datelengths@1, sr, 135B, 638cab234df63645
+datetime/chinese/datelengths@1, sr-Cyrl, 135B, 638cab234df63645
+datetime/chinese/datelengths@1, sr-Latn, 135B, 638cab234df63645
+datetime/chinese/datelengths@1, th, 117B, d940dd6dbc226ff8
+datetime/chinese/datelengths@1, tr, 135B, 638cab234df63645
+datetime/chinese/datelengths@1, und, 135B, 638cab234df63645
+datetime/chinese/datesymbols@1, ar, 618B, c474748ba96933f9
+datetime/chinese/datesymbols@1, ar-EG, 618B, c474748ba96933f9
+datetime/chinese/datesymbols@1, bn, 695B, 912d5bc71c3a0711
+datetime/chinese/datesymbols@1, ccp, 978B, bfd1b9e2fbd70e56
+datetime/chinese/datesymbols@1, en, 564B, 4bb26a319406e16
+datetime/chinese/datesymbols@1, en-001, 564B, 4bb26a319406e16
+datetime/chinese/datesymbols@1, en-ZA, 564B, 4bb26a319406e16
+datetime/chinese/datesymbols@1, es, 454B, 10e0da309a76ba68
+datetime/chinese/datesymbols@1, es-AR, 454B, 60c7425a48a30353
+datetime/chinese/datesymbols@1, fil, 466B, 23903254431cea77
+datetime/chinese/datesymbols@1, fr, 550B, e06c6a32683b26bd
+datetime/chinese/datesymbols@1, ja, 599B, 5bca158204566a1d
+datetime/chinese/datesymbols@1, ru, 619B, 896b6508bf0c4a64
+datetime/chinese/datesymbols@1, sr, 536B, bb17532cf2856863
+datetime/chinese/datesymbols@1, sr-Cyrl, 536B, bb17532cf2856863
+datetime/chinese/datesymbols@1, sr-Latn, 455B, c99877fd5da9f5ad
+datetime/chinese/datesymbols@1, th, 598B, 656433089459d907
+datetime/chinese/datesymbols@1, tr, 458B, 9bd91ab8addedc45
+datetime/chinese/datesymbols@1, und, 432B, 63dbe694b554f384
 datetime/coptic/datelengths@1, ar, 165B, c768a2600c7063f2
 datetime/coptic/datelengths@1, ar-EG, 165B, c768a2600c7063f2
 datetime/coptic/datelengths@1, bn, 150B, bc5c367f3d0719cd
@@ -361,6 +399,7 @@ datetime/japanext/datesymbols@1, th, 30477B, 245fbc931c37eacb
 datetime/japanext/datesymbols@1, tr, 24277B, 25d6879a151f5520
 datetime/japanext/datesymbols@1, und, 24195B, 2adf639e2862b336
 datetime/skeletons@1, ar-EG-u-ca-buddhist, 925B, 6c8defda9658d17b
+datetime/skeletons@1, ar-EG-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, ar-EG-u-ca-coptic, 925B, 6c8defda9658d17b
 datetime/skeletons@1, ar-EG-u-ca-ethiopic, 925B, 6c8defda9658d17b
 datetime/skeletons@1, ar-EG-u-ca-gregory, 1184B, 9865e7b1a8fff0fb
@@ -368,6 +407,7 @@ datetime/skeletons@1, ar-EG-u-ca-indian, 925B, 6c8defda9658d17b
 datetime/skeletons@1, ar-EG-u-ca-japanese, 925B, 6c8defda9658d17b
 datetime/skeletons@1, ar-EG-u-ca-japanext, 925B, 6c8defda9658d17b
 datetime/skeletons@1, ar-u-ca-buddhist, 925B, 6c8defda9658d17b
+datetime/skeletons@1, ar-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, ar-u-ca-coptic, 925B, 6c8defda9658d17b
 datetime/skeletons@1, ar-u-ca-ethiopic, 925B, 6c8defda9658d17b
 datetime/skeletons@1, ar-u-ca-gregory, 1184B, 9865e7b1a8fff0fb
@@ -375,6 +415,7 @@ datetime/skeletons@1, ar-u-ca-indian, 925B, 6c8defda9658d17b
 datetime/skeletons@1, ar-u-ca-japanese, 925B, 6c8defda9658d17b
 datetime/skeletons@1, ar-u-ca-japanext, 925B, 6c8defda9658d17b
 datetime/skeletons@1, bn-u-ca-buddhist, 976B, f83f11a258fd6369
+datetime/skeletons@1, bn-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, bn-u-ca-coptic, 976B, f83f11a258fd6369
 datetime/skeletons@1, bn-u-ca-ethiopic, 976B, f83f11a258fd6369
 datetime/skeletons@1, bn-u-ca-gregory, 1154B, 9164ba68757f7498
@@ -382,6 +423,7 @@ datetime/skeletons@1, bn-u-ca-indian, 976B, f83f11a258fd6369
 datetime/skeletons@1, bn-u-ca-japanese, 976B, f83f11a258fd6369
 datetime/skeletons@1, bn-u-ca-japanext, 976B, f83f11a258fd6369
 datetime/skeletons@1, ccp-u-ca-buddhist, 976B, c66965163edcb85b
+datetime/skeletons@1, ccp-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, ccp-u-ca-coptic, 976B, c66965163edcb85b
 datetime/skeletons@1, ccp-u-ca-ethiopic, 976B, c66965163edcb85b
 datetime/skeletons@1, ccp-u-ca-gregory, 1166B, 5c3848d8bc8c628a
@@ -389,6 +431,7 @@ datetime/skeletons@1, ccp-u-ca-indian, 976B, c66965163edcb85b
 datetime/skeletons@1, ccp-u-ca-japanese, 976B, c66965163edcb85b
 datetime/skeletons@1, ccp-u-ca-japanext, 976B, c66965163edcb85b
 datetime/skeletons@1, en-001-u-ca-buddhist, 895B, 7e9c17a0074ce900
+datetime/skeletons@1, en-001-u-ca-chinese, 1145B, aac7507e4381b760
 datetime/skeletons@1, en-001-u-ca-coptic, 895B, 7e9c17a0074ce900
 datetime/skeletons@1, en-001-u-ca-ethiopic, 895B, 7e9c17a0074ce900
 datetime/skeletons@1, en-001-u-ca-gregory, 1074B, adced35fd473d6a6
@@ -396,6 +439,7 @@ datetime/skeletons@1, en-001-u-ca-indian, 895B, 7e9c17a0074ce900
 datetime/skeletons@1, en-001-u-ca-japanese, 895B, 7e9c17a0074ce900
 datetime/skeletons@1, en-001-u-ca-japanext, 895B, 7e9c17a0074ce900
 datetime/skeletons@1, en-ZA-u-ca-buddhist, 895B, 9fa2f16aab0ba66a
+datetime/skeletons@1, en-ZA-u-ca-chinese, 1145B, aac7507e4381b760
 datetime/skeletons@1, en-ZA-u-ca-coptic, 895B, 9fa2f16aab0ba66a
 datetime/skeletons@1, en-ZA-u-ca-ethiopic, 895B, 9fa2f16aab0ba66a
 datetime/skeletons@1, en-ZA-u-ca-gregory, 1074B, 3da7dcf3e7c386d6
@@ -403,6 +447,7 @@ datetime/skeletons@1, en-ZA-u-ca-indian, 895B, 9fa2f16aab0ba66a
 datetime/skeletons@1, en-ZA-u-ca-japanese, 895B, 9fa2f16aab0ba66a
 datetime/skeletons@1, en-ZA-u-ca-japanext, 895B, 9fa2f16aab0ba66a
 datetime/skeletons@1, en-u-ca-buddhist, 907B, ace3040c246f636d
+datetime/skeletons@1, en-u-ca-chinese, 1172B, c691ab8b773b46d9
 datetime/skeletons@1, en-u-ca-coptic, 907B, ace3040c246f636d
 datetime/skeletons@1, en-u-ca-ethiopic, 907B, ace3040c246f636d
 datetime/skeletons@1, en-u-ca-gregory, 1067B, be022511f28733ad
@@ -410,6 +455,7 @@ datetime/skeletons@1, en-u-ca-indian, 907B, ace3040c246f636d
 datetime/skeletons@1, en-u-ca-japanese, 907B, ace3040c246f636d
 datetime/skeletons@1, en-u-ca-japanext, 907B, ace3040c246f636d
 datetime/skeletons@1, es-AR-u-ca-buddhist, 1370B, fdd5b9a0c0ff323b
+datetime/skeletons@1, es-AR-u-ca-chinese, 968B, e730c72c28704887
 datetime/skeletons@1, es-AR-u-ca-coptic, 1370B, fdd5b9a0c0ff323b
 datetime/skeletons@1, es-AR-u-ca-ethiopic, 1370B, fdd5b9a0c0ff323b
 datetime/skeletons@1, es-AR-u-ca-gregory, 1590B, 45e3d322e55c24c9
@@ -417,6 +463,7 @@ datetime/skeletons@1, es-AR-u-ca-indian, 1370B, fdd5b9a0c0ff323b
 datetime/skeletons@1, es-AR-u-ca-japanese, 1370B, fdd5b9a0c0ff323b
 datetime/skeletons@1, es-AR-u-ca-japanext, 1370B, fdd5b9a0c0ff323b
 datetime/skeletons@1, es-u-ca-buddhist, 1225B, 739fce0bcf04198c
+datetime/skeletons@1, es-u-ca-chinese, 968B, e730c72c28704887
 datetime/skeletons@1, es-u-ca-coptic, 1225B, 739fce0bcf04198c
 datetime/skeletons@1, es-u-ca-ethiopic, 1225B, 739fce0bcf04198c
 datetime/skeletons@1, es-u-ca-gregory, 1544B, f91d8727491e3e14
@@ -424,6 +471,7 @@ datetime/skeletons@1, es-u-ca-indian, 1225B, 739fce0bcf04198c
 datetime/skeletons@1, es-u-ca-japanese, 1225B, 739fce0bcf04198c
 datetime/skeletons@1, es-u-ca-japanext, 1225B, 739fce0bcf04198c
 datetime/skeletons@1, fil-u-ca-buddhist, 963B, 4e59d8892dc656dd
+datetime/skeletons@1, fil-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, fil-u-ca-coptic, 963B, 4e59d8892dc656dd
 datetime/skeletons@1, fil-u-ca-ethiopic, 963B, 4e59d8892dc656dd
 datetime/skeletons@1, fil-u-ca-gregory, 1247B, b35bb15a2a2cf957
@@ -431,6 +479,7 @@ datetime/skeletons@1, fil-u-ca-indian, 963B, 4e59d8892dc656dd
 datetime/skeletons@1, fil-u-ca-japanese, 963B, 4e59d8892dc656dd
 datetime/skeletons@1, fil-u-ca-japanext, 963B, 4e59d8892dc656dd
 datetime/skeletons@1, fr-u-ca-buddhist, 880B, e1bcbd5a04da14ae
+datetime/skeletons@1, fr-u-ca-chinese, 959B, f0e02abb72bb4d46
 datetime/skeletons@1, fr-u-ca-coptic, 880B, adf73c41e5cf32ef
 datetime/skeletons@1, fr-u-ca-ethiopic, 880B, adf73c41e5cf32ef
 datetime/skeletons@1, fr-u-ca-gregory, 1061B, 6ade9090ea8d8676
@@ -438,6 +487,7 @@ datetime/skeletons@1, fr-u-ca-indian, 880B, adf73c41e5cf32ef
 datetime/skeletons@1, fr-u-ca-japanese, 880B, 45b63a599ac2e487
 datetime/skeletons@1, fr-u-ca-japanext, 880B, 45b63a599ac2e487
 datetime/skeletons@1, ja-u-ca-buddhist, 1141B, 1083d20bec3900b3
+datetime/skeletons@1, ja-u-ca-chinese, 1207B, 8aca071f84d36375
 datetime/skeletons@1, ja-u-ca-coptic, 1149B, 9e6499135db99ee9
 datetime/skeletons@1, ja-u-ca-ethiopic, 1149B, 9e6499135db99ee9
 datetime/skeletons@1, ja-u-ca-gregory, 1268B, f92db1093436c05
@@ -445,6 +495,7 @@ datetime/skeletons@1, ja-u-ca-indian, 1149B, 9e6499135db99ee9
 datetime/skeletons@1, ja-u-ca-japanese, 1135B, 67d4b3724c677e3
 datetime/skeletons@1, ja-u-ca-japanext, 1135B, 67d4b3724c677e3
 datetime/skeletons@1, ru-u-ca-buddhist, 994B, 8c5f38aef4898af5
+datetime/skeletons@1, ru-u-ca-chinese, 974B, 251a9f30f65a8ce7
 datetime/skeletons@1, ru-u-ca-coptic, 994B, 8c5f38aef4898af5
 datetime/skeletons@1, ru-u-ca-ethiopic, 994B, 8c5f38aef4898af5
 datetime/skeletons@1, ru-u-ca-gregory, 1192B, f862041ef90c7c68
@@ -452,6 +503,7 @@ datetime/skeletons@1, ru-u-ca-indian, 994B, 8c5f38aef4898af5
 datetime/skeletons@1, ru-u-ca-japanese, 994B, 8c5f38aef4898af5
 datetime/skeletons@1, ru-u-ca-japanext, 994B, 8c5f38aef4898af5
 datetime/skeletons@1, sr-Cyrl-u-ca-buddhist, 1104B, 21e8e921d1b1aa01
+datetime/skeletons@1, sr-Cyrl-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, sr-Cyrl-u-ca-coptic, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Cyrl-u-ca-ethiopic, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Cyrl-u-ca-gregory, 1294B, 40cafaf319fb902f
@@ -459,6 +511,7 @@ datetime/skeletons@1, sr-Cyrl-u-ca-indian, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Cyrl-u-ca-japanese, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Cyrl-u-ca-japanext, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Latn-u-ca-buddhist, 1104B, 21e8e921d1b1aa01
+datetime/skeletons@1, sr-Latn-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, sr-Latn-u-ca-coptic, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Latn-u-ca-ethiopic, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Latn-u-ca-gregory, 1294B, 6ddd39d8d70e23aa
@@ -466,6 +519,7 @@ datetime/skeletons@1, sr-Latn-u-ca-indian, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Latn-u-ca-japanese, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Latn-u-ca-japanext, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-u-ca-buddhist, 1104B, 21e8e921d1b1aa01
+datetime/skeletons@1, sr-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, sr-u-ca-coptic, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-u-ca-ethiopic, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-u-ca-gregory, 1294B, 40cafaf319fb902f
@@ -473,6 +527,7 @@ datetime/skeletons@1, sr-u-ca-indian, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-u-ca-japanese, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-u-ca-japanext, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, th-u-ca-buddhist, 1040B, ad03d234ee41adfe
+datetime/skeletons@1, th-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, th-u-ca-coptic, 1023B, 4b33e3819937064a
 datetime/skeletons@1, th-u-ca-ethiopic, 1023B, 4b33e3819937064a
 datetime/skeletons@1, th-u-ca-gregory, 1458B, 9db7eb3396dd354f
@@ -480,6 +535,7 @@ datetime/skeletons@1, th-u-ca-indian, 1023B, 4b33e3819937064a
 datetime/skeletons@1, th-u-ca-japanese, 1026B, 290db5a86be084c4
 datetime/skeletons@1, th-u-ca-japanext, 1026B, 290db5a86be084c4
 datetime/skeletons@1, tr-u-ca-buddhist, 951B, 4831245f68df910b
+datetime/skeletons@1, tr-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, tr-u-ca-coptic, 951B, 4831245f68df910b
 datetime/skeletons@1, tr-u-ca-ethiopic, 951B, 4831245f68df910b
 datetime/skeletons@1, tr-u-ca-gregory, 1156B, b73227d0227c7b50
@@ -487,6 +543,7 @@ datetime/skeletons@1, tr-u-ca-indian, 951B, 4831245f68df910b
 datetime/skeletons@1, tr-u-ca-japanese, 951B, 4831245f68df910b
 datetime/skeletons@1, tr-u-ca-japanext, 951B, 4831245f68df910b
 datetime/skeletons@1, und-u-ca-buddhist, 898B, 5a4cb299cc98fc03
+datetime/skeletons@1, und-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, und-u-ca-coptic, 898B, 5a4cb299cc98fc03
 datetime/skeletons@1, und-u-ca-ethiopic, 898B, 5a4cb299cc98fc03
 datetime/skeletons@1, und-u-ca-gregory, 1058B, aa8b3110dc306ebd
