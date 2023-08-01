@@ -4,7 +4,7 @@
 
 use crate::internals::{CaseMapLocale, FoldOptions};
 use crate::provider::data::MappingKind;
-use crate::provider::{CaseMapUnfoldV1Marker, CaseMapV1Marker};
+use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSet;
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
