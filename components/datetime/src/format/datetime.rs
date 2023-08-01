@@ -233,7 +233,7 @@ where
                 field.length,
             )?,
             Year::Cyclic => {
-                w.write_str("(cyclic year: ")?; // TODO: Add data for cyclic year names
+                w.write_str("(cyclic year: ")?; // TODO(#3761): Add data for cyclic year names
                 format_number(
                     w,
                     fixed_decimal_format,
