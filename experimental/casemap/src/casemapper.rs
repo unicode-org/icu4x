@@ -44,6 +44,12 @@ impl Default for CaseMapper {
     }
 }
 
+impl AsRef<CaseMapper> for CaseMapper {
+    fn as_ref(&self) -> &CaseMapper {
+        self
+    }
+}
+
 impl CaseMapper {
     /// A constructor which creates a [`CaseMapper`].
     ///

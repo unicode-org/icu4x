@@ -5,7 +5,6 @@
 use crate::provider::{CaseMapUnfoldV1Marker, CaseMapV1Marker};
 use crate::set::ClosureSet;
 use crate::CaseMapper;
-use alloc::borrow::Borrow;
 
 use icu_provider::prelude::*;
 
@@ -116,7 +115,7 @@ impl CaseMapCloser<CaseMapper> {
 }
 
 // We use Borrow, not AsRef, since we want the blanket impl on T
-impl<CM: Borrow<CaseMapper>> CaseMapCloser<CM> {
+impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, casemapper: CM, error: DataError,
     #[cfg(skip)]
     functions: [
@@ -180,17 +179,12 @@ impl<CM: Borrow<CaseMapper>> CaseMapCloser<CM> {
     /// assert!(!set.contains('s')); // does not contain itself
     /// ```
     pub fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
-        self.cm.borrow().add_case_closure(c, set);
+        self.cm.as_ref().add_case_closure(c, set);
     }
 
-    /// Maps the string to single code points and adds the associated case closure
-    /// mappings, if they exist.
+    /// Finds all characters and strings which may casemap to `s` and adds them to the set.
     ///
-    /// The string is mapped to code points if it is their full case folding string.
-    /// In other words, this performs a reverse full case folding and then
-    /// adds the case closure items of the resulting code points.
-    /// If the string is found and its closure applied, then
-    /// the string itself is added as well as part of its code points' closure.
+    /// The string itself is not added to the set.
     ///
     /// Returns true if the string was found
     ///
@@ -218,7 +212,7 @@ impl<CM: Borrow<CaseMapper>> CaseMapCloser<CM> {
     /// ```
     pub fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
         self.cm
-            .borrow()
+            .as_ref()
             .data
             .get()
             .add_string_case_closure(s, set, self.unfold.get())
