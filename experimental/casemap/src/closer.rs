@@ -119,18 +119,32 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, casemapper: CM, error: DataError,
     #[cfg(skip)]
     functions: [
-        try_new_from_casemapper_unstable,
+        new_with_mapper,
         try_new_with_mapper_with_any_provider,
         try_new_with_mapper_with_buffer_provider,
         try_new_with_mapper_unstable,
         Self,
     ]);
 
-    /// Construct this object to wrap an existing CaseMapper (or a reference to one), loading additional data as needed.
+    /// A constructor which creates a [`CaseMapCloser`] from an existing [`CaseMapper`]
+    /// (either owned or as a reference)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new_with_mapper(casemapper: CM) -> Self {
+        Self {
+            cm: casemapper,
+            unfold: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_PROPS_CASEMAP_UNFOLD_V1,
+            ),
+        }
+    }
+
+    /// Construct this object to wrap an existing CaseMapper (or a reference to one), loading additional data as needed.
     ///
-    /// <div class="stab unstable">⚠️ The bounds on <tt>provider</tt> may change over time, including in SemVer minor releases.</div>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_mapper)]
     pub fn try_new_with_mapper_unstable<P>(provider: &P, casemapper: CM) -> Result<Self, DataError>
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<CaseMapUnfoldV1Marker> + ?Sized,
