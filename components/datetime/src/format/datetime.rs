@@ -232,6 +232,38 @@ where
                 FixedDecimal::from(datetime.week_of_year()?.0.number),
                 field.length,
             )?,
+            Year::Cyclic => {
+                w.write_str("(cyclic year: ")?;
+                format_number(
+                    w,
+                    fixed_decimal_format,
+                    FixedDecimal::from(
+                        datetime
+                            .datetime()
+                            .year()
+                            .ok_or(Error::MissingInputField(Some("year")))?
+                            .cyclic
+                            .ok_or(Error::MissingInputField(Some("cyclic")))?,
+                    ),
+                    field.length,
+                )?;
+                w.write_char(')')?;
+            },
+            Year::RelatedIso => {
+                format_number(
+                    w,
+                    fixed_decimal_format,
+                    FixedDecimal::from(
+                        datetime
+                            .datetime()
+                            .year()
+                            .ok_or(Error::MissingInputField(Some("year")))?
+                            .related_iso
+                            .ok_or(Error::MissingInputField(Some("related_iso")))?
+                    ),
+                    field.length,
+                )?;
+            }
         },
         FieldSymbol::Month(month) => match field.length {
             FieldLength::One | FieldLength::TwoDigit => format_number(
@@ -596,5 +628,10 @@ mod tests {
                 assert_eq!(s, *expected);
             }
         }
+    }
+
+    #[test]
+    fn test_year_formatting() {
+        
     }
 }
