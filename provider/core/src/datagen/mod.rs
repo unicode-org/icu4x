@@ -177,9 +177,7 @@ impl DataExporter for MultiExporter {
     }
 
     fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        self.0
-            .iter()
-            .try_for_each(|e| e.flush(key))
+        self.0.iter().try_for_each(|e| e.flush(key))
     }
 
     fn flush_with_built_in_fallback(
