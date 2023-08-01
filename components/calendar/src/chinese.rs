@@ -966,7 +966,8 @@ mod test {
                 expected_month: 1,
                 expected_day: 1,
             },
-            TestCase { // This test case fails to match ICU
+            TestCase {
+                // This test case fails to match ICU
                 iso_year: -2332,
                 iso_month: 2,
                 iso_day: 14,
@@ -975,23 +976,25 @@ mod test {
                 expected_month: 13,
                 expected_day: 30,
             },
-            TestCase { // This test case fails to match ICU
+            TestCase {
+                // This test case fails to match ICU
                 iso_year: -2332,
                 iso_month: 1,
                 iso_day: 17,
                 expected_rel_iso: -2333,
                 expected_cyclic: 4,
                 expected_month: 13,
-                expected_day: 2
+                expected_day: 2,
             },
-            TestCase { // This test case fails to match ICU
+            TestCase {
+                // This test case fails to match ICU
                 iso_year: -2332,
                 iso_month: 1,
                 iso_day: 16,
                 expected_rel_iso: -2333,
                 expected_cyclic: 4,
                 expected_month: 13,
-                expected_day: 1
+                expected_day: 1,
             },
             TestCase {
                 iso_year: -2332,
