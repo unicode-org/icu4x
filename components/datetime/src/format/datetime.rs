@@ -248,7 +248,7 @@ where
                     field.length,
                 )?;
                 w.write_char(')')?;
-            },
+            }
             Year::RelatedIso => {
                 format_number(
                     w,
@@ -259,7 +259,7 @@ where
                             .year()
                             .ok_or(Error::MissingInputField(Some("year")))?
                             .related_iso
-                            .ok_or(Error::MissingInputField(Some("related_iso")))?
+                            .ok_or(Error::MissingInputField(Some("related_iso")))?,
                     ),
                     field.length,
                 )?;
@@ -631,7 +631,5 @@ mod tests {
     }
 
     #[test]
-    fn test_year_formatting() {
-        
-    }
+    fn test_year_formatting() {}
 }

@@ -78,9 +78,7 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         "buddhist" => vec![("0".to_string(), tinystr!(16, "be"))]
             .into_iter()
             .collect(),
-        "chinese" => vec![]
-            .into_iter()
-            .collect(),
+        "chinese" => vec![].into_iter().collect(),
         "japanese" | "japanext" => crate::transform::cldr::calendar::japanese::get_era_code_map(),
         "coptic" => vec![
             // Before Diocletian

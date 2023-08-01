@@ -755,8 +755,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Indian
         } else if *x == value!("chinese") {
             AnyCalendarKind::Chinese
-        }
-        else if *x == value!("coptic") {
+        } else if *x == value!("coptic") {
             AnyCalendarKind::Coptic
         } else if *x == value!("iso") {
             AnyCalendarKind::Iso
@@ -1192,7 +1191,14 @@ mod tests {
         single_test_roundtrip(chinese, "chinese", 400, "M02", 5);
         single_test_roundtrip(chinese, "chinese", 4660, "M07", 29);
         single_test_roundtrip(chinese, "chinese", -100, "M11", 12);
-        single_test_error(chinese, "chinese", 4658, "M13", 1, CalendarError::UnknownMonthCode("M13".parse().unwrap(), "Chinese"));
+        single_test_error(
+            chinese,
+            "chinese",
+            4658,
+            "M13",
+            1,
+            CalendarError::UnknownMonthCode("M13".parse().unwrap(), "Chinese"),
+        );
 
         single_test_roundtrip(japanese, "reiwa", 3, "M03", 1);
         single_test_roundtrip(japanese, "heisei", 6, "M12", 1);
