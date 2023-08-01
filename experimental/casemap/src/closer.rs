@@ -180,7 +180,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     }
 
     /// Finds all characters and strings which may casemap to `s` as their full case folding string
-    /// and adds them to the set.
+    /// and adds them to the set. Includes the full case closure of each character mapping.
     ///
     /// In other words, this performs a reverse full case folding and then
     /// adds the case closure items of the resulting code points.
