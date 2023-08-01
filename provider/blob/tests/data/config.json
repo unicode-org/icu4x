@@ -4,7 +4,7 @@
       "core/helloworld@1"
     ]
   },
-  "cldr": "None",
+  "cldr": "Latest",
   "icu_export": "None",
   "segmenter_lstm": "None",
   "export": {
