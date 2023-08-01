@@ -221,31 +221,24 @@ impl CivilHebrew {
     }
 
     fn civil_to_biblical_date(civil_date: Date<CivilHebrew>) -> BookHebrew {
+        let mut year = civil_date.inner.0.year;
         let month = civil_date.inner.0.month;
-        let mut biblical_year = civil_date.inner.0.year;
-        let mut biblical_month;
+        let biblical_month;
     
         if month <= 6 {
-            biblical_month = month + 6;
+            biblical_month = (month + 6) % 12;
         } else {
             biblical_month = month - 6;
+            year += 1;
         }
     
-        if month == 13 {
-            biblical_month = ADARII; // Assuming ADAR_II is a constant for the leap year month
-            biblical_year -= 1; // Decrement the year, as the leap year adds a month
-        }
-    
-        BookHebrew {
-            year: biblical_year,
-            month: biblical_month,
-            day: civil_date.inner.0.day,
-        }
+        BookHebrew { year: year, month: biblical_month, day: civil_date.inner.0.day }
     }
     
     
     
     
+
     
 
     // ADAR = 12, ADARII = 13
@@ -1091,9 +1084,10 @@ mod tests {
         for (f_date, case) in TEST_FIXED_DATE.iter().zip(HEBREW_DATES.iter()) {
             let civil_date = CivilHebrew::civil_hebrew_from_fixed(RataDie::new(*f_date));
             let book_hebrew = CivilHebrew::civil_to_biblical_date(civil_date);
+            
             assert_eq!((case.year, case.month), (book_hebrew.year, book_hebrew.month))
         }
-    }
+        }
 
     #[test]
     fn test_icu_bug_22441() {
