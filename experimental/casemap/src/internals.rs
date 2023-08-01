@@ -9,7 +9,7 @@
 use crate::greek_to_me::{self, GreekCombiningCharacterSequenceDiacritics, GreekDiacritics};
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
-use crate::provider::CaseMapV1;
+use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
 use crate::set::ClosureSet;
 use core::fmt;
 use icu_locid::LanguageIdentifier;
@@ -578,12 +578,17 @@ impl<'data> CaseMapV1<'data> {
     /// mappings.
     ///
     /// (see docs on CaseMapper::add_string_case_closure)
-    pub(crate) fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
+    pub(crate) fn add_string_case_closure<S: ClosureSet>(
+        &self,
+        s: &str,
+        set: &mut S,
+        unfold_data: &CaseMapUnfoldV1,
+    ) -> bool {
         if s.chars().count() <= 1 {
             // The string is too short to find any match.
             return false;
         }
-        match self.unfold.get(s) {
+        match unfold_data.get(s) {
             Some(closure_string) => {
                 for c in closure_string.chars() {
                     set.add_char(c);

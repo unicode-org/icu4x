@@ -19,8 +19,6 @@ use icu_provider::prelude::*;
 
 use crate::provider::data::CaseMapData;
 use crate::provider::exceptions::CaseMapExceptions;
-use crate::provider::unfold::CaseMapUnfoldData;
-
 use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(feature = "datagen")]
 use icu_collections::codepointtrie::CodePointTrieHeader;
@@ -30,7 +28,7 @@ pub mod exception_helpers;
 pub mod exceptions;
 #[cfg(feature = "datagen")]
 mod exceptions_builder;
-pub mod unfold;
+mod unfold;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -41,7 +39,10 @@ pub struct Baked;
 const _: () = {
     use crate as icu_casemap;
     icu_casemap_data::impl_props_casemap_v1!(Baked);
+    icu_casemap_data::impl_props_casemap_unfold_v1!(Baked);
 };
+
+pub use self::unfold::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker};
 
 /// This type contains all of the casemapping data
 ///
@@ -69,8 +70,6 @@ pub struct CaseMapV1<'data> {
     pub trie: CodePointTrie<'data, CaseMapData>,
     /// Exceptions to the case mapping data
     pub exceptions: CaseMapExceptions<'data>,
-    /// Reverse case folding data.
-    pub unfold: CaseMapUnfoldData<'data>,
 }
 
 #[cfg(feature = "serde")]
@@ -82,20 +81,10 @@ impl<'de> serde::Deserialize<'de> for CaseMapV1<'de> {
             pub trie: CodePointTrie<'data, CaseMapData>,
             #[serde(borrow)]
             pub exceptions: CaseMapExceptions<'data>,
-            #[serde(borrow)]
-            pub unfold: CaseMapUnfoldData<'data>,
         }
 
-        let Raw {
-            trie,
-            exceptions,
-            unfold,
-        } = Raw::deserialize(deserializer)?;
-        let result = Self {
-            trie,
-            exceptions,
-            unfold,
-        };
+        let Raw { trie, exceptions } = Raw::deserialize(deserializer)?;
+        let result = Self { trie, exceptions };
         debug_assert!(result.validate().is_ok());
         Ok(result)
     }
@@ -111,7 +100,6 @@ impl<'data> CaseMapV1<'data> {
         trie_index: &[u16],
         trie_data: &[u16],
         exceptions: &[u16],
-        unfold: &[u16],
     ) -> Result<Self, DataError> {
         use self::exceptions_builder::CaseMapExceptionsBuilder;
         use zerovec::ZeroVec;
@@ -133,13 +121,7 @@ impl<'data> CaseMapV1<'data> {
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)
             .map_err(|_| DataError::custom("Casemapping data does not form valid trie"))?;
 
-        let unfold = CaseMapUnfoldData::try_from_icu(unfold)?;
-
-        let result = Self {
-            trie,
-            exceptions,
-            unfold,
-        };
+        let result = Self { trie, exceptions };
         result.validate().map_err(DataError::custom)?;
         Ok(result)
     }
@@ -178,9 +160,6 @@ impl<'data> CaseMapV1<'data> {
                 }
             }
         }
-
-        // The unfold data is structurally guaranteed to be valid,
-        // so there is nothing left to check.
         Ok(())
     }
 

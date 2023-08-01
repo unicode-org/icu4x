@@ -4,7 +4,7 @@
 
 use crate::internals::{CaseMapLocale, FoldOptions};
 use crate::provider::data::MappingKind;
-use crate::provider::CaseMapV1Marker;
+use crate::provider::{CaseMapUnfoldV1Marker, CaseMapV1Marker};
 use crate::set::ClosureSet;
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
@@ -35,6 +35,7 @@ use writeable::Writeable;
 #[derive(Clone, Debug)]
 pub struct CaseMapper {
     data: DataPayload<CaseMapV1Marker>,
+    unfold: DataPayload<CaseMapUnfoldV1Marker>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -65,6 +66,9 @@ impl CaseMapper {
     pub const fn new() -> Self {
         Self {
             data: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_PROPS_CASEMAP_V1),
+            unfold: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_PROPS_CASEMAP_UNFOLD_V1,
+            ),
         }
     }
 
@@ -81,10 +85,11 @@ impl CaseMapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapper, DataError>
     where
-        P: DataProvider<CaseMapV1Marker> + ?Sized,
+        P: DataProvider<CaseMapV1Marker> + DataProvider<CaseMapUnfoldV1Marker> + ?Sized,
     {
         let data = provider.load(Default::default())?.take_payload()?;
-        Ok(Self { data })
+        let unfold = provider.load(Default::default())?.take_payload()?;
+        Ok(Self { data, unfold })
     }
 
     /// Returns the full lowercase mapping of the given string as a [`Writeable`].
@@ -440,7 +445,9 @@ impl CaseMapper {
     /// assert!(set.contains('ẞ'));
     /// ```
     pub fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
-        self.data.get().add_string_case_closure(s, set)
+        self.data
+            .get()
+            .add_string_case_closure(s, set, self.unfold.get())
     }
 
     /// Returns the lowercase mapping of the given `char`.
