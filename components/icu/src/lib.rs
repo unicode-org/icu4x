@@ -37,11 +37,8 @@
 //! .expect("compiled data should include 'es-US'");
 //! ```
 //!
-//! Using compiled data data has several benefits:
-//! * Simple code, no need to manage [`DataProvider`]s
-//! * No deserialization, improves binary size and performance
-//! * The compiler can discard data for unused APIs. As ICU4X's APIs are very fine-grained, you only
-//!   have to carry a minimal amount of data
+//! Clients using compiled data benefit from simple code and optimal zero-cost data loading. Additionally,
+//! ICU4X's APIs are designed such that dead-code elimination can optimize away unused compiled data.
 //!
 //! By default, most of the data available in [CLDR] is included. Users can customize data by using
 //! the `icu4x-datagen` tool (with the `-⁠-format mod` flag) to, for example, select a smaller set of
