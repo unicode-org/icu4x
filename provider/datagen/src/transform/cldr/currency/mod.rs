@@ -53,18 +53,25 @@ fn currency_pattern_selection(
         Err(_) => unreachable!(),
     };
 
-    let right_letter_test_position = {
-        if currency_sign_index < first_num_index && currency_sign_index < last_num_index {
-            true
-        } else if currency_sign_index > first_num_index && currency_sign_index > last_num_index {
-            false
+    #[derive(PartialEq)]
+    enum PlaceHolderCharCloserToNumber {
+        First,
+        Last,
+    }
+
+    let char_closer_to_number = {
+        if currency_sign_index < first_num_index {
+            PlaceHolderCharCloserToNumber::Last
+        } else if currency_sign_index > last_num_index {
+            PlaceHolderCharCloserToNumber::First
         } else {
-            panic!("The currency sign is in the middle of the pattern.")
+            return Err(DataError::custom(
+                "Currency sign is in the middle of the pattern",
+            ));
         }
     };
 
-    if right_letter_test_position {
-        // Check if the last character has the property of letter (L).
+    if char_closer_to_number == PlaceHolderCharCloserToNumber::Last {
         match letters_set
             .as_borrowed()
             .contains(place_holder.chars().last().unwrap())
@@ -73,7 +80,6 @@ fn currency_pattern_selection(
             false => Ok(PatternSelection::Standard),
         }
     } else {
-        // Check if the first character has the property of letter (L).
         match letters_set
             .as_borrowed()
             .contains(place_holder.chars().next().unwrap())
@@ -154,8 +160,7 @@ fn extract_currency_essentials<'data>(
         None => "",
     };
 
-    let mut currency_patterns_map: ZeroMap<'_, UnvalidatedTinyAsciiStr<3>, CurrencyPatterns> =
-        ZeroMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+    let mut currency_patterns_map = ZeroMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
     let mut place_holders = VarZeroVec::<str>::new();
     let mut place_holders_map = HashMap::<String, u16>::new();
     for (iso, currency_pattern) in currencies {
