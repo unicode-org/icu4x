@@ -50,7 +50,7 @@ fn currency_pattern_selection(
         Err(icu_properties::PropertiesError::PropDataLoad(e)) => {
             return Err(e);
         }
-        Err(_) => unreachable!(),
+        Err(_) => unreachable!("load_for_general_category_group should only return PropDataLoad"),
     };
 
     #[derive(PartialEq)]
@@ -231,6 +231,8 @@ fn extract_currency_essentials<'data>(
             }
         };
 
+        // TODO(youneis): Check if we can remove also when the patterns equal to
+        // PatternSelection::StandardNextToNumber.
         if short_pattern_standard == PatternSelection::Standard
             && narrow_pattern_standard == PatternSelection::Standard
             && short_place_holder_index == u16::MAX
