@@ -16,19 +16,15 @@ type ISOCode = TinyAsciiStr<3>;
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct RoundingModes {
     #[serde(rename = "_rounding")]
-    // #[serde(deserialize_with = "serde_aux::prelude::deserialize_option_number_from_string")]
     pub rounding: Option<String>,
 
     #[serde(rename = "_digits")]
-    // #[serde(deserialize_with = "serde_aux::prelude::deserialize_option_number_from_string")]
     pub digits: Option<String>,
 
     #[serde(rename = "_cashRounding")]
-    // #[serde(deserialize_with = "serde_aux::prelude::deserialize_option_number_from_string")]
     pub cash_rounding: Option<String>,
 
     #[serde(rename = "_cashDigits")]
-    // #[serde(deserialize_with = "serde_aux::prelude::deserialize_option_number_from_string")]
     pub cash_digits: Option<String>,
 }
 
