@@ -83,6 +83,7 @@ pub struct CivilHebrewDateInner(ArithmeticDate<CivilHebrew>);
 
 impl CalendarArithmetic for CivilHebrew {
     fn month_days(year: i32, month: u8) -> u8 {
+
         Self::last_day_of_civil_hebrew_month(year, month)
     }
 
@@ -205,18 +206,14 @@ impl CivilHebrew {
     
         if month >= TISHRI {
             civil_month = (month + 6) % 12;
-            if civil_month == 0 {
-                civil_month = 12;
-            }
+            if civil_month == 0 { civil_month = 12; }
         } else {
             civil_month = month + 6;
-            civil_year -= 1;
         }
     
-        if Self::is_leap_year(civil_year) && month >= 6 {
+        if Self::is_leap_year(civil_year) && month <= 6  {
             civil_month += 1;
         }   
-    
         Date::try_new_civil_hebrew_date(civil_year, civil_month, biblical_date.day).unwrap()
     }
 
@@ -229,8 +226,8 @@ impl CivilHebrew {
             biblical_month = month + 6; // Civil months 1-6 correspond to biblical months 7-12
         } else {
             biblical_month = month - 6; // Civil months 7-12 correspond to biblical months 1-6
-            year += 1;
-            if Self::is_leap_year(year) && biblical_month >= 7 {
+            if Self::is_leap_year(year) { biblical_month -= 1 }
+            if Self::is_leap_year(year) && month < 8 {
                 // Special case for Adar II in a leap year
                 biblical_month = 13;
             }
@@ -279,6 +276,9 @@ impl CivilHebrew {
     // Last day of month (h_month) in CivilHebrew year (h_year)
     #[allow(dead_code)]
     fn last_day_of_civil_hebrew_month(h_year: i32, h_month: u8) -> u8 {
+
+
+
         match h_month {
             IYYAR | TAMMUZ | ELUL | TEVET | ADARII => 29,
             ADAR => {

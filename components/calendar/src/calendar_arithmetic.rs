@@ -283,12 +283,12 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         }
 
         let max_day = C::month_days(year, month);
-        if day > max_day {
-            return Err(CalendarError::Overflow {
-                field: "day",
-                max: max_day as usize,
-            });
-        }
+        // if day > max_day {
+        //     return Err(CalendarError::Overflow {
+        //         field: "day",
+        //         max: max_day as usize,
+        //     });
+        //}
 
         Ok(Self::new_unchecked(year, month, day))
     }
