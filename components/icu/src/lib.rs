@@ -18,9 +18,10 @@
 //!
 //! # Data Management
 //!
-//! Most internationalization relies on data. If you don't care about data customization,
-//! you can use the extensive data compiled into the library. Power users can manage data
-//! explicitly using [`DataProvider`]s.
+//! Most internationalization algorithms are data-driven based on surveys of locale experts.
+//! ICU4X offers multiple ways to manage locale data: many clients can start by using the
+//! extensive data compiled into the library, while users with additional requirements can
+//! provide data explicitly using [`DataProvider`]s.
 //!
 //! ## Compiled data
 //!
