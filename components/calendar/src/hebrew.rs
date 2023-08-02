@@ -83,7 +83,6 @@ pub struct CivilHebrewDateInner(ArithmeticDate<CivilHebrew>);
 
 impl CalendarArithmetic for CivilHebrew {
     fn month_days(year: i32, month: u8) -> u8 {
-
         Self::last_day_of_civil_hebrew_month(year, month)
     }
 
@@ -199,50 +198,52 @@ impl CivilHebrew {
     }
 
     // Converts a Biblical Hebrew Date (which considers Tishri the start of the year) to a Civil Hebrew Year (year starts at Nisan).
+    #[allow(clippy::unwrap_used)]
     fn biblical_to_civil_date(biblical_date: BookHebrew) -> Date<CivilHebrew> {
         let month = biblical_date.month;
-        let mut civil_year = biblical_date.year;
+        let civil_year = biblical_date.year;
         let mut civil_month;
-    
+
         if month >= TISHRI {
             civil_month = (month + 6) % 12;
-            if civil_month == 0 { civil_month = 12; }
+            if civil_month == 0 {
+                civil_month = 12;
+            }
         } else {
             civil_month = month + 6;
         }
-    
-        if Self::is_leap_year(civil_year) && month <= 6  {
+
+        if Self::is_leap_year(civil_year) && month <= 6 {
             civil_month += 1;
-        }   
+        }
         Date::try_new_civil_hebrew_date(civil_year, civil_month, biblical_date.day).unwrap()
+        // safe unwrap
     }
 
     fn civil_to_biblical_date(civil_date: CivilHebrewDateInner) -> BookHebrew {
-        let mut year = civil_date.0.year;
+        let year = civil_date.0.year;
         let month = civil_date.0.month;
         let mut biblical_month;
-    
+
         if month <= 6 {
             biblical_month = month + 6; // Civil months 1-6 correspond to biblical months 7-12
         } else {
             biblical_month = month - 6; // Civil months 7-12 correspond to biblical months 1-6
-            if Self::is_leap_year(year) { biblical_month -= 1 }
+            if Self::is_leap_year(year) {
+                biblical_month -= 1
+            }
             if Self::is_leap_year(year) && month < 8 {
                 // Special case for Adar II in a leap year
                 biblical_month = 13;
             }
         }
-    
-        BookHebrew { year: year, month: biblical_month, day: civil_date.0.day }
-    }
-    
-    
-    
-    
-    
-    
 
-    
+        BookHebrew {
+            year,
+            month: biblical_month,
+            day: civil_date.0.day,
+        }
+    }
 
     // ADAR = 12, ADARII = 13
     #[allow(dead_code)]
@@ -276,9 +277,6 @@ impl CivilHebrew {
     // Last day of month (h_month) in CivilHebrew year (h_year)
     #[allow(dead_code)]
     fn last_day_of_civil_hebrew_month(h_year: i32, h_month: u8) -> u8 {
-
-
-
         match h_month {
             IYYAR | TAMMUZ | ELUL | TEVET | ADARII => 29,
             ADAR => {
@@ -577,7 +575,7 @@ impl BookHebrew {
 
         let month_condition = |m: u8| {
             date <= Self::fixed_from_book_hebrew(BookHebrew {
-                year: year,
+                year,
                 month: m,
                 day: Self::last_day_of_book_hebrew_month(year, m),
             })
@@ -595,12 +593,13 @@ impl BookHebrew {
             + 1;
 
         BookHebrew {
-            year: year,
-            month: month,
+            year,
+            month,
             day: day as u8,
         }
     }
 
+    #[allow(dead_code)]
     fn year_as_hebrew(year: i32) -> types::FormattableYear {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "hebrew")),
@@ -795,7 +794,6 @@ mod tests {
             day: 5,
         },
     ];
-
 
     static EXPECTED_MOLAD_DATES: [f64; 33] = [
         -1850718767f64 / 8640f64,
@@ -1065,7 +1063,7 @@ mod tests {
             Date::try_new_iso_date(2022, 12, 25).unwrap(),
         ];
 
-        let book_hebrew_dates: [(u8,u8,i32); 48] = [
+        let book_hebrew_dates: [(u8, u8, i32); 48] = [
             (26, TEVET, 5781),
             (12, SHEVAT, 5781),
             (28, SHEVAT, 5781),
@@ -1116,7 +1114,7 @@ mod tests {
             (1, TEVET, 5783),
         ];
 
-        let civil_hebrew_dates: [(u8,u8,i32); 48] = [
+        let civil_hebrew_dates: [(u8, u8, i32); 48] = [
             (26, 4, 5781),
             (12, 5, 5781),
             (28, 5, 5781),
@@ -1167,9 +1165,21 @@ mod tests {
             (1, 4, 5783),
         ];
 
-        for (iso_date, (book_date_nums,civil_date_nums)) in iso_dates.iter().zip(book_hebrew_dates.iter().zip(civil_hebrew_dates.iter())) {
-            let book_date = BookHebrew { year: book_date_nums.2, month: book_date_nums.1, day: book_date_nums.0};
-            let civil_date:CivilHebrewDateInner = CivilHebrewDateInner(ArithmeticDate::new_unchecked(civil_date_nums.2, civil_date_nums.1, civil_date_nums.0));
+        for (_iso_date, (book_date_nums, civil_date_nums)) in iso_dates
+            .iter()
+            .zip(book_hebrew_dates.iter().zip(civil_hebrew_dates.iter()))
+        {
+            let book_date = BookHebrew {
+                year: book_date_nums.2,
+                month: book_date_nums.1,
+                day: book_date_nums.0,
+            };
+            let civil_date: CivilHebrewDateInner =
+                CivilHebrewDateInner(ArithmeticDate::new_unchecked(
+                    civil_date_nums.2,
+                    civil_date_nums.1,
+                    civil_date_nums.0,
+                ));
 
             let book_to_civil = CivilHebrew::biblical_to_civil_date(book_date).inner;
             let civil_to_book = CivilHebrew::civil_to_biblical_date(civil_date);
