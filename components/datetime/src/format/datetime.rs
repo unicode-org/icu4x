@@ -279,17 +279,15 @@ where
                 field.length,
             )?,
             length => {
-                let symbol = date_symbols
+                let code = datetime
+                    .datetime()
+                    .month()
+                    .ok_or(Error::MissingInputField(Some("month")))?
+                    .code;
+                let symbols = date_symbols
                     .ok_or(Error::MissingDateSymbols)?
-                    .get_symbol_for_month(
-                        month,
-                        length,
-                        datetime
-                            .datetime()
-                            .month()
-                            .ok_or(Error::MissingInputField(Some("month")))?
-                            .code,
-                    )?;
+                    .get_symbols_for_month(month, length, code)?;
+                let symbol = symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?;
                 w.write_str(symbol)?
             }
         },
