@@ -54,6 +54,13 @@ macro_rules! symbols {
 symbols!(months, pub struct Symbols(pub HashMap<String, String>););
 
 symbols!(
+    month_patterns,
+    pub struct Symbols {
+        pub leap: String,
+    }
+);
+
+symbols!(
     days,
     pub struct Symbols {
         pub sun: String,
@@ -139,6 +146,8 @@ pub struct AvailableFormats(pub HashMap<String, String>);
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Dates {
     pub months: months::Contexts,
+    #[serde(rename = "monthPatterns")]
+    pub month_patterns: Option<month_patterns::Contexts>,
     pub days: days::Contexts,
     pub eras: Eras,
     #[serde(rename = "dayPeriods")]
