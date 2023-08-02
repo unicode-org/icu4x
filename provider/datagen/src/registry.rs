@@ -139,6 +139,8 @@ registry!(
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
     #[cfg(feature = "icu_casemap")]
     icu_casemap::provider::CaseMapV1Marker = "props/casemap@1",
+    #[cfg(feature = "icu_casemap")]
+    icu_casemap::provider::CaseMapUnfoldV1Marker = "props/casemap_unfold@1",
     #[cfg(any(all(), feature = "icu_collator"))]
     icu_collator::provider::CollationDataV1Marker = "collator/data@1",
     icu_collator::provider::CollationDiacriticsV1Marker = "collator/dia@1",
@@ -175,6 +177,10 @@ registry!(
         "datetime/japanext/datelengths@1",
     icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker =
         "datetime/japanext/datesymbols@1",
+    icu_datetime::provider::calendar::PersianDateLengthsV1Marker = "datetime/persian/datelengths@1",
+    icu_datetime::provider::calendar::PersianDateSymbolsV1Marker = "datetime/persian/datesymbols@1",
+    icu_datetime::provider::calendar::RocDateLengthsV1Marker = "datetime/roc/datelengths@1",
+    icu_datetime::provider::calendar::RocDateSymbolsV1Marker = "datetime/roc/datesymbols@1",
     icu_datetime::provider::calendar::TimeLengthsV1Marker = "datetime/timelengths@1",
     icu_datetime::provider::calendar::TimeSymbolsV1Marker = "datetime/timesymbols@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker =

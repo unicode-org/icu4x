@@ -105,7 +105,7 @@ impl CanonicalComposition {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
@@ -376,7 +376,7 @@ impl CanonicalDecomposition {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>

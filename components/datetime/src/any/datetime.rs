@@ -149,7 +149,7 @@ impl DateTimeFormatter {
     ///     "Sep 1, 2020, 12:34 PM"
     /// );
     /// ```
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -228,6 +228,7 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<PersianDateLengthsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
@@ -235,9 +236,12 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
+            + DataProvider<RocDateLengthsV1Marker>
+            + DataProvider<RocDateSymbolsV1Marker>
             + ?Sized,
     {
         let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;
@@ -354,6 +358,7 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<PersianDateLengthsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
@@ -361,9 +366,12 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
+            + DataProvider<RocDateLengthsV1Marker>
+            + DataProvider<RocDateSymbolsV1Marker>
             + ?Sized,
     {
         let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;

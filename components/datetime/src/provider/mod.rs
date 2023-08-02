@@ -37,10 +37,14 @@ const _: () = {
     icu_datetime_data::impl_datetime_gregory_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_indian_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_indian_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_persian_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_persian_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_japanese_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_japanese_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_japanext_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_japanext_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_roc_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_roc_datesymbols_v1!(Baked);
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_skeletons_v1!(Baked);
     icu_datetime_data::impl_datetime_timelengths_v1!(Baked);

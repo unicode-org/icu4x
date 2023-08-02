@@ -54,7 +54,7 @@ uint8_t ICU4XDate_months_in_year(const ICU4XDate* self);
 
 uint8_t ICU4XDate_days_in_month(const ICU4XDate* self);
 
-uint32_t ICU4XDate_days_in_year(const ICU4XDate* self);
+uint16_t ICU4XDate_days_in_year(const ICU4XDate* self);
 
 ICU4XCalendar* ICU4XDate_calendar(const ICU4XDate* self);
 void ICU4XDate_destroy(ICU4XDate* self);
