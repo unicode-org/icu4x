@@ -16,9 +16,10 @@ available in a stand-alone manner, i.e. `icu::list` as `icu_list`.
 
 ## Data Management
 
-Most internationalization relies on data. If you don't care about data customization,
-you can use the extensive data compiled into the library. Power users can manage data
-explicitly using [`DataProvider`]s.
+Most internationalization algorithms are data-driven based on surveys of locale experts.
+ICU4X offers multiple ways to manage locale data: many clients can start by using the
+extensive data compiled into the library, while users with additional requirements can
+provide data explicitly using [`DataProvider`]s.
 
 ### Compiled data
 
@@ -35,11 +36,8 @@ let dtf = DateTimeFormatter::try_new(
 .expect("compiled data should include 'es-US'");
 ```
 
-Using compiled data data has several benefits:
-* Simple code, no need to manage [`DataProvider`]s
-* No deserialization, improves binary size and performance
-* The compiler can discard data for unused APIs. As ICU4X's APIs are very fine-grained, you only
-  have to carry a minimal amount of data
+Clients using compiled data benefit from simple code and optimal zero-cost data loading. Additionally,
+ICU4X's APIs are designed such that dead-code elimination can optimize away unused compiled data.
 
 By default, most of the data available in [CLDR] is included. Users can customize data by using
 the `icu4x-datagen` tool (with the `-⁠-format mod` flag) to, for example, select a smaller set of
