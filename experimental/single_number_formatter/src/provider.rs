@@ -37,6 +37,21 @@ pub struct CurrencyEssentialsV1<'data> {
     pub place_holders: VarZeroVec<'data, str>,
 }
 
+
+
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq)]
+#[repr(u8)]
+pub enum PatternSelection {
+    /// Use the standard pattern.
+    Standard = 0,
+
+    /// Use the standard_alpha_next_to_number pattern.
+    StandardAlphaNextToNumber = 1,
+}
+
+type PatternSelectionMask = u8;
+
+
 // TODO(https://github.com/unicode-org/icu4x/issues/3737): Reduce the size of CurrencyPatternsULE.
 #[zerovec::make_ule(CurrencyPatternsULE)]
 #[cfg_attr(
@@ -49,11 +64,11 @@ pub struct CurrencyEssentialsV1<'data> {
 pub struct CurrencyPatterns {
     /// If it is true, then use the standard pattern.
     /// Otherwise, use the standard_alpha_next_to_number pattern.
-    pub short_pattern_standard: bool,
+    pub short_pattern_standard: PatternSelectionMask,
 
     /// If it is true, then use the standard pattern.
     /// Otherwise, use the standard_alpha_next_to_number pattern.
-    pub narrow_pattern_standard: bool,
+    pub narrow_pattern_standard: PatternSelectionMask,
 
     /// The index of the short pattern place holder in the place holders list.
     /// If the value is u16::MAX, this means that the short pattern does not have a place holder.
@@ -63,3 +78,4 @@ pub struct CurrencyPatterns {
     /// If the value is u16::MAX, this means that the narrow pattern does not have a place holder.
     pub narrow_place_holder_index: u16,
 }
+
