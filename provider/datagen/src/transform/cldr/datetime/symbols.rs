@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde;
+use crate::transform::cldr::cldr_serde::{self, ca};
 use icu_calendar::types::MonthCode;
 use icu_datetime::provider::calendar::*;
 use std::borrow::Cow;
@@ -149,7 +149,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl cldr_serde::ca::$name::Contexts {
+        impl ca::Contexts<cldr_serde::ca::$name::Symbols> {
             fn get(&self, ctx: &$ctx) -> $name2::ContextsV1<'static> {
                 $name2::ContextsV1 {
                     format: self.format.get(ctx),
@@ -160,7 +160,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl cldr_serde::ca::$name::StandAloneWidths {
+        impl ca::StandAloneWidths<cldr_serde::ca::$name::Symbols> {
             // Helper function which returns None if the two groups of symbols overlap.
             pub fn get_unaliased(&self, other: &cldr_serde::ca::$name::FormatWidths) -> Option<Self> {
                 let abbreviated = self.abbreviated.as_ref().and_then(|v| v.get_unaliased(&other.abbreviated));
@@ -185,7 +185,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl cldr_serde::ca::$name::FormatWidths {
+        impl ca::FormatWidths<cldr_serde::ca::$name::Symbols> {
             fn get(&self, ctx: &$ctx) -> $name2::FormatWidthsV1<'static> {
                 $name2::FormatWidthsV1 {
                     abbreviated: self.abbreviated.get(ctx),
@@ -196,7 +196,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl cldr_serde::ca::$name::StandAloneWidths {
+        impl ca::StandAloneWidths<cldr_serde::ca::$name::Symbols> {
             fn get(&self, ctx: &$ctx) -> $name2::StandAloneWidthsV1<'static> {
                 $name2::StandAloneWidthsV1 {
                     abbreviated: self.abbreviated.as_ref().map(|width| width.get(ctx)),
