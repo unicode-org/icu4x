@@ -66,8 +66,8 @@ fn currency_pattern_selection(
             .as_borrowed()
             .contains(place_holder.chars().last().unwrap())
         {
-            true => return Ok(PatternSelection::StandardAlphaNextToNumber),
-            false => return Ok(PatternSelection::Standard),
+            true => Ok(PatternSelection::StandardAlphaNextToNumber),
+            false => Ok(PatternSelection::Standard),
         }
     } else {
         // Check if the first character has the property of letter (L).
@@ -75,8 +75,8 @@ fn currency_pattern_selection(
             .as_borrowed()
             .contains(place_holder.chars().next().unwrap())
         {
-            true => return Ok(PatternSelection::StandardAlphaNextToNumber),
-            false => return Ok(PatternSelection::Standard),
+            true => Ok(PatternSelection::StandardAlphaNextToNumber),
+            false => Ok(PatternSelection::Standard),
         }
     }
 }
