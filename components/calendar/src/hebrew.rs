@@ -220,20 +220,26 @@ impl CivilHebrew {
         Date::try_new_civil_hebrew_date(civil_year, civil_month, biblical_date.day).unwrap()
     }
 
-    fn civil_to_biblical_date(civil_date: Date<CivilHebrew>) -> BookHebrew {
-        let mut year = civil_date.inner.0.year;
-        let month = civil_date.inner.0.month;
-        let biblical_month;
+    fn civil_to_biblical_date(civil_date: CivilHebrewDateInner) -> BookHebrew {
+        let mut year = civil_date.0.year;
+        let month = civil_date.0.month;
+        let mut biblical_month;
     
         if month <= 6 {
-            biblical_month = (month + 6) % 12;
+            biblical_month = month + 6; // Civil months 1-6 correspond to biblical months 7-12
         } else {
-            biblical_month = month - 6;
+            biblical_month = month - 6; // Civil months 7-12 correspond to biblical months 1-6
             year += 1;
+            if Self::is_leap_year(year) && biblical_month >= 7 {
+                // Special case for Adar II in a leap year
+                biblical_month = 13;
+            }
         }
     
-        BookHebrew { year: year, month: biblical_month, day: civil_date.inner.0.day }
+        BookHebrew { year: year, month: biblical_month, day: civil_date.0.day }
     }
+    
+    
     
     
     
@@ -305,9 +311,7 @@ impl CivilHebrew {
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     #[allow(dead_code)]
     fn fixed_from_civil_hebrew(date: CivilHebrewDateInner) -> RataDie {
-        let book_date = CivilHebrew::civil_to_biblical_date(
-            Date::try_new_civil_hebrew_date(date.0.year, date.0.month, date.0.day).unwrap(),
-        );
+        let book_date = CivilHebrew::civil_to_biblical_date(date);
         BookHebrew::fixed_from_book_hebrew(book_date)
     }
 
@@ -1009,7 +1013,7 @@ mod tests {
     }
 
     #[test]
-    fn test_ignore() {
+    fn test_conversions() {
         let iso_dates: [Date<Iso>; 48] = [
             Date::try_new_iso_date(2021, 1, 10).unwrap(),
             Date::try_new_iso_date(2021, 1, 25).unwrap(),
@@ -1061,33 +1065,143 @@ mod tests {
             Date::try_new_iso_date(2022, 12, 25).unwrap(),
         ];
 
-        for date in iso_dates.iter() {
-            println!("{:?}", date)
+        let book_hebrew_dates: [(u8,u8,i32); 48] = [
+            (26, TEVET, 5781),
+            (12, SHEVAT, 5781),
+            (28, SHEVAT, 5781),
+            (13, ADAR, 5781),
+            (26, ADAR, 5781),
+            (12, NISAN, 5781),
+            (28, NISAN, 5781),
+            (13, IYYAR, 5781),
+            (28, IYYAR, 5781),
+            (14, SIVAN, 5781),
+            (30, SIVAN, 5781),
+            (15, TAMMUZ, 5781),
+            (1, AV, 5781),
+            (16, AV, 5781),
+            (2, ELUL, 5781),
+            (17, ELUL, 5781),
+            (4, TISHRI, 5782),
+            (19, TISHRI, 5782),
+            (4, MARHESHVAN, 5782),
+            (19, MARHESHVAN, 5782),
+            (6, KISLEV, 5782),
+            (21, KISLEV, 5782),
+            (6, TEVET, 5782),
+            (21, TEVET, 5782),
+            (8, SHEVAT, 5782),
+            (23, SHEVAT, 5782),
+            (9, ADAR, 5782),
+            (24, ADAR, 5782),
+            (7, ADARII, 5782),
+            (22, ADARII, 5782),
+            (9, NISAN, 5782),
+            (24, NISAN, 5782),
+            (9, IYYAR, 5782),
+            (24, IYYAR, 5782),
+            (11, SIVAN, 5782),
+            (26, SIVAN, 5782),
+            (11, TAMMUZ, 5782),
+            (26, TAMMUZ, 5782),
+            (13, AV, 5782),
+            (28, AV, 5782),
+            (14, ELUL, 5782),
+            (29, ELUL, 5782),
+            (15, TISHRI, 5783),
+            (30, TISHRI, 5783),
+            (16, MARHESHVAN, 5783),
+            (1, KISLEV, 5783),
+            (16, KISLEV, 5783),
+            (1, TEVET, 5783),
+        ];
+
+        let civil_hebrew_dates: [(u8,u8,i32); 48] = [
+            (26, 4, 5781),
+            (12, 5, 5781),
+            (28, 5, 5781),
+            (13, 6, 5781),
+            (26, 6, 5781),
+            (12, 7, 5781),
+            (28, 7, 5781),
+            (13, 8, 5781),
+            (28, 8, 5781),
+            (14, 9, 5781),
+            (30, 9, 5781),
+            (15, 10, 5781),
+            (1, 11, 5781),
+            (16, 11, 5781),
+            (2, 12, 5781),
+            (17, 12, 5781),
+            (4, 1, 5782),
+            (19, 1, 5782),
+            (4, 2, 5782),
+            (19, 2, 5782),
+            (6, 3, 5782),
+            (21, 3, 5782),
+            (6, 4, 5782),
+            (21, 4, 5782),
+            (8, 5, 5782),
+            (23, 5, 5782),
+            (9, 6, 5782),
+            (24, 6, 5782),
+            (7, 7, 5782),
+            (22, 7, 5782),
+            (9, 8, 5782),
+            (24, 8, 5782),
+            (9, 9, 5782),
+            (24, 9, 5782),
+            (11, 10, 5782),
+            (26, 10, 5782),
+            (11, 11, 5782),
+            (26, 11, 5782),
+            (13, 12, 5782),
+            (28, 12, 5782),
+            (14, 13, 5782),
+            (29, 13, 5782),
+            (15, 1, 5783),
+            (30, 1, 5783),
+            (16, 2, 5783),
+            (1, 3, 5783),
+            (16, 3, 5783),
+            (1, 4, 5783),
+        ];
+
+        for (iso_date, (book_date_nums,civil_date_nums)) in iso_dates.iter().zip(book_hebrew_dates.iter().zip(civil_hebrew_dates.iter())) {
+            let book_date = BookHebrew { year: book_date_nums.2, month: book_date_nums.1, day: book_date_nums.0};
+            let civil_date:CivilHebrewDateInner = CivilHebrewDateInner(ArithmeticDate::new_unchecked(civil_date_nums.2, civil_date_nums.1, civil_date_nums.0));
+
+            let book_to_civil = CivilHebrew::biblical_to_civil_date(book_date).inner;
+            let civil_to_book = CivilHebrew::civil_to_biblical_date(civil_date);
+
+            assert_eq!(civil_date, book_to_civil);
+            assert_eq!(book_date, civil_to_book);
+            // TODO: Test ISO to HEBREW / HEBREW to ISO
         }
     }
 
-    #[test]
-    fn test_book_to_civil_conversion() {
-        for (f_date, dates) in TEST_FIXED_DATE
-            .iter()
-            .zip(HEBREW_DATES.iter())
-        {
-            let date = BookHebrew::book_hebrew_from_fixed(RataDie::new(*f_date));
-            let civil_date = CivilHebrew::biblical_to_civil_date(date);
+    // #[test]
+    // fn test_book_to_civil_conversion() {
+    //     for (f_date, dates) in TEST_FIXED_DATE
+    //         .iter()
+    //         .zip(HEBREW_DATES.iter())
+    //     {
+    //         let date = BookHebrew::book_hebrew_from_fixed(RataDie::new(*f_date));
+    //         let civil_date = CivilHebrew::biblical_to_civil_date(date);
 
-            println!("{:?}", civil_date)
-        }
-    }
+    //         println!("{:?}", civil_date)
+    //     }
+    // }
 
-    #[test]
-    fn test_civil_to_book_conversion() {
-        for (f_date, case) in TEST_FIXED_DATE.iter().zip(HEBREW_DATES.iter()) {
-            let civil_date = CivilHebrew::civil_hebrew_from_fixed(RataDie::new(*f_date));
-            let book_hebrew = CivilHebrew::civil_to_biblical_date(civil_date);
-            
-            assert_eq!((case.year, case.month), (book_hebrew.year, book_hebrew.month))
-        }
-        }
+    // #[test]
+    // fn test_civil_to_book_conversion() {
+    //     for (f_date, case) in TEST_FIXED_DATE.iter().zip(HEBREW_DATES.iter()) {
+    //         let civil_date = CivilHebrew::civil_hebrew_from_fixed(RataDie::new(*f_date));
+    //         let book_hebrew = CivilHebrew::civil_to_biblical_date(civil_date);
+
+    //         assert_eq!((case.year, case.month), (book_hebrew.year, book_hebrew.month))
+    //     }
+    //     }
 
     #[test]
     fn test_icu_bug_22441() {
