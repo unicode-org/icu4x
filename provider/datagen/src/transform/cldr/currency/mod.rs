@@ -162,18 +162,18 @@ fn extract_currency_essentials<'data>(
 
     let mut currency_patterns_map = ZeroMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
     let mut place_holders = VarZeroVec::<str>::new();
-    let mut place_holders_map = HashMap::<String, u16>::new();
+    let mut place_holders_map = HashMap::<&str, u16>::new();
     for (iso, currency_pattern) in currencies {
         let short_place_holder_index: u16;
         let narrow_place_holder_index: u16;
 
         let short_option = &currency_pattern.short;
         match short_option {
-            Some(short_place_holder) => match place_holders_map.get(short_place_holder) {
+            Some(short_place_holder) => match place_holders_map.get(short_place_holder.as_str()) {
                 Some(index) => short_place_holder_index = *index,
                 None => {
                     short_place_holder_index = place_holders.len() as u16;
-                    place_holders_map.insert(short_place_holder.clone(), short_place_holder_index);
+                    place_holders_map.insert(short_place_holder, short_place_holder_index);
                     place_holders.zvl_push(short_place_holder);
                 }
             },
@@ -182,15 +182,16 @@ fn extract_currency_essentials<'data>(
 
         let narrow_option = &currency_pattern.narrow;
         match narrow_option {
-            Some(narrow_place_holder) => match place_holders_map.get(narrow_place_holder) {
-                Some(index) => narrow_place_holder_index = *index,
-                None => {
-                    narrow_place_holder_index = place_holders.len() as u16;
-                    place_holders_map
-                        .insert(narrow_place_holder.clone(), narrow_place_holder_index);
-                    place_holders.zvl_push(narrow_place_holder);
+            Some(narrow_place_holder) => {
+                match place_holders_map.get(narrow_place_holder.as_str()) {
+                    Some(index) => narrow_place_holder_index = *index,
+                    None => {
+                        narrow_place_holder_index = place_holders.len() as u16;
+                        place_holders_map.insert(narrow_place_holder, narrow_place_holder_index);
+                        place_holders.zvl_push(narrow_place_holder);
+                    }
                 }
-            },
+            }
             None => narrow_place_holder_index = u16::MAX,
         }
 
