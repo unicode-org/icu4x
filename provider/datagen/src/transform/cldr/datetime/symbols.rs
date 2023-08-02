@@ -60,11 +60,39 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         tinystr!(4, "M13"),
     ];
 
+    static LUNAR_MONTH_CODES: &[TinyStr4] = &[
+        tinystr!(4, "M01"),
+        tinystr!(4, "M02"),
+        tinystr!(4, "M03"),
+        tinystr!(4, "M04"),
+        tinystr!(4, "M05"),
+        tinystr!(4, "M06"),
+        tinystr!(4, "M07"),
+        tinystr!(4, "M08"),
+        tinystr!(4, "M09"),
+        tinystr!(4, "M10"),
+        tinystr!(4, "M11"),
+        tinystr!(4, "M12"),
+        tinystr!(4, "M01L"),
+        tinystr!(4, "M02L"),
+        tinystr!(4, "M03L"),
+        tinystr!(4, "M04L"),
+        tinystr!(4, "M05L"),
+        tinystr!(4, "M06L"),
+        tinystr!(4, "M07L"),
+        tinystr!(4, "M08L"),
+        tinystr!(4, "M09L"),
+        tinystr!(4, "M10L"),
+        tinystr!(4, "M11L"),
+        tinystr!(4, "M12L"),
+    ];
+
     match calendar {
         "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc" => {
             &SOLAR_MONTH_CODES[0..12]
         }
-        "coptic" | "ethiopic" | "chinese" => SOLAR_MONTH_CODES,
+        "coptic" | "ethiopic" => SOLAR_MONTH_CODES,
+        "chinese" => LUNAR_MONTH_CODES,
         _ => panic!("Month map unknown for {calendar}"),
     }
 }
