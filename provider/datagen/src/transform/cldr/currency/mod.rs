@@ -17,27 +17,28 @@ use icu_singlenumberformatter::provider::*;
 use std::collections::HashMap;
 use tinystr::tinystr;
 
-fn which_currency_pattern(
+/// Returns the pattern selection for a currency.
+/// For example:
+///    if the pattern is ¤#,##0.00 and the symbol is EGP,
+///    this means the return value will be PatternSelection::StandardAlphaNextToNumber
+///    because the character closes to the number is a letter.
+fn currency_pattern_selection(
     provider: &DatagenProvider,
     pattern: String,
     place_holder: String,
 ) -> Result<PatternSelection, DataError> {
+    // TODO(younies): what should we do when the place_holder is empty?
+
     let currency_sign = '¤';
-    let currency_sign_ind = pattern.find(currency_sign).unwrap();
-    let first_num_ind = pattern
-        .chars()
-        .enumerate()
-        .find(|(_, c)| c == &'0' || c == &'#')
-        .unwrap()
-        .0;
-    let last_num_ind = pattern.len()
+    let currency_sign_index = pattern.find(currency_sign).unwrap();
+    let first_num_index = pattern.chars().position(|c| c == '0' || c == '#').unwrap();
+
+    let last_num_index = pattern.len()
         - pattern
             .chars()
             .rev()
-            .enumerate()
-            .find(|(_, c)| c == &'0' || c == &'#')
+            .position(|c| c == '0' || c == '#')
             .unwrap()
-            .0
         - 1;
 
     let letters_set = match load_for_general_category_group(provider, GeneralCategoryGroup::Letter)
@@ -50,9 +51,9 @@ fn which_currency_pattern(
     };
 
     let right_letter_test_position = {
-        if currency_sign_ind < first_num_ind && currency_sign_ind < last_num_ind {
+        if currency_sign_index < first_num_index && currency_sign_index < last_num_index {
             true
-        } else if currency_sign_ind > first_num_ind && currency_sign_ind > last_num_ind {
+        } else if currency_sign_index > first_num_index && currency_sign_index > last_num_index {
             false
         } else {
             panic!("The currency sign is in the middle of the pattern.")
@@ -191,7 +192,7 @@ fn extract_currency_essentials<'data>(
             if standard_alpha_next_to_number.is_empty() {
                 PatternSelection::Standard
             } else if short_place_holder_index != u16::MAX {
-                which_currency_pattern(
+                currency_pattern_selection(
                     provider,
                     standard.clone(),
                     place_holders
@@ -200,7 +201,7 @@ fn extract_currency_essentials<'data>(
                         .to_string(),
                 )?
             } else {
-                which_currency_pattern(provider, standard.clone(), iso_string)?
+                currency_pattern_selection(provider, standard.clone(), iso_string)?
             }
         };
 
@@ -208,7 +209,7 @@ fn extract_currency_essentials<'data>(
             if standard_alpha_next_to_number.is_empty() {
                 PatternSelection::Standard
             } else if narrow_place_holder_index != u16::MAX {
-                which_currency_pattern(
+                currency_pattern_selection(
                     provider,
                     standard.clone(),
                     place_holders
