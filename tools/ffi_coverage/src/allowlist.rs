@@ -428,7 +428,7 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::make_forking_provider",
 
         // Rust-specific trait abstraction, handled as individual types over FFI
-        "icu::casemap::ClosureSet",
+        "icu::casemap::ClosureSink",
 
     ].iter().map(|s| s.split("::").map(str::to_owned).collect()).collect();
 }

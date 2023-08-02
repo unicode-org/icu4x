@@ -12,7 +12,7 @@ use icu_provider::prelude::*;
 
 use super::data::MappingKind;
 use super::exception_helpers::{ExceptionBits, ExceptionSlot, SlotPresence};
-use crate::set::ClosureSet;
+use crate::set::ClosureSink;
 use alloc::borrow::Cow;
 use core::fmt;
 #[cfg(any(feature = "serde", feature = "datagen"))]
@@ -305,7 +305,7 @@ impl ExceptionULE {
         }
     }
 
-    pub(crate) fn add_full_and_closure_mappings<S: ClosureSet>(&self, set: &mut S) {
+    pub(crate) fn add_full_and_closure_mappings<S: ClosureSink>(&self, set: &mut S) {
         if let Some(full) = self.get_fullmappings_slot_for_kind(MappingKind::Fold) {
             if !full.is_empty() {
                 set.add_string(full);
@@ -479,6 +479,10 @@ impl<'a> DecodedException<'a> {
             slot_presence.add_slot(ExceptionSlot::Closure);
             if self.full.is_some() {
                 // GIGO: if the closure length is more than 0xD800 this will error. Plenty of space.
+                debug_assert!(
+                    closure.len() < 0xD800,
+                    "Found overlarge closure value when encoding exception"
+                );
                 let len_char = u32::try_from(closure.len())
                     .ok()
                     .and_then(|c| char::try_from(c).ok())

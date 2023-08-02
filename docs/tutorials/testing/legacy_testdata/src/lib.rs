@@ -13,33 +13,6 @@ pub struct UnstableDataProvider;
 include!("../data/baked/macros/calendar_japanese_v1.data.rs");
 __impl_calendar_japanese_v1!(UnstableDataProvider);
 
-include!("../data/baked/macros/calendar_japanext_v1.data.rs");
-__impl_calendar_japanext_v1!(UnstableDataProvider);
-
-include!("../data/baked/macros/datetime_buddhist_datelengths_v1.data.rs");
-__impl_datetime_buddhist_datelengths_v1!(UnstableDataProvider);
-
-include!("../data/baked/macros/datetime_buddhist_datesymbols_v1.data.rs");
-__impl_datetime_buddhist_datesymbols_v1!(UnstableDataProvider);
-
-include!("../data/baked/macros/datetime_coptic_datelengths_v1.data.rs");
-__impl_datetime_coptic_datelengths_v1!(UnstableDataProvider);
-
-include!("../data/baked/macros/datetime_coptic_datesymbols_v1.data.rs");
-__impl_datetime_coptic_datesymbols_v1!(UnstableDataProvider);
-
-include!("../data/baked/macros/datetime_ethiopic_datelengths_v1.data.rs");
-__impl_datetime_ethiopic_datelengths_v1!(UnstableDataProvider);
-
-include!("../data/baked/macros/datetime_ethiopic_datesymbols_v1.data.rs");
-__impl_datetime_ethiopic_datesymbols_v1!(UnstableDataProvider);
-
-include!("../data/baked/macros/datetime_gregory_datelengths_v1.data.rs");
-__impl_datetime_gregory_datelengths_v1!(UnstableDataProvider);
-
-include!("../data/baked/macros/datetime_gregory_datesymbols_v1.data.rs");
-__impl_datetime_gregory_datesymbols_v1!(UnstableDataProvider);
-
 include!("../data/baked/macros/datetime_indian_datelengths_v1.data.rs");
 __impl_datetime_indian_datelengths_v1!(UnstableDataProvider);
 
@@ -51,12 +24,6 @@ __impl_datetime_japanese_datelengths_v1!(UnstableDataProvider);
 
 include!("../data/baked/macros/datetime_japanese_datesymbols_v1.data.rs");
 __impl_datetime_japanese_datesymbols_v1!(UnstableDataProvider);
-
-include!("../data/baked/macros/datetime_japanext_datelengths_v1.data.rs");
-__impl_datetime_japanext_datelengths_v1!(UnstableDataProvider);
-
-include!("../data/baked/macros/datetime_japanext_datesymbols_v1.data.rs");
-__impl_datetime_japanext_datesymbols_v1!(UnstableDataProvider);
 
 include!("../data/baked/macros/datetime_timelengths_v1.data.rs");
 __impl_datetime_timelengths_v1!(UnstableDataProvider);

@@ -221,8 +221,9 @@ impl Calendar for Chinese {
     /// month, the month codes for ordinal monts 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month = if Self::is_leap_year(date.0 .0.year) {
-            Inner::get_leap_month_in_year(Inner::fixed_mid_year_from_year(date.0 .0.year))
+        let mid_year = Inner::fixed_mid_year_from_year(date.0 .0.year);
+        let leap_month = if Inner::fixed_date_is_in_leap_year(mid_year) {
+            Inner::get_leap_month_in_year(mid_year)
         } else {
             14
         };
@@ -435,7 +436,7 @@ impl Chinese {
     pub fn chinese_new_year_on_or_before_iso(iso: Date<Iso>) -> Date<Iso> {
         let iso_inner = iso.inner;
         let fixed = Iso::fixed_from_iso(iso_inner);
-        let result_fixed = Inner::new_year_on_or_before_fixed_date(fixed);
+        let result_fixed = Inner::new_year_on_or_before_fixed_date(fixed, None).0;
         Iso::iso_from_fixed(result_fixed)
     }
 
@@ -921,6 +922,19 @@ mod test {
     }
 
     #[test]
+    fn test_iso_chinese_roundtrip() {
+        for i in -1000..=1000 {
+            let year = i;
+            let month = i as u8 % 12 + 1;
+            let day = i as u8 % 28 + 1;
+            let iso = Date::try_new_iso_date(year, month, day).unwrap();
+            let chinese = iso.to_calendar(Chinese);
+            let result = chinese.to_calendar(Iso);
+            assert_eq!(iso, result, "ISO to Chinese roundtrip failed!\nIso: {iso:?}\nChinese: {chinese:?}\nResult: {result:?}");
+        }
+    }
+
+    #[test]
     fn test_consistent_with_icu() {
         #[derive(Debug)]
         struct TestCase {
@@ -952,33 +966,36 @@ mod test {
                 expected_month: 1,
                 expected_day: 1,
             },
-            // TestCase { // This test case fails to match ICU
-            //     iso_year: -2332,
-            //     iso_month: 2,
-            //     iso_day: 14,
-            //     expected_rel_iso: -2333,
-            //     expected_cyclic: 4,
-            //     expected_month: 13,
-            //     expected_day: 29,
-            // },
-            // TestCase { // This test case fails to match ICU
-            //     iso_year: -2332,
-            //     iso_month: 1,
-            //     iso_day: 17,
-            //     expected_rel_iso: -2333,
-            //     expected_cyclic: 4,
-            //     expected_month: 13,
-            //     expected_day: 1
-            // },
-            // TestCase { // This test case fails to match ICU
-            //     iso_year: -2332,
-            //     iso_month: 1,
-            //     iso_day: 16,
-            //     expected_rel_iso: -2333,
-            //     expected_cyclic: 4,
-            //     expected_month: 12,
-            //     expected_day: 30
-            // },
+            TestCase {
+                // This test case fails to match ICU
+                iso_year: -2332,
+                iso_month: 2,
+                iso_day: 14,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 13,
+                expected_day: 30,
+            },
+            TestCase {
+                // This test case fails to match ICU
+                iso_year: -2332,
+                iso_month: 1,
+                iso_day: 17,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 13,
+                expected_day: 2,
+            },
+            TestCase {
+                // This test case fails to match ICU
+                iso_year: -2332,
+                iso_month: 1,
+                iso_day: 16,
+                expected_rel_iso: -2333,
+                expected_cyclic: 4,
+                expected_month: 13,
+                expected_day: 1,
+            },
             TestCase {
                 iso_year: -2332,
                 iso_month: 1,
