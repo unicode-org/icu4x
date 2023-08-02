@@ -21,14 +21,7 @@ fn which_currency_pattern(
     provider: &DatagenProvider,
     pattern: String,
     place_holder: String,
-) -> Result<bool, DataError> {
-    // If the pattern is empty,
-    // then return a letter (L) is close to the number.
-    // Therefore, we use the standard_alpha_next_to_number pattern.
-    if place_holder.is_empty() {
-        return Ok(false);
-    }
-
+) -> Result<PatternSelection, DataError> {
     let currency_sign = '¤';
     let currency_sign_ind = pattern.find(currency_sign).unwrap();
     let first_num_ind = pattern
@@ -68,14 +61,22 @@ fn which_currency_pattern(
 
     if right_letter_test_position {
         // Check if the last character has the property of letter (L).
-        return Ok(!letters_set
+        match letters_set
             .as_borrowed()
-            .contains(place_holder.chars().last().unwrap()));
+            .contains(place_holder.chars().last().unwrap())
+        {
+            true => return Ok(PatternSelection::StandardAlphaNextToNumber),
+            false => return Ok(PatternSelection::Standard),
+        }
     } else {
         // Check if the first character has the property of letter (L).
-        return Ok(!letters_set
+        match letters_set
             .as_borrowed()
-            .contains(place_holder.chars().next().unwrap()));
+            .contains(place_holder.chars().next().unwrap())
+        {
+            true => return Ok(PatternSelection::StandardAlphaNextToNumber),
+            false => return Ok(PatternSelection::Standard),
+        }
     }
 }
 
@@ -186,9 +187,9 @@ fn extract_currency_essentials<'data>(
 
         let iso_string = iso.try_into_tinystr().unwrap().to_string();
 
-        let short_pattern_standard: bool = {
+        let short_pattern_standard: PatternSelection = {
             if standard_alpha_next_to_number.is_empty() {
-                true
+                PatternSelection::Standard
             } else if short_place_holder_index != u16::MAX {
                 which_currency_pattern(
                     provider,
@@ -203,9 +204,9 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-        let narrow_pattern_standard: bool = {
+        let narrow_pattern_standard: PatternSelection = {
             if standard_alpha_next_to_number.is_empty() {
-                true
+                PatternSelection::Standard
             } else if narrow_place_holder_index != u16::MAX {
                 which_currency_pattern(
                     provider,
@@ -220,8 +221,8 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-        if short_pattern_standard
-            && narrow_pattern_standard
+        if short_pattern_standard == PatternSelection::Standard
+            && narrow_pattern_standard == PatternSelection::Standard
             && short_place_holder_index == u16::MAX
             && narrow_place_holder_index == u16::MAX
         {
@@ -231,8 +232,8 @@ fn extract_currency_essentials<'data>(
         currency_patterns_map.insert(
             iso,
             &CurrencyPatterns {
-                short_pattern_standard,
-                narrow_pattern_standard,
+                short_pattern_standard: short_pattern_standard as u8,
+                narrow_pattern_standard: narrow_pattern_standard as u8,
                 short_place_holder_index,
                 narrow_place_holder_index,
             },
@@ -257,8 +258,8 @@ fn test_basic() {
         place_holders: &VarZeroVec<'_, str>,
     ) -> (String, String) {
         let default = CurrencyPatternsULE {
-            short_pattern_standard: true,
-            narrow_pattern_standard: true,
+            short_pattern_standard: PatternSelection::Standard as u8,
+            narrow_pattern_standard: PatternSelection::Standard as u8,
             short_place_holder_index: u16::MAX.into(),
             narrow_place_holder_index: u16::MAX.into(),
         };

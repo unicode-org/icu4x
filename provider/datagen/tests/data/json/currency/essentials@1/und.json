@@ -1,626 +1,626 @@
 {
   "currency_patterns_map": {
     "AFN": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 0
     },
     "AMD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 1
     },
     "AOA": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 2
     },
     "ARS": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "AUD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 4,
       "narrow_place_holder_index": 3
     },
     "AZN": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 5
     },
     "BAM": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 6
     },
     "BBD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "BDT": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 7
     },
     "BMD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "BND": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "BOB": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 8
     },
     "BRL": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 9,
       "narrow_place_holder_index": 9
     },
     "BSD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "BWP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 10
     },
     "BZD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "CAD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 11,
       "narrow_place_holder_index": 3
     },
     "CLP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "CNY": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 12,
       "narrow_place_holder_index": 13
     },
     "COP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "CRC": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 14
     },
     "CUC": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "CUP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "CZK": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 15
     },
     "DKK": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 16
     },
     "DOP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "EGP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 17
     },
     "ESP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 18
     },
     "EUR": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 19,
       "narrow_place_holder_index": 19
     },
     "FJD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "FKP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 20
     },
     "GBP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 20,
       "narrow_place_holder_index": 20
     },
     "GEL": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 21
     },
     "GHS": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 22
     },
     "GIP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 20
     },
     "GNF": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 23
     },
     "GTQ": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 24
     },
     "GYD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "HKD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 25,
       "narrow_place_holder_index": 3
     },
     "HNL": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 26
     },
     "HRK": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 27
     },
     "HUF": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 28
     },
     "IDR": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 29
     },
     "ILS": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 30,
       "narrow_place_holder_index": 30
     },
     "INR": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 31,
       "narrow_place_holder_index": 31
     },
     "ISK": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 16
     },
     "JMD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "JPY": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 32,
       "narrow_place_holder_index": 13
     },
     "KHR": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 33
     },
     "KMF": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 34
     },
     "KPW": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 35
     },
     "KRW": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 35,
       "narrow_place_holder_index": 35
     },
     "KYD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "KZT": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 36
     },
     "LAK": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 37
     },
     "LBP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 38
     },
     "LKR": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 39
     },
     "LRD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "LTL": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 40
     },
     "LVL": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 41
     },
     "MGA": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 42
     },
     "MMK": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 43
     },
     "MNT": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 44
     },
     "MUR": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 39
     },
     "MXN": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 45,
       "narrow_place_holder_index": 3
     },
     "MYR": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 46
     },
     "NAD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "NGN": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 47
     },
     "NIO": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 48
     },
     "NOK": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 16
     },
     "NPR": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 39
     },
     "NZD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 49,
       "narrow_place_holder_index": 3
     },
     "PHP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 50,
       "narrow_place_holder_index": 50
     },
     "PKR": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 39
     },
     "PLN": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 51
     },
     "PYG": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 52
     },
     "RON": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 53
     },
     "RUB": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 54
     },
     "RWF": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 55
     },
     "SBD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "SEK": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 16
     },
     "SGD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "SHP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 20
     },
     "SRD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "SSP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 20
     },
     "STN": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 56
     },
     "SYP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 20
     },
     "THB": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 57
     },
     "TOP": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 58
     },
     "TRY": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 59
     },
     "TTD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "TWD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 60,
       "narrow_place_holder_index": 3
     },
     "UAH": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 61
     },
     "USD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 62,
       "narrow_place_holder_index": 3
     },
     "UYU": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 3
     },
     "VEF": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 8
     },
     "VND": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 63,
       "narrow_place_holder_index": 63
     },
     "XAF": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 64,
       "narrow_place_holder_index": 65535
     },
     "XCD": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65,
       "narrow_place_holder_index": 3
     },
     "XOF": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 66,
       "narrow_place_holder_index": 65535
     },
     "XPF": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 67,
       "narrow_place_holder_index": 65535
     },
     "XXX": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 68,
       "narrow_place_holder_index": 65535
     },
     "ZAR": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 69
     },
     "ZMW": {
-      "short_pattern_standard": true,
-      "narrow_pattern_standard": true,
+      "short_pattern_standard": 0,
+      "narrow_pattern_standard": 0,
       "short_place_holder_index": 65535,
       "narrow_place_holder_index": 70
     }

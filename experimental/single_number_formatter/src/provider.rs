@@ -37,8 +37,6 @@ pub struct CurrencyEssentialsV1<'data> {
     pub place_holders: VarZeroVec<'data, str>,
 }
 
-
-
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq)]
 #[repr(u8)]
 pub enum PatternSelection {
@@ -50,7 +48,6 @@ pub enum PatternSelection {
 }
 
 type PatternSelectionMask = u8;
-
 
 // TODO(https://github.com/unicode-org/icu4x/issues/3737): Reduce the size of CurrencyPatternsULE.
 #[zerovec::make_ule(CurrencyPatternsULE)]
@@ -78,4 +75,3 @@ pub struct CurrencyPatterns {
     /// If the value is u16::MAX, this means that the narrow pattern does not have a place holder.
     pub narrow_place_holder_index: u16,
 }
-
