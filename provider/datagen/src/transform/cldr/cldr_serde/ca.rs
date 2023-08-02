@@ -14,6 +14,29 @@ use serde::Deserialize;
 use std::borrow::Cow;
 use std::collections::HashMap;
 
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct FormatWidths<Symbols> {
+    pub abbreviated: Symbols,
+    pub narrow: Symbols,
+    pub short: Option<Symbols>,
+    pub wide: Symbols,
+}
+
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct StandAloneWidths<Symbols> {
+    pub abbreviated: Option<Symbols>,
+    pub narrow: Option<Symbols>,
+    pub short: Option<Symbols>,
+    pub wide: Option<Symbols>,
+}
+
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct Contexts<Symbols> {
+    pub format: FormatWidths<Symbols>,
+    #[serde(rename = "stand-alone")]
+    pub stand_alone: Option<StandAloneWidths<Symbols>>,
+}
+
 macro_rules! symbols {
     ($name: ident, $symbols:item) => {
         pub mod $name {
@@ -26,28 +49,11 @@ macro_rules! symbols {
         }
     };
     () => {
-        #[derive(Debug, PartialEq, Clone, Deserialize)]
-        pub struct FormatWidths {
-            pub abbreviated: Symbols,
-            pub narrow: Symbols,
-            pub short: Option<Symbols>,
-            pub wide: Symbols,
-        }
 
-        #[derive(Debug, PartialEq, Clone, Deserialize)]
-        pub struct StandAloneWidths {
-            pub abbreviated: Option<Symbols>,
-            pub narrow: Option<Symbols>,
-            pub short: Option<Symbols>,
-            pub wide: Option<Symbols>,
-        }
+        pub type FormatWidths = super::FormatWidths<Symbols>;
+        pub type StandAloneWidths = super::StandAloneWidths<Symbols>;
+        pub type Contexts = super::Contexts<Symbols>;
 
-        #[derive(Debug, PartialEq, Clone, Deserialize)]
-        pub struct Contexts {
-            pub format: FormatWidths,
-            #[serde(rename = "stand-alone")]
-            pub stand_alone: Option<StandAloneWidths>,
-        }
     }
 }
 
