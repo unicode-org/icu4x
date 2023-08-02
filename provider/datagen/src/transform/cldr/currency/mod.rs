@@ -28,6 +28,9 @@ fn currency_pattern_selection(
     place_holder: String,
 ) -> Result<PatternSelection, DataError> {
     // TODO(younies): what should we do when the place_holder is empty?
+    if place_holder.is_empty() {
+        todo!("Handle empty place holders")
+    }
 
     let currency_sign = '¤';
     let currency_sign_index = pattern.find(currency_sign).unwrap();
