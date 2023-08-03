@@ -7,9 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-misc-full/main/de/characters.json>
 
-
 use serde::Deserialize;
-
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct LocaleExemplarCharacters {

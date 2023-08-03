@@ -7,9 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-misc-full/main/en/listPatterns.json>
 
-
 use serde::Deserialize;
-
 
 use super::locale_resource::LocaleResource;
 
