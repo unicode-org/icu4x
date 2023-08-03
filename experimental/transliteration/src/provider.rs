@@ -17,8 +17,9 @@
 
 use alloc::borrow::Cow;
 
-use icu_collections::codepointinvliststringlist::{
-    CodePointInversionListAndStringList, CodePointInversionListAndStringListULE,
+use icu_collections::{
+    codepointinvlist::{CodePointInversionList, CodePointInversionListULE},
+    codepointinvliststringlist::CodePointInversionListAndStringListULE,
 };
 use zerovec::*;
 
@@ -35,7 +36,7 @@ pub struct RuleBasedTransliterator<'a> {
     pub variable_table: VarTable<'a>,
     /// The filter for this transliterator. If there is none, the set of all code points is used.
     #[serde(borrow)]
-    pub filter: CodePointInversionListAndStringList<'a>,
+    pub filter: CodePointInversionList<'a>,
     /// The list of transform rule groups this transliterator uses.
     #[serde(borrow)]
     pub id_group_list: VarZeroVec<'a, VarZeroSlice<SimpleIDULE>>,
@@ -53,9 +54,9 @@ pub struct RuleBasedTransliterator<'a> {
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct SimpleID<'a> {
     /// The filter for the transliterator. If there is none, the set of all code points is used.
-    #[zerovec::varule(CodePointInversionListAndStringListULE)]
+    #[zerovec::varule(CodePointInversionListULE)]
     #[serde(borrow)]
-    pub filter: CodePointInversionListAndStringList<'a>,
+    pub filter: CodePointInversionList<'a>,
     /// The ID of the transliterator.
     #[serde(borrow)]
     pub id: Cow<'a, str>,
