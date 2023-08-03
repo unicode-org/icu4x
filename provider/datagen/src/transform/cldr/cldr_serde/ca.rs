@@ -9,7 +9,6 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
-use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::borrow::Cow;
 use std::collections::HashMap;
@@ -151,10 +150,4 @@ pub struct LangDates {
     pub dates: DatesCalendars,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub HashMap<LanguageIdentifier, LangDates>);
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub main: LangData,
-}
+pub type Resource = super::LocaleResource<LangDates>;

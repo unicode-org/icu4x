@@ -7,7 +7,6 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/timeZoneNames.json>
 
-use icu_locid::LanguageIdentifier;
 use serde::{
     de::{IgnoredAny, MapAccess, Visitor},
     Deserialize, Deserializer,
@@ -157,10 +156,4 @@ pub struct LangTimeZones {
     pub dates: Dates,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub HashMap<LanguageIdentifier, LangTimeZones>);
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub main: LangData,
-}
+pub type Resource = super::super::LocaleResource<LangTimeZones>;

@@ -22,12 +22,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         .misc()
         .read_and_parse(&langid, "listPatterns.json")?;
 
-    let data = &resource
-        .main
-        .0
-        .get(&langid)
-        .expect("CLDR file contains the expected language")
-        .list_patterns;
+    let data = &resource.main.value.list_patterns;
 
     let (wide, short, narrow) = if M::KEY == AndListV1Marker::KEY {
         (&data.standard, &data.standard_short, &data.standard_narrow)

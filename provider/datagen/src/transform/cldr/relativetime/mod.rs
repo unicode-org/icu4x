@@ -82,9 +82,7 @@ macro_rules! make_data_provider {
                         .read_and_parse(&langid, "dateFields.json")?;
                     let fields = &resource
                         .main
-                        .0
-                        .get(&langid)
-                        .ok_or(DataErrorKind::MissingLocale.into_error())?
+                        .value
                         .dates
                         .fields;
 
