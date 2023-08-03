@@ -228,7 +228,7 @@ impl CivilHebrew {
             if Self::is_leap_year(civil_year) {
                 biblical_month -= 1
             }
-            if Self::is_leap_year(civil_year) && civil_month < 8 {
+            if biblical_month == 0 {
                 // Special case for Adar II in a leap year
                 biblical_month = 13;
             }
