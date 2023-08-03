@@ -1103,7 +1103,7 @@ impl GeneralCategoryGroup {
     /// assert!(GeneralCategoryGroup::Other.contains(gc.get32(0xE007F)));
     /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get32(0xE007F)));
     /// ```
-    pub fn contains(&self, val: GeneralCategory) -> bool {
+    pub const fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0
     }
 
@@ -1124,7 +1124,7 @@ impl GeneralCategoryGroup {
     /// assert!(!not_letter.contains(GeneralCategory::UppercaseLetter));
     /// assert!(letter.contains(GeneralCategory::UppercaseLetter));
     /// ```
-    pub fn complement(self) -> Self {
+    pub const fn complement(self) -> Self {
         // Mask off things not in Self::ALL to guarantee the mask
         // values stay in-range
         GeneralCategoryGroup(!self.0 & Self::ALL)
@@ -1143,7 +1143,7 @@ impl GeneralCategoryGroup {
     /// assert!(all.contains(GeneralCategory::OtherPunctuation));
     /// assert!(all.contains(GeneralCategory::UppercaseLetter));
     /// ```
-    pub fn all() -> Self {
+    pub const fn all() -> Self {
         Self(Self::ALL)
     }
 
@@ -1160,7 +1160,7 @@ impl GeneralCategoryGroup {
     /// assert!(!empty.contains(GeneralCategory::OtherPunctuation));
     /// assert!(!empty.contains(GeneralCategory::UppercaseLetter));
     /// ```
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self(0)
     }
 
@@ -1179,7 +1179,7 @@ impl GeneralCategoryGroup {
     /// assert!(!union.contains(GeneralCategory::OtherPunctuation));
     /// assert!(union.contains(GeneralCategory::UppercaseLetter));
     /// ```
-    pub fn union(self, other: Self) -> Self {
+    pub const fn union(self, other: Self) -> Self {
         Self(self.0 | other.0)
     }
 
@@ -1199,7 +1199,7 @@ impl GeneralCategoryGroup {
     /// assert!(intersection.contains(GeneralCategory::UppercaseLetter));
     /// assert!(!intersection.contains(GeneralCategory::LowercaseLetter));
     /// ```
-    pub fn intersection(self, other: Self) -> Self {
+    pub const fn intersection(self, other: Self) -> Self {
         Self(self.0 & other.0)
     }
 }

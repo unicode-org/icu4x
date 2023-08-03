@@ -60,3 +60,4 @@ mod internals;
 pub use casemapper::CaseMapper;
 pub use closer::CaseMapCloser;
 pub use set::ClosureSink;
+pub use titlecase::TitlecaseMapper;
