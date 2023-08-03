@@ -203,22 +203,17 @@ impl CivilHebrew {
         let biblical_month = biblical_date.month;
         let civil_year = biblical_date.year;
         let mut civil_month;
+        civil_month = (biblical_month + 6) % 12;
 
-        if biblical_month >= TISHRI {
-            civil_month = (biblical_month + 6) % 12;
-            if civil_month == 0 {
-                civil_month = 12;
-            }
-        } else {
-            civil_month = biblical_month + 6;
+        if civil_month == 0 {
+            civil_month = 12;
         }
 
-        if Self::is_leap_year(civil_year) && biblical_month <= 6 {
+        if Self::is_leap_year(civil_year) && biblical_month < TISHRI {
             civil_month += 1;
         }
 
         Date::try_new_civil_hebrew_date(civil_year, civil_month, biblical_date.day).unwrap()
-        // safe unwrap
     }
 
     fn civil_to_biblical_date(civil_date: CivilHebrewDateInner) -> BookHebrew {
@@ -240,14 +235,13 @@ impl CivilHebrew {
         }
 
         BookHebrew {
-            year,
+            year: civil_year,
             month: biblical_month,
             day: civil_date.0.day,
         }
     }
 
     // ADAR = 12, ADARII = 13
-    #[allow(dead_code)]
     fn last_month_of_civil_hebrew_year(civil_year: i32) -> u8 {
         if Self::is_leap_year(civil_year) {
             ADARII
@@ -256,66 +250,25 @@ impl CivilHebrew {
         }
     }
 
-    // Sabbatical Year of the Civil Hebrew Calendar
-    #[allow(dead_code)]
-    fn is_civil_hebrew_sabbatical_year(civil_year: i32) -> bool {
-        div_rem_euclid(civil_year, 7).1 == 0
-    }
-
-    // True if the month Marheshvan is going to be long in given CivilHebrew year
-    #[allow(dead_code)]
-    fn is_long_marheshvan(civil_year: i32) -> bool {
-        let long_marheshavan_year_lengths = [355, 385];
-        long_marheshavan_year_lengths.contains(&CivilHebrew::days_in_provided_year(civil_year))
-    }
-
-    // True if the month Kislve is going to be short in given CivilHebrew year
-    #[allow(dead_code)]
-    fn is_short_kislev(civil_year: i32) -> bool {
-        let short_kislev_year_lengths = [353, 383];
-        short_kislev_year_lengths.contains(&CivilHebrew::days_in_provided_year(civil_year))
-    }
-
     // Last day of month (h_month) in CivilHebrew year (h_year)
-    #[allow(dead_code)]
     fn last_day_of_civil_hebrew_month(civil_year: i32, civil_month: u8) -> u8 {
-        match civil_month {
-            IYYAR | TAMMUZ | ELUL | TEVET | ADARII => 29,
-            ADAR => {
-                if !Self::is_leap_year(civil_year) {
-                    29
-                } else {
-                    30
-                }
-            }
-            MARHESHVAN => {
-                if !Self::is_long_marheshvan(civil_year) {
-                    29
-                } else {
-                    30
-                }
-            }
-            KISLEV => {
-                if Self::is_short_kislev(civil_year) {
-                    29
-                } else {
-                    30
-                }
-            }
-            _ => 30,
-        }
+        let book_month = CivilHebrew::civil_to_biblical_date(CivilHebrewDateInner(
+            ArithmeticDate::new_unchecked(civil_year, civil_month, 1),
+        ))
+        .month;
+
+        BookHebrew::last_day_of_book_hebrew_month(civil_year, book_month)
     }
 
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
     // The fixed date algorithms are from
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-    #[allow(dead_code)]
     fn fixed_from_civil_hebrew(date: CivilHebrewDateInner) -> RataDie {
         let book_date = CivilHebrew::civil_to_biblical_date(date);
         BookHebrew::fixed_from_book_hebrew(book_date)
     }
 
-    #[allow(dead_code, clippy::unwrap_used)]
+    #[allow(clippy::unwrap_used)]
     fn civil_hebrew_from_fixed(date: RataDie) -> Date<CivilHebrew> {
         let book_hebrew = BookHebrew::book_hebrew_from_fixed(date);
         CivilHebrew::biblical_to_civil_date(book_hebrew)
@@ -324,7 +277,7 @@ impl CivilHebrew {
     fn year_as_hebrew(civil_year: i32) -> types::FormattableYear {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "hebrew")),
-            number: year,
+            number: civil_year,
             cyclic: None,
             related_iso: None,
         }
@@ -420,16 +373,8 @@ impl BookHebrew {
         }
     }
 
-    // Sabbatical Year of the BookHebrew Calendar
-    // Lisp code refernence: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2224
-    #[allow(dead_code)]
-    fn is_book_hebrew_sabbatical_year(book_year: i32) -> bool {
-        div_rem_euclid(book_year, 7).1 == 0
-    }
-
     // Number of days elapsed from the (Sunday) noon prior to the epoch of the BookHebrew Calendar to the molad of Tishri of BookHebrew year (h_year) or one day later
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2261
-    #[allow(dead_code)]
     fn book_hebrew_calendar_elapsed_days(book_year: i32) -> i32 {
         let months_elapsed = libm::floor((235.0 * book_year as f64 - 234.0) / 19.0);
         let parts_elapsed = 12084.0 + 13753.0 * months_elapsed;
@@ -444,7 +389,6 @@ impl BookHebrew {
 
     // Delays to start of BookHebrew year to keep ordinary year in range 353-356 and leap year in range 383-386
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2301
-    #[allow(dead_code)]
     fn book_hebrew_year_length_correction(book_year: i32) -> u8 {
         let ny0 = Self::book_hebrew_calendar_elapsed_days(book_year - 1);
         let ny1 = Self::book_hebrew_calendar_elapsed_days(book_year);
@@ -461,7 +405,6 @@ impl BookHebrew {
 
     // Fixed date of BookHebrew new year
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2294
-    #[allow(dead_code)]
     pub(crate) fn book_hebrew_new_year(book_year: i32) -> RataDie {
         RataDie::new(
             FIXED_HEBREW_EPOCH.to_i64_date()
@@ -471,12 +414,10 @@ impl BookHebrew {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2315
-    #[allow(dead_code)]
     fn days_in_hebrew_year(book_year: i32) -> u16 {
         (Self::book_hebrew_new_year(1 + book_year) - Self::book_hebrew_new_year(book_year)) as u16
     }
 
-    #[allow(dead_code)]
     fn is_hebrew_leap_year(book_year: i32) -> bool {
         div_rem_euclid(7 * book_year + 1, 19).1 < 7
     }
@@ -499,7 +440,6 @@ impl BookHebrew {
 
     // Last day of month (h_month) in BookHebrew year (book_year)
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2230
-    #[allow(dead_code)]
     fn last_day_of_book_hebrew_month(book_year: i32, book_month: u8) -> u8 {
         match book_month {
             IYYAR | TAMMUZ | ELUL | TEVET | ADARII => 29,
@@ -846,12 +786,6 @@ mod tests {
         12, 12, 13, 12, 13, 12, 13, 12, 12, 12,
     ];
 
-    static EXPECTED_HEBREW_SABBATICAL_YEAR: [bool; 33] = [
-        false, false, false, false, false, false, false, false, false, false, false, false, false,
-        false, false, false, false, true, false, false, false, false, true, false, true, false,
-        false, false, false, false, false, false, false,
-    ];
-
     static EXPECTED_HEBREW_ELASPED_CALENDAR_DAYS: [i32; 33] = [
         1158928, 1311957, 1398894, 1422636, 1544627, 1583342, 1626812, 1742956, 1773254, 1807597,
         1825848, 1843388, 1847051, 1881010, 1897460, 1917895, 1940545, 1942729, 1974889, 1986554,
@@ -910,17 +844,6 @@ mod tests {
         for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_LAST_HEBREW_MONTH.iter()) {
             let last_month = BookHebrew::last_month_of_book_hebrew_year(case.year);
             assert_eq!(last_month, *expected);
-        }
-    }
-
-    #[test]
-    fn test_hebrew_sabbatical_year() {
-        for (case, expected) in HEBREW_DATES
-            .iter()
-            .zip(EXPECTED_HEBREW_SABBATICAL_YEAR.iter())
-        {
-            let boolean = BookHebrew::is_book_hebrew_sabbatical_year(case.year);
-            assert_eq!(boolean, *expected);
         }
     }
 
@@ -1175,7 +1098,7 @@ mod tests {
             (1, 4, 5783),
         ];
 
-        for (_iso_date, (book_date_nums, civil_date_nums)) in iso_dates
+        for (iso_date, (book_date_nums, civil_date_nums)) in iso_dates
             .iter()
             .zip(book_hebrew_dates.iter().zip(civil_hebrew_dates.iter()))
         {
@@ -1196,17 +1119,15 @@ mod tests {
 
             assert_eq!(civil_date, book_to_civil);
             assert_eq!(book_date, civil_to_book);
-            // TODO: Test ISO to HEBREW / HEBREW to ISO
-        }
-    }
 
-    #[test]
-    fn test_book_to_civil_conversion() {
-        for (f_date, dates) in TEST_FIXED_DATE.iter().zip(HEBREW_DATES.iter()) {
-            let date = BookHebrew::book_hebrew_from_fixed(RataDie::new(*f_date));
-            let civil_date = CivilHebrew::biblical_to_civil_date(date).inner;
+            let iso_to_fixed = Iso::fixed_from_iso(iso_date.inner);
+            let fixed_to_hebrew = CivilHebrew::civil_hebrew_from_fixed(iso_to_fixed);
 
-            println!("{:?}", civil_date)
+            let hebrew_to_fixed = CivilHebrew::fixed_from_civil_hebrew(civil_date);
+            let fixed_to_iso = Iso::iso_from_fixed(hebrew_to_fixed);
+
+            assert_eq!(fixed_to_hebrew.inner, civil_date);
+            assert_eq!(fixed_to_iso.inner, iso_date.inner);
         }
     }
 
