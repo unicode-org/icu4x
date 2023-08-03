@@ -4,6 +4,8 @@
 
 #![allow(dead_code)] // features
 
+use icu_provider_adapters::fork::ForkByKeyProvider;
+use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
 use super::cldr_serde;
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use crate::source::SerdeCache;
@@ -52,9 +54,11 @@ impl CldrCache {
             serde_cache.read_and_parse_json("cldr-core/coverageLevels.json")?;
         let resources = LikelySubtagsResources::from_resources(likely_subtags, coverage_levels);
         let data = super::locale_canonicalizer::likely_subtags::transform(resources.get_common());
-        let provider =
-            AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(data.into());
-        let locale_expander = LocaleExpander::try_new_unstable(&provider).map_err(|e| {
+        let provider = ForkByKeyProvider::new(
+            AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(data.clone().into()),
+            AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(data.into()),
+        );
+        let locale_expander = LocaleExpander::try_new_with_any_provider(&provider).map_err(|e| {
             DataError::custom("creating LocaleExpander in CldrCache").with_display_context(&e)
         })?;
         Ok(CldrCache {
