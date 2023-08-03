@@ -659,6 +659,7 @@ mod tests {
             keys: vec![
                 LikelySubtagsForLanguageV1Marker::KEY,
                 LikelySubtagsForScriptRegionV1Marker::KEY,
+                LikelySubtagsExtendedV1Marker::KEY,
             ],
         };
         let lc = LocaleExpander::try_new_with_any_provider(&provider)
@@ -706,5 +707,21 @@ mod tests {
         if LocaleExpander::try_new_with_any_provider(&provider).is_ok() {
             panic!("should not create: no data present")
         };
+    }
+
+    #[test]
+    fn test_new_small_keys() {
+        // Include the new small keys but not the extended key
+        let provider = RejectByKeyProvider {
+            keys: vec![
+                LikelySubtagsExtendedV1Marker::KEY,
+                LikelySubtagsV1Marker::KEY,
+            ],
+        };
+        let lc = LocaleExpander::try_new_with_any_provider(&provider)
+            .expect("should create with mixed keys");
+        let mut locale = locale!("zh-CN");
+        assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+        assert_eq!(locale, locale!("zh-Hans-CN"));
     }
 }
