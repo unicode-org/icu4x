@@ -11,6 +11,7 @@ use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
 use crate::set::ClosureSink;
+use crate::titlecase::TailCasing;
 use core::fmt;
 use icu_locid::LanguageIdentifier;
 use writeable::Writeable;
@@ -450,11 +451,14 @@ impl<'data> CaseMapV1<'data> {
     }
     /// IS_TITLE_CONTEXT is true iff the mapping is MappingKind::Title, primarily exists
     /// to avoid perf impacts on other more common modes of operation
+    ///
+    /// titlecase_tail_casing is only read in IS_TITLE_CONTEXT
     pub(crate) fn full_helper_writeable<'a: 'data, const IS_TITLE_CONTEXT: bool>(
         &'a self,
         src: &'a str,
         locale: CaseMapLocale,
         mapping: MappingKind,
+        titlecase_tail_casing: TailCasing,
     ) -> impl Writeable + 'a {
         // Ensure that they are either both true or both false, i.e. an XNOR operation
         debug_assert!(!(IS_TITLE_CONTEXT ^ (mapping == MappingKind::Title)));
@@ -464,6 +468,7 @@ impl<'data> CaseMapV1<'data> {
             src: &'a str,
             locale: CaseMapLocale,
             mapping: MappingKind,
+            titlecase_tail_casing: TailCasing,
         }
 
         impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
@@ -471,7 +476,8 @@ impl<'data> CaseMapV1<'data> {
             fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
                 let src = self.src;
                 let mut mapping = self.mapping;
-                for (i, c) in src.char_indices() {
+                let mut iter = src.char_indices();
+                for (i, c) in &mut iter {
                     let context = ContextIterator::new(&src[..i], &src[i..]);
                     self.data.full_helper::<IS_TITLE_CONTEXT, W>(
                         c,
@@ -481,8 +487,16 @@ impl<'data> CaseMapV1<'data> {
                         sink,
                     )?;
                     if IS_TITLE_CONTEXT {
-                        mapping = MappingKind::Lower;
+                        if self.titlecase_tail_casing == TailCasing::Lowercase {
+                            mapping = MappingKind::Lower;
+                        } else {
+                            break;
+                        }
                     }
+                }
+                // Write the rest of the string
+                if IS_TITLE_CONTEXT && self.titlecase_tail_casing == TailCasing::PreserveCase {
+                    sink.write_str(iter.as_str())?;
                 }
                 Ok(())
             }
@@ -496,6 +510,7 @@ impl<'data> CaseMapV1<'data> {
             src,
             locale,
             mapping,
+            titlecase_tail_casing,
         }
     }
 

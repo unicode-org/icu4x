@@ -6,6 +6,7 @@ use crate::internals::{CaseMapLocale, FoldOptions};
 use crate::provider::data::MappingKind;
 use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSink;
+use crate::titlecase::TailCasing;
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -109,6 +110,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Lower,
+            TailCasing::default(),
         )
     }
 
@@ -128,6 +130,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Upper,
+            TailCasing::default(),
         )
     }
 
@@ -153,6 +156,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Title,
+            TailCasing::default(),
         )
     }
 
@@ -164,9 +168,12 @@ impl CaseMapper {
     /// See [`Self::fold_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
     pub fn fold<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
-        self.data
-            .get()
-            .full_helper_writeable::<false>(src, CaseMapLocale::Root, MappingKind::Fold)
+        self.data.get().full_helper_writeable::<false>(
+            src,
+            CaseMapLocale::Root,
+            MappingKind::Fold,
+            TailCasing::default(),
+        )
     }
 
     /// Case-folds the characters in the given string as a [`Writeable`],
@@ -182,6 +189,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::Turkish,
             MappingKind::Fold,
+            TailCasing::default(),
         )
     }
 
