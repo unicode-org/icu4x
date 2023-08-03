@@ -24,9 +24,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
 
     let data = &resource
         .main
-        .0
-        .get(&langid)
-        .expect("CLDR file contains the expected language")
+        .value
         .list_patterns;
 
     let (wide, short, narrow) = if M::KEY == AndListV1Marker::KEY {

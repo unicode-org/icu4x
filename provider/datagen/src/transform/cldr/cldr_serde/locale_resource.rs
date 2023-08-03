@@ -26,12 +26,13 @@ use serde::Deserialize;
 ///
 /// This deserializer is generic over `T`, which is the type of the resource-specific fields,
 /// and will in effect "strip" the top two layers from the JSON when parsing.
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct LocaleResource<T> {
     pub main: SingleLocaleMap<T>,
 }
 
 /// A map containing a single locale key and value.
+#[derive(Debug)]
 pub struct SingleLocaleMap<T> {
     pub locale: LanguageIdentifier,
     pub value: T,
