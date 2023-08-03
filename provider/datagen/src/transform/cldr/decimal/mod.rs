@@ -57,7 +57,7 @@ impl crate::DatagenProvider {
         &self,
         langid: &LanguageIdentifier,
     ) -> Result<Vec<TinyAsciiStr<8>>, DataError> {
-        let resource: &cldr_serde::LocaleResource<cldr_serde::numbers::LangNumbers> = self
+        let resource: &cldr_serde::numbers::Resource = self
             .source
             .cldr()?
             .numbers()

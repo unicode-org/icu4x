@@ -17,7 +17,7 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvi
         self.check_req::<ShortCompactDecimalFormatDataV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
-        let resource: &cldr_serde::LocaleResource<cldr_serde::numbers::LangNumbers> = self
+        let resource: &cldr_serde::numbers::Resource = self
             .source
             .cldr()?
             .numbers()
@@ -66,7 +66,7 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvid
         self.check_req::<LongCompactDecimalFormatDataV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
-        let resource: &cldr_serde::LocaleResource<cldr_serde::numbers::LangNumbers> = self
+        let resource: &cldr_serde::numbers::Resource = self
             .source
             .cldr()?
             .numbers()

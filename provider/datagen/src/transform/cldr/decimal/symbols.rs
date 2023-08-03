@@ -16,7 +16,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
         self.check_req::<DecimalSymbolsV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
-        let resource: &cldr_serde::LocaleResource<cldr_serde::numbers::LangNumbers> = self
+        let resource: &cldr_serde::numbers::Resource = self
             .source
             .cldr()?
             .numbers()

@@ -25,4 +25,4 @@ pub mod plurals;
 pub mod time_zones;
 pub mod week_data;
 
-pub use locale_resource::LocaleResource;
+use locale_resource::LocaleResource;

@@ -161,3 +161,5 @@ pub struct Numbers {
 pub struct LangNumbers {
     pub numbers: Numbers,
 }
+
+pub type Resource = super::LocaleResource<LangNumbers>;
