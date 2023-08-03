@@ -30,7 +30,7 @@ pub struct DeserializingBufferProvider<'a, P: ?Sized>(&'a P);
 pub trait AsDeserializingBufferProvider {
     /// Wrap this [`BufferProvider`] in a [`DeserializingBufferProvider`].
     ///
-    /// This requires requires enabling the deserialization Cargo feature
+    /// This requires enabling the deserialization Cargo feature
     /// for the expected format(s):
     ///
     /// - `deserialize_json`
@@ -45,7 +45,7 @@ where
 {
     /// Wrap this [`BufferProvider`] in a [`DeserializingBufferProvider`].
     ///
-    /// This requires requires enabling the deserialization Cargo feature
+    /// This requires enabling the deserialization Cargo feature
     /// for the expected format(s):
     ///
     /// - `deserialize_json`
@@ -104,7 +104,7 @@ impl DataPayload<BufferMarker> {
     /// Deserialize a [`DataPayload`]`<`[`BufferMarker`]`>` into a [`DataPayload`] of a
     /// specific concrete type.
     ///
-    /// This requires requires enabling the deserialization Cargo feature
+    /// This requires enabling the deserialization Cargo feature
     /// for the expected format(s):
     ///
     /// - `deserialize_json`
@@ -158,7 +158,7 @@ where
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
     ///
-    /// This requires requires enabling the deserialization Cargo feature
+    /// This requires enabling the deserialization Cargo feature
     /// for the expected format(s):
     ///
     /// - `deserialize_json`
@@ -191,7 +191,7 @@ where
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
     ///
-    /// This requires requires enabling the deserialization Cargo feature
+    /// This requires enabling the deserialization Cargo feature
     /// for the expected format(s):
     ///
     /// - `deserialize_json`
