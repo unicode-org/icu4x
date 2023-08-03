@@ -9,7 +9,7 @@
 
 use std::collections::HashMap;
 
-use icu_locid::LanguageIdentifier;
+
 use serde::{
     de::{Error, IgnoredAny, Visitor},
     Deserialize,
