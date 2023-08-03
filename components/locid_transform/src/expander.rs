@@ -317,6 +317,7 @@ impl LocaleExpander {
 
         let (likely_subtags_l, likely_subtags_sr, likely_subtags_ext) =
             match (payload_l, payload_sr, payload_ext) {
+                (Ok(l), Ok(sr), Err(_)) => (l, sr, None),
                 (Ok(l), Ok(sr), Ok(ext)) => (l, sr, Some(ext)),
                 _ => {
                     let result: DataPayload<LikelySubtagsV1Marker> =
