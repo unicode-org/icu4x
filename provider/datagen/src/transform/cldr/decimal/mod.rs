@@ -57,18 +57,13 @@ impl crate::DatagenProvider {
         &self,
         langid: &LanguageIdentifier,
     ) -> Result<Vec<TinyAsciiStr<8>>, DataError> {
-        let resource: &cldr_serde::numbers::Resource = self
+        let resource: &cldr_serde::LocaleResource<cldr_serde::numbers::LangNumbers> = self
             .source
             .cldr()?
             .numbers()
             .read_and_parse(langid, "numbers.json")?;
 
-        let numbers = &resource
-            .main
-            .0
-            .get(langid)
-            .expect("CLDR file contains the expected language")
-            .numbers;
+        let numbers = &resource.main.value.numbers;
 
         Ok(numbers
             .numsys_data

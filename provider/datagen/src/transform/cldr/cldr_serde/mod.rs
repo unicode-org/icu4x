@@ -17,9 +17,12 @@ pub mod exemplar_chars;
 pub mod japanese;
 pub mod likely_subtags;
 pub mod list_patterns;
+pub mod locale_resource;
 pub mod numbering_systems;
 pub mod numbers;
 pub mod parent_locales;
 pub mod plurals;
 pub mod time_zones;
 pub mod week_data;
+
+pub use locale_resource::LocaleResource;

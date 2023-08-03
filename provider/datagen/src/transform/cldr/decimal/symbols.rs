@@ -16,18 +16,13 @@ impl DataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
         self.check_req::<DecimalSymbolsV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
-        let resource: &cldr_serde::numbers::Resource = self
+        let resource: &cldr_serde::LocaleResource<cldr_serde::numbers::LangNumbers> = self
             .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
 
-        let numbers = &resource
-            .main
-            .0
-            .get(&langid)
-            .expect("CLDR file contains the expected language")
-            .numbers;
+        let numbers = &resource.main.value.numbers;
 
         let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
             Some(v) => *v
