@@ -40,9 +40,7 @@ macro_rules! impl_data_provider {
 
                     let time_zone_names_resource = &resource
                         .main
-                        .0
-                        .get(&langid)
-                        .expect("CLDR file contains the expected language")
+                        .value
                         .dates
                         .time_zone_names;
 
