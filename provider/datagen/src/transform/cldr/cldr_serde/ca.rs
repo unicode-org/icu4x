@@ -14,69 +14,56 @@ use serde::Deserialize;
 use std::borrow::Cow;
 use std::collections::HashMap;
 
-macro_rules! symbols {
-    ($name: ident, $symbols:item) => {
-        pub mod $name {
-            use super::*;
-
-            #[derive(Debug, PartialEq, Clone, Deserialize)]
-            $symbols
-
-            symbols!();
-        }
-    };
-    () => {
-        #[derive(Debug, PartialEq, Clone, Deserialize)]
-        pub struct FormatWidths {
-            pub abbreviated: Symbols,
-            pub narrow: Symbols,
-            pub short: Option<Symbols>,
-            pub wide: Symbols,
-        }
-
-        #[derive(Debug, PartialEq, Clone, Deserialize)]
-        pub struct StandAloneWidths {
-            pub abbreviated: Option<Symbols>,
-            pub narrow: Option<Symbols>,
-            pub short: Option<Symbols>,
-            pub wide: Option<Symbols>,
-        }
-
-        #[derive(Debug, PartialEq, Clone, Deserialize)]
-        pub struct Contexts {
-            pub format: FormatWidths,
-            #[serde(rename = "stand-alone")]
-            pub stand_alone: Option<StandAloneWidths>,
-        }
-    }
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct FormatWidths<Symbols> {
+    pub abbreviated: Symbols,
+    pub narrow: Symbols,
+    pub short: Option<Symbols>,
+    pub wide: Symbols,
 }
 
-symbols!(months, pub struct Symbols(pub HashMap<String, String>););
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct StandAloneWidths<Symbols> {
+    pub abbreviated: Option<Symbols>,
+    pub narrow: Option<Symbols>,
+    pub short: Option<Symbols>,
+    pub wide: Option<Symbols>,
+}
 
-symbols!(
-    days,
-    pub struct Symbols {
-        pub sun: String,
-        pub mon: String,
-        pub tue: String,
-        pub wed: String,
-        pub thu: String,
-        pub fri: String,
-        pub sat: String,
-    }
-);
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct Contexts<Symbols> {
+    pub format: FormatWidths<Symbols>,
+    #[serde(rename = "stand-alone")]
+    pub stand_alone: Option<StandAloneWidths<Symbols>>,
+}
+
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct MonthSymbols(pub HashMap<String, String>);
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct MonthPatternSymbols {
+    pub leap: String,
+}
+
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct DaySymbols {
+    pub sun: String,
+    pub mon: String,
+    pub tue: String,
+    pub wed: String,
+    pub thu: String,
+    pub fri: String,
+    pub sat: String,
+}
 
 // The day period symbols are Cow<'static, str> instead of String because the Option
 // needs to be retained when converting them into Cow for the data provider.
-symbols!(
-    day_periods,
-    pub struct Symbols {
-        pub am: Cow<'static, str>,
-        pub pm: Cow<'static, str>,
-        pub noon: Option<Cow<'static, str>>,
-        pub midnight: Option<Cow<'static, str>>,
-    }
-);
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct DayPeriodSymbols {
+    pub am: Cow<'static, str>,
+    pub pm: Cow<'static, str>,
+    pub noon: Option<Cow<'static, str>>,
+    pub midnight: Option<Cow<'static, str>>,
+}
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 #[serde(untagged)]
@@ -138,11 +125,14 @@ pub struct AvailableFormats(pub HashMap<String, String>);
 /// https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Dates {
-    pub months: months::Contexts,
-    pub days: days::Contexts,
+    pub months: Contexts<MonthSymbols>,
+    #[serde(rename = "monthPatterns")]
+    // Not used yet, will be in the future
+    pub month_patterns: Option<Contexts<MonthPatternSymbols>>,
+    pub days: Contexts<DaySymbols>,
     pub eras: Eras,
     #[serde(rename = "dayPeriods")]
-    pub day_periods: day_periods::Contexts,
+    pub day_periods: Contexts<DayPeriodSymbols>,
     #[serde(rename = "dateFormats")]
     pub date_formats: LengthPatterns,
     #[serde(rename = "timeFormats")]
