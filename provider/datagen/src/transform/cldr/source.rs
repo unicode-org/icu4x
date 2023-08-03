@@ -11,6 +11,7 @@ use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker;
 use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
 use icu_locid_transform::LocaleExpander;
+use icu_provider::prelude::*;
 use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::ForkByKeyProvider;
@@ -190,28 +191,27 @@ impl<'a> CldrDirLang<'a> {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         let dir_suffix = self.0.dir_suffix()?;
-        let result = self
-            .0
-            .serde_cache
-            .read_and_parse_json(&format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1));
-        if result.is_err() {
+        let path = format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1);
+        if self.0.serde_cache.file_exists(&path)? {
+            self.0.serde_cache.read_and_parse_json(&path)
+        } else {
             if let Some(new_langid) = self.0.add_script(lang) {
-                return self.read_and_parse(&new_langid, file_name);
+                self.read_and_parse(&new_langid, file_name)
+            } else {
+                Err(DataErrorKind::Io(std::io::ErrorKind::NotFound)
+                    .into_error()
+                    .with_display_context(&path))
             }
         }
-        result
     }
 
     pub fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier> + '_, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
-        Ok(self
-            .0
-            .serde_cache
-            .list(&format!("{}-{dir_suffix}/main", self.1))?
-            .map(|path| {
-                let langid = LanguageIdentifier::from_str(&path).unwrap();
-                self.0.remove_script(&langid).unwrap_or(langid)
-            }))
+        let path = format!("{}-{dir_suffix}/main", self.1);
+        Ok(self.0.serde_cache.list(&path)?.map(|path| {
+            let langid = LanguageIdentifier::from_str(&path).unwrap();
+            self.0.remove_script(&langid).unwrap_or(langid)
+        }))
     }
 
     pub fn file_exists(
@@ -220,15 +220,15 @@ impl<'a> CldrDirLang<'a> {
         file_name: &str,
     ) -> Result<bool, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
-        let exists = self
-            .0
-            .serde_cache
-            .file_exists(&format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1))?;
-        if !exists {
+        let path = format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1);
+        if self.0.serde_cache.file_exists(&path)? {
+            Ok(true)
+        } else {
             if let Some(new_langid) = self.0.add_script(lang) {
-                return self.file_exists(&new_langid, file_name);
+                self.file_exists(&new_langid, file_name)
+            } else {
+                Ok(false)
             }
         }
-        Ok(exists)
     }
 }
