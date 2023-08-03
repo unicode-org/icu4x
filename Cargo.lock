@@ -1482,6 +1482,7 @@ dependencies = [
  "log",
  "memchr",
  "ndarray",
+ "once_cell",
  "postcard",
  "rayon",
  "serde",

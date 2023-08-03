@@ -75,6 +75,7 @@ itertools = "0.10"
 lazy_static = "1"
 log = "0.4"
 memchr = "2.5.0"
+once_cell = "1"
 ndarray = { version = "0.15.5", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
