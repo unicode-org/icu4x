@@ -50,6 +50,7 @@ mod casemapper;
 mod closer;
 pub mod provider;
 mod set;
+pub mod titlecase;
 
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
