@@ -1678,7 +1678,6 @@ mod tests {
             source.escape_debug()
         );
         let mut expected_size = cpinvlistandstrlist.code_points().size();
-        eprintln!("{:?}", cpinvlistandstrlist.strings());
         for s in strings {
             expected_size += 1;
             assert!(
