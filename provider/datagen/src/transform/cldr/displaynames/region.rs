@@ -68,13 +68,11 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
     fn try_from(other: &cldr_serde::displaynames::region::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
-        for (_, lang_display_names) in other.main.0.iter() {
-            for (region, value) in lang_display_names.localedisplaynames.regions.iter() {
-                if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
-                    short_names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
-                } else if !region.contains(ALT_SUBSTRING) {
-                    names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
-                }
+        for (region, value) in other.main.value.localedisplaynames.regions.iter() {
+            if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
+                short_names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
+            } else if !region.contains(ALT_SUBSTRING) {
+                names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
             }
         }
         Ok(Self {

@@ -66,12 +66,10 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
 
     fn try_from(other: &cldr_serde::displaynames::variant::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
-        for lang_data_entry in other.main.0.iter() {
-            for entry in lang_data_entry.1.localedisplaynames.variants.iter() {
-                // TODO: Support alt variants for variant display names.
-                if !entry.0.contains(ALT_SUBSTRING) {
-                    names.insert(Variant::from_str(entry.0)?.into_tinystr(), entry.1.as_str());
-                }
+        for entry in other.main.value.localedisplaynames.variants.iter() {
+            // TODO: Support alt variants for variant display names.
+            if !entry.0.contains(ALT_SUBSTRING) {
+                names.insert(Variant::from_str(entry.0)?.into_tinystr(), entry.1.as_str());
             }
         }
         Ok(Self {
