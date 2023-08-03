@@ -212,15 +212,7 @@ impl CaseMapper {
     /// assert_eq!(cm.lowercase_to_string("CONSTANTINOPLE", &langid!("tr")), "constantınople");
     /// ```
     pub fn lowercase_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
-        self.data
-            .get()
-            .full_helper_writeable::<false>(
-                src,
-                CaseMapLocale::from_langid(langid),
-                MappingKind::Lower,
-            )
-            .write_to_string()
-            .into_owned()
+        self.lowercase(src, langid).write_to_string().into_owned()
     }
 
     /// Returns the full uppercase mapping of the given string as a String.
@@ -253,15 +245,7 @@ impl CaseMapper {
     /// assert_eq!(cm.uppercase_to_string("և Երևանի", &langid!("hy")), "ԵՎ ԵՐԵՎԱՆԻ"); // Eastern Armenian ech-yiwn ligature
     /// ```
     pub fn uppercase_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
-        self.data
-            .get()
-            .full_helper_writeable::<false>(
-                src,
-                CaseMapLocale::from_langid(langid),
-                MappingKind::Upper,
-            )
-            .write_to_string()
-            .into_owned()
+        self.uppercase(src, langid).write_to_string().into_owned()
     }
 
     /// Returns the full titlecase mapping of the given string as a String, treating
@@ -304,13 +288,7 @@ impl CaseMapper {
     /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &langid!("nl")), "IJkdijk"); // Dutch IJ digraph
     /// ```
     pub fn titlecase_segment_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
-        self.data
-            .get()
-            .full_helper_writeable::<true>(
-                src,
-                CaseMapLocale::from_langid(langid),
-                MappingKind::Title,
-            )
+        self.titlecase_segment(src, langid)
             .write_to_string()
             .into_owned()
     }
@@ -338,11 +316,7 @@ impl CaseMapper {
     /// assert_eq!(cm.fold_string("Привет мир"), "привет мир");
     /// ```
     pub fn fold_string(&self, src: &str) -> String {
-        self.data
-            .get()
-            .full_helper_writeable::<false>(src, CaseMapLocale::Root, MappingKind::Fold)
-            .write_to_string()
-            .into_owned()
+        self.fold(src).write_to_string().into_owned()
     }
 
     /// Case-folds the characters in the given string as a String,
@@ -372,11 +346,7 @@ impl CaseMapper {
     /// assert_eq!(cm.fold_turkic_string("Привет мир"), "привет мир");
     /// ```
     pub fn fold_turkic_string(&self, src: &str) -> String {
-        self.data
-            .get()
-            .full_helper_writeable::<false>(src, CaseMapLocale::Turkish, MappingKind::Fold)
-            .write_to_string()
-            .into_owned()
+        self.fold_turkic(src).write_to_string().into_owned()
     }
 
     /// Adds all simple case mappings and the full case folding for `c` to `set`.
