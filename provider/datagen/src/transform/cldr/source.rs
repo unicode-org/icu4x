@@ -219,15 +219,15 @@ impl<'a> CldrDirLang<'a> {
         file_name: &str,
     ) -> Result<bool, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
-        let result = self
+        let exists = self
             .0
             .serde_cache
-            .file_exists(&format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1));
-        if result.is_err() {
+            .file_exists(&format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1))?;
+        if !exists {
             if let Some(new_langid) = self.0.add_script(lang) {
                 return self.file_exists(&new_langid, file_name);
             }
         }
-        result
+        Ok(exists)
     }
 }
