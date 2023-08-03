@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::internals::{CaseMapLocale, FoldOptions, StringAndWriteable};
+use crate::internals::{CaseMapLocale, FoldOptions, FullCaseWriteable, StringAndWriteable};
 use crate::provider::data::MappingKind;
+use crate::provider::CaseMapV1;
 use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSink;
 use crate::titlecase::{HeadAdjustment, TailCasing, TitlecaseOptions};
@@ -153,12 +154,31 @@ impl CaseMapper {
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
     ) -> impl Writeable + 'a {
+        self.titlecase_segment_with_adjustment(src, langid, options, |data, ch| data.is_cased(ch))
+    }
+
+    /// Helper to support different head adjustment behaviors,
+    /// `char_is_head` is a function that returns true for a character that is allowed to be the
+    /// titlecase head, when `head_adjustment = Adjust`
+    ///
+    /// We return a concrete type instead of `impl Trait` so the return value can be mixed with that of other calls
+    /// to this function with different closures
+    pub(crate) fn titlecase_segment_with_adjustment<'a>(
+        &'a self,
+        src: &'a str,
+        langid: &LanguageIdentifier,
+        options: TitlecaseOptions,
+        char_is_head: impl Fn(&CaseMapV1, char) -> bool,
+    ) -> StringAndWriteable<FullCaseWriteable<'a, true>> {
         let data = self.data.get();
         let (head, rest) = match options.head_adjustment {
             HeadAdjustment::Adjust => {
-                let first_cased = src.char_indices().find(|(_i, ch)| data.is_cased(*ch));
+                let first_cased = src.char_indices().find(|(_i, ch)| char_is_head(data, *ch));
                 if let Some((first_cased, _ch)) = first_cased {
-                    (&src[..first_cased], &src[first_cased..])
+                    (
+                        src.get(..first_cased).unwrap_or(""),
+                        src.get(first_cased..).unwrap_or(""),
+                    )
                 } else {
                     (src, "")
                 }
@@ -176,7 +196,6 @@ impl CaseMapper {
             writeable,
         }
     }
-
     /// Case-folds the characters in the given string as a [`Writeable`].
     /// This function is locale-independent and context-insensitive.
     ///

@@ -44,6 +44,46 @@ impl<'a, Wr: Writeable> Writeable for StringAndWriteable<'a, Wr> {
         sink.write_str(self.string)?;
         self.writeable.write_to(sink)
     }
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(self.string.len()) + self.writeable.writeable_length_hint()
+    }
+}
+
+pub(crate) struct FullCaseWriteable<'a, const IS_TITLE_CONTEXT: bool> {
+    data: &'a CaseMapV1<'a>,
+    src: &'a str,
+    locale: CaseMapLocale,
+    mapping: MappingKind,
+    titlecase_tail_casing: TailCasing,
+}
+
+impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
+    #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        let src = self.src;
+        let mut mapping = self.mapping;
+        let mut iter = src.char_indices();
+        for (i, c) in &mut iter {
+            let context = ContextIterator::new(&src[..i], &src[i..]);
+            self.data
+                .full_helper::<IS_TITLE_CONTEXT, W>(c, context, self.locale, mapping, sink)?;
+            if IS_TITLE_CONTEXT {
+                if self.titlecase_tail_casing == TailCasing::Lowercase {
+                    mapping = MappingKind::Lower;
+                } else {
+                    break;
+                }
+            }
+        }
+        // Write the rest of the string
+        if IS_TITLE_CONTEXT && self.titlecase_tail_casing == TailCasing::PreserveCase {
+            sink.write_str(iter.as_str())?;
+        }
+        Ok(())
+    }
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::at_least(self.src.len())
+    }
 }
 
 impl<'data> CaseMapV1<'data> {
@@ -477,51 +517,9 @@ impl<'data> CaseMapV1<'data> {
         locale: CaseMapLocale,
         mapping: MappingKind,
         titlecase_tail_casing: TailCasing,
-    ) -> impl Writeable + 'a {
+    ) -> FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
         // Ensure that they are either both true or both false, i.e. an XNOR operation
         debug_assert!(!(IS_TITLE_CONTEXT ^ (mapping == MappingKind::Title)));
-
-        struct FullCaseWriteable<'a, const IS_TITLE_CONTEXT: bool> {
-            data: &'a CaseMapV1<'a>,
-            src: &'a str,
-            locale: CaseMapLocale,
-            mapping: MappingKind,
-            titlecase_tail_casing: TailCasing,
-        }
-
-        impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
-            #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
-            fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-                let src = self.src;
-                let mut mapping = self.mapping;
-                let mut iter = src.char_indices();
-                for (i, c) in &mut iter {
-                    let context = ContextIterator::new(&src[..i], &src[i..]);
-                    self.data.full_helper::<IS_TITLE_CONTEXT, W>(
-                        c,
-                        context,
-                        self.locale,
-                        mapping,
-                        sink,
-                    )?;
-                    if IS_TITLE_CONTEXT {
-                        if self.titlecase_tail_casing == TailCasing::Lowercase {
-                            mapping = MappingKind::Lower;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                // Write the rest of the string
-                if IS_TITLE_CONTEXT && self.titlecase_tail_casing == TailCasing::PreserveCase {
-                    sink.write_str(iter.as_str())?;
-                }
-                Ok(())
-            }
-            fn writeable_length_hint(&self) -> writeable::LengthHint {
-                writeable::LengthHint::at_least(self.src.len())
-            }
-        }
 
         FullCaseWriteable::<IS_TITLE_CONTEXT> {
             data: self,
