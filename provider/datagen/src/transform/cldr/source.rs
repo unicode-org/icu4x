@@ -120,6 +120,14 @@ impl CldrCache {
             Ok("modern")
         }
     }
+
+    fn add_script(&self, langid: &LanguageIdentifier) -> Option<LanguageIdentifier> {
+        if langid.script.is_some() {
+            // Nothing to do
+            return None;
+        }
+        // TODO
+    }
 }
 
 pub(crate) struct CldrDirNoLang<'a>(&'a CldrCache, String);
