@@ -92,7 +92,9 @@ impl SourceData {
     ) -> Result<Self, DataError> {
         let root = AbstractFs::new(root)?;
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(root)))),
+            cldr_paths: Some(Arc::new(CldrCache::try_from_serde_cache(SerdeCache::new(
+                root,
+            ))?)),
             ..self
         })
     }
@@ -130,9 +132,9 @@ impl SourceData {
         _use_default_here: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::new_from_url(format!(
+            cldr_paths: Some(Arc::new(CldrCache::try_from_serde_cache(SerdeCache::new(AbstractFs::new_from_url(format!(
                     "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
-                ))))
+                ))))?
             )),
             ..self
         })

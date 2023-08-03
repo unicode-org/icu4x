@@ -101,7 +101,7 @@ impl IterableDataProvider<CollationFallbackSupplementV1Marker> for crate::Datage
     }
 }
 
-fn transform<'x>(
+pub(crate) fn transform<'x>(
     it: impl Iterator<Item = (&'x LanguageIdentifier, &'x LanguageIdentifier)> + 'x,
 ) -> LocaleFallbackLikelySubtagsV1<'static> {
     let mut l2s = BTreeMap::new();

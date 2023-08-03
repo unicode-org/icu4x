@@ -109,11 +109,18 @@ impl<'a> LikelySubtagsResources<'a> {
             .cldr()?
             .core()
             .read_and_parse("coverageLevels.json")?;
+        Ok(Self::from_resources(likely_subtags, coverage_levels))
+    }
+
+    pub fn from_resources(
+        likely_subtags: &'a cldr_serde::likely_subtags::Resource,
+        coverage_levels: &'a cldr_serde::coverage_levels::Resource,
+    ) -> Self {
         let basic_plus_languages = Self::get_basic_plus_languages(coverage_levels);
-        Ok(LikelySubtagsResources {
+        Self {
             likely_subtags,
             basic_plus_languages,
-        })
+        }
     }
 
     fn get_basic_plus_languages(

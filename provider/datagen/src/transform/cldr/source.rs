@@ -4,8 +4,11 @@
 
 #![allow(dead_code)] // features
 
+use super::cldr_serde;
+use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use crate::source::SerdeCache;
 use icu_locid::LanguageIdentifier;
+use icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1;
 use icu_provider::DataError;
 use std::fmt::Debug;
 use std::str::FromStr;
@@ -36,14 +39,22 @@ pub enum CoverageLevel {
 pub(crate) struct CldrCache {
     serde_cache: SerdeCache,
     is_full: RwLock<Option<bool>>,
+    fallback_data: LocaleFallbackLikelySubtagsV1<'static>,
 }
 
 impl CldrCache {
-    pub fn from_serde_cache(serde_cache: SerdeCache) -> Self {
-        CldrCache {
+    pub fn try_from_serde_cache(serde_cache: SerdeCache) -> Result<Self, DataError> {
+        let likely_subtags: &cldr_serde::likely_subtags::Resource =
+            serde_cache.read_and_parse_json("cldr-core/supplemental/likelySubtags.json")?;
+        let coverage_levels: &cldr_serde::coverage_levels::Resource =
+            serde_cache.read_and_parse_json("cldr-core/coverageLevels.json")?;
+        let resources = LikelySubtagsResources::from_resources(likely_subtags, coverage_levels);
+        let fallback_data = super::fallback::transform(resources.get_common());
+        Ok(CldrCache {
             serde_cache,
             is_full: Default::default(),
-        }
+            fallback_data,
+        })
     }
 
     pub fn core(&self) -> CldrDirNoLang<'_> {
