@@ -26,5 +26,9 @@ all-features = true
 
 [dependencies]
 icu_provider = { path = "../../provider/core" }
+icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde"] }
 
-zerovec = { version = "0.9.4", path = "../../utils/zerovec",  features = ["derive", "yoke"] }
+serde = { version = "1.0", features = ["derive"] }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive"] }
+
+# TODO: Add serde, datagen, compiled_data features

@@ -1931,6 +1931,16 @@ name = "icu_timezone_data"
 version = "1.3.0"
 
 [[package]]
+name = "icu_transliteration"
+version = "0.0.0"
+dependencies = [
+ "icu_collections",
+ "icu_provider",
+ "serde",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_unicodeset_parser"
 version = "0.0.0"
 dependencies = [
