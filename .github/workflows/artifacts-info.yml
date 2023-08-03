@@ -24,23 +24,28 @@ jobs:
       run: |
         echo "🔒 Credentials Info"
         echo "The following artifacts are built and uploaded in forks containing the ICU4X service account key. If you are a frequent contributor, see 'artifacts-build.yml' for instructions on setting up the key."
-        echo "\n"
+        echo
+        echo
 
         echo "📖 Docs Preview"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/docs/icu/index.html"
-        echo "\n"
+        echo
+        echo
         
         echo "📖 CPP Docs Preview"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/cpp/index.html"
-        echo "\n"
+        echo
+        echo
 
         echo "📖 JS Docs Preview"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/js/index.html"
-        echo "\n"
+        echo
+        echo
 
         echo "🌐 Wasm Demo Preview"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/wasm-demo/index.html"
-        echo "\n"
+        echo
+        echo
         
         echo "The links will be available after the following job completes:"
         echo "${{ github.event.pull_request.head.repo.html_url }}/actions/workflows/artifacts-build.yml"
