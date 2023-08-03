@@ -4,16 +4,16 @@
 
 #![allow(dead_code)] // features
 
-use icu_provider_adapters::fork::ForkByKeyProvider;
-use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
 use super::cldr_serde;
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use crate::source::SerdeCache;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker;
+use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
 use icu_locid_transform::LocaleExpander;
 use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
+use icu_provider_adapters::fork::ForkByKeyProvider;
 use std::fmt::Debug;
 use std::str::FromStr;
 use std::sync::RwLock;
@@ -58,9 +58,10 @@ impl CldrCache {
             AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(data.clone().into()),
             AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(data.into()),
         );
-        let locale_expander = LocaleExpander::try_new_with_any_provider(&provider).map_err(|e| {
-            DataError::custom("creating LocaleExpander in CldrCache").with_display_context(&e)
-        })?;
+        let locale_expander =
+            LocaleExpander::try_new_with_any_provider(&provider).map_err(|e| {
+                DataError::custom("creating LocaleExpander in CldrCache").with_display_context(&e)
+            })?;
         Ok(CldrCache {
             serde_cache,
             is_full: Default::default(),
