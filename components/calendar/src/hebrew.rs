@@ -171,7 +171,40 @@ impl Calendar for Hebrew {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.month()
+        let mut ordinal = date.0.month;
+        let is_leap_year = Self::is_leap_year(date.0.year);
+
+        if is_leap_year && ordinal == 6 {
+            return types::FormattableMonth {
+                ordinal: ordinal as u32,
+                code: types::MonthCode(tinystr!(4, "M05L")),
+            };
+        }
+
+        if is_leap_year && ordinal > 6 {
+            ordinal -= 1;
+        }
+
+        let code = match ordinal {
+            1 => tinystr!(4, "M01"),
+            2 => tinystr!(4, "M02"),
+            3 => tinystr!(4, "M03"),
+            4 => tinystr!(4, "M04"),
+            5 => tinystr!(4, "M05"),
+            6 => tinystr!(4, "M06"),
+            7 => tinystr!(4, "M07"),
+            8 => tinystr!(4, "M08"),
+            9 => tinystr!(4, "M09"),
+            10 => tinystr!(4, "M10"),
+            11 => tinystr!(4, "M11"),
+            12 => tinystr!(4, "M12"),
+            _ => tinystr!(4, "und"),
+        };
+
+        types::FormattableMonth {
+            ordinal: ordinal as u32,
+            code: types::MonthCode(code),
+        }
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
