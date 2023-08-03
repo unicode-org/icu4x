@@ -33,6 +33,19 @@ impl FoldOptions {
     }
 }
 
+/// Helper type that wraps a writeable in a prefix string
+pub(crate) struct StringAndWriteable<'a, W> {
+    pub string: &'a str,
+    pub writeable: W,
+}
+
+impl<'a, Wr: Writeable> Writeable for StringAndWriteable<'a, Wr> {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        sink.write_str(self.string)?;
+        self.writeable.write_to(sink)
+    }
+}
+
 impl<'data> CaseMapV1<'data> {
     fn simple_helper(&self, c: char, kind: MappingKind) -> char {
         let data = self.lookup_data(c);
@@ -127,6 +140,11 @@ impl<'data> CaseMapV1<'data> {
             let idx = data.exception_index();
             self.exceptions.get(idx).bits.is_sensitive()
         }
+    }
+
+    /// Returns whether the character is cased
+    pub(crate) fn is_cased(&self, c: char) -> bool {
+        self.lookup_data(c).case_type().is_some()
     }
 
     #[inline(always)]
