@@ -287,7 +287,7 @@ where
 
                 let symbols = date_symbols
                     .ok_or(Error::MissingDateSymbols)?
-                    .get_symbols_for_month(month, length, code)?;
+                    .get_symbols_for_month(month, length)?;
 
                 let symbol_option = symbols.get(code); //.ok_or(Error::MissingMonthSymbol(code))?;
                 let symbol = if symbol_option.is_none() {
@@ -296,7 +296,7 @@ where
                         .ok_or(Error::MissingMonthSymbol(code))?;
                     let symbols = date_symbols
                         .ok_or(Error::MissingDateSymbols)?
-                        .get_symbols_for_month(month, length, code)?;
+                        .get_symbols_for_month(month, length)?;
                     let symbol = symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?;
                     w.write_str("(leap)")?;
                     symbol

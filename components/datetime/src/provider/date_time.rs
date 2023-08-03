@@ -18,7 +18,7 @@ use crate::provider::calendar::{
 };
 #[cfg(feature = "experimental")]
 use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
-use icu_calendar::types::{Era, MonthCode};
+use icu_calendar::types::Era;
 use icu_locid::extensions::unicode::Value;
 use icu_provider::prelude::*;
 
@@ -305,7 +305,6 @@ pub trait DateSymbols<'data> {
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        code: MonthCode,
     ) -> Result<&months::SymbolsV1<'data>>;
     fn get_symbol_for_weekday(
         &self,
@@ -369,7 +368,6 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        code: MonthCode,
     ) -> Result<&months::SymbolsV1<'data>> {
         let widths = match month {
             fields::Month::Format => &self.months.format,
@@ -383,10 +381,10 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
                     if let Some(symbols) = symbols {
                         return Ok(symbols);
                     } else {
-                        return self.get_symbols_for_month(fields::Month::Format, length, code);
+                        return self.get_symbols_for_month(fields::Month::Format, length);
                     }
                 } else {
-                    return self.get_symbols_for_month(fields::Month::Format, length, code);
+                    return self.get_symbols_for_month(fields::Month::Format, length);
                 }
             }
         };
