@@ -70,10 +70,6 @@ pub struct SimpleID<'a> {
 #[zerovec::derive(Serialize, Deserialize)]
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Rule<'a> {
-    /// If this is true, the rule only matches directly after the start of the input.
-    pub anchored_to_start: bool,
-    /// If this is true, the rule only matches if the end of the input follows immediately.
-    pub anchored_to_end: bool,
     /// The pattern for the ante context. This is not replaced.
     #[serde(borrow)]
     pub ante: Cow<'a, str>,
