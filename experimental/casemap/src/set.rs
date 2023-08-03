@@ -4,18 +4,22 @@
 
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 
-/// A setlike object that can hold characters and/or strings
-/// to be used with [`CaseMapper::add_string_case_closure()`]
+/// An object that accepts characters and/or strings
+/// to be used with [`CaseMapCloser::add_string_case_closure_to()`]
+/// and [`CaseMapCloser::add_case_closure_to()`]. Usually this object
+/// will be some kind of set over codepoints and strings, or something that
+/// can be built into one.
 ///
-/// [`CaseMapper::add_string_case_closure()`]: crate::CaseMapper::add_string_case_closure
-pub trait ClosureSet {
+/// [`CaseMapCloser::add_string_case_closure_to()`]: crate::CaseMapCloser::add_string_case_closure_to
+/// [`CaseMapCloser::add_case_closure_to()`]: crate::CaseMapCloser::add_case_closure_to
+pub trait ClosureSink {
     /// Add a character to the set
     fn add_char(&mut self, c: char);
     /// Add a string to the set
     fn add_string(&mut self, string: &str);
 }
 
-impl ClosureSet for CodePointInversionListBuilder {
+impl ClosureSink for CodePointInversionListBuilder {
     fn add_char(&mut self, c: char) {
         self.add_char(c)
     }

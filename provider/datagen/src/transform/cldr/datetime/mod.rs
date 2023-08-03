@@ -71,9 +71,7 @@ macro_rules! impl_data_provider {
 
                 let mut data = resource
                     .main
-                    .0
-                    .get(&langid)
-                    .expect("CLDR file contains the expected language")
+                    .value
                     .dates
                     .calendars
                     .get(*cldr_cal)
@@ -92,9 +90,7 @@ macro_rules! impl_data_provider {
 
                     let ethioaa_data = ethioaa
                         .main
-                        .0
-                        .get(&langid)
-                        .expect("CLDR ca-ethiopic-amete-alem.json contains the expected language")
+                        .value
                         .dates
                         .calendars
                         .get("ethiopic-amete-alem")
@@ -164,9 +160,7 @@ macro_rules! impl_data_provider {
 
                     let greg = greg_resource
                         .main
-                        .0
-                        .get(&langid)
-                        .expect("CLDR file contains the expected language")
+                        .value
                         .dates
                         .calendars
                         .get("gregorian")

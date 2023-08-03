@@ -10,6 +10,7 @@ export { ICU4XCalendar } from './ICU4XCalendar.js';
 export { ICU4XCanonicalCombiningClassMap } from './ICU4XCanonicalCombiningClassMap.js';
 export { ICU4XCanonicalComposition } from './ICU4XCanonicalComposition.js';
 export { ICU4XCanonicalDecomposition } from './ICU4XCanonicalDecomposition.js';
+export { ICU4XCaseMapCloser } from './ICU4XCaseMapCloser.js';
 export { ICU4XCaseMapper } from './ICU4XCaseMapper.js';
 export { ICU4XCodePointMapData16 } from './ICU4XCodePointMapData16.js';
 export { ICU4XCodePointMapData8 } from './ICU4XCodePointMapData8.js';

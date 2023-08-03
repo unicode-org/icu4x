@@ -293,8 +293,12 @@ where
                 if symbol_option.is_some() {
                     w.write_str(symbol_option.ok_or(Error::MissingMonthSymbol(code))?)?;
                 } else {
-                    let code = code.get_normal_if_leap().ok_or(Error::MissingMonthSymbol(code))?;
-                    let symbols = date_symbols.ok_or(Error::MissingDateSymbols)?.get_symbols_for_month(month, length)?;
+                    let code = code
+                        .get_normal_if_leap()
+                        .ok_or(Error::MissingMonthSymbol(code))?;
+                    let symbols = date_symbols
+                        .ok_or(Error::MissingDateSymbols)?
+                        .get_symbols_for_month(month, length)?;
                     w.write_str(symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?)?;
                     w.write_str("(leap)")?;
                 }

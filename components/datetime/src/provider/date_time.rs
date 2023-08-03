@@ -406,6 +406,9 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
             fields::FieldLength::Narrow => &self.eras.narrow,
             _ => &self.eras.abbr,
         };
+        if symbols.is_empty() {
+            return ""; // If symbols is empty, this calendar doesn't use eras (ex. Chinese)
+        }
         symbols
             .get(era_code.0.as_str().into())
             .unwrap_or(&era_code.0)
