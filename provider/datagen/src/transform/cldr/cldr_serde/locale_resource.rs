@@ -59,7 +59,7 @@ where
             return Err(M::Error::missing_field("<LOCALE>"));
         };
         let value = access.next_value::<T>()?;
-        if let Some(_) = access.next_key::<LanguageIdentifier>()? {
+        if access.next_key::<LanguageIdentifier>()?.is_some() {
             return Err(M::Error::duplicate_field("<LOCALE>"));
         }
         Ok(SingleLocaleMap { locale, value })
