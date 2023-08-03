@@ -289,22 +289,15 @@ where
                     .ok_or(Error::MissingDateSymbols)?
                     .get_symbols_for_month(month, length)?;
 
-                let symbol_option = symbols.get(code); //.ok_or(Error::MissingMonthSymbol(code))?;
-                let symbol = if symbol_option.is_none() {
-                    let code = code
-                        .get_normal_if_leap()
-                        .ok_or(Error::MissingMonthSymbol(code))?;
-                    let symbols = date_symbols
-                        .ok_or(Error::MissingDateSymbols)?
-                        .get_symbols_for_month(month, length)?;
-                    let symbol = symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?;
-                    w.write_str("(leap)")?;
-                    symbol
+                let symbol_option = symbols.get(code);
+                if symbol_option.is_some() {
+                    w.write_str(symbol_option.ok_or(Error::MissingMonthSymbol(code))?)?;
                 } else {
-                    symbol_option.ok_or(Error::MissingMonthSymbol(code))?
-                };
-
-                w.write_str(symbol)?
+                    let code = code.get_normal_if_leap().ok_or(Error::MissingMonthSymbol(code))?;
+                    let symbols = date_symbols.ok_or(Error::MissingDateSymbols)?.get_symbols_for_month(month, length)?;
+                    w.write_str(symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?)?;
+                    w.write_str("(leap)")?;
+                }
             }
         },
         FieldSymbol::Week(week) => match week {

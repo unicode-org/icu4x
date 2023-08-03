@@ -55,8 +55,8 @@
         },
         "output": {
             "values": {
-                "en-u-ca-chinese": "Thursday, (leap)Second Month 02, 2023((cyclic year: 40)), 14:15:07",
-                "zh-u-ca-chinese": "2023(cyclic year: 40)年(leap)二月02星期四 14:15:07"
+                "en-u-ca-chinese": "Thursday, Second Month(leap) 02, 2023((cyclic year: 40)), 14:15:07",
+                "zh-u-ca-chinese": "2023(cyclic year: 40)年二月(leap)02星期四 14:15:07"
             }
         }
     },

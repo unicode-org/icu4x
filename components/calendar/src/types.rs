@@ -97,7 +97,7 @@ impl MonthCode {
     /// Returns an option which is Some containing the non-month version of a leap month
     /// if the MonthCode this method is called upon is a leap month, and None otherwise.
     /// This method assumes the MonthCode is valid.
-    pub fn get_normal_if_leap(&self) -> Option<MonthCode> {
+    pub fn get_normal_if_leap(self) -> Option<MonthCode> {
         let bytes = self.0.all_bytes();
         if bytes[3] == b'L' {
             Some(MonthCode(TinyAsciiStr::from_bytes(&bytes[0..3]).ok()?))
