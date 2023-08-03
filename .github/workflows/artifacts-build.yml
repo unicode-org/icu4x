@@ -35,7 +35,7 @@ permissions:
 
 env:
   GCP_PROJECT_ID: "dev-infra-273822"
-  GCP_BUCKET_ID: "icu4x-pr-artifacts"
+  GCP_BUCKET_ID: "icu4x-main"
 
 jobs:
   credentials:
@@ -222,8 +222,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -265,9 +263,7 @@ jobs:
 
     - name:  Download previous benchmark data
       run: |
-        # We're on main, so the previous run is the parent.
-        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
 
     - name: Store benchmark result & create dashboard
       uses: rhysd/github-action-benchmark@v1.15.0
@@ -343,8 +339,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -381,18 +375,8 @@ jobs:
         cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
 
     - name:  Download previous benchmark data
-      if: matrix.os != 'windows-latest'
       run: |
-        # We're on main, so the previous run is the parent.
-        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
-
-    - name:  Download previous benchmark data
-      if: matrix.os == 'windows-latest'
-      run: |
-        # We're on main, so the previous run is the parent.
-        $BASELINE = git log --pretty=format:'%H' -1 -r HEAD^
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name: Store benchmark result & create dashboard
       # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
@@ -430,8 +414,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -496,9 +478,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        # We're on main, so the previous run is the parent.
-        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize benchmarks/binsize
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/benchmarks/binsize benchmarks/binsize
 
     - name: Store benchmark result & create dashboard (wasm)
       # Use gregtatum special feature to process ndjson-formatted benchmark data
@@ -549,8 +529,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -577,9 +555,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks
-        # We're on main, so the previous run is the parent.
-        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/benchmarks/datasize benchmarks
 
     - name: Store benchmark result & create dashboard
       # Use gregtatum special feature to process ndjson-formatted benchmark data
