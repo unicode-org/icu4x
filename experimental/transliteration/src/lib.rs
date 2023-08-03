@@ -31,4 +31,4 @@
 
 extern crate alloc;
 
-mod provider;
+pub mod provider;

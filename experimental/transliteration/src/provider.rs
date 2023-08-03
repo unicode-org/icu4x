@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// Provider structs must be stable
+#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
+
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
+//!
+//! Read more about data providers: [`icu_provider`]
+
 use alloc::borrow::Cow;
 
 use icu_collections::codepointinvliststringlist::{
@@ -12,7 +25,7 @@ use zerovec::*;
 // TODO(): Improve the documentation of this datastruct.
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct RuleBasedTransliterator<'a> {
     /// Whether this transliterator is accessible directly through the constructor.
     /// Hidden transliterators are intended as dependencies for visible transliterators,
@@ -35,6 +48,7 @@ pub struct RuleBasedTransliterator<'a> {
 #[derive(Debug, Clone)]
 #[make_varule(SimpleIDULE)]
 #[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
 #[zerovec::derive(Serialize, Deserialize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct SimpleID<'a> {
@@ -51,8 +65,9 @@ pub struct SimpleID<'a> {
 /// that refer to elements of the [`VarTable`] for special matchers (variables, UnicodeSets, ...).
 #[make_varule(RuleULE)]
 #[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
 #[zerovec::derive(Serialize, Deserialize)]
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Rule<'a> {
     /// If this is true, the rule only matches directly after the start of the input.
     pub anchored_to_start: bool,
@@ -76,7 +91,7 @@ pub struct Rule<'a> {
 }
 
 /// The special matchers and replacers used by this transliterator.
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct VarTable<'a> {
     /// Variable definitions.
     #[serde(borrow)]
@@ -102,11 +117,11 @@ pub struct VarTable<'a> {
 }
 
 /// An inline recursive call to a transliterator with an arbitrary argument.
-#[derive(Debug, Clone)]
 #[make_varule(FunctionCallULE)]
 #[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
 #[zerovec::derive(Serialize, Deserialize)]
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct FunctionCall<'a> {
     /// The transliterator that will be called.
     #[zerovec::varule(SimpleIDULE)]
