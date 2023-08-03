@@ -56,12 +56,12 @@ pub(crate) trait ChineseBased: CalendarArithmetic + Sized {
     /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
     ///
     /// This function should just call try_new_C_date where C is the name of the calendar.
-    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Self>;
+    fn new_chinese_based_date(year: i32, month: u8, day: u8, new_year: RataDie) -> ChineseBasedDateInner<Self>;
 }
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct ChineseBasedDateInner<C: ChineseBased>(pub(crate) ArithmeticDate<C>);
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+pub(crate) struct ChineseBasedDateInner<C: ChineseBased>(pub(crate) ArithmeticDate<C>, pub(crate) Option<RataDie>);
 
 impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Get the current major solar term of a fixed date, output as an integer from 1..=12.
@@ -252,7 +252,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Day should be in range of u8! Value {month_i64} failed for RD {date:?}"
         );
         let day = day_i64 as u8;
-        C::new_chinese_based_date(year, month, day)
+        C::new_chinese_based_date(year, month, day, first_day_of_year)
     }
 
     /// Get a RataDie from a ChineseBasedDateInner
@@ -263,8 +263,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let year = date.0.year;
         let month = date.0.month as i64;
         let day = date.0.day as i64;
-        let mid_year = Self::fixed_mid_year_from_year(year);
-        let first_day_of_year = Self::new_year_on_or_before_fixed_date(mid_year, None).0;
+        let first_day_of_year = if let Some(new_year) = date.1 { new_year } else { Self::new_year_on_or_before_fixed_date(Self::fixed_mid_year_from_year(year), None).0 };
         let month_approx = first_day_of_year + (month - 1) * 29;
         let prior_new_moon = Self::new_moon_on_or_after(month_approx.as_moment());
         prior_new_moon + day - 1

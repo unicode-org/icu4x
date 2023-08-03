@@ -137,7 +137,7 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
 pub struct Dangi;
 
 /// The inner date type used for representing [`Date`]s of [`Dangi`]. See [`Date`] and [`Dangi`] for more detail.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub struct DangiDateInner(ChineseBasedDateInner<Dangi>);
 
 type Inner = ChineseBasedDateInner<Dangi>;
@@ -183,7 +183,7 @@ impl Calendar for Dangi {
         }
 
         Ok(ArithmeticDate::new_unchecked(year, month, day))
-            .map(ChineseBasedDateInner)
+            .map(|arithmetic| ChineseBasedDateInner(arithmetic, None))
             .map(DangiDateInner)
     }
 
@@ -337,7 +337,7 @@ impl Date<Dangi> {
     /// ```
     pub fn try_new_dangi_date(year: i32, month: u8, day: u8) -> Result<Date<Dangi>, CalendarError> {
         ArithmeticDate::new_from_lunar_ordinals(year, month, day)
-            .map(ChineseBasedDateInner)
+            .map(|arithmetic| ChineseBasedDateInner(arithmetic, None))
             .map(DangiDateInner)
             .map(|inner| Date::from_raw(inner, Dangi))
     }
@@ -395,8 +395,8 @@ impl ChineseBased for Dangi {
 
     // Unchecked can be used since this function is only ever called when generating dates from
     // a valid year, month, and day.
-    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Dangi> {
-        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day))
+    fn new_chinese_based_date(year: i32, month: u8, day: u8, new_year: RataDie) -> ChineseBasedDateInner<Dangi> {
+        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), Some(new_year))
     }
 }
 

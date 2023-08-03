@@ -110,7 +110,7 @@ const CHINESE_LOCATION_POST_1929: Location =
 pub struct Chinese;
 
 /// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub struct ChineseDateInner(ChineseBasedDateInner<Chinese>);
 
 type Inner = ChineseBasedDateInner<Chinese>;
@@ -157,7 +157,7 @@ impl Calendar for Chinese {
         }
 
         Ok(ArithmeticDate::new_unchecked(year, month, day))
-            .map(ChineseBasedDateInner)
+            .map(|arithmetic| ChineseBasedDateInner(arithmetic, None))
             .map(ChineseDateInner)
     }
 
@@ -332,7 +332,7 @@ impl Date<Chinese> {
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
         ArithmeticDate::new_from_lunar_ordinals(year, month, day)
-            .map(ChineseBasedDateInner)
+            .map(|arithmetic| ChineseBasedDateInner(arithmetic, None))
             .map(ChineseDateInner)
             .map(|inner| Date::from_raw(inner, Chinese))
     }
@@ -384,8 +384,8 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
 
-    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Chinese> {
-        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day))
+    fn new_chinese_based_date(year: i32, month: u8, day: u8, new_year: RataDie) -> ChineseBasedDateInner<Chinese> {
+        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), Some(new_year))
     }
 }
 
