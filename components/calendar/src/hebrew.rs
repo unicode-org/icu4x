@@ -91,7 +91,7 @@ impl CalendarArithmetic for Hebrew {
     }
 
     fn days_in_provided_year(civil_year: i32) -> u16 {
-        BookHebrew::days_in_hebrew_year(civil_year) // number of days don't change between BookHebrew and Civil Hebrew
+        BookHebrew::days_in_book_hebrew_year(civil_year) // number of days don't change between BookHebrew and Civil Hebrew
     }
 
     fn is_leap_year(civil_year: i32) -> bool {
@@ -251,14 +251,30 @@ impl Hebrew {
         }
     }
 
-    // Last day of month (h_month) in Hebrew year (h_year)
+    // Last day of month in Hebrew year
     fn last_day_of_hebrew_month(civil_year: i32, civil_month: u8) -> u8 {
-        let book_month = Hebrew::civil_to_biblical_date(HebrewDateInner(
-            ArithmeticDate::new_unchecked(civil_year, civil_month, 1),
-        ))
-        .month;
+        BookHebrew::last_day_of_book_hebrew_month(civil_year, civil_month)
+    }
 
-        BookHebrew::last_day_of_book_hebrew_month(civil_year, book_month)
+    #[allow(dead_code)]
+    fn hebrew_calendar_elapsed_days(civil_year: i32) -> i32 {
+        BookHebrew::book_hebrew_calendar_elapsed_days(civil_year)
+    }
+
+    #[allow(dead_code)]
+    fn hebrew_year_length_correction(civil_year: i32) -> u8 {
+        BookHebrew::book_hebrew_year_length_correction(civil_year)
+    }
+
+    #[allow(dead_code)]
+    // Fixed date of Hebrew new year
+    pub(crate) fn hebrew_new_year(civil_year: i32) -> RataDie {
+        BookHebrew::book_hebrew_new_year(civil_year)
+    }
+
+    #[allow(dead_code)]
+    fn days_in_hebrew_year(civil_year: i32) -> u16 {
+        (Self::hebrew_new_year(1 + civil_year) - Self::hebrew_new_year(civil_year)) as u16
     }
 
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
@@ -415,7 +431,7 @@ impl BookHebrew {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2315
-    fn days_in_hebrew_year(book_year: i32) -> u16 {
+    fn days_in_book_hebrew_year(book_year: i32) -> u16 {
         (Self::book_hebrew_new_year(1 + book_year) - Self::book_hebrew_new_year(book_year)) as u16
     }
 
@@ -428,7 +444,7 @@ impl BookHebrew {
     #[allow(dead_code)]
     fn is_long_marheshvan(book_year: i32) -> bool {
         let long_marheshavan_year_lengths = [355, 385];
-        long_marheshavan_year_lengths.contains(&Self::days_in_hebrew_year(book_year))
+        long_marheshavan_year_lengths.contains(&Self::days_in_book_hebrew_year(book_year))
     }
 
     // True if the month Kislve is going to be short in given BookHebrew year
@@ -436,7 +452,7 @@ impl BookHebrew {
     #[allow(dead_code)]
     fn is_short_kislev(book_year: i32) -> bool {
         let short_kislev_year_lengths = [353, 383];
-        short_kislev_year_lengths.contains(&Self::days_in_hebrew_year(book_year))
+        short_kislev_year_lengths.contains(&Self::days_in_book_hebrew_year(book_year))
     }
 
     // Last day of month (h_month) in BookHebrew year (book_year)
@@ -841,10 +857,29 @@ mod tests {
     }
 
     #[test]
+    fn test_last_hebrew_month() {
+        for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_LAST_HEBREW_MONTH.iter()) {
+            let last_month = Hebrew::last_month_of_hebrew_year(case.year);
+            assert_eq!(last_month, *expected);
+        }
+    }
+
+    #[test]
     fn test_last_book_hebrew_month() {
         for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_LAST_HEBREW_MONTH.iter()) {
             let last_month = BookHebrew::last_month_of_book_hebrew_year(case.year);
             assert_eq!(last_month, *expected);
+        }
+    }
+
+    #[test]
+    fn test_hebrew_calendar_elapsed_days() {
+        for (case, expected) in HEBREW_DATES
+            .iter()
+            .zip(EXPECTED_HEBREW_ELASPED_CALENDAR_DAYS.iter())
+        {
+            let elapsed_days = Hebrew::hebrew_calendar_elapsed_days(case.year);
+            assert_eq!(elapsed_days, *expected);
         }
     }
 
@@ -856,6 +891,18 @@ mod tests {
         {
             let elapsed_days = BookHebrew::book_hebrew_calendar_elapsed_days(case.year);
             assert_eq!(elapsed_days, *expected);
+        }
+    }
+
+    #[test]
+    fn test_hebrew_year_length_correction() {
+        let year_length_correction: [u8; 33] = [
+            2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0,
+        ];
+        for (case, expected) in HEBREW_DATES.iter().zip(year_length_correction.iter()) {
+            let correction = Hebrew::hebrew_year_length_correction(case.year);
+            assert_eq!(correction, *expected);
         }
     }
 
@@ -872,6 +919,17 @@ mod tests {
     }
 
     #[test]
+    fn test_hebrew_new_year() {
+        for (case, expected) in HEBREW_DATES
+            .iter()
+            .zip(EXPECTED_FIXED_HEBREW_NEW_YEAR.iter())
+        {
+            let f_date = Hebrew::hebrew_new_year(case.year);
+            assert_eq!(f_date.to_i64_date(), *expected);
+        }
+    }
+
+    #[test]
     fn test_book_hebrew_new_year() {
         for (case, expected) in HEBREW_DATES
             .iter()
@@ -883,9 +941,17 @@ mod tests {
     }
 
     #[test]
+    fn test_days_in_hebrew_year() {
+        for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_DAYS_IN_HEBREW_YEAR.iter()) {
+            let days_in_year = Hebrew::days_in_hebrew_year(case.year);
+            assert_eq!(days_in_year, *expected);
+        }
+    }
+
+    #[test]
     fn test_days_in_book_hebrew_year() {
         for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_DAYS_IN_HEBREW_YEAR.iter()) {
-            let days_in_year = BookHebrew::days_in_hebrew_year(case.year);
+            let days_in_year = BookHebrew::days_in_book_hebrew_year(case.year);
             assert_eq!(days_in_year, *expected);
         }
     }
@@ -903,6 +969,14 @@ mod tests {
         for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_KISLEV_VALUES.iter()) {
             let kislev = BookHebrew::is_short_kislev(case.year);
             assert_eq!(kislev, *expected);
+        }
+    }
+
+    #[test]
+    fn test_last_day_in_hebrew_month() {
+        for (case, expected) in HEBREW_DATES.iter().zip(EXPECTED_DAY_IN_MONTH.iter()) {
+            let days_in_month = Hebrew::last_day_of_hebrew_month(case.year, case.month);
+            assert_eq!(days_in_month, *expected);
         }
     }
 
@@ -1146,6 +1220,6 @@ mod tests {
 
     #[test]
     fn test_icu_bug_22441() {
-        assert_eq!(BookHebrew::days_in_hebrew_year(88369), 383);
+        assert_eq!(BookHebrew::days_in_book_hebrew_year(88369), 383);
     }
 }
