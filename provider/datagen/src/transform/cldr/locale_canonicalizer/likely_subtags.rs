@@ -168,7 +168,7 @@ impl<'a> LikelySubtagsResources<'a> {
     }
 }
 
-fn transform<'x>(
+pub(crate) fn transform<'x>(
     it: impl Iterator<Item = (&'x LanguageIdentifier, &'x LanguageIdentifier)> + 'x,
 ) -> LikelySubtagsV1<'static> {
     let mut language_script = BTreeMap::new();
