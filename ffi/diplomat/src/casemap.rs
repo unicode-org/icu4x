@@ -30,14 +30,14 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
-    pub struct ICU4XTitlecaseOptions {
+    pub struct ICU4XTitlecaseOptionsV1 {
         pub head_adjustment: ICU4XHeadAdjustment,
         pub tail_casing: ICU4XTailCasing,
     }
 
-    impl ICU4XTitlecaseOptions {
+    impl ICU4XTitlecaseOptionsV1 {
         #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
-        pub fn default_options() -> ICU4XTitlecaseOptions {
+        pub fn default_options() -> ICU4XTitlecaseOptionsV1 {
             // named default_options to avoid keyword clashes
             Self {
                 head_adjustment: ICU4XHeadAdjustment::Adjust,
@@ -100,17 +100,19 @@ pub mod ffi {
 
         /// Returns the full titlecase mapping of the given string, using legacy head adjustment behavior
         /// (if head adjustment is enabled in the options)
+        ///
+        /// The `v1` refers to the version of the options struct, which may change as we add more options
         #[diplomat::rust_link(icu::casemap::CaseMapper::titlecase_segment_legacy, FnInStruct)]
         #[diplomat::rust_link(
             icu::casemap::CaseMapper::titlecase_segment_legacy_to_string,
             FnInStruct,
             hidden
         )]
-        pub fn titlecase_segment_legacy(
+        pub fn titlecase_segment_legacy_v1(
             &self,
             s: &str,
             locale: &ICU4XLocale,
-            options: ICU4XTitlecaseOptions,
+            options: ICU4XTitlecaseOptionsV1,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             // #2520
@@ -309,17 +311,19 @@ pub mod ffi {
         }
 
         /// Returns the full titlecase mapping of the given string
+        ///
+        /// The `v1` refers to the version of the options struct, which may change as we add more options
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::titlecase_segment, FnInStruct)]
         #[diplomat::rust_link(
             icu::casemap::TitlecaseMapper::titlecase_segment_to_string,
             FnInStruct,
             hidden
         )]
-        pub fn titlecase_segment(
+        pub fn titlecase_segment_v1(
             &self,
             s: &str,
             locale: &ICU4XLocale,
-            options: ICU4XTitlecaseOptions,
+            options: ICU4XTitlecaseOptionsV1,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             // #2520
@@ -335,8 +339,8 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::ICU4XTitlecaseOptions> for TitlecaseOptions {
-    fn from(other: ffi::ICU4XTitlecaseOptions) -> Self {
+impl From<ffi::ICU4XTitlecaseOptionsV1> for TitlecaseOptions {
+    fn from(other: ffi::ICU4XTitlecaseOptionsV1) -> Self {
         let mut ret = Self::default();
 
         ret.head_adjustment = other.head_adjustment.into();

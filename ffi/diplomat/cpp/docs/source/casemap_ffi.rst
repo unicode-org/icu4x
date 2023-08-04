@@ -69,16 +69,20 @@
         See the `Rust documentation for uppercase <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_legacy_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptions options, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_legacy_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const
 
         Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
 
         See the `Rust documentation for titlecase_segment_legacy <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment_legacy(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptions options) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment_legacy_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const
 
         Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
 
         See the `Rust documentation for titlecase_segment_legacy <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy>`__ for more information.
 
@@ -208,21 +212,25 @@
         See the `Rust documentation for new_legacy <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptions options, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const
 
         Returns the full titlecase mapping of the given string
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
 
         See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptions options) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const
 
         Returns the full titlecase mapping of the given string
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
 
         See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment>`__ for more information.
 
 
-.. cpp:struct:: ICU4XTitlecaseOptions
+.. cpp:struct:: ICU4XTitlecaseOptionsV1
 
     See the `Rust documentation for TitlecaseOptions <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html>`__ for more information.
 
@@ -231,7 +239,7 @@
 
     .. cpp:member:: ICU4XTailCasing tail_casing
 
-    .. cpp:function:: static ICU4XTitlecaseOptions default_options()
+    .. cpp:function:: static ICU4XTitlecaseOptionsV1 default_options()
 
         See the `Rust documentation for default <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default>`__ for more information.
 

@@ -4,7 +4,7 @@ import { ICU4XCodePointSetBuilder } from "./ICU4XCodePointSetBuilder";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
-import { ICU4XTitlecaseOptions } from "./ICU4XTitlecaseOptions";
+import { ICU4XTitlecaseOptionsV1 } from "./ICU4XTitlecaseOptionsV1";
 
 /**
 
@@ -43,10 +43,12 @@ export class ICU4XCaseMapper {
 
    * Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
 
+   * The `v1` refers to the version of the options struct, which may change as we add more options
+
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy Rust documentation for `titlecase_segment_legacy`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  titlecase_segment_legacy(s: string, locale: ICU4XLocale, options: ICU4XTitlecaseOptions): string | never;
+  titlecase_segment_legacy_v1(s: string, locale: ICU4XLocale, options: ICU4XTitlecaseOptionsV1): string | never;
 
   /**
 

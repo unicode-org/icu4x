@@ -52,14 +52,14 @@ export class ICU4XTitlecaseMapper {
     })();
   }
 
-  titlecase_segment(arg_s, arg_locale, arg_options) {
+  titlecase_segment_v1(arg_s, arg_locale, arg_options) {
     const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
     const field_head_adjustment_arg_options = arg_options["head_adjustment"];
     const field_tail_casing_arg_options = arg_options["tail_casing"];
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XTitlecaseMapper_titlecase_segment(diplomat_receive_buffer, this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_locale.underlying, ICU4XHeadAdjustment_js_to_rust[field_head_adjustment_arg_options], ICU4XTailCasing_js_to_rust[field_tail_casing_arg_options], writeable);
+        wasm.ICU4XTitlecaseMapper_titlecase_segment_v1(diplomat_receive_buffer, this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_locale.underlying, ICU4XHeadAdjustment_js_to_rust[field_head_adjustment_arg_options], ICU4XTailCasing_js_to_rust[field_tail_casing_arg_options], writeable);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

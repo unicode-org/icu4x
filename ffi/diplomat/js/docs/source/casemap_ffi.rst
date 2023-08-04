@@ -55,9 +55,11 @@
         See the `Rust documentation for uppercase <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase>`__ for more information.
 
 
-    .. js:method:: titlecase_segment_legacy(s, locale, options)
+    .. js:method:: titlecase_segment_legacy_v1(s, locale, options)
 
         Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
 
         See the `Rust documentation for titlecase_segment_legacy <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy>`__ for more information.
 
@@ -165,14 +167,16 @@
         See the `Rust documentation for new_legacy <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy>`__ for more information.
 
 
-    .. js:method:: titlecase_segment(s, locale, options)
+    .. js:method:: titlecase_segment_v1(s, locale, options)
 
         Returns the full titlecase mapping of the given string
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
 
         See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment>`__ for more information.
 
 
-.. js:class:: ICU4XTitlecaseOptions
+.. js:class:: ICU4XTitlecaseOptionsV1
 
     See the `Rust documentation for TitlecaseOptions <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html>`__ for more information.
 

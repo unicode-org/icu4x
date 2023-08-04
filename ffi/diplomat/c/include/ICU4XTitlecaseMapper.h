@@ -17,7 +17,7 @@ typedef struct ICU4XTitlecaseMapper ICU4XTitlecaseMapper;
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XTitlecaseMapper_ICU4XError.h"
 #include "ICU4XLocale.h"
-#include "ICU4XTitlecaseOptions.h"
+#include "ICU4XTitlecaseOptionsV1.h"
 #include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
@@ -28,7 +28,7 @@ diplomat_result_box_ICU4XTitlecaseMapper_ICU4XError ICU4XTitlecaseMapper_create(
 
 diplomat_result_box_ICU4XTitlecaseMapper_ICU4XError ICU4XTitlecaseMapper_create_legacy(const ICU4XDataProvider* provider);
 
-diplomat_result_void_ICU4XError ICU4XTitlecaseMapper_titlecase_segment(const ICU4XTitlecaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, ICU4XTitlecaseOptions options, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XTitlecaseMapper_titlecase_segment_v1(const ICU4XTitlecaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, ICU4XTitlecaseOptionsV1 options, DiplomatWriteable* write);
 void ICU4XTitlecaseMapper_destroy(ICU4XTitlecaseMapper* self);
 
 #ifdef __cplusplus

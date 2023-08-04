@@ -105,7 +105,7 @@ export { ICU4XTimeFormatter } from './ICU4XTimeFormatter.js';
 export { ICU4XTimeLength } from './ICU4XTimeLength.js';
 export { ICU4XTimeZoneFormatter } from './ICU4XTimeZoneFormatter.js';
 export { ICU4XTitlecaseMapper } from './ICU4XTitlecaseMapper.js';
-export { ICU4XTitlecaseOptions } from './ICU4XTitlecaseOptions.js';
+export { ICU4XTitlecaseOptionsV1 } from './ICU4XTitlecaseOptionsV1.js';
 export { ICU4XTransformResult } from './ICU4XTransformResult.js';
 export { ICU4XUnicodeSetData } from './ICU4XUnicodeSetData.js';
 export { ICU4XWeekCalculator } from './ICU4XWeekCalculator.js';
