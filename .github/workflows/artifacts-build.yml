@@ -523,7 +523,7 @@ jobs:
   bench-datasize:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-datasize
@@ -540,6 +540,10 @@ jobs:
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
+
+    - name: Install rustfmt
+      run: |
+        rustup install rustfmt
 
     - name: Setup output data directory
       run: |
@@ -580,7 +584,7 @@ jobs:
           gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/datasize
 
   gh-pages:
-    name: "Copy artifacts to gh-pages branch"
+    name: "Deploy to GitHub Pages"
     needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
@@ -600,7 +604,7 @@ jobs:
           gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo tools/website-skeleton/ || true
       - name: Upload to main bucket
         run: |
-          gsutil -m cp -r gs://${env.GCP_PR_BUCKET_ID}/gha/${{ github.sha }} gs://${env.GCP_MAIN_BUCKET_ID}/gha/
+          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID}}/gha/${{ github.sha }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
