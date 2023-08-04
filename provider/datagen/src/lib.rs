@@ -21,8 +21,7 @@
 //! use std::fs::File;
 //!
 //! fn main() {
-//!     DatagenProvider::try_new(options::Options::default(), SourceData::latest_tested())
-//!         .unwrap()
+//!     DatagenProvider::default()
 //!         .export(
 //!             {
 //!                 let mut options = options::Options::default();
@@ -88,6 +87,7 @@ use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use memchr::memmem;
+use once_cell::sync::Lazy;
 use options::{FallbackMode, LocaleInclude};
 use std::borrow::Cow;
 use std::collections::HashMap;
@@ -188,23 +188,107 @@ impl DatagenProvider {
         &self,
         key: DataKey,
         options: &options::Options,
-        fallbacker: &LocaleFallbacker,
+        fallbacker: &Lazy<
+            Result<LocaleFallbacker, DataError>,
+            impl FnOnce() -> Result<LocaleFallbacker, DataError>,
+        >,
     ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
-        let fallbacker_with_config = fallbacker.for_config(LocaleFallbackConfig::from_key(key));
-
         let supported_locales: HashSet<DataLocale> = self
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?
             .into_iter()
-            .map(|locale| {
-                // Pre-process the supported locales into their normalized forms. For example, CLDR has
-                // "sr-Latn-ME", but ICU4X wants that to be "sr-ME". CldrCache accepts both forms.
-                fallbacker_with_config.fallback_for(locale).take()
-            })
             .collect();
 
-        /*
-            if key == icu_collator::provider::CollationDataV1Marker::KEY
+        let resolved_locales = match (&options.locales, options.fallback) {
+            // Case 1: `LocaleInclude::All` simply exports all supported locales for this key.
+            (LocaleInclude::All, _) => supported_locales,
+            // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
+            // one of the explicit locales. This ensures extensions are included. In addition, any
+            // explicit locales are added to the list, even if they themselves don't contain data;
+            // fallback should be performed upon exporting.
+            (LocaleInclude::Explicit(explicit), FallbackMode::Preresolved) => supported_locales
+                .into_iter()
+                .chain(explicit.iter().map(|langid| langid.into()))
+                .filter(|locale| explicit.contains(&locale.get_langid()))
+                .collect(),
+            // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
+            (LocaleInclude::Explicit(explicit), _) => {
+                let include_und = explicit.contains(&LanguageIdentifier::UND);
+                let explicit: HashSet<DataLocale> =
+                    explicit.iter().map(DataLocale::from).collect();
+                let mut implicit = HashSet::new();
+                // TODO: Make including the default locale configurable
+                implicit.insert(DataLocale::default());
+                let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+                let fallbacker_with_config =
+                    fallbacker.for_config(LocaleFallbackConfig::from_key(key));
+
+                for locale in explicit.iter() {
+                    let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                    while !iter.get().is_empty() {
+                        implicit.insert(iter.get().clone());
+                        iter.step();
+                    }
+                }
+
+                supported_locales
+                    .into_iter()
+                    .chain(explicit.iter().cloned())
+                    .filter(|locale| {
+                        if implicit.contains(locale) {
+                            return true;
+                        }
+                        if explicit.contains(locale) {
+                            return true;
+                        }
+                        if locale.is_langid_und() && include_und {
+                            return true;
+                        }
+                        if locale.language().is_empty()
+                            && matches!(
+                                key.metadata().fallback_priority,
+                                icu_provider::FallbackPriority::Region
+                            )
+                        {
+                            return true;
+                        }
+                        // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
+                        // This would get caught later on, but it makes datagen faster and quieter to catch it here
+                        if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
+                            && !locale.has_unicode_ext()
+                        {
+                            return false;
+                        }
+                        let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                        while !iter.get().is_empty() {
+                            if explicit.contains(iter.get()) {
+                                return true;
+                            }
+                            iter.step();
+                        }
+                        log::trace!("Filtered out: {key}/{locale}");
+                        false
+                    })
+                    .collect()
+            }
+            _ => unreachable!("Pre-processed LocaleInclude has only 2 variants"),
+        };
+
+        // Special cases
+        Ok(
+            if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
+                || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
+            {
+                transform::segmenter::dictionary::filter_data_locales(
+                    resolved_locales,
+                    &options.segmenter_models,
+                )
+            } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
+                transform::segmenter::lstm::filter_data_locales(
+                    resolved_locales,
+                    &options.segmenter_models,
+                )
+            } else if key == icu_collator::provider::CollationDataV1Marker::KEY
                 || key == icu_collator::provider::CollationDiacriticsV1Marker::KEY
                 || key == icu_collator::provider::CollationJamoV1Marker::KEY
                 || key == icu_collator::provider::CollationMetadataV1Marker::KEY
@@ -215,108 +299,10 @@ impl DatagenProvider {
                     resolved_locales,
                     &options.collations,
                 )
-            } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
-                transform::segmenter::lstm::filter_data_locales(
-                    resolved_locales,
-                    &options.segmenter_models,
-                )
-            } else if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
-                || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
-            {
-                transform::segmenter::dictionary::filter_data_locales(
-                    resolved_locales,
-                    &options.segmenter_models,
-                )
             } else {
                 resolved_locales
             },
-        */
-
-        let locale_include = options.locales.clone();
-        let fallback_mode = options.fallback;
-
-        // Case 1: `LocaleInclude::All` simply exports all supported locales for this key.
-        // Also include special cases like Segmenter that should skip the rest of this function.
-        if matches!(locale_include, LocaleInclude::All)
-            || key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
-            || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
-            || key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY
-        {
-            return Ok(supported_locales);
-        }
-
-        let LocaleInclude::Explicit(explicit) = locale_include else {
-            unreachable!("Pre-processed LocaleInclude has only 2 variants")
-        };
-
-        // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
-        // one of the explicit locales. This ensures extensions are included. In addition, any
-        // explicit locales are added to the list, even if they themselves don't contain data;
-        // fallback should be performed upon exporting.
-        if matches!(fallback_mode, FallbackMode::Preresolved) {
-            let result = supported_locales
-                .into_iter()
-                .chain(explicit.iter().map(|langid| langid.into()))
-                .filter(|locale| explicit.contains(&locale.get_langid()))
-                .collect();
-            return Ok(result);
-        }
-
-        // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
-        let include_und = explicit.contains(&LanguageIdentifier::UND);
-        let explicit: HashSet<DataLocale> = explicit.into_iter().map(DataLocale::from).collect();
-        let mut implicit = HashSet::new();
-        // TODO: Make including the default locale configurable
-        implicit.insert(DataLocale::default());
-        for locale in explicit.iter() {
-            let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-            while !iter.get().is_empty() {
-                implicit.insert(iter.get().clone());
-                iter.step();
-            }
-        }
-
-        let result = supported_locales
-            .into_iter()
-            .chain(explicit.iter().cloned())
-            .filter(|locale| {
-                if implicit.contains(locale) {
-                    return true;
-                }
-                if explicit.contains(locale) {
-                    return true;
-                }
-                if locale.is_langid_und() && include_und {
-                    return true;
-                }
-                if locale.language().is_empty()
-                    && matches!(
-                        key.metadata().fallback_priority,
-                        icu_provider::FallbackPriority::Region
-                    )
-                {
-                    return true;
-                }
-                // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
-                // This would get caught later on, but it makes datagen faster and quieter to catch it here
-                if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
-                    && !locale.has_unicode_ext()
-                {
-                    return false;
-                }
-                let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                while !iter.get().is_empty() {
-                    if explicit.contains(iter.get()) {
-                        return true;
-                    }
-                    iter.step();
-                }
-                log::trace!("Filtered out: {key}/{locale}");
-                false
-            })
-            .collect();
-
-        Ok(result)
+        )
     }
 
     /// Loads a `DataPayload<ExportMarker>` with locale fallback enabled.
@@ -391,7 +377,7 @@ impl DatagenProvider {
             && !matches!(options.locales, options::LocaleInclude::Explicit(_))
         {
             return Err(DataError::custom(
-                "FallbackMode::Expand requires LocaleInclude::Explicit",
+                "FallbackMode::Preresolved requires LocaleInclude::Explicit",
             ));
         }
 
@@ -401,6 +387,7 @@ impl DatagenProvider {
                 self.source
                     .locales(levels.iter().copied().collect::<Vec<_>>().as_slice())?
                     .into_iter()
+                    .chain(core::iter::once(LanguageIdentifier::UND))
                     .collect(),
             ),
             options::LocaleInclude::Explicit(set) => options::LocaleInclude::Explicit(set),
@@ -413,16 +400,15 @@ impl DatagenProvider {
                         options::CoverageLevel::Basic,
                     ])?
                     .into_iter()
+                    .chain(core::iter::once(LanguageIdentifier::UND))
                     .collect(),
             ),
         };
 
-        /*
-        TODO: Fix
         log::info!(
             "Datagen configured with fallback mode {:?} and these locales: {}",
-            source.options.fallback,
-            match source.options.locales {
+            options.fallback,
+            match options.locales {
                 options::LocaleInclude::All => "ALL".to_string(),
                 options::LocaleInclude::Explicit(ref set) => {
                     let mut list: Vec<Cow<str>> =
@@ -433,7 +419,6 @@ impl DatagenProvider {
                 _ => unreachable!(),
             }
         );
-        */
 
         // Avoid multiple monomorphizations
         fn internal(
@@ -443,7 +428,7 @@ impl DatagenProvider {
         ) -> Result<(), DataError> {
             use rayon_prelude::*;
 
-            let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
+            let fallbacker = once_cell::sync::Lazy::new(|| LocaleFallbacker::try_new_unstable(provider));
 
             core::mem::take(&mut options.keys).into_par_iter().try_for_each(|key| {
                 log::info!("Generating key {key}");
@@ -468,9 +453,10 @@ impl DatagenProvider {
                     (options::FallbackMode::Runtime, _)
                     | (options::FallbackMode::RuntimeManual, _)
                     | (options::FallbackMode::PreferredForExporter, true) => {
+                        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                         let payloads = locales_to_export
                             .into_par_iter()
-                            .flat_map(|locale| match provider.load_with_fallback(key, &locale, &fallbacker) {
+                            .flat_map(|locale| match provider.load_with_fallback(key, &locale, fallbacker) {
                                 Ok(Some(payload)) => Some(Ok((locale, Box::new(payload)))),
                                 Ok(None) => None,
                                 Err(e) => Some(Err(e)),
@@ -500,8 +486,9 @@ impl DatagenProvider {
                     (options::FallbackMode::Hybrid, _)
                     | (options::FallbackMode::PreferredForExporter, false)
                     | (options::FallbackMode::Preresolved, _) => {
+                        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                         locales_to_export.into_par_iter().try_for_each(|locale| {
-                            let payload = provider.load_with_fallback(key, &locale, &fallbacker)?;
+                            let payload = provider.load_with_fallback(key, &locale, fallbacker)?;
                             if let Some(payload) = payload {
                                 exporter.put_payload(key, &locale, &payload)?;
                             }
@@ -774,7 +761,6 @@ pub fn datagen(
             },
             collations: source.collations.iter().cloned().collect(),
             fallback: FallbackMode::Hybrid,
-            ..Default::default()
         },
         MultiExporter::new(
             outs.into_iter()

@@ -82,6 +82,7 @@ macro_rules! impl_data_provider {
                         // MetazonePeriodV1 does not require localized time zone data
                         Ok(vec![Default::default()])
                     } else {
+
                         Ok(self
                             .source
                             .cldr()?

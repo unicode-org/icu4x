@@ -52,7 +52,6 @@ fn test_missing_locale() {
         }
     )
     .is_ok());
-    // HelloWorldProvider does NOT support Aramaic.
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {

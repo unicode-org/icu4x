@@ -75,6 +75,7 @@ fn test_fallback_options() {
     let mut testing_exporter = TestingExporter::default();
 
     let mut options = Options::default();
+    options.keys = decimal_symbols_key.clone();
 
     let explicit_locales: HashSet<LanguageIdentifier> = [
         langid!("arc"), // Aramaic, not in CLDR
@@ -90,12 +91,10 @@ fn test_fallback_options() {
     //
     // All+Hybrid
     //
-
     options.locales = LocaleInclude::All;
     options.fallback = FallbackMode::Hybrid;
-    DatagenProvider::try_new(options.clone(), source.clone())
-        .unwrap()
-        .export(decimal_symbols_key.clone(), &mut testing_exporter)
+    DatagenProvider::new(source.clone())
+        .export(options.clone(), &mut testing_exporter)
         .unwrap();
     let data_all_hybrid = testing_exporter.take_map_and_reset();
 
@@ -135,9 +134,8 @@ fn test_fallback_options() {
     //
 
     options.fallback = FallbackMode::RuntimeManual;
-    DatagenProvider::try_new(options.clone(), source.clone())
-        .unwrap()
-        .export(decimal_symbols_key.clone(), &mut testing_exporter)
+    DatagenProvider::new(source.clone())
+        .export(options.clone(), &mut testing_exporter)
         .unwrap();
     let data_all_runtime = testing_exporter.take_map_and_reset();
 
@@ -211,9 +209,8 @@ fn test_fallback_options() {
 
     options.locales = LocaleInclude::Explicit(explicit_locales.clone());
     options.fallback = FallbackMode::Hybrid;
-    DatagenProvider::try_new(options.clone(), source.clone())
-        .unwrap()
-        .export(decimal_symbols_key.clone(), &mut testing_exporter)
+    DatagenProvider::new(source.clone())
+        .export(options.clone(), &mut testing_exporter)
         .unwrap();
     let data_explicit_hybrid = testing_exporter.take_map_and_reset();
 
@@ -247,9 +244,8 @@ fn test_fallback_options() {
 
     options.locales = LocaleInclude::Explicit(explicit_locales.clone());
     options.fallback = FallbackMode::RuntimeManual;
-    DatagenProvider::try_new(options.clone(), source.clone())
-        .unwrap()
-        .export(decimal_symbols_key.clone(), &mut testing_exporter)
+    DatagenProvider::new(source.clone())
+        .export(options.clone(), &mut testing_exporter)
         .unwrap();
     let data_explicit_runtime = testing_exporter.take_map_and_reset();
 
@@ -284,9 +280,8 @@ fn test_fallback_options() {
 
     options.locales = LocaleInclude::Explicit(explicit_locales.clone());
     options.fallback = FallbackMode::Preresolved;
-    DatagenProvider::try_new(options, source)
-        .unwrap()
-        .export(decimal_symbols_key, &mut testing_exporter)
+    DatagenProvider { source }
+        .export(options, &mut testing_exporter)
         .unwrap();
     let data_explicit_preresolved = testing_exporter.take_map_and_reset();
 

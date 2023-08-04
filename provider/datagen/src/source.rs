@@ -5,7 +5,6 @@
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
-use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::prelude::*;
 use std::any::Any;
 use std::collections::{BTreeMap, HashSet};

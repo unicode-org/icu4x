@@ -144,53 +144,6 @@ pub enum LocaleInclude {
     Recommended,
 }
 
-/// Specifies the collation Han database to use.
-///
-/// Unihan is more precise but significantly increases data size. See
-/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
-#[non_exhaustive]
-pub enum CollationHanDatabase {
-    /// Implicit
-    #[serde(rename = "implicit")]
-    #[default]
-    Implicit,
-    /// Unihan
-    #[serde(rename = "unihan")]
-    Unihan,
-}
-
-impl std::fmt::Display for CollationHanDatabase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
-        }
-    }
-}
-
-/// Specifies the trie type to use.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
-#[non_exhaustive]
-pub enum TrieType {
-    /// Fast tries are optimized for speed
-    #[serde(rename = "fast")]
-    Fast,
-    /// Small tries are optimized for size
-    #[serde(rename = "small")]
-    #[default]
-    Small,
-}
-
-impl std::fmt::Display for TrieType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            TrieType::Fast => write!(f, "fast"),
-            TrieType::Small => write!(f, "small"),
-        }
-    }
-}
-
 /// The segmentation models to include
 #[derive(Debug, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
