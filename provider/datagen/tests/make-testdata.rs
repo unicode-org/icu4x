@@ -55,18 +55,15 @@ fn generate_json_and_verify_postcard() {
     });
 
     let mut options = options::Options::default();
+    options.keys = icu_datagen::all_keys().into_iter().collect();
     options.locales = options::LocaleInclude::Explicit(LOCALES.iter().cloned().collect());
     options.segmenter_models = options::SegmenterModelInclude::Explicit(vec![
         "thaidict".into(),
         "Thai_codepoints_exclusive_model4_heavy".into(),
     ]);
 
-    DatagenProvider::try_new(options, source)
-        .unwrap()
-        .export(
-            icu_datagen::all_keys().into_iter().collect(),
-            MultiExporter::new(vec![json_out, postcard_out]),
-        )
+    DatagenProvider::new(source)
+        .export(options, MultiExporter::new(vec![json_out, postcard_out]))
         .unwrap();
 }
 

@@ -19,10 +19,12 @@
 //! let mut exporter = BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something
-//! DatagenProvider::try_new(options::Options::default(), SourceData::latest_tested())
-//!     .unwrap()
-//!     .export(
-//!         [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect(),
+//! DatagenProvider::new(SourceData::latest_tested())
+//!     .export({
+//!             let mut options = options::Options::default();
+//!             options.keys = [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect();
+//!             options
+//!         },
 //!         exporter
 //!     ).unwrap();
 //! #

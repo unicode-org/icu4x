@@ -102,12 +102,16 @@ pub enum FallbackMode {
 #[derive(Debug, Clone, PartialEq, Default)]
 #[non_exhaustive]
 pub struct Options {
+    /// The set of keys to generate. See [`icu_datagen::keys`],
+    /// [`icu_datagen::all_keys`], [`icu_datagen::key`] and [`icu_datagen::keys_from_bin`].
+    ///
+    /// [`icu_datagen::keys`]: crate::keys
+    /// [`icu_datagen::all_keys`]: crate::all_keys
+    /// [`icu_datagen::key`]: crate::key
+    /// [`icu_datagen::keys_from_bin`]: crate::keys_from_bin
+    pub keys: HashSet<icu_provider::DataKey>,
     /// Defines the locales to include
     pub locales: LocaleInclude,
-    /// Whether to optimize tries for speed or size
-    pub trie_type: TrieType,
-    /// Which Han collation to use
-    pub collation_han_database: CollationHanDatabase,
     /// The collation types to include.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.

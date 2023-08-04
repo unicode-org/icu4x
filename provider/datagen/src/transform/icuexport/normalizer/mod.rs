@@ -25,7 +25,7 @@ macro_rules! normalization_provider {
                 let $toml_data: &normalizer_serde::$serde_struct =
                     self.source.icuexport()?.read_and_parse_toml(&format!(
                         "norm/{}/{}.toml",
-                        self.source.options.trie_type, $file_name
+                        self.source.trie_type, $file_name
                     ))?;
 
                 $conversion

@@ -21,7 +21,11 @@ fn main() {
     DatagenProvider::try_new(options::Options::default(), SourceData::latest_tested())
         .unwrap()
         .export(
-            [icu::list::provider::AndListV1Marker::KEY].into_iter().collect(),
+            {
+                let mut options = options::Options::default();
+                options.keys = [icu::list::provider::AndListV1Marker::KEY].into_iter().collect();
+                options
+            },
             BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())),
         )
         .unwrap();

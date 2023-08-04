@@ -43,22 +43,11 @@ impl DatagenProvider {
 #[test]
 fn test_missing_locale() {
     use icu_locid::langid;
-    let mut provider = DatagenProvider::for_test();
-    provider.source.options.locales =
-        crate::options::LocaleInclude::Explicit([langid!("fi")].into());
+    let provider = DatagenProvider::for_test();
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {
             locale: &langid!("fi").into(),
-            metadata: Default::default()
-        }
-    )
-    .is_ok());
-    // HelloWorldProvider supports Portuguese. LocaleInclude::Explicit has no impact on this.
-    assert!(DataProvider::<HelloWorldV1Marker>::load(
-        &provider,
-        DataRequest {
-            locale: &langid!("pt").into(),
             metadata: Default::default()
         }
     )
