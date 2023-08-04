@@ -104,13 +104,13 @@ macro_rules! make_data_provider {
 
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                    Ok(self.filter_data_locales(self
+                    Ok(self
                         .source
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
                         .map(DataLocale::from)
-                        .collect()))
+                        .collect())
                 }
             }
 
