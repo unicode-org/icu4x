@@ -1142,7 +1142,8 @@ props/alnum@1, und, 6179B, 66f9bcaabdbeaa23
 props/bc@1, und, 9468B, a628834e07382120
 props/bidiauxiliaryprops@1, und, 4672B, 82f34dee36202d63
 props/blank@1, und, 66B, 1e75f3c7a32d0e8a
-props/casemap@1, und, 23363B, adbf5afac05f5a98
+props/casemap@1, und, 22431B, e5f6c1c194a5002f
+props/casemap_unfold@1, und, 932B, 85d63de2fdea5a3d
 props/ccc@1, und, 5270B, 85887761e8c0b554
 props/ea@1, und, 4939B, de9bdf3107a1a963
 props/exemplarchars/auxiliary@1, ar, 103B, 81ba9ba73c59c4c4

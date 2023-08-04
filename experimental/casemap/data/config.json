@@ -1,7 +1,8 @@
 {
     "keys": {
         "Explicit": [
-            "props/casemap@1"
+            "props/casemap@1",
+            "props/casemap_unfold@1"
         ]
     },
     "locales": "Recommended",

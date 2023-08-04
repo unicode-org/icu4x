@@ -86,7 +86,7 @@ int main() {
 
     ICU4XCodePointSetBuilder builder = ICU4XCodePointSetBuilder::create();
 
-    cm.add_case_closure('s', builder);
+    cm.add_case_closure_to('s', builder);
 
     auto set = builder.build();
 

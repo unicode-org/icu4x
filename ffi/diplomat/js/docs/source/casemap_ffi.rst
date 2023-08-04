@@ -1,6 +1,34 @@
 ``casemap::ffi``
 ================
 
+.. js:class:: ICU4XCaseMapCloser
+
+    See the `Rust documentation for CaseMapCloser <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html>`__ for more information.
+
+
+    .. js:function:: create(provider)
+
+        Construct a new ICU4XCaseMapper instance
+
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new>`__ for more information.
+
+
+    .. js:method:: add_case_closure_to(c, builder)
+
+        Adds all simple case mappings and the full case folding for ``c`` to ``builder``. Also adds special case closure mappings.
+
+        See the `Rust documentation for add_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to>`__ for more information.
+
+
+    .. js:method:: add_string_case_closure_to(s, builder)
+
+        Finds all characters and strings which may casemap to ``s`` as their full case folding string and adds them to the set.
+
+        Returns true if the string was found
+
+        See the `Rust documentation for add_string_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to>`__ for more information.
+
+
 .. js:class:: ICU4XCaseMapper
 
     See the `Rust documentation for CaseMapper <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html>`__ for more information.
@@ -8,7 +36,7 @@
 
     .. js:function:: create(provider)
 
-        Construct a new ICU4XCaseMapper instance for NFC
+        Construct a new ICU4XCaseMapper instance
 
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new>`__ for more information.
 
@@ -48,26 +76,17 @@
         See the `Rust documentation for fold_turkic <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic>`__ for more information.
 
 
-    .. js:method:: add_case_closure(c, builder)
+    .. js:method:: add_case_closure_to(c, builder)
 
         Adds all simple case mappings and the full case folding for ``c`` to ``builder``. Also adds special case closure mappings.
 
         In other words, this adds all characters that this casemaps to, as well as all characters that may casemap to this one.
 
-        Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings
+        Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings.
 
-        See the `Rust documentation for add_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure>`__ for more information.
+        Identical to the similarly named method on ``ICU4XCaseMapCloser``, use that if you plan on using string case closure mappings too.
 
-
-    .. js:method:: add_string_case_closure(s, builder)
-
-        Maps the string to single code points and adds the associated case closure mappings, if they exist.
-
-        The string is mapped to code points if it is their full case folding string. In other words, this performs a reverse full case folding and then adds the case closure items of the resulting code points. If the string is found and its closure applied, then the string itself is added as well as part of its code points' closure.
-
-        Returns true if the string was found
-
-        See the `Rust documentation for add_string_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_string_case_closure>`__ for more information.
+        See the `Rust documentation for add_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to>`__ for more information.
 
 
     .. js:method:: simple_lowercase(ch)

@@ -4,12 +4,19 @@
 
 #![allow(dead_code)] // features
 
+use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use crate::source::SerdeCache;
 use icu_locid::LanguageIdentifier;
+use icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker;
+use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
+use icu_locid_transform::LocaleExpander;
+use icu_provider::prelude::*;
 use icu_provider::DataError;
+use icu_provider_adapters::any_payload::AnyPayloadProvider;
+use icu_provider_adapters::fork::ForkByKeyProvider;
+use once_cell::sync::OnceCell;
 use std::fmt::Debug;
 use std::str::FromStr;
-use std::sync::RwLock;
 
 /// A language's CLDR coverage level.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
@@ -35,14 +42,16 @@ pub enum CoverageLevel {
 #[derive(Debug)]
 pub(crate) struct CldrCache {
     serde_cache: SerdeCache,
-    is_full: RwLock<Option<bool>>,
+    dir_suffix: OnceCell<&'static str>,
+    locale_expander: OnceCell<LocaleExpander>,
 }
 
 impl CldrCache {
     pub fn from_serde_cache(serde_cache: SerdeCache) -> Self {
         CldrCache {
             serde_cache,
-            is_full: Default::default(),
+            dir_suffix: Default::default(),
+            locale_expander: Default::default(),
         }
     }
 
@@ -94,20 +103,74 @@ impl CldrCache {
     }
 
     fn dir_suffix(&self) -> Result<&'static str, DataError> {
-        let maybe_is_full = *self.is_full.read().expect("poison");
-        let is_full = match maybe_is_full {
-            Some(x) => x,
-            None => {
-                let is_full = self.serde_cache.list("cldr-misc-full")?.next().is_some();
-                let _ = self.is_full.write().expect("poison").insert(is_full);
-                is_full
-            }
-        };
-        if is_full {
-            Ok("full")
-        } else {
-            Ok("modern")
+        self.dir_suffix
+            .get_or_try_init(|| {
+                if self.serde_cache.list("cldr-misc-full")?.next().is_some() {
+                    Ok("full")
+                } else {
+                    Ok("modern")
+                }
+            })
+            .copied()
+    }
+
+    fn locale_expander(&self) -> Result<&LocaleExpander, DataError> {
+        self.locale_expander.get_or_try_init(|| {
+            let resources = LikelySubtagsResources::from_resources(
+                self.serde_cache
+                    .read_and_parse_json("cldr-core/supplemental/likelySubtags.json")?,
+                self.serde_cache
+                    .read_and_parse_json("cldr-core/coverageLevels.json")?,
+            );
+            let data =
+                super::locale_canonicalizer::likely_subtags::transform(resources.get_common());
+            let provider = ForkByKeyProvider::new(
+                AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
+                    data.clone().into(),
+                ),
+                AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(data.into()),
+            );
+            LocaleExpander::try_new_with_any_provider(&provider).map_err(|e| {
+                DataError::custom("creating LocaleExpander in CldrCache").with_display_context(&e)
+            })
+        })
+    }
+
+    /// CLDR sometimes stores regional variants with their script.
+    /// Add in the likely subtags here to make that data reachable.
+    fn add_script(
+        &self,
+        langid: &LanguageIdentifier,
+    ) -> Result<Option<LanguageIdentifier>, DataError> {
+        if langid.language.is_empty() || langid.script.is_some() || langid.region.is_none() {
+            return Ok(None);
         }
+        let mut langid = langid.clone();
+        self.locale_expander()?.maximize(&mut langid);
+        debug_assert!(langid.script.is_some());
+        Ok(Some(langid))
+    }
+
+    /// ICU4X does not store regional variants with their script
+    /// if the script is the default for the language.
+    /// Perform that normalization mapping here.
+    fn remove_script(
+        &self,
+        langid: &LanguageIdentifier,
+    ) -> Result<Option<LanguageIdentifier>, DataError> {
+        if langid.language.is_empty() || langid.script.is_none() || langid.region.is_none() {
+            return Ok(None);
+        }
+        let region = langid.region;
+        let mut langid = langid.clone();
+        self.locale_expander()?.minimize(&mut langid);
+        if langid.script.is_some() {
+            // Wasn't able to minimize the script
+            return Ok(None);
+        }
+        // Restore the region
+        langid.region = region;
+        Ok(Some(langid))
     }
 }
 
@@ -136,18 +199,31 @@ impl<'a> CldrDirLang<'a> {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         let dir_suffix = self.0.dir_suffix()?;
-        self.0
-            .serde_cache
-            .read_and_parse_json(&format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1))
+        let path = format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1);
+        if self.0.serde_cache.file_exists(&path)? {
+            self.0.serde_cache.read_and_parse_json(&path)
+        } else if let Some(new_langid) = self.0.add_script(lang)? {
+            self.read_and_parse(&new_langid, file_name)
+        } else {
+            Err(DataErrorKind::Io(std::io::ErrorKind::NotFound)
+                .into_error()
+                .with_display_context(&path))
+        }
     }
 
-    pub fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier>, DataError> {
+    pub fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier> + '_, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
+        let path = format!("{}-{dir_suffix}/main", self.1);
         Ok(self
             .0
             .serde_cache
-            .list(&format!("{}-{dir_suffix}/main", self.1))?
-            .map(|path| LanguageIdentifier::from_str(&path).unwrap()))
+            .list(&path)?
+            .map(|path| -> Result<LanguageIdentifier, DataError> {
+                let langid = LanguageIdentifier::from_str(&path).unwrap();
+                Ok(self.0.remove_script(&langid)?.unwrap_or(langid))
+            })
+            .collect::<Result<Vec<_>, _>>()?
+            .into_iter())
     }
 
     pub fn file_exists(
@@ -156,8 +232,13 @@ impl<'a> CldrDirLang<'a> {
         file_name: &str,
     ) -> Result<bool, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
-        self.0
-            .serde_cache
-            .file_exists(&format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1))
+        let path = format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1);
+        if self.0.serde_cache.file_exists(&path)? {
+            Ok(true)
+        } else if let Some(new_langid) = self.0.add_script(lang)? {
+            self.file_exists(&new_langid, file_name)
+        } else {
+            Ok(false)
+        }
     }
 }
