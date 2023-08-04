@@ -136,36 +136,39 @@ impl CldrCache {
         })
     }
 
-    /// CLDR sometimes stores regional variants with their script.
-    /// Add in the likely subtags here to make that data reachable.
+    /// CLDR sometimes stores locales with default scripts.
+    /// Add in the likely script here to make that data reachable.
     fn add_script(
         &self,
         langid: &LanguageIdentifier,
     ) -> Result<Option<LanguageIdentifier>, DataError> {
-        if langid.language.is_empty() || langid.script.is_some() || langid.region.is_none() {
+        if langid.language.is_empty() || langid.script.is_some() {
             return Ok(None);
         }
-        let mut langid = langid.clone();
-        self.locale_expander()?.maximize(&mut langid);
-        debug_assert!(langid.script.is_some());
-        Ok(Some(langid))
+        let mut new_langid = langid.clone();
+        self.locale_expander()?.maximize(&mut new_langid);
+        debug_assert!(new_langid.script.is_some());
+        if langid.region.is_none() {
+            new_langid.region = None;
+        }
+        Ok(Some(new_langid))
     }
 
-    /// ICU4X does not store regional variants with their script
+    /// ICU4X does not store locales with their script
     /// if the script is the default for the language.
     /// Perform that normalization mapping here.
     fn remove_script(
         &self,
         langid: &LanguageIdentifier,
     ) -> Result<Option<LanguageIdentifier>, DataError> {
-        if langid.language.is_empty() || langid.script.is_none() || langid.region.is_none() {
+        if langid.language.is_empty() || langid.script.is_none() {
             return Ok(None);
         }
         let region = langid.region;
         let mut langid = langid.clone();
         self.locale_expander()?.minimize(&mut langid);
-        if langid.script.is_some() {
-            // Wasn't able to minimize the script
+        if langid.script.is_some() || (region.is_none() && langid.region.is_some()) {
+            // Wasn't able to minimize the script, or had to add a region
             return Ok(None);
         }
         // Restore the region
