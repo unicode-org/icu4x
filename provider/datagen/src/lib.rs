@@ -363,7 +363,7 @@ impl DatagenProvider {
         log::trace!("Generating key/locale: {key}/{locale:}");
         let mut metadata = DataRequestMetadata::default();
         metadata.silent = true;
-        let mut config = LocaleFallbackConfig::from_key(key);
+        let config = LocaleFallbackConfig::from_key(key);
         let fallbacker = self.fallbacker()?;
         let mut iter = fallbacker.for_config(config).fallback_for(locale.clone());
         loop {
