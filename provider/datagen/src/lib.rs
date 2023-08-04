@@ -262,8 +262,7 @@ impl DatagenProvider {
             .into_iter()
             .map(|locale| {
                 // Pre-process the supported locales into their normalized forms. For example, CLDR has
-                // "sr-Latn-ME", but ICU4X wants that to be "sr-ME". In order to load the data later, we
-                // use the `visit_default_script` option during fallback.
+                // "sr-Latn-ME", but ICU4X wants that to be "sr-ME". CldrCache accepts both forms.
                 fallbacker_with_config.fallback_for(locale).take()
             })
             .collect();
@@ -365,10 +364,6 @@ impl DatagenProvider {
         let mut metadata = DataRequestMetadata::default();
         metadata.silent = true;
         let mut config = LocaleFallbackConfig::from_key(key);
-        // Enable the `visit_default_script` option here, since some raw CLDR data needs it.
-        // However, we don't use it for evaluating runtime fallback, since this option is
-        // normally disabled at runtime.
-        config.visit_default_script = true;
         let fallbacker = self.fallbacker()?;
         let mut iter = fallbacker.for_config(config).fallback_for(locale.clone());
         loop {

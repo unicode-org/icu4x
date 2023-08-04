@@ -129,20 +129,10 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         if locale.script().is_none() {
             if let Some(region) = locale.region() {
                 let language = locale.language();
-                let mut maybe_script = self.likely_subtags.lr2s.get_copied_2d(
+                if let Some(script) = self.likely_subtags.lr2s.get_copied_2d(
                     &language.into_tinystr().to_unvalidated(),
                     &region.into_tinystr().to_unvalidated(),
-                );
-                if maybe_script.is_none() && self.config.visit_default_script {
-                    maybe_script = Some(
-                        self.likely_subtags
-                            .l2s
-                            .get_copied(&language.into_tinystr().to_unvalidated())
-                            .unwrap_or(DEFAULT_SCRIPT),
-                    );
-                    self.has_default_script = true;
-                }
-                if let Some(script) = maybe_script {
+                ) {
                     locale.set_script(Some(script));
                     self.restore_extensions_variants(locale);
                     return;
@@ -155,13 +145,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             self.restore_extensions_variants(locale);
             return;
         }
-        // 7a. Remove script; only visit if the script is the default script
-        locale.set_script(None);
-        if self.config.visit_default_script && self.has_default_script {
-            self.has_default_script = false;
-            return;
-        }
-        // 8. Remove language
+        // 8. Remove language+script
         debug_assert!(!locale.language().is_empty()); // don't call .step() on und
         locale.set_script(None);
         locale.set_language(Language::UND);
@@ -240,7 +224,6 @@ mod tests {
         requires_data: bool,
         extension_key: Option<Key>,
         fallback_supplement: Option<FallbackSupplement>,
-        visit_default_script: bool,
         // Note: The first entry in the chain is the normalized locale
         expected_language_chain: &'static [&'static str],
         expected_region_chain: &'static [&'static str],
@@ -253,7 +236,6 @@ mod tests {
             requires_data: false,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
         },
@@ -262,7 +244,6 @@ mod tests {
             requires_data: false,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -271,7 +252,6 @@ mod tests {
             requires_data: false,
             extension_key: Some(key!("hc")),
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &[
                 "en-US-fonipa-u-hc-h12-sd-usca",
                 "en-US-fonipa-u-sd-usca",
@@ -298,7 +278,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -307,7 +286,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -316,7 +294,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -326,7 +303,6 @@ mod tests {
             requires_data: false,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["en"],
             expected_region_chain: &["en"],
         },
@@ -335,16 +311,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
-            expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
-            expected_region_chain: &["sr-ME", "und-ME"],
-        },
-        TestCase {
-            input: "sr-Latn-ME",
-            requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
         },
@@ -353,7 +319,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &[
                 "sr-ME-fonipa",
                 "sr-ME",
@@ -365,48 +330,11 @@ mod tests {
             expected_region_chain: &["sr-ME-fonipa", "sr-ME", "und-ME-fonipa", "und-ME"],
         },
         TestCase {
-            input: "sr-RS",
-            requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
-            visit_default_script: false,
-            expected_language_chain: &["sr-RS", "sr"],
-            expected_region_chain: &["sr-RS", "und-RS"],
-        },
-        TestCase {
-            input: "sr-Cyrl-RS",
-            requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
-            visit_default_script: false,
-            expected_language_chain: &["sr-RS", "sr"],
-            expected_region_chain: &["sr-RS", "und-RS"],
-        },
-        TestCase {
-            input: "sr-Latn-RS",
-            requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
-            visit_default_script: false,
-            expected_language_chain: &["sr-Latn-RS", "sr-Latn"],
-            expected_region_chain: &["sr-Latn-RS", "und-RS"],
-        },
-        TestCase {
             input: "de-Latn-LI",
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["de-LI", "de"],
-            expected_region_chain: &["de-LI", "und-LI"],
-        },
-        TestCase {
-            input: "de-Latn-LI",
-            requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
-            visit_default_script: true,
-            expected_language_chain: &["de-LI", "de-Latn-LI", "de-Latn", "de"],
             expected_region_chain: &["de-LI", "und-LI"],
         },
         TestCase {
@@ -414,7 +342,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca-valencia", "ca"],
             expected_region_chain: &["ca-ES-valencia", "ca-ES", "und-ES-valencia", "und-ES"],
         },
@@ -423,7 +350,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["es-AR", "es-419", "es"],
             expected_region_chain: &["es-AR", "und-AR"],
         },
@@ -432,7 +358,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["hi-IN", "hi"],
             expected_region_chain: &["hi-IN", "und-IN"],
         },
@@ -441,7 +366,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["hi-Latn-IN", "hi-Latn", "en-IN", "en-001", "en"],
             expected_region_chain: &["hi-Latn-IN", "und-IN"],
         },
@@ -450,7 +374,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             // Note: "zh-Hans" is not reachable because it is the default script for "zh".
             // The fallback algorithm does not visit the language-script bundle when the
             // script is the default for the language
@@ -462,7 +385,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["zh-TW", "zh-Hant-TW", "zh-Hant"],
             expected_region_chain: &["zh-TW", "und-TW"],
         },
@@ -471,7 +393,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
             expected_language_chain: &["yue-HK", "yue"],
             expected_region_chain: &["yue-HK", "und-HK"],
         },
@@ -480,7 +401,6 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: Some(FallbackSupplement::Collation),
-            visit_default_script: false,
             // TODO(#1964): add "zh" as a target.
             expected_language_chain: &["yue-HK", "yue", "zh-Hant"],
             expected_region_chain: &["yue-HK", "und-HK"],
@@ -501,7 +421,6 @@ mod tests {
                     priority,
                     extension_key: cas.extension_key,
                     fallback_supplement: cas.fallback_supplement,
-                    visit_default_script: cas.visit_default_script,
                 };
                 let fallbacker = if cas.requires_data {
                     fallbacker_with_data

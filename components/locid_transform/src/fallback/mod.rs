@@ -65,7 +65,8 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker = LocaleFallbacker::new();
+    /// let fallbacker =
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Language;
     /// let mut fallback_iterator = fallbacker
@@ -96,7 +97,8 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker = LocaleFallbacker::new();
+    /// let fallbacker =
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Region;
     /// let mut fallback_iterator = fallbacker
@@ -134,7 +136,8 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker = LocaleFallbacker::new();
+    /// let fallbacker =
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.extension_key = Some(icu_locid::extensions::unicode::key!("nu"));
     /// let mut fallback_iterator = fallbacker
@@ -175,7 +178,8 @@ pub struct LocaleFallbackConfig {
     /// use tinystr::tinystr;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker = LocaleFallbacker::new();
+    /// let fallbacker =
+    ///     LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Collation;
     /// config.fallback_supplement = Some(FallbackSupplement::Collation);
@@ -200,36 +204,6 @@ pub struct LocaleFallbackConfig {
     /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
     /// ```
     pub fallback_supplement: Option<FallbackSupplement>,
-    /// Internal option used by datagen. Puts the default script into the fallback chain.
-    ///
-    /// ```
-    /// use icu_locid::locale;
-    /// use icu_locid_transform::fallback::FallbackPriority;
-    /// use icu_locid_transform::fallback::FallbackSupplement;
-    /// use icu_locid_transform::fallback::LocaleFallbackConfig;
-    /// use icu_locid_transform::fallback::LocaleFallbacker;
-    /// use tinystr::tinystr;
-    ///
-    /// // Set up the fallback iterator.
-    /// let fallbacker = LocaleFallbacker::new();
-    /// let mut config = LocaleFallbackConfig::default();
-    /// config.visit_default_script = true;
-    /// let mut iter = fallbacker
-    ///     .for_config(config)
-    ///     .fallback_for(locale!("sr-RS").into());
-    ///
-    /// assert_eq!(iter.get(), &locale!("sr-RS").into());
-    /// iter.step();
-    /// assert_eq!(iter.get(), &locale!("sr-Cyrl-RS").into());
-    /// iter.step();
-    /// assert_eq!(iter.get(), &locale!("sr-Cyrl").into());
-    /// iter.step();
-    /// assert_eq!(iter.get(), &locale!("sr").into());
-    /// iter.step();
-    /// assert_eq!(iter.get(), &locale!("und").into());
-    /// ```
-    #[doc(hidden)]
-    pub visit_default_script: bool,
 }
 
 impl LocaleFallbackConfig {
@@ -239,7 +213,6 @@ impl LocaleFallbackConfig {
             priority: FallbackPriority::const_default(),
             extension_key: None,
             fallback_supplement: None,
-            visit_default_script: false,
         }
     }
 
@@ -249,7 +222,6 @@ impl LocaleFallbackConfig {
             priority: key.metadata().fallback_priority,
             extension_key: key.metadata().extension_key,
             fallback_supplement: key.metadata().fallback_supplement,
-            visit_default_script: false,
         }
     }
 }
@@ -285,7 +257,7 @@ pub struct LocaleFallbackerBorrowed<'a> {
 }
 
 /// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
@@ -303,7 +275,6 @@ struct LocaleFallbackIteratorInner<'a> {
     backup_extension: Option<Value>,
     backup_subdivision: Option<Value>,
     backup_variants: Option<Variants>,
-    has_default_script: bool,
 }
 
 /// Iteration type for locale fallback operations.
@@ -453,7 +424,6 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 backup_extension: None,
                 backup_subdivision: None,
                 backup_variants: None,
-                has_default_script: false,
             },
             phantom: core::marker::PhantomData,
         }
