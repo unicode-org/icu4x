@@ -42,12 +42,11 @@ use std::collections::HashSet;
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Options {
+    /// The set of keys to generate. See [`icu_datagen::keys`], 
+    /// [`icu_datagen::all_keys`], [`icu_datagen::key`] and [`icu_datagen::keys_for_bin`].
+    pub keys: HashSet<icu_provider::DataKey>,
     /// Defines the locales to include
     pub locales: LocaleInclude,
-    /// Whether to optimize tries for speed or size
-    pub trie_type: TrieType,
-    /// Which Han collation to use
-    pub collation_han_database: CollationHanDatabase,
     /// The collation types to include.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
@@ -81,63 +80,6 @@ pub enum LocaleInclude {
 impl Default for LocaleInclude {
     fn default() -> Self {
         Self::All
-    }
-}
-
-/// Specifies the collation Han database to use.
-///
-/// Unihan is more precise but significantly increases data size. See
-/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
-#[non_exhaustive]
-pub enum CollationHanDatabase {
-    /// Implicit
-    #[serde(rename = "implicit")]
-    Implicit,
-    /// Unihan
-    #[serde(rename = "unihan")]
-    Unihan,
-}
-
-impl std::fmt::Display for CollationHanDatabase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
-        }
-    }
-}
-
-impl Default for CollationHanDatabase {
-    fn default() -> Self {
-        Self::Implicit
-    }
-}
-
-/// Specifies the trie type to use.
-#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
-#[non_exhaustive]
-pub enum TrieType {
-    /// Fast tries are optimized for speed
-    #[serde(rename = "fast")]
-    Fast,
-    /// Small tries are optimized for size
-    #[serde(rename = "small")]
-    Small,
-}
-
-impl std::fmt::Display for TrieType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            TrieType::Fast => write!(f, "fast"),
-            TrieType::Small => write!(f, "small"),
-        }
-    }
-}
-
-impl Default for TrieType {
-    fn default() -> Self {
-        Self::Small
     }
 }
 

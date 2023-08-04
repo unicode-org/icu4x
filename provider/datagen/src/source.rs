@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::options::Options;
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
@@ -30,9 +29,9 @@ pub struct SourceData {
     icuexport_paths: Option<Arc<SerdeCache>>,
     icuexport_fallback_paths: Arc<SerdeCache>,
     segmenter_lstm_paths: Arc<SerdeCache>,
-    // TODO: move this out when we decide we can break the exhaustiveness of DatagenProvider
-    pub(crate) options: Options,
-    pub(crate) fallbacker: Option<icu_locid_transform::fallback::LocaleFallbacker>,
+    pub(crate) trie_type: TrieType,
+    pub(crate) collation_han_database: CollationHanDatabase,
+    pub(crate) collations: Vec<String>,
 }
 
 #[cfg(feature = "networking")]
@@ -77,8 +76,9 @@ impl SourceData {
                 AbstractFs::new_icuexport_fallback(),
             )),
             segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
-            options: Default::default(),
-            fallbacker: None,
+            trie_type: Default::default(),
+            collation_han_database: Default::default(),
+            collations: Default::default(),
         }
     }
 
@@ -199,26 +199,18 @@ impl SourceData {
         self.with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
     }
 
-    #[deprecated(note = "use crate::Options", since = "1.3.0")]
-    #[doc(hidden)]
+    /// Set this to use tries optimized for speed instead of data size
     pub fn with_fast_tries(self) -> Self {
         Self {
-            options: Options {
-                trie_type: crate::options::TrieType::Fast,
-                ..self.options
-            },
+            trie_type: TrieType::Fast,
             ..self
         }
     }
 
-    #[deprecated(note = "use crate::Options", since = "1.3.0")]
-    #[doc(hidden)]
+    /// Set the [`CollationHanDatabase`] version.
     pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
         Self {
-            options: Options {
-                collation_han_database,
-                ..self.options
-            },
+            collation_han_database,
             ..self
         }
     }
@@ -226,13 +218,7 @@ impl SourceData {
     #[deprecated(note = "use crate::Options", since = "1.3.0")]
     #[doc(hidden)]
     pub fn with_collations(self, collations: Vec<String>) -> Self {
-        Self {
-            options: Options {
-                collations: collations.into_iter().collect(),
-                ..self.options
-            },
-            ..self
-        }
+        Self { collations, ..self }
     }
 
     pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
@@ -264,8 +250,53 @@ impl SourceData {
     }
 }
 
+/// Specifies the trie type to use.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 #[doc(hidden)]
-pub use crate::options::CollationHanDatabase;
+#[non_exhaustive]
+pub enum TrieType {
+    /// Fast tries are optimized for speed
+    #[serde(rename = "fast")]
+    Fast,
+    /// Small tries are optimized for size
+    #[serde(rename = "small")]
+    #[default]
+    Small,
+}
+
+impl std::fmt::Display for TrieType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        match self {
+            TrieType::Fast => write!(f, "fast"),
+            TrieType::Small => write!(f, "small"),
+        }
+    }
+}
+
+/// Specifies the collation Han database to use.
+///
+/// Unihan is more precise but significantly increases data size. See
+/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
+pub enum CollationHanDatabase {
+    /// Implicit
+    #[serde(rename = "implicit")]
+    #[default]
+    Implicit,
+    /// Unihan
+    #[serde(rename = "unihan")]
+    Unihan,
+}
+
+impl std::fmt::Display for CollationHanDatabase {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        match self {
+            CollationHanDatabase::Implicit => write!(f, "implicithan"),
+            CollationHanDatabase::Unihan => write!(f, "unihan"),
+        }
+    }
+}
 
 pub(crate) struct SerdeCache {
     root: AbstractFs,
