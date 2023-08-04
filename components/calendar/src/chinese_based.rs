@@ -73,8 +73,8 @@ pub(crate) struct ChineseBasedDateInner<C: ChineseBased>(
 /// A caching struct used to store information for ChineseBasedDates
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub(crate) struct ChineseBasedCache {
-    new_year: RataDie,
-    is_leap_year: bool,
+    pub(crate) new_year: RataDie,
+    pub(crate) is_leap_year: bool,
 }
 
 impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
@@ -313,7 +313,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         prior_solstice: Option<RataDie>,
     ) -> bool {
         let next_new_year =
-            Self::new_year_on_or_before_fixed_date(new_year + 370, prior_solstice).0;
+            Self::new_year_on_or_before_fixed_date(new_year + 400, prior_solstice).0;
         let difference = next_new_year - new_year;
         difference > 365
     }
@@ -377,6 +377,11 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         )
     }
 
+    /// Call `months_in_year_cached` on a `ChineseBasedDateInner`
+    pub(crate) fn months_in_year_inner(&self) -> u8 {
+        Self::months_in_year_cached(self.0.year, Some(self.1)).0
+    }
+
     /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
     /// Also returns a ChineseBasedCache - either the cache passed as an argument, if applicable, or a new
     /// ChineseBasedCache for the given year.
@@ -412,6 +417,26 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             is_leap_year,
         };
         (is_leap_year, cache)
+    }
+
+    /// Gets the leap month for an instance of `ChineseBasedDateInner`; this function assumes the `ChineseBasedDateInner`
+    /// represents a year with a leap month.
+    pub(crate) fn get_leap_month(&self) -> u8 {
+        debug_assert!(
+            self.1.is_leap_year,
+            "fn `get_leap_month` called on a non-leap year!"
+        );
+        let mut cur = self.1.new_year;
+        let mut result = 1;
+        while result < MAX_ITERS_FOR_MONTHS_OF_YEAR && !Self::no_major_solar_term(cur) {
+            cur = Self::new_moon_on_or_after((cur + 1).as_moment());
+            result += 1;
+        }
+        debug_assert!(
+            result < MAX_ITERS_FOR_MONTHS_OF_YEAR,
+            "Unexpected number of iterations occurred searching for a leap month."
+        );
+        result
     }
 
     /// Calls `days_in_month_cached` on an instance of ChineseBasedDateInner

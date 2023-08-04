@@ -182,7 +182,7 @@ impl Calendar for Dangi {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_for_every_year(date.0 .0.year)
+        date.0.months_in_year_inner()
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
@@ -218,8 +218,8 @@ impl Calendar for Dangi {
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month = if Self::is_leap_year(date.0 .0.year) {
-            Inner::get_leap_month_in_year(Inner::fixed_mid_year_from_year(date.0 .0.year))
+        let leap_month = if date.0 .1.is_leap_year {
+            date.0.get_leap_month()
         } else {
             14
         };
@@ -285,7 +285,7 @@ impl Calendar for Dangi {
         let next_year = date.0 .0.year.saturating_add(1);
         types::DayOfYearInfo {
             day_of_year: date.0 .0.day_of_year(),
-            days_in_year: date.0 .0.days_in_year(),
+            days_in_year: date.0.days_in_year_inner(),
             prev_year: Self::format_dangi_year(prev_year),
             days_in_prev_year: Self::days_in_provided_year(prev_year),
             next_year: Self::format_dangi_year(next_year),
@@ -386,6 +386,7 @@ impl ChineseBased for Dangi {
         day: u8,
         cache: ChineseBasedCache,
     ) -> ChineseBasedDateInner<Dangi> {
+        // See the `Chinese` implementation of this function for reasons why `new_unchecked` can be used here.
         ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), cache)
     }
 }

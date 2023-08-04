@@ -206,9 +206,8 @@ impl Calendar for Chinese {
     /// month, the month codes for ordinal monts 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let mid_year = Inner::fixed_mid_year_from_year(date.0 .0.year);
-        let leap_month = if Inner::fixed_date_is_in_leap_year(mid_year) {
-            Inner::get_leap_month_in_year(mid_year)
+        let leap_month = if date.0 .1.is_leap_year {
+            date.0.get_leap_month()
         } else {
             14
         };
@@ -276,7 +275,7 @@ impl Calendar for Chinese {
         let next_year = date.0 .0.year.saturating_add(1);
         types::DayOfYearInfo {
             day_of_year: date.0 .0.day_of_year(),
-            days_in_year: date.0 .0.days_in_year(),
+            days_in_year: date.0.days_in_year_inner(),
             prev_year: Self::format_chinese_year(prev_year),
             days_in_prev_year: Self::days_in_provided_year(prev_year),
             next_year: Self::format_chinese_year(next_year),
@@ -289,7 +288,7 @@ impl Calendar for Chinese {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_for_every_year(date.0 .0.year)
+        date.0.months_in_year_inner()
     }
 }
 
@@ -376,6 +375,10 @@ impl ChineseBased for Chinese {
         day: u8,
         cache: ChineseBasedCache,
     ) -> ChineseBasedDateInner<Chinese> {
+        // This can use `new_unchecked` because this function is only ever called from functions which
+        // generate the year, month, and day; therefore, there should never be a situation where
+        // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
+        // are also used to check for valid ymd.
         ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), cache)
     }
 }
