@@ -543,7 +543,7 @@ jobs:
 
     - name: Install rustfmt
       run: |
-        rustup install rustfmt
+        rustup component add rustfmt
 
     - name: Setup output data directory
       run: |
