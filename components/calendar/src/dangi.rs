@@ -34,7 +34,7 @@
 //! ```
 
 use crate::calendar_arithmetic::CalendarArithmetic;
-use crate::chinese_based::chinese_based_ordinal_lunar_month_from_code;
+use crate::chinese_based::{chinese_based_ordinal_lunar_month_from_code, ChineseBasedCache};
 use crate::helpers::div_rem_euclid64;
 use crate::{
     astronomy::Location,
@@ -163,28 +163,12 @@ impl Calendar for Dangi {
             ));
         };
 
-        if month > Self::months_for_every_year(year) {
-            return Err(CalendarError::UnknownMonthCode(
-                month_code.0,
-                self.debug_name(),
-            ));
-        }
-
-        let max_day = Self::month_days(year, month);
-        if day > max_day {
-            return Err(CalendarError::Overflow {
-                field: "day",
-                max: max_day as usize,
-            });
-        }
-
         if era.0 != tinystr!(16, "dangi") {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        Ok(ArithmeticDate::new_unchecked(year, month, day))
-            .map(|arithmetic| ChineseBasedDateInner(arithmetic, None))
-            .map(DangiDateInner)
+        let (arithmetic, cache) = Inner::new_from_ordinals(year, month, day, None);
+        Ok(DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)))
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
@@ -336,10 +320,8 @@ impl Date<Dangi> {
     /// assert_eq!(date_dangi.day_of_month().0, 18);
     /// ```
     pub fn try_new_dangi_date(year: i32, month: u8, day: u8) -> Result<Date<Dangi>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
-            .map(|arithmetic| ChineseBasedDateInner(arithmetic, None))
-            .map(DangiDateInner)
-            .map(|inner| Date::from_raw(inner, Dangi))
+        let (arithmetic, cache) = Inner::new_from_ordinals(year, month, day, None);
+        Ok(Date::from_raw(DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)), Dangi))
     }
 }
 
@@ -395,8 +377,8 @@ impl ChineseBased for Dangi {
 
     // Unchecked can be used since this function is only ever called when generating dates from
     // a valid year, month, and day.
-    fn new_chinese_based_date(year: i32, month: u8, day: u8, new_year: RataDie) -> ChineseBasedDateInner<Dangi> {
-        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), Some(new_year))
+    fn new_chinese_based_date(year: i32, month: u8, day: u8, cache: ChineseBasedCache) -> ChineseBasedDateInner<Dangi> {
+        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), cache)
     }
 }
 

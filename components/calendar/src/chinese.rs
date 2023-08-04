@@ -37,7 +37,7 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::Location;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::chinese_based::{
-    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedDateInner,
+    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedDateInner, ChineseBasedCache,
 };
 use crate::helpers::div_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
@@ -137,28 +137,12 @@ impl Calendar for Chinese {
             ));
         };
 
-        if month > Self::months_for_every_year(year) {
-            return Err(CalendarError::UnknownMonthCode(
-                month_code.0,
-                self.debug_name(),
-            ));
-        }
-
-        let max_day = Self::month_days(year, month);
-        if day > max_day {
-            return Err(CalendarError::Overflow {
-                field: "day",
-                max: max_day as usize,
-            });
-        }
-
         if era.0 != tinystr!(16, "chinese") {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        Ok(ArithmeticDate::new_unchecked(year, month, day))
-            .map(|arithmetic| ChineseBasedDateInner(arithmetic, None))
-            .map(ChineseDateInner)
+        let (arithmetic, cache) = Inner::new_from_ordinals(year, month, day, None);
+        Ok(ChineseDateInner(ChineseBasedDateInner(arithmetic?, cache)))
     }
 
     // Construct the date from an ISO date
@@ -331,10 +315,8 @@ impl Date<Chinese> {
         month: u8,
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
-            .map(|arithmetic| ChineseBasedDateInner(arithmetic, None))
-            .map(ChineseDateInner)
-            .map(|inner| Date::from_raw(inner, Chinese))
+        let (arithmetic, cache) = Inner::new_from_ordinals(year, month, day, None);
+        Ok(Date::from_raw(ChineseDateInner(ChineseBasedDateInner(arithmetic?, cache)), Chinese))
     }
 }
 
@@ -384,8 +366,8 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
 
-    fn new_chinese_based_date(year: i32, month: u8, day: u8, new_year: RataDie) -> ChineseBasedDateInner<Chinese> {
-        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), Some(new_year))
+    fn new_chinese_based_date(year: i32, month: u8, day: u8, cache: ChineseBasedCache) -> ChineseBasedDateInner<Chinese> {
+        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), cache)
     }
 }
 

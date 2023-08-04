@@ -10,7 +10,6 @@
 //!
 //! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
 //! let chinese_date = Date::new_from_iso(iso_date, Chinese);
-//! // TODO: When Korean and Vietnamese are added, put example code here as well.
 //!
 //! assert_eq!(chinese_date.year().number, 4660);
 //! assert_eq!(chinese_date.year().related_iso, Some(2023));
@@ -29,6 +28,7 @@ use crate::{
     rata_die::RataDie,
     types::{Moment, MonthCode},
     Calendar,
+    CalendarError,
 };
 
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
@@ -56,12 +56,19 @@ pub(crate) trait ChineseBased: CalendarArithmetic + Sized {
     /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
     ///
     /// This function should just call try_new_C_date where C is the name of the calendar.
-    fn new_chinese_based_date(year: i32, month: u8, day: u8, new_year: RataDie) -> ChineseBasedDateInner<Self>;
+    fn new_chinese_based_date(year: i32, month: u8, day: u8, cache: ChineseBasedCache) -> ChineseBasedDateInner<Self>;
 }
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct ChineseBasedDateInner<C: ChineseBased>(pub(crate) ArithmeticDate<C>, pub(crate) Option<RataDie>);
+pub(crate) struct ChineseBasedDateInner<C: ChineseBased>(pub(crate) ArithmeticDate<C>, pub(crate) ChineseBasedCache);
+
+/// A caching struct used to store information for ChineseBasedDates
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+pub(crate) struct ChineseBasedCache {
+    new_year: RataDie,
+    is_leap_year: bool,
+}
 
 impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Get the current major solar term of a fixed date, output as an integer from 1..=12.
@@ -252,7 +259,12 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Day should be in range of u8! Value {month_i64} failed for RD {date:?}"
         );
         let day = day_i64 as u8;
-        C::new_chinese_based_date(year, month, day, first_day_of_year)
+        let is_leap_year = Self::new_year_is_leap_year(first_day_of_year, None);
+        let cache = ChineseBasedCache {
+            new_year: first_day_of_year,
+            is_leap_year,
+        };
+        C::new_chinese_based_date(year, month, day, cache)
     }
 
     /// Get a RataDie from a ChineseBasedDateInner
@@ -260,10 +272,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
     /// (beginning of the month) of the month given, then adds the necessary number of days.
     pub(crate) fn fixed_from_chinese_based_date_inner(date: ChineseBasedDateInner<C>) -> RataDie {
-        let year = date.0.year;
         let month = date.0.month as i64;
         let day = date.0.day as i64;
-        let first_day_of_year = if let Some(new_year) = date.1 { new_year } else { Self::new_year_on_or_before_fixed_date(Self::fixed_mid_year_from_year(year), None).0 };
+        let first_day_of_year = date.1.new_year;
         let month_approx = first_day_of_year + (month - 1) * 29;
         let prior_new_moon = Self::new_moon_on_or_after(month_approx.as_moment());
         prior_new_moon + day - 1
@@ -284,8 +295,15 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Returns true if the fixed date given is in a leap year, false otherwise
     pub(crate) fn fixed_date_is_in_leap_year(date: RataDie) -> bool {
         let (prev_new_year, solstice) = Self::new_year_on_or_before_fixed_date(date, None);
-        let next_new_year = Self::new_year_on_or_before_fixed_date(date + 370, Some(solstice)).0;
-        let difference = next_new_year - prev_new_year;
+        Self::new_year_is_leap_year(prev_new_year, Some(solstice))
+    }
+
+    /// Returns true if the fixed date given is in a leap year, assuming the fixed date
+    /// given is the RataDie of a new year. Optionally, a RataDie representing the prior winter
+    /// solstice before the `new_year` can be passed in as an Option argument.
+    pub(crate) fn new_year_is_leap_year(new_year: RataDie, prior_solstice: Option<RataDie>) -> bool {
+        let next_new_year = Self::new_year_on_or_before_fixed_date(new_year + 370, prior_solstice).0;
+        let difference = next_new_year - new_year;
         difference > 365
     }
 
@@ -307,6 +325,80 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
         debug_assert!(result < MAX_ITERS_FOR_MONTHS_OF_YEAR, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
         result
+    }
+
+    /// Create a new arithmetic date from a year, month ordinal, and day with bounds checking; returns the
+    /// result of creating this arithmetic date, as well as a ChineseBasedCache - either the one passed in
+    /// optionally as an argument, or a new ChineseBasedCache for the given year, month, and day args.
+    pub(crate) fn new_from_ordinals(year: i32, month: u8, day: u8, cache_arg: Option<ChineseBasedCache>) -> (Result<ArithmeticDate<C>, CalendarError>, ChineseBasedCache) {
+        let max_month_tuple = Self::months_in_year_cached(year, cache_arg);
+        let max_month = max_month_tuple.0;
+        let cache = if let Some(existing_cache) = cache_arg { existing_cache } else { max_month_tuple.1 };
+        if month > max_month {
+            return (Err(CalendarError::Overflow {
+                field: "month",
+                max: max_month as usize,
+            }), cache);
+        }
+
+        let max_day_tuple = Self::days_in_month_cached(year, month, Some(cache));
+        let max_day = max_day_tuple.0;
+        if day > max_day {
+            return (Err(CalendarError::Overflow {
+                field: "day",
+                max: max_day as usize,
+            }), cache);
+        }
+
+        // Unchecked can be used because month and day are already checked in this fn
+        (Ok(ArithmeticDate::<C>::new_unchecked(year, month, day)), cache)
+    }
+
+    /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
+    /// Also returns a ChineseBasedCache - either the cache passed as an argument, if applicable, or a new
+    /// ChineseBasedCache for the given year.
+    fn months_in_year_cached(year: i32, cache_arg: Option<ChineseBasedCache>) -> (u8, ChineseBasedCache) {
+        let is_leap_year_tuple = Self::is_leap_year_cached(year, cache_arg);
+        let is_leap_year = is_leap_year_tuple.0;
+        let cache = if let Some(existing_cache) = cache_arg { existing_cache } else { is_leap_year_tuple.1 };
+
+        (if is_leap_year { 13 } else { 12 }, cache)
+    }
+
+    /// Returns true if the given year is a leap year, and false if not; also returns a ChineseBasedCache - 
+    /// either the cache passed as an argument, if applicable, or a new ChineseBasedCache for the given year.
+    fn is_leap_year_cached(year: i32, cache_arg: Option<ChineseBasedCache>) -> (bool, ChineseBasedCache) {
+        if let Some(existing_cache) = cache_arg { 
+            (existing_cache.is_leap_year, existing_cache)
+        } else {
+            let mid_year = Self::fixed_mid_year_from_year(year);
+            Self::fixed_date_is_in_leap_year_empty_cache(mid_year)
+        }
+    }
+
+    /// Returns true if the given fixed date is in a leap year; also returns a reference
+    /// to a new mutable ChineseBasedCache.
+    fn fixed_date_is_in_leap_year_empty_cache(date: RataDie) -> (bool, ChineseBasedCache) {
+        let (new_year, solstice) = Self::new_year_on_or_before_fixed_date(date, None);
+        let is_leap_year = Self::new_year_is_leap_year(new_year, Some(solstice));
+        let cache = ChineseBasedCache {
+            new_year,
+            is_leap_year,
+        };
+        (is_leap_year, cache)
+    }
+
+    /// Returns the number of days in the given `year`, `month` (see `month_days`), as well as a ChineseBasedCache - 
+    /// either a cache passed in optionally as an argument, or a new cache otherwise.
+    fn days_in_month_cached(year: i32, month: u8, cache_arg: Option<ChineseBasedCache>) -> (u8, ChineseBasedCache) {
+        let cache = if let Some(existing_cache) = cache_arg { existing_cache } else { Self::is_leap_year_cached(year, None).1 };
+        let new_year = cache.new_year;
+        let approx = new_year + ((month - 1) as i64 * 29);
+        let prev_new_moon = Self::new_moon_before((approx + 15).as_moment());
+        let next_new_moon = Self::new_moon_on_or_after((approx + 15).as_moment());
+        let result = (next_new_moon - prev_new_moon) as u8;
+        debug_assert!(result == 29 || result == 30);
+        (result, cache)
     }
 }
 
