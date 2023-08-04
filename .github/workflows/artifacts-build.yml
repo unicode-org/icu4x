@@ -461,7 +461,10 @@ jobs:
       run: cargo make wasm-opt
 
     - name: gzip wasm executables
-      run: (cd wasmpkg/wasm-opt && gzip -k *+opt.wasm)
+      run: |
+        cd wasmpkg/wasm-opt
+        gzip -k *+opt.wasm
+        cd ../..
 
     - name: Setup output data directory
       run: |
@@ -541,6 +544,10 @@ jobs:
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
 
+    - name: Install rustfmt
+      run: |
+        rustup component add rustfmt
+
     - name: Setup output data directory
       run: |
         mkdir -p benchmarks/datasize
@@ -580,7 +587,7 @@ jobs:
           gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/datasize
 
   gh-pages:
-    name: "Copy artifacts to gh-pages branch"
+    name: "Deploy to GitHub Pages"
     needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
@@ -600,7 +607,7 @@ jobs:
           gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo tools/website-skeleton/ || true
       - name: Upload to main bucket
         run: |
-          gsutil -m cp -r gs://${env.GCP_PR_BUCKET_ID}/gha/${{ github.sha }} gs://${env.GCP_MAIN_BUCKET_ID}/gha/
+          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID}}/gha/${{ github.sha }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
