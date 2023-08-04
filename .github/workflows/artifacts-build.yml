@@ -463,7 +463,7 @@ jobs:
     - name: gzip wasm executables
       run: |
         cd wasmpkg/wasm-opt
-        gzip -k *+opt.wasm)
+        gzip -k *+opt.wasm
         cd ../..
 
     - name: Setup output data directory
