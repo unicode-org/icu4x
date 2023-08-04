@@ -35,7 +35,8 @@ permissions:
 
 env:
   GCP_PROJECT_ID: "dev-infra-273822"
-  GCP_BUCKET_ID: "icu4x-pr-artifacts"
+  GCP_PR_BUCKET_ID: "icu4x-pr-artifacts"
+  GCP_MAIN_BUCKET_ID: "icu4x-main"
 
 jobs:
   credentials:
@@ -86,11 +87,11 @@ jobs:
 
     - name: Upload docs to Google Cloud Storage
       run: |
-        gsutil -m cp -r target/doc gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs
+        gsutil -m cp -r target/doc gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/docs
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "::group::📖 Docs Preview"
-        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/docs/icu/index.html"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/docs/icu/index.html"
         echo "::endgroup::"
 
   ffi-docs:
@@ -133,16 +134,16 @@ jobs:
 
     - name: Upload docs to Google Cloud Storage
       run: |
-        gsutil -m cp -r ffi/diplomat/cpp/docs/build/html gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
-        gsutil -m cp -r ffi/diplomat/js/docs/build/html gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js
+        gsutil -m cp -r ffi/diplomat/cpp/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
+        gsutil -m cp -r ffi/diplomat/js/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "::group::📖 CPP Docs Preview"
-        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/cpp/index.html"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/cpp/index.html"
         echo "::endgroup::"
 
         echo "::group::📖 JS Docs Preview"
-        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/js/index.html"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/js/index.html"
         echo "::endgroup::"
 
   wasm-demo:
@@ -189,8 +190,8 @@ jobs:
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        # gsutil cors set ffi/diplomat/js/examples/wasm-demo/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
-        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
+        # gsutil cors set ffi/diplomat/js/examples/wasm-demo/cors-config-file.json gs://${{ env.GCP_PR_BUCKET_ID }}
+        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -222,8 +223,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -265,9 +264,7 @@ jobs:
 
     - name:  Download previous benchmark data
       run: |
-        # We're on main, so the previous run is the parent.
-        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
 
     - name: Store benchmark result & create dashboard
       uses: rhysd/github-action-benchmark@v1.15.0
@@ -288,7 +285,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf/${{ matrix.component }}
+          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf/${{ matrix.component }}
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
   # metrics will then be charted over time. See tools/benchmark/memory/README.md for
@@ -343,8 +340,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -381,18 +376,8 @@ jobs:
         cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
 
     - name:  Download previous benchmark data
-      if: matrix.os != 'windows-latest'
       run: |
-        # We're on main, so the previous run is the parent.
-        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
-
-    - name:  Download previous benchmark data
-      if: matrix.os == 'windows-latest'
-      run: |
-        # We're on main, so the previous run is the parent.
-        $BASELINE = git log --pretty=format:'%H' -1 -r HEAD^
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name: Store benchmark result & create dashboard
       # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
@@ -416,7 +401,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory/${{ matrix.os }}
+          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory/${{ matrix.os }}
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
@@ -430,8 +415,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -478,7 +461,10 @@ jobs:
       run: cargo make wasm-opt
 
     - name: gzip wasm executables
-      run: (cd wasmpkg/wasm-opt && gzip -k *+opt.wasm)
+      run: |
+        cd wasmpkg/wasm-opt
+        gzip -k *+opt.wasm
+        cd ../..
 
     - name: Setup output data directory
       run: |
@@ -496,9 +482,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        # We're on main, so the previous run is the parent.
-        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize benchmarks/binsize
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize benchmarks/binsize
 
     - name: Store benchmark result & create dashboard (wasm)
       # Use gregtatum special feature to process ndjson-formatted benchmark data
@@ -536,7 +520,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/binsize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/binsize
+          gsutil -m cp -r benchmarks/binsize/ gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/binsize
 
   # Data size benchmark: track size of provider/datagen/tests/data/testdata.postcard (total data size).
   bench-datasize:
@@ -549,8 +533,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -561,6 +543,10 @@ jobs:
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
+
+    - name: Install rustfmt
+      run: |
+        rustup component add rustfmt
 
     - name: Setup output data directory
       run: |
@@ -577,9 +563,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks
-        # We're on main, so the previous run is the parent.
-        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize benchmarks
 
     - name: Store benchmark result & create dashboard
       # Use gregtatum special feature to process ndjson-formatted benchmark data
@@ -600,10 +584,10 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/datasize
+          gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/datasize
 
   gh-pages:
-    name: "Copy artifacts to gh-pages branch"
+    name: "Deploy to GitHub Pages"
     needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
@@ -615,12 +599,15 @@ jobs:
       - uses: actions/checkout@v3
       - name: Download artifacts
         run: |
-          gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks tools/website-skeleton/ || true
-          gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs tools/website-skeleton || true
+          gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks tools/website-skeleton/ || true
+          gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/docs tools/website-skeleton || true
           mkdir -p tools/website-skeleton/docs/ffi
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp tools/website-skeleton/docs/ffi || true
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js tools/website-skeleton/docs/ffi || true
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo tools/website-skeleton/ || true
+          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo tools/website-skeleton/ || true
+      - name: Upload to main bucket
+        run: |
+          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID}}/gha/${{ github.sha }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:

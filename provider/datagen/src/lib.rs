@@ -190,20 +190,25 @@ impl DatagenProvider {
 
     #[cfg(test)]
     pub fn for_test() -> Self {
+        use once_cell::sync::OnceCell;
+
+        static TEST_PROVIDER: OnceCell<DatagenProvider> = OnceCell::new();
         // Singleton so that all instantiations share the same cache.
-        lazy_static::lazy_static! {
-            static ref TEST_PROVIDER: DatagenProvider = {
-                let data_root = std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
+        TEST_PROVIDER
+            .get_or_init(|| {
+                let data_root =
+                    std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
                 DatagenProvider {
                     // This is equivalent to `latest_tested` for the files defined in
                     // `tools/testdata-scripts/globs.rs.data`.
                     source: SourceData::offline()
-                        .with_cldr(data_root.join("cldr"), Default::default()).unwrap()
-                        .with_icuexport(data_root.join("icuexport")).unwrap(),
+                        .with_cldr(data_root.join("cldr"), Default::default())
+                        .unwrap()
+                        .with_icuexport(data_root.join("icuexport"))
+                        .unwrap(),
                 }
-            };
-        }
-        TEST_PROVIDER.clone()
+            })
+            .clone()
     }
 
     pub(crate) fn filter_data_locales(
