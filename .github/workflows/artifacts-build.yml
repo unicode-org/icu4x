@@ -407,7 +407,7 @@ jobs:
   bench-binsize:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     runs-on: ubuntu-latest
     concurrency:
       # Allow one run at a time to include the previous run's results
