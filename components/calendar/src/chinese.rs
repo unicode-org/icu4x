@@ -37,7 +37,8 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::Location;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::chinese_based::{
-    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedDateInner, ChineseBasedCache,
+    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedCache,
+    ChineseBasedDateInner,
 };
 use crate::helpers::div_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
@@ -160,11 +161,11 @@ impl Calendar for Chinese {
     //Count the number of months in a given year, specified by providing a date
     // from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        Self::days_in_provided_year(date.0 .0.year)
+        date.0.days_in_year_inner()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::month_days(date.0 .0.year, date.0 .0.month)
+        date.0.days_in_month_inner()
     }
 
     #[doc(hidden)] // unstable
@@ -316,7 +317,10 @@ impl Date<Chinese> {
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
         let (arithmetic, cache) = Inner::new_from_ordinals(year, month, day, None);
-        Ok(Date::from_raw(ChineseDateInner(ChineseBasedDateInner(arithmetic?, cache)), Chinese))
+        Ok(Date::from_raw(
+            ChineseDateInner(ChineseBasedDateInner(arithmetic?, cache)),
+            Chinese,
+        ))
     }
 }
 
@@ -366,7 +370,12 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
 
-    fn new_chinese_based_date(year: i32, month: u8, day: u8, cache: ChineseBasedCache) -> ChineseBasedDateInner<Chinese> {
+    fn new_chinese_based_date(
+        year: i32,
+        month: u8,
+        day: u8,
+        cache: ChineseBasedCache,
+    ) -> ChineseBasedDateInner<Chinese> {
         ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), cache)
     }
 }

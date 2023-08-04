@@ -186,11 +186,11 @@ impl Calendar for Dangi {
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        Self::days_in_provided_year(date.0 .0.year)
+        date.0.days_in_year_inner()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::month_days(date.0 .0.year, date.0 .0.month)
+        date.0.days_in_month_inner()
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: crate::DateDuration<Self>) {
@@ -321,7 +321,10 @@ impl Date<Dangi> {
     /// ```
     pub fn try_new_dangi_date(year: i32, month: u8, day: u8) -> Result<Date<Dangi>, CalendarError> {
         let (arithmetic, cache) = Inner::new_from_ordinals(year, month, day, None);
-        Ok(Date::from_raw(DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)), Dangi))
+        Ok(Date::from_raw(
+            DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)),
+            Dangi,
+        ))
     }
 }
 
@@ -377,7 +380,12 @@ impl ChineseBased for Dangi {
 
     // Unchecked can be used since this function is only ever called when generating dates from
     // a valid year, month, and day.
-    fn new_chinese_based_date(year: i32, month: u8, day: u8, cache: ChineseBasedCache) -> ChineseBasedDateInner<Dangi> {
+    fn new_chinese_based_date(
+        year: i32,
+        month: u8,
+        day: u8,
+        cache: ChineseBasedCache,
+    ) -> ChineseBasedDateInner<Dangi> {
         ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), cache)
     }
 }
