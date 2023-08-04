@@ -461,7 +461,10 @@ jobs:
       run: cargo make wasm-opt
 
     - name: gzip wasm executables
-      run: (cd wasmpkg/wasm-opt && gzip -k *+opt.wasm)
+      run: |
+        cd wasmpkg/wasm-opt
+        gzip -k *+opt.wasm)
+        cd ../..
 
     - name: Setup output data directory
       run: |
@@ -523,7 +526,7 @@ jobs:
   bench-datasize:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-datasize
