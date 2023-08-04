@@ -18,7 +18,6 @@ collator/data@1, ja, 84545B, ba94ab51f1e4941d
 collator/data@1, ja-u-co-unihan, 10028B, f7796e62a0df836
 collator/data@1, ru, 126599B, 67b40ad491cf8c28
 collator/data@1, sr, 1260B, d4d3ed781cac6b11
-collator/data@1, sr-Cyrl, 1260B, d4d3ed781cac6b11
 collator/data@1, sr-Latn, 1767B, 20686a7999a1b37c
 collator/data@1, th, 1446B, cde7f22f6db5fc85
 collator/data@1, tr, 1421B, 951f3bb88f3af29f
@@ -45,7 +44,6 @@ collator/meta@1, ja, 1B, 9208c26164ee7a99
 collator/meta@1, ja-u-co-unihan, 1B, 9208c26164ee7a99
 collator/meta@1, ru, 1B, d1dcef7af54c8272
 collator/meta@1, sr, 1B, 9208c26164ee7a99
-collator/meta@1, sr-Cyrl, 1B, 9208c26164ee7a99
 collator/meta@1, sr-Latn, 1B, 9208c26164ee7a99
 collator/meta@1, th, 2B, 7366aaaa2233984c
 collator/meta@1, tr, 1B, 9aab82d56f3b362e
@@ -62,7 +60,6 @@ collator/reord@1, ja, 264B, 9fe136fb92b56a45
 collator/reord@1, ja-u-co-unihan, 264B, 9fe136fb92b56a45
 collator/reord@1, ru, 264B, 9a7e53d9c789f77d
 collator/reord@1, sr, 264B, 9a7e53d9c789f77d
-collator/reord@1, sr-Cyrl, 264B, 9a7e53d9c789f77d
 collator/reord@1, sr-Latn, 264B, a9c045469c9ded34
 collator/reord@1, th, 264B, fbcc4327402fdfc6
 compactdecimal/long@1, ar, 160B, 50509461eabaf845
@@ -647,7 +644,6 @@ datetime/week_data@1, fr, 2B, fb813f95ba4e1e31
 datetime/week_data@1, ja, 2B, 636a8b37946c4ebf
 datetime/week_data@1, ru, 2B, fb813f95ba4e1e31
 datetime/week_data@1, sr, 2B, 62c3506f27376c25
-datetime/week_data@1, sr-Cyrl, 2B, 62c3506f27376c25
 datetime/week_data@1, sr-Latn, 2B, 62c3506f27376c25
 datetime/week_data@1, th, 2B, 636a8b37946c4ebf
 datetime/week_data@1, tr, 2B, 62c3506f27376c25
@@ -996,7 +992,6 @@ plurals/cardinal@1, fr, 113B, 85ef1251ccfd9501
 plurals/cardinal@1, ja, 5B, fd5d54cb7ad1d0d8
 plurals/cardinal@1, ru, 200B, 8b67b7207659c307
 plurals/cardinal@1, sr, 165B, e82ee4e634c4a9cf
-plurals/cardinal@1, sr-Cyrl, 165B, e82ee4e634c4a9cf
 plurals/cardinal@1, sr-Latn, 5B, fd5d54cb7ad1d0d8
 plurals/cardinal@1, th, 5B, fd5d54cb7ad1d0d8
 plurals/cardinal@1, tr, 25B, 3aff8a8624dd0ca1
@@ -1015,7 +1010,6 @@ plurals/ordinal@1, fr, 25B, 3aff8a8624dd0ca1
 plurals/ordinal@1, ja, 5B, fd5d54cb7ad1d0d8
 plurals/ordinal@1, ru, 5B, fd5d54cb7ad1d0d8
 plurals/ordinal@1, sr, 5B, fd5d54cb7ad1d0d8
-plurals/ordinal@1, sr-Cyrl, 5B, fd5d54cb7ad1d0d8
 plurals/ordinal@1, sr-Latn, 5B, fd5d54cb7ad1d0d8
 plurals/ordinal@1, th, 5B, fd5d54cb7ad1d0d8
 plurals/ordinal@1, tr, 5B, fd5d54cb7ad1d0d8
