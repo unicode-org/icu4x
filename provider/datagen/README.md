@@ -20,7 +20,11 @@ use std::fs::File;
 fn main() {
     DatagenProvider::default()
         .export(
-            [icu::list::provider::AndListV1Marker::KEY].into_iter().collect(),
+            {
+                let mut options = options::Options::default();
+                options.keys = [icu::list::provider::AndListV1Marker::KEY].into_iter().collect();
+                options
+            },
             BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())),
         )
         .unwrap();
