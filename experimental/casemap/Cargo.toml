@@ -33,11 +33,11 @@ all-features = true
 displaydoc = { version = "0.2.3", default-features = false }
 icu_collections = { version = "1.2.0", path = "../../components/collections" }
 icu_locid = { version = "1.2.0", path = "../../components/locid" }
+icu_properties = { version = "1.2.0", path = "../../components/properties", default-features = false }
 icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
 yoke = { version = "0.7.1", path = "../../utils/yoke", features = ["derive"] }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
-icu_properties = { path = "../../components/properties" }
 
 databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
@@ -48,9 +48,9 @@ icu_casemap_data = { version = "~1.3.0", path = "data", optional = true }
 default = ["compiled_data"]
 std = ["icu_collections/std", "icu_provider/std"]
 bench = []
-serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde", "icu_properties/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
-compiled_data = ["dep:icu_casemap_data"]
+compiled_data = ["dep:icu_casemap_data", "icu_properties/compiled_data"]
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
