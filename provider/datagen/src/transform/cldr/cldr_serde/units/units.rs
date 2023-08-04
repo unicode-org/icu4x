@@ -10,14 +10,13 @@
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
-
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Constant {
     #[serde(rename = "_value")]
     pub value: String,
 
     #[serde(rename = "_status")]
-    pub status: Option< String>,
+    pub status: Option<String>,
 
     #[serde(rename = "_description")]
     pub description: Option<String>,

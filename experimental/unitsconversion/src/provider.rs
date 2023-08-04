@@ -9,10 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
-use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::{ZeroMap, ZeroMap2d, ZeroVec};
 use Default;
 
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
@@ -37,9 +35,12 @@ type ConstantTypeMask = u8;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct UnitsConstantsV1 <'data>{
+pub struct UnitsConstantsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub constants_values: VarZeroVec< 'data, ConstantValueULE>,
+    pub constants_map: ZeroMap<'data, str, u16>,
+
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub constants_values: ZeroVec<'data, ConstantValue>,
 }
 
 #[zerovec::make_ule(ConstantValueULE)]
@@ -55,9 +56,9 @@ pub struct ConstantValue {
 
     pub repetition: u8,
 
-    pub numerator : u32,
+    pub numerator: u32,
 
-    pub dominator : u32,
+    pub dominator: u32,
 
     pub const_type: ConstantTypeMask,
 }
