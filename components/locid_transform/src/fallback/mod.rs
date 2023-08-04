@@ -65,8 +65,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Language;
     /// let mut fallback_iterator = fallbacker
@@ -97,8 +96,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Region;
     /// let mut fallback_iterator = fallbacker
@@ -136,8 +134,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.extension_key = Some(icu_locid::extensions::unicode::key!("nu"));
     /// let mut fallback_iterator = fallbacker
@@ -178,8 +175,7 @@ pub struct LocaleFallbackConfig {
     /// use tinystr::tinystr;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Collation;
     /// config.fallback_supplement = Some(FallbackSupplement::Collation);
@@ -257,7 +253,7 @@ pub struct LocaleFallbackerBorrowed<'a> {
 }
 
 /// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
