@@ -167,8 +167,8 @@ impl CldrCache {
         let region = langid.region;
         let mut langid = langid.clone();
         self.locale_expander()?.minimize(&mut langid);
-        if langid.script.is_some() {
-            // Wasn't able to minimize the script
+        if langid.script.is_some() || (region.is_none() && langid.region.is_some()) {
+            // Wasn't able to minimize the script, or had to add a region
             return Ok(None);
         }
         // Restore the region
