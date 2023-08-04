@@ -264,7 +264,7 @@ jobs:
 
     - name:  Download previous benchmark data
       run: |
-        gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
 
     - name: Store benchmark result & create dashboard
       uses: rhysd/github-action-benchmark@v1.15.0
@@ -377,7 +377,7 @@ jobs:
 
     - name:  Download previous benchmark data
       run: |
-        gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }} benchmarks/memory
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name: Store benchmark result & create dashboard
       # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
@@ -479,7 +479,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/benchmarks/binsize benchmarks/binsize
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize benchmarks/binsize
 
     - name: Store benchmark result & create dashboard (wasm)
       # Use gregtatum special feature to process ndjson-formatted benchmark data
@@ -556,7 +556,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks
-        gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/benchmarks/datasize benchmarks
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize benchmarks
 
     - name: Store benchmark result & create dashboard
       # Use gregtatum special feature to process ndjson-formatted benchmark data
