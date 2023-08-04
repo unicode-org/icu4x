@@ -281,14 +281,15 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
                 max: max_month as usize,
             });
         }
-
-        // let max_day = C::month_days(year, month);
-        // if day > max_day {
-        //     return Err(CalendarError::Overflow {
-        //         field: "day",
-        //         max: max_day as usize,
-        //     });
-        //}
+        extern crate std;
+        std::println!("{year}, {month}, {day}");
+        let max_day = C::month_days(year, month);
+        if day > max_day {
+            return Err(CalendarError::Overflow {
+                field: "day",
+                max: max_day as usize,
+            });
+        }
 
         Ok(Self::new_unchecked(year, month, day))
     }
