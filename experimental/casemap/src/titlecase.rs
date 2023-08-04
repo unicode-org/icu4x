@@ -7,8 +7,9 @@ use crate::provider::CaseMapV1Marker;
 use crate::CaseMapper;
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
+use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::GeneralCategoryV1Marker;
-use icu_properties::GeneralCategoryGroup;
+use icu_properties::{GeneralCategory, GeneralCategoryGroup, PropertiesError};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -139,7 +140,7 @@ pub struct TitlecaseOptions {
 #[derive(Clone, Debug)]
 pub struct TitlecaseMapper<CM> {
     cm: CM,
-    gc: Option<DataPayload<GeneralCategoryV1Marker>>,
+    gc: Option<CodePointMapData<GeneralCategory>>,
 }
 
 impl TitlecaseMapper<CaseMapper> {
@@ -153,9 +154,7 @@ impl TitlecaseMapper<CaseMapper> {
     pub const fn new() -> Self {
         Self {
             cm: CaseMapper::new(),
-            gc: Some(DataPayload::from_static_ref(
-                icu_properties::provider::Baked::SINGLETON_PROPS_GC_V1,
-            )),
+            gc: Some(icu_properties::maps::general_category().static_to_owned()),
         }
     }
     /// A constructor which creates a [`TitlecaseMapper`], with the legacy head adjustment behavior.
@@ -197,7 +196,12 @@ impl TitlecaseMapper<CaseMapper> {
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
-        let gc = Some(provider.load(Default::default())?.take_payload()?);
+        let gc = Some(
+            icu_properties::maps::load_general_category(provider).map_err(|e| {
+                let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
+                e
+            })?,
+        );
         Ok(Self { cm, gc })
     }
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
@@ -233,9 +237,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     pub const fn new_with_mapper(casemapper: CM) -> Self {
         Self {
             cm: casemapper,
-            gc: Some(DataPayload::from_static_ref(
-                icu_properties::provider::Baked::SINGLETON_PROPS_GC_V1,
-            )),
+            gc: Some(icu_properties::maps::general_category().static_to_owned()),
         }
     }
     /// A constructor which creates a [`TitlecaseMapper`] from an existing [`CaseMapper`]
@@ -256,11 +258,13 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
-        let gc = provider.load(Default::default())?.take_payload()?;
-        Ok(Self {
-            cm: casemapper,
-            gc: Some(gc),
-        })
+        let gc = Some(
+            icu_properties::maps::load_general_category(provider).map_err(|e| {
+                let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
+                e
+            })?,
+        );
+        Ok(Self { cm: casemapper, gc })
     }
 
     /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
@@ -288,11 +292,10 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
                 .union(GeneralCategoryGroup::Number)
                 .union(GeneralCategoryGroup::Symbol)
                 .union(GeneralCategoryGroup::PrivateUse);
-            let gc = gc.get();
             self.cm
                 .as_ref()
                 .titlecase_segment_with_adjustment(src, langid, options, |_data, ch| {
-                    HEAD_GROUPS.contains(gc.get32(ch as u32))
+                    HEAD_GROUPS.contains(gc.as_borrowed().get(ch))
                 })
         } else {
             self.cm

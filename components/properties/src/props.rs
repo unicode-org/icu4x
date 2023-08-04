@@ -235,7 +235,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'static, T> {
     /// Cheaply converts a `PropertyValueNameToEnumMapperBorrowed<'static>` into a `PropertyValueNameToEnumMapper`.
-    pub fn static_to_owned(self) -> PropertyValueNameToEnumMapper<T> {
+    pub const fn static_to_owned(self) -> PropertyValueNameToEnumMapper<T> {
         PropertyValueNameToEnumMapper {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
@@ -363,7 +363,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'static, T> {
     /// Cheaply converts a `PropertyEnumToValueNameSparseMapperBorrowed<'static>` into a `PropertyEnumToValueNameSparseMapper`.
-    pub fn static_to_owned(self) -> PropertyEnumToValueNameSparseMapper<T> {
+    pub const fn static_to_owned(self) -> PropertyEnumToValueNameSparseMapper<T> {
         PropertyEnumToValueNameSparseMapper {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
@@ -469,7 +469,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'static, T> {
     /// Cheaply converts a `PropertyEnumToValueNameLinearMapperBorrowed<'static>` into a `PropertyEnumToValueNameLinearMapper`.
-    pub fn static_to_owned(self) -> PropertyEnumToValueNameLinearMapper<T> {
+    pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearMapper<T> {
         PropertyEnumToValueNameLinearMapper {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
@@ -569,7 +569,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static, T> {
     /// Cheaply converts a `PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static>` into a `PropertyEnumToValueNameLinearTiny4Mapper`.
-    pub fn static_to_owned(self) -> PropertyEnumToValueNameLinearTiny4Mapper<T> {
+    pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearTiny4Mapper<T> {
         PropertyEnumToValueNameLinearTiny4Mapper {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
