@@ -32,7 +32,7 @@ independent = true
 [features]
 # Use the wasm builder
 default = ["wasm"]
-wasm = ["wasmer", "wasmer-wasi"]
+wasm = ["wasmer", "wasmer-wasi", "once_cell"]
 # Use the ICU4C builder
 # needs the ICU4C_LIB_PATH variable set and pointing to an ICU4C lib folder
 # containing dylibs. If you want to use staticlibs, set ICU4C_LINK_STATICALLY.
@@ -42,8 +42,8 @@ icu4c = ["zerovec"]
 [dependencies]
 icu_collections = { version = "1.2.0", path = "..", features = ["serde"] }
 zerovec = { version = "0.9.4", path = "../../../utils/zerovec", optional = true }
-lazy_static = "1.4.0"
 toml = "0.5"
+once_cell = { version = "1.18.0", optional = true }
 
 [dependencies.wasmer]
 version = "2.2.1"
