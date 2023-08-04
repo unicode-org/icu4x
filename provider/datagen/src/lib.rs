@@ -102,10 +102,10 @@ pub mod prelude {
     // SEMVER GRAVEYARD
     #[cfg(feature = "legacy_api")]
     #[doc(hidden)]
-    pub use crate::source::CollationHanDatabase;
+    pub use crate::options::CoverageLevel;
     #[cfg(feature = "legacy_api")]
     #[doc(hidden)]
-    pub use crate::options::{CoverageLevel};
+    pub use crate::source::CollationHanDatabase;
     #[cfg(feature = "legacy_api")]
     #[allow(deprecated)]
     #[doc(hidden)]

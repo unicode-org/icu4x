@@ -42,7 +42,7 @@ use std::collections::HashSet;
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Options {
-    /// The set of keys to generate. See [`icu_datagen::keys`], 
+    /// The set of keys to generate. See [`icu_datagen::keys`],
     /// [`icu_datagen::all_keys`], [`icu_datagen::key`] and [`icu_datagen::keys_for_bin`].
     pub keys: HashSet<icu_provider::DataKey>,
     /// Defines the locales to include
