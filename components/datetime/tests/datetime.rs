@@ -12,6 +12,10 @@ use icu_calendar::{
     coptic::Coptic,
     ethiopian::{Ethiopian, EthiopianEraStyle},
     indian::Indian,
+    islamic::IslamicCivil,
+    islamic::IslamicObservational,
+    islamic::IslamicTabular,
+    islamic::UmmAlQura,
     japanese::{Japanese, JapaneseExtended},
     persian::Persian,
     provider::WeekDataV1Marker,
@@ -74,6 +78,10 @@ fn test_fixture(fixture_name: &str) {
         let input_japanext = input_value.to_calendar(japanext);
         let input_coptic = input_value.to_calendar(Coptic);
         let input_indian = input_value.to_calendar(Indian);
+        let input_islamic_observational = input_value.to_calendar(IslamicObservational);
+        let input_islamic_civil = input_value.to_calendar(IslamicCivil);
+        let input_umm_al_qura = input_value.to_calendar(UmmAlQura);
+        let input_islamic_tabular = input_value.to_calendar(IslamicTabular);
         let input_persian = input_value.to_calendar(Persian);
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
         let input_roc = input_value.to_calendar(Roc);
@@ -134,6 +142,38 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Indian => assert_fixture_element(
                         &locale,
                         &input_indian,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::IslamicObservational => assert_fixture_element(
+                        &locale,
+                        &input_islamic_observational,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::IslamicCivil => assert_fixture_element(
+                        &locale,
+                        &input_islamic_civil,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::UmmAlQura => assert_fixture_element(
+                        &locale,
+                        &input_umm_al_qura,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::IslamicTabular => assert_fixture_element(
+                        &locale,
+                        &input_islamic_tabular,
                         &input_iso,
                         &output_value,
                         options,
