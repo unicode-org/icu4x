@@ -66,7 +66,6 @@ impl SourceData {
 
     /// Creates a `SourceData` that does not have CLDR or ICU export sources set.
     pub fn offline() -> Self {
-        let options = Options::default();
         Self {
             cldr_paths: None,
             icuexport_paths: None,

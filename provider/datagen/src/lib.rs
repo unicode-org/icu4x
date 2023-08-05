@@ -182,33 +182,14 @@ impl DatagenProvider {
             .clone()
     }
 
-    /// Gets a [`LocaleFallbacker`].
-    /// This should start returning references when we can use `std::sync::OnceLock`.
-    pub(crate) fn fallbacker(&self) -> Result<LocaleFallbacker, DataError> {
-        {
-            let lock = self.source.fallbacker_rwlock.read().unwrap();
-            match &*lock {
-                Some(fallbacker) => return Ok(fallbacker.clone()),
-                None => (),
-            }
-        }
-        let new_fallbacker = LocaleFallbacker::try_new_unstable(self)?;
-        {
-            let mut lock = self.source.fallbacker_rwlock.write().unwrap();
-            match &*lock {
-                Some(fallbacker) => Ok(fallbacker.clone()),
-                None => {
-                    lock.replace(new_fallbacker.clone());
-                    Ok(new_fallbacker)
-                }
-            }
-        }
-    }
-
     /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
     /// provider's options bag. The locales may be later optionally deduplicated for fallback.
-    fn select_locales_for_key(&self, key: DataKey) -> Result<HashSet<DataLocale>, DataError> {
-        let fallbacker = self.fallbacker()?;
+    pub(crate) fn select_locales_for_key(
+        &self,
+        key: DataKey,
+        options: &options::Options,
+        fallbacker: &LocaleFallbacker,
+    ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
         let fallbacker_with_config = fallbacker.for_config(LocaleFallbackConfig::from_key(key));
 
         let supported_locales: HashSet<DataLocale> = self
@@ -251,8 +232,8 @@ impl DatagenProvider {
             },
         */
 
-        let locale_include = self.source.options.locales.clone();
-        let fallback_mode = self.source.options.fallback;
+        let locale_include = options.locales.clone();
+        let fallback_mode = options.fallback;
 
         // Case 1: `LocaleInclude::All` simply exports all supported locales for this key.
         // Also include special cases like Segmenter that should skip the rest of this function.
@@ -343,12 +324,12 @@ impl DatagenProvider {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        fallbacker: &LocaleFallbacker,
     ) -> Result<Option<DataPayload<ExportMarker>>, DataError> {
         log::trace!("Generating key/locale: {key}/{locale:}");
         let mut metadata = DataRequestMetadata::default();
         metadata.silent = true;
         let config = LocaleFallbackConfig::from_key(key);
-        let fallbacker = self.fallbacker()?;
         let mut iter = fallbacker.for_config(config).fallback_for(locale.clone());
         loop {
             let req = DataRequest {
@@ -406,7 +387,7 @@ impl DatagenProvider {
             log::warn!("SourceData::with_collations was used and differs from Options#collations (which will be used).")
         }
 
-        if matches!(options.fallback, options::FallbackMode::Expand)
+        if matches!(options.fallback, options::FallbackMode::Preresolved)
             && !matches!(options.locales, options::LocaleInclude::Explicit(_))
         {
             return Err(DataError::custom(
@@ -436,6 +417,8 @@ impl DatagenProvider {
             ),
         };
 
+        /*
+        TODO: Fix
         log::info!(
             "Datagen configured with fallback mode {:?} and these locales: {}",
             source.options.fallback,
@@ -450,6 +433,7 @@ impl DatagenProvider {
                 _ => unreachable!(),
             }
         );
+        */
 
         // Avoid multiple monomorphizations
         fn internal(
@@ -459,11 +443,7 @@ impl DatagenProvider {
         ) -> Result<(), DataError> {
             use rayon_prelude::*;
 
-            let fallbacker = if options.fallback == options::FallbackMode::Runtime {
-                Some(LocaleFallbacker::try_new_unstable(provider)?)
-            } else {
-                None
-            };
+            let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
 
             core::mem::take(&mut options.keys).into_par_iter().try_for_each(|key| {
                 log::info!("Generating key {key}");
@@ -479,10 +459,10 @@ impl DatagenProvider {
                         .map_err(|e| e.with_req(key, Default::default()));
                 }
 
-                let locales_to_export = provider.select_locales_for_key(key)?;
+                let locales_to_export = provider.select_locales_for_key(key, &options, &fallbacker)?;
 
                 match (
-                    provider.source.options.fallback,
+                    options.fallback,
                     exporter.supports_built_in_fallback(),
                 ) {
                     (options::FallbackMode::Runtime, _)
@@ -490,13 +470,12 @@ impl DatagenProvider {
                     | (options::FallbackMode::PreferredForExporter, true) => {
                         let payloads = locales_to_export
                             .into_par_iter()
-                            .flat_map(|locale| match provider.load_with_fallback(key, &locale) {
+                            .flat_map(|locale| match provider.load_with_fallback(key, &locale, &fallbacker) {
                                 Ok(Some(payload)) => Some(Ok((locale, Box::new(payload)))),
                                 Ok(None) => None,
                                 Err(e) => Some(Err(e)),
                             })
                             .collect::<Result<HashMap<_, _>, _>>()?;
-                        let fallbacker = provider.fallbacker()?;
                         let fallbacker_with_config =
                             fallbacker.for_config(LocaleFallbackConfig::from_key(key));
                         'outer: for (locale, payload) in payloads.iter() {
@@ -522,7 +501,7 @@ impl DatagenProvider {
                     | (options::FallbackMode::PreferredForExporter, false)
                     | (options::FallbackMode::Preresolved, _) => {
                         locales_to_export.into_par_iter().try_for_each(|locale| {
-                            let payload = provider.load_with_fallback(key, &locale)?;
+                            let payload = provider.load_with_fallback(key, &locale, &fallbacker)?;
                             if let Some(payload) = payload {
                                 exporter.put_payload(key, &locale, &payload)?;
                             }
@@ -532,7 +511,7 @@ impl DatagenProvider {
                 };
 
                 match (
-                    provider.source.options.fallback,
+                    options.fallback,
                     exporter.supports_built_in_fallback(),
                 ) {
                     (options::FallbackMode::Runtime, _)
