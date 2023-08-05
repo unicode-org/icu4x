@@ -193,20 +193,46 @@ impl DatagenProvider {
             impl FnOnce() -> Result<LocaleFallbacker, DataError>,
         >,
     ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
-        let supported_locales: HashSet<DataLocale> = self
+        let mut locales = self
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?
             .into_iter()
-            .collect();
+            .collect::<HashSet<DataLocale>>();
 
-        let resolved_locales = match (&options.locales, options.fallback) {
+        if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
+            || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
+        {
+            // Segmenter: filter only by segmenter_models
+            return Ok(transform::segmenter::dictionary::filter_data_locales(
+                locales,
+                &options.segmenter_models,
+            ));
+        } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
+            // Segmenter: filter only by segmenter_models
+            return Ok(transform::segmenter::lstm::filter_data_locales(
+                locales,
+                &options.segmenter_models,
+            ));
+        } else if key == icu_collator::provider::CollationDataV1Marker::KEY
+            || key == icu_collator::provider::CollationDiacriticsV1Marker::KEY
+            || key == icu_collator::provider::CollationJamoV1Marker::KEY
+            || key == icu_collator::provider::CollationMetadataV1Marker::KEY
+            || key == icu_collator::provider::CollationReorderingV1Marker::KEY
+            || key == icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY
+        {
+            // Collator: filter by collations, but also by locales/fallback
+            locales =
+                transform::icuexport::collator::filter_data_locales(locales, &options.collations);
+        }
+
+        locales = match (&options.locales, options.fallback) {
             // Case 1: `LocaleInclude::All` simply exports all supported locales for this key.
-            (LocaleInclude::All, _) => supported_locales,
+            (LocaleInclude::All, _) => locales,
             // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
             // one of the explicit locales. This ensures extensions are included. In addition, any
             // explicit locales are added to the list, even if they themselves don't contain data;
             // fallback should be performed upon exporting.
-            (LocaleInclude::Explicit(explicit), FallbackMode::Preresolved) => supported_locales
+            (LocaleInclude::Explicit(explicit), FallbackMode::Preresolved) => locales
                 .into_iter()
                 .chain(explicit.iter().map(|langid| langid.into()))
                 .filter(|locale| explicit.contains(&locale.get_langid()))
@@ -230,7 +256,7 @@ impl DatagenProvider {
                     }
                 }
 
-                supported_locales
+                locales
                     .into_iter()
                     .chain(explicit.iter().cloned())
                     .filter(|locale| {
@@ -274,35 +300,7 @@ impl DatagenProvider {
             _ => unreachable!("Pre-processed LocaleInclude has only 2 variants"),
         };
 
-        // Special cases
-        Ok(
-            if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
-                || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
-            {
-                transform::segmenter::dictionary::filter_data_locales(
-                    resolved_locales,
-                    &options.segmenter_models,
-                )
-            } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
-                transform::segmenter::lstm::filter_data_locales(
-                    resolved_locales,
-                    &options.segmenter_models,
-                )
-            } else if key == icu_collator::provider::CollationDataV1Marker::KEY
-                || key == icu_collator::provider::CollationDiacriticsV1Marker::KEY
-                || key == icu_collator::provider::CollationJamoV1Marker::KEY
-                || key == icu_collator::provider::CollationMetadataV1Marker::KEY
-                || key == icu_collator::provider::CollationReorderingV1Marker::KEY
-                || key == icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY
-            {
-                transform::icuexport::collator::filter_data_locales(
-                    resolved_locales,
-                    &options.collations,
-                )
-            } else {
-                resolved_locales
-            },
-        )
+        Ok(locales)
     }
 
     /// Loads a `DataPayload<ExportMarker>` with locale fallback enabled.
