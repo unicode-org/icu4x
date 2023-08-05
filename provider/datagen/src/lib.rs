@@ -214,8 +214,7 @@ impl DatagenProvider {
             // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
             (LocaleInclude::Explicit(explicit), _) => {
                 let include_und = explicit.contains(&LanguageIdentifier::UND);
-                let explicit: HashSet<DataLocale> =
-                    explicit.iter().map(DataLocale::from).collect();
+                let explicit: HashSet<DataLocale> = explicit.iter().map(DataLocale::from).collect();
                 let mut implicit = HashSet::new();
                 // TODO: Make including the default locale configurable
                 implicit.insert(DataLocale::default());
@@ -254,7 +253,8 @@ impl DatagenProvider {
                         }
                         // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
                         // This would get caught later on, but it makes datagen faster and quieter to catch it here
-                        if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
+                        if key
+                            == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
                             && !locale.has_unicode_ext()
                         {
                             return false;
@@ -428,87 +428,87 @@ impl DatagenProvider {
         ) -> Result<(), DataError> {
             use rayon_prelude::*;
 
-            let fallbacker = once_cell::sync::Lazy::new(|| LocaleFallbacker::try_new_unstable(provider));
+            let fallbacker =
+                once_cell::sync::Lazy::new(|| LocaleFallbacker::try_new_unstable(provider));
 
-            core::mem::take(&mut options.keys).into_par_iter().try_for_each(|key| {
-                log::info!("Generating key {key}");
+            core::mem::take(&mut options.keys)
+                .into_par_iter()
+                .try_for_each(|key| {
+                    log::info!("Generating key {key}");
 
-                if key.metadata().singleton {
-                    let payload = provider
-                        .load_data(key, Default::default())
-                        .and_then(DataResponse::take_payload)
-                        .map_err(|e| e.with_req(key, Default::default()))?;
+                    if key.metadata().singleton {
+                        let payload = provider
+                            .load_data(key, Default::default())
+                            .and_then(DataResponse::take_payload)
+                            .map_err(|e| e.with_req(key, Default::default()))?;
 
-                    return exporter
-                        .flush_singleton(key, &payload)
-                        .map_err(|e| e.with_req(key, Default::default()));
-                }
+                        return exporter
+                            .flush_singleton(key, &payload)
+                            .map_err(|e| e.with_req(key, Default::default()));
+                    }
 
-                let locales_to_export = provider.select_locales_for_key(key, &options, &fallbacker)?;
+                    let locales_to_export =
+                        provider.select_locales_for_key(key, &options, &fallbacker)?;
 
-                match (
-                    options.fallback,
-                    exporter.supports_built_in_fallback(),
-                ) {
-                    (options::FallbackMode::Runtime, _)
-                    | (options::FallbackMode::RuntimeManual, _)
-                    | (options::FallbackMode::PreferredForExporter, true) => {
-                        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                        let payloads = locales_to_export
-                            .into_par_iter()
-                            .flat_map(|locale| match provider.load_with_fallback(key, &locale, fallbacker) {
-                                Ok(Some(payload)) => Some(Ok((locale, Box::new(payload)))),
-                                Ok(None) => None,
-                                Err(e) => Some(Err(e)),
-                            })
-                            .collect::<Result<HashMap<_, _>, _>>()?;
-                        let fallbacker_with_config =
-                            fallbacker.for_config(LocaleFallbackConfig::from_key(key));
-                        'outer: for (locale, payload) in payloads.iter() {
-                            let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                            while !iter.get().is_empty() {
-                                iter.step();
-                                if let Some(parent_payload) = payloads.get(iter.get()) {
-                                    if parent_payload == payload && locale != iter.get() {
-                                        // Found a match: don't need to write anything
-                                        log::trace!(
-                                            "Deduplicating {key}/{locale} (inherits from {})",
-                                            iter.get()
-                                        );
-                                        continue 'outer;
+                    match (options.fallback, exporter.supports_built_in_fallback()) {
+                        (options::FallbackMode::Runtime, _)
+                        | (options::FallbackMode::RuntimeManual, _)
+                        | (options::FallbackMode::PreferredForExporter, true) => {
+                            let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+                            let payloads = locales_to_export
+                                .into_par_iter()
+                                .flat_map(|locale| {
+                                    match provider.load_with_fallback(key, &locale, fallbacker) {
+                                        Ok(Some(payload)) => Some(Ok((locale, Box::new(payload)))),
+                                        Ok(None) => None,
+                                        Err(e) => Some(Err(e)),
+                                    }
+                                })
+                                .collect::<Result<HashMap<_, _>, _>>()?;
+                            let fallbacker_with_config =
+                                fallbacker.for_config(LocaleFallbackConfig::from_key(key));
+                            'outer: for (locale, payload) in payloads.iter() {
+                                let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                                while !iter.get().is_empty() {
+                                    iter.step();
+                                    if let Some(parent_payload) = payloads.get(iter.get()) {
+                                        if parent_payload == payload && locale != iter.get() {
+                                            // Found a match: don't need to write anything
+                                            log::trace!(
+                                                "Deduplicating {key}/{locale} (inherits from {})",
+                                                iter.get()
+                                            );
+                                            continue 'outer;
+                                        }
                                     }
                                 }
+                                // Did not find a match: export this payload
+                                exporter.put_payload(key, locale, payload)?;
                             }
-                            // Did not find a match: export this payload
-                            exporter.put_payload(key, locale, payload)?;
                         }
-                    }
-                    (options::FallbackMode::Hybrid, _)
-                    | (options::FallbackMode::PreferredForExporter, false)
-                    | (options::FallbackMode::Preresolved, _) => {
-                        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                        locales_to_export.into_par_iter().try_for_each(|locale| {
-                            let payload = provider.load_with_fallback(key, &locale, fallbacker)?;
-                            if let Some(payload) = payload {
-                                exporter.put_payload(key, &locale, &payload)?;
-                            }
-                            Ok::<(), DataError>(())
-                        })?;
-                    }
-                };
+                        (options::FallbackMode::Hybrid, _)
+                        | (options::FallbackMode::PreferredForExporter, false)
+                        | (options::FallbackMode::Preresolved, _) => {
+                            let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+                            locales_to_export.into_par_iter().try_for_each(|locale| {
+                                let payload =
+                                    provider.load_with_fallback(key, &locale, fallbacker)?;
+                                if let Some(payload) = payload {
+                                    exporter.put_payload(key, &locale, &payload)?;
+                                }
+                                Ok::<(), DataError>(())
+                            })?;
+                        }
+                    };
 
-                match (
-                    options.fallback,
-                    exporter.supports_built_in_fallback(),
-                ) {
-                    (options::FallbackMode::Runtime, _)
-                    | (options::FallbackMode::PreferredForExporter, true) => {
-                        exporter.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard)
+                    match (options.fallback, exporter.supports_built_in_fallback()) {
+                        (options::FallbackMode::Runtime, _)
+                        | (options::FallbackMode::PreferredForExporter, true) => exporter
+                            .flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard),
+                        (_, _) => exporter.flush(key),
                     }
-                    (_, _) => exporter.flush(key),
-                }
-                .map_err(|e| e.with_key(key))
-            })?;
+                    .map_err(|e| e.with_key(key))
+                })?;
 
             exporter.close()
         }
