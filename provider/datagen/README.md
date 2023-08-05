@@ -18,8 +18,7 @@ use icu_provider_blob::export::*;
 use std::fs::File;
 
 fn main() {
-    DatagenProvider::try_new(options::Options::default(), SourceData::latest_tested())
-        .unwrap()
+    DatagenProvider::default()
         .export(
             {
                 let mut options = options::Options::default();
