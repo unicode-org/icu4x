@@ -81,20 +81,6 @@ pub use source::SourceData;
 #[doc(hidden)] // for CLI serde
 pub use source::TrieType;
 
-use icu_locid::LanguageIdentifier;
-use icu_locid_transform::fallback::LocaleFallbackConfig;
-use icu_locid_transform::fallback::LocaleFallbacker;
-use icu_provider::datagen::*;
-use icu_provider::prelude::*;
-use memchr::memmem;
-use once_cell::sync::Lazy;
-use options::{FallbackMode, LocaleInclude};
-use std::borrow::Cow;
-use std::collections::HashMap;
-use std::collections::HashSet;
-use std::path::Path;
-use writeable::Writeable;
-
 #[cfg(feature = "provider_baked")]
 pub mod baked_exporter;
 #[cfg(feature = "provider_blob")]
@@ -126,6 +112,20 @@ pub mod prelude {
     pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out};
 }
 
+use icu_locid::LanguageIdentifier;
+use icu_locid_transform::fallback::LocaleFallbackConfig;
+use icu_locid_transform::fallback::LocaleFallbacker;
+use icu_provider::datagen::*;
+use icu_provider::prelude::*;
+use memchr::memmem;
+use once_cell::sync::Lazy;
+use options::{FallbackMode, LocaleInclude};
+use std::borrow::Cow;
+use std::collections::HashMap;
+use std::collections::HashSet;
+use std::path::Path;
+use writeable::Writeable;
+
 #[cfg(feature = "rayon")]
 pub(crate) use rayon::prelude as rayon_prelude;
 
@@ -146,6 +146,7 @@ pub(crate) mod rayon_prelude {
 /// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)) if the data is
 /// required for that key.
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "networking", derive(Default))]
 #[cfg_attr(not(doc), allow(clippy::exhaustive_structs))]
 #[cfg_attr(doc, non_exhaustive)]
 pub struct DatagenProvider {

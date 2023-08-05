@@ -23,7 +23,7 @@
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export something
-//! DatagenProvider::new(SourceData::latest_tested())
+//! DatagenProvider::default()
 //!     .export({
 //!             let mut options = options::Options::default();
 //!             options.keys = [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect();

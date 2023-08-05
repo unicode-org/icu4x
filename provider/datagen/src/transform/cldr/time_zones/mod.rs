@@ -83,13 +83,13 @@ macro_rules! impl_data_provider {
                         Ok(vec![Default::default()])
                     } else {
 
-                        Ok(self
-                            .source
-                            .cldr()?
-                            .dates("gregorian")
-                            .list_langs()?
-                            .map(DataLocale::from)
-                            .collect())
+                    Ok(self
+                        .source
+                        .cldr()?
+                        .dates("gregorian")
+                        .list_langs()?
+                        .map(DataLocale::from)
+                        .collect())
                     }
                 }
             }

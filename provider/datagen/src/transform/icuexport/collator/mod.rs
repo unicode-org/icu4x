@@ -347,9 +347,7 @@ fn test_collation_filtering() {
             .select_locales_for_key(
                 CollationDataV1Marker::KEY,
                 &options,
-                &once_cell::sync::Lazy::new(|| {
-                    icu_locid_transform::fallback::LocaleFallbacker::try_new_unstable(&provider)
-                }),
+                &once_cell::sync::Lazy::new(|| unreachable!()),
             )
             .unwrap()
             .into_iter()
