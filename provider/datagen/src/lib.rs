@@ -405,6 +405,17 @@ impl DatagenProvider {
             ),
         };
 
+        options.fallback = match options.fallback {
+            options::FallbackMode::PreferredForExporter => {
+                if exporter.supports_built_in_fallback() {
+                    options::FallbackMode::Runtime
+                } else {
+                    options::FallbackMode::Hybrid
+                }
+            }
+            f => f,
+        };
+
         log::info!(
             "Datagen configured with fallback mode {:?} and these locales: {}",
             options.fallback,
@@ -450,10 +461,8 @@ impl DatagenProvider {
                     let locales_to_export =
                         provider.select_locales_for_key(key, &options, &fallbacker)?;
 
-                    match (options.fallback, exporter.supports_built_in_fallback()) {
-                        (options::FallbackMode::Runtime, _)
-                        | (options::FallbackMode::RuntimeManual, _)
-                        | (options::FallbackMode::PreferredForExporter, true) => {
+                    match options.fallback {
+                        options::FallbackMode::Runtime | options::FallbackMode::RuntimeManual => {
                             let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                             let payloads = locales_to_export
                                 .into_par_iter()
@@ -486,9 +495,7 @@ impl DatagenProvider {
                                 exporter.put_payload(key, locale, payload)?;
                             }
                         }
-                        (options::FallbackMode::Hybrid, _)
-                        | (options::FallbackMode::PreferredForExporter, false)
-                        | (options::FallbackMode::Preresolved, _) => {
+                        options::FallbackMode::Hybrid | options::FallbackMode::Preresolved => {
                             let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                             locales_to_export.into_par_iter().try_for_each(|locale| {
                                 let payload =
@@ -499,13 +506,13 @@ impl DatagenProvider {
                                 Ok::<(), DataError>(())
                             })?;
                         }
+                        options::FallbackMode::PreferredForExporter => unreachable!("resolved"),
                     };
 
-                    match (options.fallback, exporter.supports_built_in_fallback()) {
-                        (options::FallbackMode::Runtime, _)
-                        | (options::FallbackMode::PreferredForExporter, true) => exporter
+                    match options.fallback {
+                        options::FallbackMode::Runtime => exporter
                             .flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard),
-                        (_, _) => exporter.flush(key),
+                        _ => exporter.flush(key),
                     }
                     .map_err(|e| e.with_key(key))
                 })?;
