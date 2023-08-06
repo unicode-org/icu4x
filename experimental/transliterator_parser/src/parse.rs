@@ -14,6 +14,35 @@ use icu_properties::sets::{load_pattern_white_space, load_xid_continue, load_xid
 use icu_provider::prelude::*;
 use icu_unicodeset_parser::{VariableMap, VariableValue};
 
+/// An element that can appear in a rule. Used for error reporting in [`ParseError`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum ElementKind {
+    Literal,
+    VariableReference,
+    BackReference,
+    Quantifier,
+    Segment,
+    UnicodeSet,
+    FunctionCall,
+    Cursor,
+    AnchorStart,
+    AnchorEnd,
+}
+
+/// The location in which an element can appear. Used for error reporting in [`ParseError`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum ElementLocation {
+    /// The element appears on the source side of a rule (i.e., the side _not_ pointed at
+    /// by the arrow).
+    Source,
+    /// The element appears on the target side of a rule (i.e., the side pointed at by the arrow).
+    Target,
+    /// The element appears inside a variable definition.
+    VariableDefinition,
+}
+
 /// The kind of error that occurred.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]
@@ -40,8 +69,26 @@ pub enum ParseErrorKind {
     DuplicateVariable,
     /// Invalid UnicodeSet syntax. See `icu_unicodeset_parser`'s [`ParseError`](icu_unicodeset_parser::ParseError).
     UnicodeSetError(icu_unicodeset_parser::ParseError),
+
+    // errors originating from compilation step
+    /// A global filter (forward or backward) in an unexpected position.
+    UnexpectedGlobalFilter,
+    /// An element of `[ElementKind]` appeared in the given [`ElementLocation`], but that is prohibited.
+    UnexpectedElement(ElementKind, ElementLocation),
+    /// The start anchor `^` was not placed at the beginning of a source.
+    AnchorStartNotAtStart,
+    /// The end anchor `$` was not placed at the end of a source.
+    AnchorEndNotAtEnd,
+    /// A variable that contains source-only matchers (e.g., UnicodeSets) was used on the target side.
+    SourceOnlyVariable,
+    /// No matching segment for this backreference was found.
+    BackReferenceOutOfRange,
+    /// The cursor is in an invalid position.
+    InvalidCursor,
+    /// Multiple cursors were defined.
+    DuplicateCursor,
 }
-use ParseErrorKind as PEK;
+pub(crate) use ParseErrorKind as PEK;
 
 impl ParseErrorKind {
     fn with_offset(self, offset: usize) -> ParseError {
@@ -78,10 +125,10 @@ impl From<icu_unicodeset_parser::ParseError> for ParseError {
     }
 }
 
-type Result<T, E = ParseError> = core::result::Result<T, E>;
+pub(crate) type Result<T, E = ParseError> = core::result::Result<T, E>;
 
 // the only UnicodeSets used in this crate are parsed, and thus 'static.
-type UnicodeSet = CodePointInversionListAndStringList<'static>;
+pub(crate) type UnicodeSet = CodePointInversionListAndStringList<'static>;
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum QuantifierKind {
@@ -95,11 +142,30 @@ pub(crate) enum QuantifierKind {
 
 // source-target/variant
 #[allow(unused)] // TODO(#3736): remove when doing compilation
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub(crate) struct BasicId {
-    source: String,
-    target: String,
-    variant: String,
+    pub(crate) source: String,
+    pub(crate) target: String,
+    pub(crate) variant: String,
+}
+
+impl BasicId {
+    fn is_null(&self) -> bool {
+        self.source == "Any" && self.target == "Null" && self.variant.is_empty()
+    }
+
+    pub(crate) fn reverse(self) -> Self {
+        if self.is_null() {
+            return self;
+        }
+        // TODO(#3736): add hardcoded reverses here
+
+        Self {
+            source: self.target,
+            target: self.source,
+            variant: self.variant,
+        }
+    }
 }
 
 impl Default for BasicId {
@@ -116,8 +182,8 @@ impl Default for BasicId {
 #[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct SingleId {
-    filter: Option<UnicodeSet>,
-    basic_id: BasicId,
+    pub(crate) filter: Option<UnicodeSet>,
+    pub(crate) basic_id: BasicId,
 }
 
 #[derive(Debug, Clone)]
@@ -152,21 +218,49 @@ pub(crate) enum Element {
     AnchorEnd,
 }
 
-type Section = Vec<Element>;
+impl Element {
+    pub(crate) fn kind(&self) -> ElementKind {
+        match self {
+            Element::Literal(..) => ElementKind::Literal,
+            Element::VariableRef(..) => ElementKind::VariableReference,
+            Element::BackRef(..) => ElementKind::BackReference,
+            Element::Quantifier(..) => ElementKind::Quantifier,
+            Element::Segment(..) => ElementKind::Segment,
+            Element::UnicodeSet(..) => ElementKind::UnicodeSet,
+            Element::FunctionCall(..) => ElementKind::FunctionCall,
+            Element::Cursor(..) => ElementKind::Cursor,
+            Element::AnchorStart => ElementKind::AnchorStart,
+            Element::AnchorEnd => ElementKind::AnchorEnd,
+        }
+    }
+}
+
+pub(crate) type Section = Vec<Element>;
 
 #[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct HalfRule {
-    ante: Section,
-    key: Section,
-    post: Section,
+    pub(crate) ante: Section,
+    pub(crate) key: Section,
+    pub(crate) post: Section,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Direction {
     Forward,
     Reverse,
     Both,
+}
+
+impl Direction {
+    // whether `self` is a superset of `other` or not
+    pub(crate) fn permits(&self, other: Direction) -> bool {
+        match self {
+            Direction::Forward => other == Direction::Forward,
+            Direction::Reverse => other == Direction::Reverse,
+            Direction::Both => true,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -177,7 +271,7 @@ pub(crate) enum Rule {
     // forward and backward IDs.
     // "A (B)" is Transform(A, Some(B)),
     // "(B)" is Transform(Null, Some(B)),
-    // "A" is Transform(A, None),
+    // "A" is Transform(A, None), which indicates an auto-computed reverse ID,
     // "A ()" is Transform(A, Some(Null))
     Transform(SingleId, Option<SingleId>),
     Conversion(HalfRule, Direction, HalfRule),
@@ -944,7 +1038,10 @@ where
         // was created from self.source
         #[allow(clippy::indexing_slicing)]
         let set_source = &self.source[pre_offset..];
-        let (set, consumed_bytes) = self.unicode_set_from_str(set_source)?;
+        let (set, consumed_bytes) = self.unicode_set_from_str(set_source).map_err(|mut e| {
+            e.offset.get_or_insert(pre_offset);
+            e
+        })?;
 
         // advance self.iter consumed_bytes bytes
         while let Some(offset) = self.peek_index() {
@@ -1312,6 +1409,7 @@ mod tests {
             r"a \> > b ;",
             r"a \→ > b ;",
             r"{ a > b ;",
+            r"a {  > b ;",
             r"{ a } > b ;",
             r"{ a } > { b ;",
             r"{ a } > { b } ;",
@@ -1341,6 +1439,8 @@ mod tests {
             r"a ↔ { b > } ;",
             r"a > b",
             r"@ a > b ;",
+            r"a ( {  > b ;",
+            r"a ( { )  > b ;",
         ];
 
         for source in sources {

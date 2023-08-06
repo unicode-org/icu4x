@@ -25,6 +25,7 @@
 
 use icu_properties::provider::*;
 use icu_provider::prelude::*;
+use icu_transliteration::provider::RuleBasedTransliterator;
 
 mod compile;
 mod parse;
@@ -32,17 +33,11 @@ mod parse;
 pub use parse::ParseError;
 pub use parse::ParseErrorKind;
 
-/// Standin for https://github.com/skius/icu4x/blob/transliterator/experimental/transliteration/src/datastruct_design.rs
-/// Will live in runtime icu_transliteration crate
-#[derive(Debug)]
-#[non_exhaustive]
-pub struct TransliteratorDataStruct;
-
 /// Parse a rule based transliterator definition into a `TransliteratorDataStruct`.
 ///
 /// See [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms) for more information.
 #[cfg(feature = "compiled_data")]
-pub fn parse(source: &str) -> Result<TransliteratorDataStruct, parse::ParseError> {
+pub fn parse(source: &str) -> Result<RuleBasedTransliterator<'static>, parse::ParseError> {
     parse_unstable(source, &icu_properties::provider::Baked)
 }
 
@@ -50,7 +45,7 @@ pub fn parse(source: &str) -> Result<TransliteratorDataStruct, parse::ParseError
 pub fn parse_unstable<P>(
     source: &str,
     provider: &P,
-) -> Result<TransliteratorDataStruct, parse::ParseError>
+) -> Result<RuleBasedTransliterator<'static>, parse::ParseError>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
