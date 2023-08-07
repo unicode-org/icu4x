@@ -3,13 +3,16 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use icu_provider::{DataError, DataPayload, DataProvider, DataRequest, DataResponse};
+use icu_provider::{
+    datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
+    DataResponse,
+};
 use icu_unitsconversion::provider::{ConstantValue, UnitsConstantsV1, UnitsConstantsV1Maker};
 use zerovec::maps::MutableZeroVecLike;
 
 impl DataProvider<UnitsConstantsV1Maker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsConstantsV1Maker>, DataError> {
-        // self.check_req::<UnitsConstantsV1Maker>(req)?;
+        self.check_req::<UnitsConstantsV1Maker>(_req)?;
 
         let _units_data: &cldr_serde::units::units_constants::Resource = self
             .source
@@ -38,5 +41,18 @@ impl DataProvider<UnitsConstantsV1Maker> for crate::DatagenProvider {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(result)),
         })
+    }
+}
+
+impl IterableDataProvider<UnitsConstantsV1Maker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(self
+            .source
+            .cldr()?
+            .numbers()
+            .list_langs()?
+            .filter(|e| e.language.as_str() == "und")
+            .map(DataLocale::from)
+            .collect())
     }
 }
