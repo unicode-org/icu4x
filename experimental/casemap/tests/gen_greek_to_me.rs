@@ -105,7 +105,20 @@ pub(crate) const GREEK_DATA_TRIE: CodePointTrie<'static, GreekPrecomposedLetterD
 
     let local = fs::read_to_string(local).expect("src/greek_to_me/data.rs should be a UTF-8 file");
 
-    if local != output {
+    // We cannot just check if the two are unequal because on Windows core.autocrlf
+    // may have messed with the line endings on the file, or it may have not (either
+    // due to a changed setting, or due to the code being in a cargo cache/vendor. We also
+    // cannot fix this by passing `--config newline_style=unix` to rustfmt. We must
+    // perform a `\r`-agnostic comparison.
+    //
+    // (technically this should only catch `\r\n` and not just `\r` but for a golden
+    // test on rustfmt output it does not matter)
+    if local
+        .trim()
+        .chars()
+        .filter(|&x| x != '\r')
+        .ne(output.trim().chars().filter(|&x| x != '\r'))
+    {
         println!(
             r#"Please copy the following file to src/greek_to_me/data.rs:
 ========================================================
