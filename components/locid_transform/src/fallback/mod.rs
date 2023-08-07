@@ -393,11 +393,14 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
 
 impl LocaleFallbackerBorrowed<'static> {
     /// Cheaply converts a `LocaleFallbackerBorrowed<'static>` into a `LocaleFallbacker`.
-    pub fn static_to_owned(self) -> LocaleFallbacker {
+    pub const fn static_to_owned(self) -> LocaleFallbacker {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_static_ref(self.likely_subtags),
             parents: DataPayload::from_static_ref(self.parents),
-            collation_supplement: self.collation_supplement.map(DataPayload::from_static_ref),
+            collation_supplement: match self.collation_supplement {
+                None => None,
+                Some(x) => Some(DataPayload::from_static_ref(x)),
+            },
         }
     }
 }

@@ -26,7 +26,7 @@ use zerovec::ZeroVecError;
 /// property data in a map-like form, ex: enumerated property value data keyed
 /// by code point. Access its data via the borrowed version,
 /// [`CodePointMapDataBorrowed`].
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CodePointMapData<T: TrieValue> {
     data: DataPayload<ErasedMaplikeMarker<T>>,
 }
@@ -262,7 +262,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
 
 impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
     /// Cheaply converts a `CodePointMapDataBorrowed<'static>` into a `CodePointMapData`.
-    pub fn static_to_owned(self) -> CodePointMapData<T> {
+    pub const fn static_to_owned(self) -> CodePointMapData<T> {
         CodePointMapData {
             data: DataPayload::from_static_ref(self.map),
         }

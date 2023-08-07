@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::internals::{CaseMapLocale, FoldOptions};
+use crate::internals::{CaseMapLocale, FoldOptions, FullCaseWriteable, StringAndWriteable};
 use crate::provider::data::MappingKind;
+use crate::provider::CaseMapV1;
 use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSink;
+use crate::titlecase::{HeadAdjustment, TailCasing, TitlecaseOptions};
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -109,6 +111,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Lower,
+            TailCasing::default(),
         )
     }
 
@@ -128,6 +131,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Upper,
+            TailCasing::default(),
         )
     }
 
@@ -142,20 +146,63 @@ impl CaseMapper {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::titlecase_segment_to_string()`] for the equivalent convenience function that returns a String,
+    /// This function performs legacy head adjustment behavior when [`HeadAdjustment::Adjust`] is set. See
+    /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
+    /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
+    /// is [`HeadAdjustment::NoAdjust`].
+    ///
+    /// See [`Self::titlecase_segment_legacy_to_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
-    pub fn titlecase_segment<'a>(
+    ///
+    /// [`TitlecaseMapper`]: crate::TitlecaseMapper
+    pub fn titlecase_segment_legacy<'a>(
         &'a self,
         src: &'a str,
         langid: &LanguageIdentifier,
+        options: TitlecaseOptions,
     ) -> impl Writeable + 'a {
-        self.data.get().full_helper_writeable::<true>(
-            src,
-            CaseMapLocale::from_langid(langid),
-            MappingKind::Title,
-        )
+        self.titlecase_segment_with_adjustment(src, langid, options, |data, ch| data.is_cased(ch))
     }
 
+    /// Helper to support different head adjustment behaviors,
+    /// `char_is_head` is a function that returns true for a character that is allowed to be the
+    /// titlecase head, when `head_adjustment = Adjust`
+    ///
+    /// We return a concrete type instead of `impl Trait` so the return value can be mixed with that of other calls
+    /// to this function with different closures
+    pub(crate) fn titlecase_segment_with_adjustment<'a>(
+        &'a self,
+        src: &'a str,
+        langid: &LanguageIdentifier,
+        options: TitlecaseOptions,
+        char_is_head: impl Fn(&CaseMapV1, char) -> bool,
+    ) -> StringAndWriteable<FullCaseWriteable<'a, true>> {
+        let data = self.data.get();
+        let (head, rest) = match options.head_adjustment {
+            HeadAdjustment::Adjust => {
+                let first_cased = src.char_indices().find(|(_i, ch)| char_is_head(data, *ch));
+                if let Some((first_cased, _ch)) = first_cased {
+                    (
+                        src.get(..first_cased).unwrap_or(""),
+                        src.get(first_cased..).unwrap_or(""),
+                    )
+                } else {
+                    (src, "")
+                }
+            }
+            HeadAdjustment::NoAdjust => ("", src),
+        };
+        let writeable = data.full_helper_writeable::<true>(
+            rest,
+            CaseMapLocale::from_langid(langid),
+            MappingKind::Title,
+            options.tail_casing,
+        );
+        StringAndWriteable {
+            string: head,
+            writeable,
+        }
+    }
     /// Case-folds the characters in the given string as a [`Writeable`].
     /// This function is locale-independent and context-insensitive.
     ///
@@ -164,9 +211,12 @@ impl CaseMapper {
     /// See [`Self::fold_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
     pub fn fold<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
-        self.data
-            .get()
-            .full_helper_writeable::<false>(src, CaseMapLocale::Root, MappingKind::Fold)
+        self.data.get().full_helper_writeable::<false>(
+            src,
+            CaseMapLocale::Root,
+            MappingKind::Fold,
+            TailCasing::default(),
+        )
     }
 
     /// Case-folds the characters in the given string as a [`Writeable`],
@@ -182,6 +232,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::Turkish,
             MappingKind::Fold,
+            TailCasing::default(),
         )
     }
 
@@ -212,15 +263,7 @@ impl CaseMapper {
     /// assert_eq!(cm.lowercase_to_string("CONSTANTINOPLE", &langid!("tr")), "constantınople");
     /// ```
     pub fn lowercase_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
-        self.data
-            .get()
-            .full_helper_writeable::<false>(
-                src,
-                CaseMapLocale::from_langid(langid),
-                MappingKind::Lower,
-            )
-            .write_to_string()
-            .into_owned()
+        self.lowercase(src, langid).write_to_string().into_owned()
     }
 
     /// Returns the full uppercase mapping of the given string as a String.
@@ -253,15 +296,7 @@ impl CaseMapper {
     /// assert_eq!(cm.uppercase_to_string("և Երևանի", &langid!("hy")), "ԵՎ ԵՐԵՎԱՆԻ"); // Eastern Armenian ech-yiwn ligature
     /// ```
     pub fn uppercase_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
-        self.data
-            .get()
-            .full_helper_writeable::<false>(
-                src,
-                CaseMapLocale::from_langid(langid),
-                MappingKind::Upper,
-            )
-            .write_to_string()
-            .into_owned()
+        self.uppercase(src, langid).write_to_string().into_owned()
     }
 
     /// Returns the full titlecase mapping of the given string as a String, treating
@@ -275,7 +310,12 @@ impl CaseMapper {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::titlecase_segment()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// This function performs legacy head adjustment behavior when [`HeadAdjustment::Adjust`] is set. See
+    /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
+    /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
+    /// is [`HeadAdjustment::NoAdjust`].
+    ///
+    /// See [`Self::titlecase_segment_legacy()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
     /// # Examples
     ///
@@ -286,31 +326,34 @@ impl CaseMapper {
     /// let cm = CaseMapper::new();
     /// let root = langid!("und");
     ///
+    /// let default_options = Default::default();
+    ///
     /// // note that the subsequent words are not titlecased, this function assumes
     /// // that the entire string is a single segment and only titlecases at the beginning.
-    /// assert_eq!(cm.titlecase_segment_to_string("hEllO WorLd", &root), "Hello world");
-    /// assert_eq!(cm.titlecase_segment_to_string("Γειά σου Κόσμε", &root), "Γειά σου κόσμε");
-    /// assert_eq!(cm.titlecase_segment_to_string("नमस्ते दुनिया", &root), "नमस्ते दुनिया");
-    /// assert_eq!(cm.titlecase_segment_to_string("Привет мир", &root), "Привет мир");
+    /// assert_eq!(cm.titlecase_segment_legacy_to_string("hEllO WorLd", &root, default_options), "Hello world");
+    /// assert_eq!(cm.titlecase_segment_legacy_to_string("Γειά σου Κόσμε", &root, default_options), "Γειά σου κόσμε");
+    /// assert_eq!(cm.titlecase_segment_legacy_to_string("नमस्ते दुनिया", &root, default_options), "नमस्ते दुनिया");
+    /// assert_eq!(cm.titlecase_segment_legacy_to_string("Привет мир", &root, default_options), "Привет мир");
     ///
     /// // Some behavior is language-sensitive
-    /// assert_eq!(cm.titlecase_segment_to_string("istanbul", &root), "Istanbul");
-    /// assert_eq!(cm.titlecase_segment_to_string("istanbul", &langid!("tr")), "İstanbul"); // Turkish dotted i
+    /// assert_eq!(cm.titlecase_segment_legacy_to_string("istanbul", &root, default_options), "Istanbul");
+    /// assert_eq!(cm.titlecase_segment_legacy_to_string("istanbul", &langid!("tr"), default_options), "İstanbul"); // Turkish dotted i
     ///
-    /// assert_eq!(cm.titlecase_segment_to_string("և Երևանի", &root), "Եւ երևանի");
-    /// assert_eq!(cm.titlecase_segment_to_string("և Երևանի", &langid!("hy")), "Եվ երևանի"); // Eastern Armenian ech-yiwn ligature
+    /// assert_eq!(cm.titlecase_segment_legacy_to_string("և Երևանի", &root, default_options), "Եւ երևանի");
+    /// assert_eq!(cm.titlecase_segment_legacy_to_string("և Երևանի", &langid!("hy"), default_options), "Եվ երևանի"); // Eastern Armenian ech-yiwn ligature
     ///
-    /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &root), "Ijkdijk");
-    /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &langid!("nl")), "IJkdijk"); // Dutch IJ digraph
+    /// assert_eq!(cm.titlecase_segment_legacy_to_string("ijkdijk", &root, default_options), "Ijkdijk");
+    /// assert_eq!(cm.titlecase_segment_legacy_to_string("ijkdijk", &langid!("nl"), default_options), "IJkdijk"); // Dutch IJ digraph
     /// ```
-    pub fn titlecase_segment_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
-        self.data
-            .get()
-            .full_helper_writeable::<true>(
-                src,
-                CaseMapLocale::from_langid(langid),
-                MappingKind::Title,
-            )
+    ///
+    /// [`TitlecaseMapper`]: crate::TitlecaseMapper
+    pub fn titlecase_segment_legacy_to_string(
+        &self,
+        src: &str,
+        langid: &LanguageIdentifier,
+        options: TitlecaseOptions,
+    ) -> String {
+        self.titlecase_segment_legacy(src, langid, options)
             .write_to_string()
             .into_owned()
     }
@@ -338,11 +381,7 @@ impl CaseMapper {
     /// assert_eq!(cm.fold_string("Привет мир"), "привет мир");
     /// ```
     pub fn fold_string(&self, src: &str) -> String {
-        self.data
-            .get()
-            .full_helper_writeable::<false>(src, CaseMapLocale::Root, MappingKind::Fold)
-            .write_to_string()
-            .into_owned()
+        self.fold(src).write_to_string().into_owned()
     }
 
     /// Case-folds the characters in the given string as a String,
@@ -372,11 +411,7 @@ impl CaseMapper {
     /// assert_eq!(cm.fold_turkic_string("Привет мир"), "привет мир");
     /// ```
     pub fn fold_turkic_string(&self, src: &str) -> String {
-        self.data
-            .get()
-            .full_helper_writeable::<false>(src, CaseMapLocale::Turkish, MappingKind::Fold)
-            .write_to_string()
-            .into_owned()
+        self.fold_turkic(src).write_to_string().into_owned()
     }
 
     /// Adds all simple case mappings and the full case folding for `c` to `set`.
@@ -558,6 +593,7 @@ mod tests {
     fn test_special_cases() {
         let cm = CaseMapper::new();
         let root = langid!("und");
+        let default_options = Default::default();
 
         // Ligatures
 
@@ -585,27 +621,39 @@ mod tests {
         );
         // but the YPOGEGRAMMENI should not titlecase
         assert_eq!(
-            cm.titlecase_segment_to_string("α\u{0313}\u{0345}", &root),
+            cm.titlecase_segment_legacy_to_string("α\u{0313}\u{0345}", &root, default_options),
             "Α\u{0313}\u{0345}"
         );
 
         // U+1F80 GREEK SMALL LETTER ALPHA WITH PSILI AND YPOGEGRAMMENI
-        assert_eq!(cm.titlecase_segment_to_string("ᾀ", &root), "ᾈ");
+        assert_eq!(
+            cm.titlecase_segment_legacy_to_string("ᾀ", &root, default_options),
+            "ᾈ"
+        );
         assert_eq!(cm.uppercase_to_string("ᾀ", &root), "ἈΙ");
 
         // U+1FFC GREEK CAPITAL LETTER OMEGA WITH PROSGEGRAMMENI
         assert_eq!(cm.lowercase_to_string("ῼ", &root), "ῳ");
-        assert_eq!(cm.titlecase_segment_to_string("ῼ", &root), "ῼ");
+        assert_eq!(
+            cm.titlecase_segment_legacy_to_string("ῼ", &root, default_options),
+            "ῼ"
+        );
         assert_eq!(cm.uppercase_to_string("ῼ", &root), "ΩΙ");
 
         // U+1F98 GREEK CAPITAL LETTER ETA WITH PSILI AND PROSGEGRAMMENI
         assert_eq!(cm.lowercase_to_string("ᾘ", &root), "ᾐ");
-        assert_eq!(cm.titlecase_segment_to_string("ᾘ", &root), "ᾘ");
+        assert_eq!(
+            cm.titlecase_segment_legacy_to_string("ᾘ", &root, default_options),
+            "ᾘ"
+        );
         assert_eq!(cm.uppercase_to_string("ᾘ", &root), "ἨΙ");
 
         // U+1FB2 GREEK SMALL LETTER ALPHA WITH VARIA AND YPOGEGRAMMENI
         assert_eq!(cm.lowercase_to_string("ᾲ", &root), "ᾲ");
-        assert_eq!(cm.titlecase_segment_to_string("ᾲ", &root), "Ὰ\u{345}");
+        assert_eq!(
+            cm.titlecase_segment_legacy_to_string("ᾲ", &root, default_options),
+            "Ὰ\u{345}"
+        );
         assert_eq!(cm.uppercase_to_string("ᾲ", &root), "ᾺΙ");
 
         // Final sigma test
@@ -618,8 +666,14 @@ mod tests {
         // U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE
         assert_eq!(cm.lowercase_to_string("İ", &tr), "i");
         assert_eq!(cm.lowercase_to_string("İ", &az), "i");
-        assert_eq!(cm.titlecase_segment_to_string("İ", &tr), "İ");
-        assert_eq!(cm.titlecase_segment_to_string("İ", &az), "İ");
+        assert_eq!(
+            cm.titlecase_segment_legacy_to_string("İ", &tr, default_options),
+            "İ"
+        );
+        assert_eq!(
+            cm.titlecase_segment_legacy_to_string("İ", &az, default_options),
+            "İ"
+        );
         assert_eq!(cm.uppercase_to_string("İ", &tr), "İ");
         assert_eq!(cm.uppercase_to_string("İ", &az), "İ");
 
@@ -627,11 +681,11 @@ mod tests {
         assert_eq!(cm.lowercase_to_string("I\u{0307}", &tr), "i");
         assert_eq!(cm.lowercase_to_string("I\u{0307}", &az), "i");
         assert_eq!(
-            cm.titlecase_segment_to_string("I\u{0307}", &tr),
+            cm.titlecase_segment_legacy_to_string("I\u{0307}", &tr, default_options),
             "I\u{0307}"
         );
         assert_eq!(
-            cm.titlecase_segment_to_string("I\u{0307}", &az),
+            cm.titlecase_segment_legacy_to_string("I\u{0307}", &az, default_options),
             "I\u{0307}"
         );
         assert_eq!(cm.uppercase_to_string("I\u{0307}", &tr), "I\u{0307}");
@@ -640,16 +694,28 @@ mod tests {
         // U+0049 LATIN CAPITAL LETTER I
         assert_eq!(cm.lowercase_to_string("I", &tr), "ı");
         assert_eq!(cm.lowercase_to_string("I", &az), "ı");
-        assert_eq!(cm.titlecase_segment_to_string("I", &tr), "I");
-        assert_eq!(cm.titlecase_segment_to_string("I", &az), "I");
+        assert_eq!(
+            cm.titlecase_segment_legacy_to_string("I", &tr, default_options),
+            "I"
+        );
+        assert_eq!(
+            cm.titlecase_segment_legacy_to_string("I", &az, default_options),
+            "I"
+        );
         assert_eq!(cm.uppercase_to_string("I", &tr), "I");
         assert_eq!(cm.uppercase_to_string("I", &az), "I");
 
         // U+0069 LATIN SMALL LETTER I
         assert_eq!(cm.lowercase_to_string("i", &tr), "i");
         assert_eq!(cm.lowercase_to_string("i", &az), "i");
-        assert_eq!(cm.titlecase_segment_to_string("i", &tr), "İ");
-        assert_eq!(cm.titlecase_segment_to_string("i", &az), "İ");
+        assert_eq!(
+            cm.titlecase_segment_legacy_to_string("i", &tr, default_options),
+            "İ"
+        );
+        assert_eq!(
+            cm.titlecase_segment_legacy_to_string("i", &az, default_options),
+            "İ"
+        );
         assert_eq!(cm.uppercase_to_string("i", &tr), "İ");
         assert_eq!(cm.uppercase_to_string("i", &az), "İ");
     }

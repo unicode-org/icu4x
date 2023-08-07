@@ -161,7 +161,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 
 impl BidiAuxiliaryPropertiesBorrowed<'static> {
     /// Cheaply converts a `BidiAuxiliaryPropertiesBorrowed<'static>` into a `BidiAuxiliaryProperties`.
-    pub fn static_to_owned(self) -> BidiAuxiliaryProperties {
+    pub const fn static_to_owned(self) -> BidiAuxiliaryProperties {
         BidiAuxiliaryProperties {
             data: DataPayload::from_static_ref(self.data),
         }

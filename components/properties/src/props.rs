@@ -235,7 +235,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'static, T> {
     /// Cheaply converts a `PropertyValueNameToEnumMapperBorrowed<'static>` into a `PropertyValueNameToEnumMapper`.
-    pub fn static_to_owned(self) -> PropertyValueNameToEnumMapper<T> {
+    pub const fn static_to_owned(self) -> PropertyValueNameToEnumMapper<T> {
         PropertyValueNameToEnumMapper {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
@@ -363,7 +363,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'static, T> {
     /// Cheaply converts a `PropertyEnumToValueNameSparseMapperBorrowed<'static>` into a `PropertyEnumToValueNameSparseMapper`.
-    pub fn static_to_owned(self) -> PropertyEnumToValueNameSparseMapper<T> {
+    pub const fn static_to_owned(self) -> PropertyEnumToValueNameSparseMapper<T> {
         PropertyEnumToValueNameSparseMapper {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
@@ -469,7 +469,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'static, T> {
     /// Cheaply converts a `PropertyEnumToValueNameLinearMapperBorrowed<'static>` into a `PropertyEnumToValueNameLinearMapper`.
-    pub fn static_to_owned(self) -> PropertyEnumToValueNameLinearMapper<T> {
+    pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearMapper<T> {
         PropertyEnumToValueNameLinearMapper {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
@@ -569,7 +569,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static, T> {
     /// Cheaply converts a `PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static>` into a `PropertyEnumToValueNameLinearTiny4Mapper`.
-    pub fn static_to_owned(self) -> PropertyEnumToValueNameLinearTiny4Mapper<T> {
+    pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearTiny4Mapper<T> {
         PropertyEnumToValueNameLinearTiny4Mapper {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
@@ -1127,7 +1127,7 @@ impl GeneralCategoryGroup {
     /// assert!(GeneralCategoryGroup::Other.contains(gc.get32(0xE007F)));
     /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get32(0xE007F)));
     /// ```
-    pub fn contains(&self, val: GeneralCategory) -> bool {
+    pub const fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0
     }
 
@@ -1148,7 +1148,7 @@ impl GeneralCategoryGroup {
     /// assert!(!not_letter.contains(GeneralCategory::UppercaseLetter));
     /// assert!(letter.contains(GeneralCategory::UppercaseLetter));
     /// ```
-    pub fn complement(self) -> Self {
+    pub const fn complement(self) -> Self {
         // Mask off things not in Self::ALL to guarantee the mask
         // values stay in-range
         GeneralCategoryGroup(!self.0 & Self::ALL)
@@ -1167,7 +1167,7 @@ impl GeneralCategoryGroup {
     /// assert!(all.contains(GeneralCategory::OtherPunctuation));
     /// assert!(all.contains(GeneralCategory::UppercaseLetter));
     /// ```
-    pub fn all() -> Self {
+    pub const fn all() -> Self {
         Self(Self::ALL)
     }
 
@@ -1184,7 +1184,7 @@ impl GeneralCategoryGroup {
     /// assert!(!empty.contains(GeneralCategory::OtherPunctuation));
     /// assert!(!empty.contains(GeneralCategory::UppercaseLetter));
     /// ```
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self(0)
     }
 
@@ -1203,7 +1203,7 @@ impl GeneralCategoryGroup {
     /// assert!(!union.contains(GeneralCategory::OtherPunctuation));
     /// assert!(union.contains(GeneralCategory::UppercaseLetter));
     /// ```
-    pub fn union(self, other: Self) -> Self {
+    pub const fn union(self, other: Self) -> Self {
         Self(self.0 | other.0)
     }
 
@@ -1223,7 +1223,7 @@ impl GeneralCategoryGroup {
     /// assert!(intersection.contains(GeneralCategory::UppercaseLetter));
     /// assert!(!intersection.contains(GeneralCategory::LowercaseLetter));
     /// ```
-    pub fn intersection(self, other: Self) -> Self {
+    pub const fn intersection(self, other: Self) -> Self {
         Self(self.0 & other.0)
     }
 }

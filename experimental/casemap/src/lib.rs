@@ -50,6 +50,7 @@ mod casemapper;
 mod closer;
 pub mod provider;
 mod set;
+pub mod titlecase;
 
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
@@ -59,3 +60,4 @@ mod internals;
 pub use casemapper::CaseMapper;
 pub use closer::CaseMapCloser;
 pub use set::ClosureSink;
+pub use titlecase::TitlecaseMapper;
