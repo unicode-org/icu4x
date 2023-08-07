@@ -190,13 +190,12 @@ jobs:
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        # gsutil cors set ffi/diplomat/js/examples/wasm-demo/cors-config-file.json gs://${{ env.GCP_PR_BUCKET_ID }}
-        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
+        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "::group::Wasm Demo Preview"
-        echo "https://storage.googleapis.com/icu4x-pr-artifacts/gha/${{ github.sha }}/wasm-demo/index.html"
+        echo "https://storage.googleapis.com/${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo/index.html"
         echo "::endgroup::"
 
   bench-perf:
@@ -285,7 +284,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf/${{ matrix.component }}
+          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
   # metrics will then be charted over time. See tools/benchmark/memory/README.md for
@@ -401,7 +400,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory/${{ matrix.os }}
+          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
@@ -520,7 +519,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/binsize/ gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/binsize
+          gsutil -m cp -r benchmarks/binsize/ gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
 
   # Data size benchmark: track size of provider/datagen/tests/data/testdata.postcard (total data size).
   bench-datasize:
@@ -584,7 +583,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/datasize
+          gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize
 
   gh-pages:
     name: "Deploy to GitHub Pages"
@@ -608,15 +607,13 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
       - name: Download artifacts
         run: |
-          gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks tools/website-skeleton/ || true
           gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/docs tools/website-skeleton || true
           mkdir -p tools/website-skeleton/docs/ffi
           gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp tools/website-skeleton/docs/ffi || true
           gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js tools/website-skeleton/docs/ffi || true
-          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo tools/website-skeleton/ || true
-      - name: Upload to main bucket
-        run: |
-          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID}}/gha/${{ github.sha }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/
+
+          gsutil -m cp -r gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks tools/website-skeleton/ || true
+          gsutil -m cp -r gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo tools/website-skeleton/ || true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
