@@ -73,7 +73,7 @@ cpp_default = ["logging", "simple_logger"]
 wasm_default = ["logging"]
 
 # Components
-default_components = ["icu_calendar", "icu_collator", "icu_datetime", "icu_decimal",
+default_components = ["icu_calendar", "icu_casemap", "icu_collator", "icu_datetime", "icu_decimal",
                       "icu_list", "icu_locid_transform",
                       "icu_normalizer", "icu_plurals", "icu_properties",
                       "icu_segmenter", "icu_timezone"]
