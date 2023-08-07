@@ -9,8 +9,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use std::borrow::Cow;
+
 use icu_provider::{yoke, zerofrom};
-use zerovec::{ZeroMap, ZeroVec};
+use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 use Default;
 
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
@@ -52,7 +54,7 @@ pub struct UnitsConstantsV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
 pub struct ConstantValue {
-    pub index: u8,
+    pub simple_constant_index: u8,
 
     pub repetition: u8,
 
