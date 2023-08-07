@@ -4,11 +4,19 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
+[tasks.check-all-features-chunked]
+description = "Build all permutations of all features for the provided chunk index (3 chunks)"
+category = "ICU4X Development"
+install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
+install_crate_args = ["--version", "^1.10"]
+command = "cargo"
+args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
+
 [tasks.check-all-features]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
-install_crate_args = ["--version", "^1.9"]
+install_crate_args = ["--version", "^1.10"]
 command = "cargo"
 args = ["check-all-features"]
 
@@ -16,7 +24,7 @@ args = ["check-all-features"]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
-install_crate_args = ["--version", "^1.8"]
+install_crate_args = ["--version", "^1.10"]
 command = "cargo"
 args = ["build-all-features"]
 

@@ -49,14 +49,13 @@ macro_rules! exemplar_chars_impls {
 
         impl IterableDataProvider<$data_marker_name> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self.filter_data_locales(
-                    self.source
-                        .cldr()?
-                        .misc()
-                        .list_langs()?
-                        .map(DataLocale::from)
-                        .collect(),
-                ))
+                Ok(self
+                    .source
+                    .cldr()?
+                    .misc()
+                    .list_langs()?
+                    .map(DataLocale::from)
+                    .collect())
             }
         }
 
@@ -70,11 +69,7 @@ macro_rules! exemplar_chars_impls {
                 let source_data_chars: Option<&String> = annotated_resource
                     .0
                     .main
-                    .0
-                    .iter()
-                    .next()
-                    .unwrap()
-                    .1
+                    .value
                     .characters
                     .$cldr_serde_field_name
                     .as_ref();

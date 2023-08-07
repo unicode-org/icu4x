@@ -214,7 +214,7 @@ class ICU4XDateTime {
    * 
    * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
    */
-  uint32_t days_in_year() const;
+  uint16_t days_in_year() const;
 
   /**
    * Returns the [`ICU4XCalendar`] object backing this date
@@ -364,7 +364,7 @@ inline uint8_t ICU4XDateTime::months_in_year() const {
 inline uint8_t ICU4XDateTime::days_in_month() const {
   return capi::ICU4XDateTime_days_in_month(this->inner.get());
 }
-inline uint32_t ICU4XDateTime::days_in_year() const {
+inline uint16_t ICU4XDateTime::days_in_year() const {
   return capi::ICU4XDateTime_days_in_year(this->inner.get());
 }
 inline ICU4XCalendar ICU4XDateTime::calendar() const {

@@ -1,6 +1,6 @@
 // @generated
 include!("macros.rs");
-/// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
+/// Implement `DataProvider<M>` on the given struct using the data
 /// hardcoded in this module. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 ///
@@ -23,7 +23,7 @@ macro_rules! __impl_data_provider {
 }
 #[doc(inline)]
 pub use __impl_data_provider as impl_data_provider;
-/// Implement [`AnyProvider`](icu_provider::AnyProvider) on the given struct using the data
+/// Implement `AnyProvider` on the given struct using the data
 /// hardcoded in this module. This allows the struct to be used with
 /// `icu`'s `_any` constructors.
 ///

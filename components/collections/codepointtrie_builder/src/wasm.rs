@@ -6,16 +6,14 @@ use crate::CodePointTrieBuilder;
 use crate::CodePointTrieBuilderData;
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
-use lazy_static::lazy_static;
+use once_cell::sync::OnceCell;
 use wasmer::{Instance, Module, Store};
 use wasmer_wasi::{Pipe, WasiState};
 
 const WASM_BYTES: &[u8] = include_bytes!("../list_to_ucptrie.wasm");
 
-lazy_static! {
-    static ref STORE: Store = Store::default();
-    static ref MODULE: Module = Module::new(&STORE, WASM_BYTES).expect("valid WASM");
-}
+static STORE: OnceCell<Store> = OnceCell::new();
+static MODULE: OnceCell<Module> = OnceCell::new();
 
 pub(crate) fn run_wasm<T>(builder: &CodePointTrieBuilder<T>) -> String
 where
@@ -39,9 +37,14 @@ where
         .finalize()
         .expect("valid arguments + in-memory filesystem");
 
+    let module = MODULE.get_or_init(|| {
+        let store = STORE.get_or_init(Store::default);
+        Module::new(store, WASM_BYTES).expect("valid WASM")
+    });
+
     // Create the WebAssembly instance with the module and the WasiState
-    let import_object = wasi_env.import_object(&MODULE).expect("walid wasm file");
-    let instance = Instance::new(&MODULE, &import_object).expect("valid wasm file");
+    let import_object = wasi_env.import_object(module).expect("walid wasm file");
+    let instance = Instance::new(module, &import_object).expect("valid wasm file");
 
     // To write to the stdin, we need a mutable reference to the pipe
     //

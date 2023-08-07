@@ -59,6 +59,9 @@ const ROC_ERA_OFFSET: i32 = 1911;
 ///
 /// This calendar supports two era codes: `"roc"`, corresponding to years in the 民國 (minguo) era (CE year 1912 and
 /// after), and `"roc-inverse"`, corresponding to years before the 民國 (minguo) era (CE year 1911 and before).
+///
+/// [`Chinese`]: crate::chinese::Chinese
+/// [`Gregorian`]: crate::Gregorian
 #[derive(Copy, Clone, Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Roc;
@@ -86,7 +89,7 @@ impl Calendar for Roc {
             if year <= 0 {
                 return Err(CalendarError::OutOfRange);
             }
-            1 - (year + ROC_ERA_OFFSET)
+            1 - year + ROC_ERA_OFFSET
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
@@ -108,7 +111,7 @@ impl Calendar for Roc {
         Iso.months_in_year(&date.0)
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         Iso.days_in_year(&date.0)
     }
 

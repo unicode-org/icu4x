@@ -20,7 +20,7 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.filter_data_locales(HelloWorldProvider.supported_locales()?))
+        HelloWorldProvider.supported_locales()
     }
 }
 
@@ -43,9 +43,7 @@ impl DatagenProvider {
 #[test]
 fn test_missing_locale() {
     use icu_locid::langid;
-    let mut provider = DatagenProvider::for_test();
-    provider.source.options.locales =
-        crate::options::LocaleInclude::Explicit([langid!("fi")].into());
+    let provider = DatagenProvider::for_test();
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {
@@ -54,11 +52,10 @@ fn test_missing_locale() {
         }
     )
     .is_ok());
-    // HelloWorldProvider supports Portuguese, so the error must correctly come from `check_req`
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {
-            locale: &langid!("pt").into(),
+            locale: &langid!("arc").into(),
             metadata: Default::default()
         }
     )

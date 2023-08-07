@@ -9,8 +9,8 @@
 use crate::greek_to_me::{self, GreekCombiningCharacterSequenceDiacritics, GreekDiacritics};
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
-use crate::provider::CaseMapV1;
-use crate::set::ClosureSet;
+use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
+use crate::set::ClosureSink;
 use core::fmt;
 use icu_locid::LanguageIdentifier;
 use writeable::Writeable;
@@ -506,7 +506,7 @@ impl<'data> CaseMapV1<'data> {
     /// - for s include long s
     /// - for sharp s include ss
     /// - for k include the Kelvin sign
-    pub(crate) fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
+    pub(crate) fn add_case_closure_to<S: ClosureSink>(&self, c: char, set: &mut S) {
         // Hardcode the case closure of i and its relatives and ignore the
         // data file data for these characters.
         // The Turkic dotless i and dotted I with their case mapping conditions
@@ -577,17 +577,22 @@ impl<'data> CaseMapV1<'data> {
     /// Maps the string to single code points and adds the associated case closure
     /// mappings.
     ///
-    /// (see docs on CaseMapper::add_string_case_closure)
-    pub(crate) fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
+    /// (see docs on CaseMapper::add_string_case_closure_to)
+    pub(crate) fn add_string_case_closure_to<S: ClosureSink>(
+        &self,
+        s: &str,
+        set: &mut S,
+        unfold_data: &CaseMapUnfoldV1,
+    ) -> bool {
         if s.chars().count() <= 1 {
             // The string is too short to find any match.
             return false;
         }
-        match self.unfold.get(s) {
+        match unfold_data.get(s) {
             Some(closure_string) => {
                 for c in closure_string.chars() {
                     set.add_char(c);
-                    self.add_case_closure(c, set);
+                    self.add_case_closure_to(c, set);
                 }
                 true
             }
@@ -637,7 +642,7 @@ pub enum FullMappingResult<'a> {
 
 impl<'a> FullMappingResult<'a> {
     #[allow(dead_code)]
-    fn add_to_set<S: ClosureSet>(&self, set: &mut S) {
+    fn add_to_set<S: ClosureSink>(&self, set: &mut S) {
         match *self {
             FullMappingResult::CodePoint(c) => set.add_char(c),
             FullMappingResult::String(s) => set.add_string(s),

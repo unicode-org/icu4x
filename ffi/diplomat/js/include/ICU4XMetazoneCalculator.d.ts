@@ -6,7 +6,7 @@ import { ICU4XError } from "./ICU4XError";
 
  * An object capable of computing the metazone from a timezone.
 
- * This can be used via `maybe_calculate_metazone()` on {@link crate::timezone::ffi::ICU4XCustomTimeZone; `ICU4XCustomTimeZone`}.
+ * This can be used via `maybe_calculate_metazone()` on {@link crate::timezone::ffi::ICU4XCustomTimeZone `ICU4XCustomTimeZone`}.
 
  * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html Rust documentation for `MetazoneCalculator`} for more information.
  */

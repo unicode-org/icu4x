@@ -41,11 +41,11 @@ pub trait CalendarArithmetic: Calendar {
     /// for lunar calendars
     ///
     /// The name has `provided` in it to avoid clashes with Calendar
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(year: i32) -> u16 {
         let months_in_year = Self::months_for_every_year(year);
-        let mut days: u32 = 0;
+        let mut days: u16 = 0;
         for month in 1..=months_in_year {
-            days += Self::month_days(year, month) as u32;
+            days += Self::month_days(year, month) as u16;
         }
         days
     }
@@ -147,7 +147,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn days_in_year(&self) -> u32 {
+    pub fn days_in_year(&self) -> u16 {
         C::days_in_provided_year(self.year)
     }
 
@@ -162,12 +162,12 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn day_of_year(&self) -> u32 {
+    pub fn day_of_year(&self) -> u16 {
         let mut day_of_year = 0;
         for month in 1..self.month {
-            day_of_year += C::month_days(self.year, month) as u32;
+            day_of_year += C::month_days(self.year, month) as u16;
         }
-        day_of_year + (self.day as u32)
+        day_of_year + (self.day as u16)
     }
 
     #[inline]
@@ -315,7 +315,7 @@ pub fn ordinal_month_from_code(code: types::MonthCode) -> Option<u8> {
         if bytes[2] >= b'1' && bytes[2] <= b'9' {
             return Some(bytes[2] - b'0');
         }
-    } else if bytes[1] == b'1' && bytes[2] >= b'1' && bytes[2] <= b'3' {
+    } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'3' {
         return Some(10 + bytes[2] - b'0');
     }
     None

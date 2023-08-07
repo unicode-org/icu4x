@@ -7,6 +7,7 @@
 use crate::buddhist::Buddhist;
 use crate::chinese::Chinese;
 use crate::coptic::Coptic;
+use crate::dangi::Dangi;
 use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
 use crate::gregorian::Gregorian;
 use crate::indian::Indian;
@@ -95,6 +96,8 @@ pub enum AnyCalendar {
     Chinese(Chinese),
     /// A [`Roc`] calendar
     Roc(Roc),
+    /// A [`Dangi`] calendar
+    Dangi(Dangi),
 }
 
 // TODO(#3469): Decide on the best way to implement Ord.
@@ -122,6 +125,8 @@ pub enum AnyDateInner {
     Coptic(<Coptic as Calendar>::DateInner),
     /// A date for a [`Roc`] calendar
     Roc(<Roc as Calendar>::DateInner),
+    /// A date for a [`Dangi`] calendar
+    Dangi(<Dangi as Calendar>::DateInner),
     /// A date for an [`Iso`] calendar
     Iso(<Iso as Calendar>::DateInner),
 }
@@ -140,6 +145,7 @@ macro_rules! match_cal_and_date {
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
             (&Self::Persian(ref $cal_matched), &AnyDateInner::Persian(ref $date_matched)) => $e,
             (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
+            (&Self::Roc(ref $cal_matched), &AnyDateInner::Roc(ref $date_matched)) => $e,
             (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $e,
             _ => panic!(
                 "Found AnyCalendar with mixed calendar type {} and date type {}!",
@@ -184,6 +190,9 @@ impl Calendar for AnyCalendar {
             Self::Chinese(ref c) => {
                 AnyDateInner::Chinese(c.date_from_codes(era, year, month_code, day)?)
             }
+            Self::Dangi(ref c) => {
+                AnyDateInner::Dangi(c.date_from_codes(era, year, month_code, day)?)
+            }
             Self::Coptic(ref c) => {
                 AnyDateInner::Coptic(c.date_from_codes(era, year, month_code, day)?)
             }
@@ -205,6 +214,7 @@ impl Calendar for AnyCalendar {
             Self::Persian(ref c) => AnyDateInner::Persian(c.date_from_iso(iso)),
             Self::Chinese(ref c) => AnyDateInner::Chinese(c.date_from_iso(iso)),
             Self::Roc(ref c) => AnyDateInner::Roc(c.date_from_iso(iso)),
+            Self::Dangi(ref c) => AnyDateInner::Dangi(c.date_from_iso(iso)),
         }
     }
 
@@ -216,7 +226,7 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.months_in_year(d))
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         match_cal_and_date!(match (self, date): (c, d) => c.days_in_year(d))
     }
 
@@ -251,6 +261,9 @@ impl Calendar for AnyCalendar {
                 c.offset_date(d, offset.cast_unit())
             }
             (Self::Persian(c), &mut AnyDateInner::Persian(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            (Self::Roc(c), &mut AnyDateInner::Roc(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             // This is only reached from misuse of from_raw, a semi-internal api
@@ -328,6 +341,9 @@ impl Calendar for AnyCalendar {
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
+            (Self::Roc(c1), Self::Roc(c2), AnyDateInner::Roc(d1), AnyDateInner::Roc(d2)) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
             (
                 Self::Coptic(c1),
                 Self::Coptic(c2),
@@ -387,6 +403,7 @@ impl Calendar for AnyCalendar {
             Self::Persian(_) => "AnyCalendar (Persian)",
             Self::Chinese(_) => "AnyCalendar (Chinese)",
             Self::Roc(_) => "AnyCalendar (Roc)",
+            Self::Dangi(_) => "AnyCalendar (Dangi)",
         }
     }
 
@@ -401,7 +418,7 @@ impl AnyCalendar {
     /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
     /// fallbacking. If this is desired, use [`Self::new_for_locale()`].
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -417,6 +434,7 @@ impl AnyCalendar {
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -449,6 +467,7 @@ impl AnyCalendar {
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -482,6 +501,7 @@ impl AnyCalendar {
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -513,6 +533,7 @@ impl AnyCalendar {
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
@@ -529,7 +550,7 @@ impl AnyCalendar {
     /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
     /// calendar for the locale, falling back to gregorian.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -579,6 +600,7 @@ impl AnyCalendar {
             Self::Persian(_) => "Persian",
             Self::Chinese(_) => "Chinese",
             Self::Roc(_) => "Roc",
+            Self::Dangi(_) => "Dangi",
         }
     }
 
@@ -599,6 +621,7 @@ impl AnyCalendar {
             Self::Persian(_) => AnyCalendarKind::Persian,
             Self::Chinese(_) => AnyCalendarKind::Chinese,
             Self::Roc(_) => AnyCalendarKind::Roc,
+            Self::Dangi(_) => AnyCalendarKind::Dangi,
         }
     }
 
@@ -645,6 +668,7 @@ impl AnyDateInner {
             AnyDateInner::Persian(_) => "Persian",
             AnyDateInner::Chinese(_) => "Chinese",
             AnyDateInner::Roc(_) => "Roc",
+            AnyDateInner::Dangi(_) => "Dangi",
         }
     }
 }
@@ -677,6 +701,8 @@ pub enum AnyCalendarKind {
     Chinese,
     /// The kind of a [`Roc`] calendar
     Roc,
+    /// The kind of a [`Dangi`] calendar
+    Dangi,
 }
 
 impl AnyCalendarKind {
@@ -703,7 +729,12 @@ impl AnyCalendarKind {
             b"ethiopic" => AnyCalendarKind::Ethiopian,
             b"ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
             b"persian" => AnyCalendarKind::Persian,
-            _ => return None,
+            b"roc" => AnyCalendarKind::Roc,
+            _ => {
+                // Log a warning when a calendar value is passed in but doesn't match any calendars
+                DataError::custom("bcp47_bytes did not match any calendars").with_debug_context(x);
+                return None;
+            }
         })
     }
     /// Construct from a BCP-47 [`Value`]
@@ -731,7 +762,11 @@ impl AnyCalendarKind {
             AnyCalendarKind::EthiopianAmeteAlem
         } else if *x == value!("persian") {
             AnyCalendarKind::Persian
+        } else if *x == value!("roc") {
+            AnyCalendarKind::Roc
         } else {
+            // Log a warning when a calendar value is passed in but doesn't match any calendars
+            DataError::custom("bcp47_value did not match any calendars").with_display_context(x);
             return None;
         })
     }
@@ -751,6 +786,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Persian => "persian",
             AnyCalendarKind::Chinese => "chinese",
             AnyCalendarKind::Roc => "roc",
+            AnyCalendarKind::Dangi => "dangi",
         }
     }
 
@@ -769,6 +805,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Persian => value!("persian"),
             AnyCalendarKind::Chinese => value!("chinese"),
             AnyCalendarKind::Roc => value!("roc"),
+            AnyCalendarKind::Dangi => value!("dangi"),
         }
     }
 
@@ -952,6 +989,18 @@ impl IntoAnyCalendar for Iso {
     }
 }
 
+impl IntoAnyCalendar for Roc {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Roc(Roc)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Roc(Roc)
+    }
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Roc(*d)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1036,6 +1085,7 @@ mod tests {
         let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
         let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
         let persian = AnyCalendar::new(AnyCalendarKind::Persian);
+        let roc = AnyCalendar::new(AnyCalendarKind::Roc);
         let buddhist = Ref(&buddhist);
         let coptic = Ref(&coptic);
         let ethiopian = Ref(&ethiopian);
@@ -1045,6 +1095,7 @@ mod tests {
         let japanese = Ref(&japanese);
         let japanext = Ref(&japanext);
         let persian = Ref(&persian);
+        let roc = Ref(&roc);
 
         single_test_roundtrip(buddhist, "be", 100, "M03", 1);
         single_test_roundtrip(buddhist, "be", 2000, "M03", 1);
@@ -1186,5 +1237,9 @@ mod tests {
             1,
             CalendarError::UnknownMonthCode("M9".parse().unwrap(), "Persian"),
         );
+
+        single_test_roundtrip(roc, "roc", 10, "M05", 3);
+        single_test_roundtrip(roc, "roc-inverse", 15, "M01", 10);
+        single_test_roundtrip(roc, "roc", 100, "M10", 30);
     }
 }
