@@ -62,6 +62,8 @@ icu_normalizer = { path = "../../components/normalizer" }
 icu_collections = { path = "../../components/collections", features = ["databake"] }
 icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder" }
 databake = { version = "0.1.3", path = "../../utils/databake", default-features = false}
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"
 
 
