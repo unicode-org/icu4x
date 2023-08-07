@@ -51,7 +51,7 @@ To learn about building ICU4X data, including whether to check in the data blob 
 
 [« Fully Working Example »](./crates/buffer)
 
-## Cargo.toml with Thread Safety (Lazy Static)
+## Cargo.toml with `Sync`
 
 If you wish to share ICU4X objects between threads, you must enable the `"sync"` Cargo feature:
 
@@ -60,6 +60,6 @@ If you wish to share ICU4X objects between threads, you must enable the `"sync"`
 icu = { version = "1.2", features = ["sync"] }
 ```
 
-You can now use most ICU4X types when `Send + Sync` are required, such as when persisting them in a [lazy_static](https://docs.rs/lazy_static/latest/lazy_static/).
+You can now use most ICU4X types when `Send + Sync` are required, such as when sharing across threads.
 
-[« Fully Working Example »](./crates/lazy_static)
+[« Fully Working Example »](./crates/sync)

@@ -10,6 +10,6 @@ members = [
     "crates/default",
     "crates/buffer",
     "crates/experimental",
-    "crates/lazy_static",
+    "crates/sync",
     "testing",
 ]

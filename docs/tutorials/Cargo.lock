@@ -1023,11 +1023,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "tutorial_lazy_static"
+name = "tutorial_sync"
 version = "0.0.0"
 dependencies = [
  "icu",
- "lazy_static",
 ]
 
 [[package]]

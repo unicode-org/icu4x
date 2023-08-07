@@ -48,7 +48,7 @@ exec --fail-on-error cargo --config patch.toml test -p tutorials-test
 exec --fail-on-error cargo --config patch.toml check -p tutorial_default
 exec --fail-on-error cargo --config patch.toml check -p tutorial_buffer
 exec --fail-on-error cargo --config patch.toml check -p tutorial_experimental
-exec --fail-on-error cargo --config patch.toml check -p tutorial_lazy_static
+exec --fail-on-error cargo --config patch.toml check -p tutorial_sync
 # tutorial_custom_compiled doesn't compile without data
 '''
 
@@ -72,7 +72,7 @@ cp ${project_dir}/target/debug/icu4x-datagen crates/bin/icu4x-datagen
 exec --fail-on-error cargo --config testing/patch.toml test -p tutorials-test
 exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_default
 exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_experimental
-exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_lazy_static
+exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_sync
 
 # Copy our own tutorial_buffer to speed up the task
 exec --fail-on-error cargo --config testing/patch.toml build -p tutorial_buffer
@@ -106,7 +106,7 @@ set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
 exec --fail-on-error cargo test --release -p tutorials-test
 exec --fail-on-error cargo run --release -p tutorial_default
 exec --fail-on-error cargo run --release -p tutorial_experimental
-exec --fail-on-error cargo run --release -p tutorial_lazy_static
+exec --fail-on-error cargo run --release -p tutorial_sync
 
 # Build the postcard file
 # Use the full Makefile task
