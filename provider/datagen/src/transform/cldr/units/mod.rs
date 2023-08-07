@@ -26,7 +26,7 @@ use tinystr::tinystr;
 
 impl DataProvider<UnitsConstantsV1Maker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsConstantsV1Maker>, DataError> {
-        self.check_req::<UnitsConstantsV1Maker>(req)?;
+        // self.check_req::<UnitsConstantsV1Maker>(req)?;
 
         let units_data: &cldr_serde::units::units::Resource = self
             .source
