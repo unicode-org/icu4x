@@ -28,8 +28,9 @@ class ICU4XLogger {
  public:
 
   /**
-   * Initialize the logger from the `simple_logger` crate, which simply logs to
-   * stdout. Returns `false` if there was already a logger set, or if logging has not been
+   * Initialize the logger using `simple_logger`, or console.log/warn in WASM.
+   * 
+   * Returns `false` if there was already a logger set, or if logging has not been
    * compiled into the platform
    */
   static bool init_simple_logger();
