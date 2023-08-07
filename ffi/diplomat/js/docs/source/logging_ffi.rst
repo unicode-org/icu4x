@@ -8,7 +8,18 @@
 
     .. js:function:: init_simple_logger()
 
-        Initialize the logger using ``simple_logger``, or console.log/warn in WASM.
+        Initialize the logger using ``simple_logger``
 
-        Returns ``false`` if there was already a logger set, or if logging has not been compiled into the platform
+        Requires the ``simple_logger`` Cargo feature.
+
+        Returns ``false`` if there was already a logger set.
+
+
+    .. js:function:: init_console_logger()
+
+        Initialize the logger to use the WASM console.
+
+        Only available on ``wasm32`` targets.
+
+        Returns ``false`` if there was already a logger set.
 

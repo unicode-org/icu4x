@@ -6,5 +6,5 @@
 #[cfg(target_arch = "wasm32")]
 pub unsafe extern "C" fn icu4x_init() {
     #[cfg(feature = "logging")]
-    crate::logging::ffi::ICU4XLogger::init_simple_logger();
+    crate::logging::ffi::ICU4XLogger::init_console_logger();
 }

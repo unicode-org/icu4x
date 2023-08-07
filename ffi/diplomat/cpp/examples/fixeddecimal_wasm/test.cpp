@@ -19,7 +19,7 @@ extern "C" void warn_js(char* s, u_int len) {
 }
 
 int runFixedDecimal() {
-    ICU4XLogger::init_simple_logger();
+    ICU4XLogger::init_console_logger();
     ICU4XLocale locale = ICU4XLocale::create_from_string("bn").ok().value();
     std::cout << "Running test for locale " << locale.to_string().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
