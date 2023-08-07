@@ -110,7 +110,7 @@ pub struct JapaneseDateInner {
 }
 
 impl Japanese {
-    /// Creates a new [`Japanese`] using only modern eras (post-meiji).
+    /// Creates a new [`Japanese`] using only modern eras (post-meiji) from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -136,10 +136,10 @@ impl Japanese {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<JapaneseErasV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
     ) -> Result<Self, CalendarError> {
         Ok(Self {
-            eras: data_provider.load(Default::default())?.take_payload()?,
+            eras: provider.load(Default::default())?.take_payload()?,
         })
     }
 
@@ -167,7 +167,7 @@ impl Japanese {
 }
 
 impl JapaneseExtended {
-    /// Creates a new [`Japanese`] from using all eras (including pre-meiji).
+    /// Creates a new [`Japanese`] from using all eras (including pre-meiji) from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -193,13 +193,10 @@ impl JapaneseExtended {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
     ) -> Result<Self, CalendarError> {
         Ok(Self(Japanese {
-            eras: data_provider
-                .load(Default::default())?
-                .take_payload()?
-                .cast(),
+            eras: provider.load(Default::default())?.take_payload()?.cast(),
         }))
     }
 }

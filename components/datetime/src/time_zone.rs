@@ -408,6 +408,10 @@ impl TimeZoneFormatter {
         /// To enable other time zone styles, use one of the `with` (compiled data) or `load` (runtime
         /// data provider) methods.
         ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
         /// # Examples
         ///
         /// Default format is Localized GMT:

@@ -64,7 +64,6 @@ compactdecimal/long@1, fr, 161B, cbaa60814fe4615d
 compactdecimal/long@1, ja, 60B, 77922aa8d4b6b2f
 compactdecimal/long@1, ru, 291B, 2644d0d716d625bf
 compactdecimal/long@1, sr, 213B, 61a9ef092615fa69
-compactdecimal/long@1, sr-Cyrl, 213B, 61a9ef092615fa69
 compactdecimal/long@1, sr-Latn, 149B, ed0310a27df7889c
 compactdecimal/long@1, th, 235B, 8ff3eed84279d633
 compactdecimal/long@1, th-u-nu-thai, 235B, 8ff3eed84279d633
@@ -88,7 +87,6 @@ compactdecimal/short@1, fr, 62B, 2a2b8f0f1791ef66
 compactdecimal/short@1, ja, 60B, 77922aa8d4b6b2f
 compactdecimal/short@1, ru, 85B, f5d31a311a092622
 compactdecimal/short@1, sr, 86B, 8a1b9926c61f278f
-compactdecimal/short@1, sr-Cyrl, 86B, 8a1b9926c61f278f
 compactdecimal/short@1, sr-Latn, 74B, b9601d620b3d8cd3
 compactdecimal/short@1, th, 52B, f0a39a85493a674d
 compactdecimal/short@1, th-u-nu-thai, 52B, f0a39a85493a674d
@@ -108,7 +106,6 @@ datetime/buddhist/datelengths@1, fr, 138B, b33cff62b2447f2b
 datetime/buddhist/datelengths@1, ja, 129B, 707dfc25a435b3c5
 datetime/buddhist/datelengths@1, ru, 180B, 365ddfab699adc1f
 datetime/buddhist/datelengths@1, sr, 159B, b05452ef3a8c10c1
-datetime/buddhist/datelengths@1, sr-Cyrl, 159B, b05452ef3a8c10c1
 datetime/buddhist/datelengths@1, sr-Latn, 159B, b05452ef3a8c10c1
 datetime/buddhist/datelengths@1, th, 129B, cf293267b884b93d
 datetime/buddhist/datelengths@1, tr, 138B, c921654e4c7285a7
@@ -127,7 +124,6 @@ datetime/buddhist/datesymbols@1, fr, 377B, 6f1cef87426566e4
 datetime/buddhist/datesymbols@1, ja, 372B, f327227b7beb62f0
 datetime/buddhist/datesymbols@1, ru, 843B, 9addf81a0aa7ad0c
 datetime/buddhist/datesymbols@1, sr, 539B, caa9d344a5780928
-datetime/buddhist/datesymbols@1, sr-Cyrl, 539B, caa9d344a5780928
 datetime/buddhist/datesymbols@1, sr-Latn, 335B, 5f9c0fc2b5c6c767
 datetime/buddhist/datesymbols@1, th, 911B, e46dceeb3e50445
 datetime/buddhist/datesymbols@1, tr, 341B, 6fc2721a65ea9e3a
@@ -146,7 +142,6 @@ datetime/chinese/datelengths@1, fr, 114B, df7d9daa8e5e8fdd
 datetime/chinese/datelengths@1, ja, 111B, bd200e3bde197f77
 datetime/chinese/datelengths@1, ru, 117B, a075e302f9b52b31
 datetime/chinese/datelengths@1, sr, 135B, 638cab234df63645
-datetime/chinese/datelengths@1, sr-Cyrl, 135B, 638cab234df63645
 datetime/chinese/datelengths@1, sr-Latn, 135B, 638cab234df63645
 datetime/chinese/datelengths@1, th, 117B, d940dd6dbc226ff8
 datetime/chinese/datelengths@1, tr, 135B, 638cab234df63645
@@ -165,7 +160,6 @@ datetime/chinese/datesymbols@1, fr, 550B, e06c6a32683b26bd
 datetime/chinese/datesymbols@1, ja, 599B, 5bca158204566a1d
 datetime/chinese/datesymbols@1, ru, 619B, 896b6508bf0c4a64
 datetime/chinese/datesymbols@1, sr, 536B, bb17532cf2856863
-datetime/chinese/datesymbols@1, sr-Cyrl, 536B, bb17532cf2856863
 datetime/chinese/datesymbols@1, sr-Latn, 455B, c99877fd5da9f5ad
 datetime/chinese/datesymbols@1, th, 598B, 656433089459d907
 datetime/chinese/datesymbols@1, tr, 458B, 9bd91ab8addedc45
@@ -184,7 +178,6 @@ datetime/coptic/datelengths@1, fr, 138B, b33cff62b2447f2b
 datetime/coptic/datelengths@1, ja, 135B, 1ed9efc4c4af9b92
 datetime/coptic/datelengths@1, ru, 180B, 365ddfab699adc1f
 datetime/coptic/datelengths@1, sr, 159B, b05452ef3a8c10c1
-datetime/coptic/datelengths@1, sr-Cyrl, 159B, b05452ef3a8c10c1
 datetime/coptic/datelengths@1, sr-Latn, 159B, b05452ef3a8c10c1
 datetime/coptic/datelengths@1, th, 147B, d11dca032e73d0e4
 datetime/coptic/datelengths@1, tr, 138B, c921654e4c7285a7
@@ -203,7 +196,6 @@ datetime/coptic/datesymbols@1, fr, 676B, f8fbc6ef3fdb9be9
 datetime/coptic/datesymbols@1, ja, 828B, fe455342953327fc
 datetime/coptic/datesymbols@1, ru, 930B, e9a85e7845f763a0
 datetime/coptic/datesymbols@1, sr, 838B, 8abad376356356b5
-datetime/coptic/datesymbols@1, sr-Cyrl, 838B, 8abad376356356b5
 datetime/coptic/datesymbols@1, sr-Latn, 625B, 1f8aa78645501377
 datetime/coptic/datesymbols@1, th, 1136B, 193c5740c532126d
 datetime/coptic/datesymbols@1, tr, 638B, dc12478b9bcfb0e5
@@ -222,7 +214,6 @@ datetime/ethiopic/datelengths@1, fr, 138B, b33cff62b2447f2b
 datetime/ethiopic/datelengths@1, ja, 135B, 1ed9efc4c4af9b92
 datetime/ethiopic/datelengths@1, ru, 180B, 365ddfab699adc1f
 datetime/ethiopic/datelengths@1, sr, 159B, b05452ef3a8c10c1
-datetime/ethiopic/datelengths@1, sr-Cyrl, 159B, b05452ef3a8c10c1
 datetime/ethiopic/datelengths@1, sr-Latn, 159B, b05452ef3a8c10c1
 datetime/ethiopic/datelengths@1, th, 147B, d11dca032e73d0e4
 datetime/ethiopic/datelengths@1, tr, 138B, c921654e4c7285a7
@@ -241,7 +232,6 @@ datetime/ethiopic/datesymbols@1, fr, 754B, 7348404da6b9fd00
 datetime/ethiopic/datesymbols@1, ja, 885B, 7b436dad02d4e413
 datetime/ethiopic/datesymbols@1, ru, 1069B, 67958a346908671b
 datetime/ethiopic/datesymbols@1, sr, 943B, 8b837e4f9d6e43d7
-datetime/ethiopic/datesymbols@1, sr-Cyrl, 943B, 8b837e4f9d6e43d7
 datetime/ethiopic/datesymbols@1, sr-Latn, 708B, 284f9f40a3109c0d
 datetime/ethiopic/datesymbols@1, th, 1235B, 335a79ef40182a10
 datetime/ethiopic/datesymbols@1, tr, 717B, ef5ce03cbc4ddb96
@@ -260,7 +250,6 @@ datetime/gregory/datelengths@1, fr, 123B, f19790915760f45e
 datetime/gregory/datelengths@1, ja, 117B, 709275033357ba40
 datetime/gregory/datelengths@1, ru, 156B, 7eb4cdc4261bedb0
 datetime/gregory/datelengths@1, sr, 141B, e87ac821f1d3b6e5
-datetime/gregory/datelengths@1, sr-Cyrl, 141B, e87ac821f1d3b6e5
 datetime/gregory/datelengths@1, sr-Latn, 141B, e87ac821f1d3b6e5
 datetime/gregory/datelengths@1, th, 135B, 36829a1c92a9f484
 datetime/gregory/datelengths@1, tr, 114B, c9a712ce0b15d612
@@ -279,7 +268,6 @@ datetime/gregory/datesymbols@1, fr, 451B, 20892f3111d07d17
 datetime/gregory/datesymbols@1, ja, 417B, 2bb2acf363072687
 datetime/gregory/datesymbols@1, ru, 947B, 17941ce2896a499f
 datetime/gregory/datesymbols@1, sr, 618B, c477ecfce157bfdf
-datetime/gregory/datesymbols@1, sr-Cyrl, 618B, c477ecfce157bfdf
 datetime/gregory/datesymbols@1, sr-Latn, 393B, 3a53a249619c947
 datetime/gregory/datesymbols@1, th, 1022B, 24b0cba3e7f584bc
 datetime/gregory/datesymbols@1, tr, 394B, 45e6dcdf8c9cd446
@@ -298,7 +286,6 @@ datetime/indian/datelengths@1, fr, 138B, b33cff62b2447f2b
 datetime/indian/datelengths@1, ja, 135B, 1ed9efc4c4af9b92
 datetime/indian/datelengths@1, ru, 180B, 365ddfab699adc1f
 datetime/indian/datelengths@1, sr, 159B, b05452ef3a8c10c1
-datetime/indian/datelengths@1, sr-Cyrl, 159B, b05452ef3a8c10c1
 datetime/indian/datelengths@1, sr-Latn, 159B, b05452ef3a8c10c1
 datetime/indian/datelengths@1, th, 147B, d11dca032e73d0e4
 datetime/indian/datelengths@1, tr, 138B, c921654e4c7285a7
@@ -317,7 +304,6 @@ datetime/indian/datesymbols@1, fr, 412B, 15f19c47ea9f30c
 datetime/indian/datesymbols@1, ja, 590B, 6858cb9e6b897151
 datetime/indian/datesymbols@1, ru, 672B, cae4e1ef1308f245
 datetime/indian/datesymbols@1, sr, 634B, d1833416ab014e6a
-datetime/indian/datesymbols@1, sr-Cyrl, 634B, d1833416ab014e6a
 datetime/indian/datesymbols@1, sr-Latn, 395B, 618d66f8e6e72a3a
 datetime/indian/datesymbols@1, th, 844B, c4b7fd7e99b74de4
 datetime/indian/datesymbols@1, tr, 414B, 94e18bb4a441b79c
@@ -336,7 +322,6 @@ datetime/japanese/datelengths@1, fr, 138B, b33cff62b2447f2b
 datetime/japanese/datelengths@1, ja, 132B, d6434d857a61b838
 datetime/japanese/datelengths@1, ru, 180B, 365ddfab699adc1f
 datetime/japanese/datelengths@1, sr, 150B, aa36b426cd06a6fb
-datetime/japanese/datelengths@1, sr-Cyrl, 150B, aa36b426cd06a6fb
 datetime/japanese/datelengths@1, sr-Latn, 150B, aa36b426cd06a6fb
 datetime/japanese/datelengths@1, th, 168B, 935c545fbec5295e
 datetime/japanese/datelengths@1, tr, 138B, 16bfd399f1a6e82c
@@ -355,7 +340,6 @@ datetime/japanese/datesymbols@1, fr, 655B, b5f0ae1101d56625
 datetime/japanese/datesymbols@1, ja, 623B, 569efeb5dc4c1810
 datetime/japanese/datesymbols@1, ru, 1272B, d0562bc9fab051ea
 datetime/japanese/datesymbols@1, sr, 864B, e900f5898cc5a64f
-datetime/japanese/datesymbols@1, sr-Cyrl, 864B, e900f5898cc5a64f
 datetime/japanese/datesymbols@1, sr-Latn, 595B, 1f93376af1e85c0a
 datetime/japanese/datesymbols@1, th, 1301B, 551a97dd8e71ec3c
 datetime/japanese/datesymbols@1, tr, 598B, 376a1894323c7ae8
@@ -374,7 +358,6 @@ datetime/japanext/datelengths@1, fr, 138B, b33cff62b2447f2b
 datetime/japanext/datelengths@1, ja, 132B, d6434d857a61b838
 datetime/japanext/datelengths@1, ru, 180B, 365ddfab699adc1f
 datetime/japanext/datelengths@1, sr, 150B, aa36b426cd06a6fb
-datetime/japanext/datelengths@1, sr-Cyrl, 150B, aa36b426cd06a6fb
 datetime/japanext/datelengths@1, sr-Latn, 150B, aa36b426cd06a6fb
 datetime/japanext/datelengths@1, th, 168B, 935c545fbec5295e
 datetime/japanext/datelengths@1, tr, 138B, 16bfd399f1a6e82c
@@ -393,7 +376,6 @@ datetime/japanext/datesymbols@1, fr, 24334B, 3e124d19dc33fc21
 datetime/japanext/datesymbols@1, ja, 14768B, e0c94d68cadb7c63
 datetime/japanext/datesymbols@1, ru, 31988B, 35e5c75bfd37e841
 datetime/japanext/datesymbols@1, sr, 26341B, 1f64f0574a3fc1da
-datetime/japanext/datesymbols@1, sr-Cyrl, 26341B, 1f64f0574a3fc1da
 datetime/japanext/datesymbols@1, sr-Latn, 23888B, 39dac0c007eca5e9
 datetime/japanext/datesymbols@1, th, 30477B, 245fbc931c37eacb
 datetime/japanext/datesymbols@1, tr, 24277B, 25d6879a151f5520
@@ -412,7 +394,6 @@ datetime/persian/datelengths@1, fr, 138B, b33cff62b2447f2b
 datetime/persian/datelengths@1, ja, 135B, 1ed9efc4c4af9b92
 datetime/persian/datelengths@1, ru, 180B, 365ddfab699adc1f
 datetime/persian/datelengths@1, sr, 159B, b05452ef3a8c10c1
-datetime/persian/datelengths@1, sr-Cyrl, 159B, b05452ef3a8c10c1
 datetime/persian/datelengths@1, sr-Latn, 159B, b05452ef3a8c10c1
 datetime/persian/datelengths@1, th, 147B, d11dca032e73d0e4
 datetime/persian/datelengths@1, tr, 138B, c921654e4c7285a7
@@ -431,7 +412,6 @@ datetime/persian/datesymbols@1, fr, 377B, ab0525dba6583fe7
 datetime/persian/datesymbols@1, ja, 662B, 4cacd3bcbb70b6b5
 datetime/persian/datesymbols@1, ru, 649B, 758baf03b1ceb8b0
 datetime/persian/datesymbols@1, sr, 590B, c7f0e236e0908b0f
-datetime/persian/datesymbols@1, sr-Cyrl, 590B, c7f0e236e0908b0f
 datetime/persian/datesymbols@1, sr-Latn, 375B, 8491d93b46b1237
 datetime/persian/datesymbols@1, th, 1033B, 3db9906ac7c71a57
 datetime/persian/datesymbols@1, tr, 378B, 85b7af19204f2cf0
@@ -450,7 +430,6 @@ datetime/roc/datelengths@1, fr, 138B, b33cff62b2447f2b
 datetime/roc/datelengths@1, ja, 129B, dd1182a8fd94a9d2
 datetime/roc/datelengths@1, ru, 180B, 365ddfab699adc1f
 datetime/roc/datelengths@1, sr, 159B, b05452ef3a8c10c1
-datetime/roc/datelengths@1, sr-Cyrl, 159B, b05452ef3a8c10c1
 datetime/roc/datelengths@1, sr-Latn, 159B, b05452ef3a8c10c1
 datetime/roc/datelengths@1, th, 168B, 78c3749ed866a1f7
 datetime/roc/datelengths@1, tr, 138B, c921654e4c7285a7
@@ -469,7 +448,6 @@ datetime/roc/datesymbols@1, fr, 435B, 56b9172e33838540
 datetime/roc/datesymbols@1, ja, 455B, aaf813e46dc5b27c
 datetime/roc/datesymbols@1, ru, 978B, 29f7e883bb4783f8
 datetime/roc/datesymbols@1, sr, 620B, a3d6b1dad9b0b2ab
-datetime/roc/datesymbols@1, sr-Cyrl, 620B, a3d6b1dad9b0b2ab
 datetime/roc/datesymbols@1, sr-Latn, 401B, 902b7c1731a967b5
 datetime/roc/datesymbols@1, th, 1093B, d2edefa0290580e9
 datetime/roc/datesymbols@1, tr, 441B, 99c62b1d6c1f48b2
@@ -604,16 +582,6 @@ datetime/skeletons@1, ru-u-ca-japanese, 994B, 8c5f38aef4898af5
 datetime/skeletons@1, ru-u-ca-japanext, 994B, 8c5f38aef4898af5
 datetime/skeletons@1, ru-u-ca-persian, 994B, 8c5f38aef4898af5
 datetime/skeletons@1, ru-u-ca-roc, 994B, 8c5f38aef4898af5
-datetime/skeletons@1, sr-Cyrl-u-ca-buddhist, 1104B, 21e8e921d1b1aa01
-datetime/skeletons@1, sr-Cyrl-u-ca-chinese, 1007B, a0bdf15d6cea423d
-datetime/skeletons@1, sr-Cyrl-u-ca-coptic, 1104B, 21e8e921d1b1aa01
-datetime/skeletons@1, sr-Cyrl-u-ca-ethiopic, 1104B, 21e8e921d1b1aa01
-datetime/skeletons@1, sr-Cyrl-u-ca-gregory, 1294B, 40cafaf319fb902f
-datetime/skeletons@1, sr-Cyrl-u-ca-indian, 1104B, 21e8e921d1b1aa01
-datetime/skeletons@1, sr-Cyrl-u-ca-japanese, 1104B, 21e8e921d1b1aa01
-datetime/skeletons@1, sr-Cyrl-u-ca-japanext, 1104B, 21e8e921d1b1aa01
-datetime/skeletons@1, sr-Cyrl-u-ca-persian, 1104B, 21e8e921d1b1aa01
-datetime/skeletons@1, sr-Cyrl-u-ca-roc, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Latn-u-ca-buddhist, 1104B, 21e8e921d1b1aa01
 datetime/skeletons@1, sr-Latn-u-ca-chinese, 1007B, a0bdf15d6cea423d
 datetime/skeletons@1, sr-Latn-u-ca-coptic, 1104B, 21e8e921d1b1aa01
@@ -678,7 +646,6 @@ datetime/timelengths@1, fr, 173B, 2c1bb8698087f258
 datetime/timelengths@1, ja, 164B, adb2c0e121383b23
 datetime/timelengths@1, ru, 173B, 2c1bb8698087f258
 datetime/timelengths@1, sr, 173B, 2c1bb8698087f258
-datetime/timelengths@1, sr-Cyrl, 173B, 2c1bb8698087f258
 datetime/timelengths@1, sr-Latn, 173B, 2c1bb8698087f258
 datetime/timelengths@1, th, 287B, 753e9d8e5506d542
 datetime/timelengths@1, tr, 173B, b2ca0dc81497fbc4
@@ -697,7 +664,6 @@ datetime/timesymbols@1, fr, 62B, ccd672a6f7e7f2c7
 datetime/timesymbols@1, ja, 101B, 3fad82823a8b72a3
 datetime/timesymbols@1, ru, 96B, 541f6a73928adbaf
 datetime/timesymbols@1, sr, 158B, 2195d1350e4f3af5
-datetime/timesymbols@1, sr-Cyrl, 158B, 2195d1350e4f3af5
 datetime/timesymbols@1, sr-Latn, 107B, 12ba5d61ce784440
 datetime/timesymbols@1, th, 447B, 9466af7f8f22bf39
 datetime/timesymbols@1, tr, 121B, 5794353edf9a394b
@@ -875,7 +841,6 @@ decimal/symbols@1, fr, 35B, bd076f44d0623175
 decimal/symbols@1, ja, 33B, 8df59f98704d3b0c
 decimal/symbols@1, ru, 34B, 8f773f51e85a65c1
 decimal/symbols@1, sr, 33B, 3ec76252c7ed8d8c
-decimal/symbols@1, sr-Cyrl, 33B, 3ec76252c7ed8d8c
 decimal/symbols@1, sr-Latn, 33B, 3ec76252c7ed8d8c
 decimal/symbols@1, th, 33B, 8df59f98704d3b0c
 decimal/symbols@1, th-u-nu-thai, 53B, db1d187d375ccfd2
@@ -895,7 +860,6 @@ displaynames/languages@1, fr, 8587B, 977e72e56588c7a8
 displaynames/languages@1, ja, 13946B, c04e0f0fdb013bac
 displaynames/languages@1, ru, 12484B, 2caf317b6683fc86
 displaynames/languages@1, sr, 11367B, 14b07c1d6b670940
-displaynames/languages@1, sr-Cyrl, 11367B, 14b07c1d6b670940
 displaynames/languages@1, sr-Latn, 7221B, cf22b5a5406ed678
 displaynames/languages@1, th, 17564B, 40cbad01c2fda5bf
 displaynames/languages@1, tr, 9388B, 5b8df14fe78f3ba0
@@ -913,7 +877,6 @@ displaynames/locales@1, fr, 709B, 501bbe85f4ae8efc
 displaynames/locales@1, ja, 645B, 70fbd85fc745932c
 displaynames/locales@1, ru, 1363B, 95103b2be86fbeef
 displaynames/locales@1, sr, 886B, 18de1d9cdfa1f44
-displaynames/locales@1, sr-Cyrl, 886B, 18de1d9cdfa1f44
 displaynames/locales@1, sr-Latn, 570B, 9f920a3c63fb7afb
 displaynames/locales@1, th, 1263B, 267bbc024267efb3
 displaynames/locales@1, tr, 810B, 4e5546c7865f648c
@@ -931,7 +894,6 @@ displaynames/regions@1, fr, 4878B, c8f1d82c914ed28
 displaynames/regions@1, ja, 6454B, ae5d0a6a30f19e6
 displaynames/regions@1, ru, 7478B, e57cb68ae6931702
 displaynames/regions@1, sr, 7715B, 51420e0d3503da27
-displaynames/regions@1, sr-Cyrl, 7715B, 51420e0d3503da27
 displaynames/regions@1, sr-Latn, 4769B, 167c57dcc06277a0
 displaynames/regions@1, th, 10811B, 84aad4d11372eb38
 displaynames/regions@1, tr, 4650B, 8f8bd5f16f02a43
@@ -949,7 +911,6 @@ displaynames/scripts@1, fr, 2372B, 5ba98747b85e1740
 displaynames/scripts@1, ja, 4360B, 2ce4aab958b0cce4
 displaynames/scripts@1, ru, 4438B, 30d5b43c72fe9453
 displaynames/scripts@1, sr, 4524B, cde0240f7b451d72
-displaynames/scripts@1, sr-Cyrl, 4524B, cde0240f7b451d72
 displaynames/scripts@1, sr-Latn, 2778B, b91a3c0302bb859a
 displaynames/scripts@1, th, 5455B, 464792f923f09161
 displaynames/scripts@1, tr, 2508B, 4d1fd138001a9264
@@ -965,7 +926,6 @@ displaynames/variants@1, fr, 913B, c842ab85f5311d88
 displaynames/variants@1, ja, 2040B, 7711b0a75a90d1e9
 displaynames/variants@1, ru, 991B, 4e8374508af05cac
 displaynames/variants@1, sr, 1289B, 889597cb3627ed0d
-displaynames/variants@1, sr-Cyrl, 1289B, 889597cb3627ed0d
 displaynames/variants@1, sr-Latn, 820B, 867ee87a02147d0b
 displaynames/variants@1, th, 3709B, ed1d48e400b1c35c
 displaynames/variants@1, tr, 1094B, f75a0ab8f0d0bc98
@@ -986,7 +946,6 @@ list/and@1, fr, 24B, e7d22c80fdb46995
 list/and@1, ja, 18B, 63f62f90d59a7cc5
 list/and@1, ru, 24B, 6da70da3b8a81c68
 list/and@1, sr, 24B, 3ed8301e7e2208a0
-list/and@1, sr-Cyrl, 24B, 3ed8301e7e2208a0
 list/and@1, sr-Latn, 23B, 58b0dcc30cdabe1d
 list/and@1, th, 41B, 294a0ede8a0d2015
 list/and@1, tr, 24B, 1215513b46817e60
@@ -1005,7 +964,6 @@ list/or@1, fr, 24B, ef0beb53438de196
 list/or@1, ja, 45B, de30e5aa548f8dec
 list/or@1, ru, 28B, 3ea21a1724b77445
 list/or@1, sr, 28B, 3ea21a1724b77445
-list/or@1, sr-Cyrl, 28B, 3ea21a1724b77445
 list/or@1, sr-Latn, 25B, a8e1945fae979592
 list/or@1, th, 49B, c4e45f8366d47ee5
 list/or@1, tr, 26B, b191a110ef6202d6
@@ -1024,7 +982,6 @@ list/unit@1, fr, 28B, a0505c62ffabb87a
 list/unit@1, ja, 19B, 5d679b8a8d264625
 list/unit@1, ru, 16B, 375096409d6f0946
 list/unit@1, sr, 24B, 3ed8301e7e2208a0
-list/unit@1, sr-Cyrl, 24B, 3ed8301e7e2208a0
 list/unit@1, sr-Latn, 23B, 58b0dcc30cdabe1d
 list/unit@1, th, 30B, 3634af6f27539959
 list/unit@1, tr, 16B, 375096409d6f0946
@@ -1175,7 +1132,6 @@ props/exemplarchars/auxiliary@1, fr, 144B, 8f01707e31ae9b77
 props/exemplarchars/auxiliary@1, ja, 608B, 5cda0ba025ae5157
 props/exemplarchars/auxiliary@1, ru, 61B, 6a20fa4f2a8172f3
 props/exemplarchars/auxiliary@1, sr, 37B, e291a541ad2ca8fd
-props/exemplarchars/auxiliary@1, sr-Cyrl, 37B, e291a541ad2ca8fd
 props/exemplarchars/auxiliary@1, sr-Latn, 31B, 60f5752fc7094742
 props/exemplarchars/auxiliary@1, th, 15B, 5d3232640b4d876a
 props/exemplarchars/auxiliary@1, tr, 152B, 54b1b627d8fe7736
@@ -1194,7 +1150,6 @@ props/exemplarchars/index@1, fr, 15B, 757e29ef1029b9f2
 props/exemplarchars/index@1, ja, 87B, 1fe8d5166096a8f
 props/exemplarchars/index@1, ru, 39B, b216a14c26e08b41
 props/exemplarchars/index@1, sr, 39B, 1f34a0b2c4e8c9cf
-props/exemplarchars/index@1, sr-Cyrl, 39B, 1f34a0b2c4e8c9cf
 props/exemplarchars/index@1, sr-Latn, 60B, 6e724686cc05703e
 props/exemplarchars/index@1, th, 15B, 9a73c145265a2ae5
 props/exemplarchars/index@1, tr, 55B, becd57ac0c1a82ed
@@ -1213,7 +1168,6 @@ props/exemplarchars/main@1, fr, 87B, 978fe355ffd56d69
 props/exemplarchars/main@1, ja, 13960B, ecdb0541bf50467a
 props/exemplarchars/main@1, ru, 23B, 776f46a709a45c84
 props/exemplarchars/main@1, sr, 47B, 6dd4749272778c73
-props/exemplarchars/main@1, sr-Cyrl, 47B, 6dd4749272778c73
 props/exemplarchars/main@1, sr-Latn, 84B, b3210a1fdbb25658
 props/exemplarchars/main@1, th, 23B, dc264c756b6c70c5
 props/exemplarchars/main@1, tr, 79B, 2a46aadb009b9040
@@ -1232,7 +1186,6 @@ props/exemplarchars/numbers@1, fr, 87B, 4665b771b63788a9
 props/exemplarchars/numbers@1, ja, 47B, e1b5384c071ba661
 props/exemplarchars/numbers@1, ru, 47B, e8216b1455c6fe34
 props/exemplarchars/numbers@1, sr, 47B, e1b5384c071ba661
-props/exemplarchars/numbers@1, sr-Cyrl, 47B, e1b5384c071ba661
 props/exemplarchars/numbers@1, sr-Latn, 47B, e1b5384c071ba661
 props/exemplarchars/numbers@1, th, 47B, e1b5384c071ba661
 props/exemplarchars/numbers@1, tr, 47B, e1b5384c071ba661
@@ -1251,7 +1204,6 @@ props/exemplarchars/punctuation@1, fr, 144B, ec3639703b696076
 props/exemplarchars/punctuation@1, ja, 312B, c7c2f5c2e2a238e5
 props/exemplarchars/punctuation@1, ru, 160B, f08f7f99e3254699
 props/exemplarchars/punctuation@1, sr, 144B, 82109d7f0d039c80
-props/exemplarchars/punctuation@1, sr-Cyrl, 144B, 82109d7f0d039c80
 props/exemplarchars/punctuation@1, sr-Latn, 144B, 82109d7f0d039c80
 props/exemplarchars/punctuation@1, th, 111B, 3054746777f45c15
 props/exemplarchars/punctuation@1, tr, 127B, fcc476bc9071298f
@@ -1282,7 +1234,6 @@ relativetime/long/day@1, fr, 131B, 578e3316794f2add
 relativetime/long/day@1, ja, 85B, 55b56f9037c6e6c4
 relativetime/long/day@1, ru, 275B, 28d5fe1e65fba51c
 relativetime/long/day@1, sr, 195B, 8fc7ea264fb4a215
-relativetime/long/day@1, sr-Cyrl, 195B, 8fc7ea264fb4a215
 relativetime/long/day@1, sr-Latn, 127B, 12cefe296d717aae
 relativetime/long/day@1, th, 222B, f3bf124474f9f510
 relativetime/long/day@1, tr, 122B, 69e8331f607a1a05
@@ -1301,7 +1252,6 @@ relativetime/long/hour@1, fr, 91B, edf7b64f472a6d34
 relativetime/long/hour@1, ja, 57B, 309b3b93f8390feb
 relativetime/long/hour@1, ru, 213B, e6edd572e2889600
 relativetime/long/hour@1, sr, 136B, 376028addfce483b
-relativetime/long/hour@1, sr-Cyrl, 136B, 376028addfce483b
 relativetime/long/hour@1, sr-Latn, 90B, 2920524013f5a414
 relativetime/long/hour@1, th, 140B, 1be446db734b2b41
 relativetime/long/hour@1, tr, 78B, 1daaea161d8bf73a
@@ -1320,7 +1270,6 @@ relativetime/long/minute@1, fr, 96B, 74bde333c10f9826
 relativetime/long/minute@1, ja, 48B, 4911dc6e9507e98e
 relativetime/long/minute@1, ru, 245B, ced1de2bbbe40ef1
 relativetime/long/minute@1, sr, 164B, 19c6f0300d4dafdf
-relativetime/long/minute@1, sr-Cyrl, 164B, 19c6f0300d4dafdf
 relativetime/long/minute@1, sr-Latn, 104B, eeff6927b551e366
 relativetime/long/minute@1, th, 113B, 9b41bbe0ee9c6503
 relativetime/long/minute@1, tr, 88B, c39e22825843ad93
@@ -1339,7 +1288,6 @@ relativetime/long/month@1, fr, 118B, 9225606da0c601e4
 relativetime/long/month@1, ja, 67B, 2525a99d68bac96
 relativetime/long/month@1, ru, 321B, a860865b8460c0e9
 relativetime/long/month@1, sr, 226B, 39757bd07532690d
-relativetime/long/month@1, sr-Cyrl, 226B, 39757bd07532690d
 relativetime/long/month@1, sr-Latn, 141B, 86a892be9e2bb130
 relativetime/long/month@1, th, 191B, f7f08627091f08d2
 relativetime/long/month@1, tr, 93B, 6232a7b69947196
@@ -1358,7 +1306,6 @@ relativetime/long/quarter@1, fr, 152B, e20d8aa9bd33050d
 relativetime/long/quarter@1, ja, 91B, 2beda91f96c89e25
 relativetime/long/quarter@1, ru, 371B, 229aa928e3d604d7
 relativetime/long/quarter@1, sr, 262B, ab88e574de8f7175
-relativetime/long/quarter@1, sr-Cyrl, 262B, ab88e574de8f7175
 relativetime/long/quarter@1, sr-Latn, 159B, c3a36d617676d364
 relativetime/long/quarter@1, th, 200B, 8b637608b37bfa9c
 relativetime/long/quarter@1, tr, 128B, bd6bfbabbe0ccc37
@@ -1377,7 +1324,6 @@ relativetime/long/second@1, fr, 95B, 1ea2d40ec4462bba
 relativetime/long/second@1, ja, 40B, 164364eec7dd1b8b
 relativetime/long/second@1, ru, 251B, cd446549f8271c71
 relativetime/long/second@1, sr, 165B, d308333e3ee9ba67
-relativetime/long/second@1, sr-Cyrl, 165B, d308333e3ee9ba67
 relativetime/long/second@1, sr-Latn, 104B, 487e3b371afa8182
 relativetime/long/second@1, th, 122B, 293fbc78e53192a4
 relativetime/long/second@1, tr, 85B, a111e8aad09014f9
@@ -1396,7 +1342,6 @@ relativetime/long/week@1, fr, 144B, 4acc33318f0a4586
 relativetime/long/week@1, ja, 67B, c06345a4014e35d3
 relativetime/long/week@1, ru, 327B, f573d04a5383dc13
 relativetime/long/week@1, sr, 222B, 6cc6983f8a2ba68f
-relativetime/long/week@1, sr-Cyrl, 222B, 6cc6983f8a2ba68f
 relativetime/long/week@1, sr-Latn, 148B, 1e77a1a50125df18
 relativetime/long/week@1, th, 221B, 5228d6680242f8f3
 relativetime/long/week@1, tr, 114B, 5be2e623ddfa968e
@@ -1415,7 +1360,6 @@ relativetime/long/year@1, fr, 123B, 279dc9395001eeaf
 relativetime/long/year@1, ja, 61B, d057cf953cf3b207
 relativetime/long/year@1, ru, 269B, f881f8e52c6d935d
 relativetime/long/year@1, sr, 222B, 804abd3eaba4d04
-relativetime/long/year@1, sr-Cyrl, 222B, 804abd3eaba4d04
 relativetime/long/year@1, sr-Latn, 139B, e360aae69a476954
 relativetime/long/year@1, th, 140B, 80ab6c972802fb4d
 relativetime/long/year@1, tr, 107B, a182ac8d5087b3cb
@@ -1434,7 +1378,6 @@ relativetime/narrow/day@1, fr, 97B, fe66e4de5ffe5c99
 relativetime/narrow/day@1, ja, 83B, da0512955c15a4f7
 relativetime/narrow/day@1, ru, 179B, 8d54d6218cc16380
 relativetime/narrow/day@1, sr, 167B, d6c9c096219f78a3
-relativetime/narrow/day@1, sr-Cyrl, 167B, d6c9c096219f78a3
 relativetime/narrow/day@1, sr-Latn, 116B, c8ae937e59c0129a
 relativetime/narrow/day@1, th, 207B, e716eb8b1ab5d6a4
 relativetime/narrow/day@1, tr, 122B, 69e8331f607a1a05
@@ -1453,7 +1396,6 @@ relativetime/narrow/hour@1, fr, 53B, d5de9ab701e97e83
 relativetime/narrow/hour@1, ja, 55B, 931532caae1a9c02
 relativetime/narrow/hour@1, ru, 85B, ad8f14f6b58d13de
 relativetime/narrow/hour@1, sr, 108B, 4f45f4cffdb963f7
-relativetime/narrow/hour@1, sr-Cyrl, 108B, 4f45f4cffdb963f7
 relativetime/narrow/hour@1, sr-Latn, 85B, 50958f8b0b81f28f
 relativetime/narrow/hour@1, th, 98B, 4fde4a893ef40427
 relativetime/narrow/hour@1, tr, 74B, 84ecdcdea14fdde0
@@ -1472,7 +1414,6 @@ relativetime/narrow/minute@1, fr, 62B, bd437871585526a2
 relativetime/narrow/minute@1, ja, 46B, 760df018f445c8fd
 relativetime/narrow/minute@1, ru, 121B, d78e26cbd06126a5
 relativetime/narrow/minute@1, sr, 136B, 8615576dc072d6ae
-relativetime/narrow/minute@1, sr-Cyrl, 136B, 8615576dc072d6ae
 relativetime/narrow/minute@1, sr-Latn, 93B, f26af6ca5dbaca75
 relativetime/narrow/minute@1, th, 98B, 1d5c2ec265303fe8
 relativetime/narrow/minute@1, tr, 76B, 2da41fe309b08554
@@ -1491,7 +1432,6 @@ relativetime/narrow/month@1, fr, 90B, beefa65a2612dc57
 relativetime/narrow/month@1, ja, 65B, 170dda7c9635673
 relativetime/narrow/month@1, ru, 165B, 1f15f63150518d9
 relativetime/narrow/month@1, sr, 159B, 5b0b0a8cbb22fb0a
-relativetime/narrow/month@1, sr-Cyrl, 159B, 5b0b0a8cbb22fb0a
 relativetime/narrow/month@1, sr-Latn, 112B, 423f6cfb5c9b5a9e
 relativetime/narrow/month@1, th, 176B, 863a3f550b69df80
 relativetime/narrow/month@1, tr, 93B, 6232a7b69947196
@@ -1510,7 +1450,6 @@ relativetime/narrow/quarter@1, fr, 114B, de6f650869eda49d
 relativetime/narrow/quarter@1, ja, 89B, c982f85732857db2
 relativetime/narrow/quarter@1, ru, 140B, 48288413549cd1ba
 relativetime/narrow/quarter@1, sr, 198B, c2e5c171f2c17650
-relativetime/narrow/quarter@1, sr-Cyrl, 198B, c2e5c171f2c17650
 relativetime/narrow/quarter@1, sr-Latn, 130B, 5b8dc876df9d23d2
 relativetime/narrow/quarter@1, th, 191B, 5fab891e956e5ef1
 relativetime/narrow/quarter@1, tr, 114B, 6f1458a3f0498574
@@ -1529,7 +1468,6 @@ relativetime/narrow/second@1, fr, 49B, 2e0b680bbd19e98e
 relativetime/narrow/second@1, ja, 38B, 881926d75c111976
 relativetime/narrow/second@1, ru, 79B, 4826e6f865427c9a
 relativetime/narrow/second@1, sr, 99B, e5217a591c899187
-relativetime/narrow/second@1, sr-Cyrl, 99B, e5217a591c899187
 relativetime/narrow/second@1, sr-Latn, 74B, b86fbb63b888e430
 relativetime/narrow/second@1, th, 107B, f736b6a8f453cfbc
 relativetime/narrow/second@1, tr, 73B, 7d703da211043f0e
@@ -1548,7 +1486,6 @@ relativetime/narrow/week@1, fr, 110B, 66ec47f1d74d8227
 relativetime/narrow/week@1, ja, 65B, e613cd8b561e9723
 relativetime/narrow/week@1, ru, 171B, a1bd4428190a3882
 relativetime/narrow/week@1, sr, 141B, 781e94a8f3aa74fb
-relativetime/narrow/week@1, sr-Cyrl, 141B, 781e94a8f3aa74fb
 relativetime/narrow/week@1, sr-Latn, 103B, d92e784b885b1396
 relativetime/narrow/week@1, th, 206B, ab18fda702a2f554
 relativetime/narrow/week@1, tr, 100B, c80eef100595add
@@ -1567,7 +1504,6 @@ relativetime/narrow/year@1, fr, 97B, 6b26aafcea6cba6c
 relativetime/narrow/year@1, ja, 59B, 24d7c8dddef2819d
 relativetime/narrow/year@1, ru, 117B, c978ad2a69732149
 relativetime/narrow/year@1, sr, 141B, bb577721c0594960
-relativetime/narrow/year@1, sr-Cyrl, 141B, bb577721c0594960
 relativetime/narrow/year@1, sr-Latn, 103B, a8f72fc4e692472
 relativetime/narrow/year@1, th, 131B, 956e97879a6bd7ad
 relativetime/narrow/year@1, tr, 107B, a182ac8d5087b3cb
@@ -1586,7 +1522,6 @@ relativetime/short/day@1, fr, 121B, 708c1df0ea5f28a8
 relativetime/short/day@1, ja, 85B, 55b56f9037c6e6c4
 relativetime/short/day@1, ru, 259B, 2a716a550944917b
 relativetime/short/day@1, sr, 167B, d6c9c096219f78a3
-relativetime/short/day@1, sr-Cyrl, 167B, d6c9c096219f78a3
 relativetime/short/day@1, sr-Latn, 116B, c8ae937e59c0129a
 relativetime/short/day@1, th, 207B, e716eb8b1ab5d6a4
 relativetime/short/day@1, tr, 122B, 69e8331f607a1a05
@@ -1605,7 +1540,6 @@ relativetime/short/hour@1, fr, 77B, 7be090fec1d569e6
 relativetime/short/hour@1, ja, 57B, 309b3b93f8390feb
 relativetime/short/hour@1, ru, 165B, 178a7c02d398dda8
 relativetime/short/hour@1, sr, 108B, 4f45f4cffdb963f7
-relativetime/short/hour@1, sr-Cyrl, 108B, 4f45f4cffdb963f7
 relativetime/short/hour@1, sr-Latn, 85B, 50958f8b0b81f28f
 relativetime/short/hour@1, th, 98B, 4fde4a893ef40427
 relativetime/short/hour@1, tr, 74B, 84ecdcdea14fdde0
@@ -1624,7 +1558,6 @@ relativetime/short/minute@1, fr, 86B, d941b509fcf0efbe
 relativetime/short/minute@1, ja, 48B, 4911dc6e9507e98e
 relativetime/short/minute@1, ru, 209B, 799d409469665559
 relativetime/short/minute@1, sr, 136B, 8615576dc072d6ae
-relativetime/short/minute@1, sr-Cyrl, 136B, 8615576dc072d6ae
 relativetime/short/minute@1, sr-Latn, 93B, f26af6ca5dbaca75
 relativetime/short/minute@1, th, 98B, 1d5c2ec265303fe8
 relativetime/short/minute@1, tr, 76B, 2da41fe309b08554
@@ -1643,7 +1576,6 @@ relativetime/short/month@1, fr, 110B, 698cd6b719e06b68
 relativetime/short/month@1, ja, 67B, 2525a99d68bac96
 relativetime/short/month@1, ru, 266B, 8ae82315955cce3b
 relativetime/short/month@1, sr, 183B, 66c9dd25928e8493
-relativetime/short/month@1, sr-Cyrl, 183B, 66c9dd25928e8493
 relativetime/short/month@1, sr-Latn, 124B, 3591aaceda6acd87
 relativetime/short/month@1, th, 176B, 863a3f550b69df80
 relativetime/short/month@1, tr, 93B, 6232a7b69947196
@@ -1662,7 +1594,6 @@ relativetime/short/quarter@1, fr, 134B, 8206de0907018078
 relativetime/short/quarter@1, ja, 91B, 2beda91f96c89e25
 relativetime/short/quarter@1, ru, 245B, 7d97dae90a2af015
 relativetime/short/quarter@1, sr, 198B, c2e5c171f2c17650
-relativetime/short/quarter@1, sr-Cyrl, 198B, c2e5c171f2c17650
 relativetime/short/quarter@1, sr-Latn, 130B, 5b8dc876df9d23d2
 relativetime/short/quarter@1, th, 191B, 5fab891e956e5ef1
 relativetime/short/quarter@1, tr, 114B, 6f1458a3f0498574
@@ -1681,7 +1612,6 @@ relativetime/short/second@1, fr, 73B, 1e151be468e4f3e9
 relativetime/short/second@1, ja, 40B, 164364eec7dd1b8b
 relativetime/short/second@1, ru, 203B, 4c877e7fdcfb1a2
 relativetime/short/second@1, sr, 123B, 643f029d2299642e
-relativetime/short/second@1, sr-Cyrl, 123B, 643f029d2299642e
 relativetime/short/second@1, sr-Latn, 86B, ad6705b25ad102f6
 relativetime/short/second@1, th, 107B, f736b6a8f453cfbc
 relativetime/short/second@1, tr, 73B, 7d703da211043f0e
@@ -1700,7 +1630,6 @@ relativetime/short/week@1, fr, 130B, 4300cfc8f710f92a
 relativetime/short/week@1, ja, 67B, c06345a4014e35d3
 relativetime/short/week@1, ru, 272B, fce24f85676b1f1c
 relativetime/short/week@1, sr, 177B, 7ace5dd0ae22bc43
-relativetime/short/week@1, sr-Cyrl, 177B, 7ace5dd0ae22bc43
 relativetime/short/week@1, sr-Latn, 121B, 7842f2fb4295f921
 relativetime/short/week@1, th, 206B, ab18fda702a2f554
 relativetime/short/week@1, tr, 100B, c80eef100595add
@@ -1719,7 +1648,6 @@ relativetime/short/year@1, fr, 117B, 292c731ea6b5cfd4
 relativetime/short/year@1, ja, 61B, d057cf953cf3b207
 relativetime/short/year@1, ru, 213B, e7439a731ea9a52f
 relativetime/short/year@1, sr, 177B, 4cf13afef6904c5
-relativetime/short/year@1, sr-Cyrl, 177B, 4cf13afef6904c5
 relativetime/short/year@1, sr-Latn, 121B, ec453c97466f78e1
 relativetime/short/year@1, th, 131B, 956e97879a6bd7ad
 relativetime/short/year@1, tr, 107B, a182ac8d5087b3cb
@@ -1744,7 +1672,6 @@ time_zone/exemplar_cities@1, fr, 7940B, 9c887b4ae291d2e4
 time_zone/exemplar_cities@1, ja, 11036B, 7d76d1ec07e9c446
 time_zone/exemplar_cities@1, ru, 11011B, b942bfdd0e52be3c
 time_zone/exemplar_cities@1, sr, 10825B, 1387af9b9410d10b
-time_zone/exemplar_cities@1, sr-Cyrl, 10825B, 1387af9b9410d10b
 time_zone/exemplar_cities@1, sr-Latn, 7703B, 90aa59048efd7047
 time_zone/exemplar_cities@1, th, 14845B, fdc59d29ab6244ed
 time_zone/exemplar_cities@1, tr, 7785B, f3a7276b7def3275
@@ -1763,7 +1690,6 @@ time_zone/formats@1, fr, 122B, 140374a983f9824d
 time_zone/formats@1, ja, 104B, 7ad6e2c4c2e66af7
 time_zone/formats@1, ru, 137B, fc384f2dc00f004e
 time_zone/formats@1, sr, 133B, 8f45cdc5704eab16
-time_zone/formats@1, sr-Cyrl, 133B, 8f45cdc5704eab16
 time_zone/formats@1, sr-Latn, 109B, d7036195c93ab4e7
 time_zone/formats@1, th, 152B, 59b1b6e3f3ceb653
 time_zone/formats@1, tr, 108B, 2f76bfe5cde3454c
@@ -1782,7 +1708,6 @@ time_zone/generic_long@1, fr, 4368B, df5d2f177839bd72
 time_zone/generic_long@1, ja, 4650B, 8329c619e52bc519
 time_zone/generic_long@1, ru, 4602B, 3df87a295c32a0d1
 time_zone/generic_long@1, sr, 6123B, cb026abb14f034b3
-time_zone/generic_long@1, sr-Cyrl, 6123B, cb026abb14f034b3
 time_zone/generic_long@1, sr-Latn, 3719B, c0f66557ce13f2c5
 time_zone/generic_long@1, th, 7915B, 96dff3b5e7bdc7ec
 time_zone/generic_long@1, tr, 3666B, 4b3f4062e4fd8ead
@@ -1801,7 +1726,6 @@ time_zone/generic_short@1, fr, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, ja, 34B, 90638422c896d221
 time_zone/generic_short@1, ru, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, sr, 61B, da063c8d2cbb7223
-time_zone/generic_short@1, sr-Cyrl, 61B, da063c8d2cbb7223
 time_zone/generic_short@1, sr-Latn, 61B, da063c8d2cbb7223
 time_zone/generic_short@1, th, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, tr, 21B, 70edef5aa0f7a054
@@ -1821,7 +1745,6 @@ time_zone/specific_long@1, fr, 9077B, 195598e01a95f43f
 time_zone/specific_long@1, ja, 8606B, e7b68d1ee4fab089
 time_zone/specific_long@1, ru, 12963B, b9ef4c0504c56957
 time_zone/specific_long@1, sr, 13568B, 76a6a11d0b5ac851
-time_zone/specific_long@1, sr-Cyrl, 13568B, 76a6a11d0b5ac851
 time_zone/specific_long@1, sr-Latn, 8461B, 18e4a46cbebbf99c
 time_zone/specific_long@1, th, 17026B, e13e195da5d62aec
 time_zone/specific_long@1, tr, 7617B, 63f0eee48201243c
@@ -1840,7 +1763,6 @@ time_zone/specific_short@1, fr, 31B, 4b7af6a019fab889
 time_zone/specific_short@1, ja, 57B, 43764214f8fd21fd
 time_zone/specific_short@1, ru, 31B, 4b7af6a019fab889
 time_zone/specific_short@1, sr, 119B, dcdb9855b7df4f90
-time_zone/specific_short@1, sr-Cyrl, 119B, dcdb9855b7df4f90
 time_zone/specific_short@1, sr-Latn, 119B, dcdb9855b7df4f90
 time_zone/specific_short@1, th, 31B, 4b7af6a019fab889
 time_zone/specific_short@1, tr, 31B, 4b7af6a019fab889

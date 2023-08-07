@@ -127,6 +127,10 @@ impl ZonedDateTimeFormatter {
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Examples
     ///
     /// ```
@@ -163,10 +167,6 @@ impl ZonedDateTimeFormatter {
     ///     "April 2021, 16:12 GMT-07:00"
     /// );
     /// ```
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "experimental")]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_experimental(
@@ -278,6 +278,10 @@ impl ZonedDateTimeFormatter {
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Examples
     ///
     /// ```
@@ -313,10 +317,6 @@ impl ZonedDateTimeFormatter {
     ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
     /// );
     /// ```
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         locale: &DataLocale,

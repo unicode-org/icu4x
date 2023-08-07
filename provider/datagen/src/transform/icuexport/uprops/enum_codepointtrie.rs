@@ -20,7 +20,7 @@ pub(crate) fn get_enumerated_prop<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::enumerated::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.options.trie_type, key
+            source.trie_type, key
         ))?
         .enum_property
         .get(0)
@@ -379,7 +379,7 @@ fn get_mask_prop<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.options.trie_type,
+            source.trie_type,
             key
         ))?
         .mask_property

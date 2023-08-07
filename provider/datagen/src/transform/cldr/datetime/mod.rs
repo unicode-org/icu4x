@@ -11,7 +11,7 @@ use icu_locid::{
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use lazy_static::lazy_static;
+use once_cell::sync::OnceCell;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::str::FromStr;
@@ -21,22 +21,26 @@ mod skeletons;
 mod symbols;
 pub mod week_data;
 
-lazy_static! {
-    // BCP-47 value -> CLDR identifier
-    static ref SUPPORTED_CALS: HashMap<icu_locid::extensions::unicode::Value, &'static str> = [
-        (value!("gregory"), "gregorian"),
-        (value!("buddhist"), "buddhist"),
-        (value!("chinese"), "chinese"),
-        (value!("japanese"), "japanese"),
-        (value!("japanext"), "japanese"),
-        (value!("coptic"), "coptic"),
-        (value!("indian"), "indian"),
-        (value!("persian"), "persian"),
-        (value!("ethiopic"), "ethiopic"),
-        (value!("roc"), "roc"),
-    ]
-    .into_iter()
-    .collect();
+pub static SUPPORTED_CALS: OnceCell<HashMap<icu_locid::extensions::unicode::Value, &'static str>> =
+    OnceCell::new();
+
+fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &'static str> {
+    SUPPORTED_CALS.get_or_init(|| {
+        [
+            (value!("gregory"), "gregorian"),
+            (value!("buddhist"), "buddhist"),
+            (value!("chinese"), "chinese"),
+            (value!("japanese"), "japanese"),
+            (value!("japanext"), "japanese"),
+            (value!("coptic"), "coptic"),
+            (value!("indian"), "indian"),
+            (value!("persian"), "persian"),
+            (value!("ethiopic"), "ethiopic"),
+            (value!("roc"), "roc"),
+        ]
+        .into_iter()
+        .collect()
+    })
 }
 
 macro_rules! impl_data_provider {
@@ -59,7 +63,7 @@ macro_rules! impl_data_provider {
                     value!($calendared)
                 };
 
-                let cldr_cal = SUPPORTED_CALS
+                let cldr_cal = supported_cals()
                     .get(&calendar)
                     .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
@@ -232,7 +236,7 @@ macro_rules! impl_data_provider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                 let mut r = Vec::new();
                 if $calendared == "locale" {
-                    for (cal_value, cldr_cal) in &*SUPPORTED_CALS {
+                    for (cal_value, cldr_cal) in supported_cals() {
                         r.extend(
                             self.source
                                 .cldr()?
@@ -255,7 +259,7 @@ macro_rules! impl_data_provider {
                     } else {
                         value!($calendared)
                     };
-                    let cldr_cal = SUPPORTED_CALS
+                    let cldr_cal = supported_cals()
                         .get(&calendar)
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
                     r.extend(
@@ -275,7 +279,7 @@ macro_rules! impl_data_provider {
                     r.retain(|l| l.get_langid() != icu_locid::langid!("byn") && l.get_langid() != icu_locid::langid!("ssy"));
                 }
 
-                Ok(self.filter_data_locales(r))
+                Ok(r)
             }
         }
     };

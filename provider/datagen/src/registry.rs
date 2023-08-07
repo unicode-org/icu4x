@@ -42,8 +42,10 @@ macro_rules! registry {
         /// );
         /// ```
         pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
-            lazy_static::lazy_static! {
-                static ref LOOKUP: std::collections::HashMap<&'static str, Result<DataKey, &'static str>> = [
+            use once_cell::sync::OnceCell;
+            static LOOKUP: OnceCell<std::collections::HashMap<&'static str, Result<DataKey, &'static str>>> = OnceCell::new();
+            let lookup = LOOKUP.get_or_init(|| {
+                [
                     ("core/helloworld@1", Ok(icu_provider::hello_world::HelloWorldV1Marker::KEY)),
                     $(
                         $(
@@ -55,10 +57,10 @@ macro_rules! registry {
                     )+
                 ]
                 .into_iter()
-                .collect();
-            }
+                .collect()
+            });
             let path = string.as_ref();
-            match LOOKUP.get(path).copied() {
+            match lookup.get(path).copied() {
                 None => {
                     log::warn!("Unknown key {path:?}");
                     None

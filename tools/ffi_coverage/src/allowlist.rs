@@ -429,6 +429,8 @@ lazy_static::lazy_static! {
 
         // Rust-specific trait abstraction, handled as individual types over FFI
         "icu::casemap::ClosureSink",
+        // Reexported
+        "icu::casemap::titlecase::TitlecaseMapper",
 
     ].iter().map(|s| s.split("::").map(str::to_owned).collect()).collect();
 }

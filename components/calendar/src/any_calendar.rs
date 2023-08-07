@@ -425,7 +425,7 @@ impl Calendar for AnyCalendar {
 }
 
 impl AnyCalendar {
-    /// Constructs an AnyCalendar for a given calendar kind.
+    /// Constructs an AnyCalendar for a given calendar kind from compiled data.
     ///
     /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
     /// fallbacking. If this is desired, use [`Self::new_for_locale()`].
@@ -557,7 +557,7 @@ impl AnyCalendar {
         })
     }
 
-    /// Constructs an AnyCalendar for a given calendar kind.
+    /// Constructs an AnyCalendar for a given calendar kind from compiled data.
     ///
     /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
     /// calendar for the locale, falling back to gregorian.

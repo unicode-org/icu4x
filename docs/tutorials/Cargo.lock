@@ -764,7 +764,7 @@ name = "icu_codepointtrie_builder"
 version = "0.3.5"
 dependencies = [
  "icu_collections",
- "lazy_static",
+ "once_cell",
  "toml",
  "wasmer",
  "wasmer-wasi",
@@ -854,10 +854,10 @@ dependencies = [
  "icu_segmenter",
  "icu_timezone",
  "itertools",
- "lazy_static",
  "log",
  "memchr",
  "ndarray",
+ "once_cell",
  "rayon",
  "serde",
  "serde-aux",

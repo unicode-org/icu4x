@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::options;
 use icu_locid::{langid, locale};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
@@ -33,6 +35,23 @@ pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static 
         id if id == langid!("my") => Some("burmesedict"),
         id if id == langid!("th") => Some("thaidict"),
         _ => None,
+    }
+}
+
+pub(crate) fn filter_data_locales(
+    locales: HashSet<DataLocale>,
+    segmenter_models: &options::SegmenterModelInclude,
+) -> HashSet<DataLocale> {
+    match segmenter_models {
+        options::SegmenterModelInclude::Recommended => locales,
+        options::SegmenterModelInclude::None => Default::default(),
+        options::SegmenterModelInclude::Explicit(list) => locales
+            .into_iter()
+            .filter(|locale| {
+                list.iter()
+                    .any(|x| Some(x.as_str()) == data_locale_to_model_name(locale))
+            })
+            .collect(),
     }
 }
 
@@ -78,18 +97,10 @@ macro_rules! implement {
 
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(match &self.source.options.segmenter_models {
-                    crate::options::SegmenterModelInclude::Recommended => $supported
-                        .into_iter()
-                        .filter_map(model_name_to_data_locale)
-                        .collect(),
-                    crate::options::SegmenterModelInclude::None => Vec::new(),
-                    crate::options::SegmenterModelInclude::Explicit(list) => $supported
-                        .into_iter()
-                        .filter(|&model| list.iter().any(|x| x == model))
-                        .filter_map(model_name_to_data_locale)
-                        .collect(),
-                })
+                Ok($supported
+                    .into_iter()
+                    .filter_map(model_name_to_data_locale)
+                    .collect())
             }
         }
     };
