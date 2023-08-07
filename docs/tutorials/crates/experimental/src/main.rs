@@ -17,5 +17,5 @@ fn main() {
     .expect("locale 'fr' should be present in compiled data");
     let name = names.of(region!("DE")).unwrap();
     assert_eq!(name, "Allemagne");
-    println!("{}", name);
+    println!("{name}");
 }

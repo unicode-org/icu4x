@@ -15,5 +15,5 @@ fn main() {
         .expect("locale 'ru' should be present in the compiled data");
     let result = rules.category_for(&3.into());
     assert_eq!(result, PluralCategory::Few);
-    println!("{:?}", result);
+    println!("{result:?}");
 }

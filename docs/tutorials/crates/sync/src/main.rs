@@ -21,5 +21,5 @@ fn main() {
         })
         .format_to_string(["uno", "dos", "tres"].iter());
     assert_eq!(result, "uno, dos y tres");
-    println!("{}", result);
+    println!("{result}");
 }
