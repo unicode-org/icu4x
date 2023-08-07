@@ -281,7 +281,6 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
                 max: max_month as usize,
             });
         }
-
         let max_day = C::month_days(year, month);
         if day > max_day {
             return Err(CalendarError::Overflow {
