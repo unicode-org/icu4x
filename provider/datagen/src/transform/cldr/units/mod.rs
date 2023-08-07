@@ -28,7 +28,7 @@ impl DataProvider<UnitsConstantsV1Maker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsConstantsV1Maker>, DataError> {
         // self.check_req::<UnitsConstantsV1Maker>(req)?;
 
-        let _units_data: &cldr_serde::units::units::Resource = self
+        let _units_data: &cldr_serde::units::units_constants::Resource = self
             .source
             .cldr()?
             .core()
