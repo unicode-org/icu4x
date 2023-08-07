@@ -64,7 +64,7 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc" => {
             &SOLAR_MONTH_CODES[0..12]
         }
-        "coptic" | "ethiopic" => SOLAR_MONTH_CODES,
+        "coptic" | "ethiopic" | "chinese" => SOLAR_MONTH_CODES,
         _ => panic!("Month map unknown for {calendar}"),
     }
 }
@@ -80,6 +80,7 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         "buddhist" => vec![("0".to_string(), tinystr!(16, "be"))]
             .into_iter()
             .collect(),
+        "chinese" => vec![].into_iter().collect(),
         "japanese" | "japanext" => crate::transform::cldr::calendar::japanese::get_era_code_map(),
         "coptic" => vec![
             // Before Diocletian
