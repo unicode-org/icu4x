@@ -142,7 +142,8 @@ impl Calendar for Chinese {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        let (arithmetic, cache) = Inner::new_from_ordinals(year, month, day, None);
+        let cache = Inner::compute_cache(year);
+        let arithmetic = Inner::new_from_ordinals(year, month, day, cache);
         Ok(ChineseDateInner(ChineseBasedDateInner(arithmetic?, cache)))
     }
 
@@ -315,7 +316,8 @@ impl Date<Chinese> {
         month: u8,
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
-        let (arithmetic, cache) = Inner::new_from_ordinals(year, month, day, None);
+        let cache = Inner::compute_cache(year);
+        let arithmetic = Inner::new_from_ordinals(year, month, day, cache);
         Ok(Date::from_raw(
             ChineseDateInner(ChineseBasedDateInner(arithmetic?, cache)),
             Chinese,

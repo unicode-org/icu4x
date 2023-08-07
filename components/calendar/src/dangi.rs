@@ -167,7 +167,8 @@ impl Calendar for Dangi {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        let (arithmetic, cache) = Inner::new_from_ordinals(year, month, day, None);
+        let cache = Inner::compute_cache(year);
+        let arithmetic = Inner::new_from_ordinals(year, month, day, cache);
         Ok(DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)))
     }
 
@@ -320,7 +321,8 @@ impl Date<Dangi> {
     /// assert_eq!(date_dangi.day_of_month().0, 18);
     /// ```
     pub fn try_new_dangi_date(year: i32, month: u8, day: u8) -> Result<Date<Dangi>, CalendarError> {
-        let (arithmetic, cache) = Inner::new_from_ordinals(year, month, day, None);
+        let cache = Inner::compute_cache(year);
+        let arithmetic = Inner::new_from_ordinals(year, month, day, cache);
         Ok(Date::from_raw(
             DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)),
             Dangi,
