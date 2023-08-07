@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::{yoke, zerofrom};
-use zerovec::{ZeroMap, ZeroMap2d, ZeroVec};
+use zerovec::{ZeroMap, ZeroVec};
 use Default;
 
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
