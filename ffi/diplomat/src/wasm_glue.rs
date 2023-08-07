@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[no_mangle]
-#[cfg(target_arch = "wasm")]
+#[cfg(target_arch = "wasm32")]
 pub unsafe extern "C" fn icu4x_init() {
     #[cfg(feature = "logging")]
     crate::logging::ffi::ICU4XLogger::init_simple_logger();
