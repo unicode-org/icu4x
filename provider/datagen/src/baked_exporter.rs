@@ -20,8 +20,11 @@
 //!
 //! // Export something
 //! DatagenProvider::default()
-//!     .export(
-//!         [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect(),
+//!     .export({
+//!             let mut options = options::Options::default();
+//!             options.keys = [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect();
+//!             options
+//!         },
 //!         exporter
 //!     ).unwrap();
 //! #

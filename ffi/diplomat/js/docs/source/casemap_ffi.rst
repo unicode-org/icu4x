@@ -55,11 +55,13 @@
         See the `Rust documentation for uppercase <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase>`__ for more information.
 
 
-    .. js:method:: titlecase_segment(s, locale)
+    .. js:method:: titlecase_segment_legacy_v1(s, locale, options)
 
-        Returns the full titlecase mapping of the given string
+        Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
 
-        See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment>`__ for more information.
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment_legacy <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy>`__ for more information.
 
 
     .. js:method:: fold(s)
@@ -132,4 +134,58 @@
         This function only implements simple folding. For full folding, use ``ICU4XCaseMapper::fold_turkic``.
 
         See the `Rust documentation for simple_fold_turkic <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold_turkic>`__ for more information.
+
+
+.. js:class:: ICU4XHeadAdjustment
+
+    See the `Rust documentation for HeadAdjustment <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.HeadAdjustment.html>`__ for more information.
+
+
+.. js:class:: ICU4XTailCasing
+
+    See the `Rust documentation for TailCasing <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TailCasing.html>`__ for more information.
+
+
+.. js:class:: ICU4XTitlecaseMapper
+
+    See the `Rust documentation for TitlecaseMapper <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html>`__ for more information.
+
+
+    .. js:function:: create(provider)
+
+        Construct a new ``ICU4XTitlecaseMapper`` instance
+
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new>`__ for more information.
+
+
+    .. js:function:: create_legacy(provider)
+
+        Construct a new ``ICU4XTitlecaseMapper`` instance with legacy head-adjustment behavior
+
+        Behaves identically to using ``titlecase_segment_legacy`` on ``CaseMapper``
+
+        See the `Rust documentation for new_legacy <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy>`__ for more information.
+
+
+    .. js:method:: titlecase_segment_v1(s, locale, options)
+
+        Returns the full titlecase mapping of the given string
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment>`__ for more information.
+
+
+.. js:class:: ICU4XTitlecaseOptionsV1
+
+    See the `Rust documentation for TitlecaseOptions <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html>`__ for more information.
+
+
+    .. js:attribute:: head_adjustment
+
+    .. js:attribute:: tail_casing
+
+    .. js:function:: default_options()
+
+        See the `Rust documentation for default <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default>`__ for more information.
 

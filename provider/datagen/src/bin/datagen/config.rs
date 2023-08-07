@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub use icu_datagen::options::*;
+pub use icu_datagen::{CollationHanDatabase, TrieType};
 
 use icu_provider::prelude::*;
 use std::collections::HashSet;

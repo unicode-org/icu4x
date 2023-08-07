@@ -551,7 +551,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
 
 impl ScriptWithExtensionsBorrowed<'static> {
     /// Cheaply converts a `ScriptWithExtensionsBorrowed<'static>` into a `ScriptWithExtensions`.
-    pub fn static_to_owned(self) -> ScriptWithExtensions {
+    pub const fn static_to_owned(self) -> ScriptWithExtensions {
         ScriptWithExtensions {
             data: DataPayload::from_static_ref(self.data),
         }
@@ -560,6 +560,10 @@ impl ScriptWithExtensionsBorrowed<'static> {
 
 /// Returns a [`ScriptWithExtensionsBorrowed`] struct that represents the data for the Script
 /// and Script_Extensions properties.
+///
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
+///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
 ///
 /// # Examples
 ///
@@ -612,10 +616,6 @@ impl ScriptWithExtensionsBorrowed<'static> {
 /// assert!(syriac.contains32(0x0700)); // SYRIAC END OF PARAGRAPH
 /// assert!(syriac.contains32(0x074A)); // SYRIAC BARREKH
 /// ```
-///
-/// ✨ *Enabled with the `compiled_data` Cargo feature.*
-///
-/// [📚 Help choosing a constructor](icu_provider::constructors)
 #[cfg(feature = "compiled_data")]
 pub const fn script_with_extensions() -> ScriptWithExtensionsBorrowed<'static> {
     ScriptWithExtensionsBorrowed {

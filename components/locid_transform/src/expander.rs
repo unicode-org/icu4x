@@ -190,7 +190,7 @@ fn update_langid(
 }
 
 impl LocaleExpander {
-    /// Creates a [`LocaleExpander`] with data for all locales.
+    /// Creates a [`LocaleExpander`] with compiled data for all locales.
     ///
     /// Use this constructor if you are using likely subtags for comprehensive support of all
     /// languages and regions, including ones that may not have CLDR data.
@@ -244,7 +244,7 @@ impl LocaleExpander {
         Self
     ]);
 
-    /// Creates a [`LocaleExpander`] with data for CLDR locales with Basic or higher coverage.
+    /// Creates a [`LocaleExpander`] with compiled data for CLDR locales with Basic or higher coverage.
     ///
     /// Use this constructor if you are using likely subtags for comprehensive support of all
     /// languages and regions, including ones that may not have CLDR data.

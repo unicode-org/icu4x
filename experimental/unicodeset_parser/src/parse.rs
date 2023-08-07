@@ -1297,6 +1297,10 @@ where
 /// `General_Category` property.
 /// * We do not support `\N{Unicode code point name}` character escaping. Use any other escape method described in UTS35.
 ///
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
+///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
+///
 /// # Examples
 ///
 /// Parse ranges
