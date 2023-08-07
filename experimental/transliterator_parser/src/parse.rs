@@ -18,15 +18,25 @@ use icu_unicodeset_parser::{VariableMap, VariableValue};
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum ElementKind {
+    /// A literal string: `abc 'abc'`.
     Literal,
+    /// A variable reference: `$var`.
     VariableReference,
+    /// A backreference to a segment: `$1`.
     BackReference,
+    /// A quantifier of any sort: `c*`, `c+`, `c?`.
     Quantifier,
+    /// A segment: `(abc)`.
     Segment,
+    /// A UnicodeSet: `[a-z]`.
     UnicodeSet,
+    /// A function call: `&[a-z] Remove(...)`.
     FunctionCall,
+    /// A cursor: `|`.
     Cursor,
+    /// A start anchor: `^`.
     AnchorStart,
+    /// An end anchor: `$`.
     AnchorEnd,
 }
 
@@ -73,7 +83,7 @@ pub enum ParseErrorKind {
     // errors originating from compilation step
     /// A global filter (forward or backward) in an unexpected position.
     UnexpectedGlobalFilter,
-    /// An element of `[ElementKind]` appeared in the given [`ElementLocation`], but that is prohibited.
+    /// An element of [`ElementKind`] appeared in the given [`ElementLocation`], but that is prohibited.
     UnexpectedElement(ElementKind, ElementLocation),
     /// The start anchor `^` was not placed at the beginning of a source.
     AnchorStartNotAtStart,

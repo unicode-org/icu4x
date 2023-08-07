@@ -6,7 +6,9 @@
 //!
 //! This crate provides parsing functionality for [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
 //!
-//! See [`parse`](crate::parse) for more information.
+//! See [`parse`](crate::parse()) for more information.
+//!
+//! [`ICU4X`]: ../icu/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(
@@ -30,6 +32,8 @@ use icu_transliteration::provider::RuleBasedTransliterator;
 mod compile;
 mod parse;
 
+pub use parse::ElementKind;
+pub use parse::ElementLocation;
 pub use parse::ParseError;
 pub use parse::ParseErrorKind;
 
@@ -41,7 +45,7 @@ pub fn parse(source: &str) -> Result<RuleBasedTransliterator<'static>, parse::Pa
     parse_unstable(source, &icu_properties::provider::Baked)
 }
 
-#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse)]
+#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse())]
 pub fn parse_unstable<P>(
     source: &str,
     provider: &P,
@@ -105,5 +109,6 @@ where
         + DataProvider<XidStartV1Marker>,
 {
     let parsed = parse::parse_unstable(source, provider)?;
-    compile::compile(parsed)
+    // TODO(#3736): pass direction from metadata
+    compile::compile(parsed, parse::Direction::Both)
 }

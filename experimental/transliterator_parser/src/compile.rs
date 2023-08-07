@@ -112,8 +112,7 @@ as described in the zero-copy format, and the maps here are just arrays)
 */
 
 use crate::parse;
-use crate::parse::{ElementKind as EK, ElementLocation as EL, HalfRule, QuantifierKind};
-use parse::ParseError;
+use crate::parse::{ElementLocation as EL, HalfRule, QuantifierKind};
 use parse::Result;
 use parse::PEK;
 use std::collections::{HashMap, HashSet};
@@ -402,8 +401,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
     fn validate_section(&mut self, section: &[parse::Element], top_level: bool) -> Result<()> {
         section
             .iter()
-            .map(|element| self.validate_element(element, top_level))
-            .collect()
+            .try_for_each(|element| self.validate_element(element, top_level))
     }
 
     fn validate_element(&mut self, element: &parse::Element, top_level: bool) -> Result<()> {
@@ -509,14 +507,13 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
 
         // now neither start nor end anchors may appear anywhere in `order`
 
-        sections.iter().map(|s| self.validate_section(s)).collect()
+        sections.iter().try_for_each(|s| self.validate_section(s))
     }
 
     fn validate_section(&mut self, section: &[parse::Element]) -> Result<()> {
         section
             .iter()
-            .map(|element| self.validate_element(element))
-            .collect()
+            .try_for_each(|element| self.validate_element(element))
     }
 
     fn validate_element(&mut self, element: &parse::Element) -> Result<()> {
@@ -589,8 +586,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
     fn validate_section(&mut self, section: &[parse::Element]) -> Result<()> {
         section
             .iter()
-            .map(|element| self.validate_element(element))
-            .collect()
+            .try_for_each(|element| self.validate_element(element))
     }
 
     fn validate_element(&mut self, element: &parse::Element) -> Result<()> {
