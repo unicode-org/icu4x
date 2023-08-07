@@ -39,7 +39,6 @@ fn main() {
     options.insert_feature_gates = true;
     options.use_separate_crates = true;
     options.overwrite = true;
-    options.pretty = true;
     let mod_out = Out::Baked {
         mod_directory: data_root.join("baked"),
         options,
