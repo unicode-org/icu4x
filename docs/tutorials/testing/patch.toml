@@ -5,6 +5,8 @@
 [patch.crates-io]
 icu_calendar = { path = "../../components/calendar" }
 icu_calendar_data = { path = "../../components/calendar/data" }
+icu_casemap = { path = "../../components/casemap" }
+icu_casemap_data = { path = "../../components/casemap/data" }
 icu_collator = { path = "../../components/collator" }
 icu_collator_data = { path = "../../components/collator/data" }
 icu_collections = { path = "../../components/collections" }
@@ -30,8 +32,6 @@ icu_segmenter_data = { path = "../../components/segmenter/data" }
 icu_timezone = { path = "../../components/timezone" }
 icu_timezone_data = { path = "../../components/timezone/data" }
 bies = { path = "../../experimental/bies" }
-icu_casemap = { path = "../../components/casemap" }
-icu_casemap_data = { path = "../../components/casemap/data" }
 icu_compactdecimal = { path = "../../experimental/compactdecimal" }
 icu_compactdecimal_data = { path = "../../experimental/compactdecimal/data" }
 icu_displaynames = { path = "../../experimental/displaynames" }
