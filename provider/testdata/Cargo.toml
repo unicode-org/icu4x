@@ -46,7 +46,7 @@ zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
 
 # databake options
 icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, optional = true }
-icu_casemap = { version = "0.7.1", path = "../../experimental/casemap", default-features = false, optional = true }
+icu_casemap = { version = "0.7.1", path = "../../components/casemap", default-features = false, optional = true }
 icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, optional = true }
 icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
 icu_datetime = { version = "1.2.0", path = "../../components/datetime", default-features = false, optional = true }
