@@ -605,7 +605,7 @@ jobs:
           workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
           service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
       - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/setup-gcloud@v1
       - name: Download artifacts
         run: |
           gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks tools/website-skeleton/ || true
