@@ -84,7 +84,11 @@ impl CanonicalComposition {
         )
     }
 
-    /// Constructs a new `CanonicalComposition`.
+    /// Constructs a new `CanonicalComposition` using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
@@ -106,12 +110,12 @@ impl CanonicalComposition {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
     {
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
         Ok(CanonicalComposition {
             canonical_compositions,
         })
@@ -338,7 +342,11 @@ impl CanonicalDecomposition {
         Decomposed::Default
     }
 
-    /// Construct from built-in data.
+    /// Construct from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         const _: () = assert!(
@@ -377,7 +385,7 @@ impl CanonicalDecomposition {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -385,9 +393,9 @@ impl CanonicalDecomposition {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
@@ -400,7 +408,7 @@ impl CanonicalDecomposition {
         }
 
         let non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         Ok(CanonicalDecomposition {
             decompositions,
@@ -452,7 +460,11 @@ impl CanonicalCombiningClassMap {
         }
     }
 
-    /// Construct from built-in data.
+    /// Construct from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         CanonicalCombiningClassMap {
@@ -473,12 +485,12 @@ impl CanonicalCombiningClassMap {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
         Ok(CanonicalCombiningClassMap { decompositions })
     }
 }

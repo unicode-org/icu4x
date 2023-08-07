@@ -110,7 +110,7 @@ impl Default for SentenceSegmenter {
 }
 
 impl SentenceSegmenter {
-    /// Constructs a [`SentenceSegmenter`] with an invariant locale.
+    /// Constructs a [`SentenceSegmenter`] with an invariant locale and compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

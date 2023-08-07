@@ -51,7 +51,11 @@ impl AsRef<CaseMapper> for CaseMapper {
 }
 
 impl CaseMapper {
-    /// A constructor which creates a [`CaseMapper`].
+    /// Creates a [`CaseMapper`] using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -63,10 +67,6 @@ impl CaseMapper {
     ///
     /// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
     /// ```
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
@@ -549,7 +549,6 @@ impl CaseMapper {
 }
 
 #[cfg(test)]
-#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
     use icu_locid::langid;

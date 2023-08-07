@@ -168,8 +168,12 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
     }
 }
 
-/// Returns a [`BidiAuxiliaryPropertiesV1`] struct that represents the data for certain
+/// Creates a [`BidiAuxiliaryPropertiesV1`] struct that represents the data for certain
 /// Bidi properties.
+///
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
+///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
 ///
 /// # Examples
 /// ```
@@ -181,8 +185,6 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
 /// assert_eq!(open_paren.mirroring_glyph, Some(')'));
 /// assert_eq!(open_paren.mirrored, true);
 /// ```
-///
-/// ✨ *Enabled with the `compiled_data` Cargo feature.*
 #[cfg(feature = "compiled_data")]
 pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'static> {
     BidiAuxiliaryPropertiesBorrowed {

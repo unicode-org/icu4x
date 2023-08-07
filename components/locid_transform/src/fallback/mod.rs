@@ -285,7 +285,7 @@ pub struct LocaleFallbackIterator<'a, 'b> {
 }
 
 impl LocaleFallbacker {
-    /// Creates a [`LocaleFallbacker`] with fallback data (likely subtags and parent locales).
+    /// Creates a [`LocaleFallbacker`] with compiled fallback data (likely subtags and parent locales).
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

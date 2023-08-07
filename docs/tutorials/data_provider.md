@@ -48,9 +48,9 @@ pub struct AdditiveIdentity(char);
 impl AdditiveIdentity {
     pub fn try_new<L: Into<Locale>, P: DataProvider<DecimalSymbolsV1Marker>>(
         locale: L,
-        data_provider: &P,
+        provider: &P,
     ) -> Result<Self, MyError> {
-        let response = data_provider.load(DataRequest {
+        let response = provider.load(DataRequest {
             locale: &locale.into().into(),
             metadata: Default::default(),
         })?.take_payload()?;
