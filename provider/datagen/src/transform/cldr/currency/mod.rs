@@ -61,7 +61,7 @@ fn currency_pattern_selection(
             PlaceHolderCharCloserToNumber::First
         } else {
             return Err(DataError::custom(
-                "Currency sign is in the middle of the pattern",
+                "Currency sign must be in the middle of the pattern",
             ));
         }
     };
