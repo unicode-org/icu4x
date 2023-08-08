@@ -111,40 +111,78 @@ impl Calendar for Hebrew {
 
     fn date_from_codes(
         &self,
-        _era: types::Era,
-        _year: i32,
-        _month_code: types::MonthCode,
-        _day: u8,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
+        let is_leap_year = Self::is_leap_year(year);
+
         let year = if _era.0 == tinystr!(16, "hebrew") {
-            _year
+            year
         } else {
             return Err(CalendarError::UnknownEra(_era.0, self.debug_name()));
         };
 
-        let is_leap_year = Self::is_leap_year(year);
-
-        // Define the month codes for better matching
-        let m05l = tinystr!(4, "M05L");
-        let m06 = tinystr!(4, "M06");
-        let m07 = tinystr!(4, "M07");
-        let m08 = tinystr!(4, "M08");
-        let m09 = tinystr!(4, "M09");
-        let m10 = tinystr!(4, "M10");
-        let m11 = tinystr!(4, "M11");
-
-        let adjusted_month_code = match _month_code.0 {
-            code if code == m05l && is_leap_year => _month_code,
-            code if code == m06 && is_leap_year => types::MonthCode(tinystr!(4, "M07")),
-            code if code == m07 && is_leap_year => types::MonthCode(tinystr!(4, "M08")),
-            code if code == m08 && is_leap_year => types::MonthCode(tinystr!(4, "M09")),
-            code if code == m09 && is_leap_year => types::MonthCode(tinystr!(4, "M10")),
-            code if code == m10 && is_leap_year => types::MonthCode(tinystr!(4, "M11")),
-            code if code == m11 && is_leap_year => types::MonthCode(tinystr!(4, "M12")),
-            _ => _month_code,
+        let month_ordinal = match month_code.0.to_string().as_str() {
+            "M01" => 1,
+            "M02" => 2,
+            "M03" => 3,
+            "M04" => 4,
+            "M05" => 5,
+            "M05L" if is_leap_year => 6,
+            "M06" => {
+                if is_leap_year {
+                    7
+                } else {
+                    6
+                }
+            }
+            "M07" => {
+                if is_leap_year {
+                    8
+                } else {
+                    7
+                }
+            }
+            "M08" => {
+                if is_leap_year {
+                    9
+                } else {
+                    8
+                }
+            }
+            "M09" => {
+                if is_leap_year {
+                    10
+                } else {
+                    9
+                }
+            }
+            "M10" => {
+                if is_leap_year {
+                    11
+                } else {
+                    10
+                }
+            }
+            "M11" => {
+                if is_leap_year {
+                    12
+                } else {
+                    11
+                }
+            }
+            "M12" => 12,
+            _ => {
+                return Err(CalendarError::UnknownMonthCode(
+                    month_code.0,
+                    self.debug_name(),
+                ))
+            }
         };
 
-        ArithmeticDate::new_from_codes(self, year, adjusted_month_code, _day).map(HebrewDateInner)
+        ArithmeticDate::new_from_lunar_ordinals(year, month_ordinal, day).map(HebrewDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
