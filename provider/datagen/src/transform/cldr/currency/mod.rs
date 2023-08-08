@@ -36,15 +36,8 @@ fn currency_pattern_selection(
 
     let currency_sign = '¤';
     let currency_sign_index = pattern.find(currency_sign).unwrap();
-    let first_num_index = pattern.chars().position(|c| c == '0' || c == '#').unwrap();
-
-    let last_num_index = pattern.len()
-        - pattern
-            .chars()
-            .rev()
-            .position(|c| c == '0' || c == '#')
-            .unwrap()
-        - 1;
+    let first_num_index = pattern.find(|c| c == '0' || c == '#').unwrap();
+    let last_num_index = pattern.rfind(|c: char| c == '0' || c == '#').unwrap();
 
     let letters_set = match load_for_general_category_group(provider, GeneralCategoryGroup::Letter)
     {
