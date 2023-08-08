@@ -532,6 +532,7 @@ jobs:
 
   # ci-job-fmt
   fmt:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3

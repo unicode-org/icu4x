@@ -53,6 +53,9 @@ icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime"
 icu_provider = { version = "1.2.0", path = "../../provider/core", default-features = false }
 
 [dev-dependencies]
+icu_datetime = { version = "1.2.0", path = "../datetime", features = ["serde"] }
+icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
+icu_provider_blob = { path = "../../provider/blob" }
 writeable = { path = "../../utils/writeable" }
 
 [features]
