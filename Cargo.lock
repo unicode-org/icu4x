@@ -1221,6 +1221,8 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_provider_adapters",
+ "icu_provider_blob",
  "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",

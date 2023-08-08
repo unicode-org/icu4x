@@ -2,10 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_fs_data_provider` is one of the [`ICU4X`] components.
+//! `icu_provider_fs` is one of the [`ICU4X`] components.
 //!
-//! It reads ICU4X data files from the filesystem in a given directory. It can also export data to
-//! the filesystem via an iterable data provider (see the `export` module).
+//! It reads ICU4X data files from the filesystem in a given directory.
 //!
 //! # Examples
 //!
@@ -18,13 +17,12 @@
 //!
 //! # Directory Structure
 //!
-//! The ICU4X data directory has a file named *manifest.json* at the root, and a nested structure
-//! with category (ResourceCategory), subcategory@version, optional variant, and language identifier
-//! as the leaf data files. For example, Arabic JSON data for cardinal plurals lives at
-//! *plurals/cardinal@1/ar.json*.
+//! The ICU4X data directory has a file named `manifest.json` at the root, and a nested structure
+//! with a data key ([`DataKey`](icu_provider::DataKey)), and locale ([`DataLocale`](icu_provider::DataLocale))
+//! as the leaf data files. For example, Arabic JSON data for cardinal plural rules lives at `plurals/cardinal@1/ar.json`.
 //!
 //! The exact form of the directory structure may change over time. ICU4X uses metadata from
-//! *manifest.json* to dynamically interpret different versions of the directory structure.
+//! `manifest.json` to dynamically interpret different versions of the directory structure.
 //!
 //! ```text
 //! ├── manifest.json
@@ -58,6 +56,10 @@
 //!
 //! The directory passed to the [`FsDataProvider`] constructor may contain either of them.
 //!
+//! *Notice:* In order for ICU4X to be able to *deserialize* the returned data, the corresponding
+//! Cargo feature has to be activated on the [`icu_provider`] crate. See
+//! [`AsDeserializingBufferProvider::as_deserializing`](icu_provider::serde::AsDeserializingBufferProvider).
+//!
 //! # Exporting data
 //!
 //! To generate the data required for [`FsDataProvider`], run the following:
@@ -71,9 +73,6 @@
 //! ```bash
 //! icu4x-datagen --keys all --locales full --format dir --syntax postcard
 //! ```
-//!
-//! *Notice:* In order to use encoded data in production, [`icu_provider`](crate) has to be
-//! added with `deserialize_{bincode_1, json, postcard_1}` Cargo feature.
 //!
 //! [`ICU4X`]: ../icu/index.html
 
