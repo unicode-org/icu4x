@@ -69,9 +69,11 @@ pub struct CurrencyPatterns {
 
     /// The index of the short pattern place holder in the place holders list.
     /// If the value is u16::MAX, this means that the short pattern does not have a place holder.
+    /// If the value is u16::MAX - 1, this means that the short pattern equals to the iso code.
     pub short_place_holder_index: u16,
 
     /// The index of the narrow pattern place holder in the place holders list.
     /// If the value is u16::MAX, this means that the narrow pattern does not have a place holder.
+    /// If the value is u16::MAX - 1, this means that the narrow pattern equals to the iso code.
     pub narrow_place_holder_index: u16,
 }
