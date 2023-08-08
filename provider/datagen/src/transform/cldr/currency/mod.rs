@@ -15,6 +15,7 @@ use crate::DatagenProvider;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_singlenumberformatter::provider::*;
+use std::collections::BTreeMap;
 use std::collections::HashMap;
 use tinystr::tinystr;
 
@@ -154,7 +155,7 @@ fn extract_currency_essentials<'data>(
         None => "",
     };
 
-    let mut currency_patterns_map = ZeroMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+    let mut currency_patterns_map = BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
     let mut place_holders = Vec::<&str>::new();
     let mut place_holders_map = HashMap::<&str, u16>::new();
     for (iso, currency_pattern) in currencies {
@@ -236,8 +237,8 @@ fn extract_currency_essentials<'data>(
         }
 
         currency_patterns_map.insert(
-            iso,
-            &CurrencyPatterns {
+            *iso,
+            CurrencyPatterns {
                 short_pattern_standard: short_pattern_standard as u8,
                 narrow_pattern_standard: narrow_pattern_standard as u8,
                 short_place_holder_index,
@@ -245,9 +246,8 @@ fn extract_currency_essentials<'data>(
             },
         );
     }
-
     let result = CurrencyEssentialsV1 {
-        currency_patterns_map,
+        currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard: standard.to_owned().into(),
         standard_alpha_next_to_number: standard_alpha_next_to_number.to_owned().into(),
         place_holders: VarZeroVec::from(&place_holders),
