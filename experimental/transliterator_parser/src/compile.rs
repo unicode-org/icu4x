@@ -4,13 +4,23 @@
 
 // TODO: update this module doc (and below //-comment) to reflect the new bidirectional nature of Pass1
 
-//! # Compilation for transliterators
-//!
 //! This module has three main functions. First, it validates many aspects of transliterators.
 //! Second, it compiles them into the zero-copy data struct defined in `icu_transliteration`. Third,
 //! it computes the dependencies of the transliterator.
 //! It is responsible for both directions of a source file, but the rest of this documentation
 //! assumes a single direction. The process is simply repeated for the other direction.
+//!
+//! # Terminology
+//! * The "direction" of a rule: Whether a rule is _forward_ (left-to-right in the source) or
+//!   _reverse_ (right-to-left in the source). At runtime, clients will apply a transliterator
+//!   in one direction. The transliterator `a <> b` replaces `a` with `b` in the forward direction,
+//!   and `b` with `a` in the reverse direction.
+//! * The "side" of a rule: A rule has a _source_ and a _target_ side. The source is replaced
+//!   with the target. If we're looking at a definition of a transliterator in the _forward_
+//!   direction, the source is on the left and the target is on the right, and vice versa for
+//!   the _reverse_ direction.
+//!
+//! # Conversion rule encoding
 //!
 //! Conversion rules are encoded using `str`s, and private use code points are used to represent
 //! the special constructs that can appear in a conversion rule (UnicodeSets, quantifiers, ...).
@@ -25,6 +35,8 @@
 //!   will change, and its private use encoding will change
 //! * Therefore we must know the sizes of each `VZV` before we can start encoding conversion rules
 //!   into `str`s.
+//!
+//! # Passes
 //!
 //! This module works by performing multiple passes over the rules.
 //!
@@ -50,11 +62,11 @@
 //! never overflow into the indices of the following `VZV`.
 
 // more (data struct compatible) runtime optimization opportunities:
-// - deduplicate special constructs ($a = hello ; $b = hello should only generate one hello element)
+// - deduplicate special constructs ($a = hello; $b = hello; should only generate one hello element)
 //   - especially important for equivalent unicodesets
-// - inline single-use variables
-// - replace uses of single-element variables with the element itself ($a = [a-z] ; $a > a; => [a-z] > a;)
-// - flatten single-element sets into literals
+// - inline single-use variables ($a = x; $a > b; => x > b;)
+// - replace uses of single-element variables with the element itself ($a = [a-z]; $a > a; => [a-z] > a;)
+// - flatten single-element sets into literals ([a] > b; => a > b;)
 
 /*
 Encoding example:
@@ -75,11 +87,11 @@ forward-data.used_vars: a
 when collecting the sizes (for forward) at the end, we sum over all sizes of the transitive
 dependencies of forward (using used_vars), and add the sizes of forward itself.
 we also compute the transitive closure of used variables.
-this gives us:
-final forward-data.sizes: 2 compound, 1 quantifier plus, 1 unicodeset
-final forward-data.used_vars: a, b
+this gives us the `Pass1Result`:
+forward-data.sizes: 2 compound, 1 quantifier plus, 1 unicodeset
+forward-data.used_vars: a, b
 
-this final data we give to Pass2, which will produce something like this:
+this `Pass1Result` we give to Pass2, which will produce something like this:
 (note that the integer-indexed maps shown here are only semantic, in actuality the indices are implicit,
 as described in the zero-copy format, and the maps here are just arrays)
 
