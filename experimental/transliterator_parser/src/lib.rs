@@ -6,7 +6,9 @@
 //!
 //! This crate provides parsing functionality for [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
 //!
-//! See [`parse`](crate::parse) for more information.
+//! See [`parse`](crate::parse()) for more information.
+//!
+//! [`ICU4X`]: ../icu/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(
@@ -32,7 +34,7 @@ mod parse;
 pub use parse::ParseError;
 pub use parse::ParseErrorKind;
 
-/// Standin for https://github.com/skius/icu4x/blob/transliterator/experimental/transliteration/src/datastruct_design.rs
+/// Standin for <https://github.com/skius/icu4x/blob/transliterator/experimental/transliteration/src/datastruct_design.rs>
 /// Will live in runtime icu_transliteration crate
 #[derive(Debug)]
 #[non_exhaustive]
@@ -46,7 +48,7 @@ pub fn parse(source: &str) -> Result<TransliteratorDataStruct, parse::ParseError
     parse_unstable(source, &icu_properties::provider::Baked)
 }
 
-#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse)]
+#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse())]
 pub fn parse_unstable<P>(
     source: &str,
     provider: &P,

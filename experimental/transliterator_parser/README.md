@@ -4,7 +4,9 @@
 
 This crate provides parsing functionality for [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
 
-See [`parse`](crate::parse) for more information.
+See [`parse`](crate::parse()) for more information.
+
+[`ICU4X`]: ../icu/index.html
 
 ## More Information
 
