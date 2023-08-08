@@ -16,25 +16,6 @@ group("icu_provider") {
   public_deps = [ ":icu_provider-v1_2_0" ]
 }
 
-rust_library("cfg-if-v1_0_0") {
-  crate_name = "cfg_if"
-  crate_root = "//ffi/gn/vendor/cfg-if/src/lib.rs"
-  output_name = "cfg_if-5f200286e6ae9b7a"
-
-  deps = []
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2018",
-    "-Cmetadata=5f200286e6ae9b7a",
-    "-Cextra-filename=-5f200286e6ae9b7a",
-  ]
-
-  visibility = [ ":*" ]
-}
-
 rust_proc_macro("diplomat-v0_5_2") {
   crate_name = "diplomat"
   crate_root = "//ffi/gn/vendor/diplomat/src/lib.rs"
@@ -256,9 +237,6 @@ rust_library("icu_capi-v1_2_2") {
   deps += [ ":tinystr-v0_7_1" ]
   deps += [ ":unicode-bidi-v0_3_13" ]
   deps += [ ":writeable-v0_5_2" ]
-  if (current_cpu == "wasm32") {
-    deps += [ ":log-v0_4_17" ]
-  }
 
   rustenv = []
 
@@ -752,28 +730,6 @@ rust_library("litemap-v0_7_0") {
     "-Cextra-filename=-9af155724df6c491",
     "--cfg=feature=\"alloc\"",
     "--cfg=feature=\"default\"",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("log-v0_4_17") {
-  crate_name = "log"
-  crate_root = "//ffi/gn/vendor/log/src/lib.rs"
-  output_name = "log-69f3eb5ea5870c4"
-
-  deps = []
-  deps += [ ":cfg-if-v1_0_0" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2015",
-    "-Cmetadata=69f3eb5ea5870c4",
-    "-Cextra-filename=-69f3eb5ea5870c4",
-    "--cfg=atomic_cas",
-    "--cfg=has_atomics",
   ]
 
   visibility = [ ":*" ]
