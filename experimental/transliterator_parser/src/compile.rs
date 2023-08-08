@@ -1170,10 +1170,9 @@ mod tests {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
-                (Pass, Err(e)) => panic!(
-                    "unexpected error in pass1 validation for rules {source:?}: {:?}",
-                    e
-                ),
+                (Pass, Err(e)) => {
+                    panic!("unexpected error in pass1 validation for rules {source:?}: {e:?}")
+                }
                 _ => {}
             }
         }
@@ -1203,10 +1202,9 @@ mod tests {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
-                (Pass, Err(e)) => panic!(
-                    "unexpected error in pass1 validation for rules {source:?}: {:?}",
-                    e
-                ),
+                (Pass, Err(e)) => {
+                    panic!("unexpected error in pass1 validation for rules {source:?}: {e:?}")
+                }
                 _ => {}
             }
         }
@@ -1236,10 +1234,9 @@ mod tests {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
-                (Pass, Err(e)) => panic!(
-                    "unexpected error in pass1 validation for rules {source:?}: {:?}",
-                    e
-                ),
+                (Pass, Err(e)) => {
+                    panic!("unexpected error in pass1 validation for rules {source:?}: {e:?}")
+                }
                 _ => {}
             }
         }
