@@ -127,7 +127,6 @@ extern crate icu_provider;
 #[doc(inline)]
 pub use icu_calendar as calendar;
 
-#[cfg(feature = "icu_casemap")]
 #[doc(inline)]
 pub use icu_casemap as casemap;
 
