@@ -51,16 +51,6 @@ pub(crate) trait ChineseBased: CalendarArithmetic + Sized {
     /// reflect traditional methods of year-tracking or eras, since Chinese-based calendars
     /// may not track years ordinally in the same way many western calendars do.
     const EPOCH: RataDie;
-
-    /// Given a year, month, and day, create a Date<C> where C is a Chinese-based calendar.
-    ///
-    /// This function should just call try_new_C_date where C is the name of the calendar.
-    fn new_chinese_based_date(
-        year: i32,
-        month: u8,
-        day: u8,
-        cache: ChineseBasedCache,
-    ) -> ChineseBasedDateInner<Self>;
 }
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
@@ -75,6 +65,7 @@ pub(crate) struct ChineseBasedDateInner<C: ChineseBased>(
 pub(crate) struct ChineseBasedCache {
     pub(crate) new_year: RataDie,
     pub(crate) is_leap_year: bool,
+    pub(crate) leap_month: u8,
 }
 
 impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
@@ -267,11 +258,21 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         );
         let day = day_i64 as u8;
         let is_leap_year = Self::new_year_is_leap_year(first_day_of_year, None);
+        let leap_month = if is_leap_year {
+            Self::get_leap_month_from_new_year(first_day_of_year)
+        } else {
+            14
+        };
         let cache = ChineseBasedCache {
             new_year: first_day_of_year,
             is_leap_year,
+            leap_month,
         };
-        C::new_chinese_based_date(year, month, day, cache)
+        // This can use `new_unchecked` because this function is only ever called from functions which
+        // generate the year, month, and day; therefore, there should never be a situation where
+        // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
+        // are also used to check for valid ymd.
+        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), cache)
     }
 
     /// Get a RataDie from a ChineseBasedDateInner
@@ -319,16 +320,22 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     }
 
     /// Given that a date is in a leap year, find which month in the year is a leap month.
-    /// Since the first month in which there are no major solar terms is a leap month,
-    /// this function cycles through months until it finds the leap month, then returns
-    /// the number of that month. This function assumes the date passed in is in a leap year
-    /// and tests to ensure this is the case by asserting that no more than twelve months are
-    /// analyzed.
+    /// This function finds the new year on or before the given `date`, then calls `get_leap_month_from_new_year`.
+    pub(crate) fn get_leap_month_in_year(date: RataDie) -> u8 {
+        let new_year = Self::new_year_on_or_before_fixed_date(date, None).0;
+        Self::get_leap_month_from_new_year(new_year)
+    }
+
+    /// Given that `new_year` is the first day of a leap year, find which month in the year is a leap month.
+    /// Since the first month in which there are no major solar terms is a leap month, this function
+    /// cycles through months until it finds the leap month, then returns the number of that month. This
+    /// function assumes the date passed in is in a leap year and tests to ensure this is the case in debug
+    /// mode by asserting that no more than thirteen months are analyzed.
     ///
     /// Conceptually similar to code from _Calendrical Calculations_ by Reingold & Dershowitz
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5443-L5450
-    pub(crate) fn get_leap_month_in_year(date: RataDie) -> u8 {
-        let mut cur = Self::new_year_on_or_before_fixed_date(date, None).0;
+    pub(crate) fn get_leap_month_from_new_year(new_year: RataDie) -> u8 {
+        let mut cur = new_year;
         let mut result = 1;
         while result < MAX_ITERS_FOR_MONTHS_OF_YEAR && !Self::no_major_solar_term(cur) {
             cur = Self::new_moon_on_or_after((cur + 1).as_moment());
@@ -345,7 +352,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         year: i32,
         month: u8,
         day: u8,
-        cache: ChineseBasedCache,
+        cache: &ChineseBasedCache,
     ) -> Result<ArithmeticDate<C>, CalendarError> {
         let max_month = Self::months_in_year_cached(cache);
         if month > max_month {
@@ -370,12 +377,12 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
 
     /// Call `months_in_year_cached` on a `ChineseBasedDateInner`
     pub(crate) fn months_in_year_inner(&self) -> u8 {
-        Self::months_in_year_cached(self.1)
+        Self::months_in_year_cached(&self.1)
     }
 
     /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
     /// Also takes a `ChineseBasedCache` argument.
-    fn months_in_year_cached(cache: ChineseBasedCache) -> u8 {
+    fn months_in_year_cached(cache: &ChineseBasedCache) -> u8 {
         if cache.is_leap_year {
             13
         } else {
@@ -383,34 +390,14 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
     }
 
-    /// Gets the leap month for an instance of `ChineseBasedDateInner`; this function assumes the `ChineseBasedDateInner`
-    /// represents a year with a leap month.
-    pub(crate) fn get_leap_month(&self) -> u8 {
-        debug_assert!(
-            self.1.is_leap_year,
-            "fn `get_leap_month` called on a non-leap year!"
-        );
-        let mut cur = self.1.new_year;
-        let mut result = 1;
-        while result < MAX_ITERS_FOR_MONTHS_OF_YEAR && !Self::no_major_solar_term(cur) {
-            cur = Self::new_moon_on_or_after((cur + 1).as_moment());
-            result += 1;
-        }
-        debug_assert!(
-            result < MAX_ITERS_FOR_MONTHS_OF_YEAR,
-            "Unexpected number of iterations occurred searching for a leap month."
-        );
-        result
-    }
-
     /// Calls `days_in_month_cached` on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_month_inner(&self) -> u8 {
-        Self::days_in_month_cached(self.0.month, self.1)
+        Self::days_in_month_cached(self.0.month, &self.1)
     }
 
     /// Returns the number of days in the given `year`, `month` (see `month_days`);
     /// this function takes a `ChineseBasedCache` argument.
-    fn days_in_month_cached(month: u8, cache: ChineseBasedCache) -> u8 {
+    fn days_in_month_cached(month: u8, cache: &ChineseBasedCache) -> u8 {
         let new_year = cache.new_year;
         let approx = new_year + ((month - 1) as i64 * 29);
         let prev_new_moon = Self::new_moon_before((approx + 15).as_moment());
@@ -422,11 +409,11 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
 
     /// Calls day_in_year_cached on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_year_inner(&self) -> u16 {
-        Self::days_in_year_cached(self.1)
+        Self::days_in_year_cached(&self.1)
     }
 
     /// Returns the number of day in the given year with an associated `ChineseBasedCache`.
-    fn days_in_year_cached(cache: ChineseBasedCache) -> u16 {
+    fn days_in_year_cached(cache: &ChineseBasedCache) -> u16 {
         let prev_new_year = cache.new_year;
         let next_new_year = Self::new_year_on_or_before_fixed_date(prev_new_year + 370, None).0;
         let result = next_new_year - prev_new_year;
@@ -443,9 +430,15 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let prior_solstice = Self::winter_solstice_on_or_before(mid_year);
         let new_year = Self::new_year_on_or_before_fixed_date(mid_year, Some(prior_solstice)).0;
         let is_leap_year = Self::new_year_is_leap_year(new_year, Some(prior_solstice));
+        let leap_month = if is_leap_year {
+            Self::get_leap_month_from_new_year(new_year)
+        } else {
+            14
+        };
         ChineseBasedCache {
             new_year,
             is_leap_year,
+            leap_month,
         }
     }
 }

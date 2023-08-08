@@ -34,11 +34,10 @@
 //! ```
 
 use crate::calendar_arithmetic::CalendarArithmetic;
-use crate::chinese_based::{chinese_based_ordinal_lunar_month_from_code, ChineseBasedCache};
+use crate::chinese_based::chinese_based_ordinal_lunar_month_from_code;
 use crate::helpers::div_rem_euclid64;
 use crate::{
     astronomy::Location,
-    calendar_arithmetic::ArithmeticDate,
     chinese_based::{ChineseBased, ChineseBasedDateInner},
     rata_die::RataDie,
     types::{self, Era, FormattableYear},
@@ -168,7 +167,7 @@ impl Calendar for Dangi {
         }
 
         let cache = Inner::compute_cache(year);
-        let arithmetic = Inner::new_from_ordinals(year, month, day, cache);
+        let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
         Ok(DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)))
     }
 
@@ -219,11 +218,7 @@ impl Calendar for Dangi {
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month = if date.0 .1.is_leap_year {
-            date.0.get_leap_month()
-        } else {
-            14
-        };
+        let leap_month = date.0 .1.leap_month;
         let code_inner = if leap_month == ordinal {
             // Month cannot be 1 because a year cannot have a leap month before the first actual month,
             // and the maximum num of months ina leap year is 13.
@@ -322,7 +317,7 @@ impl Date<Dangi> {
     /// ```
     pub fn try_new_dangi_date(year: i32, month: u8, day: u8) -> Result<Date<Dangi>, CalendarError> {
         let cache = Inner::compute_cache(year);
-        let arithmetic = Inner::new_from_ordinals(year, month, day, cache);
+        let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
         Ok(Date::from_raw(
             DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)),
             Dangi,
@@ -379,18 +374,6 @@ impl ChineseBased for Dangi {
     }
 
     const EPOCH: RataDie = KOREAN_EPOCH;
-
-    // Unchecked can be used since this function is only ever called when generating dates from
-    // a valid year, month, and day.
-    fn new_chinese_based_date(
-        year: i32,
-        month: u8,
-        day: u8,
-        cache: ChineseBasedCache,
-    ) -> ChineseBasedDateInner<Dangi> {
-        // See the `Chinese` implementation of this function for reasons why `new_unchecked` can be used here.
-        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), cache)
-    }
 }
 
 impl Dangi {
