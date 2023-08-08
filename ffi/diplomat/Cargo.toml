@@ -66,8 +66,8 @@ simple_logger = ["dep:simple_logger", "logging"]
 
 # Legacy features
 provider_test = []
-cpp_default = []
-wasm_default = []
+cpp_default = ["logging"]
+wasm_default = ["logging"]
 
 # Components
 default_components = ["icu_calendar", "icu_collator", "icu_datetime", "icu_decimal",
