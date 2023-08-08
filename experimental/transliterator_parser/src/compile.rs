@@ -17,6 +17,11 @@
 //!   with the target. If we're looking at a definition of a transliterator in the _forward_
 //!   direction, the source is on the left and the target is on the right, and vice versa for
 //!   the _reverse_ direction.
+//! * "Special matchers" are non-literal items that can appear on the source side of a rule.
+//!   This includes, e.g., UnicodeSets and quantifiers.
+//! * "Special replacers" are non-literal items that can appear on the target side of a rule.
+//!   This includes, e.g., function calls and back references.
+//! * "Special constructs" are just any non-literal rule item.
 //!
 //! # Conversion rule encoding
 //!
@@ -124,6 +129,7 @@ enum SingleDirection {
     Reverse,
 }
 
+/// The number of elements for each `VZV` in the `VarTable`.
 #[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
 struct SpecialConstructSizes {
     num_compounds: usize,
@@ -154,6 +160,7 @@ struct Pass1Result<'p> {
     variable_definitions: HashMap<String, &'p [parse::Element]>,
 }
 
+/// Responsible for the first pass as described in the module-level documentation.
 #[derive(Debug, Clone)]
 struct Pass1<'p> {
     direction: parse::Direction,
@@ -362,6 +369,11 @@ struct SourceValidator<'a, 'p, F: Fn(&str) -> bool> {
     num_segments: u32,
 }
 
+/// Validates the source side of a rule.
+///
+/// Ensures that only special constructs that may appear on the source side of a rule are used.
+/// Also validates certain other source-side-only constraints, such as anchors needing to be at the
+/// beginning or end of the rule.
 impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
     fn new(
         is_variable_defined: F,
@@ -464,6 +476,11 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
     }
 }
 
+/// Validates the target side of a rule.
+///
+/// Ensures that only special constructs (including variables) that may appear on the target side
+/// of a rule are used. Also validates other target-side-only constraints, such as
+/// back references not being allowed to overflow and only one cursor being allowed.
 struct TargetValidator<'a, 'p, F: Fn(&str) -> bool> {
     is_variable_defined: F,
     target_disallowed_variables: &'a mut HashSet<String>,
@@ -593,6 +610,14 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
     }
 }
 
+/// Validates variable definitions.
+///
+/// This checks that only a limited subset of special constructs appear in a variable's definition.
+/// For example, segments, back references, cursors, anchors, and function calls are not allowed.
+///
+/// It also propagates information about whether a variable may appear on the target side of a rule,
+/// as variables are in general allowed on the target side, but only if they only contain
+/// special constructs that are allowed to appear on the target side.
 struct VariableDefinitionValidator<'a, 'p, F: Fn(&str) -> bool> {
     is_variable_defined: F,
     target_disallowed_variables: &'a HashSet<String>,
