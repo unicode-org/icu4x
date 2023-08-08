@@ -233,7 +233,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// The calculation for `elapsed_years` and `month` in this function are based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
     pub(crate) fn chinese_based_date_from_fixed(date: RataDie) -> ChineseBasedDateInner<C> {
-        let first_day_of_year = Self::new_year_on_or_before_fixed_date(date, None).0;
+        let (first_day_of_year, next_solstice) = Self::new_year_on_or_before_fixed_date(date, None);
         let year_float = libm::floor(
             1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
         );
@@ -257,7 +257,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Day should be in range of u8! Value {month_i64} failed for RD {date:?}"
         );
         let day = day_i64 as u8;
-        let is_leap_year = Self::new_year_is_leap_year(first_day_of_year, None);
+        let is_leap_year = Self::new_year_is_leap_year(first_day_of_year, Some(next_solstice));
         let leap_month = if is_leap_year {
             // This doesn't need to be checked for `None`, since `get_leap_month_from_new_year`
             // will always return a number greater than or equal to 1, and less than 14.
