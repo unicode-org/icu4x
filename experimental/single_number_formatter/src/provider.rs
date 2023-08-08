@@ -14,7 +14,7 @@ use icu_provider::{yoke, zerofrom};
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
-#[icu_provider::data_struct(CurrencyEssentialsV1Maker = "currency/essentials@1")]
+#[icu_provider::data_struct(CurrencyEssentialsV1Marker = "currency/essentials@1")]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",

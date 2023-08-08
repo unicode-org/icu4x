@@ -85,9 +85,12 @@ fn currency_pattern_selection(
     }
 }
 
-impl DataProvider<CurrencyEssentialsV1Maker> for crate::DatagenProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyEssentialsV1Maker>, DataError> {
-        self.check_req::<CurrencyEssentialsV1Maker>(req)?;
+impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<CurrencyEssentialsV1Marker>, DataError> {
+        self.check_req::<CurrencyEssentialsV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let currencies_resource: &cldr_serde::currencies::Resource = self
@@ -112,7 +115,7 @@ impl DataProvider<CurrencyEssentialsV1Maker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<CurrencyEssentialsV1Maker> for crate::DatagenProvider {
+impl IterableDataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
@@ -259,7 +262,7 @@ fn extract_currency_essentials<'data>(
 fn test_basic() {
     fn get_place_holders_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
-        locale: &DataPayload<CurrencyEssentialsV1Maker>,
+        locale: &DataPayload<CurrencyEssentialsV1Marker>,
         place_holders: &VarZeroVec<'_, str>,
     ) -> (String, String) {
         let default = CurrencyPatternsULE {
@@ -300,7 +303,7 @@ fn test_basic() {
 
     let provider = crate::DatagenProvider::for_test();
 
-    let en: DataPayload<CurrencyEssentialsV1Maker> = provider
+    let en: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &locale!("en").into(),
             metadata: Default::default(),
@@ -326,7 +329,7 @@ fn test_basic() {
     assert_eq!(en_egp_short, "");
     assert_eq!(en_egp_narrow, "E£");
 
-    let ar_eg: DataPayload<CurrencyEssentialsV1Maker> = provider
+    let ar_eg: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &locale!("ar-EG").into(),
             metadata: Default::default(),
