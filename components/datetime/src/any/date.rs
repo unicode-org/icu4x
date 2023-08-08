@@ -68,6 +68,10 @@ impl DateFormatter {
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Examples
     ///
     /// ```
@@ -96,10 +100,6 @@ impl DateFormatter {
     ///     "Sep 1, 2020"
     /// );
     /// ```
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
@@ -168,6 +168,7 @@ impl DateFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<GregorianDateLengthsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
@@ -176,6 +177,7 @@ impl DateFormatter {
             + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>

@@ -27,7 +27,7 @@ impl Default for MetazoneCalculator {
 }
 
 impl MetazoneCalculator {
-    /// Constructs a `MetazoneCalculator`.
+    /// Constructs a `MetazoneCalculator` using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

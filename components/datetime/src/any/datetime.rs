@@ -118,6 +118,10 @@ impl DateTimeFormatter {
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Examples
     ///
     /// ```
@@ -224,6 +228,7 @@ impl DateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<GregorianDateLengthsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
@@ -232,6 +237,7 @@ impl DateTimeFormatter {
             + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
@@ -267,6 +273,10 @@ impl DateTimeFormatter {
     }
 
     /// Constructor that supports experimental options with compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
@@ -354,6 +364,7 @@ impl DateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<GregorianDateLengthsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
@@ -362,6 +373,7 @@ impl DateTimeFormatter {
             + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>

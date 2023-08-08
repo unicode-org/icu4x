@@ -65,8 +65,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Language;
     /// let mut fallback_iterator = fallbacker
@@ -97,8 +96,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Region;
     /// let mut fallback_iterator = fallbacker
@@ -136,8 +134,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.extension_key = Some(icu_locid::extensions::unicode::key!("nu"));
     /// let mut fallback_iterator = fallbacker
@@ -178,8 +175,7 @@ pub struct LocaleFallbackConfig {
     /// use tinystr::tinystr;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Collation;
     /// config.fallback_supplement = Some(FallbackSupplement::Collation);
@@ -257,7 +253,7 @@ pub struct LocaleFallbackerBorrowed<'a> {
 }
 
 /// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
@@ -289,7 +285,7 @@ pub struct LocaleFallbackIterator<'a, 'b> {
 }
 
 impl LocaleFallbacker {
-    /// Creates a [`LocaleFallbacker`] with fallback data (likely subtags and parent locales).
+    /// Creates a [`LocaleFallbacker`] with compiled fallback data (likely subtags and parent locales).
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -397,11 +393,14 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
 
 impl LocaleFallbackerBorrowed<'static> {
     /// Cheaply converts a `LocaleFallbackerBorrowed<'static>` into a `LocaleFallbacker`.
-    pub fn static_to_owned(self) -> LocaleFallbacker {
+    pub const fn static_to_owned(self) -> LocaleFallbacker {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_static_ref(self.likely_subtags),
             parents: DataPayload::from_static_ref(self.parents),
-            collation_supplement: self.collation_supplement.map(DataPayload::from_static_ref),
+            collation_supplement: match self.collation_supplement {
+                None => None,
+                Some(x) => Some(DataPayload::from_static_ref(x)),
+            },
         }
     }
 }

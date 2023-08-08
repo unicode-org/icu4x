@@ -133,16 +133,20 @@ impl FixedDecimalFormatter {
         locale: include,
         options: options::FixedDecimalFormatterOptions,
         error: DecimalError,
-        /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
+        /// Creates a new [`FixedDecimalFormatter`] from compiled locale data and an options bag.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, DecimalError> {
-        let symbols = data_provider
+        let symbols = provider
             .load(DataRequest {
                 locale,
                 metadata: Default::default(),

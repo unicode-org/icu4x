@@ -10,6 +10,16 @@ mod datetime_buddhist_datesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_buddhist_datesymbols_v1 as impl_datetime_buddhist_datesymbols_v1;
 #[macro_use]
+#[path = "macros/datetime_chinese_datelengths_v1.data.rs"]
+mod datetime_chinese_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_chinese_datelengths_v1 as impl_datetime_chinese_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_chinese_datesymbols_v1.data.rs"]
+mod datetime_chinese_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_chinese_datesymbols_v1 as impl_datetime_chinese_datesymbols_v1;
+#[macro_use]
 #[path = "macros/datetime_coptic_datelengths_v1.data.rs"]
 mod datetime_coptic_datelengths_v1;
 #[doc(inline)]

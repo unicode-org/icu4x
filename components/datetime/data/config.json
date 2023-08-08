@@ -3,6 +3,8 @@
         "Explicit": [
             "datetime/buddhist/datelengths@1",
             "datetime/buddhist/datesymbols@1",
+            "datetime/chinese/datelengths@1",
+            "datetime/chinese/datesymbols@1",
             "datetime/coptic/datelengths@1",
             "datetime/coptic/datesymbols@1",
             "datetime/ethiopic/datelengths@1",

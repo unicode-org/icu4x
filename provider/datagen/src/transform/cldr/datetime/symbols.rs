@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde;
+use crate::transform::cldr::cldr_serde::{self, ca};
 use icu_calendar::types::MonthCode;
 use icu_datetime::provider::calendar::*;
 use std::borrow::Cow;
@@ -64,7 +64,7 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc" => {
             &SOLAR_MONTH_CODES[0..12]
         }
-        "coptic" | "ethiopic" => SOLAR_MONTH_CODES,
+        "coptic" | "ethiopic" | "chinese" => SOLAR_MONTH_CODES,
         _ => panic!("Month map unknown for {calendar}"),
     }
 }
@@ -80,6 +80,7 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         "buddhist" => vec![("0".to_string(), tinystr!(16, "be"))]
             .into_iter()
             .collect(),
+        "chinese" => vec![].into_iter().collect(),
         "japanese" | "japanext" => crate::transform::cldr::calendar::japanese::get_era_code_map(),
         "coptic" => vec![
             // Before Diocletian
@@ -113,8 +114,8 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
 }
 
 macro_rules! symbols_from {
-    ([$name: ident, $name2: ident $(,)?], $ctx:ty, [ $($element: ident),+ $(,)? ] $(,)?) => {
-        impl cldr_serde::ca::$name::Symbols {
+    ([$symbols: path, $name2: ident $(,)?], $ctx:ty, [ $($element: ident),+ $(,)? ] $(,)?) => {
+        impl $symbols {
             fn get(&self, _ctx: &$ctx) -> $name2::SymbolsV1<'static> {
                 $name2::SymbolsV1([
                     $(
@@ -123,10 +124,10 @@ macro_rules! symbols_from {
                 ])
             }
         }
-        symbols_from!([$name, $name2], $ctx);
+        symbols_from!([$symbols, $name2], $ctx);
     };
-    ([$name: ident, $name2: ident $(,)?], $ctx:ty, { $($element: ident),+ $(,)? } $(,)?) => {
-        impl cldr_serde::ca::$name::Symbols {
+    ([$symbols: path, $name2: ident $(,)?], $ctx:ty, { $($element: ident),+ $(,)? } $(,)?) => {
+        impl $symbols {
             fn get(&self, _ctx: &$ctx) -> $name2::SymbolsV1<'static> {
                 $name2::SymbolsV1 {
                     $(
@@ -135,10 +136,10 @@ macro_rules! symbols_from {
                 }
             }
         }
-        symbols_from!([$name, $name], $ctx);
+        symbols_from!([$symbols, $name2], $ctx);
     };
-    ([$name: ident, $name2: ident], $ctx:ty) => {
-        impl cldr_serde::ca::$name::Symbols {
+    ([$symbols: path, $name2: ident], $ctx:ty) => {
+        impl $symbols {
             // Helper function which returns None if the two groups of symbols overlap.
             pub fn get_unaliased(&self, other: &Self) -> Option<Self> {
                 if self == other {
@@ -149,7 +150,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl cldr_serde::ca::$name::Contexts {
+        impl ca::Contexts<$symbols> {
             fn get(&self, ctx: &$ctx) -> $name2::ContextsV1<'static> {
                 $name2::ContextsV1 {
                     format: self.format.get(ctx),
@@ -160,9 +161,9 @@ macro_rules! symbols_from {
             }
         }
 
-        impl cldr_serde::ca::$name::StandAloneWidths {
+        impl ca::StandAloneWidths<$symbols> {
             // Helper function which returns None if the two groups of symbols overlap.
-            pub fn get_unaliased(&self, other: &cldr_serde::ca::$name::FormatWidths) -> Option<Self> {
+            pub fn get_unaliased(&self, other: &ca::FormatWidths<$symbols>) -> Option<Self> {
                 let abbreviated = self.abbreviated.as_ref().and_then(|v| v.get_unaliased(&other.abbreviated));
                 let narrow = self.narrow.as_ref().and_then(|v| v.get_unaliased(&other.narrow));
                 let short = if self.short == other.short {
@@ -185,7 +186,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl cldr_serde::ca::$name::FormatWidths {
+        impl ca::FormatWidths<$symbols> {
             fn get(&self, ctx: &$ctx) -> $name2::FormatWidthsV1<'static> {
                 $name2::FormatWidthsV1 {
                     abbreviated: self.abbreviated.get(ctx),
@@ -196,7 +197,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl cldr_serde::ca::$name::StandAloneWidths {
+        impl ca::StandAloneWidths<$symbols> {
             fn get(&self, ctx: &$ctx) -> $name2::StandAloneWidthsV1<'static> {
                 $name2::StandAloneWidthsV1 {
                     abbreviated: self.abbreviated.as_ref().map(|width| width.get(ctx)),
@@ -208,9 +209,9 @@ macro_rules! symbols_from {
         }
     };
 }
-symbols_from!([months, months], &'static [TinyStr4]);
+symbols_from!([cldr_serde::ca::MonthSymbols, months], &'static [TinyStr4]);
 
-impl cldr_serde::ca::months::Symbols {
+impl cldr_serde::ca::MonthSymbols {
     fn get(&self, ctx: &&'static [TinyStr4]) -> months::SymbolsV1<'static> {
         if ctx.len() == 12 && self.0.len() == 12 {
             let mut arr: [Cow<'static, str>; 12] = Default::default();
@@ -251,11 +252,15 @@ impl cldr_serde::ca::months::Symbols {
     }
 }
 
-symbols_from!([days, weekdays], (), [sun, mon, tue, wed, thu, fri, sat]);
+symbols_from!(
+    [cldr_serde::ca::DaySymbols, weekdays],
+    (),
+    [sun, mon, tue, wed, thu, fri, sat]
+);
 
 symbols_from!(
     [
-        day_periods,
+        cldr_serde::ca::DayPeriodSymbols,
         day_periods,
     ],
     (),

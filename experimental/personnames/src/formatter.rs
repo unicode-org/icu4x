@@ -15,14 +15,14 @@ pub struct PersonNamesFormatter {
 
 impl PersonNamesFormatter {
     pub fn try_new_unstable<D: DataProvider<PersonNamesFormattingDefinitionV1Marker>>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: PersonNamesFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: DataProvider<PersonNamesFormattingDefinitionV1Marker>,
     {
-        let data_payload = data_provider
+        let data_payload = provider
             .load(DataRequest {
                 locale,
                 metadata: Default::default(),

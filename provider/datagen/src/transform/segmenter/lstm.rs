@@ -4,12 +4,14 @@
 
 //! This module contains provider implementations backed by LSTM segmentation data.
 
+use crate::options;
 use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use zerovec::{ule::UnvalidatedStr, ZeroVec};
 
@@ -201,6 +203,23 @@ pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static 
     }
 }
 
+pub(crate) fn filter_data_locales(
+    locales: HashSet<DataLocale>,
+    segmenter_models: &options::SegmenterModelInclude,
+) -> HashSet<DataLocale> {
+    match &segmenter_models {
+        options::SegmenterModelInclude::Recommended => locales,
+        options::SegmenterModelInclude::None => Default::default(),
+        options::SegmenterModelInclude::Explicit(list) => locales
+            .into_iter()
+            .filter(|locale| {
+                list.iter()
+                    .any(|x| Some(x.as_str()) == data_locale_to_model_name(locale))
+            })
+            .collect(),
+    }
+}
+
 impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
@@ -228,23 +247,15 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(match &self.source.options.segmenter_models {
-            crate::options::SegmenterModelInclude::Recommended => [
-                "Burmese_codepoints_exclusive_model4_heavy",
-                "Khmer_codepoints_exclusive_model4_heavy",
-                "Lao_codepoints_exclusive_model4_heavy",
-                "Thai_codepoints_exclusive_model4_heavy",
-            ]
-            .into_iter()
-            .filter_map(model_name_to_data_locale)
-            .collect(),
-            crate::options::SegmenterModelInclude::None => Vec::new(),
-            crate::options::SegmenterModelInclude::Explicit(list) => list
-                .iter()
-                .map(core::ops::Deref::deref)
-                .filter_map(model_name_to_data_locale)
-                .collect(),
-        })
+        Ok([
+            "Burmese_codepoints_exclusive_model4_heavy",
+            "Khmer_codepoints_exclusive_model4_heavy",
+            "Lao_codepoints_exclusive_model4_heavy",
+            "Thai_codepoints_exclusive_model4_heavy",
+        ]
+        .into_iter()
+        .filter_map(model_name_to_data_locale)
+        .collect())
     }
 }
 

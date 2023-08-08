@@ -42,12 +42,14 @@ postcard = { version = "1.0.0", features = ["alloc"], default-features = false, 
 serde_json = { version = "1.0", optional = true }
 
 [dev-dependencies]
-criterion = "0.4"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locid = { path = "../../components/locid", features = ["serde"] }
 icu_provider = { path = "../core", features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_1", "datagen"] }
 icu_datagen = { path = "../datagen" }
 writeable = { path = "../../utils/writeable" }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
 
 [features]
 # Enables the "export" module and FilesystemExporter
