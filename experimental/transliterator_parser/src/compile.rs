@@ -104,7 +104,7 @@ as described in the zero-copy format, and the maps here are just arrays)
 */
 
 use crate::parse;
-use crate::parse::{ElementLocation as EL, HalfRule, QuantifierKind};
+use crate::parse::{BasicId, ElementLocation as EL, HalfRule, QuantifierKind};
 use parse::Result;
 use parse::PEK;
 use std::collections::{HashMap, HashSet};
@@ -114,7 +114,7 @@ enum SingleDirection {
     Reverse,
 }
 
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
 struct SpecialConstructSizes {
     num_compounds: usize,
     num_quantifiers_opt: usize,
@@ -129,15 +129,24 @@ struct SpecialConstructSizes {
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 struct Pass1Data {
     sizes: SpecialConstructSizes,
-    // the variables (directly) used by the associated key
+    // the variables used by the associated key
     used_variables: HashSet<String>,
-    // the recursive transliterators that are (directly) used by the associated key
+    // the recursive transliterators used by the associated key
     dependencies: HashSet<parse::BasicId>,
+}
+
+// data with dependencies resolved and sizes summed
+#[derive(Debug, Clone)]
+struct Pass1Result<'p> {
+    forward_data: Pass1Data,
+    reverse_data: Pass1Data,
+    variable_definitions: HashMap<String, &'p [parse::Element]>,
 }
 
 #[derive(Debug, Clone)]
 struct Pass1<'p> {
     direction: parse::Direction,
+    // data for *direct* dependencies
     forward_data: Pass1Data,
     reverse_data: Pass1Data,
     variable_data: HashMap<String, Pass1Data>,
@@ -159,7 +168,7 @@ impl<'p> Pass1<'p> {
         }
     }
 
-    fn run(&mut self, rules: &'p [parse::Rule]) -> Result<()> {
+    fn run(&mut self, rules: &'p [parse::Rule]) -> Result<Pass1Result<'p>> {
         // first check global filter/global inverse filter.
         // after this check, they may not appear anywhere.
         let rules = self.validate_global_filters(rules)?;
@@ -184,7 +193,7 @@ impl<'p> Pass1<'p> {
             }
         }
 
-        Ok(())
+        Pass1ResultGenerator::generate(self)
     }
 
     fn validate_global_filters<'a>(&self, rules: &'a [parse::Rule]) -> Result<&'a [parse::Rule]> {
@@ -195,7 +204,7 @@ impl<'p> Pass1<'p> {
                 }
 
                 rest
-            },
+            }
             _ => rules,
         };
         let rules = match rules {
@@ -205,7 +214,7 @@ impl<'p> Pass1<'p> {
                 }
 
                 rest
-            },
+            }
             _ => rules,
         };
 
@@ -381,7 +390,9 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
 
         // now neither start nor end anchors may appear anywhere in `order`
 
-        sections.iter().try_for_each(|s| self.validate_section(s, true))
+        sections
+            .iter()
+            .try_for_each(|s| self.validate_section(s, true))
     }
 
     fn validate_section(&mut self, section: &[parse::Element], top_level: bool) -> Result<()> {
@@ -617,8 +628,13 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
                 }
                 self.data.used_variables.insert(name.clone());
             }
-            parse::Element::Quantifier(_, inner) => {
+            parse::Element::Quantifier(kind, inner) => {
                 self.used_target_disallowed_construct = true;
+                match *kind {
+                    QuantifierKind::ZeroOrOne => self.data.sizes.num_quantifiers_opt += 1,
+                    QuantifierKind::ZeroOrMore => self.data.sizes.num_quantifiers_kleene += 1,
+                    QuantifierKind::OneOrMore => self.data.sizes.num_quantifiers_kleene_plus += 1,
+                }
                 self.validate_element(inner)?;
             }
             parse::Element::UnicodeSet(_) => {
@@ -646,6 +662,108 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
 //  as part of this, it should also be decided whether these edge cases are full-blown errors or
 //  merely logged warnings.
 
+struct Pass1ResultGenerator<'a, 'p> {
+    pass: &'a Pass1<'p>,
+    // for cycle-detection
+    current_vars: HashSet<String>,
+    transitive_var_dependencies: HashMap<String, HashSet<String>>,
+}
+
+impl<'a, 'p> Pass1ResultGenerator<'a, 'p> {
+    fn generate(pass: &'a Pass1<'p>) -> Result<Pass1Result<'p>> {
+        let mut generator = Self {
+            pass,
+            current_vars: HashSet::new(),
+            transitive_var_dependencies: HashMap::new(),
+        };
+        generator.generate_result()
+    }
+
+    fn generate_result(&mut self) -> Result<Pass1Result<'p>> {
+        // the result for a given direction is computed by first computing the transitive
+        // used variables for each direction, then using that data summing over the
+        // special construct sizes, and at last filtering the variable definitions based on
+        // the used variables in either direction.
+
+        let fwd_data = self.generate_result_one_direction(&self.pass.forward_data)?;
+        let rev_data = self.generate_result_one_direction(&self.pass.reverse_data)?;
+
+        let variable_definitions = self.pass.variable_definitions.iter()
+            .filter(|&(var, _)| fwd_data.used_variables.contains(var) || rev_data.used_variables.contains(var))
+            .map(|(var, def)| (var.clone(), *def))
+            .collect();
+
+        Ok(Pass1Result {
+            reverse_data: rev_data,
+            forward_data: fwd_data,
+            variable_definitions,
+        })
+
+    }
+
+    fn generate_result_one_direction(&mut self, seed_data: &Pass1Data) -> Result<Pass1Data> {
+        let seed_vars = &seed_data.used_variables;
+        let seed_transliterators = &seed_data.dependencies;
+
+        let mut used_vars = seed_vars.clone();
+        for var in seed_vars {
+            self.visit_var(var)?;
+            #[allow(clippy::indexing_slicing)] // an non-error `visit_var` ensures this exists
+            let deps = self.transitive_var_dependencies[var].clone();
+            used_vars.extend(deps);
+        }
+
+        // if in the future variables are ever allowed to contain, e.g., function calls, this
+        // will need to take into account recursive dependencies from `used_vars` as well
+        let transliterator_dependencies = seed_transliterators.clone();
+
+        let sizes = used_vars.iter().try_fold(seed_data.sizes, |mut sizes, var| {
+            // we check for unknown variables during the first pass, so these should exist
+            let var_data = self.pass.variable_data.get(var).ok_or(PEK::Internal)?;
+            sizes.num_compounds += var_data.sizes.num_compounds;
+            sizes.num_segments += var_data.sizes.num_segments;
+            sizes.num_quantifiers_opt += var_data.sizes.num_quantifiers_opt;
+            sizes.num_quantifiers_kleene += var_data.sizes.num_quantifiers_kleene;
+            sizes.num_quantifiers_kleene_plus += var_data.sizes.num_quantifiers_kleene_plus;
+            sizes.num_unicode_sets += var_data.sizes.num_unicode_sets;
+            sizes.num_function_calls += var_data.sizes.num_function_calls;
+
+            Ok::<_, crate::ParseError>(sizes)
+        })?;
+
+        Ok(Pass1Data {
+            dependencies: transliterator_dependencies,
+            used_variables: used_vars,
+            sizes,
+        })
+    }
+
+    fn visit_var(&mut self, name: &str) -> Result<()> {
+        if self.transitive_var_dependencies.contains_key(name) {
+            return Ok(());
+        }
+        if self.current_vars.contains(name) {
+            // cyclic dependency - should not occur
+            return Err(PEK::Internal.into());
+        }
+        self.current_vars.insert(name.to_owned());
+        // we check for unknown variables during the first pass, so these should exist
+        let var_data = self.pass.variable_data.get(name).ok_or(PEK::Internal)?;
+        let mut transitive_dependencies = var_data.used_variables.clone();
+        var_data.used_variables.iter().try_for_each(|var| {
+            self.visit_var(var)?;
+            #[allow(clippy::indexing_slicing)] // an non-error `visit_var` ensures this exists
+            let deps = self.transitive_var_dependencies[var].clone();
+            transitive_dependencies.extend(deps);
+
+            Ok::<_, crate::ParseError>(())
+        })?;
+        self.current_vars.remove(name);
+        self.transitive_var_dependencies.insert(name.to_owned(), transitive_dependencies);
+        Ok(())
+    }
+}
+
 pub(crate) fn compile(
     rules: Vec<parse::Rule>,
     direction: parse::Direction,
@@ -663,6 +781,7 @@ pub(crate) fn compile(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::ops::Deref;
 
     enum ExpectedOutcome {
         Pass,
@@ -679,6 +798,26 @@ mod tests {
             Ok(rules) => rules,
             Err(e) => panic!("unexpected error parsing rules {s:?}: {:?}", e),
         }
+    }
+
+    fn pass1data_from_parts(
+        translit_deps: &[(&'static str, &'static str, &'static str)],
+        var_deps: &[&'static str],
+        sizes: SpecialConstructSizes,
+    ) -> Pass1Data {
+        let mut data = Pass1Data::default();
+        data.sizes = sizes;
+        for &(source, target, variant) in translit_deps {
+            data.dependencies.insert(parse::BasicId {
+                source: source.into(),
+                target: target.into(),
+                variant: variant.into(),
+            });
+        }
+        for &var in var_deps {
+            data.used_variables.insert(var.into());
+        }
+        data
     }
 
     #[test]
@@ -708,79 +847,167 @@ mod tests {
 
         let rules = parse(source);
         let mut pass1 = Pass1::new(BOTH);
-        pass1.run(&rules).unwrap();
+        let result = pass1.run(&rules).expect("pass1 failed");
 
         {
-            let mut expected_fwd_data = Pass1Data::default();
-            expected_fwd_data.sizes.num_segments = 1;
-            expected_fwd_data.sizes.num_function_calls = 1;
-            expected_fwd_data.sizes.num_unicode_sets = 1;
-            expected_fwd_data.dependencies.insert(parse::BasicId {
-                source: "Bidi".into(),
-                target: "Dependency".into(),
-                variant: "One".into(),
-            });
-            expected_fwd_data.dependencies.insert(parse::BasicId {
-                source: "Forward".into(),
-                target: "Dependency".into(),
-                variant: "".into(),
-            });
-            expected_fwd_data.dependencies.insert(parse::BasicId {
-                source: "Any".into(),
-                target: "AnotherForwardDependency".into(),
-                variant: "".into(),
-            });
-            expected_fwd_data.dependencies.insert(parse::BasicId {
-                source: "YetAnother".into(),
-                target: "ForwardDependency".into(),
-                variant: "".into(),
-            });
-            expected_fwd_data.used_variables.insert("used_both".into());
-            expected_fwd_data.used_variables.insert("used_fwd".into());
-            expected_fwd_data.used_variables.insert("literal1".into());
-            expected_fwd_data.used_variables.insert("literal2".into());
+            // forward
+            let mut sizes = SpecialConstructSizes::default();
+            sizes.num_segments = 1;
+            sizes.num_function_calls = 1;
+            sizes.num_unicode_sets = 1;
+            let expected_fwd_data = pass1data_from_parts(
+                &[
+                    ("Bidi", "Dependency", "One"),
+                    ("Forward", "Dependency", ""),
+                    ("Any", "AnotherForwardDependency", ""),
+                    ("YetAnother", "ForwardDependency", ""),
+                ],
+                &["used_both", "used_fwd", "literal1", "literal2"],
+                sizes,
+            );
             assert_eq!(expected_fwd_data, pass1.forward_data);
         }
         {
-            let mut expected_rev_data = Pass1Data::default();
-            expected_rev_data.sizes.num_quantifiers_opt = 1;
-            expected_rev_data.sizes.num_quantifiers_kleene_plus = 2;
-            expected_rev_data.sizes.num_segments = 2;
-            expected_rev_data.sizes.num_function_calls = 3;
-            expected_rev_data.dependencies.insert(parse::BasicId {
-                source: "Dependency".into(),
-                target: "Bidi".into(),
-                variant: "One".into(),
-            });
-            expected_rev_data.dependencies.insert(parse::BasicId {
-                source: "Backward".into(),
-                target: "Dependency".into(),
-                variant: "".into(),
-            });
-            expected_rev_data.dependencies.insert(parse::BasicId {
-                source: "Any".into(),
-                target: "AnotherBackwardDependency".into(),
-                variant: "".into(),
-            });
-            expected_rev_data.dependencies.insert(parse::BasicId {
-                source: "Any".into(),
-                target: "Many".into(),
-                variant: "".into(),
-            });
-            expected_rev_data.dependencies.insert(parse::BasicId {
-                source: "Any".into(),
-                target: "Backwardz".into(),
-                variant: "".into(),
-            });
-            expected_rev_data.dependencies.insert(parse::BasicId {
-                source: "Any".into(),
-                target: "Deps".into(),
-                variant: "".into(),
-            });
-            expected_rev_data.used_variables.insert("used_rev".into());
-            expected_rev_data.used_variables.insert("literal1".into());
-            expected_rev_data.used_variables.insert("literal2".into());
+            // reverse
+            let mut sizes = SpecialConstructSizes::default();
+            sizes.num_quantifiers_opt = 1;
+            sizes.num_quantifiers_kleene_plus = 2;
+            sizes.num_segments = 2;
+            sizes.num_function_calls = 3;
+            let expected_rev_data = pass1data_from_parts(
+                &[
+                    ("Dependency", "Bidi", "One"),
+                    ("Backward", "Dependency", ""),
+                    ("Any", "AnotherBackwardDependency", ""),
+                    ("Any", "Many", ""),
+                    ("Any", "Backwardz", ""),
+                    ("Any", "Deps", ""),
+                ],
+                &["used_rev", "literal1", "literal2"],
+                sizes,
+            );
             assert_eq!(expected_rev_data, pass1.reverse_data);
+        }
+        {
+            // $used_both
+            let mut sizes = SpecialConstructSizes::default();
+            sizes.num_compounds = 1;
+            sizes.num_unicode_sets = 1;
+            let expected_data = pass1data_from_parts(&[], &[], sizes);
+            assert_eq!(expected_data, pass1.variable_data["used_both"]);
+        }
+        {
+            // $used_rev
+            let mut sizes = SpecialConstructSizes::default();
+            sizes.num_compounds = 1;
+            sizes.num_quantifiers_kleene_plus = 1;
+            let expected_data = pass1data_from_parts(&[], &["used_both"], sizes);
+            assert_eq!(expected_data, pass1.variable_data["used_rev"]);
+        }
+        {
+            // $unused
+            let mut sizes = SpecialConstructSizes::default();
+            sizes.num_compounds = 1;
+            sizes.num_unicode_sets = 1;
+            sizes.num_quantifiers_opt = 1;
+            sizes.num_quantifiers_kleene_plus = 2;
+            let expected_data = pass1data_from_parts(&[], &["used_both", "used_rev"], sizes);
+            assert_eq!(expected_data, pass1.variable_data["unused"]);
+        }
+        {
+            // $unused2
+            let mut sizes = SpecialConstructSizes::default();
+            sizes.num_compounds = 1;
+            let expected_data = pass1data_from_parts(&[], &["unused"], sizes);
+            assert_eq!(expected_data, pass1.variable_data["unused2"]);
+        }
+        {
+            // $used_both
+            let mut sizes = SpecialConstructSizes::default();
+            sizes.num_compounds = 1;
+            sizes.num_unicode_sets = 1;
+            let expected_data = pass1data_from_parts(&[], &[], sizes);
+            assert_eq!(expected_data, pass1.variable_data["used_both"]);
+        }
+        {
+            // $used_fwd
+            let mut sizes = SpecialConstructSizes::default();
+            sizes.num_compounds = 1;
+            sizes.num_unicode_sets = 1;
+            let expected_data = pass1data_from_parts(&[], &[], sizes);
+            assert_eq!(expected_data, pass1.variable_data["used_fwd"]);
+        }
+        {
+            // $literal1
+            let mut sizes = SpecialConstructSizes::default();
+            sizes.num_compounds = 1;
+            let expected_data = pass1data_from_parts(&[], &[], sizes);
+            assert_eq!(expected_data, pass1.variable_data["literal1"]);
+        }
+        {
+            // $literal2
+            let mut sizes = SpecialConstructSizes::default();
+            sizes.num_compounds = 1;
+            let expected_data = pass1data_from_parts(&[], &[], sizes);
+            assert_eq!(expected_data, pass1.variable_data["literal2"]);
+        }
+        {
+            let vars_with_data: HashSet<_> = pass1.variable_data.keys().map(Deref::deref).collect();
+            let expected_vars_with_data = HashSet::from([
+                "used_both",
+                "used_rev",
+                "unused",
+                "unused2",
+                "used_fwd",
+                "literal1",
+                "literal2",
+            ]);
+            assert_eq!(expected_vars_with_data, vars_with_data);
+        }
+        {
+            // check aggregated Pass1Result
+            let mut fwd_sizes = SpecialConstructSizes::default();
+            fwd_sizes.num_compounds = 4;
+            fwd_sizes.num_unicode_sets = 3;
+            fwd_sizes.num_function_calls = 1;
+            fwd_sizes.num_segments = 1;
+            let fwd_data = pass1data_from_parts(
+                &[
+                    ("Bidi", "Dependency", "One"),
+                    ("Forward", "Dependency", ""),
+                    ("Any", "AnotherForwardDependency", ""),
+                    ("YetAnother", "ForwardDependency", ""),
+                ],
+                &["used_both", "used_fwd", "literal1", "literal2"],
+                fwd_sizes,
+            );
+
+            let mut rev_sizes = SpecialConstructSizes::default();
+            rev_sizes.num_compounds = 4;
+            rev_sizes.num_unicode_sets = 1;
+            rev_sizes.num_quantifiers_kleene_plus = 3;
+            rev_sizes.num_quantifiers_opt = 1;
+            rev_sizes.num_segments = 2;
+            rev_sizes.num_function_calls = 3;
+            let rev_data = pass1data_from_parts(
+                &[
+                    ("Dependency", "Bidi", "One"),
+                    ("Backward", "Dependency", ""),
+                    ("Any", "AnotherBackwardDependency", ""),
+                    ("Any", "Many", ""),
+                    ("Any", "Backwardz", ""),
+                    ("Any", "Deps", ""),
+                ],
+                &["used_both", "used_rev", "literal1", "literal2"],
+                rev_sizes,
+            );
+
+            assert_eq!(fwd_data, result.forward_data);
+            assert_eq!(rev_data, result.reverse_data);
+
+            let actual_definition_keys: HashSet<_> = result.variable_definitions.keys().map(Deref::deref).collect();
+            let expected_definition_keys = HashSet::from(["used_both", "used_fwd", "used_rev", "literal1", "literal2"]);
+            assert_eq!(expected_definition_keys, actual_definition_keys);
         }
     }
 
@@ -867,9 +1094,14 @@ mod tests {
             let mut pass = Pass1::new(BOTH);
             let result = pass.run(&rules);
             match (expected_outcome, result) {
-                (Fail, Ok(())) => panic!("unexpected successful pass1 validation for rules {source:?}"),
-                (Pass, Err(e)) => panic!("unexpected error in pass1 validation for rules {source:?}: {:?}", e),
-                _ => {},
+                (Fail, Ok(_)) => {
+                    panic!("unexpected successful pass1 validation for rules {source:?}")
+                }
+                (Pass, Err(e)) => panic!(
+                    "unexpected error in pass1 validation for rules {source:?}: {:?}",
+                    e
+                ),
+                _ => {}
             }
         }
     }
@@ -895,9 +1127,14 @@ mod tests {
             let mut pass = Pass1::new(BOTH);
             let result = pass.run(&rules);
             match (expected_outcome, result) {
-                (Fail, Ok(())) => panic!("unexpected successful pass1 validation for rules {source:?}"),
-                (Pass, Err(e)) => panic!("unexpected error in pass1 validation for rules {source:?}: {:?}", e),
-                _ => {},
+                (Fail, Ok(_)) => {
+                    panic!("unexpected successful pass1 validation for rules {source:?}")
+                }
+                (Pass, Err(e)) => panic!(
+                    "unexpected error in pass1 validation for rules {source:?}: {:?}",
+                    e
+                ),
+                _ => {}
             }
         }
     }
@@ -923,9 +1160,14 @@ mod tests {
             let mut pass = Pass1::new(BOTH);
             let result = pass.run(&rules);
             match (expected_outcome, result) {
-                (Fail, Ok(())) => panic!("unexpected successful pass1 validation for rules {source:?}"),
-                (Pass, Err(e)) => panic!("unexpected error in pass1 validation for rules {source:?}: {:?}", e),
-                _ => {},
+                (Fail, Ok(_)) => {
+                    panic!("unexpected successful pass1 validation for rules {source:?}")
+                }
+                (Pass, Err(e)) => panic!(
+                    "unexpected error in pass1 validation for rules {source:?}: {:?}",
+                    e
+                ),
+                _ => {}
             }
         }
     }
