@@ -39,8 +39,8 @@ use icu_locid::LanguageIdentifier;
 use std::collections::HashSet;
 
 /// Options bag for [`DatagenProvider`](crate::DatagenProvider).
-#[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Default)]
+#[non_exhaustive]
 pub struct Options {
     /// The set of keys to generate. See [`icu_datagen::keys`],
     /// [`icu_datagen::all_keys`], [`icu_datagen::key`] and [`icu_datagen::keys_from_bin`].
@@ -64,14 +64,15 @@ pub struct Options {
 }
 
 /// Defines the locales to include
+#[derive(Debug, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
-#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum LocaleInclude {
     /// All locales
     All,
     /// No locales
     None,
-    /// An explicit set of locales
+    /// An explicit set of locales. Note that ancestors and children (such as regional variants)
+    /// may be included as well, depending on the [`FallbackMode`].
     Explicit(HashSet<LanguageIdentifier>),
     /// All locales with the given CLDR coverage levels
     CldrSet(HashSet<CoverageLevel>),
@@ -79,22 +80,18 @@ pub enum LocaleInclude {
     ///
     /// This currently resolves to `CldrSet({Modern, Moderate, Basic})` but
     /// might change in future releases.
+    #[default]
     Recommended,
 }
 
-impl Default for LocaleInclude {
-    fn default() -> Self {
-        Self::All
-    }
-}
-
-#[non_exhaustive]
-#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 /// The segmentation models to include
+#[derive(Debug, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
 pub enum SegmenterModelInclude {
     /// Include the recommended set of models. This will cover all languages supported
     /// by ICU4X: Thai, Burmese, Khmer, Lao, Chinese, and Japanese. Both dictionary
     /// and LSTM models will be included, to the extent required by the chosen data keys.
+    #[default]
     Recommended,
     /// Include no dictionary or LSTM models. This will make line and word segmenters
     /// behave like simple rule-based segmenters, which will be incorrect when handling text
@@ -120,10 +117,4 @@ pub enum SegmenterModelInclude {
     /// segmentation when encountering text in a script that requires the model, which will be
     /// incorrect.
     Explicit(Vec<String>),
-}
-
-impl Default for SegmenterModelInclude {
-    fn default() -> Self {
-        Self::Recommended
-    }
 }
