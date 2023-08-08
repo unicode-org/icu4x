@@ -1344,6 +1344,8 @@ dependencies = [
  "criterion",
  "databake",
  "displaydoc",
+ "icu",
+ "icu_benchmark_macros",
  "icu_casemap_data",
  "icu_codepointtrie_builder",
  "icu_collections",
