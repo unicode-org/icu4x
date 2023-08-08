@@ -7,6 +7,7 @@
 pub mod calendar;
 pub mod characters;
 pub mod cldr_serde;
+#[cfg(feature = "icu_singlenumberformatter")]
 pub mod currency;
 pub mod datetime;
 pub mod decimal;
