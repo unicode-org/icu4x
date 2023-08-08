@@ -37,6 +37,7 @@ use crate::types::Moment;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
+use crate::alloc::string::ToString;
 
 /// Biblical Hebrew
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
