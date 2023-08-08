@@ -404,13 +404,12 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
 
     /// Calls day_in_year_cached on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_year_inner(&self) -> u16 {
-        Self::days_in_year_cached(&self.1)
+        let next_new_year = Self::new_year_on_or_before_fixed_date(self.1.new_year + 400, None).0;
+        Self::days_in_year(self.1.new_year, next_new_year)
     }
 
-    /// Returns the number of day in the given year with an associated `ChineseBasedCache`.
-    fn days_in_year_cached(cache: &ChineseBasedCache) -> u16 {
-        let prev_new_year = cache.new_year;
-        let next_new_year = Self::new_year_on_or_before_fixed_date(prev_new_year + 370, None).0;
+    /// Returns the number of day in the given year bounds
+    fn days_in_year(prev_new_year: RataDie, next_new_year: RataDie) -> u16 {
         let result = next_new_year - prev_new_year;
         debug_assert!(
             ((u16::MIN as i64)..=(u16::MAX as i64)).contains(&result),
@@ -492,12 +491,7 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
             Some(solstice),
         )
         .0;
-        let result = next_new_year - prev_new_year;
-        debug_assert!(
-            ((u16::MIN as i64)..=(u16::MAX as i64)).contains(&result),
-            "Days in year should be in range of u16."
-        );
-        result as u16
+        ChineseBasedDateInner::<C>::days_in_year(prev_new_year, next_new_year)
     }
 }
 
