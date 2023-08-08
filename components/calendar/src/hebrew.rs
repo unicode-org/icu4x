@@ -118,10 +118,10 @@ impl Calendar for Hebrew {
     ) -> Result<Self::DateInner, CalendarError> {
         let is_leap_year = Self::is_leap_year(year);
 
-        let year = if _era.0 == tinystr!(16, "hebrew") {
+        let year = if era.0 == tinystr!(16, "hebrew") {
             year
         } else {
-            return Err(CalendarError::UnknownEra(_era.0, self.debug_name()));
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
         let month_ordinal = match month_code.0.to_string().as_str() {
