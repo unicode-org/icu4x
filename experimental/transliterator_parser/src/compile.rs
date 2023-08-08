@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// TODO: update this module doc (and below //-comment) to reflect the new bidirectional nature of Pass1
-
 //! This module has three main functions. First, it validates many aspects of transliterators.
 //! Second, it compiles them into the zero-copy data struct defined in `icu_transliteration`. Third,
 //! it computes the dependencies of the transliterator.
