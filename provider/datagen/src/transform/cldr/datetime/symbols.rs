@@ -64,7 +64,7 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc" => {
             &SOLAR_MONTH_CODES[0..12]
         }
-        "coptic" | "ethiopic" | "chinese" => SOLAR_MONTH_CODES,
+        "coptic" | "ethiopic" | "chinese" => SOLAR_MONTH_CODES, // TODO(#3766): Fix leap month formatting
         _ => panic!("Month map unknown for {calendar}"),
     }
 }
