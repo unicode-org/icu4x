@@ -49,6 +49,7 @@ pub struct CaseMapCloser<CM> {
 
 #[cfg(feature = "compiled_data")]
 impl Default for CaseMapCloser<CaseMapper> {
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     fn default() -> Self {
         Self::new()
     }
