@@ -42,6 +42,7 @@ members = [
     "experimental/ixdtf",
     "experimental/relativetime",
     "experimental/relativetime/data",
+    "experimental/transliteration",
     "experimental/single_number_formatter",
     "experimental/unicodeset_parser",
     "ffi/capi_cdylib",
