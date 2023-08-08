@@ -18,30 +18,24 @@ jobs:
     runs-on: "ubuntu-latest"
     env:
       GCP_PROJECT_ID: "dev-infra-273822"
-      GCP_BUCKET_ID: "icu4x-pr-artifacts"
+      GCP_PR_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
-        echo "::group::🔒 Credentials Info"
+        echo "🔒 Credentials Info"
         echo "The following artifacts are built and uploaded in forks containing the ICU4X service account key. If you are a frequent contributor, see 'artifacts-build.yml' for instructions on setting up the key."
-        echo "::endgroup::"
-
-        echo "::group::📖 Docs Preview"
-        echo "View the docs preview at:"
-        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/docs/icu/index.html"
-        
-        echo "::group::📖 CPP Docs Preview"
-        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/cpp/index.html"
-        echo "::endgroup::"
-
-        echo "::group::📖 JS Docs Preview"
-        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/js/index.html"
-        echo "::endgroup::"
-
-        echo "::endgroup::"
-        echo "::group::Wasm Demo Preview"
-        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/wasm-demo/index.html"
-        echo "::endgroup::"
-        
+        echo
+        echo "📖 Docs Preview"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/docs/icu/index.html"
+        echo
+        echo "📖 CPP Docs Preview"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/cpp/index.html"
+        echo
+        echo "📖 JS Docs Preview"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/js/index.html"
+        echo
+        echo "🌐 Wasm Demo Preview (main only)" 
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/wasm-demo/index.html"
+        echo
         echo "The links will be available after the following job completes:"
         echo "${{ github.event.pull_request.head.repo.html_url }}/actions/workflows/artifacts-build.yml"

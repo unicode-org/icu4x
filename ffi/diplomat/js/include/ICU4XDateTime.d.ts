@@ -1,4 +1,4 @@
-import { u8, i32, u32 } from "./diplomat-runtime"
+import { u8, u16, i32, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCalendar } from "./ICU4XCalendar";
 import { ICU4XDate } from "./ICU4XDate";
@@ -200,7 +200,7 @@ export class ICU4XDateTime {
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year Rust documentation for `days_in_year`} for more information.
    */
-  days_in_year(): u32;
+  days_in_year(): u16;
 
   /**
 

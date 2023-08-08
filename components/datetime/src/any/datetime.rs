@@ -118,6 +118,10 @@ impl DateTimeFormatter {
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Examples
     ///
     /// ```
@@ -149,7 +153,7 @@ impl DateTimeFormatter {
     ///     "Sep 1, 2020, 12:34 PM"
     /// );
     /// ```
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -224,20 +228,26 @@ impl DateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<GregorianDateLengthsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<PersianDateLengthsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
+            + DataProvider<RocDateLengthsV1Marker>
+            + DataProvider<RocDateSymbolsV1Marker>
             + ?Sized,
     {
         let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;
@@ -263,6 +273,10 @@ impl DateTimeFormatter {
     }
 
     /// Constructor that supports experimental options with compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
@@ -350,20 +364,26 @@ impl DateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<GregorianDateLengthsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<PersianDateLengthsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
+            + DataProvider<RocDateLengthsV1Marker>
+            + DataProvider<RocDateSymbolsV1Marker>
             + ?Sized,
     {
         let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;

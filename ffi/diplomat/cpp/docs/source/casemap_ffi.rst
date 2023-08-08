@@ -1,6 +1,34 @@
 ``casemap::ffi``
 ================
 
+.. cpp:class:: ICU4XCaseMapCloser
+
+    See the `Rust documentation for CaseMapCloser <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XCaseMapCloser, ICU4XError> create(const ICU4XDataProvider& provider)
+
+        Construct a new ICU4XCaseMapper instance
+
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new>`__ for more information.
+
+
+    .. cpp:function:: void add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const
+
+        Adds all simple case mappings and the full case folding for ``c`` to ``builder``. Also adds special case closure mappings.
+
+        See the `Rust documentation for add_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to>`__ for more information.
+
+
+    .. cpp:function:: bool add_string_case_closure_to(const std::string_view s, ICU4XCodePointSetBuilder& builder) const
+
+        Finds all characters and strings which may casemap to ``s`` as their full case folding string and adds them to the set.
+
+        Returns true if the string was found
+
+        See the `Rust documentation for add_string_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to>`__ for more information.
+
+
 .. cpp:class:: ICU4XCaseMapper
 
     See the `Rust documentation for CaseMapper <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html>`__ for more information.
@@ -8,7 +36,7 @@
 
     .. cpp:function:: static diplomat::result<ICU4XCaseMapper, ICU4XError> create(const ICU4XDataProvider& provider)
 
-        Construct a new ICU4XCaseMapper instance for NFC
+        Construct a new ICU4XCaseMapper instance
 
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new>`__ for more information.
 
@@ -41,18 +69,22 @@
         See the `Rust documentation for uppercase <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_legacy_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const
 
-        Returns the full titlecase mapping of the given string
+        Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
 
-        See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment>`__ for more information.
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment_legacy <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment(const std::string_view s, const ICU4XLocale& locale) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment_legacy_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const
 
-        Returns the full titlecase mapping of the given string
+        Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
 
-        See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment>`__ for more information.
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment_legacy <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> fold_to_writeable(const std::string_view s, W& write) const
@@ -83,26 +115,17 @@
         See the `Rust documentation for fold_turkic <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic>`__ for more information.
 
 
-    .. cpp:function:: void add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const
+    .. cpp:function:: void add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const
 
         Adds all simple case mappings and the full case folding for ``c`` to ``builder``. Also adds special case closure mappings.
 
         In other words, this adds all characters that this casemaps to, as well as all characters that may casemap to this one.
 
-        Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings
+        Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings.
 
-        See the `Rust documentation for add_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure>`__ for more information.
+        Identical to the similarly named method on ``ICU4XCaseMapCloser``, use that if you plan on using string case closure mappings too.
 
-
-    .. cpp:function:: bool add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const
-
-        Maps the string to single code points and adds the associated case closure mappings, if they exist.
-
-        The string is mapped to code points if it is their full case folding string. In other words, this performs a reverse full case folding and then adds the case closure items of the resulting code points. If the string is found and its closure applied, then the string itself is added as well as part of its code points' closure.
-
-        Returns true if the string was found
-
-        See the `Rust documentation for add_string_case_closure <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_string_case_closure>`__ for more information.
+        See the `Rust documentation for add_case_closure_to <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to>`__ for more information.
 
 
     .. cpp:function:: char32_t simple_lowercase(char32_t ch) const
@@ -148,4 +171,75 @@
         This function only implements simple folding. For full folding, use ``ICU4XCaseMapper::fold_turkic``.
 
         See the `Rust documentation for simple_fold_turkic <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold_turkic>`__ for more information.
+
+
+.. cpp:enum-struct:: ICU4XHeadAdjustment
+
+    See the `Rust documentation for HeadAdjustment <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.HeadAdjustment.html>`__ for more information.
+
+
+    .. cpp:enumerator:: Adjust
+
+    .. cpp:enumerator:: NoAdjust
+
+.. cpp:enum-struct:: ICU4XTailCasing
+
+    See the `Rust documentation for TailCasing <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TailCasing.html>`__ for more information.
+
+
+    .. cpp:enumerator:: Lowercase
+
+    .. cpp:enumerator:: PreserveCase
+
+.. cpp:class:: ICU4XTitlecaseMapper
+
+    See the `Rust documentation for TitlecaseMapper <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create(const ICU4XDataProvider& provider)
+
+        Construct a new ``ICU4XTitlecaseMapper`` instance
+
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create_legacy(const ICU4XDataProvider& provider)
+
+        Construct a new ``ICU4XTitlecaseMapper`` instance with legacy head-adjustment behavior
+
+        Behaves identically to using ``titlecase_segment_legacy`` on ``CaseMapper``
+
+        See the `Rust documentation for new_legacy <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy>`__ for more information.
+
+
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const
+
+        Returns the full titlecase mapping of the given string
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const
+
+        Returns the full titlecase mapping of the given string
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment>`__ for more information.
+
+
+.. cpp:struct:: ICU4XTitlecaseOptionsV1
+
+    See the `Rust documentation for TitlecaseOptions <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html>`__ for more information.
+
+
+    .. cpp:member:: ICU4XHeadAdjustment head_adjustment
+
+    .. cpp:member:: ICU4XTailCasing tail_casing
+
+    .. cpp:function:: static ICU4XTitlecaseOptionsV1 default_options()
+
+        See the `Rust documentation for default <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default>`__ for more information.
 

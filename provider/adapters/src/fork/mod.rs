@@ -80,9 +80,9 @@ use predicates::MissingDataKeyPredicate;
 ///     HelloWorldProvider.into_json_provider(),
 /// );
 ///
-/// let data_provider = forking_provider.as_deserializing();
+/// let provider = forking_provider.as_deserializing();
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
+/// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
 ///     .load(DataRequest {
 ///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
@@ -114,11 +114,11 @@ use predicates::MissingDataKeyPredicate;
 ///         .filter_by_langid(|langid| langid.language == language!("de")),
 /// );
 ///
-/// let data_provider: &dyn DataProvider<HelloWorldV1Marker> =
+/// let provider: &dyn DataProvider<HelloWorldV1Marker> =
 ///     &forking_provider.as_deserializing();
 ///
 /// // Chinese is the first provider, so this succeeds
-/// let chinese_hello_world = data_provider
+/// let chinese_hello_world = provider
 ///     .load(DataRequest {
 ///         locale: &locale!("zh").into(),
 ///         metadata: Default::default(),
@@ -130,7 +130,7 @@ use predicates::MissingDataKeyPredicate;
 /// assert_eq!("你好世界", chinese_hello_world.get().message);
 ///
 /// // German is shadowed by Chinese, so this fails
-/// data_provider
+/// provider
 ///     .load(DataRequest {
 ///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
@@ -185,11 +185,11 @@ impl<P0, P1> ForkByKeyProvider<P0, P1> {
 ///     ],
 /// );
 ///
-/// let data_provider: &dyn DataProvider<HelloWorldV1Marker> =
+/// let provider: &dyn DataProvider<HelloWorldV1Marker> =
 ///     &forking_provider.as_deserializing();
 ///
 /// // Chinese is the first provider, so this succeeds
-/// let chinese_hello_world = data_provider
+/// let chinese_hello_world = provider
 ///     .load(DataRequest {
 ///         locale: &locale!("zh").into(),
 ///         metadata: Default::default(),
@@ -201,7 +201,7 @@ impl<P0, P1> ForkByKeyProvider<P0, P1> {
 /// assert_eq!("你好世界", chinese_hello_world.get().message);
 ///
 /// // German is shadowed by Chinese, so this fails
-/// data_provider
+/// provider
 ///     .load(DataRequest {
 ///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),

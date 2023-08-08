@@ -63,6 +63,7 @@ assert_eq!(cpt.get32(u32::MAX), 2); // error value
 ```
 
 [`ICU4X`]: ../icu/index.html
+[`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
 
 ## More Information

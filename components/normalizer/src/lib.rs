@@ -1524,9 +1524,9 @@ pub struct DecomposingNormalizer {
 }
 
 impl DecomposingNormalizer {
-    /// NFD constructor.
+    /// NFD constructor using compiled data.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -1571,16 +1571,16 @@ impl DecomposingNormalizer {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfd)]
-    pub fn try_new_nfd_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfd_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
@@ -1602,9 +1602,9 @@ impl DecomposingNormalizer {
         })
     }
 
-    /// NFKD constructor.
+    /// NFKD constructor using compiled data.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -1677,7 +1677,7 @@ impl DecomposingNormalizer {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkd)]
-    pub fn try_new_nfkd_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfkd_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -1686,14 +1686,14 @@ impl DecomposingNormalizer {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
         let supplementary_decompositions: DataPayload<
             CompatibilityDecompositionSupplementV1Marker,
-        > = data_provider.load(Default::default())?.take_payload()?;
+        > = provider.load(Default::default())?.take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
         let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len()
             + tables.get().scalars24.len()
@@ -1809,7 +1809,7 @@ impl DecomposingNormalizer {
     #[doc(hidden)]
     #[cfg(feature = "experimental")]
     pub fn try_new_uts46_decomposed_without_ignored_and_disallowed_unstable<D>(
-        data_provider: &D,
+        provider: &D,
     ) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -1820,13 +1820,13 @@ impl DecomposingNormalizer {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
         let supplementary_decompositions: DataPayload<Uts46DecompositionSupplementV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
         let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len()
             + tables.get().scalars24.len()
@@ -2143,9 +2143,9 @@ pub struct ComposingNormalizer {
 }
 
 impl ComposingNormalizer {
-    /// NFC constructor.
+    /// NFC constructor using compiled data.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -2173,17 +2173,17 @@ impl ComposingNormalizer {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfc)]
-    pub fn try_new_nfc_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfc_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
     {
-        let decomposing_normalizer = DecomposingNormalizer::try_new_nfd_unstable(data_provider)?;
+        let decomposing_normalizer = DecomposingNormalizer::try_new_nfd_unstable(provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
@@ -2191,9 +2191,9 @@ impl ComposingNormalizer {
         })
     }
 
-    /// NFKC constructor.
+    /// NFKC constructor using compiled data.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -2221,7 +2221,7 @@ impl ComposingNormalizer {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkc)]
-    pub fn try_new_nfkc_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfkc_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -2230,10 +2230,10 @@ impl ComposingNormalizer {
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
     {
-        let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd_unstable(data_provider)?;
+        let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd_unstable(provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
@@ -2241,7 +2241,7 @@ impl ComposingNormalizer {
         })
     }
 
-    /// See [`try_new_uts46_without_ignored_and_disallowed_unstable`].
+    /// See [`Self::try_new_uts46_without_ignored_and_disallowed_unstable`].
     #[cfg(all(feature = "experimental", feature = "compiled_data"))]
     pub const fn new_uts46_without_ignored_and_disallowed() -> Self {
         ComposingNormalizer {
@@ -2285,7 +2285,7 @@ impl ComposingNormalizer {
     /// </div>
     #[cfg(feature = "experimental")]
     pub fn try_new_uts46_without_ignored_and_disallowed_unstable<D>(
-        data_provider: &D,
+        provider: &D,
     ) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -2298,11 +2298,11 @@ impl ComposingNormalizer {
     {
         let decomposing_normalizer =
             DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed_unstable(
-                data_provider,
+                provider,
             )?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,

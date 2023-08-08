@@ -63,12 +63,7 @@ impl crate::DatagenProvider {
             .numbers()
             .read_and_parse(langid, "numbers.json")?;
 
-        let numbers = &resource
-            .main
-            .0
-            .get(langid)
-            .expect("CLDR file contains the expected language")
-            .numbers;
+        let numbers = &resource.main.value.numbers;
 
         Ok(numbers
             .numsys_data
@@ -80,28 +75,27 @@ impl crate::DatagenProvider {
     }
 
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.filter_data_locales(
-            self.source
-                .cldr()?
-                .numbers()
-                .list_langs()?
-                .flat_map(|langid| {
-                    let last = DataLocale::from(&langid);
-                    self.get_supported_numsys_for_langid_without_default(&langid)
-                        .expect("All languages from list_langs should be present")
-                        .into_iter()
-                        .map(move |nsname| {
-                            let mut data_locale = DataLocale::from(&langid);
-                            data_locale.set_unicode_ext(
-                                key!("nu"),
-                                Value::try_from_single_subtag(nsname.as_bytes())
-                                    .expect("CLDR should have valid numbering system names"),
-                            );
-                            data_locale
-                        })
-                        .chain([last])
-                })
-                .collect(),
-        ))
+        Ok(self
+            .source
+            .cldr()?
+            .numbers()
+            .list_langs()?
+            .flat_map(|langid| {
+                let last = DataLocale::from(&langid);
+                self.get_supported_numsys_for_langid_without_default(&langid)
+                    .expect("All languages from list_langs should be present")
+                    .into_iter()
+                    .map(move |nsname| {
+                        let mut data_locale = DataLocale::from(&langid);
+                        data_locale.set_unicode_ext(
+                            key!("nu"),
+                            Value::try_from_single_subtag(nsname.as_bytes())
+                                .expect("CLDR should have valid numbering system names"),
+                        );
+                        data_locale
+                    })
+                    .chain([last])
+            })
+            .collect())
     }
 }

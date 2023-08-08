@@ -10,9 +10,7 @@ use icu_collections::codepointtrie::{CodePointTrie, TrieType};
 use icu_normalizer::DecomposingNormalizer;
 use icu_properties::{maps, GeneralCategoryGroup, Script};
 use std::fs;
-use std::io::Write;
 use std::path::Path;
-use std::process::{Command, Stdio};
 
 fn main() {
     let decomposer = DecomposingNormalizer::new_nfd();
@@ -97,29 +95,11 @@ fn main() {
 use super::GreekPrecomposedLetterData;
 use icu_collections::codepointtrie::CodePointTrie;
 
+#[rustfmt::skip]
 pub(crate) const GREEK_DATA_TRIE: CodePointTrie<'static, GreekPrecomposedLetterData> = {};
 "#,
         trie.bake(&Default::default())
     );
-
-    let mut rustfmt = Command::new("rustfmt")
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("spawn failed");
-    let mut rustfmt_stdin = rustfmt.stdin.take().unwrap();
-    write!(rustfmt_stdin, "{output}").expect("write failed");
-
-    drop(rustfmt_stdin); // EOF
-
-    let output = rustfmt
-        .wait_with_output()
-        .expect("execution of rustfmt failed");
-    if !output.status.success() {
-        let stderr = String::from_utf8(output.stderr).expect("rustfmt output not utf-8");
-        panic!("rustfmt failed: {stderr}");
-    }
-    let output = String::from_utf8(output.stdout).expect("rustfmt output not utf-8");
 
     let local = Path::new(std::env!("CARGO_MANIFEST_DIR")).join("src/greek_to_me/data.rs");
 

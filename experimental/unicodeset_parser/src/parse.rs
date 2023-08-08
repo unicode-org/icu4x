@@ -255,7 +255,7 @@ impl<'a> VariableMap<'a> {
     pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
-            // safety: we just checked that this key exists
+            // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
@@ -270,7 +270,7 @@ impl<'a> VariableMap<'a> {
     pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
-            // safety: we just checked that this key exists
+            // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
@@ -291,7 +291,7 @@ impl<'a> VariableMap<'a> {
     pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
-            // safety: we just checked that this key exists
+            // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
@@ -316,7 +316,7 @@ impl<'a> VariableMap<'a> {
     ) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.get(&key).is_some() {
-            // safety: we just checked that this key exists
+            // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
@@ -391,6 +391,7 @@ struct UnicodeSetBuilder<'a, 'b, P: ?Sized> {
     single_set: CodePointInversionListBuilder,
     string_set: HashSet<String>,
     iter: &'a mut Peekable<CharIndices<'b>>,
+    source: &'b str,
     inverted: bool,
     variable_map: &'a VariableMap<'a>,
     xid_start: &'a CodePointInversionList<'a>,
@@ -460,6 +461,7 @@ where
 {
     fn new_internal(
         iter: &'a mut Peekable<CharIndices<'b>>,
+        source: &'b str,
         variable_map: &'a VariableMap<'a>,
         xid_start: &'a CodePointInversionList<'a>,
         xid_continue: &'a CodePointInversionList<'a>,
@@ -470,6 +472,7 @@ where
             single_set: CodePointInversionListBuilder::new(),
             string_set: Default::default(),
             iter,
+            source,
             inverted: false,
             variable_map,
             xid_start,
@@ -619,7 +622,7 @@ where
                     if let Some(prev) = prev_char.take() {
                         self.single_set.add_char(prev);
                     }
-                    // safety: the match guard checks length == 1
+                    // the match guard checks length == 1
                     #[allow(clippy::indexing_slicing)]
                     let c = c_vec[0];
                     prev_char = Some(c);
@@ -650,7 +653,7 @@ where
                 // parse a literal char as the end of a range
                 (CharMinus, MT::CharOrString(CS::Char(c_vec))) if c_vec.len() == 1 => {
                     let start = prev_char.ok_or(PEK::Internal.with_offset(tok_offset))?;
-                    // safety: the match guard checks length == 1
+                    // the match guard checks length == 1
                     #[allow(clippy::indexing_slicing)]
                     let end = c_vec[0];
                     if start > end {
@@ -723,6 +726,7 @@ where
             ('\\', 'p' | 'P') | ('[', _) => {
                 let mut inner_builder = UnicodeSetBuilder::new_internal(
                     self.iter,
+                    self.source,
                     self.variable_map,
                     self.xid_start,
                     self.xid_continue,
@@ -860,12 +864,8 @@ where
                                 return self.error_here(PEK::UnexpectedChar(initial_c));
                             }
 
-                            let (hex_digits, end_offset) = self.parse_variable_length_hex()?;
-                            let num = u32::from_str_radix(&hex_digits, 16)
-                                .map_err(|_| PEK::Internal.with_offset(end_offset))?;
-                            let parsed_c = char::try_from(num)
-                                .map_err(|_| PEK::InvalidEscape.with_offset(end_offset))?;
-                            c_vec.push(parsed_c);
+                            let (_, c) = self.parse_hex_digits_into_char(1, 6)?;
+                            c_vec.push(c);
                         }
                     }
                 }
@@ -877,47 +877,20 @@ where
             }
             'u' => {
                 // 'u' hex{4}
-                let (offset, exact) = self.parse_exact_hex_digits::<4>()?;
-                let hex_digits = exact.iter().collect::<String>();
-                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num)
-                    .map(|c| (offset, vec![c]))
-                    .map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                self.parse_hex_digits_into_char(4, 4)
+                    .map(|(offset, c)| (offset, vec![c]))
             }
             'x' => {
                 // 'x' hex{2}
-                let (offset, exact) = self.parse_exact_hex_digits::<2>()?;
-                let hex_digits = exact.iter().collect::<String>();
-                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num)
-                    .map(|c| (offset, vec![c]))
-                    .map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                self.parse_hex_digits_into_char(2, 2)
+                    .map(|(offset, c)| (offset, vec![c]))
             }
             'U' => {
                 // 'U00' ('0' hex{5} | '10' hex{4})
                 self.consume('0')?;
                 self.consume('0')?;
-                let (offset, hex_digits) = match self.must_peek_char()? {
-                    '0' => {
-                        self.iter.next();
-                        let (offset, exact) = self.parse_exact_hex_digits::<5>()?;
-                        (offset, exact.iter().collect::<String>())
-                    }
-                    '1' => {
-                        self.iter.next();
-                        self.consume('0')?;
-                        let (offset, exact) = self.parse_exact_hex_digits::<4>()?;
-                        (
-                            offset,
-                            ['1', '0'].iter().chain(exact.iter()).collect::<String>(),
-                        )
-                    }
-                    c => return self.error_here(PEK::UnexpectedChar(c)),
-                };
-                let num = u32::from_str_radix(&hex_digits, 16).map_err(|_| PEK::Internal)?;
-                char::try_from(num)
-                    .map(|c| (offset, vec![c]))
-                    .map_err(|_| PEK::InvalidEscape.with_offset(offset))
+                self.parse_hex_digits_into_char(6, 6)
+                    .map(|(offset, c)| (offset, vec![c]))
             }
             'N' => {
                 // parse code point with name in {}
@@ -1131,41 +1104,38 @@ where
         }
     }
 
-    // parses [0-9a-fA-F]{1..6}
-    fn parse_variable_length_hex(&mut self) -> Result<(String, usize)> {
-        let mut result = String::new();
-        let mut end_offset = 0;
-        while let Some(&(offset, c)) = self.iter.peek() {
-            if result.len() >= 6 || !c.is_ascii_hexdigit() {
-                break;
-            }
-            result.push(c);
-            end_offset = offset;
-            self.iter.next();
-        }
-        if result.is_empty() {
-            let (unexpected_offset, unexpected_char) = self.must_peek()?;
-            return Err(PEK::UnexpectedChar(unexpected_char).with_offset(unexpected_offset));
-        }
-        Ok((result, end_offset))
+    // note: could turn this from the current two-pass approach into a one-pass approach
+    // by manually parsing the digits instead of using u32::from_str_radix.
+    fn parse_hex_digits_into_char(&mut self, min: usize, max: usize) -> Result<(usize, char)> {
+        let first_offset = self.must_peek_index()?;
+        let end_offset = self.validate_hex_digits(min, max)?;
+
+        // validate_hex_digits ensures that chars (including the last one) are ascii hex digits,
+        // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
+        #[allow(clippy::indexing_slicing)]
+        let hex_source = &self.source[first_offset..=end_offset];
+        let num = u32::from_str_radix(hex_source, 16).map_err(|_| PEK::Internal)?;
+        char::try_from(num)
+            .map(|c| (end_offset, c))
+            .map_err(|_| PEK::InvalidEscape.with_offset(end_offset))
     }
 
-    // parses [0-9a-fA-F]{N}, returns the offset of the last digit
-    fn parse_exact_hex_digits<const N: usize>(&mut self) -> Result<(usize, [char; N])> {
-        debug_assert!(N > 0);
-
-        let mut result = [0 as char; N];
-        // N is never zero, so the loop will always run at least once
+    // validates [0-9a-fA-F]{min,max}, returns the offset of the last digit, consuming everything in the process
+    fn validate_hex_digits(&mut self, min: usize, max: usize) -> Result<usize> {
         let mut last_offset = 0;
-        for slot in result.iter_mut() {
-            let (offset, c) = self.must_next()?;
-            last_offset = offset;
+        for count in 0..max {
+            let (offset, c) = self.must_peek()?;
             if !c.is_ascii_hexdigit() {
-                return Err(PEK::UnexpectedChar(c).with_offset(offset));
+                if count < min {
+                    return Err(PEK::UnexpectedChar(c).with_offset(offset));
+                } else {
+                    break;
+                }
             }
-            *slot = c;
+            self.iter.next();
+            last_offset = offset;
         }
-        Ok((last_offset, result))
+        Ok(last_offset)
     }
 
     // returns the number of skipped whitespace chars
@@ -1321,11 +1291,15 @@ where
 ///
 /// # Limitations
 ///
-/// * Currently, we only support the [ECMA-262 properties](https://tc39.es/ecma262/#table-nonbinary-unicode-properties) except `Script_Extensions`.
+/// * Currently, we only support the [ECMA-262 properties](https://tc39.es/ecma262/#table-nonbinary-unicode-properties).
 /// The property names must match the exact spelling listed in ECMA-262. Note that we do support UTS35 syntax for elided `General_Category`
 /// and `Script` property names, i.e., `[:Latn:]` and `[:Ll:]` are both valid, with the former implying the `Script` property, and the latter the
 /// `General_Category` property.
 /// * We do not support `\N{Unicode code point name}` character escaping. Use any other escape method described in UTS35.
+///
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
+///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
 ///
 /// # Examples
 ///
@@ -1506,6 +1480,7 @@ where
 
     let mut builder = UnicodeSetBuilder::new_internal(
         &mut iter,
+        source,
         variable_map,
         &xid_start_list,
         &xid_continue_list,

@@ -89,7 +89,7 @@ impl Calendar for Buddhist {
         Iso.months_in_year(date)
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         Iso.days_in_year(date)
     }
 

@@ -7,7 +7,6 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/numbers.json>
 
-use icu_locid::LanguageIdentifier;
 use itertools::Itertools;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
@@ -163,10 +162,4 @@ pub struct LangNumbers {
     pub numbers: Numbers,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub HashMap<LanguageIdentifier, LangNumbers>);
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub main: LangData,
-}
+pub type Resource = super::LocaleResource<LangNumbers>;

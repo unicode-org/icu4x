@@ -47,8 +47,10 @@
 extern crate alloc;
 
 mod casemapper;
+mod closer;
 pub mod provider;
 mod set;
+pub mod titlecase;
 
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
@@ -56,4 +58,6 @@ pub mod greek_to_me;
 mod internals;
 
 pub use casemapper::CaseMapper;
-pub use set::ClosureSet;
+pub use closer::CaseMapCloser;
+pub use set::ClosureSink;
+pub use titlecase::TitlecaseMapper;

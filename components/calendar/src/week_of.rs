@@ -46,7 +46,7 @@ impl WeekCalculator {
         locale: include,
         options: skip,
         error: CalendarError,
-        /// Creates a new [`WeekCalculator`] from locale data.
+        /// Creates a new [`WeekCalculator`] from compiled locale data.
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -128,9 +128,9 @@ impl WeekCalculator {
     ) -> Result<WeekOf, CalendarError> {
         week_of(
             self,
-            day_of_year_info.days_in_prev_year as u16,
-            day_of_year_info.days_in_year as u16,
-            day_of_year_info.day_of_year as u16,
+            day_of_year_info.days_in_prev_year,
+            day_of_year_info.days_in_year,
+            day_of_year_info.day_of_year,
             iso_weekday,
         )
     }

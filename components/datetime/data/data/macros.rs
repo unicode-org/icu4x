@@ -10,6 +10,16 @@ mod datetime_buddhist_datesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_buddhist_datesymbols_v1 as impl_datetime_buddhist_datesymbols_v1;
 #[macro_use]
+#[path = "macros/datetime_chinese_datelengths_v1.data.rs"]
+mod datetime_chinese_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_chinese_datelengths_v1 as impl_datetime_chinese_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_chinese_datesymbols_v1.data.rs"]
+mod datetime_chinese_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_chinese_datesymbols_v1 as impl_datetime_chinese_datesymbols_v1;
+#[macro_use]
 #[path = "macros/datetime_coptic_datelengths_v1.data.rs"]
 mod datetime_coptic_datelengths_v1;
 #[doc(inline)]
@@ -69,6 +79,26 @@ pub use __impl_datetime_japanext_datelengths_v1 as impl_datetime_japanext_datele
 mod datetime_japanext_datesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_japanext_datesymbols_v1 as impl_datetime_japanext_datesymbols_v1;
+#[macro_use]
+#[path = "macros/datetime_persian_datelengths_v1.data.rs"]
+mod datetime_persian_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_persian_datelengths_v1 as impl_datetime_persian_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_persian_datesymbols_v1.data.rs"]
+mod datetime_persian_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_persian_datesymbols_v1 as impl_datetime_persian_datesymbols_v1;
+#[macro_use]
+#[path = "macros/datetime_roc_datelengths_v1.data.rs"]
+mod datetime_roc_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_roc_datelengths_v1 as impl_datetime_roc_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_roc_datesymbols_v1.data.rs"]
+mod datetime_roc_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_roc_datesymbols_v1 as impl_datetime_roc_datesymbols_v1;
 #[macro_use]
 #[path = "macros/datetime_skeletons_v1.data.rs"]
 mod datetime_skeletons_v1;

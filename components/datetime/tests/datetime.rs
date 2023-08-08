@@ -8,11 +8,14 @@ mod patterns;
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     buddhist::Buddhist,
+    chinese::Chinese,
     coptic::Coptic,
     ethiopian::{Ethiopian, EthiopianEraStyle},
     indian::Indian,
     japanese::{Japanese, JapaneseExtended},
+    persian::Persian,
     provider::WeekDataV1Marker,
+    roc::Roc,
     AsCalendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{
@@ -66,11 +69,14 @@ fn test_fixture(fixture_name: &str) {
         let input_value = mock::parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);
         let input_buddhist = input_value.to_calendar(Buddhist);
+        let input_chinese = input_value.to_calendar(Chinese);
         let input_japanese = input_value.to_calendar(japanese);
         let input_japanext = input_value.to_calendar(japanext);
         let input_coptic = input_value.to_calendar(Coptic);
         let input_indian = input_value.to_calendar(Indian);
+        let input_persian = input_value.to_calendar(Persian);
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
+        let input_roc = input_value.to_calendar(Roc);
 
         let input_ethioaa =
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
@@ -88,6 +94,14 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
                         &locale,
                         &input_buddhist,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Chinese => assert_fixture_element(
+                        &locale,
+                        &input_chinese,
                         &input_iso,
                         &output_value,
                         options,
@@ -125,6 +139,14 @@ fn test_fixture(fixture_name: &str) {
                         options,
                         &description,
                     ),
+                    AnyCalendarKind::Persian => assert_fixture_element(
+                        &locale,
+                        &input_persian,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
                     AnyCalendarKind::Ethiopian => assert_fixture_element(
                         &locale,
                         &input_ethiopian,
@@ -136,6 +158,14 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::EthiopianAmeteAlem => assert_fixture_element(
                         &locale,
                         &input_ethioaa,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Roc => assert_fixture_element(
+                        &locale,
+                        &input_roc,
                         &input_iso,
                         &output_value,
                         options,

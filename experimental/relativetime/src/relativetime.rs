@@ -116,9 +116,9 @@ pub struct RelativeTimeFormatter {
 macro_rules! constructor {
     ($unstable: ident, $baked: ident, $any: ident, $buffer: ident, $marker: ty) => {
 
-        /// Create a new [`RelativeTimeFormatter`]
+        /// Create a new [`RelativeTimeFormatter`] from compiled data.
         ///
-        /// ✨ **Enabled with the `"compiled_data"` feature.**
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         #[cfg(feature = "compiled_data")]
@@ -164,7 +164,7 @@ macro_rules! constructor {
 
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$baked)]
         pub fn $unstable<D>(
-            data_provider: &D,
+            provider: &D,
             locale: &DataLocale,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, RelativeTimeError>
@@ -174,14 +174,14 @@ macro_rules! constructor {
                 + DataProvider<DecimalSymbolsV1Marker>
                 + ?Sized,
         {
-            let plural_rules = PluralRules::try_new_cardinal_unstable(data_provider, locale)?;
+            let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-                data_provider,
+                provider,
                 locale,
                 FixedDecimalFormatterOptions::default(),
             )?;
-            let rt: DataPayload<$marker> = data_provider
+            let rt: DataPayload<$marker> = provider
                 .load(DataRequest {
                     locale,
                     metadata: Default::default(),

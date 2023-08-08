@@ -38,10 +38,12 @@ databake = { version = "0.1.3", path = "../../utils/databake", optional = true }
 
 [dev-dependencies]
 bincode = "1.3"
-criterion = "0.4"
 postcard = { version = "1.0.0", features = ["use-std"], default-features = false }
 rand = { version = "0.8.5", features = ["small_rng"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
 
 [features]
 default = ["alloc"]

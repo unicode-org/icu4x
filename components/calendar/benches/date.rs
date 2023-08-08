@@ -121,6 +121,15 @@ fn date_benches(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
+        "calendar/chinese",
+        &fxs,
+        icu::calendar::chinese::Chinese,
+        |y, m, d| Date::try_new_chinese_date(y, m, d).unwrap(),
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
         "calendar/gregorian",
         &fxs,
         icu::calendar::gregorian::Gregorian,

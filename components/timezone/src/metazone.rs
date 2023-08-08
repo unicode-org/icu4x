@@ -27,9 +27,9 @@ impl Default for MetazoneCalculator {
 }
 
 impl MetazoneCalculator {
-    /// Constructs a `MetazoneCalculator`.
+    /// Constructs a `MetazoneCalculator` using compiled data.
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

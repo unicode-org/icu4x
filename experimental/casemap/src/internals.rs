@@ -9,8 +9,9 @@
 use crate::greek_to_me::{self, GreekCombiningCharacterSequenceDiacritics, GreekDiacritics};
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
-use crate::provider::CaseMapV1;
-use crate::set::ClosureSet;
+use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
+use crate::set::ClosureSink;
+use crate::titlecase::TailCasing;
 use core::fmt;
 use icu_locid::LanguageIdentifier;
 use writeable::Writeable;
@@ -29,6 +30,59 @@ impl FoldOptions {
         Self {
             exclude_special_i: true,
         }
+    }
+}
+
+/// Helper type that wraps a writeable in a prefix string
+pub(crate) struct StringAndWriteable<'a, W> {
+    pub string: &'a str,
+    pub writeable: W,
+}
+
+impl<'a, Wr: Writeable> Writeable for StringAndWriteable<'a, Wr> {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        sink.write_str(self.string)?;
+        self.writeable.write_to(sink)
+    }
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(self.string.len()) + self.writeable.writeable_length_hint()
+    }
+}
+
+pub(crate) struct FullCaseWriteable<'a, const IS_TITLE_CONTEXT: bool> {
+    data: &'a CaseMapV1<'a>,
+    src: &'a str,
+    locale: CaseMapLocale,
+    mapping: MappingKind,
+    titlecase_tail_casing: TailCasing,
+}
+
+impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
+    #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        let src = self.src;
+        let mut mapping = self.mapping;
+        let mut iter = src.char_indices();
+        for (i, c) in &mut iter {
+            let context = ContextIterator::new(&src[..i], &src[i..]);
+            self.data
+                .full_helper::<IS_TITLE_CONTEXT, W>(c, context, self.locale, mapping, sink)?;
+            if IS_TITLE_CONTEXT {
+                if self.titlecase_tail_casing == TailCasing::Lowercase {
+                    mapping = MappingKind::Lower;
+                } else {
+                    break;
+                }
+            }
+        }
+        // Write the rest of the string
+        if IS_TITLE_CONTEXT && self.titlecase_tail_casing == TailCasing::PreserveCase {
+            sink.write_str(iter.as_str())?;
+        }
+        Ok(())
+    }
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::at_least(self.src.len())
     }
 }
 
@@ -126,6 +180,11 @@ impl<'data> CaseMapV1<'data> {
             let idx = data.exception_index();
             self.exceptions.get(idx).bits.is_sensitive()
         }
+    }
+
+    /// Returns whether the character is cased
+    pub(crate) fn is_cased(&self, c: char) -> bool {
+        self.lookup_data(c).case_type().is_some()
     }
 
     #[inline(always)]
@@ -450,52 +509,24 @@ impl<'data> CaseMapV1<'data> {
     }
     /// IS_TITLE_CONTEXT is true iff the mapping is MappingKind::Title, primarily exists
     /// to avoid perf impacts on other more common modes of operation
+    ///
+    /// titlecase_tail_casing is only read in IS_TITLE_CONTEXT
     pub(crate) fn full_helper_writeable<'a: 'data, const IS_TITLE_CONTEXT: bool>(
         &'a self,
         src: &'a str,
         locale: CaseMapLocale,
         mapping: MappingKind,
-    ) -> impl Writeable + 'a {
+        titlecase_tail_casing: TailCasing,
+    ) -> FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
         // Ensure that they are either both true or both false, i.e. an XNOR operation
         debug_assert!(!(IS_TITLE_CONTEXT ^ (mapping == MappingKind::Title)));
-
-        struct FullCaseWriteable<'a, const IS_TITLE_CONTEXT: bool> {
-            data: &'a CaseMapV1<'a>,
-            src: &'a str,
-            locale: CaseMapLocale,
-            mapping: MappingKind,
-        }
-
-        impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
-            #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
-            fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-                let src = self.src;
-                let mut mapping = self.mapping;
-                for (i, c) in src.char_indices() {
-                    let context = ContextIterator::new(&src[..i], &src[i..]);
-                    self.data.full_helper::<IS_TITLE_CONTEXT, W>(
-                        c,
-                        context,
-                        self.locale,
-                        mapping,
-                        sink,
-                    )?;
-                    if IS_TITLE_CONTEXT {
-                        mapping = MappingKind::Lower;
-                    }
-                }
-                Ok(())
-            }
-            fn writeable_length_hint(&self) -> writeable::LengthHint {
-                writeable::LengthHint::at_least(self.src.len())
-            }
-        }
 
         FullCaseWriteable::<IS_TITLE_CONTEXT> {
             data: self,
             src,
             locale,
             mapping,
+            titlecase_tail_casing,
         }
     }
 
@@ -506,7 +537,7 @@ impl<'data> CaseMapV1<'data> {
     /// - for s include long s
     /// - for sharp s include ss
     /// - for k include the Kelvin sign
-    pub(crate) fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
+    pub(crate) fn add_case_closure_to<S: ClosureSink>(&self, c: char, set: &mut S) {
         // Hardcode the case closure of i and its relatives and ignore the
         // data file data for these characters.
         // The Turkic dotless i and dotted I with their case mapping conditions
@@ -577,17 +608,22 @@ impl<'data> CaseMapV1<'data> {
     /// Maps the string to single code points and adds the associated case closure
     /// mappings.
     ///
-    /// (see docs on CaseMapper::add_string_case_closure)
-    pub(crate) fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
+    /// (see docs on CaseMapper::add_string_case_closure_to)
+    pub(crate) fn add_string_case_closure_to<S: ClosureSink>(
+        &self,
+        s: &str,
+        set: &mut S,
+        unfold_data: &CaseMapUnfoldV1,
+    ) -> bool {
         if s.chars().count() <= 1 {
             // The string is too short to find any match.
             return false;
         }
-        match self.unfold.get(s) {
+        match unfold_data.get(s) {
             Some(closure_string) => {
                 for c in closure_string.chars() {
                     set.add_char(c);
-                    self.add_case_closure(c, set);
+                    self.add_case_closure_to(c, set);
                 }
                 true
             }
@@ -637,7 +673,7 @@ pub enum FullMappingResult<'a> {
 
 impl<'a> FullMappingResult<'a> {
     #[allow(dead_code)]
-    fn add_to_set<S: ClosureSet>(&self, set: &mut S) {
+    fn add_to_set<S: ClosureSink>(&self, set: &mut S) {
         match *self {
             FullMappingResult::CodePoint(c) => set.add_char(c),
             FullMappingResult::String(s) => set.add_string(s),

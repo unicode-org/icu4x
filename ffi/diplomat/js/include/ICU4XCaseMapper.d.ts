@@ -4,6 +4,7 @@ import { ICU4XCodePointSetBuilder } from "./ICU4XCodePointSetBuilder";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
+import { ICU4XTitlecaseOptionsV1 } from "./ICU4XTitlecaseOptionsV1";
 
 /**
 
@@ -13,7 +14,7 @@ export class ICU4XCaseMapper {
 
   /**
 
-   * Construct a new ICU4XCaseMapper instance for NFC
+   * Construct a new ICU4XCaseMapper instance
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
@@ -40,12 +41,14 @@ export class ICU4XCaseMapper {
 
   /**
 
-   * Returns the full titlecase mapping of the given string
+   * Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment Rust documentation for `titlecase_segment`} for more information.
+   * The `v1` refers to the version of the options struct, which may change as we add more options
+
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy Rust documentation for `titlecase_segment_legacy`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  titlecase_segment(s: string, locale: ICU4XLocale): string | never;
+  titlecase_segment_legacy_v1(s: string, locale: ICU4XLocale, options: ICU4XTitlecaseOptionsV1): string | never;
 
   /**
 
@@ -71,23 +74,13 @@ export class ICU4XCaseMapper {
 
    * In other words, this adds all characters that this casemaps to, as well as all characters that may casemap to this one.
 
-   * Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings
+   * Note that since ICU4XCodePointSetBuilder does not contain strings, this will ignore string mappings.
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure Rust documentation for `add_case_closure`} for more information.
+   * Identical to the similarly named method on `ICU4XCaseMapCloser`, use that if you plan on using string case closure mappings too.
+
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to Rust documentation for `add_case_closure_to`} for more information.
    */
-  add_case_closure(c: char, builder: ICU4XCodePointSetBuilder): void;
-
-  /**
-
-   * Maps the string to single code points and adds the associated case closure mappings, if they exist.
-
-   * The string is mapped to code points if it is their full case folding string. In other words, this performs a reverse full case folding and then adds the case closure items of the resulting code points. If the string is found and its closure applied, then the string itself is added as well as part of its code points' closure.
-
-   * Returns true if the string was found
-
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_string_case_closure Rust documentation for `add_string_case_closure`} for more information.
-   */
-  add_string_case_closure(s: string, builder: ICU4XCodePointSetBuilder): boolean;
+  add_case_closure_to(c: char, builder: ICU4XCodePointSetBuilder): void;
 
   /**
 

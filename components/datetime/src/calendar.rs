@@ -4,9 +4,11 @@
 
 use crate::provider::calendar::*;
 use icu_calendar::any_calendar::AnyCalendarKind;
+use icu_calendar::chinese::Chinese;
+use icu_calendar::roc::Roc;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, japanese::Japanese,
-    japanese::JapaneseExtended, Gregorian,
+    japanese::JapaneseExtended, persian::Persian, Gregorian,
 };
 use icu_locid::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
@@ -47,6 +49,12 @@ impl CldrCalendar for Buddhist {
     type DateLengthsV1Marker = BuddhistDateLengthsV1Marker;
 }
 
+impl CldrCalendar for Chinese {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("chinese");
+    type DateSymbolsV1Marker = ChineseDateSymbolsV1Marker;
+    type DateLengthsV1Marker = ChineseDateLengthsV1Marker;
+}
+
 impl CldrCalendar for Japanese {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanese");
     type DateSymbolsV1Marker = JapaneseDateSymbolsV1Marker;
@@ -71,6 +79,12 @@ impl CldrCalendar for Indian {
     type DateLengthsV1Marker = IndianDateLengthsV1Marker;
 }
 
+impl CldrCalendar for Persian {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("persian");
+    type DateSymbolsV1Marker = PersianDateSymbolsV1Marker;
+    type DateLengthsV1Marker = PersianDateLengthsV1Marker;
+}
+
 impl CldrCalendar for Ethiopian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopic");
     type DateSymbolsV1Marker = EthiopianDateSymbolsV1Marker;
@@ -78,6 +92,12 @@ impl CldrCalendar for Ethiopian {
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("ethiopic") || *value == value!("ethioaa")
     }
+}
+
+impl CldrCalendar for Roc {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("roc");
+    type DateSymbolsV1Marker = RocDateSymbolsV1Marker;
+    type DateLengthsV1Marker = RocDateLengthsV1Marker;
 }
 
 pub(crate) fn load_lengths_for_cldr_calendar<C, P>(
@@ -122,11 +142,14 @@ pub(crate) fn load_lengths_for_any_calendar_kind<P>(
 where
     P: DataProvider<GregorianDateLengthsV1Marker>
         + DataProvider<BuddhistDateLengthsV1Marker>
+        + DataProvider<ChineseDateLengthsV1Marker>
         + DataProvider<JapaneseDateLengthsV1Marker>
         + DataProvider<JapaneseExtendedDateLengthsV1Marker>
         + DataProvider<CopticDateLengthsV1Marker>
         + DataProvider<IndianDateLengthsV1Marker>
+        + DataProvider<PersianDateLengthsV1Marker>
         + DataProvider<EthiopianDateLengthsV1Marker>
+        + DataProvider<RocDateLengthsV1Marker>
         + ?Sized,
 {
     let req = DataRequest {
@@ -141,6 +164,11 @@ where
         }
         AnyCalendarKind::Buddhist => {
             DataProvider::<<Buddhist as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Chinese => {
+            DataProvider::<<Chinese as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }
@@ -159,6 +187,11 @@ where
                 .take_payload()?
                 .cast()
         }
+        AnyCalendarKind::Persian => {
+            DataProvider::<<Persian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
         AnyCalendarKind::Coptic => {
             DataProvider::<<Coptic as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
@@ -171,6 +204,11 @@ where
         }
         AnyCalendarKind::EthiopianAmeteAlem => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Roc => {
+            DataProvider::<<Roc as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }
@@ -192,11 +230,14 @@ pub(crate) fn load_symbols_for_any_calendar_kind<P>(
 where
     P: DataProvider<GregorianDateSymbolsV1Marker>
         + DataProvider<BuddhistDateSymbolsV1Marker>
+        + DataProvider<ChineseDateSymbolsV1Marker>
         + DataProvider<JapaneseDateSymbolsV1Marker>
         + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
         + DataProvider<CopticDateSymbolsV1Marker>
         + DataProvider<IndianDateSymbolsV1Marker>
+        + DataProvider<PersianDateSymbolsV1Marker>
         + DataProvider<EthiopianDateSymbolsV1Marker>
+        + DataProvider<RocDateSymbolsV1Marker>
         + ?Sized,
 {
     let req = DataRequest {
@@ -211,6 +252,11 @@ where
         }
         AnyCalendarKind::Buddhist => {
             DataProvider::<<Buddhist as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Chinese => {
+            DataProvider::<<Chinese as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }
@@ -229,6 +275,11 @@ where
                 .take_payload()?
                 .cast()
         }
+        AnyCalendarKind::Persian => {
+            DataProvider::<<Persian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
         AnyCalendarKind::Coptic => {
             DataProvider::<<Coptic as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
@@ -241,6 +292,11 @@ where
         }
         AnyCalendarKind::EthiopianAmeteAlem => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Roc => {
+            DataProvider::<<Roc as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }

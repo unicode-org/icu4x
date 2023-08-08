@@ -39,7 +39,7 @@ jobs:
     # be killed if check fails.
     strategy:
       matrix: 
-        behavior: [check, features]
+        behavior: [check, features-1, features-2, features-3]
       fail-fast: true
     steps:
     - uses: actions/checkout@v3
@@ -61,6 +61,24 @@ jobs:
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
+
+    # Cargo-all-features boilerplate
+    - name: Get cargo-all-features version
+      id: cargo-all-features-version
+      run: |
+        echo "hash=$(cargo search cargo-all-features | grep '^cargo-all-features =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-all-features
+      uses: actions/cache@v3
+      id: cargo-all-features-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-all-features
+          ~/.cargo/bin/cargo-all-features.exe
+        key: ${{ runner.os }}-all-features-${{ steps.cargo-all-features-version.outputs.hash }}
+    - name: Install cargo-all-features
+      if: steps.cargo-all-features-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-all-features
 
     # No toolchain boilerplate as this runs on MSRV
 
@@ -102,10 +120,6 @@ jobs:
       run: cargo make set-nightly-version-for-ci
     - name: Show the selected Rust toolchain
       run: rustup show
-
-    # Job-specific dependencies
-    - name: Install rustfmt
-      run: rustup component add rustfmt
 
     # Actual job
     - name: Run `cargo make ci-job-test`
@@ -197,8 +211,6 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x-source-cache
-    - name: Install rustfmt
-      run: rustup component add rustfmt
 
     # Actual job
     - name: Run `cargo make ci-job-testdata`
@@ -286,9 +298,31 @@ jobs:
   # ci-job-ffi
   ffi:
     runs-on: ubuntu-latest
+    container:
+      image: rust:bookworm
 
     steps:
     - uses: actions/checkout@v3
+    
+    # Software setup/installation for the container
+    - name: Run apt-get update
+      run: |
+        apt-get update
+    - name: Install Clang-15
+      run: |
+        apt-get install -y clang-15 lld-15 llvm-15-dev libc++-15-dev
+    - name: Install GCC 11
+      run: |
+        apt-get install -y gcc-11 g++-11
+    - name: Install Node.js v16.18.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+    - name: Install Rust toolchains
+      run: |
+        rustup toolchain install stable
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -303,7 +337,8 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+        # Since this is inside a container, use a different key than the other jobs
+        key: ${{ runner.os }}-make-ffi-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
@@ -316,17 +351,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Set up Clang-15
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 15
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
     - name: Attempt to load download cache
       uses: actions/cache@v3
       with:
@@ -341,7 +365,7 @@ jobs:
     - name: Run `cargo make ci-job-ffi`
       run: cargo make ci-job-ffi
       env:
-        CXX: "g++-10"
+        CXX: "g++-11"
 
   # ci-job-verify-ffi
   verify-ffi:
