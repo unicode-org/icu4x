@@ -3,12 +3,6 @@
 version = 3
 
 [[package]]
-name = "cfg-if"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
-
-[[package]]
 name = "diplomat"
 version = "0.5.2"
 source = "git+https://github.com/rust-diplomat/diplomat?rev=8d125999893fedfdf30595e97334c21ec4b18da9#8d125999893fedfdf30595e97334c21ec4b18da9"
@@ -116,7 +110,6 @@ dependencies = [
  "icu_provider_adapters",
  "icu_segmenter",
  "icu_timezone",
- "log",
  "tinystr",
  "writeable",
 ]
@@ -427,15 +420,6 @@ checksum = "348108ab3fba42ec82ff6e9564fc4ca0247bdccdc68dd8af9764bbc79c3c8ffb"
 [[package]]
 name = "litemap"
 version = "0.7.0"
-
-[[package]]
-name = "log"
-version = "0.4.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "abb12e687cfb44aa40f41fc3978ef76448f9b6038cad6aef4259d3c095a2382e"
-dependencies = [
- "cfg-if",
-]
 
 [[package]]
 name = "memchr"

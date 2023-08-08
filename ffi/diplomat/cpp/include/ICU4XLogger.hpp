@@ -28,11 +28,22 @@ class ICU4XLogger {
  public:
 
   /**
-   * Initialize the logger from the `simple_logger` crate, which simply logs to
-   * stdout. Returns `false` if there was already a logger set, or if logging has not been
-   * compiled into the platform
+   * Initialize the logger using `simple_logger`
+   * 
+   * Requires the `simple_logger` Cargo feature.
+   * 
+   * Returns `false` if there was already a logger set.
    */
   static bool init_simple_logger();
+
+  /**
+   * Initialize the logger to use the WASM console.
+   * 
+   * Only available on `wasm32` targets.
+   * 
+   * Returns `false` if there was already a logger set.
+   */
+  static bool init_console_logger();
   inline const capi::ICU4XLogger* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLogger* AsFFIMut() { return this->inner.get(); }
   inline ICU4XLogger(capi::ICU4XLogger* i) : inner(i) {}
@@ -46,5 +57,8 @@ class ICU4XLogger {
 
 inline bool ICU4XLogger::init_simple_logger() {
   return capi::ICU4XLogger_init_simple_logger();
+}
+inline bool ICU4XLogger::init_console_logger() {
+  return capi::ICU4XLogger_init_console_logger();
 }
 #endif

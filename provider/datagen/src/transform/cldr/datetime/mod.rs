@@ -29,6 +29,7 @@ fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &
         [
             (value!("gregory"), "gregorian"),
             (value!("buddhist"), "buddhist"),
+            (value!("chinese"), "chinese"),
             (value!("japanese"), "japanese"),
             (value!("japanext"), "japanese"),
             (value!("coptic"), "coptic"),
@@ -102,6 +103,7 @@ macro_rules! impl_data_provider {
 
                     let mundi_name = ethioaa_data
                         .eras
+                       // .ok_or_else(|| DataError::custom("Could not find eras"))?
                         .names
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");
@@ -294,6 +296,11 @@ impl_data_provider!(
     calendared = "buddhist"
 );
 impl_data_provider!(
+    ChineseDateSymbolsV1Marker,
+    symbols::convert_dates,
+    calendared = "chinese"
+);
+impl_data_provider!(
     JapaneseDateSymbolsV1Marker,
     symbols::convert_dates,
     calendared = "japanese"
@@ -347,6 +354,11 @@ impl_data_provider!(
     BuddhistDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
     calendared = "buddhist"
+);
+impl_data_provider!(
+    ChineseDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    calendared = "chinese"
 );
 impl_data_provider!(
     JapaneseDateLengthsV1Marker,
