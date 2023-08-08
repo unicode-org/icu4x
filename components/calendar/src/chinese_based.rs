@@ -422,7 +422,8 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     pub(crate) fn compute_cache(year: i32) -> ChineseBasedCache {
         let mid_year = Self::fixed_mid_year_from_year(year);
         let prior_solstice = Self::winter_solstice_on_or_before(mid_year);
-        let (new_year, following_solstice) = Self::new_year_on_or_before_fixed_date(mid_year, Some(prior_solstice));
+        let (new_year, following_solstice) =
+            Self::new_year_on_or_before_fixed_date(mid_year, Some(prior_solstice));
         let is_leap_year = Self::new_year_is_leap_year(new_year, Some(following_solstice));
         let leap_month = if is_leap_year {
             // This doesn't need to be checked for None because `get_leap_month_from_new_year`
