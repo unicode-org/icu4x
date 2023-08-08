@@ -125,9 +125,7 @@ fn extract_currency_essentials<'data>(
 
     let currency_formats = &&numbers_resource
         .main
-        .0
-        .get(langid)
-        .expect("CLDR file contains the expected language")
+        .value
         .numbers
         .numsys_data
         .currency_formats
