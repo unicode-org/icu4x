@@ -48,17 +48,11 @@ fn currency_pattern_selection(
         Err(_) => unreachable!("load_for_general_category_group should only return PropDataLoad"),
     };
 
-    #[derive(PartialEq)]
-    enum PlaceHolderCharCloserToNumber {
-        First,
-        Last,
-    }
-
     let char_closer_to_number = {
         if currency_sign_index < first_num_index {
-            PlaceHolderCharCloserToNumber::Last
+            place_holder.chars().last().unwrap()
         } else if currency_sign_index > last_num_index {
-            PlaceHolderCharCloserToNumber::First
+            place_holder.chars().next().unwrap()
         } else {
             return Err(DataError::custom(
                 "Currency sign must be in the middle of the pattern",
@@ -66,22 +60,10 @@ fn currency_pattern_selection(
         }
     };
 
-    if char_closer_to_number == PlaceHolderCharCloserToNumber::Last {
-        match letters_set
-            .as_borrowed()
-            .contains(place_holder.chars().last().unwrap())
-        {
-            true => Ok(PatternSelection::StandardAlphaNextToNumber),
-            false => Ok(PatternSelection::Standard),
-        }
+    if letters_set.as_borrowed().contains(char_closer_to_number) {
+        return Ok(PatternSelection::StandardAlphaNextToNumber);
     } else {
-        match letters_set
-            .as_borrowed()
-            .contains(place_holder.chars().next().unwrap())
-        {
-            true => Ok(PatternSelection::StandardAlphaNextToNumber),
-            false => Ok(PatternSelection::Standard),
-        }
+        return Ok(PatternSelection::Standard);
     }
 }
 
