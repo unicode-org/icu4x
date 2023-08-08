@@ -83,6 +83,8 @@ pub enum ParseErrorKind {
     // errors originating from compilation step
     /// A global filter (forward or backward) in an unexpected position.
     UnexpectedGlobalFilter,
+    /// A global filter (forward or backward) may not contain strings.
+    GlobalFilterWithStrings,
     /// An element of [`ElementKind`] appeared in the given [`ElementLocation`], but that is prohibited.
     UnexpectedElement(ElementKind, ElementLocation),
     /// The start anchor `^` was not placed at the beginning of a source.
@@ -160,7 +162,7 @@ pub(crate) struct BasicId {
 }
 
 impl BasicId {
-    fn is_null(&self) -> bool {
+    pub(crate) fn is_null(&self) -> bool {
         self.source == "Any" && self.target == "Null" && self.variant.is_empty()
     }
 
@@ -1451,6 +1453,12 @@ mod tests {
             r"@ a > b ;",
             r"a ( {  > b ;",
             r"a ( { )  > b ;",
+            r"a } + > b ;",
+            r"a (+?*) > b ;",
+            r"+?* > b ;",
+            r"+ > b ;",
+            r"* > b ;",
+            r"? > b ;",
         ];
 
         for source in sources {
