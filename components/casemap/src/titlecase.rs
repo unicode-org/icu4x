@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 /// How to handle the rest of the string once the head of the
-/// string has been titlecased
+/// string has been titlecased. See docs of [`TitlecaseMapper`] for examples.
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
 pub enum TailCasing {
@@ -26,7 +26,7 @@ pub enum TailCasing {
 }
 
 /// Whether to start casing at the beginning of the string or at the first
-/// relevant character.
+/// relevant character. See docs of [`TitlecaseMapper`] for examples.
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
 pub enum HeadAdjustment {
@@ -40,6 +40,8 @@ pub enum HeadAdjustment {
 }
 
 /// Various options for controlling titlecasing
+///
+/// See docs of [`TitlecaseMapper`] for examples.
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
 pub struct TitlecaseOptions {
