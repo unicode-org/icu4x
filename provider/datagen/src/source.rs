@@ -40,7 +40,13 @@ pub struct SourceData {
 /// Requires `networking` Cargo feature.
 impl Default for SourceData {
     fn default() -> Self {
-        Self::latest_tested()
+        Self::offline()
+            .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
+            .unwrap()
+            .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
+            .unwrap()
+            .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+            .unwrap()
     }
 }
 
@@ -54,13 +60,11 @@ impl SourceData {
     /// The latest segmentation LSTM model tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
-    /// Creates a [`SourceData`] that downloads data from the latest tested tag.
+    #[doc(hidden)]
     #[cfg(feature = "networking")]
+    #[deprecated(since = "1.3.0", note = "use SourceData::default()")]
     pub fn latest_tested() -> Self {
-        Self::offline()
-            .with_cldr_for_tag_2(Self::LATEST_TESTED_CLDR_TAG)
-            .with_icuexport_for_tag_2(Self::LATEST_TESTED_ICUEXPORT_TAG)
-            .with_segmenter_lstm_for_tag_2(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+        Self::default()
     }
 
     /// Creates a `SourceData` that does not have CLDR or ICU export sources set.
@@ -125,19 +129,13 @@ impl SourceData {
         tag: &str,
         _use_default_here: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
-        Ok(self.with_cldr_for_tag_2(tag))
-    }
-
-    // TODO(#2856): Consider making this the public method in 2.0
-    #[cfg(feature = "networking")]
-    fn with_cldr_for_tag_2(self, tag: &str) -> Self {
-        Self {
+        Ok(Self {
             cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::new_from_url(format!(
                     "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
                 ))))
             )),
             ..self
-        }
+        })
     }
 
     /// Adds ICU export data to this `SourceData`. The data will be downloaded from GitHub
@@ -151,13 +149,7 @@ impl SourceData {
         if tag == "release-71-1" {
             tag = "icu4x/2022-08-17/71.x";
         }
-        Ok(self.with_icuexport_for_tag_2(tag))
-    }
-
-    // TODO(#2856): Consider making this the public method in 2.0
-    #[cfg(feature = "networking")]
-    fn with_icuexport_for_tag_2(self, tag: &str) -> Self {
-        Self {
+        Ok(Self {
             icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(
                 format!(
                     "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
@@ -165,7 +157,7 @@ impl SourceData {
                 ),
             )))),
             ..self
-        }
+        })
     }
 
     /// Adds segmenter LSTM data to this `SourceData`. The data will be downloaded from GitHub
@@ -176,18 +168,12 @@ impl SourceData {
     /// Requires `networking` Cargo feature.
     #[cfg(feature = "networking")]
     pub fn with_segmenter_lstm_for_tag(self, tag: &str) -> Result<Self, DataError> {
-        Ok(self.with_segmenter_lstm_for_tag_2(tag))
-    }
-
-    // TODO(#2856): Consider making this the public method in 2.0
-    #[cfg(feature = "networking")]
-    fn with_segmenter_lstm_for_tag_2(self, tag: &str) -> Self {
-        Self {
+        Ok(Self {
             segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
                 "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{tag}/models.zip"
             )))),
             ..self
-        }
+        })
     }
 
     #[deprecated(
