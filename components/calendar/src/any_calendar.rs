@@ -1535,7 +1535,7 @@ mod tests {
             100,
             "M9",
             1,
-            CalendarError::UnknownMonthCode("M9".parse().unwrap(), "UmmAlQura"),
+            CalendarError::UnknownMonthCode("M9".parse().unwrap(), "Umm-al-Qura Islamic"),
         );
 
         single_test_roundtrip(islamic_tabular, "ah", 477, "M03", 1);
