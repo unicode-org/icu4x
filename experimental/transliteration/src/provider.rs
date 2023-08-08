@@ -33,13 +33,14 @@ pub struct RuleBasedTransliterator<'a> {
     /// see, e.g., [Devanagari-Latin](https://github.com/unicode-org/cldr/blob/main/common/transforms/Devanagari-Latin.xml)
     pub visibility: bool,
     /// The [`VarTable`] containing any special matchers (variables, UnicodeSets, ...) used by this transliterator.
+    #[serde(borrow)]
     pub variable_table: VarTable<'a>,
     /// The filter for this transliterator. If there is none, the set of all code points is used.
     #[serde(borrow)]
     pub filter: CodePointInversionList<'a>,
     /// The list of transform rule groups this transliterator uses.
     #[serde(borrow)]
-    pub id_group_list: VarZeroVec<'a, VarZeroSlice<SimpleIDULE>>,
+    pub id_group_list: VarZeroVec<'a, VarZeroSlice<SimpleIdULE>>,
     /// The list of conversion rule groups this transliterator uses.
     #[serde(borrow)]
     pub rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
@@ -47,12 +48,12 @@ pub struct RuleBasedTransliterator<'a> {
 
 /// The ID of a transliterator plus an optional filter.
 #[derive(Debug, Clone)]
-#[make_varule(SimpleIDULE)]
+#[make_varule(SimpleIdULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]
 #[zerovec::derive(Serialize, Deserialize)]
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct SimpleID<'a> {
+pub struct SimpleId<'a> {
     /// The filter for the transliterator. If there is none, the set of all code points is used.
     #[zerovec::varule(CodePointInversionListULE)]
     #[serde(borrow)]
@@ -121,9 +122,9 @@ pub struct VarTable<'a> {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct FunctionCall<'a> {
     /// The transliterator that will be called.
-    #[zerovec::varule(SimpleIDULE)]
+    #[zerovec::varule(SimpleIdULE)]
     #[serde(borrow)]
-    pub translit: SimpleID<'a>,
+    pub translit: SimpleId<'a>,
     #[serde(borrow)]
     /// The argument to be transliterated given to the transliterator.
     pub arg: Cow<'a, str>,
