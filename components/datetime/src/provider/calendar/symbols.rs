@@ -31,6 +31,7 @@ use zerovec::{ule::UnvalidatedStr, ZeroMap};
     marker(EthiopianDateSymbolsV1Marker, "datetime/ethiopic/datesymbols@1"),
     marker(RocDateSymbolsV1Marker, "datetime/roc/datesymbols@1"),
     marker(PersianDateSymbolsV1Marker, "datetime/persian/datesymbols@1"),
+    marker(HebrewDateSymbolsV1Marker, "datetime/hebrew/datesymbols@1"),
     marker(
         IslamicObservationalDateSymbolsV1Marker,
         "datetime/islamicobservational/datesymbols@1"

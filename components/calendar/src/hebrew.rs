@@ -116,7 +116,7 @@ impl Calendar for Hebrew {
         _month_code: types::MonthCode,
         _day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        // let year = if era.0 == tinystr!(16, "hebrew") {
+        // let year = if era.0 == tinystr!(16, "am") {
         //     year
         // } else {
         //     return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
@@ -330,7 +330,7 @@ impl Hebrew {
 
     fn year_as_hebrew(civil_year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "hebrew")),
+            era: types::Era(tinystr!(16, "am")),
             number: civil_year,
             cyclic: None,
             related_iso: None,
@@ -606,7 +606,7 @@ impl BookHebrew {
     #[allow(dead_code)]
     fn year_as_hebrew(book_year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "hebrew")),
+            era: types::Era(tinystr!(16, "am")),
             number: book_year,
             cyclic: None,
             related_iso: None,

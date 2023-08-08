@@ -18,6 +18,7 @@ use icu_calendar::{
     islamic::UmmAlQura,
     japanese::{Japanese, JapaneseExtended},
     persian::Persian,
+    hebrew::Hebrew,
     provider::WeekDataV1Marker,
     roc::Roc,
     AsCalendar, DateTime, Gregorian, Iso,
@@ -83,6 +84,7 @@ fn test_fixture(fixture_name: &str) {
         let input_umm_al_qura = input_value.to_calendar(UmmAlQura);
         let input_islamic_tabular = input_value.to_calendar(IslamicTabular);
         let input_persian = input_value.to_calendar(Persian);
+        let input_hebrew = input_value.to_calendar(Hebrew);
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
         let input_roc = input_value.to_calendar(Roc);
 
@@ -182,6 +184,14 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Persian => assert_fixture_element(
                         &locale,
                         &input_persian,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Hebrew => assert_fixture_element(
+                        &locale,
+                        &input_hebrew,
                         &input_iso,
                         &output_value,
                         options,

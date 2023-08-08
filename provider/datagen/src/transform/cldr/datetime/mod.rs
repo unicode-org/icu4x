@@ -39,6 +39,7 @@ fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &
             (value!("umalqura"), "islamic"),
             (value!("tbla"), "islamic"),
             (value!("persian"), "persian"),
+            (value!("hebrew"), "hebrew"),
             (value!("ethiopic"), "ethiopic"),
             (value!("roc"), "roc"),
         ]
@@ -350,6 +351,11 @@ impl_data_provider!(
     calendared = "persian"
 );
 impl_data_provider!(
+    HebrewDateSymbolsV1Marker,
+    symbols::convert_dates,
+    calendared = "hebrew"
+);
+impl_data_provider!(
     EthiopianDateSymbolsV1Marker,
     symbols::convert_dates,
     calendared = "ethiopic"
@@ -433,6 +439,11 @@ impl_data_provider!(
     PersianDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
     calendared = "persian"
+);
+impl_data_provider!(
+    HebrewDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    calendared = "hebrew"
 );
 impl_data_provider!(
     EthiopianDateLengthsV1Marker,
