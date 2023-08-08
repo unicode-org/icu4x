@@ -36,17 +36,17 @@
 //!    * An index of `vzv1.len() + vzv2.len() + 4` indexes the third `VZV` at index 4
 //! * Thus, if the length of an earlier `VZV` changes, the index of an element in a later `VZV`
 //!   will change, and its private use encoding will change
-//! * Therefore we must know the sizes of each `VZV` before we can start encoding conversion rules
-//!   into `str`s.
+//! * Therefore we must know the number of elements of each `VZV` before we can start encoding
+//!   conversion rules into `str`s.
 //!
 //! # Passes
 //!
 //! This module works by performing multiple passes over the rules.
 //!
 //! ## Pass 1
-//! General validation of the rules and computation of the sizes of the `VZV`s in the `VarTable`.
+//! General validation of the rules and computation of the lengths of the `VZV`s in the `VarTable`.
 //!
-//! Only special constructs for the current direction contribute to the `VZV` sizes,
+//! Only special constructs for the current direction contribute to the `VZV` lengths,
 //! i.e., the rule `a <> [a-z] { b` will not increment the size of the
 //! `VZV` for UnicodeSets if the current direction is `forward`, but it will if the current
 //! direction is `reverse` (this is because contexts on the target side of a rule are ignored).
@@ -58,10 +58,10 @@
 //! Encoding of the zero-copy data struct.
 //!
 //! To encode conversion rules into `str`s, we use the previously described encoded `VarTable`
-//! indices. Because we know the sizes of each special construct list (in the form a `VZV`)
+//! indices. Because we know the lengths of each special construct list (in the form a `VZV`)
 //! from the first pass, we can store the offsets for each special construct list (i.e., the sum of
 //! the lengths of the previous lists) while encoding the conversion rules, and incrementing the
-//! offset of a given special construct when we encode an element. The precomputed sizes mean we
+//! offset of a given special construct when we encode an element. The precomputed lengths mean we
 //! never overflow into the indices of the following `VZV`.
 
 // more (data struct compatible) runtime optimization opportunities:
@@ -78,20 +78,20 @@ Encoding example:
     $a = [a-z] $b ;
     $a > ;
 
-b-data.sizes: 1 compound (the definition itself), 1 quantifier plus (c+)
+b-data.counts: 1 compound (the definition itself), 1 quantifier plus (c+)
 b-data.used_vars: -
 
-a-data.sizes: 1 compound (the definition itself), 1 unicodeset ([a-z])
+a-data.counts: 1 compound (the definition itself), 1 unicodeset ([a-z])
 a-data.used_vars: b
 
-forward-data.sizes: 0 (rules are inlined)
+forward-data.counts: 0 (rules are inlined)
 forward-data.used_vars: a
 
-when collecting the sizes (for forward) at the end, we sum over all sizes of the transitive
-dependencies of forward (using used_vars), and add the sizes of forward itself.
+when collecting the counts (for forward) at the end, we sum over all counts of the transitive
+dependencies of forward (using used_vars), and add the counts of forward itself.
 we also compute the transitive closure of used variables.
 this gives us the `Pass1Result`:
-forward-data.sizes: 2 compound, 1 quantifier plus, 1 unicodeset
+forward-data.counts: 2 compound, 1 quantifier plus, 1 unicodeset
 forward-data.used_vars: a, b
 
 this `Pass1Result` we give to Pass2, which will produce something like this:
@@ -131,7 +131,7 @@ enum SingleDirection {
 
 /// The number of elements for each `VZV` in the `VarTable`.
 #[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
-struct SpecialConstructSizes {
+struct SpecialConstructCounts {
     num_compounds: usize,
     num_quantifiers_opt: usize,
     num_quantifiers_kleene: usize,
@@ -144,7 +144,7 @@ struct SpecialConstructSizes {
 // Data for a given direction or variable definition (the "key")
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 struct Pass1Data {
-    sizes: SpecialConstructSizes,
+    counts: SpecialConstructCounts,
     // the variables used by the associated key
     used_variables: HashSet<String>,
     // the recursive transliterators used by the associated key
@@ -154,7 +154,7 @@ struct Pass1Data {
 #[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 struct Pass1Result<'p> {
-    // data with dependencies resolved and sizes summed
+    // data with dependencies resolved and counts summed
     forward_data: Pass1Data,
     reverse_data: Pass1Data,
     variable_definitions: HashMap<String, &'p [parse::Element]>,
@@ -269,7 +269,7 @@ impl<'p> Pass1<'p> {
 
         let mut data = Pass1Data::default();
         // the variable definition itself is counted here
-        data.sizes.num_compounds = 1;
+        data.counts.num_compounds = 1;
 
         let mut validator = VariableDefinitionValidator::new(
             |s| self.variable_definitions.contains_key(s),
@@ -436,9 +436,9 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
             parse::Element::Quantifier(kind, inner) => {
                 self.validate_element(inner, false)?;
                 match *kind {
-                    QuantifierKind::ZeroOrOne => self.data.sizes.num_quantifiers_opt += 1,
-                    QuantifierKind::ZeroOrMore => self.data.sizes.num_quantifiers_kleene += 1,
-                    QuantifierKind::OneOrMore => self.data.sizes.num_quantifiers_kleene_plus += 1,
+                    QuantifierKind::ZeroOrOne => self.data.counts.num_quantifiers_opt += 1,
+                    QuantifierKind::ZeroOrMore => self.data.counts.num_quantifiers_kleene += 1,
+                    QuantifierKind::OneOrMore => self.data.counts.num_quantifiers_kleene_plus += 1,
                 }
             }
             parse::Element::Segment(inner) => {
@@ -446,10 +446,10 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
                 // increment the count for this specific rule
                 self.num_segments += 1;
                 // increment the count for this direction of the entire transliterator
-                self.data.sizes.num_segments += 1;
+                self.data.counts.num_segments += 1;
             }
             parse::Element::UnicodeSet(_) => {
-                self.data.sizes.num_unicode_sets += 1;
+                self.data.counts.num_unicode_sets += 1;
             }
             parse::Element::Cursor(_, _) => {
                 // while cursors have no effect on the source side, they may appear nonetheless
@@ -578,7 +578,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
             parse::Element::FunctionCall(id, inner) => {
                 self.validate_section(inner, false)?;
                 self.data.used_transliterators.insert(id.basic_id.clone());
-                self.data.sizes.num_function_calls += 1;
+                self.data.counts.num_function_calls += 1;
             }
             parse::Element::Cursor(pre, post) => {
                 self.encounter_cursor()?;
@@ -667,15 +667,15 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
             parse::Element::Quantifier(kind, inner) => {
                 self.used_target_disallowed_construct = true;
                 match *kind {
-                    QuantifierKind::ZeroOrOne => self.data.sizes.num_quantifiers_opt += 1,
-                    QuantifierKind::ZeroOrMore => self.data.sizes.num_quantifiers_kleene += 1,
-                    QuantifierKind::OneOrMore => self.data.sizes.num_quantifiers_kleene_plus += 1,
+                    QuantifierKind::ZeroOrOne => self.data.counts.num_quantifiers_opt += 1,
+                    QuantifierKind::ZeroOrMore => self.data.counts.num_quantifiers_kleene += 1,
+                    QuantifierKind::OneOrMore => self.data.counts.num_quantifiers_kleene_plus += 1,
                 }
                 self.validate_element(inner)?;
             }
             parse::Element::UnicodeSet(_) => {
                 self.used_target_disallowed_construct = true;
-                self.data.sizes.num_unicode_sets += 1;
+                self.data.counts.num_unicode_sets += 1;
             }
             elt => {
                 return Err(PEK::UnexpectedElement(elt.kind(), EL::VariableDefinition).into());
@@ -718,7 +718,7 @@ impl<'a, 'p> Pass1ResultGenerator<'a, 'p> {
     fn generate_result(&mut self) -> Result<Pass1Result<'p>> {
         // the result for a given direction is computed by first computing the transitive
         // used variables for each direction, then using that data summing over the
-        // special construct sizes, and at last filtering the variable definitions based on
+        // special construct counts, and at last filtering the variable definitions based on
         // the used variables in either direction.
 
         let forward_data = self.generate_result_one_direction(&self.pass.forward_data)?;
@@ -758,26 +758,26 @@ impl<'a, 'p> Pass1ResultGenerator<'a, 'p> {
         // will need to take into account recursive dependencies from `used_vars` as well
         let used_transliterators = seed_transliterators.clone();
 
-        let sizes = used_variables
+        let counts = used_variables
             .iter()
-            .try_fold(seed_data.sizes, |mut sizes, var| {
+            .try_fold(seed_data.counts, |mut counts, var| {
                 // we check for unknown variables during the first pass, so these should exist
                 let var_data = self.pass.variable_data.get(var).ok_or(PEK::Internal)?;
-                sizes.num_compounds += var_data.sizes.num_compounds;
-                sizes.num_segments += var_data.sizes.num_segments;
-                sizes.num_quantifiers_opt += var_data.sizes.num_quantifiers_opt;
-                sizes.num_quantifiers_kleene += var_data.sizes.num_quantifiers_kleene;
-                sizes.num_quantifiers_kleene_plus += var_data.sizes.num_quantifiers_kleene_plus;
-                sizes.num_unicode_sets += var_data.sizes.num_unicode_sets;
-                sizes.num_function_calls += var_data.sizes.num_function_calls;
+                counts.num_compounds += var_data.counts.num_compounds;
+                counts.num_segments += var_data.counts.num_segments;
+                counts.num_quantifiers_opt += var_data.counts.num_quantifiers_opt;
+                counts.num_quantifiers_kleene += var_data.counts.num_quantifiers_kleene;
+                counts.num_quantifiers_kleene_plus += var_data.counts.num_quantifiers_kleene_plus;
+                counts.num_unicode_sets += var_data.counts.num_unicode_sets;
+                counts.num_function_calls += var_data.counts.num_function_calls;
 
-                Ok::<_, crate::ParseError>(sizes)
+                Ok::<_, crate::ParseError>(counts)
             })?;
 
         Ok(Pass1Data {
             used_transliterators,
             used_variables,
-            sizes,
+            counts,
         })
     }
 
@@ -845,10 +845,10 @@ mod tests {
     fn pass1data_from_parts(
         translit_deps: &[(&'static str, &'static str, &'static str)],
         var_deps: &[&'static str],
-        sizes: SpecialConstructSizes,
+        counts: SpecialConstructCounts,
     ) -> Pass1Data {
         let mut data = Pass1Data {
-            sizes,
+            counts,
             ..Default::default()
         };
         for &(source, target, variant) in translit_deps {
@@ -895,7 +895,7 @@ mod tests {
 
         {
             // forward
-            let sizes = SpecialConstructSizes {
+            let counts = SpecialConstructCounts {
                 num_segments: 1,
                 num_function_calls: 1,
                 num_unicode_sets: 1,
@@ -909,13 +909,13 @@ mod tests {
                     ("YetAnother", "ForwardDependency", ""),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
-                sizes,
+                counts,
             );
             assert_eq!(expected_fwd_data, pass1.forward_data);
         }
         {
             // reverse
-            let sizes = SpecialConstructSizes {
+            let counts = SpecialConstructCounts {
                 num_quantifiers_opt: 1,
                 num_quantifiers_kleene_plus: 2,
                 num_segments: 2,
@@ -932,87 +932,87 @@ mod tests {
                     ("Any", "Deps", ""),
                 ],
                 &["used_rev", "literal1", "literal2"],
-                sizes,
+                counts,
             );
             assert_eq!(expected_rev_data, pass1.reverse_data);
         }
         {
             // $used_both
-            let sizes = SpecialConstructSizes {
+            let counts = SpecialConstructCounts {
                 num_compounds: 1,
                 num_unicode_sets: 1,
                 ..Default::default()
             };
-            let expected_data = pass1data_from_parts(&[], &[], sizes);
+            let expected_data = pass1data_from_parts(&[], &[], counts);
             assert_eq!(expected_data, pass1.variable_data["used_both"]);
         }
         {
             // $used_rev
-            let sizes = SpecialConstructSizes {
+            let counts = SpecialConstructCounts {
                 num_compounds: 1,
                 num_quantifiers_kleene_plus: 1,
                 ..Default::default()
             };
-            let expected_data = pass1data_from_parts(&[], &["used_both"], sizes);
+            let expected_data = pass1data_from_parts(&[], &["used_both"], counts);
             assert_eq!(expected_data, pass1.variable_data["used_rev"]);
         }
         {
             // $unused
-            let sizes = SpecialConstructSizes {
+            let counts = SpecialConstructCounts {
                 num_compounds: 1,
                 num_unicode_sets: 1,
                 num_quantifiers_opt: 1,
                 num_quantifiers_kleene_plus: 2,
                 ..Default::default()
             };
-            let expected_data = pass1data_from_parts(&[], &["used_both", "used_rev"], sizes);
+            let expected_data = pass1data_from_parts(&[], &["used_both", "used_rev"], counts);
             assert_eq!(expected_data, pass1.variable_data["unused"]);
         }
         {
             // $unused2
-            let sizes = SpecialConstructSizes {
+            let counts = SpecialConstructCounts {
                 num_compounds: 1,
                 ..Default::default()
             };
-            let expected_data = pass1data_from_parts(&[], &["unused"], sizes);
+            let expected_data = pass1data_from_parts(&[], &["unused"], counts);
             assert_eq!(expected_data, pass1.variable_data["unused2"]);
         }
         {
             // $used_both
-            let sizes = SpecialConstructSizes {
+            let counts = SpecialConstructCounts {
                 num_compounds: 1,
                 num_unicode_sets: 1,
                 ..Default::default()
             };
-            let expected_data = pass1data_from_parts(&[], &[], sizes);
+            let expected_data = pass1data_from_parts(&[], &[], counts);
             assert_eq!(expected_data, pass1.variable_data["used_both"]);
         }
         {
             // $used_fwd
-            let sizes = SpecialConstructSizes {
+            let counts = SpecialConstructCounts {
                 num_compounds: 1,
                 num_unicode_sets: 1,
                 ..Default::default()
             };
-            let expected_data = pass1data_from_parts(&[], &[], sizes);
+            let expected_data = pass1data_from_parts(&[], &[], counts);
             assert_eq!(expected_data, pass1.variable_data["used_fwd"]);
         }
         {
             // $literal1
-            let sizes = SpecialConstructSizes {
+            let counts = SpecialConstructCounts {
                 num_compounds: 1,
                 ..Default::default()
             };
-            let expected_data = pass1data_from_parts(&[], &[], sizes);
+            let expected_data = pass1data_from_parts(&[], &[], counts);
             assert_eq!(expected_data, pass1.variable_data["literal1"]);
         }
         {
             // $literal2
-            let sizes = SpecialConstructSizes {
+            let counts = SpecialConstructCounts {
                 num_compounds: 1,
                 ..Default::default()
             };
-            let expected_data = pass1data_from_parts(&[], &[], sizes);
+            let expected_data = pass1data_from_parts(&[], &[], counts);
             assert_eq!(expected_data, pass1.variable_data["literal2"]);
         }
         {
@@ -1030,7 +1030,7 @@ mod tests {
         }
         {
             // check aggregated Pass1Result
-            let fwd_sizes = SpecialConstructSizes {
+            let fwd_counts = SpecialConstructCounts {
                 num_compounds: 4,
                 num_unicode_sets: 3,
                 num_function_calls: 1,
@@ -1045,10 +1045,10 @@ mod tests {
                     ("YetAnother", "ForwardDependency", ""),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
-                fwd_sizes,
+                fwd_counts,
             );
 
-            let rev_sizes = SpecialConstructSizes {
+            let rev_counts = SpecialConstructCounts {
                 num_compounds: 4,
                 num_unicode_sets: 1,
                 num_quantifiers_kleene_plus: 3,
@@ -1067,7 +1067,7 @@ mod tests {
                     ("Any", "Deps", ""),
                 ],
                 &["used_both", "used_rev", "literal1", "literal2"],
-                rev_sizes,
+                rev_counts,
             );
 
             assert_eq!(fwd_data, result.forward_data);
