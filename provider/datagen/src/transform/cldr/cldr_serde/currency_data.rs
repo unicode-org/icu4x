@@ -15,6 +15,8 @@ type ISOCode = TinyAsciiStr<3>;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct RoundingModes {
+    // TODO: Get `deserialize_option_number_from_string` to work
+    //    HINT: #[serde(deserialize_with = "serde_aux::prelude::deserialize_option_number_from_string")])
     #[serde(rename = "_rounding")]
     pub rounding: Option<String>,
 
