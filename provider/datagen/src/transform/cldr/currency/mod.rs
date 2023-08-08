@@ -61,9 +61,9 @@ fn currency_pattern_selection(
     };
 
     if letters_set.as_borrowed().contains(char_closer_to_number) {
-        return Ok(PatternSelection::StandardAlphaNextToNumber);
+        Ok(PatternSelection::StandardAlphaNextToNumber)
     } else {
-        return Ok(PatternSelection::Standard);
+        Ok(PatternSelection::Standard)
     }
 }
 
