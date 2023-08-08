@@ -257,7 +257,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Day should be in range of u8! Value {month_i64} failed for RD {date:?}"
         );
         let day = day_i64 as u8;
-        let is_leap_year = Self::new_year_is_leap_year(first_day_of_year);
+        let is_leap_year = Self::new_year_is_leap_year(first_day_of_year, None);
         let leap_month = if is_leap_year {
             Self::get_leap_month_from_new_year(first_day_of_year)
         } else {
@@ -303,14 +303,14 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Returns true if the fixed date given is in a leap year, false otherwise
     pub(crate) fn fixed_date_is_in_leap_year(date: RataDie) -> bool {
         let (prev_new_year, _) = Self::new_year_on_or_before_fixed_date(date, None);
-        Self::new_year_is_leap_year(prev_new_year)
+        Self::new_year_is_leap_year(prev_new_year, None)
     }
 
     /// Returns true if the fixed date given is in a leap year, assuming the fixed date
     /// given is the RataDie of a new year. Optionally, a RataDie representing the prior winter
     /// solstice before the `new_year` can be passed in as an Option argument.
-    pub(crate) fn new_year_is_leap_year(new_year: RataDie) -> bool {
-        let next_new_year = Self::new_year_on_or_before_fixed_date(new_year + 400, None).0;
+    pub(crate) fn new_year_is_leap_year(new_year: RataDie, next_solstice: Option<RataDie>) -> bool {
+        let next_new_year = Self::new_year_on_or_before_fixed_date(new_year + 400, next_solstice).0;
         let difference = next_new_year - new_year;
         difference > 365
     }
@@ -425,7 +425,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let mid_year = Self::fixed_mid_year_from_year(year);
         let prior_solstice = Self::winter_solstice_on_or_before(mid_year);
         let new_year = Self::new_year_on_or_before_fixed_date(mid_year, Some(prior_solstice)).0;
-        let is_leap_year = Self::new_year_is_leap_year(new_year);
+        let is_leap_year = Self::new_year_is_leap_year(new_year, None);
         let leap_month = if is_leap_year {
             Self::get_leap_month_from_new_year(new_year)
         } else {
