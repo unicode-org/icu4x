@@ -1263,7 +1263,6 @@ mod tests {
                 day,
                 e,
             )
-
         });
 
         let roundtrip_year = date.year();
