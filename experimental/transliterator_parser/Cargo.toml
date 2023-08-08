@@ -3,8 +3,8 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_transliteration"
-description = "API for Transliteration"
+name = "icu_transliterator_parser"
+description = "API to parse transform rules into transliterators as defined in UTS35"
 version = "0.0.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
@@ -25,10 +25,13 @@ include = [
 all-features = true
 
 [dependencies]
+icu_collections = { path = "../../components/collections" }
+icu_properties = { path = "../../components/properties", default-features = false }
 icu_provider = { path = "../../provider/core" }
-icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde"] }
+icu_unicodeset_parser = { path = "../unicodeset_parser" }
+icu_transliteration = { path = "../transliteration" }
 
-serde = { version = "1.0", features = ["derive"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive"] }
+log = "0.4"
 
-# TODO: Add serde, datagen, compiled_data features
+[features]
+compiled_data = ["icu_properties/compiled_data"]
