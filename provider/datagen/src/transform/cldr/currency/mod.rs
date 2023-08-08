@@ -246,14 +246,13 @@ fn extract_currency_essentials<'data>(
             },
         );
     }
-    let result = CurrencyEssentialsV1 {
+
+    Ok(CurrencyEssentialsV1 {
         currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard: standard.to_owned().into(),
         standard_alpha_next_to_number: standard_alpha_next_to_number.to_owned().into(),
         place_holders: VarZeroVec::from(&place_holders),
-    };
-
-    Ok(result)
+    })
 }
 
 #[test]
