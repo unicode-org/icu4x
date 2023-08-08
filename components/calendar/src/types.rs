@@ -12,6 +12,7 @@ use core::convert::TryInto;
 use core::fmt;
 use core::ops::{Add, AddAssign, Sub, SubAssign};
 use core::str::FromStr;
+use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
@@ -91,6 +92,35 @@ impl FormattableYear {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MonthCode(pub TinyStr4);
+
+impl MonthCode {
+    /// Returns an option which is Some containing the non-month version of a leap month
+    /// if the MonthCode this method is called upon is a leap month, and None otherwise.
+    /// This method assumes the MonthCode is valid.
+    pub fn get_normal_if_leap(self) -> Option<MonthCode> {
+        let bytes = self.0.all_bytes();
+        if bytes[3] == b'L' {
+            Some(MonthCode(TinyAsciiStr::from_bytes(&bytes[0..3]).ok()?))
+        } else {
+            None
+        }
+    }
+}
+
+#[test]
+fn test_get_normal_month_code_if_leap() {
+    let mc1 = MonthCode(tinystr::tinystr!(4, "M01L"));
+    let result1 = mc1.get_normal_if_leap();
+    assert_eq!(result1, Some(MonthCode(tinystr::tinystr!(4, "M01"))));
+
+    let mc2 = MonthCode(tinystr::tinystr!(4, "M11L"));
+    let result2 = mc2.get_normal_if_leap();
+    assert_eq!(result2, Some(MonthCode(tinystr::tinystr!(4, "M11"))));
+
+    let mc_invalid = MonthCode(tinystr::tinystr!(4, "M10"));
+    let result_invalid = mc_invalid.get_normal_if_leap();
+    assert_eq!(result_invalid, None);
+}
 
 impl AsULE for MonthCode {
     type ULE = TinyStr4;

@@ -19,6 +19,8 @@
             "values": {
                 "en": "Tuesday, January 21, 2020 Anno Domini, 08:25:07",
                 "en-u-ca-buddhist": "Tuesday, January 21, 2563 BE, 08:25:07",
+                "en-u-ca-chinese": "Tuesday, Twelfth Month 27, 2019((cyclic year: 36)), 08:25:07",
+                "zh-u-ca-chinese": "2019(cyclic year: 36)年腊月27星期二 08:25:07",
                 "en-u-ca-japanese": "Tuesday, January 21, 2 Reiwa, 08:25:07",
                 "ja-u-ca-japanese": "令和2年1月21日火曜日 8:25:07",
                 "en-u-ca-coptic": "Tuesday, Toba 12, 1736 ERA1, 08:25:07",
@@ -32,6 +34,29 @@
                 "en-u-ca-roc": "Tuesday, January 21, 109 Minguo, 08:25:07",
                 "fr-u-ca-roc": "mardi 21 janvier 109 RdC 08:25:07",
                 "zh-u-ca-roc": "民国109年1月21日星期二 08:25:07"
+            }
+        }
+    },
+    {
+        "input": {
+            "value": "2023-03-23T14:15:07.123",
+            "options": {
+                "components": {
+                    "weekday": "long",
+                    "month": "long",
+                    "day": "two-digit-day-of-month",
+                    "era": "long",
+                    "year": "numeric",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "numeric"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en-u-ca-chinese": "Thursday, Second Month(leap) 02, 2023((cyclic year: 40)), 14:15:07",
+                "zh-u-ca-chinese": "2023(cyclic year: 40)年二月(leap)02星期四 14:15:07"
             }
         }
     },

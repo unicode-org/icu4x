@@ -141,7 +141,7 @@ impl Default for GraphemeClusterSegmenter {
 }
 
 impl GraphemeClusterSegmenter {
-    /// Constructs a [`GraphemeClusterSegmenter`] with an invariant locale.
+    /// Constructs a [`GraphemeClusterSegmenter`] with an invariant locale from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

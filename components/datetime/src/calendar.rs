@@ -4,6 +4,7 @@
 
 use crate::provider::calendar::*;
 use icu_calendar::any_calendar::AnyCalendarKind;
+use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, japanese::Japanese,
@@ -46,6 +47,12 @@ impl CldrCalendar for Buddhist {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("buddhist");
     type DateSymbolsV1Marker = BuddhistDateSymbolsV1Marker;
     type DateLengthsV1Marker = BuddhistDateLengthsV1Marker;
+}
+
+impl CldrCalendar for Chinese {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("chinese");
+    type DateSymbolsV1Marker = ChineseDateSymbolsV1Marker;
+    type DateLengthsV1Marker = ChineseDateLengthsV1Marker;
 }
 
 impl CldrCalendar for Japanese {
@@ -135,6 +142,7 @@ pub(crate) fn load_lengths_for_any_calendar_kind<P>(
 where
     P: DataProvider<GregorianDateLengthsV1Marker>
         + DataProvider<BuddhistDateLengthsV1Marker>
+        + DataProvider<ChineseDateLengthsV1Marker>
         + DataProvider<JapaneseDateLengthsV1Marker>
         + DataProvider<JapaneseExtendedDateLengthsV1Marker>
         + DataProvider<CopticDateLengthsV1Marker>
@@ -156,6 +164,11 @@ where
         }
         AnyCalendarKind::Buddhist => {
             DataProvider::<<Buddhist as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Chinese => {
+            DataProvider::<<Chinese as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }
@@ -217,6 +230,7 @@ pub(crate) fn load_symbols_for_any_calendar_kind<P>(
 where
     P: DataProvider<GregorianDateSymbolsV1Marker>
         + DataProvider<BuddhistDateSymbolsV1Marker>
+        + DataProvider<ChineseDateSymbolsV1Marker>
         + DataProvider<JapaneseDateSymbolsV1Marker>
         + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
         + DataProvider<CopticDateSymbolsV1Marker>
@@ -238,6 +252,11 @@ where
         }
         AnyCalendarKind::Buddhist => {
             DataProvider::<<Buddhist as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Chinese => {
+            DataProvider::<<Chinese as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }

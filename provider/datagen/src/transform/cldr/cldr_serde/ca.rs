@@ -86,7 +86,7 @@ impl LengthPattern {
     }
 }
 
-#[derive(PartialEq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, Debug, Deserialize, Clone, Default)]
 pub struct Eras {
     #[serde(rename = "eraNames")]
     pub names: HashMap<String, String>,
@@ -129,6 +129,7 @@ pub struct Dates {
     // Not used yet, will be in the future
     pub month_patterns: Option<Contexts<MonthPatternSymbols>>,
     pub days: Contexts<DaySymbols>,
+    #[serde(default)]
     pub eras: Eras,
     #[serde(rename = "dayPeriods")]
     pub day_periods: Contexts<DayPeriodSymbols>,

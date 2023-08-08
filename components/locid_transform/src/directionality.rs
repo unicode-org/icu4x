@@ -56,7 +56,7 @@ pub struct LocaleDirectionality {
 }
 
 impl LocaleDirectionality {
-    /// A constructor which creates a [`LocaleDirectionality`].
+    /// A constructor which creates a [`LocaleDirectionality`] from compiled data.
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self::new_with_expander(LocaleExpander::new())
@@ -93,7 +93,7 @@ impl LocaleDirectionality {
         Self::try_new_with_expander_unstable(provider, expander)
     }
 
-    /// Creates a [`LocaleDirectionality`] with a custom [`LocaleExpander`] object.
+    /// Creates a [`LocaleDirectionality`] with a custom [`LocaleExpander`] and compiled data.
     ///
     /// For example, use this constructor if you wish to support all languages.
     ///

@@ -143,6 +143,7 @@ macro_rules! match_cal_and_date {
             ) => $e,
             (&Self::Ethiopian(ref $cal_matched), &AnyDateInner::Ethiopian(ref $date_matched)) => $e,
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
+            (&Self::Chinese(ref $cal_matched), &AnyDateInner::Chinese(ref $date_matched)) => $e,
             (&Self::Persian(ref $cal_matched), &AnyDateInner::Persian(ref $date_matched)) => $e,
             (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
             (&Self::Roc(ref $cal_matched), &AnyDateInner::Roc(ref $date_matched)) => $e,
@@ -254,6 +255,9 @@ impl Calendar for AnyCalendar {
             (Self::Indian(c), &mut AnyDateInner::Indian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
+            (Self::Chinese(c), &mut AnyDateInner::Chinese(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
             (Self::Coptic(c), &mut AnyDateInner::Coptic(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
@@ -330,6 +334,14 @@ impl Calendar for AnyCalendar {
                 Self::Indian(c2),
                 AnyDateInner::Indian(d1),
                 AnyDateInner::Indian(d2),
+            ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
+            (
+                Self::Chinese(c1),
+                Self::Chinese(c2),
+                AnyDateInner::Chinese(d1),
+                AnyDateInner::Chinese(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
@@ -413,7 +425,7 @@ impl Calendar for AnyCalendar {
 }
 
 impl AnyCalendar {
-    /// Constructs an AnyCalendar for a given calendar kind.
+    /// Constructs an AnyCalendar for a given calendar kind from compiled data.
     ///
     /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
     /// fallbacking. If this is desired, use [`Self::new_for_locale()`].
@@ -545,7 +557,7 @@ impl AnyCalendar {
         })
     }
 
-    /// Constructs an AnyCalendar for a given calendar kind.
+    /// Constructs an AnyCalendar for a given calendar kind from compiled data.
     ///
     /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
     /// calendar for the locale, falling back to gregorian.
@@ -724,6 +736,7 @@ impl AnyCalendarKind {
             b"japanese" => AnyCalendarKind::Japanese,
             b"japanext" => AnyCalendarKind::JapaneseExtended,
             b"indian" => AnyCalendarKind::Indian,
+            b"chinese" => AnyCalendarKind::Chinese,
             b"coptic" => AnyCalendarKind::Coptic,
             b"iso" => AnyCalendarKind::Iso,
             b"ethiopic" => AnyCalendarKind::Ethiopian,
@@ -752,6 +765,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::JapaneseExtended
         } else if *x == value!("indian") {
             AnyCalendarKind::Indian
+        } else if *x == value!("chinese") {
+            AnyCalendarKind::Chinese
         } else if *x == value!("coptic") {
             AnyCalendarKind::Coptic
         } else if *x == value!("iso") {
@@ -953,6 +968,18 @@ impl IntoAnyCalendar for Indian {
     }
 }
 
+impl IntoAnyCalendar for Chinese {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Chinese(Chinese)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Chinese(Chinese)
+    }
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Chinese(*d)
+    }
+}
+
 impl IntoAnyCalendar for Coptic {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Coptic(Coptic)
@@ -1082,6 +1109,7 @@ mod tests {
         let ethioaa = AnyCalendar::new(AnyCalendarKind::EthiopianAmeteAlem);
         let gregorian = AnyCalendar::new(AnyCalendarKind::Gregorian);
         let indian = AnyCalendar::new(AnyCalendarKind::Indian);
+        let chinese = AnyCalendar::new(AnyCalendarKind::Chinese);
         let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
         let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
         let persian = AnyCalendar::new(AnyCalendarKind::Persian);
@@ -1092,6 +1120,7 @@ mod tests {
         let ethioaa = Ref(&ethioaa);
         let gregorian = Ref(&gregorian);
         let indian = Ref(&indian);
+        let chinese = Ref(&chinese);
         let japanese = Ref(&japanese);
         let japanext = Ref(&japanext);
         let persian = Ref(&persian);
@@ -1188,6 +1217,19 @@ mod tests {
             1,
             CalendarError::UnknownMonthCode("M13".parse().unwrap(), "Indian"),
         );
+
+        single_test_roundtrip(chinese, "chinese", 400, "M02", 5);
+        single_test_roundtrip(chinese, "chinese", 4660, "M07", 29);
+        single_test_roundtrip(chinese, "chinese", -100, "M11", 12);
+        single_test_error(
+            chinese,
+            "chinese",
+            4658,
+            "M13",
+            1,
+            CalendarError::UnknownMonthCode("M13".parse().unwrap(), "Chinese"),
+        );
+
         single_test_roundtrip(japanese, "reiwa", 3, "M03", 1);
         single_test_roundtrip(japanese, "heisei", 6, "M12", 1);
         single_test_roundtrip(japanese, "meiji", 10, "M03", 1);
