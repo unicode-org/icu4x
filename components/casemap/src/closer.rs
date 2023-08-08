@@ -56,7 +56,7 @@ impl Default for CaseMapCloser<CaseMapper> {
 }
 
 impl CaseMapCloser<CaseMapper> {
-    /// A constructor which creates a [`CaseMapCloser`].
+    /// A constructor which creates a [`CaseMapCloser`] using compiled data.
     ///
     /// # Examples
     ///
