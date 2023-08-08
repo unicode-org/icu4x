@@ -68,6 +68,7 @@ pub struct Options {
 #[non_exhaustive]
 pub enum LocaleInclude {
     /// All locales
+    #[default]
     All,
     /// No locales
     None,
@@ -80,7 +81,6 @@ pub enum LocaleInclude {
     ///
     /// This currently resolves to `CldrSet({Modern, Moderate, Basic})` but
     /// might change in future releases.
-    #[default]
     Recommended,
 }
 
