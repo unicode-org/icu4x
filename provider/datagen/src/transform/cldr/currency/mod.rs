@@ -7,7 +7,6 @@ use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
 use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::maps::MutableZeroVecLike;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
 
@@ -156,7 +155,7 @@ fn extract_currency_essentials<'data>(
     };
 
     let mut currency_patterns_map = ZeroMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
-    let mut place_holders = VarZeroVec::<str>::new();
+    let mut place_holders = Vec::<&str>::new();
     let mut place_holders_map = HashMap::<&str, u16>::new();
     for (iso, currency_pattern) in currencies {
         let short_place_holder_index: u16;
@@ -169,7 +168,7 @@ fn extract_currency_essentials<'data>(
                 None => {
                     short_place_holder_index = place_holders.len() as u16;
                     place_holders_map.insert(short_place_holder, short_place_holder_index);
-                    place_holders.zvl_push(short_place_holder);
+                    place_holders.push(short_place_holder);
                 }
             },
             None => short_place_holder_index = u16::MAX,
@@ -183,7 +182,7 @@ fn extract_currency_essentials<'data>(
                     None => {
                         narrow_place_holder_index = place_holders.len() as u16;
                         place_holders_map.insert(narrow_place_holder, narrow_place_holder_index);
-                        place_holders.zvl_push(narrow_place_holder);
+                        place_holders.push(narrow_place_holder);
                     }
                 }
             }
@@ -251,7 +250,7 @@ fn extract_currency_essentials<'data>(
         currency_patterns_map,
         standard: standard.to_owned().into(),
         standard_alpha_next_to_number: standard_alpha_next_to_number.to_owned().into(),
-        place_holders,
+        place_holders: VarZeroVec::from(&place_holders),
     };
 
     Ok(result)
