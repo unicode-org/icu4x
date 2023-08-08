@@ -359,7 +359,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             });
         }
 
-        let max_day = Self::days_in_month_cached(month, cache);
+        let max_day = Self::days_in_month(month, cache.new_year);
         if day > max_day {
             return Err(CalendarError::Overflow {
                 field: "day",
@@ -387,15 +387,13 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
     }
 
-    /// Calls `days_in_month_cached` on an instance of ChineseBasedDateInner
+    /// Calls `days_in_month` on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_month_inner(&self) -> u8 {
-        Self::days_in_month_cached(self.0.month, &self.1)
+        Self::days_in_month(self.0.month, self.1.new_year)
     }
 
-    /// Returns the number of days in the given `year`, `month` (see `month_days`);
-    /// this function takes a `ChineseBasedCache` argument.
-    fn days_in_month_cached(month: u8, cache: &ChineseBasedCache) -> u8 {
-        let new_year = cache.new_year;
+    /// Returns the number of days in the given `month` after the given `new_year`.
+    fn days_in_month(month: u8, new_year: RataDie) -> u8 {
         let approx = new_year + ((month - 1) as i64 * 29);
         let prev_new_moon = Self::new_moon_before((approx + 15).as_moment());
         let next_new_moon = Self::new_moon_on_or_after((approx + 15).as_moment());
@@ -449,13 +447,7 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
         let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
         let new_year =
             ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year, None).0;
-        let approx = new_year + ((month - 1) as i64 * 29);
-        let prev_new_moon = ChineseBasedDateInner::<C>::new_moon_before((approx + 15).as_moment());
-        let next_new_moon =
-            ChineseBasedDateInner::<C>::new_moon_on_or_after((approx + 15).as_moment());
-        let result = (next_new_moon - prev_new_moon) as u8;
-        debug_assert!(result == 29 || result == 30);
-        result
+        ChineseBasedDateInner::<C>::days_in_month(month, new_year)
     }
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
