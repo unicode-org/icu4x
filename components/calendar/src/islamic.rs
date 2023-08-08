@@ -41,14 +41,17 @@ use ::tinystr::tinystr;
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct IslamicObservational;
+
 /// Civil / Arithmetical Islamic Calendar (Used for administrative purposes)
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct IslamicCivil;
+
 /// Umm-al-Qura Hijri Calendar (Used in Saudi Arabia)
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct UmmAlQura;
+
 /// A Tabular version of the Arithmetical Islamic Calendar
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
