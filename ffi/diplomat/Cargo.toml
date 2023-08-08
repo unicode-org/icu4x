@@ -38,7 +38,7 @@ max_combination_size = 2
 
 # Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates (except for components features)
 [features]
-default = ["compiled_data", "default_components", "simple_logger"]
+default = ["compiled_data", "default_components", "logging", "simple_logger"]
 any_provider = []
 buffer_provider = [
     "dep:icu_provider_blob",
