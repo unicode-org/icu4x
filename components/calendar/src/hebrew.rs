@@ -116,14 +116,35 @@ impl Calendar for Hebrew {
         _month_code: types::MonthCode,
         _day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        // let year = if era.0 == tinystr!(16, "hebrew") {
-        //     year
-        // } else {
-        //     return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
-        // };
+        let year = if _era.0 == tinystr!(16, "hebrew") {
+            _year
+        } else {
+            return Err(CalendarError::UnknownEra(_era.0, self.debug_name()));
+        };
 
-        // ArithmeticDate::new_from_codes(self, year, month_code, day).map(HebrewDateInner)
-        todo!("#3789")
+        let is_leap_year = Self::is_leap_year(year);
+
+        // Define the month codes for better matching
+        let m05l = tinystr!(4, "M05L");
+        let m06 = tinystr!(4, "M06");
+        let m07 = tinystr!(4, "M07");
+        let m08 = tinystr!(4, "M08");
+        let m09 = tinystr!(4, "M09");
+        let m10 = tinystr!(4, "M10");
+        let m11 = tinystr!(4, "M11");
+
+        let adjusted_month_code = match _month_code.0 {
+            code if code == m05l && is_leap_year => _month_code,
+            code if code == m06 && is_leap_year => types::MonthCode(tinystr!(4, "M07")),
+            code if code == m07 && is_leap_year => types::MonthCode(tinystr!(4, "M08")),
+            code if code == m08 && is_leap_year => types::MonthCode(tinystr!(4, "M09")),
+            code if code == m09 && is_leap_year => types::MonthCode(tinystr!(4, "M10")),
+            code if code == m10 && is_leap_year => types::MonthCode(tinystr!(4, "M11")),
+            code if code == m11 && is_leap_year => types::MonthCode(tinystr!(4, "M12")),
+            _ => _month_code,
+        };
+
+        ArithmeticDate::new_from_codes(self, year, adjusted_month_code, _day).map(HebrewDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
