@@ -222,7 +222,12 @@ impl Calendar for Dangi {
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month = date.0 .1.leap_month;
+        let leap_month_option = date.0 .1.leap_month;
+        let leap_month = if let Some(leap) = leap_month_option {
+            leap.get()
+        } else {
+            14
+        };
         let code_inner = if leap_month == ordinal {
             // Month cannot be 1 because a year cannot have a leap month before the first actual month,
             // and the maximum num of months ina leap year is 13.

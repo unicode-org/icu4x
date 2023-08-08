@@ -210,7 +210,12 @@ impl Calendar for Chinese {
     /// month, the month codes for ordinal monts 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month = date.0 .1.leap_month;
+        let leap_month_option = date.0 .1.leap_month;
+        let leap_month = if let Some(leap) = leap_month_option {
+            leap.get()
+        } else {
+            14
+        };
         let code_inner = if leap_month == ordinal {
             // Month cannot be 1 because a year cannot have a leap month before the first actual month,
             // and the maximum num of months ina leap year is 13.

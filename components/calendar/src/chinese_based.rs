@@ -29,6 +29,7 @@ use crate::{
     types::{Moment, MonthCode},
     Calendar, CalendarError,
 };
+use core::num::NonZeroU8;
 
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
 /// To do so, calendars should:
@@ -64,8 +65,7 @@ pub(crate) struct ChineseBasedDateInner<C: ChineseBased>(
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub(crate) struct ChineseBasedCache {
     pub(crate) new_year: RataDie,
-    pub(crate) is_leap_year: bool,
-    pub(crate) leap_month: u8,
+    pub(crate) leap_month: Option<NonZeroU8>,
 }
 
 impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
@@ -259,13 +259,14 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let day = day_i64 as u8;
         let is_leap_year = Self::new_year_is_leap_year(first_day_of_year, None);
         let leap_month = if is_leap_year {
-            Self::get_leap_month_from_new_year(first_day_of_year)
+            // This doesn't need to be checked for `None`, since `get_leap_month_from_new_year`
+            // will always return a number greater than or equal to 1, and less than 14.
+            NonZeroU8::new(Self::get_leap_month_from_new_year(first_day_of_year))
         } else {
-            14
+            None
         };
         let cache = ChineseBasedCache {
             new_year: first_day_of_year,
-            is_leap_year,
             leap_month,
         };
         // This can use `new_unchecked` because this function is only ever called from functions which
@@ -379,7 +380,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
     /// Also takes a `ChineseBasedCache` argument.
     fn months_in_year_cached(cache: &ChineseBasedCache) -> u8 {
-        if cache.is_leap_year {
+        if cache.leap_month.is_some() {
             13
         } else {
             12
@@ -427,13 +428,14 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let new_year = Self::new_year_on_or_before_fixed_date(mid_year, Some(prior_solstice)).0;
         let is_leap_year = Self::new_year_is_leap_year(new_year, None);
         let leap_month = if is_leap_year {
-            Self::get_leap_month_from_new_year(new_year)
+            // This doesn't need to be checked for None because `get_leap_month_from_new_year`
+            // will always return a value between 1..=13
+            NonZeroU8::new(Self::get_leap_month_from_new_year(new_year))
         } else {
-            14
+            None
         };
         ChineseBasedCache {
             new_year,
-            is_leap_year,
             leap_month,
         }
     }
