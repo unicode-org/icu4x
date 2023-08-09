@@ -77,7 +77,7 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
                     key,
                     post,
                     replacement,
-                    cursor_offset: 0, // TODO - maybe pass this as an additional parameter to push?
+                    cursor_offset: 0, // TODO(#3736): maybe pass this as an additional parameter to push?
                 };
 
                 let finished_group = self.current.push(UniRule::Conversion(rule));
@@ -123,7 +123,7 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
 
     pub(crate) fn finalize(mut self) -> RuleGroups<'p> {
         // push the current group
-        self.push_rule_group(self.current.clone()); // TODO: refactor and get rid of clone
+        self.push_rule_group(self.current.clone()); // note: refactoring could get rid of clone
                                                     // push any remaining group pairs
         if let Some(transform_group) = self.preceding_transform_group.take() {
             self.groups.push((transform_group, Vec::new()));
@@ -221,7 +221,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
                     key,
                     post,
                     replacement,
-                    cursor_offset: 0, // TODO - maybe pass this as an additional parameter to push?
+                    cursor_offset: 0, // TODO(#3736): maybe pass this as an additional parameter to push?
                 };
 
                 let finished_group = self.current.push(UniRule::Conversion(rule));
@@ -270,7 +270,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
 
     pub(crate) fn finalize(mut self) -> RuleGroups<'p> {
         // push the current group
-        self.push_rule_group(self.current.clone()); // TODO: refactor and get rid of clone
+        self.push_rule_group(self.current.clone()); // note: refactoring could get rid of clone
                                                     // push any remaining group pairs
         if let Some(conv_group) = self.preceding_conversion_group.take() {
             // a trailing conversion group in source order is the same as having a conversion
