@@ -127,7 +127,7 @@ impl ParseErrorKind {
 }
 
 /// The error type returned by the `parse` functions in this crate.
-#[allow(unused)] // TODO(#3736): remove when doing compilation
+#[allow(unused)] // TODO(#3736): remove when parse error message tests are added
 #[derive(Debug, Clone, Copy)]
 pub struct ParseError {
     // offset is the index to an arbitrary byte in the last character in the source that makes sense
@@ -170,7 +170,6 @@ pub(crate) enum QuantifierKind {
 }
 
 // source-target/variant
-#[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub(crate) struct BasicId {
     pub(crate) source: String,
@@ -208,7 +207,6 @@ impl Default for BasicId {
 }
 
 // [set] source-target/variant
-#[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct SingleId {
     pub(crate) filter: Option<FilterSet>,
@@ -275,7 +273,6 @@ impl Element {
 
 pub(crate) type Section = Vec<Element>;
 
-#[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct HalfRule {
     pub(crate) ante: Section,

@@ -168,7 +168,6 @@ struct Pass1Data {
     used_transliterators: HashSet<parse::BasicId>,
 }
 
-#[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 struct DirectedPass1Result<'p> {
     // data with dependencies resolved and counts summed
@@ -177,7 +176,6 @@ struct DirectedPass1Result<'p> {
     filter: Option<FilterSet>,
 }
 
-#[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 struct Pass1Result<'p> {
     forward_result: DirectedPass1Result<'p>,
