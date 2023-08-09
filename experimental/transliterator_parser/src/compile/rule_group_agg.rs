@@ -137,7 +137,6 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
 
 // Represents a non-empty rule group for the forward direction.
 #[derive(Debug, Clone)]
-
 enum ForwardRuleGroup<'p> {
     Conversion(Vec<UniConversionRule<'p>>),
     Transform(Vec<Cow<'p, parse::SingleId>>),
