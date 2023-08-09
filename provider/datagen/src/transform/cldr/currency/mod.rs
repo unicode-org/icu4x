@@ -36,8 +36,8 @@ fn currency_pattern_selection(
 
     let currency_sign = '¤';
     let currency_sign_index = pattern.find(currency_sign).unwrap();
-    let first_num_index = pattern.find(&['0', '#']).unwrap();
-    let last_num_index = pattern.rfind(&['0', '#']).unwrap();
+    let first_num_index = pattern.find(['0', '#']).unwrap();
+    let last_num_index = pattern.rfind(['0', '#']).unwrap();
 
     let letters_set = match load_for_general_category_group(provider, GeneralCategoryGroup::Letter)
     {
@@ -50,7 +50,7 @@ fn currency_pattern_selection(
 
     let char_closer_to_number = {
         if currency_sign_index < first_num_index {
-            place_holder.chars().rev().next().unwrap()
+            place_holder.chars().next_back().unwrap()
         } else if currency_sign_index > last_num_index {
             place_holder.chars().next().unwrap()
         } else {
