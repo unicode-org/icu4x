@@ -37,7 +37,6 @@ use crate::types::Moment;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
-use crate::alloc::string::ToString;
 
 /// Biblical Hebrew
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
@@ -118,68 +117,55 @@ impl Calendar for Hebrew {
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
         let is_leap_year = Self::is_leap_year(year);
-
         let year = if era.0 == tinystr!(16, "hebrew") {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        let month_ordinal = match month_code.0.to_string().as_str() {
-            "M01" => 1,
-            "M02" => 2,
-            "M03" => 3,
-            "M04" => 4,
-            "M05" => 5,
-            "M05L" if is_leap_year => 6,
-            "M06" => {
-                if is_leap_year {
-                    7
-                } else {
-                    6
+        let month_code_str = month_code.0.as_str();
+
+        let month_ordinal = if is_leap_year {
+            match month_code_str {
+                "M01" => 1,
+                "M02" => 2,
+                "M03" => 3,
+                "M04" => 4,
+                "M05" => 5,
+                "M05L" => 6,
+                "M06" => 7,
+                "M07" => 8,
+                "M08" => 9,
+                "M09" => 10,
+                "M10" => 11,
+                "M11" => 12,
+                _ => {
+                    return Err(CalendarError::UnknownMonthCode(
+                        month_code.0,
+                        self.debug_name(),
+                    ))
                 }
             }
-            "M07" => {
-                if is_leap_year {
-                    8
-                } else {
-                    7
+        } else {
+            match month_code_str {
+                "M01" => 1,
+                "M02" => 2,
+                "M03" => 3,
+                "M04" => 4,
+                "M05" => 5,
+                "M06" => 6,
+                "M07" => 7,
+                "M08" => 8,
+                "M09" => 9,
+                "M10" => 10,
+                "M11" => 11,
+                "M12" => 12,
+                _ => {
+                    return Err(CalendarError::UnknownMonthCode(
+                        month_code.0,
+                        self.debug_name(),
+                    ))
                 }
-            }
-            "M08" => {
-                if is_leap_year {
-                    9
-                } else {
-                    8
-                }
-            }
-            "M09" => {
-                if is_leap_year {
-                    10
-                } else {
-                    9
-                }
-            }
-            "M10" => {
-                if is_leap_year {
-                    11
-                } else {
-                    10
-                }
-            }
-            "M11" => {
-                if is_leap_year {
-                    12
-                } else {
-                    11
-                }
-            }
-            "M12" => 12,
-            _ => {
-                return Err(CalendarError::UnknownMonthCode(
-                    month_code.0,
-                    self.debug_name(),
-                ))
             }
         };
 
