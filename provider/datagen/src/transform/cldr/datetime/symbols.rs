@@ -66,15 +66,15 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         tinystr!(4, "M03"),
         tinystr!(4, "M04"),
         tinystr!(4, "M05"),
+        tinystr!(4, "M05L"),
         tinystr!(4, "M06"),
+        tinystr!(4, "M06L"),
         tinystr!(4, "M07"),
         tinystr!(4, "M08"),
         tinystr!(4, "M09"),
         tinystr!(4, "M10"),
         tinystr!(4, "M11"),
         tinystr!(4, "M12"),
-        tinystr!(4, "M05L"),
-        tinystr!(4, "M06L"),
     ];
 
     match calendar {
@@ -251,23 +251,13 @@ impl cldr_serde::ca::MonthSymbols {
         if ctx.1 == "hebrew" {
             let mut map = BTreeMap::new();
             for (k, v) in self.0.iter() {
-                let keys = match k.as_str() {
-                    "1" => tinystr!(4, "M01"),
-                    "2" => tinystr!(4, "M02"),
-                    "3" => tinystr!(4, "M03"),
-                    "4" => tinystr!(4, "M04"),
-                    "5" => tinystr!(4, "M05"),
-                    "6" => tinystr!(4, "M05L"),
-                    "7" => tinystr!(4, "M06"),
-                    "7-yeartype-leap" => tinystr!(4, "M06L"),
-                    "8" => tinystr!(4, "M07"),
-                    "9" => tinystr!(4, "M08"),
-                    "10" => tinystr!(4, "M9"),
-                    "11" => tinystr!(4, "M10"),
-                    "12" => tinystr!(4, "M11"),
-                    "13" => tinystr!(4, "M12"),
-                    _ => panic!("Unexpected month for Hebrew calendar"),
+                let keys: TinyStr4 = if k.as_str() == "7-yeartype-leap" {
+                    "M06L".parse().expect("Failed to parse.")
+                } else {
+                    let formatted_str = format!("M{:0>2}", k);
+                    formatted_str.parse().expect("Failed to parse.")
                 };
+
                 map.insert(MonthCode(keys), v.as_ref());
             }
             months::SymbolsV1::Other(map.into_iter().collect())
