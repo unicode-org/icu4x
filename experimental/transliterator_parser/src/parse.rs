@@ -198,6 +198,15 @@ pub(crate) struct SingleId {
     pub(crate) basic_id: BasicId,
 }
 
+impl SingleId {
+    pub(crate) fn reverse(self) -> Self {
+        Self {
+            basic_id: self.basic_id.reverse(),
+            ..self
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub(crate) enum Element {
     // Examples:

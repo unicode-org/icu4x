@@ -119,15 +119,30 @@ as described in the zero-copy format, and the maps here are just arrays)
 */
 
 use crate::parse;
-use crate::parse::{ElementLocation as EL, HalfRule, QuantifierKind};
+use crate::parse::{ElementLocation as EL, HalfRule, QuantifierKind, UnicodeSet};
 use parse::Result;
 use parse::PEK;
 use std::collections::{HashMap, HashSet};
+
+mod rule_group_agg;
 
 enum SingleDirection {
     Forward,
     Reverse,
 }
+
+// parse::Rule::Conversion but unidirectional
+#[derive(Debug, Clone)]
+struct UniConversionRule<'p> {
+    ante: &'p [parse::Element],
+    key: &'p [parse::Element],
+    post: &'p [parse::Element],
+    replacement: &'p [parse::Element],
+    cursor_offset: i32,
+}
+
+// transform + conversion rule groups for a single direction
+type RuleGroups<'p> = Vec<(Vec<parse::SingleId>, Vec<UniConversionRule<'p>>)>;
 
 /// The number of elements for each `VZV` in the `VarTable`.
 #[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
@@ -168,6 +183,8 @@ struct Pass1<'p> {
     forward_data: Pass1Data,
     reverse_data: Pass1Data,
     variable_data: HashMap<String, Pass1Data>,
+    forward_filter: Option<UnicodeSet>,
+    reverse_filter: Option<UnicodeSet>,
     variable_definitions: HashMap<String, &'p [parse::Element]>,
     // variables which contain constructs that are only allowed to appear on the source side
     // e.g., $a = c+; $set = [a-z]; ...
@@ -183,6 +200,8 @@ impl<'p> Pass1<'p> {
             variable_data: HashMap::new(),
             variable_definitions: HashMap::new(),
             target_disallowed_variables: HashSet::new(),
+            forward_filter: None,
+            reverse_filter: None,
         }
     }
 
@@ -192,6 +211,8 @@ impl<'p> Pass1<'p> {
         let rules = self.validate_global_filters(rules)?;
 
         // iterate through remaining rules and perform checks according to interim specification
+
+        let mut forward_rule_group = Vec::new();
 
         for rule in rules {
             match rule {
@@ -214,12 +235,13 @@ impl<'p> Pass1<'p> {
         Pass1ResultGenerator::generate(self)
     }
 
-    fn validate_global_filters<'a>(&self, rules: &'a [parse::Rule]) -> Result<&'a [parse::Rule]> {
+    fn validate_global_filters<'a>(&mut self, rules: &'a [parse::Rule]) -> Result<&'a [parse::Rule]> {
         let rules = match rules {
             [parse::Rule::GlobalFilter(filter), rest @ ..] => {
                 if filter.has_strings() {
                     return Err(PEK::GlobalFilterWithStrings.into());
                 }
+                self.forward_filter = Some(filter.clone());
 
                 rest
             }
@@ -230,6 +252,7 @@ impl<'p> Pass1<'p> {
                 if filter.has_strings() {
                     return Err(PEK::GlobalFilterWithStrings.into());
                 }
+                self.reverse_filter = Some(filter.clone());
 
                 rest
             }
