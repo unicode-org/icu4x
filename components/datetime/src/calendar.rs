@@ -7,8 +7,10 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, japanese::Japanese,
-    japanese::JapaneseExtended, persian::Persian, Gregorian,
+    buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian,
+    islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
+    islamic::UmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
+    Gregorian,
 };
 use icu_locid::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
@@ -85,6 +87,30 @@ impl CldrCalendar for Persian {
     type DateLengthsV1Marker = PersianDateLengthsV1Marker;
 }
 
+impl CldrCalendar for IslamicObservational {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
+    type DateSymbolsV1Marker = IslamicObservationalDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicObservationalDateLengthsV1Marker;
+}
+
+impl CldrCalendar for IslamicCivil {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamicc");
+    type DateSymbolsV1Marker = IslamicCivilDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicCivilDateLengthsV1Marker;
+}
+
+impl CldrCalendar for UmmAlQura {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("umalqura");
+    type DateSymbolsV1Marker = UmmAlQuraDateSymbolsV1Marker;
+    type DateLengthsV1Marker = UmmAlQuraDateLengthsV1Marker;
+}
+
+impl CldrCalendar for IslamicTabular {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("tbla");
+    type DateSymbolsV1Marker = IslamicTabularDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicTabularDateLengthsV1Marker;
+}
+
 impl CldrCalendar for Ethiopian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopic");
     type DateSymbolsV1Marker = EthiopianDateSymbolsV1Marker;
@@ -147,6 +173,10 @@ where
         + DataProvider<JapaneseExtendedDateLengthsV1Marker>
         + DataProvider<CopticDateLengthsV1Marker>
         + DataProvider<IndianDateLengthsV1Marker>
+        + DataProvider<IslamicObservationalDateLengthsV1Marker>
+        + DataProvider<IslamicCivilDateLengthsV1Marker>
+        + DataProvider<UmmAlQuraDateLengthsV1Marker>
+        + DataProvider<IslamicTabularDateLengthsV1Marker>
         + DataProvider<PersianDateLengthsV1Marker>
         + DataProvider<EthiopianDateLengthsV1Marker>
         + DataProvider<RocDateLengthsV1Marker>
@@ -187,6 +217,26 @@ where
                 .take_payload()?
                 .cast()
         }
+        AnyCalendarKind::IslamicObservational => DataProvider::<
+            <IslamicObservational as CldrCalendar>::DateLengthsV1Marker,
+        >::load(provider, req)?
+        .take_payload()?
+        .cast(),
+        AnyCalendarKind::IslamicCivil => DataProvider::<
+            <IslamicCivil as CldrCalendar>::DateLengthsV1Marker,
+        >::load(provider, req)?
+        .take_payload()?
+        .cast(),
+        AnyCalendarKind::UmmAlQura => {
+            DataProvider::<<UmmAlQura as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::IslamicTabular => DataProvider::<
+            <IslamicTabular as CldrCalendar>::DateLengthsV1Marker,
+        >::load(provider, req)?
+        .take_payload()?
+        .cast(),
         AnyCalendarKind::Persian => {
             DataProvider::<<Persian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
@@ -235,6 +285,10 @@ where
         + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
         + DataProvider<CopticDateSymbolsV1Marker>
         + DataProvider<IndianDateSymbolsV1Marker>
+        + DataProvider<IslamicObservationalDateSymbolsV1Marker>
+        + DataProvider<IslamicCivilDateSymbolsV1Marker>
+        + DataProvider<UmmAlQuraDateSymbolsV1Marker>
+        + DataProvider<IslamicTabularDateSymbolsV1Marker>
         + DataProvider<PersianDateSymbolsV1Marker>
         + DataProvider<EthiopianDateSymbolsV1Marker>
         + DataProvider<RocDateSymbolsV1Marker>
@@ -275,6 +329,26 @@ where
                 .take_payload()?
                 .cast()
         }
+        AnyCalendarKind::IslamicObservational => DataProvider::<
+            <IslamicObservational as CldrCalendar>::DateSymbolsV1Marker,
+        >::load(provider, req)?
+        .take_payload()?
+        .cast(),
+        AnyCalendarKind::IslamicCivil => DataProvider::<
+            <IslamicCivil as CldrCalendar>::DateSymbolsV1Marker,
+        >::load(provider, req)?
+        .take_payload()?
+        .cast(),
+        AnyCalendarKind::UmmAlQura => {
+            DataProvider::<<UmmAlQura as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::IslamicTabular => DataProvider::<
+            <IslamicTabular as CldrCalendar>::DateSymbolsV1Marker,
+        >::load(provider, req)?
+        .take_payload()?
+        .cast(),
         AnyCalendarKind::Persian => {
             DataProvider::<<Persian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?

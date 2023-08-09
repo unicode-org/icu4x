@@ -116,7 +116,7 @@ impl Calendar for IslamicObservational {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "ah") {
+        let year = if era.0 == tinystr!(16, "islamic") {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
@@ -245,7 +245,7 @@ impl IslamicObservational {
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "ah")),
+            era: types::Era(tinystr!(16, "islamic")),
             number: year,
             cyclic: None,
             related_iso: None,
@@ -355,7 +355,7 @@ impl Calendar for UmmAlQura {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "islamic-umalqura") {
+        let year = if era.0 == tinystr!(16, "islamic") {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
@@ -572,7 +572,7 @@ impl UmmAlQura {
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "islamic-umalqura")),
+            era: types::Era(tinystr!(16, "islamic")),
             number: year,
             cyclic: None,
             related_iso: None,
@@ -631,7 +631,7 @@ impl Calendar for IslamicCivil {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "islamic-civil") {
+        let year = if era.0 == tinystr!(16, "islamic") {
             // TODO: Check name and alias
             year
         } else {
@@ -760,7 +760,7 @@ impl IslamicCivil {
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "islamic-civil")),
+            era: types::Era(tinystr!(16, "islamic")),
             number: year,
             cyclic: None,
             related_iso: None,
@@ -876,7 +876,7 @@ impl Calendar for IslamicTabular {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "islamic-tbla") {
+        let year = if era.0 == tinystr!(16, "islamic") {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
@@ -1004,7 +1004,7 @@ impl IslamicTabular {
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "islamic-tbla")),
+            era: types::Era(tinystr!(16, "islamic")),
             number: year,
             cyclic: None,
             related_iso: None,
