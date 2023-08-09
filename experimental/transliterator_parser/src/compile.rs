@@ -126,12 +126,14 @@ as described in the zero-copy format, and the maps here are just arrays)
 */
 
 use crate::parse;
-use crate::parse::{ElementLocation as EL, HalfRule, QuantifierKind};
+use crate::parse::{ElementLocation as EL, HalfRule, QuantifierKind, UnicodeSet};
 use parse::Result;
 use parse::PEK;
 use std::collections::{HashMap, HashSet};
 
 mod pass2;
+mod rule_group_agg;
+use rule_group_agg::RuleGroups;
 
 enum SingleDirection {
     Forward,
@@ -174,10 +176,18 @@ struct Pass1Data {
 
 #[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
-struct Pass1Result<'p> {
+struct DirectedPass1Result<'p> {
     // data with dependencies resolved and counts summed
-    forward_data: Pass1Data,
-    reverse_data: Pass1Data,
+    data: Pass1Data,
+    groups: RuleGroups<'p>,
+    filter: Option<UnicodeSet>,
+}
+
+#[allow(unused)] // TODO: remove annotation
+#[derive(Debug, Clone)]
+struct Pass1Result<'p> {
+    forward_result: DirectedPass1Result<'p>,
+    reverse_result: DirectedPass1Result<'p>,
     variable_definitions: HashMap<String, &'p [parse::Element]>,
 }
 
@@ -189,6 +199,10 @@ struct Pass1<'p> {
     forward_data: Pass1Data,
     reverse_data: Pass1Data,
     variable_data: HashMap<String, Pass1Data>,
+    forward_filter: Option<UnicodeSet>,
+    reverse_filter: Option<UnicodeSet>,
+    forward_rule_group_agg: rule_group_agg::ForwardRuleGroupAggregator<'p>,
+    reverse_rule_group_agg: rule_group_agg::ReverseRuleGroupAggregator<'p>,
     variable_definitions: HashMap<String, &'p [parse::Element]>,
     // variables which contain constructs that are only allowed to appear on the source side
     // e.g., $a = c+; $set = [a-z]; ...
@@ -204,10 +218,14 @@ impl<'p> Pass1<'p> {
             variable_data: HashMap::new(),
             variable_definitions: HashMap::new(),
             target_disallowed_variables: HashSet::new(),
+            forward_filter: None,
+            reverse_filter: None,
+            forward_rule_group_agg: rule_group_agg::ForwardRuleGroupAggregator::new(),
+            reverse_rule_group_agg: rule_group_agg::ReverseRuleGroupAggregator::new(),
         }
     }
 
-    fn run(&mut self, rules: &'p [parse::Rule]) -> Result<Pass1Result<'p>> {
+    fn run(&mut self, rules: &'p [parse::Rule]) -> Result<()> {
         // first check global filter/global inverse filter.
         // after this check, they may not appear anywhere.
         let rules = self.validate_global_filters(rules)?;
@@ -215,6 +233,9 @@ impl<'p> Pass1<'p> {
         // iterate through remaining rules and perform checks according to interim specification
 
         for rule in rules {
+            self.forward_rule_group_agg.push(rule);
+            self.reverse_rule_group_agg.push(rule);
+
             match rule {
                 parse::Rule::GlobalFilter(_) | parse::Rule::GlobalInverseFilter(_) => {
                     // the previous step ensures `rules` has no more global filters
@@ -232,15 +253,23 @@ impl<'p> Pass1<'p> {
             }
         }
 
+        Ok(())
+    }
+
+    fn generate_result(self) -> Result<Pass1Result<'p>> {
         Pass1ResultGenerator::generate(self)
     }
 
-    fn validate_global_filters<'a>(&self, rules: &'a [parse::Rule]) -> Result<&'a [parse::Rule]> {
+    fn validate_global_filters<'a>(
+        &mut self,
+        rules: &'a [parse::Rule],
+    ) -> Result<&'a [parse::Rule]> {
         let rules = match rules {
             [parse::Rule::GlobalFilter(filter), rest @ ..] => {
                 if filter.has_strings() {
                     return Err(PEK::GlobalFilterWithStrings.into());
                 }
+                self.forward_filter = Some(filter.clone());
 
                 rest
             }
@@ -251,6 +280,7 @@ impl<'p> Pass1<'p> {
                 if filter.has_strings() {
                     return Err(PEK::GlobalFilterWithStrings.into());
                 }
+                self.reverse_filter = Some(filter.clone());
 
                 rest
             }
@@ -719,57 +749,70 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
 //  as part of this, it should also be decided whether these edge cases are full-blown errors or
 //  merely logged warnings.
 
-struct Pass1ResultGenerator<'a, 'p> {
-    pass: &'a Pass1<'p>,
+struct Pass1ResultGenerator {
     // for cycle-detection
     current_vars: HashSet<String>,
     transitive_var_dependencies: HashMap<String, HashSet<String>>,
 }
 
-impl<'a, 'p> Pass1ResultGenerator<'a, 'p> {
-    fn generate(pass: &'a Pass1<'p>) -> Result<Pass1Result<'p>> {
-        let mut generator = Self {
-            pass,
+impl Pass1ResultGenerator {
+    fn generate(pass: Pass1) -> Result<Pass1Result> {
+        let generator = Self {
             current_vars: HashSet::new(),
             transitive_var_dependencies: HashMap::new(),
         };
-        generator.generate_result()
+        generator.generate_result(pass)
     }
 
-    fn generate_result(&mut self) -> Result<Pass1Result<'p>> {
+    fn generate_result(mut self, pass: Pass1) -> Result<Pass1Result> {
         // the result for a given direction is computed by first computing the transitive
         // used variables for each direction, then using that data summing over the
         // special construct counts, and at last filtering the variable definitions based on
         // the used variables in either direction.
 
-        let forward_data = self.generate_result_one_direction(&self.pass.forward_data)?;
-        let reverse_data = self.generate_result_one_direction(&self.pass.reverse_data)?;
+        let forward_data =
+            self.generate_result_one_direction(&pass.forward_data, &pass.variable_data)?;
+        let reverse_data =
+            self.generate_result_one_direction(&pass.reverse_data, &pass.variable_data)?;
 
-        let variable_definitions = self
-            .pass
+        let variable_definitions = pass
             .variable_definitions
-            .iter()
-            .filter(|&(var, _)| {
+            .into_iter()
+            .filter(|(var, _)| {
                 forward_data.used_variables.contains(var)
                     || reverse_data.used_variables.contains(var)
             })
-            .map(|(var, def)| (var.clone(), *def))
             .collect();
 
+        let forward_rule_groups = pass.forward_rule_group_agg.finalize();
+        let reverse_rule_groups = pass.reverse_rule_group_agg.finalize();
+
         Ok(Pass1Result {
-            forward_data,
-            reverse_data,
+            forward_result: DirectedPass1Result {
+                data: forward_data,
+                filter: pass.forward_filter,
+                groups: forward_rule_groups,
+            },
+            reverse_result: DirectedPass1Result {
+                data: reverse_data,
+                filter: pass.reverse_filter,
+                groups: reverse_rule_groups,
+            },
             variable_definitions,
         })
     }
 
-    fn generate_result_one_direction(&mut self, seed_data: &Pass1Data) -> Result<Pass1Data> {
+    fn generate_result_one_direction(
+        &mut self,
+        seed_data: &Pass1Data,
+        var_data_map: &HashMap<String, Pass1Data>,
+    ) -> Result<Pass1Data> {
         let seed_vars = &seed_data.used_variables;
         let seed_transliterators = &seed_data.used_transliterators;
 
         let mut used_variables = seed_vars.clone();
         for var in seed_vars {
-            self.visit_var(var)?;
+            self.visit_var(var, var_data_map)?;
             #[allow(clippy::indexing_slicing)] // an non-error `visit_var` ensures this exists
             let deps = self.transitive_var_dependencies[var].clone();
             used_variables.extend(deps);
@@ -783,7 +826,7 @@ impl<'a, 'p> Pass1ResultGenerator<'a, 'p> {
             .iter()
             .try_fold(seed_data.counts, |mut counts, var| {
                 // we check for unknown variables during the first pass, so these should exist
-                let var_data = self.pass.variable_data.get(var).ok_or(PEK::Internal)?;
+                let var_data = var_data_map.get(var).ok_or(PEK::Internal)?;
                 counts.num_compounds += var_data.counts.num_compounds;
                 counts.num_segments += var_data.counts.num_segments;
                 counts.num_quantifiers_opt += var_data.counts.num_quantifiers_opt;
@@ -802,7 +845,7 @@ impl<'a, 'p> Pass1ResultGenerator<'a, 'p> {
         })
     }
 
-    fn visit_var(&mut self, name: &str) -> Result<()> {
+    fn visit_var(&mut self, name: &str, var_data_map: &HashMap<String, Pass1Data>) -> Result<()> {
         if self.transitive_var_dependencies.contains_key(name) {
             return Ok(());
         }
@@ -812,10 +855,10 @@ impl<'a, 'p> Pass1ResultGenerator<'a, 'p> {
         }
         self.current_vars.insert(name.to_owned());
         // we check for unknown variables during the first pass, so these should exist
-        let var_data = self.pass.variable_data.get(name).ok_or(PEK::Internal)?;
+        let var_data = var_data_map.get(name).ok_or(PEK::Internal)?;
         let mut transitive_dependencies = var_data.used_variables.clone();
         var_data.used_variables.iter().try_for_each(|var| {
-            self.visit_var(var)?;
+            self.visit_var(var, var_data_map)?;
             #[allow(clippy::indexing_slicing)] // an non-error `visit_var` ensures this exists
             let deps = self.transitive_var_dependencies[var].clone();
             transitive_dependencies.extend(deps);
@@ -838,7 +881,8 @@ pub(crate) fn compile(
     //  - if validation is dependent, this rule is valid because it's not used in the forward direction
     //  - if validation is independent, this rule is invalid because the reverse direction is also checked
     let mut pass1 = Pass1::new(direction);
-    let _result = pass1.run(&rules)?;
+    pass1.run(&rules)?;
+    let _result = pass1.generate_result();
 
     todo!()
 }
@@ -912,7 +956,12 @@ mod tests {
 
         let rules = parse(source);
         let mut pass1 = Pass1::new(BOTH);
-        let result = pass1.run(&rules).expect("pass1 failed");
+        pass1.run(&rules).expect("pass1 failed");
+        // cloning to keep access to intermediate data for testing
+        let result = pass1
+            .clone()
+            .generate_result()
+            .expect("pass1 result generation failed");
 
         {
             // forward
@@ -1091,8 +1140,8 @@ mod tests {
                 rev_counts,
             );
 
-            assert_eq!(fwd_data, result.forward_data);
-            assert_eq!(rev_data, result.reverse_data);
+            assert_eq!(fwd_data, result.forward_result.data);
+            assert_eq!(rev_data, result.reverse_result.data);
 
             let actual_definition_keys: HashSet<_> = result
                 .variable_definitions
@@ -1186,7 +1235,7 @@ mod tests {
         for (expected_outcome, source) in sources {
             let rules = parse(source);
             let mut pass = Pass1::new(BOTH);
-            let result = pass.run(&rules);
+            let result = pass.run(&rules).and_then(|_| pass.generate_result());
             match (expected_outcome, result) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
@@ -1218,7 +1267,7 @@ mod tests {
         for (expected_outcome, source) in sources {
             let rules = parse(source);
             let mut pass = Pass1::new(BOTH);
-            let result = pass.run(&rules);
+            let result = pass.run(&rules).and_then(|_| pass.generate_result());
             match (expected_outcome, result) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
@@ -1250,7 +1299,7 @@ mod tests {
         for (expected_outcome, source) in sources {
             let rules = parse(source);
             let mut pass = Pass1::new(BOTH);
-            let result = pass.run(&rules);
+            let result = pass.run(&rules).and_then(|_| pass.generate_result());
             match (expected_outcome, result) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")

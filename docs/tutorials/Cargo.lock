@@ -748,6 +748,7 @@ dependencies = [
  "icu_casemap_data",
  "icu_collections",
  "icu_locid",
+ "icu_properties",
  "icu_provider",
  "serde",
  "writeable",
