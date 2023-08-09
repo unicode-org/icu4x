@@ -914,7 +914,7 @@ mod tests {
     }
 
     fn pass1data_from_parts(
-        translit_deps: &[(&'static str, &'static str, &'static str)],
+        translit_deps: &[(&'static str, &'static str, Option<&'static str>)],
         var_deps: &[&'static str],
         counts: SpecialConstructCounts,
     ) -> Pass1Data {
@@ -926,7 +926,7 @@ mod tests {
             data.used_transliterators.insert(parse::BasicId {
                 source: source.into(),
                 target: target.into(),
-                variant: variant.into(),
+                variant: variant.map(|s| s.into()),
             });
         }
         for &var in var_deps {
@@ -979,10 +979,10 @@ mod tests {
             };
             let expected_fwd_data = pass1data_from_parts(
                 &[
-                    ("Bidi", "Dependency", "One"),
-                    ("Forward", "Dependency", ""),
-                    ("Any", "AnotherForwardDependency", ""),
-                    ("YetAnother", "ForwardDependency", ""),
+                    ("Bidi", "Dependency", Some("One")),
+                    ("Forward", "Dependency", None),
+                    ("Any", "AnotherForwardDependency", None),
+                    ("YetAnother", "ForwardDependency", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 counts,
@@ -1000,12 +1000,12 @@ mod tests {
             };
             let expected_rev_data = pass1data_from_parts(
                 &[
-                    ("Dependency", "Bidi", "One"),
-                    ("Backward", "Dependency", ""),
-                    ("Any", "AnotherBackwardDependency", ""),
-                    ("Any", "Many", ""),
-                    ("Any", "Backwardz", ""),
-                    ("Any", "Deps", ""),
+                    ("Dependency", "Bidi", Some("One")),
+                    ("Backward", "Dependency", None),
+                    ("Any", "AnotherBackwardDependency", None),
+                    ("Any", "Many", None),
+                    ("Any", "Backwardz", None),
+                    ("Any", "Deps", None),
                 ],
                 &["used_rev", "literal1", "literal2"],
                 counts,
@@ -1115,10 +1115,10 @@ mod tests {
             };
             let fwd_data = pass1data_from_parts(
                 &[
-                    ("Bidi", "Dependency", "One"),
-                    ("Forward", "Dependency", ""),
-                    ("Any", "AnotherForwardDependency", ""),
-                    ("YetAnother", "ForwardDependency", ""),
+                    ("Bidi", "Dependency", Some("One")),
+                    ("Forward", "Dependency", None),
+                    ("Any", "AnotherForwardDependency", None),
+                    ("YetAnother", "ForwardDependency", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 fwd_counts,
@@ -1135,12 +1135,12 @@ mod tests {
             };
             let rev_data = pass1data_from_parts(
                 &[
-                    ("Dependency", "Bidi", "One"),
-                    ("Backward", "Dependency", ""),
-                    ("Any", "AnotherBackwardDependency", ""),
-                    ("Any", "Many", ""),
-                    ("Any", "Backwardz", ""),
-                    ("Any", "Deps", ""),
+                    ("Dependency", "Bidi", Some("One")),
+                    ("Backward", "Dependency", None),
+                    ("Any", "AnotherBackwardDependency", None),
+                    ("Any", "Many", None),
+                    ("Any", "Backwardz", None),
+                    ("Any", "Deps", None),
                 ],
                 &["used_both", "used_rev", "literal1", "literal2"],
                 rev_counts,

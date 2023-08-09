@@ -174,12 +174,12 @@ pub(crate) enum QuantifierKind {
 pub(crate) struct BasicId {
     pub(crate) source: String,
     pub(crate) target: String,
-    pub(crate) variant: String,
+    pub(crate) variant: Option<String>,
 }
 
 impl BasicId {
     pub(crate) fn is_null(&self) -> bool {
-        self.source == "Any" && self.target == "Null" && self.variant.is_empty()
+        self.source == "Any" && self.target == "Null" && self.variant.is_none()
     }
 
     pub(crate) fn reverse(self) -> Self {
@@ -201,7 +201,7 @@ impl Default for BasicId {
         Self {
             source: "Any".to_string(),
             target: "Null".to_string(),
-            variant: "".to_string(),
+            variant: None,
         }
     }
 }
@@ -701,7 +701,7 @@ where
         Ok(BasicId {
             source,
             target,
-            variant: variant_id.unwrap_or("".to_string()),
+            variant: variant_id,
         })
     }
 
