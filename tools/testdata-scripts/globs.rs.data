@@ -14,13 +14,8 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-cal-indian-full/main/$LOCALES/ca-indian.json",
     "cldr-cal-japanese-full/main/$LOCALES/ca-japanese.json",
     "cldr-cal-persian-full/main/$LOCALES/ca-persian.json",
-<<<<<<< HEAD
     "cldr-cal-hebrew-full/main/$LOCALES/ca-hebrew.json",
     "cldr-cal-islamic-full/main/$LOCALES/ca-islamic.json",
-||||||| f549131a3
-=======
-    "cldr-cal-islamic-full/main/$LOCALES/ca-islamic.json",
->>>>>>> origin/main
     "cldr-cal-roc-full/main/$LOCALES/ca-roc.json",
     "cldr-core/coverageLevels.json",
     "cldr-core/scriptMetadata.json",
