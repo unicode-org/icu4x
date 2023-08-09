@@ -128,7 +128,7 @@ fn extract_currency_essentials<'data>(
         .value
         .numbers
         .numsys_data
-        .currency_formats
+        .currency_patterns
         .get(&tinystr!(8, "latn"))
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 

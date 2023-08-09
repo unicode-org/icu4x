@@ -87,7 +87,7 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct CurrencyFormats {
+pub struct CurrencyFormattingPatterns {
     /// Maps from currency code to standard pattern
     pub standard: String,
 
@@ -102,8 +102,8 @@ pub struct NumberingSystemData {
     pub symbols: HashMap<TinyStr8, Symbols>,
     /// Map from numbering system to decimal formats
     pub formats: HashMap<TinyStr8, DecimalFormats>,
-    /// Map from currency formats to patterns
-    pub currency_formats: HashMap<TinyStr8, CurrencyFormats>,
+    /// Map from numbering system to patterns
+    pub currency_patterns: HashMap<TinyStr8, CurrencyFormattingPatterns>,
 }
 
 pub struct NumberingSystemDataVisitor;
@@ -140,8 +140,8 @@ impl<'de> Visitor<'de> for NumberingSystemDataVisitor {
                     result.formats.insert(numsys, value);
                 }
                 "currencyFormats" => {
-                    let value: CurrencyFormats = access.next_value()?;
-                    result.currency_formats.insert(numsys, value);
+                    let value: CurrencyFormattingPatterns = access.next_value()?;
+                    result.currency_patterns.insert(numsys, value);
                 }
                 _ => {
                     // When needed, consume "scientificFormats", "percentFormats", ...
