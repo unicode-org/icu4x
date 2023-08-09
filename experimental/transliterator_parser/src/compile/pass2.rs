@@ -139,10 +139,11 @@ impl MutVarTable {
 
     fn standin_for_backref(&self, backref_num: u32) -> char {
         debug_assert!(backref_num > 0);
-        // TODO: move this step into fallible constructor, collect max_backref_num in pass1
-        debug_assert!(self.backref_base + backref_num - 1 <= Self::MAX_DYNAMIC);
-        #[allow(clippy::unwrap_used)] // debug asserts imply this is in range
-        char::try_from(self.backref_base + backref_num - 1).unwrap()
+        // -1 because backrefs are 1-indexed
+        let standin = self.backref_base + backref_num - 1;
+        debug_assert!(standin <= Self::MAX_DYNAMIC);
+        #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
+        char::try_from(standin).unwrap()
     }
 
     fn finalize(&self) -> ds::VarTable<'static> {
@@ -197,8 +198,6 @@ pub(super) struct Pass2<'a, 'p> {
 }
 
 impl<'a, 'p> Pass2<'a, 'p> {
-    // TODO: the interface for Pass2 could be better, maybe a non-self Pass2::run()
-
     pub(super) fn run(
         result: DirectedPass1Result<'p>,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,

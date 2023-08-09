@@ -152,6 +152,9 @@ struct SpecialConstructCounts {
     num_segments: usize,
     num_unicode_sets: usize,
     num_function_calls: usize,
+    // backrefs have no data, they're simply an integer, so we only care about the maximum number
+    // we need to encode
+    max_backref_num: u32,
 }
 
 impl SpecialConstructCounts {
@@ -163,6 +166,7 @@ impl SpecialConstructCounts {
             + self.num_segments
             + self.num_unicode_sets
             + self.num_function_calls
+            + self.max_backref_num as usize
     }
 }
 
@@ -621,6 +625,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 if *num > self.num_segments {
                     return Err(PEK::BackReferenceOutOfRange.into());
                 }
+                self.data.counts.max_backref_num = self.data.counts.max_backref_num.max(*num);
             }
             parse::Element::FunctionCall(id, inner) => {
                 self.validate_section(inner, false)?;
@@ -830,6 +835,8 @@ impl Pass1ResultGenerator {
                 counts.num_quantifiers_kleene_plus += var_data.counts.num_quantifiers_kleene_plus;
                 counts.num_unicode_sets += var_data.counts.num_unicode_sets;
                 counts.num_function_calls += var_data.counts.num_function_calls;
+                counts.max_backref_num =
+                    counts.max_backref_num.max(var_data.counts.max_backref_num);
 
                 Ok::<_, crate::ParseError>(counts)
             })?;
