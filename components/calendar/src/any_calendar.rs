@@ -1502,48 +1502,48 @@ mod tests {
         single_test_roundtrip(roc, "roc-inverse", 15, "M01", 10);
         single_test_roundtrip(roc, "roc", 100, "M10", 30);
 
-        single_test_roundtrip(islamic_observational, "ah", 477, "M03", 1);
-        single_test_roundtrip(islamic_observational, "ah", 2083, "M07", 21);
-        single_test_roundtrip(islamic_observational, "ah", 1600, "M12", 20);
+        single_test_roundtrip(islamic_observational, "islamic", 477, "M03", 1);
+        single_test_roundtrip(islamic_observational, "islamic", 2083, "M07", 21);
+        single_test_roundtrip(islamic_observational, "islamic", 1600, "M12", 20);
         single_test_error(
             islamic_observational,
-            "ah",
+            "islamic",
             100,
             "M9",
             1,
             CalendarError::UnknownMonthCode("M9".parse().unwrap(), "IslamicObservational"),
         );
 
-        single_test_roundtrip(islamic_civil, "ah", 477, "M03", 1);
-        single_test_roundtrip(islamic_civil, "ah", 2083, "M07", 21);
-        single_test_roundtrip(islamic_civil, "ah", 1600, "M12", 20);
+        single_test_roundtrip(islamic_civil, "islamic", 477, "M03", 1);
+        single_test_roundtrip(islamic_civil, "islamic", 2083, "M07", 21);
+        single_test_roundtrip(islamic_civil, "islamic", 1600, "M12", 20);
         single_test_error(
             islamic_civil,
-            "ah",
+            "islamic",
             100,
             "M9",
             1,
             CalendarError::UnknownMonthCode("M9".parse().unwrap(), "IslamicCivil"),
         );
 
-        single_test_roundtrip(umm_al_qura, "ah", 477, "M03", 1);
-        single_test_roundtrip(umm_al_qura, "ah", 2083, "M07", 21);
-        single_test_roundtrip(umm_al_qura, "ah", 1600, "M12", 20);
+        single_test_roundtrip(umm_al_qura, "islamic", 477, "M03", 1);
+        single_test_roundtrip(umm_al_qura, "islamic", 2083, "M07", 21);
+        single_test_roundtrip(umm_al_qura, "islamic", 1600, "M12", 20);
         single_test_error(
             umm_al_qura,
-            "ah",
+            "islamic",
             100,
             "M9",
             1,
             CalendarError::UnknownMonthCode("M9".parse().unwrap(), "Umm-al-Qura Islamic"),
         );
 
-        single_test_roundtrip(islamic_tabular, "ah", 477, "M03", 1);
-        single_test_roundtrip(islamic_tabular, "ah", 2083, "M07", 21);
-        single_test_roundtrip(islamic_tabular, "ah", 1600, "M12", 20);
+        single_test_roundtrip(islamic_tabular, "islamic", 477, "M03", 1);
+        single_test_roundtrip(islamic_tabular, "islamic", 2083, "M07", 21);
+        single_test_roundtrip(islamic_tabular, "islamic", 1600, "M12", 20);
         single_test_error(
             islamic_tabular,
-            "ah",
+            "islamic-tabular",
             100,
             "M9",
             1,
