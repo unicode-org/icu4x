@@ -102,7 +102,10 @@ pub mod ffi {
         /// (if head adjustment is enabled in the options)
         ///
         /// The `v1` refers to the version of the options struct, which may change as we add more options
-        #[diplomat::rust_link(icu::casemap::CaseMapper::titlecase_segment_adjust_to_cased, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapper::titlecase_segment_adjust_to_cased,
+            FnInStruct
+        )]
         #[diplomat::rust_link(
             icu::casemap::CaseMapper::titlecase_segment_adjust_to_cased_to_string,
             FnInStruct,

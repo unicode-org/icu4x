@@ -621,7 +621,11 @@ mod tests {
         );
         // but the YPOGEGRAMMENI should not titlecase
         assert_eq!(
-            cm.titlecase_segment_adjust_to_cased_to_string("α\u{0313}\u{0345}", &root, default_options),
+            cm.titlecase_segment_adjust_to_cased_to_string(
+                "α\u{0313}\u{0345}",
+                &root,
+                default_options
+            ),
             "Α\u{0313}\u{0345}"
         );
 
