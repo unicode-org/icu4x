@@ -16,6 +16,7 @@
 // allocations could be avoided.
 
 use crate::parse;
+use std::borrow::Cow;
 use std::collections::VecDeque;
 
 // parse::Rule::Conversion but unidirectional
@@ -30,12 +31,12 @@ pub(crate) struct UniConversionRule<'p> {
 }
 
 // transform + conversion rule groups for a single direction
-pub(crate) type RuleGroups<'p> = Vec<(Vec<parse::SingleId>, Vec<UniConversionRule<'p>>)>;
+pub(crate) type RuleGroups<'p> = Vec<(Vec<Cow<'p, parse::SingleId>>, Vec<UniConversionRule<'p>>)>;
 
 // an intermediate enum for use in the aggregators
 enum UniRule<'p> {
     Conversion(UniConversionRule<'p>),
-    Transform(parse::SingleId),
+    Transform(Cow<'p, parse::SingleId>),
 }
 
 #[derive(Debug, Clone)]
@@ -45,7 +46,7 @@ pub(crate) struct ForwardRuleGroupAggregator<'p> {
     // forward-order.
     groups: RuleGroups<'p>,
     // the transform_group of a group pair appears first
-    preceding_transform_group: Option<Vec<parse::SingleId>>,
+    preceding_transform_group: Option<Vec<Cow<'p, parse::SingleId>>>,
 }
 
 impl<'p> ForwardRuleGroupAggregator<'p> {
@@ -86,7 +87,7 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
                 }
             }
             parse::Rule::Transform(fwd, _) => {
-                let finished_group = self.current.push(UniRule::Transform(fwd.clone()));
+                let finished_group = self.current.push(UniRule::Transform(Cow::Borrowed(fwd)));
                 if let Some(finished_group) = finished_group {
                     self.push_rule_group(finished_group);
                 }
@@ -139,7 +140,7 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
 
 enum ForwardRuleGroup<'p> {
     Conversion(Vec<UniConversionRule<'p>>),
-    Transform(Vec<parse::SingleId>),
+    Transform(Vec<Cow<'p, parse::SingleId>>),
 }
 
 impl<'p> ForwardRuleGroup<'p> {
@@ -147,7 +148,7 @@ impl<'p> ForwardRuleGroup<'p> {
         Self::Conversion(vec![rule])
     }
 
-    fn new_transform(rule: parse::SingleId) -> Self {
+    fn new_transform(rule: Cow<'p, parse::SingleId>) -> Self {
         Self::Transform(vec![rule])
     }
 
@@ -188,7 +189,7 @@ pub(crate) struct ReverseRuleGroupAggregator<'p> {
     current: ReverseRuleGroup<'p>,
     // VecDeque because we encounter groups in source-order, but we want to aggregate them in
     // reverse-order.
-    groups: VecDeque<(Vec<parse::SingleId>, Vec<UniConversionRule<'p>>)>,
+    groups: VecDeque<(Vec<Cow<'p, parse::SingleId>>, Vec<UniConversionRule<'p>>)>,
     // the conversion_group of a group pair appears first due to the reverse order
     preceding_conversion_group: Option<Vec<UniConversionRule<'p>>>,
 }
@@ -233,7 +234,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
             parse::Rule::Transform(fwd, rev) => {
                 let rev = rev.clone().unwrap_or_else(|| fwd.clone().reverse());
 
-                let finished_group = self.current.push(UniRule::Transform(rev));
+                let finished_group = self.current.push(UniRule::Transform(Cow::Owned(rev)));
                 if let Some(finished_group) = finished_group {
                     self.push_rule_group(finished_group);
                 }
@@ -290,7 +291,7 @@ enum ReverseRuleGroup<'p> {
     // because contiguous C's are aggregated in source-order, we can just use a Vec
     Conversion(Vec<UniConversionRule<'p>>),
     // but contiguous T's are aggregated in reverse-order, so we need to use a VecDeque and push_back
-    Transform(VecDeque<parse::SingleId>),
+    Transform(VecDeque<Cow<'p, parse::SingleId>>),
 }
 
 impl<'p> Default for ReverseRuleGroup<'p> {
@@ -304,7 +305,7 @@ impl<'p> ReverseRuleGroup<'p> {
         Self::Conversion(vec![rule])
     }
 
-    fn new_transform(rule: parse::SingleId) -> Self {
+    fn new_transform(rule: Cow<'p, parse::SingleId>) -> Self {
         let mut group = VecDeque::new();
         group.push_back(rule);
         Self::Transform(group)
