@@ -2,10 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains provider implementations backed by TOML files
-//! exported from ICU.
-
-pub mod collator;
-pub mod normalizer;
-pub mod ucase;
-pub mod uprops;
+pub(crate) fn compile(
+    _rules: Vec<crate::parse::Rule>,
+) -> Result<super::TransliteratorDataStruct, crate::ParseError> {
+    todo!()
+}

@@ -5,7 +5,7 @@
 This module is published as its own crate ([`icu_casemap`](https://docs.rs/icu_casemap/latest/icu_casemap/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
-## Example
+## Examples
 
 ```rust
 use icu_casemap::CaseMapper;
