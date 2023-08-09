@@ -1,53 +1,50 @@
-use std::collections::VecDeque;
-use crate::compile::UniConversionRule;
-use crate::parse;
-use crate::parse::SingleId;
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module contains the logic for aggregating rules into groups.
+//! Due to incompatible orders (see comment on `ReverseRuleGroupAggregator`), we need separate
+//! aggregators for forward and reverse directions.
+//!
+//! These aggregators both accept source-order (!) `parse::Rule`s and aggregate them into the rule
+//! groups that the data struct [`RuleBasedTransliterator`](icu_transliteration::provider::RuleBasedTransliterator)
+//! semantically expects. A later step converts these into the actual zero-copy format.
+//! They also transform the bidirectional `parse::Rule`s into a unidirectional version.
+
+// note: the aggregators currently work in a one-`parse::Rule`-at-a-time fashion, but really, they
+// could also receive the full `&[parse::Rule]` slice. with some careful index handling, some
+// allocations could be avoided.
+
+use crate::parse;
+use std::collections::VecDeque;
+
+// parse::Rule::Conversion but unidirectional
+#[derive(Debug, Clone)]
+pub(crate) struct UniConversionRule<'p> {
+    ante: &'p [parse::Element],
+    key: &'p [parse::Element],
+    post: &'p [parse::Element],
+    replacement: &'p [parse::Element],
+    cursor_offset: i32,
+}
+
+// transform + conversion rule groups for a single direction
+pub(crate) type RuleGroups<'p> = Vec<(Vec<parse::SingleId>, Vec<UniConversionRule<'p>>)>;
+
+// an intermediate enum for use in the aggregators
 enum UniRule<'p> {
-    Conversion(super::UniConversionRule<'p>),
+    Conversion(UniConversionRule<'p>),
     Transform(parse::SingleId),
 }
 
-enum ForwardRuleGroup<'p> {
-    Conversion(Vec<super::UniConversionRule<'p>>),
-    Transform(Vec<parse::SingleId>),
-}
-
-impl<'p> ForwardRuleGroup<'p> {
-    fn new_conversion(rule: super::UniConversionRule<'p>) -> Self {
-        Self::Conversion(vec![rule])
-    }
-
-    fn new_transform(rule: parse::SingleId) -> Self {
-        Self::Transform(vec![rule])
-    }
-
-    // if the group is full return self, and push the rule into a new group
-    fn push(&mut self, rule: UniRule<'p>) -> Option<Self> {
-        match (self, rule) {
-            (Self::Conversion(group), UniRule::Conversion(rule)) => {
-                group.push(rule);
-                None
-            }
-            (Self::Transform(group), UniRule::Transform(rule)) => {
-                group.push(rule);
-                None
-            }
-            (Self::Conversion(_), UniRule::Transform(new_rule)) => {
-                Some(std::mem::replace(self, Self::new_transform(new_rule)))
-            }
-            (Self::Transform(_), UniRule::Conversion(new_rule)) => {
-                Some(std::mem::replace(self, Self::new_conversion(new_rule)))
-            }
-        }
-    }
-}
-
-struct ForwardRuleGroupAggregator<'p> {
+#[derive(Debug, Clone)]
+pub(crate) struct ForwardRuleGroupAggregator<'p> {
     current: ForwardRuleGroup<'p>,
-    groups: Vec<(Vec<SingleId>, Vec<UniConversionRule<'p>>)>,
+    // the forward aggregator can use the final type directly, as source-order is equivalent to
+    // forward-order.
+    groups: RuleGroups<'p>,
     // the transform_group of a group pair appears first
-    preceding_transform_group: Option<Vec<SingleId>>,
+    preceding_transform_group: Option<Vec<parse::SingleId>>,
 }
 
 impl<'p> ForwardRuleGroupAggregator<'p> {
@@ -110,34 +107,71 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
                 // finished group pair into self.groups.
                 debug_assert!(self.preceding_transform_group.is_none());
                 self.preceding_transform_group = Some(transform_group);
-            },
+            }
             ForwardRuleGroup::Conversion(conversion_group) => {
                 let associated_transform_group = match self.preceding_transform_group.take() {
                     Some(transform_group) => transform_group,
                     // match arm is necessary if the first source-order rule group is a conversion group
                     None => Vec::new(),
                 };
-                self.groups.push((associated_transform_group, conversion_group));
-            },
+                self.groups
+                    .push((associated_transform_group, conversion_group));
+            }
         }
     }
 
-    pub(crate) fn finalize(mut self) -> Vec<(Vec<SingleId>, Vec<UniConversionRule<'p>>)> {
+    pub(crate) fn finalize(mut self) -> RuleGroups<'p> {
         // push the current group
         self.push_rule_group(self.current);
         // push any remaining group pairs
         match self.preceding_transform_group.take() {
             Some(transform_group) => {
                 self.groups.push((transform_group, Vec::new()));
-            },
-            None => {},
+            }
+            None => {}
         }
 
         self.groups
     }
 }
 
+// Represents a non-empty rule group for the forward direction.
+#[derive(Debug, Clone)]
 
+enum ForwardRuleGroup<'p> {
+    Conversion(Vec<UniConversionRule<'p>>),
+    Transform(Vec<parse::SingleId>),
+}
+
+impl<'p> ForwardRuleGroup<'p> {
+    fn new_conversion(rule: UniConversionRule<'p>) -> Self {
+        Self::Conversion(vec![rule])
+    }
+
+    fn new_transform(rule: parse::SingleId) -> Self {
+        Self::Transform(vec![rule])
+    }
+
+    // if the group is full return self, and push the rule into a new group
+    fn push(&mut self, rule: UniRule<'p>) -> Option<Self> {
+        match (self, rule) {
+            (Self::Conversion(group), UniRule::Conversion(rule)) => {
+                group.push(rule);
+                None
+            }
+            (Self::Transform(group), UniRule::Transform(rule)) => {
+                group.push(rule);
+                None
+            }
+            (Self::Conversion(_), UniRule::Transform(new_rule)) => {
+                Some(std::mem::replace(self, Self::new_transform(new_rule)))
+            }
+            (Self::Transform(_), UniRule::Conversion(new_rule)) => {
+                Some(std::mem::replace(self, Self::new_conversion(new_rule)))
+            }
+        }
+    }
+}
 
 // Rules will be pushed in source-order (i.e., forward order), which means we have to be careful
 // in which order we aggregate them. Example: (T = transform rule, C = conversion rule)
@@ -150,11 +184,11 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
 //
 // We do this by using VecDeque, push_back, and make_contiguous in the end.
 #[derive(Debug, Clone)]
-struct ReverseRuleGroupAggregator<'p> {
+pub(crate) struct ReverseRuleGroupAggregator<'p> {
     current: ReverseRuleGroup<'p>,
     // VecDeque because we encounter groups in source-order, but we want to aggregate them in
     // reverse-order.
-    groups: VecDeque<(Vec<SingleId>, Vec<UniConversionRule<'p>>)>,
+    groups: VecDeque<(Vec<parse::SingleId>, Vec<UniConversionRule<'p>>)>,
     // the conversion_group of a group pair appears first due to the reverse order
     preceding_conversion_group: Option<Vec<UniConversionRule<'p>>>,
 }
@@ -221,7 +255,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
                 // finished group pair into self.groups.
                 debug_assert!(self.preceding_conversion_group.is_none());
                 self.preceding_conversion_group = Some(conv_group);
-            },
+            }
             ReverseRuleGroup::Transform(transform_group) => {
                 let associated_conv_group = match self.preceding_conversion_group.take() {
                     Some(conv_group) => conv_group,
@@ -229,12 +263,13 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
                     None => Vec::new(),
                 };
                 let vec_transform_group = transform_group.into(); // non-allocating conversion
-                self.groups.push_back((vec_transform_group, associated_conv_group));
-            },
+                self.groups
+                    .push_back((vec_transform_group, associated_conv_group));
+            }
         }
     }
 
-    pub(crate) fn finalize(mut self) -> Vec<(Vec<SingleId>, Vec<UniConversionRule<'p>>)> {
+    pub(crate) fn finalize(mut self) -> RuleGroups<'p> {
         // push the current group
         self.push_rule_group(self.current);
         // push any remaining group pairs
@@ -243,31 +278,31 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
                 // a trailing conversion group in source order is the same as having a conversion
                 // group as the first in-order group. we can just prepend an empty transform group.
                 self.groups.push_back((Vec::new(), conv_group));
-            },
-            None => {},
+            }
+            None => {}
         }
 
         self.groups.into() // non-allocating conversion
     }
 }
 
+// Represents a non-empty rule group for the reverse direction.
 #[derive(Debug, Clone)]
 enum ReverseRuleGroup<'p> {
     // because contiguous C's are aggregated in source-order, we can just use a Vec
     Conversion(Vec<UniConversionRule<'p>>),
     // but contiguous T's are aggregated in reverse-order, so we need to use a VecDeque and push_back
-    Transform(VecDeque<SingleId>),
+    Transform(VecDeque<parse::SingleId>),
 }
 
 impl<'p> Default for ReverseRuleGroup<'p> {
     fn default() -> Self {
-
         Self::Conversion(Vec::new())
     }
 }
 
 impl<'p> ReverseRuleGroup<'p> {
-    fn new_conversion(rule: super::UniConversionRule<'p>) -> Self {
+    fn new_conversion(rule: UniConversionRule<'p>) -> Self {
         Self::Conversion(vec![rule])
     }
 
