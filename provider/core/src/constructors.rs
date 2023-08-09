@@ -15,8 +15,8 @@
 //! 3. Reduced overhead and code size (data is resolved locally at each call site).
 //! 4. Explicit support for multiple ICU4X instances sharing data.
 //!
-//! However, as manual data management can be tedious, ICU4X also has a `data` Cargo feature
-//! that includes data and makes ICU4X work out-of-the box.
+//! However, as manual data management can be tedious, ICU4X also has a `compiled_data`
+//! default Cargo feature that includes data and makes ICU4X work out-of-the box.
 //!
 //! Subsequently, there are 4 versions of all Rust ICU4X functions that use data:
 //!
@@ -30,18 +30,18 @@
 //! ## When to use `*`
 //!
 //! If you don't want to customize data at runtime (i.e. if you don't care about code size,
-//! updating your data, etc.) you can enable the `data` Cargo feature and don't have to think
+//! updating your data, etc.) you can use the `compiled_data` Cargo feature and don't have to think
 //! about where your data comes from.
 //!
-//! These constructors are sometimes `const` functions or even `const` values (if they
-//! don't take any parameters). This way Rust can most effectively optimize your usage of ICU4X.
+//! These constructors are sometimes `const` functions, this way Rust can most effectively optimize
+//! your usage of ICU4X.
 //!
 //! ## When to use `*_unstable`
 //!
 //! Use this constructor if your data provider implements the [`DataProvider`] trait for all
 //! data structs in *current and future* ICU4X versions. Examples:
 //!
-//! 1. `BakedDataProvider` auto-regenerated on new ICU4X versions
+//! 1. `BakedDataProvider` generated for the specific ICU4X minor version
 //! 2. Anything with a _blanket_ [`DataProvider`] impl
 //!
 //! Since the exact set of bounds may change at any time, including in minor SemVer releases,
@@ -64,9 +64,9 @@
 //!
 //! 1. [`BlobDataProvider`]
 //! 2. [`FsDataProvider`]
-//! 3. [`ForkByKeyProvider`] between any of the above
+//! 3. [`ForkByKeyProvider`] between two providers implementing [`BufferProvider`]
 //!
-//! Please note that you must enable the `"serde"` Cargo feature on each crate in which you use the
+//! Please note that you must enable the `serde` Cargo feature on each crate in which you use the
 //! `*_with_buffer_provider` constructor.
 //!
 //! # Data Versioning Policy
@@ -78,7 +78,7 @@
 //! version 1.2 will be able to read the same data file. Likewise, backwards-compatible keys can
 //! always be included by `icu_datagen` to support older library versions.
 //!
-//! The `*_unstable` functions are only guaranteed to work on data built for the exact same version
+//! The `*_unstable` functions are only guaranteed to work on data built for the exact same minor version
 //! of ICU4X. The advantage of the `*_unstable` functions is that they result in the smallest code
 //! size and allow for automatic data slicing when `BakedDataProvider` is used. However, the type
 //! bounds of this function may change over time, breaking SemVer guarantees. These functions
@@ -88,19 +88,18 @@
 //! # Data Providers Over FFI
 //!
 //! Over FFI, there is only one data provider type: [`ICU4XDataProvider`]. Internally, it is an
-//! `enum` between `dyn `[`AnyProvider`] and `dyn `[`BufferProvider`].
+//! `enum` between`dyn `[`BufferProvider`] and a unit compiled data variant.
 //!
-//! To control for code size, there are two Cargo features, `any_provider` and `buffer_provider`,
+//! To control for code size, there are two Cargo features, `compiled_data` and `buffer_provider`,
 //! that enable the corresponding items in the enum.
 //!
-//! In Rust ICU4X, a similar buffer/any enum approach was not taken because:
+//! In Rust ICU4X, a similar enum approach was not taken because:
 //!
 //! 1. Feature-gating the enum branches gets complex across crates.
 //! 2. Without feature gating, users need to carry Serde code even if they're not using it,
 //!    violating one of the core value propositions of ICU4X.
-//! 3. We could reduce the number of constructors from 3 to 2 but not to 1, so the educational
+//! 3. We could reduce the number of constructors from 4 to 2 but not to 1, so the educational
 //!    benefit is limited.
-//!
 //!
 //! [`DataProvider`]: crate::DataProvider
 //! [`BufferProvider`]: crate::BufferProvider

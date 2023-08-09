@@ -50,6 +50,7 @@ pub mod common;
 pub mod data_struct;
 pub mod errors;
 pub mod locale;
+#[cfg(feature = "logging")]
 pub mod logging;
 #[macro_use]
 pub mod provider;

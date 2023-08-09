@@ -300,7 +300,7 @@ where
                         .ok_or(Error::MissingDateSymbols)?
                         .get_symbols_for_month(month, length)?;
                     w.write_str(symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?)?;
-                    w.write_str("(leap)")?;
+                    w.write_str("(leap)")?; // This is temporary; TODO(#3766) add support for leap months
                 }
             }
         },
@@ -640,7 +640,4 @@ mod tests {
             }
         }
     }
-
-    #[test]
-    fn test_year_formatting() {}
 }
