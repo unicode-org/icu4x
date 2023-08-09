@@ -50,7 +50,7 @@ fn currency_pattern_selection(
 
     let char_closer_to_number = {
         if currency_sign_index < first_num_index {
-            place_holder.chars().last().unwrap()
+            place_holder.chars().rev().next().unwrap()
         } else if currency_sign_index > last_num_index {
             place_holder.chars().next().unwrap()
         } else {
