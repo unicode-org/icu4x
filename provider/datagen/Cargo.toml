@@ -120,6 +120,7 @@ icu_casemap = ["dep:icu_casemap"]
 icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_relativetime = ["dep:icu_relativetime"]
+icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
 
 [[bin]]
 name = "icu4x-datagen"
@@ -137,6 +138,6 @@ skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # Always the experimental deps because we want to all-or-nothing them
 # and the nothing case is already tested in regular check CI
-always_include_features = ["icu_casemap", "icu_compactdecimal", "icu_displaynames", "icu_relativetime"]
+always_include_features = ["icu_casemap", "icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_singlenumberformatter"]
 # We have a *lot* of features here
 max_combination_size = 2
