@@ -1341,11 +1341,13 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap"
-version = "0.7.2"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
  "displaydoc",
+ "icu",
+ "icu_benchmark_macros",
  "icu_casemap_data",
  "icu_codepointtrie_builder",
  "icu_collections",
@@ -1955,6 +1957,16 @@ dependencies = [
  "icu_provider",
  "serde",
  "zerovec",
+]
+
+[[package]]
+name = "icu_transliterator_parser"
+version = "0.0.0"
+dependencies = [
+ "icu_collections",
+ "icu_properties",
+ "icu_provider",
+ "icu_unicodeset_parser",
 ]
 
 [[package]]

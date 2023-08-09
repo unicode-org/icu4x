@@ -1,0 +1,108 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "Muhar.",
+          "Safer",
+          "R.evvel",
+          "R.ahir",
+          "C.evvel",
+          "C.ahir",
+          "Recep",
+          "Şaban",
+          "Ram.",
+          "Şevval",
+          "Zilkade",
+          "Zilhicce"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "Muharrem",
+          "Safer",
+          "Rebiülevvel",
+          "Rebiülahir",
+          "Cemaziyelevvel",
+          "Cemaziyelahir",
+          "Recep",
+          "Şaban",
+          "Ramazan",
+          "Şevval",
+          "Zilkade",
+          "Zilhicce"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Paz",
+        "Pzt",
+        "Sal",
+        "Çar",
+        "Per",
+        "Cum",
+        "Cmt"
+      ],
+      "narrow": [
+        "P",
+        "P",
+        "S",
+        "Ç",
+        "P",
+        "C",
+        "C"
+      ],
+      "short": [
+        "Pa",
+        "Pt",
+        "Sa",
+        "Ça",
+        "Pe",
+        "Cu",
+        "Ct"
+      ],
+      "wide": [
+        "Pazar",
+        "Pazartesi",
+        "Salı",
+        "Çarşamba",
+        "Perşembe",
+        "Cuma",
+        "Cumartesi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "islamic": "Hicri"
+    },
+    "abbr": {
+      "islamic": "Hicri"
+    },
+    "narrow": {
+      "islamic": "Hicri"
+    }
+  }
+}

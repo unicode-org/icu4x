@@ -39,6 +39,14 @@ const _: () = {
     icu_datetime_data::impl_datetime_gregory_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_indian_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_indian_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamicobservational_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamicobservational_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamiccivil_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamiccivil_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_ummalqura_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_ummalqura_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamictabular_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamictabular_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_persian_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_persian_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_japanese_datelengths_v1!(Baked);

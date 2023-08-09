@@ -111,19 +111,65 @@ impl Calendar for Hebrew {
 
     fn date_from_codes(
         &self,
-        _era: types::Era,
-        _year: i32,
-        _month_code: types::MonthCode,
-        _day: u8,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        // let year = if era.0 == tinystr!(16, "hebrew") {
-        //     year
-        // } else {
-        //     return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
-        // };
+        let is_leap_year = Self::is_leap_year(year);
+        let year = if era.0 == tinystr!(16, "hebrew") {
+            year
+        } else {
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+        };
 
-        // ArithmeticDate::new_from_codes(self, year, month_code, day).map(HebrewDateInner)
-        todo!("#3789")
+        let month_code_str = month_code.0.as_str();
+
+        let month_ordinal = if is_leap_year {
+            match month_code_str {
+                "M01" => 1,
+                "M02" => 2,
+                "M03" => 3,
+                "M04" => 4,
+                "M05" => 5,
+                "M05L" => 6,
+                "M06" => 7,
+                "M07" => 8,
+                "M08" => 9,
+                "M09" => 10,
+                "M10" => 11,
+                "M11" => 12,
+                _ => {
+                    return Err(CalendarError::UnknownMonthCode(
+                        month_code.0,
+                        self.debug_name(),
+                    ))
+                }
+            }
+        } else {
+            match month_code_str {
+                "M01" => 1,
+                "M02" => 2,
+                "M03" => 3,
+                "M04" => 4,
+                "M05" => 5,
+                "M06" => 6,
+                "M07" => 7,
+                "M08" => 8,
+                "M09" => 9,
+                "M10" => 10,
+                "M11" => 11,
+                "M12" => 12,
+                _ => {
+                    return Err(CalendarError::UnknownMonthCode(
+                        month_code.0,
+                        self.debug_name(),
+                    ))
+                }
+            }
+        };
+
+        ArithmeticDate::new_from_lunar_ordinals(year, month_ordinal, day).map(HebrewDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
