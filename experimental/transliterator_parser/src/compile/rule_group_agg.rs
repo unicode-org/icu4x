@@ -124,7 +124,7 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
     pub(crate) fn finalize(mut self) -> RuleGroups<'p> {
         // push the current group
         self.push_rule_group(self.current.clone()); // TODO: refactor and get rid of clone
-        // push any remaining group pairs
+                                                    // push any remaining group pairs
         if let Some(transform_group) = self.preceding_transform_group.take() {
             self.groups.push((transform_group, Vec::new()));
         }
@@ -271,7 +271,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
     pub(crate) fn finalize(mut self) -> RuleGroups<'p> {
         // push the current group
         self.push_rule_group(self.current.clone()); // TODO: refactor and get rid of clone
-        // push any remaining group pairs
+                                                    // push any remaining group pairs
         if let Some(conv_group) = self.preceding_conversion_group.take() {
             // a trailing conversion group in source order is the same as having a conversion
             // group as the first in-order group. we can just prepend an empty transform group.
@@ -321,10 +321,10 @@ impl<'p> ReverseRuleGroup<'p> {
                 group.push_back(rule);
                 None
             }
-            ( Self::Conversion(_), UniRule::Transform(new_rule)) => {
+            (Self::Conversion(_), UniRule::Transform(new_rule)) => {
                 Some(std::mem::replace(self, Self::new_transform(new_rule)))
             }
-            ( Self::Transform(_), UniRule::Conversion(new_rule)) => {
+            (Self::Transform(_), UniRule::Conversion(new_rule)) => {
                 Some(std::mem::replace(self, Self::new_conversion(new_rule)))
             }
         }

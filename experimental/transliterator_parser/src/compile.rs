@@ -938,7 +938,10 @@ mod tests {
         let mut pass1 = Pass1::new(BOTH);
         pass1.run(&rules).expect("pass1 failed");
         // cloning to keep access to intermediate data for testing
-        let result = pass1.clone().generate_result().expect("pass1 result generation failed");
+        let result = pass1
+            .clone()
+            .generate_result()
+            .expect("pass1 result generation failed");
 
         {
             // forward
