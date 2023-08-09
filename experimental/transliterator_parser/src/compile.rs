@@ -876,15 +876,6 @@ impl Pass1ResultGenerator {
 
 // TODO: define type FilterSet that is just a CPIL (without strings) and use that everywhere
 
-fn compile_one_direction(
-    result: DirectedPass1Result,
-    variable_definitions: &HashMap<String, &[parse::Element]>,
-) -> Result<icu_transliteration::provider::RuleBasedTransliterator<'static>> {
-    let mut p2 = Pass2::try_new(&result.data, variable_definitions)?;
-    let t = p2.run(result.groups, result.filter)?;
-    Ok(t)
-}
-
 // returns (forward, backward) transliterators if they were requested
 pub(crate) fn compile(
     rules: Vec<parse::Rule>,
@@ -902,13 +893,13 @@ pub(crate) fn compile(
     let p1_result = p1.generate_result()?;
 
     let forward_t = if direction.permits(parse::Direction::Forward) {
-        let t = compile_one_direction(p1_result.forward_result, &p1_result.variable_definitions)?;
+        let t = Pass2::run(p1_result.forward_result, &p1_result.variable_definitions)?;
         Some(t)
     } else {
         None
     };
     let reverse_t = if direction.permits(parse::Direction::Reverse) {
-        let t = compile_one_direction(p1_result.reverse_result, &p1_result.variable_definitions)?;
+        let t = Pass2::run(p1_result.reverse_result, &p1_result.variable_definitions)?;
         Some(t)
     } else {
         None
