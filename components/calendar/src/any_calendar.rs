@@ -1543,7 +1543,7 @@ mod tests {
         single_test_roundtrip(islamic_tabular, "islamic", 1600, "M12", 20);
         single_test_error(
             islamic_tabular,
-            "islamic-tabular",
+            "islamic",
             100,
             "M9",
             1,
