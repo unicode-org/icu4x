@@ -1341,11 +1341,13 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap"
-version = "0.7.2"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
  "displaydoc",
+ "icu",
+ "icu_benchmark_macros",
  "icu_casemap_data",
  "icu_codepointtrie_builder",
  "icu_collections",

@@ -214,6 +214,7 @@ name = "icu"
 version = "1.2.0"
 dependencies = [
  "icu_calendar",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_datetime",
@@ -250,6 +251,7 @@ dependencies = [
  "diplomat-runtime",
  "fixed_decimal",
  "icu_calendar",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_datetime",
@@ -276,6 +278,20 @@ dependencies = [
  "icu",
  "icu_capi",
  "icu_provider",
+]
+
+[[package]]
+name = "icu_casemap"
+version = "1.2.0"
+dependencies = [
+ "displaydoc",
+ "icu_collections",
+ "icu_locid",
+ "icu_properties",
+ "icu_provider",
+ "writeable",
+ "yoke",
+ "zerovec",
 ]
 
 [[package]]

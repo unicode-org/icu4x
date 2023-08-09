@@ -70,7 +70,7 @@ cpp_default = ["logging"]
 wasm_default = ["logging"]
 
 # Components
-default_components = ["icu_calendar", "icu_collator", "icu_datetime", "icu_decimal",
+default_components = ["icu_calendar", "icu_casemap", "icu_collator", "icu_datetime", "icu_decimal",
                       "icu_list", "icu_locid_transform",
                       "icu_normalizer", "icu_plurals", "icu_properties",
                       "icu_segmenter", "icu_timezone"]
@@ -118,7 +118,7 @@ writeable = { version = "0.5.1", path = "../../utils/writeable/" }
 # Optional ICU4X components and their dependent utils
 fixed_decimal = { version = "0.5.2", path = "../../utils/fixed_decimal", features = ["ryu"] , optional = true}
 icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, optional = true }
-icu_casemap = { version = "0.7.2", path = "../../experimental/casemap", default-features = false, optional = true }
+icu_casemap = { version = "1.2.0", path = "../../components/casemap", default-features = false, optional = true }
 icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, optional = true }
 icu_collections = { version = "1.2.0", path = "../../components/collections", default-features = false, optional = true }
 icu_datetime = { version = "1.2.0", path = "../../components/datetime/", default-features = false, optional = true }
