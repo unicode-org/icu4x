@@ -9,6 +9,7 @@ use icu_collections::codepointinvlist::CodePointInversionList;
 use std::fmt::{Display, Formatter};
 use zerovec::VarZeroVec;
 
+use crate::compile::rule_group_agg::UniConversionRule;
 use icu_transliteration::provider as ds;
 
 macro_rules! impl_insert {
@@ -191,14 +192,9 @@ pub(super) struct Pass2<'a, 'p> {
     var_definitions: &'a HashMap<String, &'p [parse::Element]>,
     // the inverse of VarTable.compounds
     var_to_char: HashMap<String, char>,
-
-    id_group_list: Vec<VarZeroVec<'static, ds::SimpleIdULE>>,
-    conversion_group_list: Vec<VarZeroVec<'static, ds::RuleULE>>,
 }
 
 impl<'a, 'p> Pass2<'a, 'p> {
-    // TODO: the interface for Pass2 could be better, maybe a non-self Pass2::run()
-
     pub(super) fn run(
         result: DirectedPass1Result<'p>,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,
@@ -215,8 +211,6 @@ impl<'a, 'p> Pass2<'a, 'p> {
             var_table: MutVarTable::try_new_from_counts(counts)?,
             var_definitions,
             var_to_char: HashMap::new(),
-            id_group_list: Vec::new(),
-            conversion_group_list: Vec::new(),
         })
     }
 
@@ -225,32 +219,21 @@ impl<'a, 'p> Pass2<'a, 'p> {
         rule_groups: super::RuleGroups<'p>,
         global_filter: Option<UnicodeSet>,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
-        for (transform_group, conversion_group) in rule_groups {
-            let mut compiled_transform_group = Vec::new();
-            for id in transform_group {
-                compiled_transform_group.push(self.compile_single_id(&id));
-            }
-            self.id_group_list
-                .push(VarZeroVec::from(&compiled_transform_group));
+        let mut compiled_transform_groups: Vec<VarZeroVec<'static, ds::SimpleIdULE>> = Vec::new();
+        let mut compiled_conversion_groups: Vec<VarZeroVec<'static, ds::RuleULE>> = Vec::new();
 
-            let mut compiled_conversion_group = Vec::new();
-            for rule in conversion_group {
-                let ante = self.compile_section(rule.ante, parse::ElementLocation::Source);
-                let key = self.compile_section(rule.key, parse::ElementLocation::Source);
-                let post = self.compile_section(rule.post, parse::ElementLocation::Source);
-                let replacer =
-                    self.compile_section(rule.replacement, parse::ElementLocation::Target);
-                let cursor_offset = rule.cursor_offset;
-                compiled_conversion_group.push(ds::Rule {
-                    ante: ante.into(),
-                    key: key.into(),
-                    post: post.into(),
-                    replacer: replacer.into(),
-                    cursor_offset,
-                });
-            }
-            self.conversion_group_list
-                .push(VarZeroVec::from(&compiled_conversion_group));
+        for (transform_group, conversion_group) in rule_groups {
+            let compiled_transform_group: Vec<_> = transform_group
+                .into_iter()
+                .map(|id| self.compile_single_id(&id))
+                .collect();
+            compiled_transform_groups.push(VarZeroVec::from(&compiled_transform_group));
+
+            let compiled_conversion_group: Vec<_> = conversion_group
+                .into_iter()
+                .map(|rule| self.compile_conversion_rule(rule))
+                .collect();
+            compiled_conversion_groups.push(VarZeroVec::from(&compiled_conversion_group));
         }
 
         let res = ds::RuleBasedTransliterator {
@@ -258,12 +241,27 @@ impl<'a, 'p> Pass2<'a, 'p> {
             filter: global_filter
                 .map(|f| f.code_points().clone())
                 .unwrap_or(CodePointInversionList::all()),
-            id_group_list: VarZeroVec::from(&self.id_group_list),
-            rule_group_list: VarZeroVec::from(&self.conversion_group_list),
+            id_group_list: VarZeroVec::from(&compiled_transform_groups),
+            rule_group_list: VarZeroVec::from(&compiled_conversion_groups),
             variable_table: self.var_table.finalize(),
         };
 
         Ok(res)
+    }
+
+    fn compile_conversion_rule(&mut self, rule: UniConversionRule<'p>) -> ds::Rule<'static> {
+        let ante = self.compile_section(rule.ante, parse::ElementLocation::Source);
+        let key = self.compile_section(rule.key, parse::ElementLocation::Source);
+        let post = self.compile_section(rule.post, parse::ElementLocation::Source);
+        let replacer = self.compile_section(rule.replacement, parse::ElementLocation::Target);
+        let cursor_offset = rule.cursor_offset;
+        ds::Rule {
+            ante: ante.into(),
+            key: key.into(),
+            post: post.into(),
+            replacer: replacer.into(),
+            cursor_offset,
+        }
     }
 
     fn compile_single_id(&mut self, id: &parse::SingleId) -> ds::SimpleId<'static> {
