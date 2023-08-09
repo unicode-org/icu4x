@@ -64,19 +64,7 @@
 //! offset of a given special construct when we encode an element. The precomputed lengths mean we
 //! never overflow into the indices of the following `VZV`.
 
-// more (data struct compatible) runtime optimization opportunities:
-// - deduplicate special constructs ($a = hello; $b = hello; should only generate one hello element)
-//   - especially important for equivalent unicodesets
-// - inline single-use variables ($a = x; $a > b; => x > b;)
-// - replace uses of single-element variables with the element itself ($a = [a-z]; $a > a; => [a-z] > a;)
-// - flatten single-element sets into literals ([a] > b; => a > b;)
-
-// TODO: add this optimization note somewhere:
-// the question whether variables should be inlined or not has a (relatively) simple answer from a data size perspective:
-// having a variable costs 2 + 4*n bytes, where n >= 1 is the number of uses. 2 bytes for the index
-// of the variable in the VZV (Index16), and 4 bytes for the PUP (15) code point in UTF-8 at every use site.
-// inlining a variable costs (n-1) * C bytes, where C is the number of bytes (UTF-8) of the variable's definition.
-// in other words, if 2 + 4*n > (n-1) * C, then it is cheaper to inline the variable at every use site.
+// TODO(#3825): Datagen optimizations (variable inlining, set flattening, deduplicating VarTable)
 
 /*
 Encoding example:
