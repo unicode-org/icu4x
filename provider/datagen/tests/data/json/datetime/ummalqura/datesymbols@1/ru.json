@@ -96,13 +96,13 @@
   },
   "eras": {
     "names": {
-      "ah": "после хиджры"
+      "islamic": "после хиджры"
     },
     "abbr": {
-      "ah": "AH"
+      "islamic": "AH"
     },
     "narrow": {
-      "ah": "AH"
+      "islamic": "AH"
     }
   }
 }

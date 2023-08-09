@@ -38,7 +38,6 @@ use crate::chinese_based::chinese_based_ordinal_lunar_month_from_code;
 use crate::helpers::div_rem_euclid64;
 use crate::{
     astronomy::Location,
-    calendar_arithmetic::ArithmeticDate,
     chinese_based::{ChineseBased, ChineseBasedDateInner},
     rata_die::RataDie,
     types::{self, Era, FormattableYear},
@@ -137,7 +136,7 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
 pub struct Dangi;
 
 /// The inner date type used for representing [`Date`]s of [`Dangi`]. See [`Date`] and [`Dangi`] for more detail.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub struct DangiDateInner(ChineseBasedDateInner<Dangi>);
 
 type Inner = ChineseBasedDateInner<Dangi>;
@@ -152,8 +151,10 @@ impl Calendar for Dangi {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, crate::Error> {
+        let cache = Inner::compute_cache(year);
+
         let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code::<Dangi>(year, month_code)
+            chinese_based_ordinal_lunar_month_from_code::<Dangi>(month_code, cache)
         {
             ordinal
         } else {
@@ -163,28 +164,12 @@ impl Calendar for Dangi {
             ));
         };
 
-        if month > Self::months_for_every_year(year) {
-            return Err(CalendarError::UnknownMonthCode(
-                month_code.0,
-                self.debug_name(),
-            ));
-        }
-
-        let max_day = Self::month_days(year, month);
-        if day > max_day {
-            return Err(CalendarError::Overflow {
-                field: "day",
-                max: max_day as usize,
-            });
-        }
-
         if era.0 != tinystr!(16, "dangi") {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        Ok(ArithmeticDate::new_unchecked(year, month, day))
-            .map(ChineseBasedDateInner)
-            .map(DangiDateInner)
+        let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
+        Ok(DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)))
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
@@ -198,19 +183,23 @@ impl Calendar for Dangi {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_for_every_year(date.0 .0.year)
+        date.0.months_in_year_inner()
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        Self::days_in_provided_year(date.0 .0.year)
+        date.0.days_in_year_inner()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::month_days(date.0 .0.year, date.0 .0.month)
+        date.0.days_in_month_inner()
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: crate::DateDuration<Self>) {
-        date.0 .0.offset_date(offset)
+        let year = date.0 .0.year;
+        date.0 .0.offset_date(offset);
+        if date.0 .0.year != year {
+            date.0 .1 = Inner::compute_cache(date.0 .0.year);
+        }
     }
 
     fn until(
@@ -234,8 +223,9 @@ impl Calendar for Dangi {
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month = if Self::is_leap_year(date.0 .0.year) {
-            Inner::get_leap_month_in_year(Inner::fixed_mid_year_from_year(date.0 .0.year))
+        let leap_month_option = date.0 .1.leap_month;
+        let leap_month = if let Some(leap) = leap_month_option {
+            leap.get()
         } else {
             14
         };
@@ -301,7 +291,7 @@ impl Calendar for Dangi {
         let next_year = date.0 .0.year.saturating_add(1);
         types::DayOfYearInfo {
             day_of_year: date.0 .0.day_of_year(),
-            days_in_year: date.0 .0.days_in_year(),
+            days_in_year: date.0.days_in_year_inner(),
             prev_year: Self::format_dangi_year(prev_year),
             days_in_prev_year: Self::days_in_provided_year(prev_year),
             next_year: Self::format_dangi_year(next_year),
@@ -336,10 +326,12 @@ impl Date<Dangi> {
     /// assert_eq!(date_dangi.day_of_month().0, 18);
     /// ```
     pub fn try_new_dangi_date(year: i32, month: u8, day: u8) -> Result<Date<Dangi>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
-            .map(ChineseBasedDateInner)
-            .map(DangiDateInner)
-            .map(|inner| Date::from_raw(inner, Dangi))
+        let cache = Inner::compute_cache(year);
+        let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
+        Ok(Date::from_raw(
+            DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)),
+            Dangi,
+        ))
     }
 }
 
@@ -392,12 +384,6 @@ impl ChineseBased for Dangi {
     }
 
     const EPOCH: RataDie = KOREAN_EPOCH;
-
-    // Unchecked can be used since this function is only ever called when generating dates from
-    // a valid year, month, and day.
-    fn new_chinese_based_date(year: i32, month: u8, day: u8) -> ChineseBasedDateInner<Dangi> {
-        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day))
-    }
 }
 
 impl Dangi {

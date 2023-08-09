@@ -96,13 +96,13 @@
   },
   "eras": {
     "names": {
-      "ah": "যুগ"
+      "islamic": "যুগ"
     },
     "abbr": {
-      "ah": "যুগ"
+      "islamic": "যুগ"
     },
     "narrow": {
-      "ah": "যুগ"
+      "islamic": "যুগ"
     }
   }
 }
