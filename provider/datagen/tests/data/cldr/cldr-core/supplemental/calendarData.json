@@ -119,7 +119,7 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
-            "_code": "islamic",
+            "_code": "islamic-civil",
             "_aliases": "islamicc ah",
             "_start": "622-7-16"
           }
@@ -139,7 +139,7 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
-            "_code": "islamic",
+            "_code": "islamic-tbla",
             "_aliases": "ah",
             "_start": "622-7-15"
           }
@@ -149,7 +149,7 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
-            "_code": "islamic",
+            "_code": "islamic-umalqura",
             "_aliases": "ah",
             "_start": "622-7-15"
           }
