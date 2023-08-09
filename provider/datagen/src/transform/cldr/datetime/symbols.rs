@@ -125,7 +125,7 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         "persian" => vec![("0".to_string(), tinystr!(16, "ah"))]
             .into_iter()
             .collect(),
-        "hebrew" => vec![("0".to_string(), tinystr!(16, "am"))]
+        "hebrew" => vec![("0".to_string(), tinystr!(16, "hebrew"))]
             .into_iter()
             .collect(),
         "ethiopic" => vec![

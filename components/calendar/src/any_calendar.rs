@@ -1369,6 +1369,7 @@ mod tests {
         let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
         let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
         let persian = AnyCalendar::new(AnyCalendarKind::Persian);
+        let hebrew = AnyCalendar::new(AnyCalendarKind::Hebrew);
         let islamic_observational: AnyCalendar =
             AnyCalendar::new(AnyCalendarKind::IslamicObservational);
         let islamic_civil: AnyCalendar = AnyCalendar::new(AnyCalendarKind::IslamicCivil);
@@ -1389,6 +1390,7 @@ mod tests {
         let islamic_civil = Ref(&islamic_civil);
         let umm_al_qura = Ref(&umm_al_qura);
         let islamic_tabular = Ref(&islamic_tabular);
+        let hebrew = Ref(&hebrew);
         let roc = Ref(&roc);
 
         single_test_roundtrip(buddhist, "be", 100, "M03", 1);
