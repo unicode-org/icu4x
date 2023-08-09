@@ -1951,7 +1951,10 @@ dependencies = [
  "icu_collections",
  "icu_properties",
  "icu_provider",
+ "icu_transliteration",
  "icu_unicodeset_parser",
+ "log",
+ "zerovec",
 ]
 
 [[package]]
