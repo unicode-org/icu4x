@@ -24,6 +24,13 @@ macro_rules! impl_insert {
     };
 }
 
+struct MutVarTableField<T> {
+    vec: Vec<T>,
+    base: u32,
+    current: u32
+}
+
+
 // TODO: refactor these into struct MutVarTableField<T>{vec: Vec<T>, base: u32, current: u32};
 struct MutVarTable {
     compounds: Vec<String>,
@@ -183,14 +190,6 @@ impl MutVarTable {
     }
 }
 
-struct MutFunctionCall {
-    name: parse::SingleId,
-    args: String,
-}
-
-type MutIdGroupList<'p> = Vec<Vec<Cow<'p, parse::SingleId>>>;
-type MutRuleGroupList = Vec<Vec<MutRule>>;
-
 struct MutRule {
     ante: String,
     key: String,
@@ -213,10 +212,9 @@ impl ToString for LiteralOrStandin<'_> {
     }
 }
 
-struct Pass2<'p> {
+struct Pass2<'a, 'p> {
     var_table: MutVarTable,
-    var_definitions: HashMap<String, &'p [parse::Element]>,
-    used_vars: HashSet<String>,
+    var_definitions: &'a HashMap<String, &'p [parse::Element]>,
     // the inverse of VarTable.compounds
     var_to_char: HashMap<String, char>,
 
@@ -224,15 +222,22 @@ struct Pass2<'p> {
     conversion_group_list: Vec<VarZeroVec<'static, ds::RuleULE>>,
 }
 
-impl<'p> Pass2<'p> {
+impl<'a, 'p> Pass2<'a, 'p> {
+    fn try_new(data: &'a Pass1Data, var_definitions: &'a HashMap<String, &'p [parse::Element]>) -> Result<Self> {
+        Ok(Pass2 {
+            var_table: MutVarTable::try_new_from_counts(data.counts)?,
+            var_definitions,
+            var_to_char: HashMap::new(),
+            id_group_list: Vec::new(),
+            conversion_group_list: Vec::new(),
+        })
+    }
+
     fn run(
         &mut self,
-        data: &Pass1Data,
-        var_definitions: &HashMap<String, &'p [parse::Element]>,
         rule_groups: super::RuleGroups<'p>,
         global_filter: Option<UnicodeSet>,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
-
         for (transform_group, conversion_group) in rule_groups {
             let mut compiled_transform_group = Vec::new();
             for id in transform_group {
@@ -291,7 +296,7 @@ impl<'p> Pass2<'p> {
         standin
     }
 
-    fn compile_section(&mut self, section: &[parse::Element]) -> String {
+    fn compile_section(&mut self, section: &'p [parse::Element]) -> String {
         let mut result = String::new();
         for elt in section {
             match self.compile_element(elt) {
@@ -302,7 +307,7 @@ impl<'p> Pass2<'p> {
         result
     }
 
-    fn compile_element<'a>(&mut self, elt: &'a parse::Element) -> LiteralOrStandin<'a> {
+    fn compile_element(&mut self, elt: &'p parse::Element) -> LiteralOrStandin<'p> {
         match elt {
             parse::Element::Literal(s) => LiteralOrStandin::Literal(s),
             parse::Element::VariableRef(v) => LiteralOrStandin::Standin(self.compile_variable(v)),
