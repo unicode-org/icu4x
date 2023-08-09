@@ -44,6 +44,7 @@ impl ElementKind {
     // returns true if the element has no effect in the location. this is not equivalent to
     // syntactically being allowed in that location.
     pub(crate) fn skipped_in(self, location: ElementLocation) -> bool {
+        #[allow(clippy::match_like_matches_macro)] // I think the explicit match is clearer here
         match (location, self) {
             (ElementLocation::Source, Self::Cursor) => true,
             (ElementLocation::Target, Self::AnchorStart | Self::AnchorEnd) => true,

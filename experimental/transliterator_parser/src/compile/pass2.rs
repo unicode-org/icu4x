@@ -199,7 +199,10 @@ pub(super) struct Pass2<'a, 'p> {
 impl<'a, 'p> Pass2<'a, 'p> {
     // TODO: the interface for Pass2 could be better, maybe a non-self Pass2::run()
 
-    pub(super) fn run(result: DirectedPass1Result<'p>, var_definitions: &'a HashMap<String, &'p [parse::Element]>) -> Result<ds::RuleBasedTransliterator<'static>> {
+    pub(super) fn run(
+        result: DirectedPass1Result<'p>,
+        var_definitions: &'a HashMap<String, &'p [parse::Element]>,
+    ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut pass2 = Self::try_new(result.data.counts, var_definitions)?;
         pass2.compile(result.groups, result.filter)
     }
