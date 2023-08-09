@@ -154,14 +154,19 @@ struct Pass1Data {
     used_transliterators: HashSet<parse::BasicId>,
 }
 
+#[derive(Debug, Clone)]
+struct DirectedPass1Result<'p> {
+    // data with dependencies resolved and counts summed
+    data: Pass1Data,
+    groups: RuleGroups<'p>,
+    filter: Option<UnicodeSet>,
+}
+
 #[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 struct Pass1Result<'p> {
-    // data with dependencies resolved and counts summed
-    forward_data: Pass1Data,
-    reverse_data: Pass1Data,
-    forward_groups: RuleGroups<'p>,
-    reverse_groups: RuleGroups<'p>,
+    forward_result: DirectedPass1Result<'p>,
+    reverse_result: DirectedPass1Result<'p>,
     variable_definitions: HashMap<String, &'p [parse::Element]>,
 }
 
@@ -758,11 +763,17 @@ impl Pass1ResultGenerator {
         let reverse_rule_groups = pass.reverse_rule_group_agg.finalize();
 
         Ok(Pass1Result {
-            forward_data,
-            reverse_data,
+            forward_result: DirectedPass1Result {
+                data: forward_data,
+                filter: pass.forward_filter,
+                groups: forward_rule_groups,
+            },
+            reverse_result: DirectedPass1Result {
+                data: reverse_data,
+                filter: pass.reverse_filter,
+                groups: reverse_rule_groups,
+            },
             variable_definitions,
-            forward_groups: forward_rule_groups,
-            reverse_groups: reverse_rule_groups,
         })
     }
 
@@ -1098,8 +1109,8 @@ mod tests {
                 rev_counts,
             );
 
-            assert_eq!(fwd_data, result.forward_data);
-            assert_eq!(rev_data, result.reverse_data);
+            assert_eq!(fwd_data, result.forward_result.data);
+            assert_eq!(rev_data, result.reverse_result.data);
 
             let actual_definition_keys: HashSet<_> = result
                 .variable_definitions

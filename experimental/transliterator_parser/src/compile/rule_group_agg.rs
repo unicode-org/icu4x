@@ -324,11 +324,11 @@ impl<'p> ReverseRuleGroup<'p> {
                 group.push_back(rule);
                 None
             }
-            (Self::Conversion(_), UniRule::Transform(new_rule)) => {
-                Some(std::mem::replace(self, Self::new_transform(new_rule)))
+            (curr @ Self::Conversion(_), UniRule::Transform(new_rule)) => {
+                Some(std::mem::replace(curr, Self::new_transform(new_rule)))
             }
-            (Self::Transform(_), UniRule::Conversion(new_rule)) => {
-                Some(std::mem::replace(self, Self::new_conversion(new_rule)))
+            (curr @ Self::Transform(_), UniRule::Conversion(new_rule)) => {
+                Some(std::mem::replace(curr, Self::new_conversion(new_rule)))
             }
         }
     }
