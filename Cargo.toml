@@ -43,6 +43,7 @@ members = [
     "experimental/relativetime",
     "experimental/relativetime/data",
     "experimental/transliterator_parser",
+    "experimental/transliteration",
     "experimental/unicodeset_parser",
     "ffi/capi_cdylib",
     "ffi/capi_staticlib",

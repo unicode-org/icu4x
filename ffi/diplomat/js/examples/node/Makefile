@@ -28,8 +28,7 @@ lib: $(ALL_HEADERS)
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
 		--release \
-		--package icu_capi_cdylib \
-		--features wasm_default
+		--package icu_capi_cdylib
 
 icu_capi.wasm: ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm
 	cp ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm icu_capi.wasm

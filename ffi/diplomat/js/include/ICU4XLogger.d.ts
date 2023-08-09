@@ -7,7 +7,21 @@ export class ICU4XLogger {
 
   /**
 
-   * Initialize the logger from the `simple_logger` crate, which simply logs to stdout. Returns `false` if there was already a logger set, or if logging has not been compiled into the platform
+   * Initialize the logger using `simple_logger`
+
+   * Requires the `simple_logger` Cargo feature.
+
+   * Returns `false` if there was already a logger set.
    */
   static init_simple_logger(): boolean;
+
+  /**
+
+   * Initialize the logger to use the WASM console.
+
+   * Only available on `wasm32` targets.
+
+   * Returns `false` if there was already a logger set.
+   */
+  static init_console_logger(): boolean;
 }
