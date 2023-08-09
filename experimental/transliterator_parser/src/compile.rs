@@ -71,6 +71,13 @@
 // - replace uses of single-element variables with the element itself ($a = [a-z]; $a > a; => [a-z] > a;)
 // - flatten single-element sets into literals ([a] > b; => a > b;)
 
+// TODO: add this optimization note somewhere:
+// the question whether variables should be inlined or not has a (relatively) simple answer from a data size perspective:
+// having a variable costs 2 + 4*n bytes, where n >= 1 is the number of uses. 2 bytes for the index
+// of the variable in the VZV (Index16), and 4 bytes for the PUP (15) code point in UTF-8 at every use site.
+// inlining a variable costs (n-1) * C bytes, where C is the number of bytes (UTF-8) of the variable's definition.
+// in other words, if 2 + 4*n > (n-1) * C, then it is cheaper to inline the variable at every use site.
+
 /*
 Encoding example:
 
@@ -124,6 +131,8 @@ use parse::Result;
 use parse::PEK;
 use std::collections::{HashMap, HashSet};
 
+mod pass2;
+
 enum SingleDirection {
     Forward,
     Reverse,
@@ -139,6 +148,18 @@ struct SpecialConstructCounts {
     num_segments: usize,
     num_unicode_sets: usize,
     num_function_calls: usize,
+}
+
+impl SpecialConstructCounts {
+    fn num_total(&self) -> usize {
+        self.num_compounds
+            + self.num_quantifiers_opt
+            + self.num_quantifiers_kleene
+            + self.num_quantifiers_kleene_plus
+            + self.num_segments
+            + self.num_unicode_sets
+            + self.num_function_calls
+    }
 }
 
 // Data for a given direction or variable definition (the "key")

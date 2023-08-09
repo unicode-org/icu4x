@@ -99,6 +99,8 @@ pub enum ParseErrorKind {
     InvalidCursor,
     /// Multiple cursors were defined.
     DuplicateCursor,
+    /// There are too many special matchers/replacers/variables in the source.
+    TooManySpecials,
 }
 pub(crate) use ParseErrorKind as PEK;
 
