@@ -33,5 +33,5 @@ path = "src/lib.rs"
 [features]
 default = []
 serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
-datagen = ["serde", "zerovec/databake", "databake"]
+datagen = ["serde", "zerovec/databake", "databake", "tinystr/databake"]
 
