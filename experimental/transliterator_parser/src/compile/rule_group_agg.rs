@@ -19,6 +19,7 @@ use crate::parse;
 use std::collections::VecDeque;
 
 // parse::Rule::Conversion but unidirectional
+#[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 pub(crate) struct UniConversionRule<'p> {
     ante: &'p [parse::Element],
@@ -93,7 +94,7 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
             parse::Rule::VariableDefinition(..) => {
                 // variable definitions are handled in a previous step
             }
-            parse::Rule::GlobalFilter(..) => {
+            parse::Rule::GlobalFilter(..) | parse::Rule::GlobalInverseFilter(..) => {
                 // global filters are handled in a previous step
             }
         }
@@ -122,7 +123,7 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
 
     pub(crate) fn finalize(mut self) -> RuleGroups<'p> {
         // push the current group
-        self.push_rule_group(self.current);
+        self.push_rule_group(self.current.clone()); // TODO: refactor and get rid of clone
         // push any remaining group pairs
         match self.preceding_transform_group.take() {
             Some(transform_group) => {
@@ -154,7 +155,8 @@ impl<'p> ForwardRuleGroup<'p> {
 
     // if the group is full return self, and push the rule into a new group
     fn push(&mut self, rule: UniRule<'p>) -> Option<Self> {
-        match (self, rule) {
+        // necessary reborrow for mem::replace
+        match (&mut *self, rule) {
             (Self::Conversion(group), UniRule::Conversion(rule)) => {
                 group.push(rule);
                 None
@@ -164,10 +166,10 @@ impl<'p> ForwardRuleGroup<'p> {
                 None
             }
             (Self::Conversion(_), UniRule::Transform(new_rule)) => {
-                Some(std::mem::replace(self, Self::new_transform(new_rule)))
+                Some(core::mem::replace(self, Self::new_transform(new_rule)))
             }
             (Self::Transform(_), UniRule::Conversion(new_rule)) => {
-                Some(std::mem::replace(self, Self::new_conversion(new_rule)))
+                Some(core::mem::replace(self, Self::new_conversion(new_rule)))
             }
         }
     }
@@ -231,7 +233,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
                 }
             }
             parse::Rule::Transform(fwd, rev) => {
-                let rev = rev.unwrap_or_else(|| fwd.clone().reverse());
+                let rev = rev.clone().unwrap_or_else(|| fwd.clone().reverse());
 
                 let finished_group = self.current.push(UniRule::Transform(rev));
                 if let Some(finished_group) = finished_group {
@@ -241,7 +243,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
             parse::Rule::VariableDefinition(..) => {
                 // variable definitions are handled in a previous step
             }
-            parse::Rule::GlobalFilter(..) => {
+            parse::Rule::GlobalFilter(..) | parse::Rule::GlobalInverseFilter(..) => {
                 // global filters are handled in a previous step
             }
         }
@@ -271,7 +273,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
 
     pub(crate) fn finalize(mut self) -> RuleGroups<'p> {
         // push the current group
-        self.push_rule_group(self.current);
+        self.push_rule_group(self.current.clone()); // TODO: refactor and get rid of clone
         // push any remaining group pairs
         match self.preceding_conversion_group.take() {
             Some(conv_group) => {
@@ -313,7 +315,8 @@ impl<'p> ReverseRuleGroup<'p> {
     }
 
     fn push(&mut self, rule: UniRule<'p>) -> Option<Self> {
-        match (self, rule) {
+        // necessary reborrow for mem::replace
+        match (&mut *self, rule) {
             (Self::Conversion(group), UniRule::Conversion(rule)) => {
                 group.push(rule);
                 None
@@ -324,11 +327,11 @@ impl<'p> ReverseRuleGroup<'p> {
                 group.push_back(rule);
                 None
             }
-            (curr @ Self::Conversion(_), UniRule::Transform(new_rule)) => {
-                Some(std::mem::replace(curr, Self::new_transform(new_rule)))
+            ( Self::Conversion(_), UniRule::Transform(new_rule)) => {
+                Some(std::mem::replace(self, Self::new_transform(new_rule)))
             }
-            (curr @ Self::Transform(_), UniRule::Conversion(new_rule)) => {
-                Some(std::mem::replace(curr, Self::new_conversion(new_rule)))
+            ( Self::Transform(_), UniRule::Conversion(new_rule)) => {
+                Some(std::mem::replace(self, Self::new_conversion(new_rule)))
             }
         }
     }

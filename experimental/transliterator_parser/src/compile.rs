@@ -154,6 +154,7 @@ struct Pass1Data {
     used_transliterators: HashSet<parse::BasicId>,
 }
 
+#[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 struct DirectedPass1Result<'p> {
     // data with dependencies resolved and counts summed
@@ -732,7 +733,7 @@ struct Pass1ResultGenerator {
 
 impl Pass1ResultGenerator {
     fn generate(pass: Pass1) -> Result<Pass1Result> {
-        let mut generator = Self {
+        let generator = Self {
             current_vars: HashSet::new(),
             transitive_var_dependencies: HashMap::new(),
         };
@@ -855,7 +856,7 @@ pub(crate) fn compile(
     //  example: transliterator with metadata-direction "forward", and a rule `[a-z] < b ;` (invalid)
     //  - if validation is dependent, this rule is valid because it's not used in the forward direction
     //  - if validation is independent, this rule is invalid because the reverse direction is also checked
-    let mut pass1 = Pass1::new(direction);
+    let pass1 = Pass1::new(direction);
     let _result = pass1.run(&rules)?;
 
     todo!()
