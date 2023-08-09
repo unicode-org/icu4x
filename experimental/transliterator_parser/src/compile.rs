@@ -205,7 +205,7 @@ impl<'p> Pass1<'p> {
         }
     }
 
-    fn run(mut self, rules: &'p [parse::Rule]) -> Result<Pass1Result<'p>> {
+    fn run(&mut self, rules: &'p [parse::Rule]) -> Result<()> {
         // first check global filter/global inverse filter.
         // after this check, they may not appear anywhere.
         let rules = self.validate_global_filters(rules)?;
@@ -233,6 +233,10 @@ impl<'p> Pass1<'p> {
             }
         }
 
+        Ok(())
+    }
+
+    fn generate_result(self) -> Result<Pass1Result<'p>> {
         Pass1ResultGenerator::generate(self)
     }
 
@@ -856,8 +860,9 @@ pub(crate) fn compile(
     //  example: transliterator with metadata-direction "forward", and a rule `[a-z] < b ;` (invalid)
     //  - if validation is dependent, this rule is valid because it's not used in the forward direction
     //  - if validation is independent, this rule is invalid because the reverse direction is also checked
-    let pass1 = Pass1::new(direction);
-    let _result = pass1.run(&rules)?;
+    let mut pass1 = Pass1::new(direction);
+    pass1.run(&rules)?;
+    let _result = pass1.generate_result();
 
     todo!()
 }
@@ -931,7 +936,9 @@ mod tests {
 
         let rules = parse(source);
         let mut pass1 = Pass1::new(BOTH);
-        let result = pass1.run(&rules).expect("pass1 failed");
+        pass1.run(&rules).expect("pass1 failed");
+        // cloning to keep access to intermediate data for testing
+        let result = pass1.clone().generate_result().expect("pass1 result generation failed");
 
         {
             // forward
@@ -1205,7 +1212,7 @@ mod tests {
         for (expected_outcome, source) in sources {
             let rules = parse(source);
             let mut pass = Pass1::new(BOTH);
-            let result = pass.run(&rules);
+            let result = pass.run(&rules).and_then(|_| pass.generate_result());
             match (expected_outcome, result) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
@@ -1237,7 +1244,7 @@ mod tests {
         for (expected_outcome, source) in sources {
             let rules = parse(source);
             let mut pass = Pass1::new(BOTH);
-            let result = pass.run(&rules);
+            let result = pass.run(&rules).and_then(|_| pass.generate_result());
             match (expected_outcome, result) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
@@ -1269,7 +1276,7 @@ mod tests {
         for (expected_outcome, source) in sources {
             let rules = parse(source);
             let mut pass = Pass1::new(BOTH);
-            let result = pass.run(&rules);
+            let result = pass.run(&rules).and_then(|_| pass.generate_result());
             match (expected_outcome, result) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
