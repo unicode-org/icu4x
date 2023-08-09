@@ -162,7 +162,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         } else {
             Self::winter_solstice_on_or_before(date)
         }; // s1
-        let following_solstice = Self::winter_solstice_on_or_before(prior_solstice + 400); // s2
+        let following_solstice = Self::winter_solstice_on_or_before(prior_solstice + 370); // s2
         let month_after_eleventh = Self::new_moon_on_or_after((prior_solstice + 1).as_moment()); // m12
         let month_after_twelfth =
             Self::new_moon_on_or_after((month_after_eleventh + 1).as_moment()); // m13
@@ -369,7 +369,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             });
         }
 
-        let max_day = Self::days_in_month(month, cache.new_year);
+        let max_day = Self::days_in_month(month, cache.new_year, None).0;
         if day > max_day {
             return Err(CalendarError::Overflow {
                 field: "day",
@@ -399,17 +399,18 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
 
     /// Calls `days_in_month` on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_month_inner(&self) -> u8 {
-        Self::days_in_month(self.0.month, self.1.new_year)
+        Self::days_in_month(self.0.month, self.1.new_year, None).0
     }
 
     /// Returns the number of days in the given `month` after the given `new_year`.
-    fn days_in_month(month: u8, new_year: RataDie) -> u8 {
+    /// Also returns the RataDie of the new moon beginning the next month.
+    fn days_in_month(month: u8, new_year: RataDie, prev_new_moon: Option<RataDie>) -> (u8, RataDie) {
         let approx = new_year + ((month - 1) as i64 * 29);
-        let prev_new_moon = Self::new_moon_before((approx + 15).as_moment());
+        let prev_new_moon = if let Some(prev_moon) = prev_new_moon { prev_moon} else { Self::new_moon_before((approx + 15).as_moment()) };
         let next_new_moon = Self::new_moon_on_or_after((approx + 15).as_moment());
         let result = (next_new_moon - prev_new_moon) as u8;
         debug_assert!(result == 29 || result == 30);
-        result
+        (result, next_new_moon)
     }
 
     /// Calls day_in_year_cached on an instance of ChineseBasedDateInner
@@ -426,6 +427,19 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Days in year should be in range of u16."
         );
         result as u16
+    }
+
+    /// Calculate the number of days in the year for a ChineseBasedDate;
+    /// similar to `CalendarArithmetic::day_of_year`
+    pub(crate) fn day_of_year(&self) -> u16 {
+        let mut day_of_year = 0;
+        let mut prev_new_moon = None;
+        for month in 1..self.0.month {
+            let (days_in_month, next_new_moon) = Self::days_in_month(month, self.1.new_year, prev_new_moon);
+            day_of_year += days_in_month as u16;
+            prev_new_moon = Some(next_new_moon);
+        }
+        day_of_year + (self.0.day as u16)
     }
 
     /// Compute a `ChineseBasedCache` from a ChineseBased year
@@ -461,7 +475,7 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
         let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
         let new_year =
             ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year, None).0;
-        ChineseBasedDateInner::<C>::days_in_month(month, new_year)
+        ChineseBasedDateInner::<C>::days_in_month(month, new_year, None).0
     }
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
