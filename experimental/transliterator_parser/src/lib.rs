@@ -41,7 +41,15 @@ pub use parse::ParseErrorKind;
 ///
 /// See [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms) for more information.
 #[cfg(feature = "compiled_data")]
-pub fn parse(source: &str) -> Result<RuleBasedTransliterator<'static>, parse::ParseError> {
+pub fn parse(
+    source: &str,
+) -> Result<
+    (
+        Option<RuleBasedTransliterator<'static>>,
+        Option<RuleBasedTransliterator<'static>>,
+    ),
+    parse::ParseError,
+> {
     parse_unstable(source, &icu_properties::provider::Baked)
 }
 
@@ -49,7 +57,13 @@ pub fn parse(source: &str) -> Result<RuleBasedTransliterator<'static>, parse::Pa
 pub fn parse_unstable<P>(
     source: &str,
     provider: &P,
-) -> Result<RuleBasedTransliterator<'static>, parse::ParseError>
+) -> Result<
+    (
+        Option<RuleBasedTransliterator<'static>>,
+        Option<RuleBasedTransliterator<'static>>,
+    ),
+    parse::ParseError,
+>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>

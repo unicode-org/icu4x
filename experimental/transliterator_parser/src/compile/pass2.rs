@@ -2,11 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::Cow;
-use icu_collections::codepointinvlist::CodePointInversionList;
-use zerovec::VarZeroVec;
 use super::*;
 use crate::parse::UnicodeSet;
+use icu_collections::codepointinvlist::CodePointInversionList;
+use zerovec::VarZeroVec;
 
 use icu_transliteration::provider as ds;
 
@@ -27,7 +26,7 @@ macro_rules! impl_insert {
 struct MutVarTableField<T> {
     vec: Vec<T>,
     base: u32,
-    current: u32
+    current: u32,
 }
 
 struct MutVarTable {
@@ -104,12 +103,7 @@ impl MutVarTable {
         })
     }
 
-    impl_insert!(
-        insert_compound,
-        compounds,
-        String,
-        quantifiers_opt
-    );
+    impl_insert!(insert_compound, compounds, String, quantifiers_opt);
     impl_insert!(
         insert_quantifier_opt,
         quantifiers_opt,
@@ -128,18 +122,8 @@ impl MutVarTable {
         String,
         segments
     );
-    impl_insert!(
-        insert_segment,
-        segments,
-        String,
-        unicode_sets
-    );
-    impl_insert!(
-        insert_unicode_set,
-        unicode_sets,
-        UnicodeSet,
-        function_calls
-    );
+    impl_insert!(insert_segment, segments, String, unicode_sets);
+    impl_insert!(insert_unicode_set, unicode_sets, UnicodeSet, function_calls);
     fn insert_function_call(&mut self, elt: ds::FunctionCall<'static>) -> char {
         // pass 1 is responsible for this
         debug_assert!(self.function_calls.current < self.backref_base - 1);
@@ -184,20 +168,12 @@ impl MutVarTable {
     }
 }
 
-struct MutRule {
-    ante: String,
-    key: String,
-    post: String,
-    replacer: String,
-    cursor_offset: i32,
-}
-
 enum LiteralOrStandin<'a> {
     Literal(&'a str),
     Standin(char),
 }
 
-impl ToString for LiteralOrStandin<'_> {
+impl<'a> LiteralOrStandin<'a> {
     fn to_string(&self) -> String {
         match *self {
             LiteralOrStandin::Literal(s) => s.to_owned(),
@@ -217,7 +193,12 @@ pub(super) struct Pass2<'a, 'p> {
 }
 
 impl<'a, 'p> Pass2<'a, 'p> {
-    pub(super) fn try_new(data: &'a Pass1Data, var_definitions: &'a HashMap<String, &'p [parse::Element]>) -> Result<Self> {
+    // TODO: the API for Pass2 could be better, maybe a non-self Pass2::run()
+
+    pub(super) fn try_new(
+        data: &'a Pass1Data,
+        var_definitions: &'a HashMap<String, &'p [parse::Element]>,
+    ) -> Result<Self> {
         Ok(Pass2 {
             var_table: MutVarTable::try_new_from_counts(data.counts)?,
             var_definitions,
@@ -237,7 +218,8 @@ impl<'a, 'p> Pass2<'a, 'p> {
             for id in transform_group {
                 compiled_transform_group.push(self.compile_single_id(&id));
             }
-            self.id_group_list.push(VarZeroVec::from(&compiled_transform_group));
+            self.id_group_list
+                .push(VarZeroVec::from(&compiled_transform_group));
 
             let mut compiled_conversion_group = Vec::new();
             for rule in conversion_group {
@@ -255,12 +237,15 @@ impl<'a, 'p> Pass2<'a, 'p> {
                     cursor_offset,
                 });
             }
-            self.conversion_group_list.push(VarZeroVec::from(&compiled_conversion_group));
+            self.conversion_group_list
+                .push(VarZeroVec::from(&compiled_conversion_group));
         }
 
         let res = ds::RuleBasedTransliterator {
             visibility: true,
-            filter: global_filter.map(|f| f.code_points().clone()).unwrap_or(CodePointInversionList::all()),
+            filter: global_filter
+                .map(|f| f.code_points().clone())
+                .unwrap_or(CodePointInversionList::all()),
             id_group_list: VarZeroVec::from(&self.id_group_list),
             rule_group_list: VarZeroVec::from(&self.conversion_group_list),
             variable_table: self.var_table.finalize(),
@@ -274,7 +259,11 @@ impl<'a, 'p> Pass2<'a, 'p> {
 
         ds::SimpleId {
             id: id_string.into(),
-            filter: id.filter.as_ref().map(|f| f.code_points().clone()).unwrap_or(CodePointInversionList::all()),
+            filter: id
+                .filter
+                .as_ref()
+                .map(|f| f.code_points().clone())
+                .unwrap_or(CodePointInversionList::all()),
         }
     }
 

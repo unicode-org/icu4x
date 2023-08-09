@@ -127,12 +127,14 @@ as described in the zero-copy format, and the maps here are just arrays)
 
 use crate::parse;
 use crate::parse::{ElementLocation as EL, HalfRule, QuantifierKind, UnicodeSet};
+use icu_transliteration::provider::RuleBasedTransliterator;
 use parse::Result;
 use parse::PEK;
 use std::collections::{HashMap, HashSet};
 
 mod pass2;
 mod rule_group_agg;
+use crate::compile::pass2::Pass2;
 use rule_group_agg::RuleGroups;
 
 enum SingleDirection {
@@ -872,19 +874,47 @@ impl Pass1ResultGenerator {
     }
 }
 
+// TODO: define type FilterSet that is just a CPIL (without strings) and use that everywhere
+
+fn compile_one_direction<'p>(
+    result: DirectedPass1Result,
+    variable_definitions: &HashMap<String, &'p [parse::Element]>,
+) -> Result<icu_transliteration::provider::RuleBasedTransliterator<'static>> {
+    let mut p2 = Pass2::try_new(&result.data, variable_definitions)?;
+    let t = p2.run(result.groups, result.filter)?;
+    Ok(t)
+}
+
+// returns (forward, backward) transliterators if they were requested
 pub(crate) fn compile(
     rules: Vec<parse::Rule>,
     direction: parse::Direction,
-) -> Result<icu_transliteration::provider::RuleBasedTransliterator<'static>> {
+) -> Result<(
+    Option<RuleBasedTransliterator<'static>>,
+    Option<RuleBasedTransliterator<'static>>,
+)> {
     // TODO(#3736): decide if validation should be metadata-direction dependent
     //  example: transliterator with metadata-direction "forward", and a rule `[a-z] < b ;` (invalid)
     //  - if validation is dependent, this rule is valid because it's not used in the forward direction
     //  - if validation is independent, this rule is invalid because the reverse direction is also checked
-    let mut pass1 = Pass1::new(direction);
-    pass1.run(&rules)?;
-    let _result = pass1.generate_result();
+    let mut p1 = Pass1::new(direction);
+    p1.run(&rules)?;
+    let p1_result = p1.generate_result()?;
 
-    todo!()
+    let forward_t = if direction.permits(parse::Direction::Forward) {
+        let t = compile_one_direction(p1_result.forward_result, &p1_result.variable_definitions)?;
+        Some(t)
+    } else {
+        None
+    };
+    let reverse_t = if direction.permits(parse::Direction::Reverse) {
+        let t = compile_one_direction(p1_result.reverse_result, &p1_result.variable_definitions)?;
+        Some(t)
+    } else {
+        None
+    };
+
+    Ok((forward_t, reverse_t))
 }
 
 #[cfg(test)]
