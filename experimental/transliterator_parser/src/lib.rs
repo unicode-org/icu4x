@@ -25,6 +25,8 @@
 )]
 #![warn(missing_docs)]
 
+extern crate core;
+
 use icu_properties::provider::*;
 use icu_provider::prelude::*;
 use icu_transliteration::provider::RuleBasedTransliterator;

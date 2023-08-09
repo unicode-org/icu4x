@@ -876,9 +876,9 @@ impl Pass1ResultGenerator {
 
 // TODO: define type FilterSet that is just a CPIL (without strings) and use that everywhere
 
-fn compile_one_direction<'p>(
+fn compile_one_direction(
     result: DirectedPass1Result,
-    variable_definitions: &HashMap<String, &'p [parse::Element]>,
+    variable_definitions: &HashMap<String, &[parse::Element]>,
 ) -> Result<icu_transliteration::provider::RuleBasedTransliterator<'static>> {
     let mut p2 = Pass2::try_new(&result.data, variable_definitions)?;
     let t = p2.run(result.groups, result.filter)?;

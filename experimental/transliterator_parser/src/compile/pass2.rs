@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt;
+use std::fmt::{Display, Formatter};
 use super::*;
 use crate::parse::UnicodeSet;
 use icu_collections::codepointinvlist::CodePointInversionList;
@@ -173,11 +175,12 @@ enum LiteralOrStandin<'a> {
     Standin(char),
 }
 
-impl<'a> LiteralOrStandin<'a> {
-    fn to_string(&self) -> String {
+// gives us `to_string` and makes clippy happy
+impl<'a> Display for LiteralOrStandin<'a> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match *self {
-            LiteralOrStandin::Literal(s) => s.to_owned(),
-            LiteralOrStandin::Standin(c) => c.to_string(),
+            LiteralOrStandin::Literal(s) => write!(f, "{}", s),
+            LiteralOrStandin::Standin(c) => write!(f, "{}", c),
         }
     }
 }
@@ -224,10 +227,10 @@ impl<'a, 'p> Pass2<'a, 'p> {
             let mut compiled_conversion_group = Vec::new();
             for rule in conversion_group {
                 // TODO: depending on source or target, remove the ignored special constructs (anchor, cursor)
-                let ante = self.compile_section(&rule.ante);
-                let key = self.compile_section(&rule.key);
-                let post = self.compile_section(&rule.post);
-                let replacer = self.compile_section(&rule.replacement);
+                let ante = self.compile_section(rule.ante);
+                let key = self.compile_section(rule.key);
+                let post = self.compile_section(rule.post);
+                let replacer = self.compile_section(rule.replacement);
                 let cursor_offset = rule.cursor_offset;
                 compiled_conversion_group.push(ds::Rule {
                     ante: ante.into(),
@@ -272,6 +275,8 @@ impl<'a, 'p> Pass2<'a, 'p> {
         if let Some(c) = self.var_to_char.get(var) {
             return *c;
         }
+        // the first pass ensures that all variables are defined
+        #[allow(clippy::indexing_slicing)]
         let definition = self.var_definitions[var];
         let compiled = self.compile_section(definition);
         let standin = self.var_table.insert_compound(compiled);
