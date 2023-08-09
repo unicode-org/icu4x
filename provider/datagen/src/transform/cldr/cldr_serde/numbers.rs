@@ -88,10 +88,10 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct CurrencyFormattingPatterns {
-    /// Maps from currency code to standard pattern
+    /// Standard pattern
     pub standard: String,
 
-    /// Maps from currency code to standard alphaNextToNumber pattern
+    /// Standard alphaNextToNumber pattern
     #[serde(rename = "standard-alphaNextToNumber")]
     pub standard_alpha_next_to_number: Option<String>,
 }
