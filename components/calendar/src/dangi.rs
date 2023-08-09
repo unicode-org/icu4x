@@ -151,8 +151,10 @@ impl Calendar for Dangi {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, crate::Error> {
+        let cache = Inner::compute_cache(year);
+
         let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code::<Dangi>(year, month_code)
+            chinese_based_ordinal_lunar_month_from_code::<Dangi>(month_code, cache)
         {
             ordinal
         } else {
@@ -166,7 +168,6 @@ impl Calendar for Dangi {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        let cache = Inner::compute_cache(year);
         let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
         Ok(DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)))
     }

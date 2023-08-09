@@ -126,8 +126,10 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
+        let cache = Inner::compute_cache(year);
+
         let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code::<Chinese>(year, month_code)
+            chinese_based_ordinal_lunar_month_from_code::<Chinese>(month_code, cache)
         {
             ordinal
         } else {
@@ -141,7 +143,6 @@ impl Calendar for Chinese {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        let cache = Inner::compute_cache(year);
         let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
         Ok(ChineseDateInner(ChineseBasedDateInner(arithmetic?, cache)))
     }
@@ -706,9 +707,12 @@ mod test {
             let expected_month = case.1;
             let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
             let chinese_year = iso.to_calendar(Chinese).year().number;
-            let rata_die = Iso::fixed_from_iso(*iso.inner());
+            let cache = Inner::compute_cache(chinese_year);
             assert!(Chinese::is_leap_year(chinese_year));
-            assert_eq!(expected_month, Inner::get_leap_month_in_year(rata_die));
+            assert_eq!(
+                expected_month,
+                Inner::get_leap_month_from_new_year(cache.new_year)
+            );
         }
     }
 
@@ -857,6 +861,7 @@ mod test {
     #[test]
     fn test_month_code_to_ordinal() {
         let year = 4660;
+        let cache = Inner::compute_cache(year);
         let codes = [
             (1, tinystr!(4, "M01")),
             (2, tinystr!(4, "M02")),
@@ -874,7 +879,7 @@ mod test {
         ];
         for ordinal_code_pair in codes {
             let code = MonthCode(ordinal_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(year, code);
+            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(code, cache);
             assert_eq!(
                 ordinal,
                 Some(ordinal_code_pair.0),
@@ -899,8 +904,9 @@ mod test {
         ];
         for year_code_pair in invalid_codes {
             let year = year_code_pair.0;
+            let cache = Inner::compute_cache(year);
             let code = MonthCode(year_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(year, code);
+            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(code, cache);
             assert_eq!(
                 ordinal, None,
                 "Invalid month code failed for year: {year}, code: {code}"

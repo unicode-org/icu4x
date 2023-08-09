@@ -333,13 +333,6 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         difference > 365
     }
 
-    /// Given that a date is in a leap year, find which month in the year is a leap month.
-    /// This function finds the new year on or before the given `date`, then calls `get_leap_month_from_new_year`.
-    pub(crate) fn get_leap_month_in_year(date: RataDie) -> u8 {
-        let new_year = Self::new_year_on_or_before_fixed_date(date, None).0;
-        Self::get_leap_month_from_new_year(new_year)
-    }
-
     /// Given that `new_year` is the first day of a leap year, find which month in the year is a leap month.
     /// Since the first month in which there are no major solar terms is a leap month, this function
     /// cycles through months until it finds the leap month, then returns the number of that month. This
@@ -519,20 +512,18 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
 
 /// Get the ordinal lunar month from a code for chinese-based calendars.
 pub(crate) fn chinese_based_ordinal_lunar_month_from_code<C: ChineseBased>(
-    year: i32,
     code: MonthCode,
+    cache: ChineseBasedCache,
 ) -> Option<u8> {
+    let leap_month = if let Some(leap) = cache.leap_month {
+        leap.get()
+    } else {
+        14
+    };
+
     if code.0.len() < 3 {
         return None;
     }
-    let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
-    let leap_month = if C::is_leap_year(year) {
-        ChineseBasedDateInner::<C>::get_leap_month_in_year(mid_year)
-    } else {
-        // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
-        // it is impossible to actually have 14 months in a year.
-        14
-    };
     let bytes = code.0.all_bytes();
     if bytes[0] != b'M' {
         return None;
