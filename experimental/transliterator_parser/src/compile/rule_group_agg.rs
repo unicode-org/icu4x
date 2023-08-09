@@ -23,11 +23,11 @@ use std::collections::VecDeque;
 #[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 pub(crate) struct UniConversionRule<'p> {
-    ante: &'p [parse::Element],
-    key: &'p [parse::Element],
-    post: &'p [parse::Element],
-    replacement: &'p [parse::Element],
-    cursor_offset: i32,
+    pub(crate) ante: &'p [parse::Element],
+    pub(crate) key: &'p [parse::Element],
+    pub(crate) post: &'p [parse::Element],
+    pub(crate) replacement: &'p [parse::Element],
+    pub(crate) cursor_offset: i32,
 }
 
 // transform + conversion rule groups for a single direction

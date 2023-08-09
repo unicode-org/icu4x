@@ -2,8 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::borrow::Cow;
+use icu_collections::codepointinvlist::CodePointInversionList;
+use zerovec::VarZeroVec;
 use super::*;
 use crate::parse::UnicodeSet;
+
+use icu_transliteration::provider as ds;
 
 macro_rules! impl_insert {
     ($fn_name:ident, $vec_field:ident, $elt_type:ty, $current_field:ident, $next_field:ident) => {
@@ -39,7 +44,7 @@ struct MutVarTable {
     unicode_sets: Vec<UnicodeSet>,
     unicode_sets_base: u32,
     unicode_sets_current: u32,
-    function_calls: Vec<MutFunctionCall>,
+    function_calls: Vec<ds::FunctionCall<'static>>,
     function_calls_base: u32,
     function_calls_current: u32,
     backref_base: u32,
@@ -139,7 +144,7 @@ impl MutVarTable {
     impl_insert!(
         insert_function_call,
         function_calls,
-        MutFunctionCall,
+        ds::FunctionCall<'static>,
         function_calls_current,
         backref_base
     );
@@ -151,6 +156,31 @@ impl MutVarTable {
         #[allow(clippy::unwrap_used)] // debug asserts imply this is in range
         char::try_from(self.backref_base + backref_num - 1).unwrap()
     }
+
+    fn finalize(&self) -> ds::VarTable<'static> {
+        // we computed the exact counts, so when we call finalize, we should be full
+        debug_assert!(self.is_full());
+
+        ds::VarTable {
+            compounds: VarZeroVec::from(&self.compounds),
+            quantifiers_opt: VarZeroVec::from(&self.quantifiers_opt),
+            quantifiers_kleene: VarZeroVec::from(&self.quantifiers_kleene),
+            quantifiers_kleene_plus: VarZeroVec::from(&self.quantifiers_kleene_plus),
+            segments: VarZeroVec::from(&self.segments),
+            unicode_sets: VarZeroVec::from(&self.unicode_sets),
+            function_calls: VarZeroVec::from(&self.function_calls),
+        }
+    }
+
+    fn is_full(&self) -> bool {
+        self.compounds.len() == self.counts.num_compounds
+            && self.quantifiers_opt.len() == self.counts.num_quantifiers_opt
+            && self.quantifiers_kleene.len() == self.counts.num_quantifiers_kleene
+            && self.quantifiers_kleene_plus.len() == self.counts.num_quantifiers_kleene_plus
+            && self.segments.len() == self.counts.num_segments
+            && self.unicode_sets.len() == self.counts.num_unicode_sets
+            && self.function_calls.len() == self.counts.num_function_calls
+    }
 }
 
 struct MutFunctionCall {
@@ -158,8 +188,8 @@ struct MutFunctionCall {
     args: String,
 }
 
-struct MutIdGroupList(Vec<Vec<parse::SingleId>>);
-struct MutRuleGroupList(Vec<Vec<MutRule>>);
+type MutIdGroupList<'p> = Vec<Vec<Cow<'p, parse::SingleId>>>;
+type MutRuleGroupList = Vec<Vec<MutRule>>;
 
 struct MutRule {
     ante: String,
@@ -189,34 +219,64 @@ struct Pass2<'p> {
     used_vars: HashSet<String>,
     // the inverse of VarTable.compounds
     var_to_char: HashMap<String, char>,
+
+    id_group_list: Vec<VarZeroVec<'static, ds::SimpleIdULE>>,
+    conversion_group_list: Vec<VarZeroVec<'static, ds::RuleULE>>,
 }
 
-// types produced by pass 1 and consumed by pass 2
-mod ir {
-    use super::*;
-
-    struct ConversionRule<'p> {
-        ante: &'p [parse::Element],
-        key: &'p [parse::Element],
-        post: &'p [parse::Element],
-        replacement: &'p [parse::Element],
-        cursor_offset: i32,
-    }
-
-    struct TransformRule(parse::SingleId);
-}
-
-// pass 2 is responsible for
 impl<'p> Pass2<'p> {
     fn run(
         &mut self,
         data: &Pass1Data,
         var_definitions: &HashMap<String, &'p [parse::Element]>,
-        rule_group_iter: impl Iterator<Item = &'p [parse::Rule]>,
+        rule_groups: super::RuleGroups<'p>,
         global_filter: Option<UnicodeSet>,
-    ) -> Result<()> {
+    ) -> Result<ds::RuleBasedTransliterator<'static>> {
 
-        Ok(())
+        for (transform_group, conversion_group) in rule_groups {
+            let mut compiled_transform_group = Vec::new();
+            for id in transform_group {
+                compiled_transform_group.push(self.compile_single_id(&id));
+            }
+            self.id_group_list.push(VarZeroVec::from(&compiled_transform_group));
+
+            let mut compiled_conversion_group = Vec::new();
+            for rule in conversion_group {
+                // TODO: depending on source or target, remove the ignored special constructs (anchor, cursor)
+                let ante = self.compile_section(&rule.ante);
+                let key = self.compile_section(&rule.key);
+                let post = self.compile_section(&rule.post);
+                let replacer = self.compile_section(&rule.replacement);
+                let cursor_offset = rule.cursor_offset;
+                compiled_conversion_group.push(ds::Rule {
+                    ante: ante.into(),
+                    key: key.into(),
+                    post: post.into(),
+                    replacer: replacer.into(),
+                    cursor_offset,
+                });
+            }
+            self.conversion_group_list.push(VarZeroVec::from(&compiled_conversion_group));
+        }
+
+        let res = ds::RuleBasedTransliterator {
+            visibility: true,
+            filter: global_filter.map(|f| f.code_points().clone()).unwrap_or(CodePointInversionList::all()),
+            id_group_list: VarZeroVec::from(&self.id_group_list),
+            rule_group_list: VarZeroVec::from(&self.conversion_group_list),
+            variable_table: self.var_table.finalize(),
+        };
+
+        Ok(res)
+    }
+
+    fn compile_single_id(&mut self, id: &parse::SingleId) -> ds::SimpleId<'static> {
+        let id_string = id.basic_id.source.clone(); // TODO(#3736): map legacy ID to internal ID and use here
+
+        ds::SimpleId {
+            id: id_string.into(),
+            filter: id.filter.as_ref().map(|f| f.code_points().clone()).unwrap_or(CodePointInversionList::all()),
+        }
     }
 
     // returns the standin char
@@ -277,11 +337,12 @@ impl<'p> Pass2<'p> {
                 let standin = self.var_table.insert_segment(inner);
                 LiteralOrStandin::Standin(standin)
             }
-            parse::Element::FunctionCall(set, inner) => {
+            parse::Element::FunctionCall(id, inner) => {
                 let inner = self.compile_section(inner);
-                let standin = self.var_table.insert_function_call(MutFunctionCall {
-                    name: set.clone(),
-                    args: inner,
+                let id = self.compile_single_id(id);
+                let standin = self.var_table.insert_function_call(ds::FunctionCall {
+                    translit: id,
+                    arg: inner.into(),
                 });
                 LiteralOrStandin::Standin(standin)
             }
