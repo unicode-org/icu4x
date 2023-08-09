@@ -107,7 +107,6 @@ macro_rules! impl_data_provider {
 
                     let mundi_name = ethioaa_data
                         .eras
-                       // .ok_or_else(|| DataError::custom("Could not find eras"))?
                         .names
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");

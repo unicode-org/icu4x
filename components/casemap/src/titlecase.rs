@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 /// How to handle the rest of the string once the head of the
-/// string has been titlecased
+/// string has been titlecased. See docs of [`TitlecaseMapper`] for examples.
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
 pub enum TailCasing {
@@ -26,7 +26,7 @@ pub enum TailCasing {
 }
 
 /// Whether to start casing at the beginning of the string or at the first
-/// relevant character.
+/// relevant character. See docs of [`TitlecaseMapper`] for examples.
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
 pub enum HeadAdjustment {
@@ -40,6 +40,8 @@ pub enum HeadAdjustment {
 }
 
 /// Various options for controlling titlecasing
+///
+/// See docs of [`TitlecaseMapper`] for examples.
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
 pub struct TitlecaseOptions {
@@ -144,7 +146,7 @@ pub struct TitlecaseMapper<CM> {
 }
 
 impl TitlecaseMapper<CaseMapper> {
-    /// A constructor which creates a [`TitlecaseMapper`], with the normal (non-legacy) head adjustment behavior.
+    /// A constructor which creates a [`TitlecaseMapper`] using compiled data, with the normal (non-legacy) head adjustment behavior.
     /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior and usage examples.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -157,7 +159,7 @@ impl TitlecaseMapper<CaseMapper> {
             gc: Some(icu_properties::maps::general_category().static_to_owned()),
         }
     }
-    /// A constructor which creates a [`TitlecaseMapper`], with the legacy head adjustment behavior.
+    /// A constructor which creates a [`TitlecaseMapper`] using compiled data, with the legacy head adjustment behavior.
     /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior and usage examples.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -227,7 +229,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ]);
 
     /// A constructor which creates a [`TitlecaseMapper`] from an existing [`CaseMapper`]
-    /// (either owned or as a reference), with the normal (non-legacy) head adjustment behavior.
+    /// (either owned or as a reference) and compiled data, with the normal (non-legacy) head adjustment behavior.
     /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*

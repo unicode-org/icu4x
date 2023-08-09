@@ -50,6 +50,8 @@ icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transf
 arraystring = "0.3.0"
 atoi = "1.0.0"
 icu = { path = "../icu" }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"
 
 [features]

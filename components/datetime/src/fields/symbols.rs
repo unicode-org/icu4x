@@ -448,9 +448,9 @@ field_type! (
         ///
         /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same way as for [`Year::Calendar`].
         'Y' => WeekOf = 1,
-        /// TODO: Docs
+        /// Field symbol for cyclic year; used in calendars where years are tracked in cycles, such as the Chinese or Dangi calendars.
         'U' => Cyclic = 2,
-        /// TODO: Docs
+        /// Field symbol for related ISO; some calendars which use different year numbering than ISO, or no year numbering, may express years in an ISO year corresponding to a calendar year.
         'r' => RelatedIso = 3,
     };
     Numeric;
