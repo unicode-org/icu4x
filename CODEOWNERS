@@ -8,6 +8,7 @@
 # List of components with at least two owners as specified in docs/crate-ownership.
 
 components/calendar/              @Manishearth @sffc
+components/casemap/               @Manishearth
 components/collator/              @hsivonen @echeran
 components/collections/           @echeran
 components/datetime/              @zbraniecki @gregtatum @nordzilla
@@ -20,7 +21,6 @@ components/plurals/               @zbraniecki @sffc
 components/segmenter/             @aethanyc @makotokato @sffc
 components/timezone/              @nordzilla
 experimental/bies/                @sffc
-experimental/casemap/             @Manishearth
 experimental/compactdecimal/      @eggrobin
 experimental/displaynames/        @sffc @snktd
 experimental/harfbuzz/            @hsivonen
@@ -51,6 +51,7 @@ utils/zerofrom                    @Manishearth @sffc
 utils/zerovec/                    @Manishearth @sffc
 
 components/calendar/data             @unicode-org/icu4x-owners
+components/casemap/data              @unicode-org/icu4x-owners
 components/collator/data             @unicode-org/icu4x-owners
 components/collections/data          @unicode-org/icu4x-owners
 components/datetime/data             @unicode-org/icu4x-owners
@@ -61,7 +62,6 @@ components/normalizer/data           @unicode-org/icu4x-owners
 components/plurals/data              @unicode-org/icu4x-owners
 components/segmenter/data            @unicode-org/icu4x-owners
 components/timezone/data             @unicode-org/icu4x-owners
-experimental/casemap/data            @unicode-org/icu4x-owners
 experimental/compactdecimal/data     @unicode-org/icu4x-owners
 experimental/displaynames/data       @unicode-org/icu4x-owners
 experimental/relativetime/data       @unicode-org/icu4x-owners
