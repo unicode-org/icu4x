@@ -11,14 +11,14 @@ use crate::parse::UnicodeSet;
 use icu_transliteration::provider as ds;
 
 macro_rules! impl_insert {
-    ($fn_name:ident, $vec_field:ident, $elt_type:ty, $current_field:ident, $next_field:ident) => {
+    ($fn_name:ident, $field:ident, $elt_type:ty, $next_field:ident) => {
         fn $fn_name(&mut self, elt: $elt_type) -> char {
             // pass 1 is responsible for this
-            debug_assert!(self.$current_field < self.$next_field - 1);
+            debug_assert!(self.$field.current < self.$next_field.base - 1);
             #[allow(clippy::unwrap_used)] // the whole PUP (15) consists of valid chars
-            let standin = char::try_from(self.$current_field).unwrap();
-            self.$vec_field.push(elt);
-            self.$current_field += 1;
+            let standin = char::try_from(self.$field.current).unwrap();
+            self.$field.vec.push(elt);
+            self.$field.current += 1;
             standin
         }
     };
@@ -30,30 +30,14 @@ struct MutVarTableField<T> {
     current: u32
 }
 
-
-// TODO: refactor these into struct MutVarTableField<T>{vec: Vec<T>, base: u32, current: u32};
 struct MutVarTable {
-    compounds: Vec<String>,
-    compounds_base: u32,
-    compounds_current: u32,
-    quantifiers_opt: Vec<String>,
-    quantifiers_opt_base: u32,
-    quantifiers_opt_current: u32,
-    quantifiers_kleene: Vec<String>,
-    quantifiers_kleene_base: u32,
-    quantifiers_kleene_current: u32,
-    quantifiers_kleene_plus: Vec<String>,
-    quantifiers_kleene_plus_base: u32,
-    quantifiers_kleene_plus_current: u32,
-    segments: Vec<String>,
-    segments_base: u32,
-    segments_current: u32,
-    unicode_sets: Vec<UnicodeSet>,
-    unicode_sets_base: u32,
-    unicode_sets_current: u32,
-    function_calls: Vec<ds::FunctionCall<'static>>,
-    function_calls_base: u32,
-    function_calls_current: u32,
+    compounds: MutVarTableField<String>,
+    quantifiers_opt: MutVarTableField<String>,
+    quantifiers_kleene: MutVarTableField<String>,
+    quantifiers_kleene_plus: MutVarTableField<String>,
+    segments: MutVarTableField<String>,
+    unicode_sets: MutVarTableField<UnicodeSet>,
+    function_calls: MutVarTableField<ds::FunctionCall<'static>>,
     backref_base: u32,
     counts: SpecialConstructCounts,
 }
@@ -80,28 +64,42 @@ impl MutVarTable {
         let function_calls_base = unicode_sets_base + counts.num_unicode_sets as u32;
 
         Ok(Self {
-            compounds: Vec::with_capacity(counts.num_compounds),
-            compounds_base,
-            quantifiers_opt: Vec::with_capacity(counts.num_quantifiers_opt),
-            quantifiers_opt_base,
-            quantifiers_kleene: Vec::with_capacity(counts.num_quantifiers_kleene),
-            quantifiers_kleene_base,
-            quantifiers_kleene_plus: Vec::with_capacity(counts.num_quantifiers_kleene_plus),
-            quantifiers_kleene_plus_base,
-            segments: Vec::with_capacity(counts.num_segments),
-            segments_base,
-            unicode_sets: Vec::with_capacity(counts.num_unicode_sets),
-            unicode_sets_base,
-            function_calls: Vec::with_capacity(counts.num_function_calls),
-            function_calls_base,
+            compounds: MutVarTableField {
+                vec: Vec::with_capacity(counts.num_compounds),
+                base: compounds_base,
+                current: compounds_base,
+            },
+            quantifiers_opt: MutVarTableField {
+                vec: Vec::with_capacity(counts.num_quantifiers_opt),
+                base: quantifiers_opt_base,
+                current: quantifiers_opt_base,
+            },
+            quantifiers_kleene: MutVarTableField {
+                vec: Vec::with_capacity(counts.num_quantifiers_kleene),
+                base: quantifiers_kleene_base,
+                current: quantifiers_kleene_base,
+            },
+            quantifiers_kleene_plus: MutVarTableField {
+                vec: Vec::with_capacity(counts.num_quantifiers_kleene_plus),
+                base: quantifiers_kleene_plus_base,
+                current: quantifiers_kleene_plus_base,
+            },
+            segments: MutVarTableField {
+                vec: Vec::with_capacity(counts.num_segments),
+                base: segments_base,
+                current: segments_base,
+            },
+            unicode_sets: MutVarTableField {
+                vec: Vec::with_capacity(counts.num_unicode_sets),
+                base: unicode_sets_base,
+                current: unicode_sets_base,
+            },
+            function_calls: MutVarTableField {
+                vec: Vec::with_capacity(counts.num_function_calls),
+                base: function_calls_base,
+                current: function_calls_base,
+            },
             counts,
-            compounds_current: compounds_base,
-            quantifiers_opt_current: quantifiers_opt_base,
-            quantifiers_kleene_current: quantifiers_kleene_base,
-            quantifiers_kleene_plus_current: quantifiers_kleene_plus_base,
-            segments_current: segments_base,
-            unicode_sets_current: unicode_sets_base,
-            function_calls_current: function_calls_base,
             backref_base: function_calls_base + counts.num_function_calls as u32,
         })
     }
@@ -110,51 +108,47 @@ impl MutVarTable {
         insert_compound,
         compounds,
         String,
-        compounds_current,
-        quantifiers_opt_base
+        quantifiers_opt
     );
     impl_insert!(
         insert_quantifier_opt,
         quantifiers_opt,
         String,
-        quantifiers_opt_current,
-        quantifiers_kleene_base
+        quantifiers_kleene
     );
     impl_insert!(
         insert_quantifier_kleene,
         quantifiers_kleene,
         String,
-        quantifiers_kleene_current,
-        quantifiers_kleene_plus_base
+        quantifiers_kleene_plus
     );
     impl_insert!(
         insert_quantifier_kleene_plus,
         quantifiers_kleene_plus,
         String,
-        quantifiers_kleene_plus_current,
-        segments_base
+        segments
     );
     impl_insert!(
         insert_segment,
         segments,
         String,
-        segments_current,
-        unicode_sets_base
+        unicode_sets
     );
     impl_insert!(
         insert_unicode_set,
         unicode_sets,
         UnicodeSet,
-        unicode_sets_current,
-        function_calls_base
+        function_calls
     );
-    impl_insert!(
-        insert_function_call,
-        function_calls,
-        ds::FunctionCall<'static>,
-        function_calls_current,
-        backref_base
-    );
+    fn insert_function_call(&mut self, elt: ds::FunctionCall<'static>) -> char {
+        // pass 1 is responsible for this
+        debug_assert!(self.function_calls.current < self.backref_base - 1);
+        #[allow(clippy::unwrap_used)] // the whole PUP (15) consists of valid chars
+        let standin = char::try_from(self.function_calls.current).unwrap();
+        self.function_calls.vec.push(elt);
+        self.function_calls.current += 1;
+        standin
+    }
 
     fn standin_for_backref(&self, backref_num: u32) -> char {
         debug_assert!(backref_num > 0);
@@ -169,24 +163,24 @@ impl MutVarTable {
         debug_assert!(self.is_full());
 
         ds::VarTable {
-            compounds: VarZeroVec::from(&self.compounds),
-            quantifiers_opt: VarZeroVec::from(&self.quantifiers_opt),
-            quantifiers_kleene: VarZeroVec::from(&self.quantifiers_kleene),
-            quantifiers_kleene_plus: VarZeroVec::from(&self.quantifiers_kleene_plus),
-            segments: VarZeroVec::from(&self.segments),
-            unicode_sets: VarZeroVec::from(&self.unicode_sets),
-            function_calls: VarZeroVec::from(&self.function_calls),
+            compounds: VarZeroVec::from(&self.compounds.vec),
+            quantifiers_opt: VarZeroVec::from(&self.quantifiers_opt.vec),
+            quantifiers_kleene: VarZeroVec::from(&self.quantifiers_kleene.vec),
+            quantifiers_kleene_plus: VarZeroVec::from(&self.quantifiers_kleene_plus.vec),
+            segments: VarZeroVec::from(&self.segments.vec),
+            unicode_sets: VarZeroVec::from(&self.unicode_sets.vec),
+            function_calls: VarZeroVec::from(&self.function_calls.vec),
         }
     }
 
     fn is_full(&self) -> bool {
-        self.compounds.len() == self.counts.num_compounds
-            && self.quantifiers_opt.len() == self.counts.num_quantifiers_opt
-            && self.quantifiers_kleene.len() == self.counts.num_quantifiers_kleene
-            && self.quantifiers_kleene_plus.len() == self.counts.num_quantifiers_kleene_plus
-            && self.segments.len() == self.counts.num_segments
-            && self.unicode_sets.len() == self.counts.num_unicode_sets
-            && self.function_calls.len() == self.counts.num_function_calls
+        self.compounds.vec.len() == self.counts.num_compounds
+            && self.quantifiers_opt.vec.len() == self.counts.num_quantifiers_opt
+            && self.quantifiers_kleene.vec.len() == self.counts.num_quantifiers_kleene
+            && self.quantifiers_kleene_plus.vec.len() == self.counts.num_quantifiers_kleene_plus
+            && self.segments.vec.len() == self.counts.num_segments
+            && self.unicode_sets.vec.len() == self.counts.num_unicode_sets
+            && self.function_calls.vec.len() == self.counts.num_function_calls
     }
 }
 
@@ -212,7 +206,7 @@ impl ToString for LiteralOrStandin<'_> {
     }
 }
 
-struct Pass2<'a, 'p> {
+pub(super) struct Pass2<'a, 'p> {
     var_table: MutVarTable,
     var_definitions: &'a HashMap<String, &'p [parse::Element]>,
     // the inverse of VarTable.compounds
@@ -223,7 +217,7 @@ struct Pass2<'a, 'p> {
 }
 
 impl<'a, 'p> Pass2<'a, 'p> {
-    fn try_new(data: &'a Pass1Data, var_definitions: &'a HashMap<String, &'p [parse::Element]>) -> Result<Self> {
+    pub(super) fn try_new(data: &'a Pass1Data, var_definitions: &'a HashMap<String, &'p [parse::Element]>) -> Result<Self> {
         Ok(Pass2 {
             var_table: MutVarTable::try_new_from_counts(data.counts)?,
             var_definitions,
@@ -233,7 +227,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
         })
     }
 
-    fn run(
+    pub(super) fn run(
         &mut self,
         rule_groups: super::RuleGroups<'p>,
         global_filter: Option<UnicodeSet>,
