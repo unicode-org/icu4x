@@ -13,11 +13,16 @@ use icu_locid::langid;
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-
     let cm = CaseMapper::new();
-    
-    println!(r#"The uppercase of "hello world" is "{}""#, cm.uppercase_to_string("hello world", &langid!("und")));
-    println!(r#"The lowercase of "Γειά σου Κόσμε" is "{}""#, cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und")));
+
+    println!(
+        r#"The uppercase of "hello world" is "{}""#,
+        cm.uppercase_to_string("hello world", &langid!("und"))
+    );
+    println!(
+        r#"The lowercase of "Γειά σου Κόσμε" is "{}""#,
+        cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und"))
+    );
 
     0
 }
