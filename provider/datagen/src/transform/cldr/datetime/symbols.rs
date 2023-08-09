@@ -65,7 +65,7 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         tinystr!(4, "M02"),
         tinystr!(4, "M03"),
         tinystr!(4, "M04"),
-        tinystr!(4, "M05"), 
+        tinystr!(4, "M05"),
         tinystr!(4, "M06"),
         tinystr!(4, "M07"),
         tinystr!(4, "M08"),
@@ -241,16 +241,16 @@ macro_rules! symbols_from {
         }
     };
 }
-symbols_from!([cldr_serde::ca::MonthSymbols, months], (&'static [TinyStr4], &str));
+symbols_from!(
+    [cldr_serde::ca::MonthSymbols, months],
+    (&'static [TinyStr4], &str)
+);
 
 impl cldr_serde::ca::MonthSymbols {
     fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::SymbolsV1<'static> {
-        
         if ctx.1 == "hebrew" {
-
             let mut map = BTreeMap::new();
             for (k, v) in self.0.iter() {
-
                 let keys = match k.as_str() {
                     "1" => tinystr!(4, "M01"),
                     "2" => tinystr!(4, "M02"),
@@ -266,8 +266,8 @@ impl cldr_serde::ca::MonthSymbols {
                     "11" => tinystr!(4, "M10"),
                     "12" => tinystr!(4, "M11"),
                     "13" => tinystr!(4, "M12"),
-                    _ => panic!("Unexpected month for Hebrew calendar")
-                };                
+                    _ => panic!("Unexpected month for Hebrew calendar"),
+                };
                 map.insert(MonthCode(keys), v.as_ref());
             }
             months::SymbolsV1::Other(map.into_iter().collect())
@@ -299,7 +299,8 @@ impl cldr_serde::ca::MonthSymbols {
                 if index == 0 {
                     panic!("CLDR month indices cannot be zero");
                 }
-                let code = ctx.0
+                let code = ctx
+                    .0
                     .get(index - 1)
                     .expect("Found out of bounds month index for calendar");
 

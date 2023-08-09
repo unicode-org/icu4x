@@ -7,10 +7,10 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian,
+    buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, hebrew::Hebrew, indian::Indian,
     islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
     islamic::UmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
-    Gregorian, hebrew::Hebrew
+    Gregorian,
 };
 use icu_locid::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;

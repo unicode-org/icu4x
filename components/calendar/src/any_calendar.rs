@@ -10,12 +10,12 @@ use crate::coptic::Coptic;
 use crate::dangi::Dangi;
 use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
 use crate::gregorian::Gregorian;
+use crate::hebrew::Hebrew;
 use crate::indian::Indian;
 use crate::islamic::{IslamicCivil, IslamicObservational, IslamicTabular, UmmAlQura};
 use crate::iso::Iso;
 use crate::japanese::{Japanese, JapaneseExtended};
 use crate::persian::Persian;
-use crate::hebrew::Hebrew;
 use crate::roc::Roc;
 use crate::{
     types, AsCalendar, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Ref,
@@ -263,7 +263,9 @@ impl Calendar for AnyCalendar {
             Self::Indian(ref c) => AnyDateInner::Indian(c.date_from_iso(iso)),
             Self::Coptic(ref c) => AnyDateInner::Coptic(c.date_from_iso(iso)),
             Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_iso(iso)),
-            Self::IslamicObservational(ref c) => AnyDateInner::IslamicObservational(c.date_from_iso(iso)),
+            Self::IslamicObservational(ref c) => {
+                AnyDateInner::IslamicObservational(c.date_from_iso(iso))
+            }
             Self::IslamicCivil(ref c) => AnyDateInner::IslamicCivil(c.date_from_iso(iso)),
             Self::UmmAlQura(ref c) => AnyDateInner::UmmAlQura(c.date_from_iso(iso)),
             Self::IslamicTabular(ref c) => AnyDateInner::IslamicTabular(c.date_from_iso(iso)),
@@ -1308,7 +1310,6 @@ mod tests {
                 day,
                 e,
             )
-
         });
 
         let roundtrip_year = date.year();
@@ -1544,12 +1545,12 @@ mod tests {
             CalendarError::UnknownMonthCode("M9".parse().unwrap(), "Persian"),
         );
 
-        single_test_roundtrip(hebrew, "am", 5773, "M03", 1);
-        single_test_roundtrip(hebrew, "am", 4993, "M07", 21);
-        single_test_roundtrip(hebrew, "am", 5012, "M12", 20);
+        single_test_roundtrip(hebrew, "hebrew", 5773, "M03", 1);
+        single_test_roundtrip(hebrew, "hebrew", 4993, "M07", 21);
+        single_test_roundtrip(hebrew, "hebrew", 5012, "M12", 20);
         single_test_error(
             hebrew,
-            "am",
+            "hebrew",
             100,
             "M9",
             1,
