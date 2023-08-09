@@ -227,11 +227,11 @@ impl<'a, 'p> Pass2<'a, 'p> {
 
             let mut compiled_conversion_group = Vec::new();
             for rule in conversion_group {
-                // TODO: depending on source or target, remove the ignored special constructs (anchor, cursor)
-                let ante = self.compile_section(rule.ante);
-                let key = self.compile_section(rule.key);
-                let post = self.compile_section(rule.post);
-                let replacer = self.compile_section(rule.replacement);
+                let ante = self.compile_section(rule.ante, parse::ElementLocation::Source);
+                let key = self.compile_section(rule.key, parse::ElementLocation::Source);
+                let post = self.compile_section(rule.post, parse::ElementLocation::Source);
+                let replacer =
+                    self.compile_section(rule.replacement, parse::ElementLocation::Target);
                 let cursor_offset = rule.cursor_offset;
                 compiled_conversion_group.push(ds::Rule {
                     ante: ante.into(),
@@ -246,7 +246,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
         }
 
         let res = ds::RuleBasedTransliterator {
-            visibility: true,
+            visibility: true, // TODO(#3736): use metadata
             filter: global_filter
                 .map(|f| f.code_points().clone())
                 .unwrap_or(CodePointInversionList::all()),
@@ -279,16 +279,23 @@ impl<'a, 'p> Pass2<'a, 'p> {
         // the first pass ensures that all variables are defined
         #[allow(clippy::indexing_slicing)]
         let definition = self.var_definitions[var];
-        let compiled = self.compile_section(definition);
+        let compiled = self.compile_section(definition, parse::ElementLocation::VariableDefinition);
         let standin = self.var_table.insert_compound(compiled);
         self.var_to_char.insert(var.to_owned(), standin);
         standin
     }
 
-    fn compile_section(&mut self, section: &'p [parse::Element]) -> String {
+    fn compile_section(
+        &mut self,
+        section: &'p [parse::Element],
+        loc: parse::ElementLocation,
+    ) -> String {
         let mut result = String::new();
         for elt in section {
-            match self.compile_element(elt) {
+            if elt.kind().skipped_in(loc) {
+                continue;
+            }
+            match self.compile_element(elt, loc) {
                 LiteralOrStandin::Literal(s) => result.push_str(s),
                 LiteralOrStandin::Standin(c) => result.push(c),
             }
@@ -296,13 +303,18 @@ impl<'a, 'p> Pass2<'a, 'p> {
         result
     }
 
-    fn compile_element(&mut self, elt: &'p parse::Element) -> LiteralOrStandin<'p> {
+    fn compile_element(
+        &mut self,
+        elt: &'p parse::Element,
+        loc: parse::ElementLocation,
+    ) -> LiteralOrStandin<'p> {
+        debug_assert!(!elt.kind().skipped_in(loc));
         match elt {
             parse::Element::Literal(s) => LiteralOrStandin::Literal(s),
             parse::Element::VariableRef(v) => LiteralOrStandin::Standin(self.compile_variable(v)),
-            parse::Element::Quantifier(q, inner) => {
-                let inner = self.compile_element(inner).to_string();
-                let standin = match q {
+            parse::Element::Quantifier(kind, inner) => {
+                let inner = self.compile_element(inner, loc).to_string();
+                let standin = match kind {
                     parse::QuantifierKind::ZeroOrOne => self.var_table.insert_quantifier_opt(inner),
                     parse::QuantifierKind::ZeroOrMore => {
                         self.var_table.insert_quantifier_kleene(inner)
@@ -327,12 +339,12 @@ impl<'a, 'p> Pass2<'a, 'p> {
                 LiteralOrStandin::Standin(standin)
             }
             parse::Element::Segment(inner) => {
-                let inner = self.compile_section(inner);
+                let inner = self.compile_section(inner, loc);
                 let standin = self.var_table.insert_segment(inner);
                 LiteralOrStandin::Standin(standin)
             }
             parse::Element::FunctionCall(id, inner) => {
-                let inner = self.compile_section(inner);
+                let inner = self.compile_section(inner, loc);
                 let id = self.compile_single_id(id);
                 let standin = self.var_table.insert_function_call(ds::FunctionCall {
                     translit: id,
@@ -341,7 +353,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
                 LiteralOrStandin::Standin(standin)
             }
             parse::Element::Cursor(..) => {
-                // TODO: compile this in some other step
+                // TODO(#3736): compile this
                 LiteralOrStandin::Literal("")
             }
         }
