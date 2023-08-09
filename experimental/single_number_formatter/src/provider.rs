@@ -37,6 +37,7 @@ pub struct CurrencyEssentialsV1<'data> {
     pub place_holders: VarZeroVec<'data, str>,
 }
 
+#[zerovec::make_ule(PatternSelectionULE)]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq)]
 #[repr(u8)]
 pub enum PatternSelection {
@@ -61,7 +62,7 @@ type PatternSelectionMask = u8;
 pub struct CurrencyPatterns {
     /// If it is true, then use the standard pattern.
     /// Otherwise, use the standard_alpha_next_to_number pattern.
-    pub short_pattern_standard: PatternSelectionMask,
+    pub short_pattern_standard: PatternSelectionMask, // TODO: sffc@,  I got an error when I use `PatternSelectionULE` in `#[zerovec::make_ule(CurrencyPatternsULE)]`
 
     /// If it is true, then use the standard pattern.
     /// Otherwise, use the standard_alpha_next_to_number pattern.
