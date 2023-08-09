@@ -165,7 +165,9 @@ fn datetime_benches(c: &mut Criterion) {
         "calendar/islamic/tabular",
         &fxs,
         icu::calendar::islamic::IslamicTabular,
-        |y, m, d, h, min, s| DateTime::try_new_islamic_tabular_datetime(y, m, d, h, min, s).unwrap(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_islamic_tabular_datetime(y, m, d, h, min, s).unwrap()
+        },
     );
 
     #[cfg(feature = "bench")]
