@@ -1054,6 +1054,7 @@ where
             e.offset.get_or_insert(pre_offset);
             e
         })?;
+        let (set, consumed_bytes) = self.unicode_set_from_str(set_source)?;
 
         // advance self.iter consumed_bytes bytes
         while let Some(offset) = self.peek_index() {
