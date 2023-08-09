@@ -14,6 +14,13 @@ use icu_provider::{yoke, zerofrom};
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
+/// This type contains all of the essential data for currency formatting.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(CurrencyEssentialsV1Marker = "currency/essentials@1")]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
