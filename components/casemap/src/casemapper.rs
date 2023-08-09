@@ -146,7 +146,7 @@ impl CaseMapper {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// This function performs legacy head adjustment behavior when [`HeadAdjustment::Adjust`] is set. See
+    /// This function performs "adjust to cased" head adjustment behavior when [`HeadAdjustment::Adjust`] is set. See
     /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
     /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
     /// is [`HeadAdjustment::NoAdjust`].

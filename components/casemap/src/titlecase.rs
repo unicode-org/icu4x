@@ -54,7 +54,7 @@ pub struct TitlecaseOptions {
 }
 
 /// A wrapper around [`CaseMapper`] that can compute titlecasing stuff, and is able to load additional data
-/// to support the non-legacy "head adjustment" behavior.
+/// to support the non-"adjust to cased" "head adjustment" behavior.
 ///
 ///
 /// By default, [`Self::titlecase_segment()`] and [`Self::titlecase_segment_to_string()`] perform "head adjustment",
@@ -62,7 +62,7 @@ pub struct TitlecaseOptions {
 /// is ignored because the word starts at the first "t", which will get titlecased (producing `'Twixt`). Other punctuation will
 /// also be ignored, like in the string `«hello»`, which will get titlecased to `«Hello»`.
 ///
-/// Opinions on exactly what is a "relevant" character may differ. In "legacy" mode the first cased character is considered "relevant",
+/// Opinions on exactly what is a "relevant" character may differ. In "adjust to cased" mode the first cased character is considered "relevant",
 /// whereas in the normal mode, it is the first character that is a letter, number, symbol, or private use character. This means
 /// that the strings `49ers` and `«丰(abc)»` will titlecase to `49Ers` and `«丰(Abc)»`, whereas in the normal mode they stay unchanged.
 /// This difference largely matters for things that mix numbers and letters, or mix writing systems, within a single segment.
@@ -146,7 +146,7 @@ pub struct TitlecaseMapper<CM> {
 }
 
 impl TitlecaseMapper<CaseMapper> {
-    /// A constructor which creates a [`TitlecaseMapper`] using compiled data, with the normal (non-legacy) head adjustment behavior.
+    /// A constructor which creates a [`TitlecaseMapper`] using compiled data, with the normal (non-"adjust to cased") head adjustment behavior.
     /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior and usage examples.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -159,7 +159,7 @@ impl TitlecaseMapper<CaseMapper> {
             gc: Some(icu_properties::maps::general_category().static_to_owned()),
         }
     }
-    /// A constructor which creates a [`TitlecaseMapper`] using compiled data, with the legacy head adjustment behavior.
+    /// A constructor which creates a [`TitlecaseMapper`] using compiled data, with the "adjust to cased" head adjustment behavior.
     /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior and usage examples.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
