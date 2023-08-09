@@ -21,14 +21,14 @@ export class ICU4XTitlecaseMapper {
 
   /**
 
-   * Construct a new `ICU4XTitlecaseMapper` instance with legacy head-adjustment behavior
+   * Construct a new `ICU4XTitlecaseMapper` instance with "adjust to cased" head-adjustment behavior
 
-   * Behaves identically to using `titlecase_segment_legacy` on `CaseMapper`
+   * Behaves identically to using `titlecase_segment_adjust_to_cased` on `CaseMapper`
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy Rust documentation for `new_legacy`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_adjust_to_cased Rust documentation for `new_adjust_to_cased`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static create_legacy(provider: ICU4XDataProvider): ICU4XTitlecaseMapper | never;
+  static create_adjust_to_cased(provider: ICU4XDataProvider): ICU4XTitlecaseMapper | never;
 
   /**
 

@@ -41,14 +41,14 @@ export class ICU4XCaseMapper {
 
   /**
 
-   * Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
+   * Returns the full titlecase mapping of the given string, using "adjust to cased" head adjustment behavior (if head adjustment is enabled in the options)
 
    * The `v1` refers to the version of the options struct, which may change as we add more options
 
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy Rust documentation for `titlecase_segment_legacy`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_adjust_to_cased Rust documentation for `titlecase_segment_adjust_to_cased`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  titlecase_segment_legacy_v1(s: string, locale: ICU4XLocale, options: ICU4XTitlecaseOptionsV1): string | never;
+  titlecase_segment_adjust_to_cased_v1(s: string, locale: ICU4XLocale, options: ICU4XTitlecaseOptionsV1): string | never;
 
   /**
 

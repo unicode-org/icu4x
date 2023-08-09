@@ -35,10 +35,10 @@ export class ICU4XTitlecaseMapper {
     })();
   }
 
-  static create_legacy(arg_provider) {
+  static create_adjust_to_cased(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XTitlecaseMapper_create_legacy(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XTitlecaseMapper_create_adjust_to_cased(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XTitlecaseMapper(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

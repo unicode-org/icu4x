@@ -42,13 +42,13 @@ class ICU4XTitlecaseMapper {
   static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
-   * Construct a new `ICU4XTitlecaseMapper` instance with legacy head-adjustment behavior
+   * Construct a new `ICU4XTitlecaseMapper` instance with "adjust to cased" head-adjustment behavior
    * 
-   * Behaves identically to using `titlecase_segment_legacy` on `CaseMapper`
+   * Behaves identically to using `titlecase_segment_adjust_to_cased` on `CaseMapper`
    * 
-   * See the [Rust documentation for `new_legacy`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy) for more information.
+   * See the [Rust documentation for `new_adjust_to_cased`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_adjust_to_cased) for more information.
    */
-  static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create_legacy(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create_adjust_to_cased(const ICU4XDataProvider& provider);
 
   /**
    * Returns the full titlecase mapping of the given string
@@ -91,8 +91,8 @@ inline diplomat::result<ICU4XTitlecaseMapper, ICU4XError> ICU4XTitlecaseMapper::
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XTitlecaseMapper, ICU4XError> ICU4XTitlecaseMapper::create_legacy(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XTitlecaseMapper_create_legacy(provider.AsFFI());
+inline diplomat::result<ICU4XTitlecaseMapper, ICU4XError> ICU4XTitlecaseMapper::create_adjust_to_cased(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XTitlecaseMapper_create_adjust_to_cased(provider.AsFFI());
   diplomat::result<ICU4XTitlecaseMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XTitlecaseMapper>(std::move(ICU4XTitlecaseMapper(diplomat_result_raw_out_value.ok)));

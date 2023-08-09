@@ -69,22 +69,22 @@
         See the `Rust documentation for uppercase <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_legacy_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_adjust_to_cased_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const
 
-        Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
-
-        The ``v1`` refers to the version of the options struct, which may change as we add more options
-
-        See the `Rust documentation for titlecase_segment_legacy <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy>`__ for more information.
-
-
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment_legacy_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const
-
-        Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
+        Returns the full titlecase mapping of the given string, using "adjust to cased" head adjustment behavior (if head adjustment is enabled in the options)
 
         The ``v1`` refers to the version of the options struct, which may change as we add more options
 
-        See the `Rust documentation for titlecase_segment_legacy <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy>`__ for more information.
+        See the `Rust documentation for titlecase_segment_adjust_to_cased <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_adjust_to_cased>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment_adjust_to_cased_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const
+
+        Returns the full titlecase mapping of the given string, using "adjust to cased" head adjustment behavior (if head adjustment is enabled in the options)
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment_adjust_to_cased <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_adjust_to_cased>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> fold_to_writeable(const std::string_view s, W& write) const
@@ -203,13 +203,13 @@
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create_legacy(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create_adjust_to_cased(const ICU4XDataProvider& provider)
 
-        Construct a new ``ICU4XTitlecaseMapper`` instance with legacy head-adjustment behavior
+        Construct a new ``ICU4XTitlecaseMapper`` instance with "adjust to cased" head-adjustment behavior
 
-        Behaves identically to using ``titlecase_segment_legacy`` on ``CaseMapper``
+        Behaves identically to using ``titlecase_segment_adjust_to_cased`` on ``CaseMapper``
 
-        See the `Rust documentation for new_legacy <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy>`__ for more information.
+        See the `Rust documentation for new_adjust_to_cased <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_adjust_to_cased>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const

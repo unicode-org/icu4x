@@ -55,13 +55,13 @@
         See the `Rust documentation for uppercase <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase>`__ for more information.
 
 
-    .. js:method:: titlecase_segment_legacy_v1(s, locale, options)
+    .. js:method:: titlecase_segment_adjust_to_cased_v1(s, locale, options)
 
-        Returns the full titlecase mapping of the given string, using legacy head adjustment behavior (if head adjustment is enabled in the options)
+        Returns the full titlecase mapping of the given string, using "adjust to cased" head adjustment behavior (if head adjustment is enabled in the options)
 
         The ``v1`` refers to the version of the options struct, which may change as we add more options
 
-        See the `Rust documentation for titlecase_segment_legacy <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy>`__ for more information.
+        See the `Rust documentation for titlecase_segment_adjust_to_cased <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_adjust_to_cased>`__ for more information.
 
 
     .. js:method:: fold(s)
@@ -158,13 +158,13 @@
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new>`__ for more information.
 
 
-    .. js:function:: create_legacy(provider)
+    .. js:function:: create_adjust_to_cased(provider)
 
-        Construct a new ``ICU4XTitlecaseMapper`` instance with legacy head-adjustment behavior
+        Construct a new ``ICU4XTitlecaseMapper`` instance with "adjust to cased" head-adjustment behavior
 
-        Behaves identically to using ``titlecase_segment_legacy`` on ``CaseMapper``
+        Behaves identically to using ``titlecase_segment_adjust_to_cased`` on ``CaseMapper``
 
-        See the `Rust documentation for new_legacy <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy>`__ for more information.
+        See the `Rust documentation for new_adjust_to_cased <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_adjust_to_cased>`__ for more information.
 
 
     .. js:method:: titlecase_segment_v1(s, locale, options)

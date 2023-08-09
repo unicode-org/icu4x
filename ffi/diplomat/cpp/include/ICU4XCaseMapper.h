@@ -31,7 +31,7 @@ diplomat_result_void_ICU4XError ICU4XCaseMapper_lowercase(const ICU4XCaseMapper*
 
 diplomat_result_void_ICU4XError ICU4XCaseMapper_uppercase(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, DiplomatWriteable* write);
 
-diplomat_result_void_ICU4XError ICU4XCaseMapper_titlecase_segment_legacy_v1(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, ICU4XTitlecaseOptionsV1 options, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XCaseMapper_titlecase_segment_adjust_to_cased_v1(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, ICU4XTitlecaseOptionsV1 options, DiplomatWriteable* write);
 
 diplomat_result_void_ICU4XError ICU4XCaseMapper_fold(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, DiplomatWriteable* write);
 
