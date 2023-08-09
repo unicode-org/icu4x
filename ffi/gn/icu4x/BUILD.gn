@@ -156,6 +156,7 @@ rust_library("icu-v1_2_0") {
 
   deps = []
   deps += [ ":icu_calendar-v1_2_0" ]
+  deps += [ ":icu_casemap-v1_2_0" ]
   deps += [ ":icu_collator-v1_2_0" ]
   deps += [ ":icu_collections-v1_2_0" ]
   deps += [ ":icu_datetime-v1_2_1" ]
@@ -218,6 +219,7 @@ rust_library("icu_capi-v1_2_2") {
   deps += [ ":diplomat-runtime-v0_5_2" ]
   deps += [ ":fixed_decimal-v0_5_3" ]
   deps += [ ":icu_calendar-v1_2_0" ]
+  deps += [ ":icu_casemap-v1_2_0" ]
   deps += [ ":icu_collator-v1_2_0" ]
   deps += [ ":icu_collections-v1_2_0" ]
   deps += [ ":icu_datetime-v1_2_1" ]
@@ -245,6 +247,7 @@ rust_library("icu_capi-v1_2_2") {
     "-Cextra-filename=-7fdd0dfbc90c4949",
     "--cfg=feature=\"default_components\"",
     "--cfg=feature=\"icu_calendar\"",
+    "--cfg=feature=\"icu_casemap\"",
     "--cfg=feature=\"icu_collator\"",
     "--cfg=feature=\"icu_datetime\"",
     "--cfg=feature=\"icu_decimal\"",
@@ -255,6 +258,33 @@ rust_library("icu_capi-v1_2_2") {
     "--cfg=feature=\"icu_properties\"",
     "--cfg=feature=\"icu_segmenter\"",
     "--cfg=feature=\"icu_timezone\"",
+  ]
+
+  visibility = [ ":*" ]
+}
+
+rust_library("icu_casemap-v1_2_0") {
+  crate_name = "icu_casemap"
+  crate_root = "//components/casemap/src/lib.rs"
+  output_name = "icu_casemap-14fac046168d59e4"
+
+  deps = []
+  deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
+  deps += [ ":icu_collections-v1_2_0" ]
+  deps += [ ":icu_locid-v1_2_0" ]
+  deps += [ ":icu_properties-v1_2_0" ]
+  deps += [ ":icu_provider-v1_2_0" ]
+  deps += [ ":writeable-v0_5_2" ]
+  deps += [ ":yoke-v0_7_1" ]
+  deps += [ ":zerovec-v0_9_4" ]
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2021",
+    "-Cmetadata=14fac046168d59e4",
+    "-Cextra-filename=-14fac046168d59e4",
   ]
 
   visibility = [ ":*" ]

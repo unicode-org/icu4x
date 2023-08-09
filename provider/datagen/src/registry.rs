@@ -139,9 +139,8 @@ registry!(
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
-    #[cfg(feature = "icu_casemap")]
+    #[cfg(any(all(), feature = "icu_casemap"))]
     icu_casemap::provider::CaseMapV1Marker = "props/casemap@1",
-    #[cfg(feature = "icu_casemap")]
     icu_casemap::provider::CaseMapUnfoldV1Marker = "props/casemap_unfold@1",
     #[cfg(any(all(), feature = "icu_collator"))]
     icu_collator::provider::CollationDataV1Marker = "collator/data@1",
