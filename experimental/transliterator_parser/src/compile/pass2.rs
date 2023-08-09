@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::fmt;
-use std::fmt::{Display, Formatter};
 use super::*;
 use crate::parse::UnicodeSet;
+use core::fmt;
 use icu_collections::codepointinvlist::CodePointInversionList;
+use std::fmt::{Display, Formatter};
 use zerovec::VarZeroVec;
 
 use icu_transliteration::provider as ds;
@@ -31,6 +31,7 @@ struct MutVarTableField<T> {
     current: u32,
 }
 
+// a mutable version of the zero-copy `VarTable` that allows easy construction
 struct MutVarTable {
     compounds: MutVarTableField<String>,
     quantifiers_opt: MutVarTableField<String>,
@@ -196,7 +197,7 @@ pub(super) struct Pass2<'a, 'p> {
 }
 
 impl<'a, 'p> Pass2<'a, 'p> {
-    // TODO: the API for Pass2 could be better, maybe a non-self Pass2::run()
+    // TODO: the interface for Pass2 could be better, maybe a non-self Pass2::run()
 
     pub(super) fn try_new(
         data: &'a Pass1Data,
