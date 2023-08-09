@@ -7,7 +7,7 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, hebrew::Hebrew,
+    buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, hebrew::Hebrew, indian::Indian,
     islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
     islamic::UmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
     Gregorian,
