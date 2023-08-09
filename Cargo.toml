@@ -110,3 +110,8 @@ opt-level = "s"
 [profile.bench]
 debug = true
 debug-assertions = false
+
+[profile.windows-test-ci]
+inherits = "debug"
+debug-assertions = true
+debug = false
