@@ -151,7 +151,7 @@ fn extract_currency_essentials<'data>(
                 Some(index) => short_place_holder_index = *index,
                 None => {
                     if short_place_holder == iso.try_into_tinystr().unwrap().as_str() {
-                        short_place_holder_index = u16::MAX - 1;
+                        short_place_holder_index = USE_ISO_CODE;
                     } else {
                         short_place_holder_index = place_holders.len() as u16;
                         place_holders.push(short_place_holder);
@@ -159,7 +159,7 @@ fn extract_currency_essentials<'data>(
                     place_holders_map.insert(short_place_holder, short_place_holder_index);
                 }
             },
-            None => short_place_holder_index = u16::MAX,
+            None => short_place_holder_index = NO_PLACE_HOLDER,
         }
 
         let narrow_option = &currency_pattern.narrow;
@@ -169,7 +169,7 @@ fn extract_currency_essentials<'data>(
                     Some(index) => narrow_place_holder_index = *index,
                     None => {
                         if narrow_place_holder == iso.try_into_tinystr().unwrap().as_str() {
-                            narrow_place_holder_index = u16::MAX - 1;
+                            narrow_place_holder_index = USE_ISO_CODE;
                         } else {
                             narrow_place_holder_index = place_holders.len() as u16;
                             place_holders.push(narrow_place_holder);
@@ -178,7 +178,7 @@ fn extract_currency_essentials<'data>(
                     }
                 }
             }
-            None => narrow_place_holder_index = u16::MAX,
+            None => narrow_place_holder_index = NO_PLACE_HOLDER,
         }
 
         let iso_string = iso.try_into_tinystr().unwrap().to_string();
@@ -186,7 +186,9 @@ fn extract_currency_essentials<'data>(
         let short_pattern_standard: PatternSelection = {
             if standard_alpha_next_to_number.is_empty() {
                 PatternSelection::Standard
-            } else if short_place_holder_index < u16::MAX - 1 {
+            } else if short_place_holder_index != USE_ISO_CODE
+                && short_place_holder_index < NO_PLACE_HOLDER
+            {
                 currency_pattern_selection(
                     provider,
                     standard.clone(),
@@ -204,7 +206,9 @@ fn extract_currency_essentials<'data>(
         let narrow_pattern_standard: PatternSelection = {
             if standard_alpha_next_to_number.is_empty() {
                 PatternSelection::Standard
-            } else if narrow_place_holder_index < u16::MAX - 1 {
+            } else if narrow_place_holder_index != USE_ISO_CODE
+                && narrow_place_holder_index != NO_PLACE_HOLDER
+            {
                 currency_pattern_selection(
                     provider,
                     standard.clone(),
@@ -223,8 +227,8 @@ fn extract_currency_essentials<'data>(
         // PatternSelection::StandardNextToNumber.
         if short_pattern_standard == PatternSelection::Standard
             && narrow_pattern_standard == PatternSelection::Standard
-            && short_place_holder_index == u16::MAX
-            && narrow_place_holder_index == u16::MAX
+            && short_place_holder_index == NO_PLACE_HOLDER
+            && narrow_place_holder_index == NO_PLACE_HOLDER
         {
             continue;
         }
@@ -250,8 +254,6 @@ fn extract_currency_essentials<'data>(
 
 #[test]
 fn test_basic() {
-    use std::ops::Sub;
-
     fn get_place_holders_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
         locale: &DataPayload<CurrencyEssentialsV1Marker>,
@@ -260,8 +262,8 @@ fn test_basic() {
         let default = CurrencyPatternsULE {
             short_pattern_standard: PatternSelection::Standard as u8,
             narrow_pattern_standard: PatternSelection::Standard as u8,
-            short_place_holder_index: u16::MAX.into(),
-            narrow_place_holder_index: u16::MAX.into(),
+            short_place_holder_index: NO_PLACE_HOLDER.into(),
+            narrow_place_holder_index: NO_PLACE_HOLDER.into(),
         };
         let owned = locale.get().to_owned();
         let currency_pattern: &CurrencyPatternsULE = owned
@@ -269,27 +271,29 @@ fn test_basic() {
             .get(&iso_code)
             .unwrap_or(&default);
 
-        let short_place_holder = if currency_pattern.short_place_holder_index == u16::MAX.into() {
-            "".to_string()
-        } else if currency_pattern.short_place_holder_index == u16::MAX.sub(1).into() {
-            iso_code.try_into_tinystr().unwrap().to_string()
-        } else {
-            place_holders
-                .get(currency_pattern.short_place_holder_index.as_unsigned_int() as usize)
-                .unwrap()
-                .to_string()
-        };
+        let short_place_holder =
+            if currency_pattern.short_place_holder_index == NO_PLACE_HOLDER.into() {
+                "".to_string()
+            } else if currency_pattern.short_place_holder_index == USE_ISO_CODE.into() {
+                iso_code.try_into_tinystr().unwrap().to_string()
+            } else {
+                place_holders
+                    .get(currency_pattern.short_place_holder_index.as_unsigned_int() as usize)
+                    .unwrap()
+                    .to_string()
+            };
 
-        let narrow_place_holder = if currency_pattern.narrow_place_holder_index == u16::MAX.into() {
-            "".to_string()
-        } else if currency_pattern.short_place_holder_index == u16::MAX.sub(1).into() {
-            iso_code.try_into_tinystr().unwrap().to_string()
-        } else {
-            place_holders
-                .get(currency_pattern.narrow_place_holder_index.as_unsigned_int() as usize)
-                .unwrap()
-                .to_string()
-        };
+        let narrow_place_holder =
+            if currency_pattern.narrow_place_holder_index == NO_PLACE_HOLDER.into() {
+                "".to_string()
+            } else if currency_pattern.short_place_holder_index == USE_ISO_CODE.into() {
+                iso_code.try_into_tinystr().unwrap().to_string()
+            } else {
+                place_holders
+                    .get(currency_pattern.narrow_place_holder_index.as_unsigned_int() as usize)
+                    .unwrap()
+                    .to_string()
+            };
 
         (short_place_holder, narrow_place_holder)
     }

@@ -57,6 +57,11 @@ pub enum PatternSelection {
 
 type PatternSelectionMask = u8;
 
+// TODO(younies): replace this with Option<PlaceHolder>, enum PlaceHolder { Index(usize), ISO }
+// and encapsulate the encoding in the ULE implementation.
+pub const USE_ISO_CODE: u16 = u16::MAX - 1;
+pub const NO_PLACE_HOLDER: u16 = u16::MAX;
+
 // TODO(https://github.com/unicode-org/icu4x/issues/3737): Reduce the size of CurrencyPatternsULE.
 #[zerovec::make_ule(CurrencyPatternsULE)]
 #[cfg_attr(
@@ -76,12 +81,12 @@ pub struct CurrencyPatterns {
     pub narrow_pattern_standard: PatternSelectionMask,
 
     /// The index of the short pattern place holder in the place holders list.
-    /// If the value is u16::MAX, this means that the short pattern does not have a place holder.
-    /// If the value is u16::MAX - 1, this means that the short pattern equals to the iso code.
+    /// If the value is `NO_PLACE_HOLDER`, this means that the short pattern does not have a place holder.
+    /// If the value is `USE_ISO_CODE`, this means that the short pattern equals to the iso code.
     pub short_place_holder_index: u16,
 
     /// The index of the narrow pattern place holder in the place holders list.
-    /// If the value is u16::MAX, this means that the narrow pattern does not have a place holder.
-    /// If the value is u16::MAX - 1, this means that the narrow pattern equals to the iso code.
+    /// If the value is `NO_PLACE_HOLDER`, this means that the narrow pattern does not have a place holder.
+    /// If the value is `USE_ISO_CODE`, this means that the narrow pattern equals to the iso code.
     pub narrow_place_holder_index: u16,
 }
