@@ -7,9 +7,8 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/currencies.json>
 
-use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 use tinystr::UnvalidatedTinyAsciiStr;
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -31,10 +30,4 @@ pub struct LangNumbers {
     pub numbers: Numbers,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub HashMap<LanguageIdentifier, LangNumbers>);
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub main: LangData,
-}
+pub type Resource = super::LocaleResource<LangNumbers>;

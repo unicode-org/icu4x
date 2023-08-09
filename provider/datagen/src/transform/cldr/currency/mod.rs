@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::LanguageIdentifier;
 use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
@@ -87,8 +86,7 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
 
-        let result =
-            extract_currency_essentials(self, currencies_resource, numbers_resource, &langid);
+        let result = extract_currency_essentials(self, currencies_resource, numbers_resource);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -113,15 +111,8 @@ fn extract_currency_essentials<'data>(
     provider: &DatagenProvider,
     currencies_resource: &cldr_serde::currencies::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
-    langid: &LanguageIdentifier,
 ) -> Result<CurrencyEssentialsV1<'data>, DataError> {
-    let currencies = &currencies_resource
-        .main
-        .0
-        .get(langid)
-        .expect("CLDR file contains the expected language")
-        .numbers
-        .currencies;
+    let currencies = &currencies_resource.main.value.numbers.currencies;
 
     let currency_formats = &&numbers_resource
         .main
