@@ -111,7 +111,7 @@ pub struct TitlecaseOptions {
 /// use icu_locid::langid;
 ///
 /// let cm_normal = TitlecaseMapper::new();
-/// let cm_legacy = TitlecaseMapper::new_legacy();
+/// let cm_adjust_to_cased = TitlecaseMapper::new_adjust_to_cased();
 /// let root = langid!("und");
 ///
 /// let default_options = Default::default();
@@ -120,17 +120,17 @@ pub struct TitlecaseOptions {
 ///
 /// // Exhibits head adjustment when set:
 /// assert_eq!(cm_normal.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
-/// assert_eq!(cm_legacy.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
+/// assert_eq!(cm_adjust_to_cased.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
 /// assert_eq!(cm_normal.titlecase_segment_to_string("«hello»", &root, no_adjust), "«hello»");
 ///
 /// // Only changed in legacy mode:
 /// assert_eq!(cm_normal.titlecase_segment_to_string("丰(abc)", &root, default_options), "丰(abc)");
-/// assert_eq!(cm_legacy.titlecase_segment_to_string("丰(abc)", &root, default_options), "丰(Abc)");
+/// assert_eq!(cm_adjust_to_cased.titlecase_segment_to_string("丰(abc)", &root, default_options), "丰(Abc)");
 /// assert_eq!(cm_normal.titlecase_segment_to_string("丰(abc)", &root, no_adjust), "丰(abc)");
 ///
 /// // Only changed in legacy mode:
 /// assert_eq!(cm_normal.titlecase_segment_to_string("49ers", &root, default_options), "49ers");
-/// assert_eq!(cm_legacy.titlecase_segment_to_string("49ers", &root, default_options), "49Ers");
+/// assert_eq!(cm_adjust_to_cased.titlecase_segment_to_string("49ers", &root, default_options), "49Ers");
 /// assert_eq!(cm_normal.titlecase_segment_to_string("49ers", &root, no_adjust), "49ers");
 /// ```
 /// <div class="stab unstable">
@@ -166,7 +166,7 @@ impl TitlecaseMapper<CaseMapper> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new_legacy() -> Self {
+    pub const fn new_adjust_to_cased() -> Self {
         Self {
             cm: CaseMapper::new(),
             gc: None,
@@ -185,10 +185,10 @@ impl TitlecaseMapper<CaseMapper> {
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
     #[cfg(skip)]
     functions: [
-        new_legacy,
-        try_new_legacy_with_any_provider,
-        try_new_legacy_with_buffer_provider,
-        try_new_legacy_unstable,
+        new_adjust_to_cased,
+        try_new_adjust_to_cased_with_any_provider,
+        try_new_adjust_to_cased_with_buffer_provider,
+        try_new_adjust_to_cased_unstable,
         Self,
     ]);
 
@@ -207,7 +207,7 @@ impl TitlecaseMapper<CaseMapper> {
         Ok(Self { cm, gc })
     }
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_legacy_unstable<P>(provider: &P) -> Result<Self, DataError>
+    pub fn try_new_adjust_to_cased_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<CaseMapV1Marker> + ?Sized,
     {
@@ -247,7 +247,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    pub const fn new_with_mapper_legacy(casemapper: CM) -> Self {
+    pub const fn new_with_mapper_adjust_to_cased(casemapper: CM) -> Self {
         Self {
             cm: casemapper,
             gc: None,
