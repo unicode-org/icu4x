@@ -223,12 +223,12 @@ impl<'a, 'p> Pass2<'a, 'p> {
     fn compile(
         &mut self,
         rule_groups: super::RuleGroups<'p>,
-        global_filter: Option<UnicodeSet>,
+        global_filter: Option<FilterSet>,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         for (transform_group, conversion_group) in rule_groups {
             let mut compiled_transform_group = Vec::new();
             for id in transform_group {
-                compiled_transform_group.push(self.compile_single_id(&id));
+                compiled_transform_group.push(self.compile_single_id(id.into_owned()));
             }
             self.id_group_list
                 .push(VarZeroVec::from(&compiled_transform_group));
@@ -255,9 +255,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
 
         let res = ds::RuleBasedTransliterator {
             visibility: true, // TODO(#3736): use metadata
-            filter: global_filter
-                .map(|f| f.code_points().clone())
-                .unwrap_or(CodePointInversionList::all()),
+            filter: global_filter.unwrap_or(CodePointInversionList::all()),
             id_group_list: VarZeroVec::from(&self.id_group_list),
             rule_group_list: VarZeroVec::from(&self.conversion_group_list),
             variable_table: self.var_table.finalize(),
@@ -266,16 +264,12 @@ impl<'a, 'p> Pass2<'a, 'p> {
         Ok(res)
     }
 
-    fn compile_single_id(&mut self, id: &parse::SingleId) -> ds::SimpleId<'static> {
+    fn compile_single_id(&mut self, id: parse::SingleId) -> ds::SimpleId<'static> {
         let id_string = id.basic_id.source.clone(); // TODO(#3736): map legacy ID to internal ID and use here
 
         ds::SimpleId {
             id: id_string.into(),
-            filter: id
-                .filter
-                .as_ref()
-                .map(|f| f.code_points().clone())
-                .unwrap_or(CodePointInversionList::all()),
+            filter: id.filter.unwrap_or(CodePointInversionList::all()),
         }
     }
 
@@ -353,7 +347,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
             }
             parse::Element::FunctionCall(id, inner) => {
                 let inner = self.compile_section(inner, loc);
-                let id = self.compile_single_id(id);
+                let id = self.compile_single_id(id.clone());
                 let standin = self.var_table.insert_function_call(ds::FunctionCall {
                     translit: id,
                     arg: inner.into(),

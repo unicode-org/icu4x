@@ -156,6 +156,8 @@ pub(crate) type Result<T, E = ParseError> = core::result::Result<T, E>;
 
 // the only UnicodeSets used in this crate are parsed, and thus 'static.
 pub(crate) type UnicodeSet = CodePointInversionListAndStringList<'static>;
+// UnicodeSets that are used as filters may not contain strings.
+pub(crate) type FilterSet = CodePointInversionList<'static>;
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum QuantifierKind {
@@ -209,7 +211,7 @@ impl Default for BasicId {
 #[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct SingleId {
-    pub(crate) filter: Option<UnicodeSet>,
+    pub(crate) filter: Option<FilterSet>,
     pub(crate) basic_id: BasicId,
 }
 
@@ -302,8 +304,8 @@ impl Direction {
 #[derive(Debug, Clone)]
 #[allow(clippy::large_enum_variant)]
 pub(crate) enum Rule {
-    GlobalFilter(UnicodeSet),
-    GlobalInverseFilter(UnicodeSet),
+    GlobalFilter(FilterSet),
+    GlobalInverseFilter(FilterSet),
     // forward and backward IDs.
     // "A (B)" is Transform(A, Some(B)),
     // "(B)" is Transform(Null, Some(B)),
@@ -575,15 +577,15 @@ where
     fn parse_filter_or_transform_rule_parts(
         &mut self,
     ) -> Result<(
-        Option<UnicodeSet>,
+        Option<FilterSet>,
         Option<BasicId>,
-        Option<UnicodeSet>,
+        Option<FilterSet>,
         Option<BasicId>,
         bool,
     )> {
         // parse forward things, i.e., everything until Self::OPEN_PAREN
         self.skip_whitespace();
-        let forward_filter = self.try_parse_unicode_set()?;
+        let forward_filter = self.try_parse_filter_set()?;
         self.skip_whitespace();
         let forward_basic_id = self.try_parse_basic_id()?;
         self.skip_whitespace();
@@ -603,7 +605,7 @@ where
             // if we have a reverse, parse it
             self.consume(Self::OPEN_PAREN)?;
             self.skip_whitespace();
-            reverse_filter = self.try_parse_unicode_set()?;
+            reverse_filter = self.try_parse_filter_set()?;
             self.skip_whitespace();
             reverse_basic_id = self.try_parse_basic_id()?;
             self.skip_whitespace();
@@ -665,7 +667,7 @@ where
         // <unicodeset>? <basic-id>
 
         self.skip_whitespace();
-        let filter = self.try_parse_unicode_set()?;
+        let filter = self.try_parse_filter_set()?;
         self.skip_whitespace();
         let basic_id = self.parse_basic_id()?;
         Ok(SingleId { filter, basic_id })
@@ -867,7 +869,8 @@ where
             Self::CURSOR_PLACEHOLDER | Self::CURSOR => self.parse_cursor(),
             Self::QUOTE => Ok(Element::Literal(self.parse_quoted_literal()?)),
             _ if self.peek_is_unicode_set_start() => {
-                Ok(Element::UnicodeSet(self.parse_unicode_set()?))
+                let (_, set) = self.parse_unicode_set()?;
+                Ok(Element::UnicodeSet(set))
             }
             c if self.is_valid_unquoted_literal(c) => Ok(Element::Literal(self.parse_literal()?)),
             _ => self.unexpected_char_here(),
@@ -1061,14 +1064,18 @@ where
         Ok(elt)
     }
 
-    fn try_parse_unicode_set(&mut self) -> Result<Option<UnicodeSet>> {
+    fn try_parse_filter_set(&mut self) -> Result<Option<FilterSet>> {
         if self.peek_is_unicode_set_start() {
-            return Ok(Some(self.parse_unicode_set()?));
+            let (offset, set) = self.parse_unicode_set()?;
+            if set.has_strings() {
+                return Err(PEK::GlobalFilterWithStrings.with_offset(offset));
+            }
+            return Ok(Some(set.code_points().clone()));
         }
         Ok(None)
     }
 
-    fn parse_unicode_set(&mut self) -> Result<UnicodeSet> {
+    fn parse_unicode_set(&mut self) -> Result<(usize, UnicodeSet)> {
         let pre_offset = self.must_peek_index()?;
         // pre_offset is a valid index because self.iter (used in must_peek_index)
         // was created from self.source
@@ -1079,6 +1086,7 @@ where
             e
         })?;
 
+        let mut last_offset = pre_offset;
         // advance self.iter consumed_bytes bytes
         while let Some(offset) = self.peek_index() {
             // we can use equality because unicodeset_parser also lexes on char boundaries
@@ -1086,10 +1094,11 @@ where
             if offset == pre_offset + consumed_bytes {
                 break;
             }
+            last_offset = offset;
             self.iter.next();
         }
 
-        Ok(set)
+        Ok((last_offset, set))
     }
 
     fn get_dot_set(&mut self) -> Result<UnicodeSet> {
@@ -1417,7 +1426,7 @@ mod tests {
 
         ^ (start) { key ' key '+ $good_set } > $102 }  post\-context$;
         # contexts are optional
-        target < source ;
+        target < source [{set\ with\ string}];
         # contexts can be empty
         { 'source-or-target' } <> { 'target-or-source' } ;
 
@@ -1425,7 +1434,7 @@ mod tests {
 
         . > ;
 
-        :: ([{Inverse]-filter}]) ;
+        :: ([inverse-filter]) ;
         "##;
 
         if let Err(e) = parse(source) {
@@ -1566,6 +1575,8 @@ mod tests {
             r":: [a$-^\]] ;",
             r":: ( [] [] ) ;",
             r":: () [] ;",
+            r":: [{string}];",
+            r":: ([{string}]);",
         ];
 
         for source in sources {
@@ -1647,6 +1658,7 @@ mod tests {
             r":: a-z / ( [] a-z ) ;",
             r":: Latin-ASCII/BGN Arab-Greek/UNGEGN ;",
             r":: (Latin-ASCII/BGN Arab-Greek/UNGEGN) ;",
+            r":: [a-z{string}] Remove ;",
         ];
 
         for source in sources {

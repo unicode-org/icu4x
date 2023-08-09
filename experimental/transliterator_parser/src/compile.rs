@@ -126,7 +126,7 @@ as described in the zero-copy format, and the maps here are just arrays)
 */
 
 use crate::parse;
-use crate::parse::{ElementLocation as EL, HalfRule, QuantifierKind, UnicodeSet};
+use crate::parse::{ElementLocation as EL, FilterSet, HalfRule, QuantifierKind};
 use icu_transliteration::provider::RuleBasedTransliterator;
 use parse::Result;
 use parse::PEK;
@@ -182,7 +182,7 @@ struct DirectedPass1Result<'p> {
     // data with dependencies resolved and counts summed
     data: Pass1Data,
     groups: RuleGroups<'p>,
-    filter: Option<UnicodeSet>,
+    filter: Option<FilterSet>,
 }
 
 #[allow(unused)] // TODO: remove annotation
@@ -201,8 +201,8 @@ struct Pass1<'p> {
     forward_data: Pass1Data,
     reverse_data: Pass1Data,
     variable_data: HashMap<String, Pass1Data>,
-    forward_filter: Option<UnicodeSet>,
-    reverse_filter: Option<UnicodeSet>,
+    forward_filter: Option<FilterSet>,
+    reverse_filter: Option<FilterSet>,
     forward_rule_group_agg: rule_group_agg::ForwardRuleGroupAggregator<'p>,
     reverse_rule_group_agg: rule_group_agg::ReverseRuleGroupAggregator<'p>,
     variable_definitions: HashMap<String, &'p [parse::Element]>,
@@ -268,9 +268,6 @@ impl<'p> Pass1<'p> {
     ) -> Result<&'a [parse::Rule]> {
         let rules = match rules {
             [parse::Rule::GlobalFilter(filter), rest @ ..] => {
-                if filter.has_strings() {
-                    return Err(PEK::GlobalFilterWithStrings.into());
-                }
                 self.forward_filter = Some(filter.clone());
 
                 rest
@@ -279,9 +276,6 @@ impl<'p> Pass1<'p> {
         };
         let rules = match rules {
             [rest @ .., parse::Rule::GlobalInverseFilter(filter)] => {
-                if filter.has_strings() {
-                    return Err(PEK::GlobalFilterWithStrings.into());
-                }
                 self.reverse_filter = Some(filter.clone());
 
                 rest
@@ -874,8 +868,6 @@ impl Pass1ResultGenerator {
     }
 }
 
-// TODO: define type FilterSet that is just a CPIL (without strings) and use that everywhere
-
 // returns (forward, backward) transliterators if they were requested
 pub(crate) fn compile(
     rules: Vec<parse::Rule>,
@@ -1307,8 +1299,6 @@ mod tests {
             (Pass, r":: [a-z];"),
             (Pass, r":: ([a-z]);"),
             (Pass, r":: [a-z] ; :: ([a-z]);"),
-            (Fail, r":: [{string}] ;"),
-            (Fail, r":: ([{string}]);"),
             (Fail, r":: [a-z] ; :: [a-z] ;"),
             (Fail, r":: ([a-z]) ; :: ([a-z]) ;"),
             (Fail, r":: ([a-z]) ; :: [a-z] ;"),
