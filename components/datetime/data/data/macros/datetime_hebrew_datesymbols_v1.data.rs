@@ -14,16 +14,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0c\0m\0q\0y\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB1\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB1\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD0\xB0\xD1\x80\xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0c\0m\0w\0{\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB1\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB1\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD0\xB0\xD1\x80\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0c\0m\0q\0y\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB1\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB1\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD0\xB0\xD1\x80\xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0c\0m\0w\0{\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB1\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB1\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD0\xB0\xD1\x80\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                         },
                         stand_alone: None,
@@ -49,16 +49,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0s\0{\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0y\0}\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0s\0{\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0y\0}\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                         },
                         stand_alone: None,
@@ -84,16 +84,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0s\0{\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0y\0}\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0s\0{\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0y\0}\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                         },
                         stand_alone: None,
@@ -119,16 +119,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0s\0{\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0y\0}\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0s\0{\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0y\0}\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x98\xD0\xB0\xD1\x80\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\x95\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                         },
                         stand_alone: None,
@@ -154,16 +154,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0s\0{\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD1\x98\xD0\xB0\xD1\x80\xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0y\0}\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD1\x98\xD0\xB0\xD1\x80\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0s\0{\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD1\x98\xD0\xB0\xD1\x80\xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0@\0H\0S\0]\0e\0o\0y\0}\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB8\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD1\x98\xD0\xB0\xD1\x80\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                         },
                         stand_alone: None,
@@ -189,16 +189,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0B\0L\0Y\0c\0m\0y\0}\0\x87\0\xCE\xA4\xCE\xB9\xCF\x83\xCF\x81\xCE\xAF\xCE\xA7\xCE\xB5\xCF\x83\xCE\xB2\xCE\xAC\xCE\xBD\xCE\x9A\xCE\xB9\xCF\x83\xCE\xBB\xCE\xAD\xCF\x86\xCE\xA4\xCE\xAD\xCE\xB2\xCE\xB5\xCF\x84\xCE\xA3\xCE\xB5\xCE\xB2\xCE\xAC\xCF\x84\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81 I\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81 II\xCE\x9D\xCE\xB9\xCF\x83\xCE\xAC\xCE\xBD\xCE\x99\xCE\xB3\xCE\xB9\xCE\xAC\xCF\x81\xCE\xA4\xCE\xB1\xCE\xBC\xCE\xBF\xCF\x8D\xCE\xB6\xCE\x91\xCE\xB2\xCE\x88\xCE\xBB\xCE\xBF\xCF\x85\xCE\xBB\xCE\xA3\xCE\xB9\xCE\xB2\xCE\xAC\xCE\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0B\0L\0Y\0c\0m\0w\0\x83\0\x87\0\xCE\xA4\xCE\xB9\xCF\x83\xCF\x81\xCE\xAF\xCE\xA7\xCE\xB5\xCF\x83\xCE\xB2\xCE\xAC\xCE\xBD\xCE\x9A\xCE\xB9\xCF\x83\xCE\xBB\xCE\xAD\xCF\x86\xCE\xA4\xCE\xAD\xCE\xB2\xCE\xB5\xCF\x84\xCE\xA3\xCE\xB5\xCE\xB2\xCE\xAC\xCF\x84\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81 I\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81 II\xCE\x9D\xCE\xB9\xCF\x83\xCE\xAC\xCE\xBD\xCE\x99\xCE\xB3\xCE\xB9\xCE\xAC\xCF\x81\xCE\xA3\xCE\xB9\xCE\xB2\xCE\xAC\xCE\xBD\xCE\xA4\xCE\xB1\xCE\xBC\xCE\xBF\xCF\x8D\xCE\xB6\xCE\x91\xCE\xB2\xCE\x88\xCE\xBB\xCE\xBF\xCF\x85\xCE\xBB") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0B\0L\0Y\0c\0m\0y\0}\0\x87\0\xCE\xA4\xCE\xB9\xCF\x83\xCF\x81\xCE\xAF\xCE\xA7\xCE\xB5\xCF\x83\xCE\xB2\xCE\xAC\xCE\xBD\xCE\x9A\xCE\xB9\xCF\x83\xCE\xBB\xCE\xAD\xCF\x86\xCE\xA4\xCE\xAD\xCE\xB2\xCE\xB5\xCF\x84\xCE\xA3\xCE\xB5\xCE\xB2\xCE\xAC\xCF\x84\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81 I\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81 II\xCE\x9D\xCE\xB9\xCF\x83\xCE\xAC\xCE\xBD\xCE\x99\xCE\xB3\xCE\xB9\xCE\xAC\xCF\x81\xCE\xA4\xCE\xB1\xCE\xBC\xCE\xBF\xCF\x8D\xCE\xB6\xCE\x91\xCE\xB2\xCE\x88\xCE\xBB\xCE\xBF\xCF\x85\xCE\xBB\xCE\xA3\xCE\xB9\xCE\xB2\xCE\xAC\xCE\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x16\0\"\0,\x006\0B\0L\0Y\0c\0m\0w\0\x83\0\x87\0\xCE\xA4\xCE\xB9\xCF\x83\xCF\x81\xCE\xAF\xCE\xA7\xCE\xB5\xCF\x83\xCE\xB2\xCE\xAC\xCE\xBD\xCE\x9A\xCE\xB9\xCF\x83\xCE\xBB\xCE\xAD\xCF\x86\xCE\xA4\xCE\xAD\xCE\xB2\xCE\xB5\xCF\x84\xCE\xA3\xCE\xB5\xCE\xB2\xCE\xAC\xCF\x84\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81 I\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81\xCE\x91\xCE\xBD\xCF\x84\xCE\xAC\xCF\x81 II\xCE\x9D\xCE\xB9\xCF\x83\xCE\xAC\xCE\xBD\xCE\x99\xCE\xB3\xCE\xB9\xCE\xAC\xCF\x81\xCE\xA3\xCE\xB9\xCE\xB2\xCE\xAC\xCE\xBD\xCE\xA4\xCE\xB1\xCE\xBC\xCE\xBF\xCF\x8D\xCE\xB6\xCE\x91\xCE\xB2\xCE\x88\xCE\xBB\xCE\xBF\xCF\x85\xCE\xBB") })
                             }),
                         },
                         stand_alone: None,
@@ -224,16 +224,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x1C\0*\x004\0>\0H\0P\0[\0e\0k\0w\0{\0\x83\0\xD1\x82\xD1\x96\xD1\x88\xD1\x80\xD0\xB8\xD0\xBC\xD0\xB0\xD1\x80\xD1\x87\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x87\xD0\xB8\xD1\x81\xD0\xBB\xD1\x8C\xD0\xBE\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB1\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD1\x96\xD1\x81\xD0\xB0\xD0\xBD\xD1\x96\xD0\xB0\xD1\x80\xD1\x82\xD0\xB0\xD0\xBC\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB1\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x1C\0*\x004\0>\0H\0P\0[\0e\0k\0u\0\x81\0\x85\0\xD1\x82\xD1\x96\xD1\x88\xD1\x80\xD0\xB8\xD0\xBC\xD0\xB0\xD1\x80\xD1\x87\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x87\xD0\xB8\xD1\x81\xD0\xBB\xD1\x8C\xD0\xBE\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB1\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD1\x96\xD1\x81\xD0\xB0\xD0\xBD\xD1\x96\xD0\xB0\xD1\x80\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x82\xD0\xB0\xD0\xBC\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB1\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x1C\0*\x004\0>\0H\0P\0[\0e\0k\0w\0{\0\x83\0\xD1\x82\xD1\x96\xD1\x88\xD1\x80\xD0\xB8\xD0\xBC\xD0\xB0\xD1\x80\xD1\x87\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x87\xD0\xB8\xD1\x81\xD0\xBB\xD1\x8C\xD0\xBE\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB1\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD1\x96\xD1\x81\xD0\xB0\xD0\xBD\xD1\x96\xD0\xB0\xD1\x80\xD1\x82\xD0\xB0\xD0\xBC\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB1\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x1C\0*\x004\0>\0H\0P\0[\0e\0k\0u\0\x81\0\x85\0\xD1\x82\xD1\x96\xD1\x88\xD1\x80\xD0\xB8\xD0\xBC\xD0\xB0\xD1\x80\xD1\x87\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x87\xD0\xB8\xD1\x81\xD0\xBB\xD1\x8C\xD0\xBE\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB1\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD1\x96\xD1\x81\xD0\xB0\xD0\xBD\xD1\x96\xD0\xB0\xD1\x80\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x82\xD0\xB0\xD0\xBC\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB1\xD0\xB5\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                         },
                         stand_alone: None,
@@ -259,16 +259,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\r\0\x1A\0'\x004\0A\0M\0W\0c\0p\0z\0\x84\0\x8D\0\x97\0\xE0\xAE\x9F\xE0\xAE\xBF\xE0\xAE\xB7\xE0\xAF\x8D.\xE0\xAE\xB9\xE0\xAF\x86\xE0\xAE\xB7\xE0\xAF\x8D.\xE0\xAE\x95\xE0\xAE\xBF\xE0\xAE\xB8\xE0\xAF\x8D.\xE0\xAE\x9F\xE0\xAF\x86\xE0\xAE\xB5\xE0\xAF\x86.\xE0\xAE\xB7\xE0\xAF\x86\xE0\xAE\xB5\xE0\xAE\xBE.\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE. 1\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE.\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE. 2\xE0\xAE\xA8\xE0\xAE\xBF\xE0\xAE\x9A\xE0\xAE\xBE.\xE0\xAE\x90\xE0\xAE\xAF\xE0\xAE\xBE.\xE0\xAE\xA4\xE0\xAE\xAE\xE0\xAF\x81.\xE0\xAE\x85\xE0\xAE\xB5\xE0\xAF\x8D\xE0\xAE\x8E\xE0\xAE\xB2\xE0\xAF\x81.\xE0\xAE\x9A\xE0\xAE\xBF\xE0\xAE\xB5\xE0\xAE\xBE.") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\r\0\x1A\0'\x004\0A\0M\0W\0c\0p\0z\0\x87\0\x91\0\x9A\0\xE0\xAE\x9F\xE0\xAE\xBF\xE0\xAE\xB7\xE0\xAF\x8D.\xE0\xAE\xB9\xE0\xAF\x86\xE0\xAE\xB7\xE0\xAF\x8D.\xE0\xAE\x95\xE0\xAE\xBF\xE0\xAE\xB8\xE0\xAF\x8D.\xE0\xAE\x9F\xE0\xAF\x86\xE0\xAE\xB5\xE0\xAF\x86.\xE0\xAE\xB7\xE0\xAF\x86\xE0\xAE\xB5\xE0\xAE\xBE.\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE. 1\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE.\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE. 2\xE0\xAE\xA8\xE0\xAE\xBF\xE0\xAE\x9A\xE0\xAE\xBE.\xE0\xAE\x90\xE0\xAE\xAF\xE0\xAE\xBE.\xE0\xAE\x9A\xE0\xAE\xBF\xE0\xAE\xB5\xE0\xAE\xBE.\xE0\xAE\xA4\xE0\xAE\xAE\xE0\xAF\x81.\xE0\xAE\x85\xE0\xAE\xB5\xE0\xAF\x8D\xE0\xAE\x8E\xE0\xAE\xB2\xE0\xAF\x81.") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0*\0B\0T\0f\0w\0\x86\0\x97\0\xA9\0\xB8\0\xC7\0\xD0\0\xDF\0\xE0\xAE\x9F\xE0\xAE\xBF\xE0\xAE\xB7\xE0\xAF\x8D\xE0\xAE\xB0\xE0\xAE\xBF\xE0\xAE\xB9\xE0\xAF\x86\xE0\xAE\xB7\xE0\xAF\x8D\xE0\xAE\xB5\xE0\xAE\xBE\xE0\xAE\xA9\xE0\xAF\x8D\xE0\xAE\x95\xE0\xAE\xBF\xE0\xAE\xB8\xE0\xAF\x8D\xE0\xAE\xB2\xE0\xAF\x86\xE0\xAE\xB5\xE0\xAF\x8D\xE0\xAE\x9F\xE0\xAF\x86\xE0\xAE\xB5\xE0\xAF\x86\xE0\xAE\x9F\xE0\xAF\x8D\xE0\xAE\xB7\xE0\xAF\x86\xE0\xAE\xB5\xE0\xAE\xBE\xE0\xAE\x9F\xE0\xAF\x8D\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE\xE0\xAE\xB0\xE0\xAF\x8D 1\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE\xE0\xAE\xB0\xE0\xAF\x8D\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE\xE0\xAE\xB0\xE0\xAF\x8D 2\xE0\xAE\xA8\xE0\xAE\xBF\xE0\xAE\x9A\xE0\xAE\xBE\xE0\xAE\xA9\xE0\xAF\x8D\xE0\xAE\x90\xE0\xAE\xAF\xE0\xAE\xBE\xE0\xAE\xB0\xE0\xAF\x8D\xE0\xAE\xA4\xE0\xAE\xAE\xE0\xAF\x81\xE0\xAE\xB8\xE0\xAF\x8D\xE0\xAE\x85\xE0\xAE\xB5\xE0\xAF\x8D\xE0\xAE\x8E\xE0\xAE\xB2\xE0\xAF\x81\xE0\xAE\xB2\xE0\xAF\x8D\xE0\xAE\x9A\xE0\xAE\xBF\xE0\xAE\xB5\xE0\xAE\xBE\xE0\xAE\xA9\xE0\xAF\x8D") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0*\0B\0T\0f\0w\0\x86\0\x97\0\xA9\0\xB8\0\xCA\0\xD9\0\xE2\0\xE0\xAE\x9F\xE0\xAE\xBF\xE0\xAE\xB7\xE0\xAF\x8D\xE0\xAE\xB0\xE0\xAE\xBF\xE0\xAE\xB9\xE0\xAF\x86\xE0\xAE\xB7\xE0\xAF\x8D\xE0\xAE\xB5\xE0\xAE\xBE\xE0\xAE\xA9\xE0\xAF\x8D\xE0\xAE\x95\xE0\xAE\xBF\xE0\xAE\xB8\xE0\xAF\x8D\xE0\xAE\xB2\xE0\xAF\x86\xE0\xAE\xB5\xE0\xAF\x8D\xE0\xAE\x9F\xE0\xAF\x86\xE0\xAE\xB5\xE0\xAF\x86\xE0\xAE\x9F\xE0\xAF\x8D\xE0\xAE\xB7\xE0\xAF\x86\xE0\xAE\xB5\xE0\xAE\xBE\xE0\xAE\x9F\xE0\xAF\x8D\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE\xE0\xAE\xB0\xE0\xAF\x8D 1\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE\xE0\xAE\xB0\xE0\xAF\x8D\xE0\xAE\x85\xE0\xAE\x9F\xE0\xAE\xBE\xE0\xAE\xB0\xE0\xAF\x8D 2\xE0\xAE\xA8\xE0\xAE\xBF\xE0\xAE\x9A\xE0\xAE\xBE\xE0\xAE\xA9\xE0\xAF\x8D\xE0\xAE\x90\xE0\xAE\xAF\xE0\xAE\xBE\xE0\xAE\xB0\xE0\xAF\x8D\xE0\xAE\x9A\xE0\xAE\xBF\xE0\xAE\xB5\xE0\xAE\xBE\xE0\xAE\xA9\xE0\xAF\x8D\xE0\xAE\xA4\xE0\xAE\xAE\xE0\xAF\x81\xE0\xAE\xB8\xE0\xAF\x8D\xE0\xAE\x85\xE0\xAE\xB5\xE0\xAF\x8D\xE0\xAE\x8E\xE0\xAE\xB2\xE0\xAF\x81\xE0\xAE\xB2\xE0\xAF\x8D") })
                             }),
                         },
                         stand_alone: None,
@@ -294,28 +294,28 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\t\0\x12\0\x1B\0!\0'\0/\x005\0=\0C\0L\0U\0X\0^\0\xEB\x94\x94\xEC\x8A\xA4\xEB\xA6\xAC\xEB\xA7\x90\xEC\xBC\x80\xEC\x8A\xA4\xEA\xB8\xB0\xEC\x8A\xAC\xEB\xA5\xB4\xEB\x8D\xB0\xEB\xB2\xB3\xEC\x8A\xA4\xEB\xB0\xA7\xEC\x95\x84\xEB\x8B\xAC 1\xEC\x95\x84\xEB\x8B\xAC\xEC\x95\x84\xEB\x8B\xAC 2\xEB\x8B\x9B\xEC\x82\xB0\xEC\x9D\xB4\xEC\x95\xBC\xEB\xA5\xB4\xEB\x8B\xB4\xEB\xAC\xB4\xEB\xA5\xB4\xEC\x95\x95\xEC\x97\x98\xEB\xA3\xB0\xEC\x8B\x9C\xEC\x99\x84") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\t\0\x12\0\x1B\0!\0'\0/\x005\0=\0C\0L\0R\0[\0^\0\xEB\x94\x94\xEC\x8A\xA4\xEB\xA6\xAC\xEB\xA7\x90\xEC\xBC\x80\xEC\x8A\xA4\xEA\xB8\xB0\xEC\x8A\xAC\xEB\xA5\xB4\xEB\x8D\xB0\xEB\xB2\xB3\xEC\x8A\xA4\xEB\xB0\xA7\xEC\x95\x84\xEB\x8B\xAC 1\xEC\x95\x84\xEB\x8B\xAC\xEC\x95\x84\xEB\x8B\xAC 2\xEB\x8B\x9B\xEC\x82\xB0\xEC\x9D\xB4\xEC\x95\xBC\xEB\xA5\xB4\xEC\x8B\x9C\xEC\x99\x84\xEB\x8B\xB4\xEB\xAC\xB4\xEB\xA5\xB4\xEC\x95\x95\xEC\x97\x98\xEB\xA3\xB0") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\t\0\x12\0\x1B\0!\0'\0/\x005\0=\0C\0L\0U\0X\0^\0\xEB\x94\x94\xEC\x8A\xA4\xEB\xA6\xAC\xEB\xA7\x90\xEC\xBC\x80\xEC\x8A\xA4\xEA\xB8\xB0\xEC\x8A\xAC\xEB\xA5\xB4\xEB\x8D\xB0\xEB\xB2\xB3\xEC\x8A\xA4\xEB\xB0\xA7\xEC\x95\x84\xEB\x8B\xAC 1\xEC\x95\x84\xEB\x8B\xAC\xEC\x95\x84\xEB\x8B\xAC 2\xEB\x8B\x9B\xEC\x82\xB0\xEC\x9D\xB4\xEC\x95\xBC\xEB\xA5\xB4\xEB\x8B\xB4\xEB\xAC\xB4\xEB\xA5\xB4\xEC\x95\x95\xEC\x97\x98\xEB\xA3\xB0\xEC\x8B\x9C\xEC\x99\x84") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\t\0\x12\0\x1B\0!\0'\0/\x005\0=\0C\0L\0R\0[\0^\0\xEB\x94\x94\xEC\x8A\xA4\xEB\xA6\xAC\xEB\xA7\x90\xEC\xBC\x80\xEC\x8A\xA4\xEA\xB8\xB0\xEC\x8A\xAC\xEB\xA5\xB4\xEB\x8D\xB0\xEB\xB2\xB3\xEC\x8A\xA4\xEB\xB0\xA7\xEC\x95\x84\xEB\x8B\xAC 1\xEC\x95\x84\xEB\x8B\xAC\xEC\x95\x84\xEB\x8B\xAC 2\xEB\x8B\x9B\xEC\x82\xB0\xEC\x9D\xB4\xEC\x95\xBC\xEB\xA5\xB4\xEC\x8B\x9C\xEC\x99\x84\xEB\x8B\xB4\xEB\xAC\xB4\xEB\xA5\xB4\xEC\x95\x95\xEC\x97\x98\xEB\xA3\xB0") })
                             }),
                         },
                         stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                             abbreviated: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\x006\0A\0J\0U\0^\0j\0v\0|\0\x85\0\xEB\x94\x94\xEC\x8A\xA4\xEB\xA6\xAC\xEC\x9B\x94\xEB\xA7\x90\xEC\xBC\x80\xEC\x8A\xA4\xEC\x9B\x94\xEA\xB8\xB0\xEC\x8A\xAC\xEB\xA5\xB4\xEC\x9B\x94\xEB\x8D\xB0\xEB\xB2\xB3\xEC\x9B\x94\xEC\x8A\xA4\xEB\xB0\xA7\xEC\x9B\x94\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94 1\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94 2\xEB\x8B\x9B\xEC\x82\xB0\xEC\x9B\x94\xEC\x9D\xB4\xEC\x95\xBC\xEB\xA5\xB4\xEC\x9B\x94\xEB\x8B\xB4\xEB\xAC\xB4\xEB\xA5\xB4\xEC\x9B\x94\xEC\x95\x95\xEC\x9B\x94\xEC\x97\x98\xEB\xA3\xB0\xEC\x9B\x94\xEC\x8B\x9C\xEC\x99\x84\xEC\x9B\x94") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\x006\0A\0J\0U\0^\0j\0s\0\x7F\0\x85\0\xEB\x94\x94\xEC\x8A\xA4\xEB\xA6\xAC\xEC\x9B\x94\xEB\xA7\x90\xEC\xBC\x80\xEC\x8A\xA4\xEC\x9B\x94\xEA\xB8\xB0\xEC\x8A\xAC\xEB\xA5\xB4\xEC\x9B\x94\xEB\x8D\xB0\xEB\xB2\xB3\xEC\x9B\x94\xEC\x8A\xA4\xEB\xB0\xA7\xEC\x9B\x94\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94 1\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94 2\xEB\x8B\x9B\xEC\x82\xB0\xEC\x9B\x94\xEC\x9D\xB4\xEC\x95\xBC\xEB\xA5\xB4\xEC\x9B\x94\xEC\x8B\x9C\xEC\x99\x84\xEC\x9B\x94\xEB\x8B\xB4\xEB\xAC\xB4\xEB\xA5\xB4\xEC\x9B\x94\xEC\x95\x95\xEC\x9B\x94\xEC\x97\x98\xEB\xA3\xB0\xEC\x9B\x94") })
                             })),
                             narrow: None,
                             short: None,
                             wide: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\x006\0A\0J\0U\0^\0j\0v\0|\0\x85\0\xEB\x94\x94\xEC\x8A\xA4\xEB\xA6\xAC\xEC\x9B\x94\xEB\xA7\x90\xEC\xBC\x80\xEC\x8A\xA4\xEC\x9B\x94\xEA\xB8\xB0\xEC\x8A\xAC\xEB\xA5\xB4\xEC\x9B\x94\xEB\x8D\xB0\xEB\xB2\xB3\xEC\x9B\x94\xEC\x8A\xA4\xEB\xB0\xA7\xEC\x9B\x94\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94 1\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94 2\xEB\x8B\x9B\xEC\x82\xB0\xEC\x9B\x94\xEC\x9D\xB4\xEC\x95\xBC\xEB\xA5\xB4\xEC\x9B\x94\xEB\x8B\xB4\xEB\xAC\xB4\xEB\xA5\xB4\xEC\x9B\x94\xEC\x95\x95\xEC\x9B\x94\xEC\x97\x98\xEB\xA3\xB0\xEC\x9B\x94\xEC\x8B\x9C\xEC\x99\x84\xEC\x9B\x94") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\x006\0A\0J\0U\0^\0j\0s\0\x7F\0\x85\0\xEB\x94\x94\xEC\x8A\xA4\xEB\xA6\xAC\xEC\x9B\x94\xEB\xA7\x90\xEC\xBC\x80\xEC\x8A\xA4\xEC\x9B\x94\xEA\xB8\xB0\xEC\x8A\xAC\xEB\xA5\xB4\xEC\x9B\x94\xEB\x8D\xB0\xEB\xB2\xB3\xEC\x9B\x94\xEC\x8A\xA4\xEB\xB0\xA7\xEC\x9B\x94\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94 1\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94\xEC\x95\x84\xEB\x8B\xAC\xEC\x9B\x94 2\xEB\x8B\x9B\xEC\x82\xB0\xEC\x9B\x94\xEC\x9D\xB4\xEC\x95\xBC\xEB\xA5\xB4\xEC\x9B\x94\xEC\x8B\x9C\xEC\x99\x84\xEC\x9B\x94\xEB\x8B\xB4\xEB\xAC\xB4\xEB\xA5\xB4\xEC\x9B\x94\xEC\x95\x95\xEC\x9B\x94\xEC\x97\x98\xEB\xA3\xB0\xEC\x9B\x94") })
                             })),
                         }),
                     },
@@ -340,16 +340,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x14\0\x18\0\x1C\0!\0%\0)\0-\0/\x003\0tis.hes.kis.tev.she.ad.Iadarad.IInis.iyartam.avelulsiv.") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x14\0\x18\0\x1C\0!\0%\0)\0-\x001\x003\0tis.hes.kis.tev.she.ad.Iadarad.IInis.iyarsiv.tam.avelul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                         },
                         stand_alone: None,
@@ -375,16 +375,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x14\0\x18\0\x1C\0#\0'\0+\x000\x005\0:\x001\xE6\x9C\x882\xE6\x9C\x883\xE6\x9C\x884\xE6\x9C\x885\xE6\x9C\x886\xE6\x9C\x887\xE6\x9C\x88\xE9\x97\xB07\xE6\x9C\x888\xE6\x9C\x889\xE6\x9C\x8811\xE6\x9C\x8812\xE6\x9C\x8813\xE6\x9C\x8810\xE6\x9C\x88") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x14\0\x18\0\x1C\0#\0'\0+\x000\x005\0:\x001\xE6\x9C\x882\xE6\x9C\x883\xE6\x9C\x884\xE6\x9C\x885\xE6\x9C\x886\xE6\x9C\x887\xE6\x9C\x88\xE9\x97\xB07\xE6\x9C\x888\xE6\x9C\x889\xE6\x9C\x8810\xE6\x9C\x8811\xE6\x9C\x8812\xE6\x9C\x8813\xE6\x9C\x88") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0C\0\x12\0\x18\0\x1E\0$\0*\x003\09\0?\0H\0Q\0Z\0\xE4\xB8\x80\xE6\x9C\x88\xE4\xBA\x8C\xE6\x9C\x88\xE4\xB8\x89\xE6\x9C\x88\xE5\x9B\x9B\xE6\x9C\x88\xE4\xBA\x94\xE6\x9C\x88\xE5\x85\xAD\xE6\x9C\x88\xE4\xB8\x83\xE6\x9C\x88\xE9\x97\xB0\xE4\xB8\x83\xE6\x9C\x88\xE5\x85\xAB\xE6\x9C\x88\xE4\xB9\x9D\xE6\x9C\x88\xE5\x8D\x81\xE4\xB8\x80\xE6\x9C\x88\xE5\x8D\x81\xE4\xBA\x8C\xE6\x9C\x88\xE5\x8D\x81\xE4\xB8\x89\xE6\x9C\x88\xE5\x8D\x81\xE6\x9C\x88") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0C\0\x12\0\x18\0\x1E\0$\0*\x003\09\0?\0E\0N\0W\0\xE4\xB8\x80\xE6\x9C\x88\xE4\xBA\x8C\xE6\x9C\x88\xE4\xB8\x89\xE6\x9C\x88\xE5\x9B\x9B\xE6\x9C\x88\xE4\xBA\x94\xE6\x9C\x88\xE5\x85\xAD\xE6\x9C\x88\xE4\xB8\x83\xE6\x9C\x88\xE9\x97\xB0\xE4\xB8\x83\xE6\x9C\x88\xE5\x85\xAB\xE6\x9C\x88\xE4\xB9\x9D\xE6\x9C\x88\xE5\x8D\x81\xE6\x9C\x88\xE5\x8D\x81\xE4\xB8\x80\xE6\x9C\x88\xE5\x8D\x81\xE4\xBA\x8C\xE6\x9C\x88\xE5\x8D\x81\xE4\xB8\x89\xE6\x9C\x88") })
                             }),
                         },
                         stand_alone: None,
@@ -410,16 +410,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x04\0\x08\0\x0C\0\x11\0\x17\0\x1B\0\x1F\0$\0(\0,\x000\x002\x006\0tis.hes.kis.t\xC3\xA9b.sch\xC3\xA9.ad.Iadarad.IInis.iyartam.avell.siv.") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x04\0\x08\0\x0C\0\x11\0\x17\0\x1B\0\x1F\0$\0(\0,\x000\x004\x006\0tis.hes.kis.t\xC3\xA9b.sch\xC3\xA9.ad.Iadarad.IInis.iyarsiv.tam.avell.") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0B\0\x0C\0\r\0THKTSAAANITAES") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0B\0\x0C\0\r\0THKTSAAANISTAE") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x1B\0!\0'\0+\x002\08\0<\0B\0D\0J\0tichrih\xC3\xA8chvankislevt\xC3\xA9vethchevatadar Iadaradar IInissaniyartamouzav\xC3\xA9loulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x1B\0!\0'\0+\x002\08\0<\0A\0G\0I\0tichrih\xC3\xA8chvankislevt\xC3\xA9vethchevatadar Iadaradar IInissaniyarsivantamouzav\xC3\xA9loul") })
                             }),
                         },
                         stand_alone: None,
@@ -445,16 +445,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x05\0\x0B\0\x0F\0\x14\0\x19\0\x1D\0!\0&\0*\0.\x002\x004\08\0tich.h\xC3\xA8ch.kis.t\xC3\xA9v.chev.ad.Iadarad.IInis.iyartam.av\xC3\xA9l.siv.") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x05\0\x0B\0\x0F\0\x14\0\x19\0\x1D\0!\0&\0*\0.\x002\x006\08\0tich.h\xC3\xA8ch.kis.t\xC3\xA9v.chev.ad.Iadarad.IInis.iyarsiv.tam.av\xC3\xA9l.") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x1B\0!\0'\0+\x002\08\0<\0B\0D\0J\0tichrih\xC3\xA8chvankislevt\xC3\xA9vethchevatadar Iadaradar IInissaniyartamouzav\xC3\xA9loulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x1B\0!\0'\0+\x002\08\0<\0A\0G\0I\0tichrih\xC3\xA8chvankislevt\xC3\xA9vethchevatadar Iadaradar IInissaniyarsivantamouzav\xC3\xA9loul") })
                             }),
                         },
                         stand_alone: None,
@@ -480,16 +480,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x05\0\x0C\0\x14\0\x1C\0!\0)\0/\08\0?\0D\0I\0L\0P\0TisriHesv\xC3\xA1nKiszl\xC3\xA9vT\xC3\xA9v\xC3\xA9szSv\xC3\xA1t\xC3\x81d\xC3\xA1r I\xC3\x81d\xC3\xA1r\xC3\x81d\xC3\xA1r IINisz\xC3\xA1nIj\xC3\xA1rTamuz\xC3\x81vElulSziv\xC3\xA1n") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x05\0\x0C\0\x14\0\x1C\0!\0)\0/\08\0?\0D\0K\0P\0S\0TisriHesv\xC3\xA1nKiszl\xC3\xA9vT\xC3\xA9v\xC3\xA9szSv\xC3\xA1t\xC3\x81d\xC3\xA1r I\xC3\x81d\xC3\xA1r\xC3\x81d\xC3\xA1r IINisz\xC3\xA1nIj\xC3\xA1rSziv\xC3\xA1nTamuz\xC3\x81vElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x05\0\x0C\0\x14\0\x1C\0!\0)\0/\08\0?\0D\0I\0L\0P\0TisriHesv\xC3\xA1nKiszl\xC3\xA9vT\xC3\xA9v\xC3\xA9szSv\xC3\xA1t\xC3\x81d\xC3\xA1r I\xC3\x81d\xC3\xA1r\xC3\x81d\xC3\xA1r IINisz\xC3\xA1nIj\xC3\xA1rTamuz\xC3\x81vElulSziv\xC3\xA1n") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x05\0\x0C\0\x14\0\x1C\0!\0)\0/\08\0?\0D\0K\0P\0S\0TisriHesv\xC3\xA1nKiszl\xC3\xA9vT\xC3\xA9v\xC3\xA9szSv\xC3\xA1t\xC3\x81d\xC3\xA1r I\xC3\x81d\xC3\xA1r\xC3\x81d\xC3\xA1r IINisz\xC3\xA1nIj\xC3\xA1rSziv\xC3\xA1nTamuz\xC3\x81vElul") })
                             }),
                         },
                         stand_alone: None,
@@ -515,16 +515,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -550,16 +550,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -585,16 +585,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0Ti\xC5\xA1riHe\xC5\xA1vanKislevTevet\xC5\xA0evatAdar IAdarAdar IINisanIjarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -620,23 +620,23 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\t\0\n\0\x0B\0\r\0\x0F\0\x11\x0012345677b8911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\t\0\n\0\x0B\0\r\0\x0F\0\x11\x0012345677b8910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                             abbreviated: None,
                             narrow: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x0B\0\x0C\0\r\0\x0F\0\x11\0\x13\x0012345677bis8911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x0B\0\x0C\0\r\0\x0F\0\x11\0\x13\x0012345677bis8910111213") })
                             })),
                             short: None,
                             wide: None,
@@ -663,16 +663,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -698,16 +698,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -733,16 +733,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -768,16 +768,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -803,16 +803,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -838,16 +838,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -873,16 +873,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -908,16 +908,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -943,16 +943,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -978,16 +978,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1013,16 +1013,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1048,16 +1048,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1083,16 +1083,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1118,16 +1118,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1153,16 +1153,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1188,16 +1188,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1223,16 +1223,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1258,16 +1258,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1293,16 +1293,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1328,16 +1328,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1363,16 +1363,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1398,16 +1398,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1433,16 +1433,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1468,16 +1468,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1503,16 +1503,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1538,16 +1538,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1573,16 +1573,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1608,16 +1608,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1643,16 +1643,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1678,16 +1678,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1713,16 +1713,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1748,16 +1748,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1783,16 +1783,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1818,16 +1818,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1853,16 +1853,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1888,16 +1888,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1923,16 +1923,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1958,16 +1958,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -1993,16 +1993,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2028,16 +2028,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2063,16 +2063,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2098,16 +2098,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2133,16 +2133,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2168,16 +2168,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2203,16 +2203,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2238,16 +2238,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2273,16 +2273,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2308,16 +2308,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2343,16 +2343,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2378,16 +2378,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2413,16 +2413,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2448,16 +2448,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2483,16 +2483,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2518,16 +2518,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2553,16 +2553,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2588,16 +2588,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2623,16 +2623,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2658,16 +2658,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2693,16 +2693,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2728,16 +2728,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2763,16 +2763,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2798,16 +2798,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2833,16 +2833,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2868,16 +2868,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2903,16 +2903,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2938,16 +2938,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -2973,16 +2973,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3008,16 +3008,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3043,16 +3043,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3078,16 +3078,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3113,16 +3113,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3148,16 +3148,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3183,16 +3183,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3218,16 +3218,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3253,16 +3253,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3288,16 +3288,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3323,16 +3323,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3358,16 +3358,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3393,16 +3393,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3428,16 +3428,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3463,16 +3463,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3498,16 +3498,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3533,16 +3533,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3568,16 +3568,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3603,16 +3603,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3638,16 +3638,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -3673,22 +3673,22 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                             abbreviated: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzavelulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzavelul") })
                             })),
                             narrow: None,
                             short: None,
@@ -3716,22 +3716,22 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                             abbreviated: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzavelulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzavelul") })
                             })),
                             narrow: None,
                             short: None,
@@ -3759,22 +3759,22 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                             abbreviated: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzavelulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzavelul") })
                             })),
                             narrow: None,
                             short: None,
@@ -3802,22 +3802,22 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                             abbreviated: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzavelulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzavelul") })
                             })),
                             narrow: None,
                             short: None,
@@ -3845,22 +3845,22 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                             abbreviated: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarTamuzavelulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzavelul") })
                             })),
                             narrow: None,
                             short: None,
@@ -3888,16 +3888,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                         },
                         stand_alone: None,
@@ -3923,16 +3923,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                         },
                         stand_alone: None,
@@ -3958,16 +3958,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                         },
                         stand_alone: None,
@@ -3993,16 +3993,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                         },
                         stand_alone: None,
@@ -4028,16 +4028,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IInisaniyarsivantamuzavelul") })
                             }),
                         },
                         stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
@@ -4046,7 +4046,7 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                             short: None,
                             wide: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0tishriheshvankislevtevetshevatadar Iadaradar IINisaniyartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0tishriheshvankislevtevetshevatadar Iadaradar IINisaniyarsivantamuzavelul") })
                             })),
                         }),
                     },
@@ -4071,16 +4071,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0)\0-\x003\08\0=\0B\0D\0H\0Ti\xC5\x9FriHe\xC5\x9FvanKislevTevet\xC5\x9EevatAdar Ri\xC5\x9FonAdarVeadarNisan\xC4\xB0yarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0)\0-\x003\08\0=\0B\0G\0I\0Ti\xC5\x9FriHe\xC5\x9FvanKislevTevet\xC5\x9EevatAdar Ri\xC5\x9FonAdarVeadarNisan\xC4\xB0yarSivanTamuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0)\0-\x003\08\0=\0B\0D\0H\0Ti\xC5\x9FriHe\xC5\x9FvanKislevTevet\xC5\x9EevatAdar Ri\xC5\x9FonAdarVeadarNisan\xC4\xB0yarTamuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0)\0-\x003\08\0=\0B\0G\0I\0Ti\xC5\x9FriHe\xC5\x9FvanKislevTevet\xC5\x9EevatAdar Ri\xC5\x9FonAdarVeadarNisan\xC4\xB0yarSivanTamuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -4106,16 +4106,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TiszriCheszwanKislewTewetSzwatAdar IAdarAdar IINisanIjarTamuzAwElulSiwan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TiszriCheszwanKislewTewetSzwatAdar IAdarAdar IINisanIjarSiwanTamuzAwElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1E\0$\0(\0/\x004\08\0=\0?\0C\0TiszriCheszwanKislewTewetSzwatAdar IAdarAdar IINisanIjarTamuzAwElulSiwan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TiszriCheszwanKislewTewetSzwatAdar IAdarAdar IINisanIjarSiwanTamuzAwElul") })
                             }),
                         },
                         stand_alone: None,
@@ -4141,16 +4141,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0@\0D\0ti\xC5\xA1riche\xC5\xA1vankislevtevet\xC5\xA1evatadar Iadaradar IInisanijartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0C\0E\0ti\xC5\xA1riche\xC5\xA1vankislevtevet\xC5\xA1evatadar Iadaradar IInisanijarsivantamuzavelul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0@\0D\0ti\xC5\xA1riche\xC5\xA1vankislevtevet\xC5\xA1evatadar Iadaradar IInisanijartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0C\0E\0ti\xC5\xA1riche\xC5\xA1vankislevtevet\xC5\xA1evatadar Iadaradar IInisanijarsivantamuzavelul") })
                             }),
                         },
                         stand_alone: None,
@@ -4176,16 +4176,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0@\0D\0ti\xC5\xA1riche\xC5\xA1vankislevtevet\xC5\xA1evatadar Iadaradar IInisanijartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0C\0E\0ti\xC5\xA1riche\xC5\xA1vankislevtevet\xC5\xA1evatadar Iadaradar IInisanijarsivantamuzavelul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0@\0D\0ti\xC5\xA1riche\xC5\xA1vankislevtevet\xC5\xA1evatadar Iadaradar IInisanijartamuzavelulsivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0C\0E\0ti\xC5\xA1riche\xC5\xA1vankislevtevet\xC5\xA1evatadar Iadaradar IInisanijarsivantamuzavelul") })
                             }),
                         },
                         stand_alone: None,
@@ -4211,16 +4211,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x16\0\x1C\0#\0+\x000\08\0>\0C\0I\0L\0Q\0ti\xC5\xA1rihe\xC5\xA1vanskis\xC4\xBCevstevets\xC5\xA1evats1. adarsadars2. adarsnisansijarstamuzsavselulssivans") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x16\0\x1C\0#\0+\x000\08\0>\0C\0I\0O\0R\0ti\xC5\xA1rihe\xC5\xA1vanskis\xC4\xBCevstevets\xC5\xA1evats1. adarsadars2. adarsnisansijarssivanstamuzsavseluls") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x16\0\x1C\0#\0+\x000\08\0>\0C\0I\0L\0Q\0ti\xC5\xA1rihe\xC5\xA1vanskis\xC4\xBCevstevets\xC5\xA1evats1. adarsadars2. adarsnisansijarstamuzsavselulssivans") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0E\0\x16\0\x1C\0#\0+\x000\08\0>\0C\0I\0O\0R\0ti\xC5\xA1rihe\xC5\xA1vanskis\xC4\xBCevstevets\xC5\xA1evats1. adarsadars2. adarsnisansijarssivanstamuzsavseluls") })
                             }),
                         },
                         stand_alone: None,
@@ -4246,16 +4246,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0?\0A\0E\0Ti\xC8\x99reiHe\xC8\x99vanKislevTevet\xC8\x98evatAdar IAdarAdar IINisanIyarTammuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0D\0F\0Ti\xC8\x99reiHe\xC8\x99vanKislevTevet\xC8\x98evatAdar IAdarAdar IINisanIyarSivanTammuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0?\0A\0E\0Ti\xC8\x99reiHe\xC8\x99vanKislevTevet\xC8\x98evatAdar IAdarAdar IINisanIyarTammuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0D\0F\0Ti\xC8\x99reiHe\xC8\x99vanKislevTevet\xC8\x98evatAdar IAdarAdar IINisanIyarSivanTammuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -4281,16 +4281,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0?\0A\0E\0Ti\xC8\x99reiHe\xC8\x99vanKislevTevet\xC8\x98evatAdar IAdarAdar IINisanIyarTammuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0D\0F\0Ti\xC8\x99reiHe\xC8\x99vanKislevTevet\xC8\x98evatAdar IAdarAdar IINisanIyarSivanTammuzAvElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0?\0A\0E\0Ti\xC8\x99reiHe\xC8\x99vanKislevTevet\xC8\x98evatAdar IAdarAdar IINisanIyarTammuzAvElulSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0E\0\x14\0\x19\0\x1F\0%\0)\x000\x005\09\0>\0D\0F\0Ti\xC8\x99reiHe\xC8\x99vanKislevTevet\xC8\x98evatAdar IAdarAdar IINisanIyarSivanTammuzAvElul") })
                             }),
                         },
                         stand_alone: None,
@@ -4316,16 +4316,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x15\0\x1A\0 \0&\0*\x000\x005\09\0@\0B\0H\0TisjrieChesjwanKislevTevetSjevatAdar AAdarAdar BNisanIjarTammoezAvElloelSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x15\0\x1A\0 \0&\0*\x000\x005\09\0>\0E\0G\0TisjrieChesjwanKislevTevetSjevatAdar AAdarAdar BNisanIjarSivanTammoezAvElloel") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x15\0\x1A\0 \0&\0*\x000\x005\09\0@\0B\0H\0TisjrieChesjwanKislevTevetSjevatAdar AAdarAdar BNisanIjarTammoezAvElloelSivan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x15\0\x1A\0 \0&\0*\x000\x005\09\0>\0E\0G\0TisjrieChesjwanKislevTevetSjevatAdar AAdarAdar BNisanIjarSivanTammoezAvElloel") })
                             }),
                         },
                         stand_alone: None,
@@ -4351,16 +4351,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x16\0\x1C\0#\0*\0/\x007\0=\0C\0J\0L\0Q\0ti\xC5\xA1r\xC3\xADhe\xC5\xA1v\xC3\xA1nkisl\xC3\xA9vtev\xC3\xA9t\xC5\xA1ev\xC3\xA1tad\xC3\xA1r Iad\xC3\xA1rad\xC3\xA1r IInis\xC3\xA1nijj\xC3\xA1rtamm\xC3\xBAzabel\xC3\xBAlsiv\xC3\xA1n") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x16\0\x1C\0#\0*\0/\x007\0=\0C\0I\0P\0R\0ti\xC5\xA1r\xC3\xADhe\xC5\xA1v\xC3\xA1nkisl\xC3\xA9vtev\xC3\xA9t\xC5\xA1ev\xC3\xA1tad\xC3\xA1r Iad\xC3\xA1rad\xC3\xA1r IInis\xC3\xA1nijj\xC3\xA1rsiv\xC3\xA1ntamm\xC3\xBAzabel\xC3\xBAl") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0B\0\x0C\0\r\0THKTSAAANITAES") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0B\0\x0C\0\r\0THKTSAAANISTAE") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x19\0%\x000\0<\0H\0R\0_\0j\0u\0\x81\0\x88\0\x92\0ti\xC5\xA1r\xC3\xADkuutahe\xC5\xA1v\xC3\xA1nkuutakisl\xC3\xA9vkuutatev\xC3\xA9tkuuta\xC5\xA1ev\xC3\xA1tkuutaad\xC3\xA1rkuuta Iad\xC3\xA1rkuutaad\xC3\xA1rkuuta IInis\xC3\xA1nkuutaijj\xC3\xA1rkuutatamm\xC3\xBAzkuutaabkuutael\xC3\xBAlkuutasiv\xC3\xA1nkuuta") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x19\0%\x000\0<\0H\0R\0_\0j\0u\0\x80\0\x8C\0\x93\0ti\xC5\xA1r\xC3\xADkuutahe\xC5\xA1v\xC3\xA1nkuutakisl\xC3\xA9vkuutatev\xC3\xA9tkuuta\xC5\xA1ev\xC3\xA1tkuutaad\xC3\xA1rkuuta Iad\xC3\xA1rkuutaad\xC3\xA1rkuuta IInis\xC3\xA1nkuutaijj\xC3\xA1rkuutasiv\xC3\xA1nkuutatamm\xC3\xBAzkuutaabkuutael\xC3\xBAlkuuta") })
                             }),
                         },
                         stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
@@ -4369,7 +4369,7 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                             short: None,
                             wide: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x15\0\x1F\0(\x002\0<\0D\0O\0X\0a\0k\0p\0x\0ti\xC5\xA1r\xC3\xADkuuhe\xC5\xA1v\xC3\xA1nkuukisl\xC3\xA9vkuutev\xC3\xA9tkuu\xC5\xA1ev\xC3\xA1tkuuad\xC3\xA1rkuu Iad\xC3\xA1rkuuad\xC3\xA1rkuu IInis\xC3\xA1nkuuijj\xC3\xA1rkuutamm\xC3\xBAzkuuabkuuel\xC3\xBAlkuusiv\xC3\xA1nkuu") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\n\0\x15\0\x1F\0(\x002\0<\0D\0O\0X\0a\0j\0t\0y\0ti\xC5\xA1r\xC3\xADkuuhe\xC5\xA1v\xC3\xA1nkuukisl\xC3\xA9vkuutev\xC3\xA9tkuu\xC5\xA1ev\xC3\xA1tkuuad\xC3\xA1rkuu Iad\xC3\xA1rkuuad\xC3\xA1rkuu IInis\xC3\xA1nkuuijj\xC3\xA1rkuusiv\xC3\xA1nkuutamm\xC3\xBAzkuuabkuuel\xC3\xBAlkuu") })
                             })),
                         }),
                     },
@@ -4394,28 +4394,28 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x16\0\x1C\0#\0*\0/\x007\0=\0C\0J\0L\0Q\0tishr\xC3\xADheshv\xC3\xA1nkisl\xC3\xA9vtev\xC3\xA9tshev\xC3\xA1tad\xC3\xA1r Iad\xC3\xA1rad\xC3\xA1r IInis\xC3\xA1nijj\xC3\xA1rtamm\xC3\xBAzabel\xC3\xBAlsiv\xC3\xA1n") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x16\0\x1C\0#\0*\0/\x007\0=\0C\0I\0P\0R\0tishr\xC3\xADheshv\xC3\xA1nkisl\xC3\xA9vtev\xC3\xA9tshev\xC3\xA1tad\xC3\xA1r Iad\xC3\xA1rad\xC3\xA1r IInis\xC3\xA1nijj\xC3\xA1rsiv\xC3\xA1ntamm\xC3\xBAzabel\xC3\xBAl") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x16\0\x1C\0#\0*\0/\x007\0=\0C\0J\0L\0Q\0tishr\xC3\xADheshv\xC3\xA1nkisl\xC3\xA9vtev\xC3\xA9tshev\xC3\xA1tad\xC3\xA1r Iad\xC3\xA1rad\xC3\xA1r IInis\xC3\xA1nijj\xC3\xA1rtamm\xC3\xBAzabel\xC3\xBAlsiv\xC3\xA1n") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x16\0\x1C\0#\0*\0/\x007\0=\0C\0I\0P\0R\0tishr\xC3\xADheshv\xC3\xA1nkisl\xC3\xA9vtev\xC3\xA9tshev\xC3\xA1tad\xC3\xA1r Iad\xC3\xA1rad\xC3\xA1r IInis\xC3\xA1nijj\xC3\xA1rsiv\xC3\xA1ntamm\xC3\xBAzabel\xC3\xBAl") })
                             }),
                         },
                         stand_alone: Some(icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                             abbreviated: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x16\0\x1C\0#\0*\0/\x007\0=\0C\0J\0L\0Q\0Tishr\xC3\xADHeshv\xC3\xA1nKisl\xC3\xA9vTev\xC3\xA9tShev\xC3\xA1tAd\xC3\xA1r IAd\xC3\xA1rAd\xC3\xA1r IINis\xC3\xA1nIjj\xC3\xA1rTamm\xC3\xBAzAbEl\xC3\xBAlSiv\xC3\xA1n") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x16\0\x1C\0#\0*\0/\x007\0=\0C\0I\0P\0R\0Tishr\xC3\xADHeshv\xC3\xA1nKisl\xC3\xA9vTev\xC3\xA9tShev\xC3\xA1tAd\xC3\xA1r IAd\xC3\xA1rAd\xC3\xA1r IINis\xC3\xA1nIjj\xC3\xA1rSiv\xC3\xA1nTamm\xC3\xBAzAbEl\xC3\xBAl") })
                             })),
                             narrow: None,
                             short: None,
                             wide: Some(icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x16\0\x1C\0#\0*\0/\x007\0=\0C\0J\0L\0Q\0Tishr\xC3\xADHeshv\xC3\xA1nKisl\xC3\xA9vTev\xC3\xA9tShev\xC3\xA1tAd\xC3\xA1r IAd\xC3\xA1rAd\xC3\xA1r IINis\xC3\xA1nIjj\xC3\xA1rTamm\xC3\xBAzAbEl\xC3\xBAlSiv\xC3\xA1n") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0F\0\x16\0\x1C\0#\0*\0/\x007\0=\0C\0I\0P\0R\0Tishr\xC3\xADHeshv\xC3\xA1nKisl\xC3\xA9vTev\xC3\xA9tShev\xC3\xA1tAd\xC3\xA1r IAd\xC3\xA1rAd\xC3\xA1r IINis\xC3\xA1nIjj\xC3\xA1rSiv\xC3\xA1nTamm\xC3\xBAzAbEl\xC3\xBAl") })
                             })),
                         }),
                     },
@@ -4440,16 +4440,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x10\0\x16\0\x1B\0\"\0(\0,\x003\08\0=\0C\0E\0I\0TischriCheschwanKislewTevetSchevatAdar IAdarAdar IINisanIjjarTammusAwElulSiwan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x10\0\x16\0\x1B\0\"\0(\0,\x003\08\0=\0B\0H\0J\0TischriCheschwanKislewTevetSchevatAdar IAdarAdar IINisanIjjarSiwanTammusAwElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x10\0\x16\0\x1B\0\"\0(\0,\x003\08\0=\0C\0E\0I\0TischriCheschwanKislewTevetSchevatAdar IAdarAdar IINisanIjjarTammusAwElulSiwan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x10\0\x16\0\x1B\0\"\0(\0,\x003\08\0=\0B\0H\0J\0TischriCheschwanKislewTevetSchevatAdar IAdarAdar IINisanIjjarSiwanTammusAwElul") })
                             }),
                         },
                         stand_alone: None,
@@ -4475,16 +4475,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x10\0\x16\0\x1B\0\"\0(\0,\x003\08\0=\0C\0E\0I\0TischriCheschwanKislewTevetSchevatAdar IAdarAdar IINisanIjjarTammusAwElulSiwan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x10\0\x16\0\x1B\0\"\0(\0,\x003\08\0=\0B\0H\0J\0TischriCheschwanKislewTevetSchevatAdar IAdarAdar IINisanIjjarSiwanTammusAwElul") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x10\0\x16\0\x1B\0\"\0(\0,\x003\08\0=\0C\0E\0I\0TischriCheschwanKislewTevetSchevatAdar IAdarAdar IINisanIjjarTammusAwElulSiwan") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x10\0\x16\0\x1B\0\"\0(\0,\x003\08\0=\0B\0H\0J\0TischriCheschwanKislewTevetSchevatAdar IAdarAdar IINisanIjjarSiwanTammusAwElul") })
                             }),
                         },
                         stand_alone: None,
@@ -4510,16 +4510,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x10\0\x18\0\x1E\0$\0/\x005\0@\0H\0P\0X\0\\\0d\0\xD7\xAA\xD7\xA9\xD7\xA8\xD7\x99\xD7\x97\xD7\xA9\xD7\x95\xD7\x9F\xD7\x9B\xD7\xA1\xD7\x9C\xD7\x95\xD7\x98\xD7\x91\xD7\xAA\xD7\xA9\xD7\x91\xD7\x98\xD7\x90\xD7\x93\xD7\xA8 \xD7\x90\xD7\xB3\xD7\x90\xD7\x93\xD7\xA8\xD7\x90\xD7\x93\xD7\xA8 \xD7\x91\xD7\xB3\xD7\xA0\xD7\x99\xD7\xA1\xD7\x9F\xD7\x90\xD7\x99\xD7\x99\xD7\xA8\xD7\xAA\xD7\x9E\xD7\x95\xD7\x96\xD7\x90\xD7\x91\xD7\x90\xD7\x9C\xD7\x95\xD7\x9C\xD7\xA1\xD7\x99\xD7\x95\xD7\x9F") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x10\0\x18\0\x1E\0$\0/\x005\0@\0H\0P\0X\0`\0d\0\xD7\xAA\xD7\xA9\xD7\xA8\xD7\x99\xD7\x97\xD7\xA9\xD7\x95\xD7\x9F\xD7\x9B\xD7\xA1\xD7\x9C\xD7\x95\xD7\x98\xD7\x91\xD7\xAA\xD7\xA9\xD7\x91\xD7\x98\xD7\x90\xD7\x93\xD7\xA8 \xD7\x90\xD7\xB3\xD7\x90\xD7\x93\xD7\xA8\xD7\x90\xD7\x93\xD7\xA8 \xD7\x91\xD7\xB3\xD7\xA0\xD7\x99\xD7\xA1\xD7\x9F\xD7\x90\xD7\x99\xD7\x99\xD7\xA8\xD7\xA1\xD7\x99\xD7\x95\xD7\x9F\xD7\xAA\xD7\x9E\xD7\x95\xD7\x96\xD7\x90\xD7\x91\xD7\x90\xD7\x9C\xD7\x95\xD7\x9C") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0C\0\x12\0\x18\0\x1E\0$\0*\x000\x006\0<\0B\0F\0L\0\xD7\xAA\xD7\xA9\xD7\xB3\xD7\x97\xD7\xA9\xD7\xB3\xD7\x9B\xD7\xA1\xD7\xB3\xD7\x98\xD7\x91\xD7\xB3\xD7\xA9\xD7\x91\xD7\xB3\xD7\x90\xD7\xB4\xD7\x90\xD7\x90\xD7\x93\xD7\xB3\xD7\x90\xD7\xB4\xD7\x91\xD7\xA0\xD7\x99\xD7\xB3\xD7\x90\xD7\x99\xD7\xB3\xD7\xAA\xD7\x9E\xD7\xB3\xD7\x90\xD7\x91\xD7\x90\xD7\x9C\xD7\xB3\xD7\xA1\xD7\x99\xD7\xB3") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\x0C\0\x12\0\x18\0\x1E\0$\0*\x000\x006\0<\0B\0H\0L\0\xD7\xAA\xD7\xA9\xD7\xB3\xD7\x97\xD7\xA9\xD7\xB3\xD7\x9B\xD7\xA1\xD7\xB3\xD7\x98\xD7\x91\xD7\xB3\xD7\xA9\xD7\x91\xD7\xB3\xD7\x90\xD7\xB4\xD7\x90\xD7\x90\xD7\x93\xD7\xB3\xD7\x90\xD7\xB4\xD7\x91\xD7\xA0\xD7\x99\xD7\xB3\xD7\x90\xD7\x99\xD7\xB3\xD7\xA1\xD7\x99\xD7\xB3\xD7\xAA\xD7\x9E\xD7\xB3\xD7\x90\xD7\x91\xD7\x90\xD7\x9C\xD7\xB3") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x12\0\x1A\0 \0&\x001\x007\0B\0J\0R\0Z\0^\0f\0\xD7\xAA\xD7\xA9\xD7\xA8\xD7\x99\xD7\x97\xD7\xA9\xD7\x95\xD7\x95\xD7\x9F\xD7\x9B\xD7\xA1\xD7\x9C\xD7\x95\xD7\x98\xD7\x91\xD7\xAA\xD7\xA9\xD7\x91\xD7\x98\xD7\x90\xD7\x93\xD7\xA8 \xD7\x90\xD7\xB3\xD7\x90\xD7\x93\xD7\xA8\xD7\x90\xD7\x93\xD7\xA8 \xD7\x91\xD7\xB3\xD7\xA0\xD7\x99\xD7\xA1\xD7\x9F\xD7\x90\xD7\x99\xD7\x99\xD7\xA8\xD7\xAA\xD7\x9E\xD7\x95\xD7\x96\xD7\x90\xD7\x91\xD7\x90\xD7\x9C\xD7\x95\xD7\x9C\xD7\xA1\xD7\x99\xD7\x95\xD7\x95\xD7\x9F") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x12\0\x1A\0 \0&\x001\x007\0B\0J\0R\0\\\0d\0h\0\xD7\xAA\xD7\xA9\xD7\xA8\xD7\x99\xD7\x97\xD7\xA9\xD7\x95\xD7\x95\xD7\x9F\xD7\x9B\xD7\xA1\xD7\x9C\xD7\x95\xD7\x98\xD7\x91\xD7\xAA\xD7\xA9\xD7\x91\xD7\x98\xD7\x90\xD7\x93\xD7\xA8 \xD7\x90\xD7\xB3\xD7\x90\xD7\x93\xD7\xA8\xD7\x90\xD7\x93\xD7\xA8 \xD7\x91\xD7\xB3\xD7\xA0\xD7\x99\xD7\xA1\xD7\x9F\xD7\x90\xD7\x99\xD7\x99\xD7\xA8\xD7\xA1\xD7\x99\xD7\x95\xD7\x95\xD7\x9F\xD7\xAA\xD7\x9E\xD7\x95\xD7\x96\xD7\x90\xD7\x91\xD7\x90\xD7\x9C\xD7\x95\xD7\x9C") })
                             }),
                         },
                         stand_alone: None,
@@ -4545,16 +4545,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x12\0\x1A\0 \0(\x000\0:\0Q\0[\0c\0k\0o\0y\0\xD8\xAA\xD8\xB4\xD8\xB1\xDB\x8C\xD8\xAD\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xDA\xA9\xD8\xB3\xD9\x84\xD9\x88\xD8\xB7\xD9\x88\xD8\xAA\xD8\xB4\xD8\xA8\xD8\xA7\xD8\xB7\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1\xD9\x88\xD8\xA7\xD8\xB0\xD8\xA7\xD8\xB1\xD9\x88\xD8\xA7\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xAB\xD8\xA7\xD9\x86\xDB\x8C\xD9\x86\xDB\x8C\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA7\xDB\x8C\xD8\xA7\xD8\xB1\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA2\xD8\xA8\xD8\xA7\xDB\x8C\xD9\x84\xD9\x88\xD9\x84\xD8\xB3\xDB\x8C\xD9\x88\xD8\xA7\xD9\x86") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x12\0\x1A\0 \0(\x000\0:\0Q\0[\0c\0m\0u\0y\0\xD8\xAA\xD8\xB4\xD8\xB1\xDB\x8C\xD8\xAD\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xDA\xA9\xD8\xB3\xD9\x84\xD9\x88\xD8\xB7\xD9\x88\xD8\xAA\xD8\xB4\xD8\xA8\xD8\xA7\xD8\xB7\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1\xD9\x88\xD8\xA7\xD8\xB0\xD8\xA7\xD8\xB1\xD9\x88\xD8\xA7\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xAB\xD8\xA7\xD9\x86\xDB\x8C\xD9\x86\xDB\x8C\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA7\xDB\x8C\xD8\xA7\xD8\xB1\xD8\xB3\xDB\x8C\xD9\x88\xD8\xA7\xD9\x86\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA2\xD8\xA8\xD8\xA7\xDB\x8C\xD9\x84\xD9\x88\xD9\x84") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x02\0\x04\0\x06\0\x08\0\n\0\x0C\0\x0E\0\x10\0\x12\0\x14\0\x16\0\x18\0\x1A\0\xD8\xAA\xD8\xAD\xDA\xA9\xD8\xB7\xD8\xB4\xD8\xA2\xD9\x88\xD9\x88\xD9\x86\xD8\xA7\xD8\xAA\xD8\xA2\xD8\xA7\xD8\xB3") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x02\0\x04\0\x06\0\x08\0\n\0\x0C\0\x0E\0\x10\0\x12\0\x14\0\x16\0\x18\0\x1A\0\xD8\xAA\xD8\xAD\xDA\xA9\xD8\xB7\xD8\xB4\xD8\xA2\xD9\x88\xD9\x88\xD9\x86\xD8\xA7\xD8\xB3\xD8\xAA\xD8\xA2\xD8\xA7") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x12\0\x1A\0 \0(\x000\0:\0Q\0[\0c\0k\0o\0y\0\xD8\xAA\xD8\xB4\xD8\xB1\xDB\x8C\xD8\xAD\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xDA\xA9\xD8\xB3\xD9\x84\xD9\x88\xD8\xB7\xD9\x88\xD8\xAA\xD8\xB4\xD8\xA8\xD8\xA7\xD8\xB7\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1\xD9\x88\xD8\xA7\xD8\xB0\xD8\xA7\xD8\xB1\xD9\x88\xD8\xA7\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xAB\xD8\xA7\xD9\x86\xDB\x8C\xD9\x86\xDB\x8C\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA7\xDB\x8C\xD8\xA7\xD8\xB1\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA2\xD8\xA8\xD8\xA7\xDB\x8C\xD9\x84\xD9\x88\xD9\x84\xD8\xB3\xDB\x8C\xD9\x88\xD8\xA7\xD9\x86") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x12\0\x1A\0 \0(\x000\0:\0Q\0[\0c\0m\0u\0y\0\xD8\xAA\xD8\xB4\xD8\xB1\xDB\x8C\xD8\xAD\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xDA\xA9\xD8\xB3\xD9\x84\xD9\x88\xD8\xB7\xD9\x88\xD8\xAA\xD8\xB4\xD8\xA8\xD8\xA7\xD8\xB7\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1\xD9\x88\xD8\xA7\xD8\xB0\xD8\xA7\xD8\xB1\xD9\x88\xD8\xA7\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xAB\xD8\xA7\xD9\x86\xDB\x8C\xD9\x86\xDB\x8C\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA7\xDB\x8C\xD8\xA7\xD8\xB1\xD8\xB3\xDB\x8C\xD9\x88\xD8\xA7\xD9\x86\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA2\xD8\xA8\xD8\xA7\xDB\x8C\xD9\x84\xD9\x88\xD9\x84") })
                             }),
                         },
                         stand_alone: None,
@@ -4580,16 +4580,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x14\0\x1E\0(\x000\0?\0E\0T\0\\\0d\0l\0p\0{\0\xD9\xB9\xD8\xB4\xD8\xB1\xDB\x8C\xD9\x87\xDB\x92\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xDA\xA9\xD8\xB3\xD9\x84\xDB\x8C\xD9\x88\xD8\xAA\xDB\x8C\xD9\x88\xDB\x8C\xD8\xAA\xD8\xB4\xDB\x8C\xD9\x88\xD8\xAA\xD8\xA2\xD8\xAF\xD8\xB1 \xD8\xA7\xD9\x88\xD9\x91\xD9\x84\xD8\xA2\xD8\xAF\xD8\xB1\xD8\xA2\xD8\xAF\xD8\xB1 \xD8\xAF\xD9\x88\xD9\x91\xD9\x85\xD9\x86\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA7\xDB\x8C\xD8\xA6\xD8\xB1\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA7\xD9\x88\xD8\xA7\xDB\x8C \xD9\x84\xD9\x88\xD9\x84\xD8\xB3\xDB\x8C\xD9\x88\xD9\x86") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x14\0\x1E\0(\x000\0?\0E\0T\0\\\0d\0l\0t\0x\0\xD9\xB9\xD8\xB4\xD8\xB1\xDB\x8C\xD9\x87\xDB\x92\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xDA\xA9\xD8\xB3\xD9\x84\xDB\x8C\xD9\x88\xD8\xAA\xDB\x8C\xD9\x88\xDB\x8C\xD8\xAA\xD8\xB4\xDB\x8C\xD9\x88\xD8\xAA\xD8\xA2\xD8\xAF\xD8\xB1 \xD8\xA7\xD9\x88\xD9\x91\xD9\x84\xD8\xA2\xD8\xAF\xD8\xB1\xD8\xA2\xD8\xAF\xD8\xB1 \xD8\xAF\xD9\x88\xD9\x91\xD9\x85\xD9\x86\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA7\xDB\x8C\xD8\xA6\xD8\xB1\xD8\xB3\xDB\x8C\xD9\x88\xD9\x86\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA7\xD9\x88\xD8\xA7\xDB\x8C \xD9\x84\xD9\x88\xD9\x84") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x14\0\x1E\0(\x000\0?\0E\0T\0\\\0d\0l\0p\0{\0\xD9\xB9\xD8\xB4\xD8\xB1\xDB\x8C\xD9\x87\xDB\x92\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xDA\xA9\xD8\xB3\xD9\x84\xDB\x8C\xD9\x88\xD8\xAA\xDB\x8C\xD9\x88\xDB\x8C\xD8\xAA\xD8\xB4\xDB\x8C\xD9\x88\xD8\xAA\xD8\xA2\xD8\xAF\xD8\xB1 \xD8\xA7\xD9\x88\xD9\x91\xD9\x84\xD8\xA2\xD8\xAF\xD8\xB1\xD8\xA2\xD8\xAF\xD8\xB1 \xD8\xAF\xD9\x88\xD9\x91\xD9\x85\xD9\x86\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA7\xDB\x8C\xD8\xA6\xD8\xB1\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA7\xD9\x88\xD8\xA7\xDB\x8C \xD9\x84\xD9\x88\xD9\x84\xD8\xB3\xDB\x8C\xD9\x88\xD9\x86") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x14\0\x1E\0(\x000\0?\0E\0T\0\\\0d\0l\0t\0x\0\xD9\xB9\xD8\xB4\xD8\xB1\xDB\x8C\xD9\x87\xDB\x92\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xDA\xA9\xD8\xB3\xD9\x84\xDB\x8C\xD9\x88\xD8\xAA\xDB\x8C\xD9\x88\xDB\x8C\xD8\xAA\xD8\xB4\xDB\x8C\xD9\x88\xD8\xAA\xD8\xA2\xD8\xAF\xD8\xB1 \xD8\xA7\xD9\x88\xD9\x91\xD9\x84\xD8\xA2\xD8\xAF\xD8\xB1\xD8\xA2\xD8\xAF\xD8\xB1 \xD8\xAF\xD9\x88\xD9\x91\xD9\x85\xD9\x86\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA7\xDB\x8C\xD8\xA6\xD8\xB1\xD8\xB3\xDB\x8C\xD9\x88\xD9\x86\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA7\xD9\x88\xD8\xA7\xDB\x8C \xD9\x84\xD9\x88\xD9\x84") })
                             }),
                         },
                         stand_alone: None,
@@ -4615,16 +4615,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x16\0 \0(\x000\0C\0K\0`\0j\0r\0z\0~\0\x88\0\xD8\xAA\xD8\xB4\xD8\xB1\xD9\x8A\xD9\x85\xD8\xB1\xD8\xAD\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xD9\x83\xD9\x8A\xD8\xB3\xD9\x84\xD9\x88\xD8\xB7\xD9\x8A\xD9\x81\xD8\xAA\xD8\xB4\xD8\xA8\xD8\xA7\xD8\xB7\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xA3\xD9\x88\xD9\x84\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xAB\xD8\xA7\xD9\x86\xD9\x8A\xD9\x86\xD9\x8A\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA3\xD9\x8A\xD8\xA7\xD8\xB1\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA2\xD8\xA8\xD8\xA3\xD9\x8A\xD9\x84\xD9\x88\xD9\x84\xD8\xB3\xD9\x8A\xD9\x81\xD8\xA7\xD9\x86") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x16\0 \0(\x000\0C\0K\0`\0j\0r\0|\0\x84\0\x88\0\xD8\xAA\xD8\xB4\xD8\xB1\xD9\x8A\xD9\x85\xD8\xB1\xD8\xAD\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xD9\x83\xD9\x8A\xD8\xB3\xD9\x84\xD9\x88\xD8\xB7\xD9\x8A\xD9\x81\xD8\xAA\xD8\xB4\xD8\xA8\xD8\xA7\xD8\xB7\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xA3\xD9\x88\xD9\x84\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xAB\xD8\xA7\xD9\x86\xD9\x8A\xD9\x86\xD9\x8A\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA3\xD9\x8A\xD8\xA7\xD8\xB1\xD8\xB3\xD9\x8A\xD9\x81\xD8\xA7\xD9\x86\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA2\xD8\xA8\xD8\xA3\xD9\x8A\xD9\x84\xD9\x88\xD9\x84") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x16\0 \0(\x000\0C\0K\0`\0j\0r\0z\0~\0\x88\0\xD8\xAA\xD8\xB4\xD8\xB1\xD9\x8A\xD9\x85\xD8\xB1\xD8\xAD\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xD9\x83\xD9\x8A\xD8\xB3\xD9\x84\xD9\x88\xD8\xB7\xD9\x8A\xD9\x81\xD8\xAA\xD8\xB4\xD8\xA8\xD8\xA7\xD8\xB7\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xA3\xD9\x88\xD9\x84\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xAB\xD8\xA7\xD9\x86\xD9\x8A\xD9\x86\xD9\x8A\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA3\xD9\x8A\xD8\xA7\xD8\xB1\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA2\xD8\xA8\xD8\xA3\xD9\x8A\xD9\x84\xD9\x88\xD9\x84\xD8\xB3\xD9\x8A\xD9\x81\xD8\xA7\xD9\x86") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x08\0\x16\0 \0(\x000\0C\0K\0`\0j\0r\0|\0\x84\0\x88\0\xD8\xAA\xD8\xB4\xD8\xB1\xD9\x8A\xD9\x85\xD8\xB1\xD8\xAD\xD8\xB4\xD9\x88\xD8\xA7\xD9\x86\xD9\x83\xD9\x8A\xD8\xB3\xD9\x84\xD9\x88\xD8\xB7\xD9\x8A\xD9\x81\xD8\xAA\xD8\xB4\xD8\xA8\xD8\xA7\xD8\xB7\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xA3\xD9\x88\xD9\x84\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1\xD8\xA2\xD8\xB0\xD8\xA7\xD8\xB1 \xD8\xA7\xD9\x84\xD8\xAB\xD8\xA7\xD9\x86\xD9\x8A\xD9\x86\xD9\x8A\xD8\xB3\xD8\xA7\xD9\x86\xD8\xA3\xD9\x8A\xD8\xA7\xD8\xB1\xD8\xB3\xD9\x8A\xD9\x81\xD8\xA7\xD9\x86\xD8\xAA\xD9\x85\xD9\x88\xD8\xB2\xD8\xA2\xD8\xA8\xD8\xA3\xD9\x8A\xD9\x84\xD9\x88\xD9\x84") })
                             }),
                         },
                         stand_alone: None,
@@ -4650,16 +4650,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0w\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x8E\x9B\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xAB\xE6\x9C\x88\xE7\xBB\x86\xE7\xBD\xA2\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88 I\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA6\x84\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBC\xAF\xE6\x9C\x88") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0t\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x8E\x9B\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xAB\xE6\x9C\x88\xE7\xBB\x86\xE7\xBD\xA2\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88 I\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBC\xAF\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA6\x84\xE6\x9C\x88") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0w\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x8E\x9B\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xAB\xE6\x9C\x88\xE7\xBB\x86\xE7\xBD\xA2\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88 I\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA6\x84\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBC\xAF\xE6\x9C\x88") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0t\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x8E\x9B\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xAB\xE6\x9C\x88\xE7\xBB\x86\xE7\xBD\xA2\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88 I\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88\xE4\xBA\x9A\xE8\xBE\xBE\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBC\xAF\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA6\x84\xE6\x9C\x88") })
                             }),
                         },
                         stand_alone: None,
@@ -4685,16 +4685,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0w\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x91\xAA\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xA5\xE6\x9C\x88\xE7\xB4\xB0\xE7\xBD\xB7\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 I\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA5\xBF\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBD\x8E\xE6\x9C\x88") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0t\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x91\xAA\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xA5\xE6\x9C\x88\xE7\xB4\xB0\xE7\xBD\xB7\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 I\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBD\x8E\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA5\xBF\xE6\x9C\x88") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0w\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x91\xAA\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xA5\xE6\x9C\x88\xE7\xB4\xB0\xE7\xBD\xB7\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 I\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA5\xBF\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBD\x8E\xE6\x9C\x88") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0t\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x91\xAA\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xA5\xE6\x9C\x88\xE7\xB4\xB0\xE7\xBD\xB7\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 I\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBD\x8E\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA5\xBF\xE6\x9C\x88") })
                             }),
                         },
                         stand_alone: None,
@@ -4720,16 +4720,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0w\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x91\xAA\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xA5\xE6\x9C\x88\xE7\xB4\xB0\xE7\xBD\xB7\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 I\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA5\xBF\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBD\x8E\xE6\x9C\x88") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0t\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x91\xAA\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xA5\xE6\x9C\x88\xE7\xB4\xB0\xE7\xBD\xB7\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 I\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBD\x8E\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA5\xBF\xE6\x9C\x88") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0w\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x91\xAA\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xA5\xE6\x9C\x88\xE7\xB4\xB0\xE7\xBD\xB7\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 I\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA5\xBF\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBD\x8E\xE6\x9C\x88") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0-\09\0D\0M\0Y\0b\0k\0t\0\x80\0\x89\0\xE6\x8F\x90\xE6\x96\xAF\xE5\x88\xA9\xE6\x9C\x88\xE7\x91\xAA\xE8\xA5\xBF\xE7\x8F\xAD\xE6\x9C\x88\xE5\x9F\xBA\xE6\x96\xAF\xE6\xB5\x81\xE6\x9C\x88\xE6\x8F\x90\xE5\x88\xA5\xE6\x9C\x88\xE7\xB4\xB0\xE7\xBD\xB7\xE7\x89\xB9\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 I\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88\xE4\xBA\x9E\xE9\x81\x94\xE6\x9C\x88 II\xE5\xB0\xBC\xE6\x95\xA3\xE6\x9C\x88\xE4\xBB\xA5\xE7\x8F\xA5\xE6\x9C\x88\xE8\xA5\xBF\xE5\xBD\x8E\xE6\x9C\x88\xE6\x90\xAD\xE6\xA8\xA1\xE6\x96\xAF\xE6\x9C\x88\xE5\x9F\x83\xE6\xB3\xA2\xE6\x9C\x88\xE4\xBB\xA5\xE7\xA5\xBF\xE6\x9C\x88") })
                             }),
                         },
                         stand_alone: None,
@@ -4755,16 +4755,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0.\08\0B\0J\0U\0_\0e\0q\0u\0}\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB5\xD0\xB9\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD1\x8F\xD1\x80\xD1\x82\xD0\xB0\xD0\xBC\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD1\x8D\xD0\xBB\xD1\x83\xD0\xBB\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0.\08\0B\0J\0U\0_\0e\0o\0{\0\x7F\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB5\xD0\xB9\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD1\x8F\xD1\x80\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x82\xD0\xB0\xD0\xBC\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD1\x8D\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0.\08\0B\0J\0U\0_\0e\0q\0u\0}\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB5\xD0\xB9\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD1\x8F\xD1\x80\xD1\x82\xD0\xB0\xD0\xBC\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD1\x8D\xD0\xBB\xD1\x83\xD0\xBB\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0.\08\0B\0J\0U\0_\0e\0o\0{\0\x7F\0\xD1\x82\xD0\xB8\xD1\x88\xD1\x80\xD0\xB5\xD0\xB9\xD1\x85\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xBA\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD1\x82\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD1\x88\xD0\xB5\xD0\xB2\xD0\xB0\xD1\x82\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\xBD\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\xB8\xD1\x8F\xD1\x80\xD1\x81\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD1\x82\xD0\xB0\xD0\xBC\xD0\xBC\xD1\x83\xD0\xB7\xD0\xB0\xD0\xB2\xD1\x8D\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                         },
                         stand_alone: None,
@@ -4790,16 +4790,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0.\x006\0@\0H\0S\0]\0c\0m\0q\0y\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB5\xD0\xB9\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x8F\xD1\x80\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\xAD\xD0\xBB\xD1\x83\xD0\xBB\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0.\x006\0@\0H\0S\0]\0c\0m\0w\0{\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB5\xD0\xB9\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x8F\xD1\x80\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\xAD\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0.\x006\0@\0H\0S\0]\0c\0m\0q\0y\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB5\xD0\xB9\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x8F\xD1\x80\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\xAD\xD0\xBB\xD1\x83\xD0\xBB\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\0.\x006\0@\0H\0S\0]\0c\0m\0w\0{\0\xD0\xA2\xD0\xB8\xD1\x88\xD1\x80\xD0\xB5\xD0\xB9\xD0\xA5\xD0\xB5\xD1\x88\xD0\xB2\xD0\xB0\xD0\xBD\xD0\x9A\xD0\xB8\xD1\x81\xD0\xBB\xD0\xB5\xD0\xB2\xD0\xA2\xD0\xB5\xD0\xB2\xD0\xB5\xD1\x82\xD0\xA8\xD0\xB2\xD0\xB0\xD1\x82\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 I\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80\xD0\x90\xD0\xB4\xD0\xB0\xD1\x80 II\xD0\x9D\xD0\xB8\xD1\x81\xD0\xB0\xD0\xBD\xD0\x98\xD1\x8F\xD1\x80\xD0\xA1\xD0\xB8\xD0\xB2\xD0\xB0\xD0\xBD\xD0\xA2\xD0\xB0\xD0\xBC\xD1\x83\xD0\xB7\xD0\x90\xD0\xB2\xD0\xAD\xD0\xBB\xD1\x83\xD0\xBB") })
                             }),
                         },
                         stand_alone: None,
@@ -4825,16 +4825,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\x000\0<\0G\0P\0\\\0e\0n\0w\0}\0\x86\0\xE3\x83\x86\xE3\x82\xA3\xE3\x82\xB9\xE3\x83\xAC\xE3\x81\xB8\xE3\x82\xB7\xE3\x83\x9C\xE3\x83\xB3\xE3\x82\xAD\xE3\x82\xB9\xE3\x83\xAC\xE3\x83\x96\xE3\x83\x86\xE3\x83\x99\xE3\x83\x83\xE3\x83\x88\xE3\x82\xB7\xE3\x83\x90\xE3\x83\x83\xE3\x83\x88\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB I\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB II\xE3\x83\x8B\xE3\x82\xB5\xE3\x83\xB3\xE3\x82\xA4\xE3\x83\xA4\xE3\x83\xAB\xE3\x82\xBF\xE3\x83\xA0\xE3\x82\xBA\xE3\x82\xA2\xE3\x83\xB4\xE3\x82\xA8\xE3\x83\xAB\xE3\x83\xAB\xE3\x82\xB7\xE3\x83\x90\xE3\x83\xB3") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\x000\0<\0G\0P\0\\\0e\0n\0w\0\x80\0\x86\0\xE3\x83\x86\xE3\x82\xA3\xE3\x82\xB9\xE3\x83\xAC\xE3\x81\xB8\xE3\x82\xB7\xE3\x83\x9C\xE3\x83\xB3\xE3\x82\xAD\xE3\x82\xB9\xE3\x83\xAC\xE3\x83\x96\xE3\x83\x86\xE3\x83\x99\xE3\x83\x83\xE3\x83\x88\xE3\x82\xB7\xE3\x83\x90\xE3\x83\x83\xE3\x83\x88\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB I\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB II\xE3\x83\x8B\xE3\x82\xB5\xE3\x83\xB3\xE3\x82\xA4\xE3\x83\xA4\xE3\x83\xAB\xE3\x82\xB7\xE3\x83\x90\xE3\x83\xB3\xE3\x82\xBF\xE3\x83\xA0\xE3\x82\xBA\xE3\x82\xA2\xE3\x83\xB4\xE3\x82\xA8\xE3\x83\xAB\xE3\x83\xAB") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\x000\0<\0G\0P\0\\\0e\0n\0w\0}\0\x86\0\xE3\x83\x86\xE3\x82\xA3\xE3\x82\xB9\xE3\x83\xAC\xE3\x81\xB8\xE3\x82\xB7\xE3\x83\x9C\xE3\x83\xB3\xE3\x82\xAD\xE3\x82\xB9\xE3\x83\xAC\xE3\x83\x96\xE3\x83\x86\xE3\x83\x99\xE3\x83\x83\xE3\x83\x88\xE3\x82\xB7\xE3\x83\x90\xE3\x83\x83\xE3\x83\x88\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB I\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB II\xE3\x83\x8B\xE3\x82\xB5\xE3\x83\xB3\xE3\x82\xA4\xE3\x83\xA4\xE3\x83\xAB\xE3\x82\xBF\xE3\x83\xA0\xE3\x82\xBA\xE3\x82\xA2\xE3\x83\xB4\xE3\x82\xA8\xE3\x83\xAB\xE3\x83\xAB\xE3\x82\xB7\xE3\x83\x90\xE3\x83\xB3") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0C\0\x18\0$\x000\0<\0G\0P\0\\\0e\0n\0w\0\x80\0\x86\0\xE3\x83\x86\xE3\x82\xA3\xE3\x82\xB9\xE3\x83\xAC\xE3\x81\xB8\xE3\x82\xB7\xE3\x83\x9C\xE3\x83\xB3\xE3\x82\xAD\xE3\x82\xB9\xE3\x83\xAC\xE3\x83\x96\xE3\x83\x86\xE3\x83\x99\xE3\x83\x83\xE3\x83\x88\xE3\x82\xB7\xE3\x83\x90\xE3\x83\x83\xE3\x83\x88\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB I\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB\xE3\x82\xA2\xE3\x83\x80\xE3\x83\xAB II\xE3\x83\x8B\xE3\x82\xB5\xE3\x83\xB3\xE3\x82\xA4\xE3\x83\xA4\xE3\x83\xAB\xE3\x82\xB7\xE3\x83\x90\xE3\x83\xB3\xE3\x82\xBF\xE3\x83\xA0\xE3\x82\xBA\xE3\x82\xA2\xE3\x83\xB4\xE3\x82\xA8\xE3\x83\xAB\xE3\x83\xAB") })
                             }),
                         },
                         stand_alone: None,
@@ -4860,16 +4860,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x003\0B\0Q\0_\0k\0z\0\x89\0\x98\0\xA7\0\xAD\0\xB9\0\xE0\xA6\xA4\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB9\xE0\xA7\x87\xE0\xA6\xB6\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x95\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA6\xB2\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xA4\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA7\x87\xE0\xA6\xA4\xE0\xA6\xB6\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA4\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 I\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 II\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x86\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xA4\xE0\xA6\xBE\xE0\xA6\xAE\xE0\xA7\x81\xE0\xA6\x9C\xE0\xA6\x85\xE0\xA6\xAD\xE0\xA6\x8F\xE0\xA6\xB2\xE0\xA7\x81\xE0\xA6\xB2\xE0\xA6\xB8\xE0\xA6\xBF\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x003\0B\0Q\0_\0k\0z\0\x89\0\x98\0\xA7\0\xB6\0\xBC\0\xE0\xA6\xA4\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB9\xE0\xA7\x87\xE0\xA6\xB6\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x95\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA6\xB2\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xA4\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA7\x87\xE0\xA6\xA4\xE0\xA6\xB6\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA4\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 I\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 II\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x86\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xB8\xE0\xA6\xBF\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\xA4\xE0\xA6\xBE\xE0\xA6\xAE\xE0\xA7\x81\xE0\xA6\x9C\xE0\xA6\x85\xE0\xA6\xAD\xE0\xA6\x8F\xE0\xA6\xB2\xE0\xA7\x81\xE0\xA6\xB2") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\x15\0\x18\0\x1B\0\x1E\0$\0*\x000\0\xE0\xA7\xA7\xE0\xA7\xA8\xE0\xA7\xA9\xE0\xA7\xAA\xE0\xA7\xAB\xE0\xA7\xAC\xE0\xA7\xAD\xE0\xA7\xAD\xE0\xA7\xAE\xE0\xA7\xAF\xE0\xA7\xA7\xE0\xA7\xA7\xE0\xA7\xA7\xE0\xA7\xA8\xE0\xA7\xA7\xE0\xA7\xA9\xE0\xA7\xA7\xE0\xA7\xA6") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\x15\0\x18\0\x1B\0\x1E\0$\0*\x000\0\xE0\xA7\xA7\xE0\xA7\xA8\xE0\xA7\xA9\xE0\xA7\xAA\xE0\xA7\xAB\xE0\xA7\xAC\xE0\xA7\xAD\xE0\xA7\xAD\xE0\xA7\xAE\xE0\xA7\xAF\xE0\xA7\xA7\xE0\xA7\xA6\xE0\xA7\xA7\xE0\xA7\xA7\xE0\xA7\xA7\xE0\xA7\xA8\xE0\xA7\xA7\xE0\xA7\xA9") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x003\0B\0Q\0_\0k\0z\0\x89\0\x98\0\xA7\0\xAD\0\xB9\0\xE0\xA6\xA4\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB9\xE0\xA7\x87\xE0\xA6\xB6\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x95\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA6\xB2\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xA4\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA7\x87\xE0\xA6\xA4\xE0\xA6\xB6\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA4\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 I\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 II\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x86\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xA4\xE0\xA6\xBE\xE0\xA6\xAE\xE0\xA7\x81\xE0\xA6\x9C\xE0\xA6\x85\xE0\xA6\xAD\xE0\xA6\x8F\xE0\xA6\xB2\xE0\xA7\x81\xE0\xA6\xB2\xE0\xA6\xB8\xE0\xA6\xBF\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x003\0B\0Q\0_\0k\0z\0\x89\0\x98\0\xA7\0\xB6\0\xBC\0\xE0\xA6\xA4\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB9\xE0\xA7\x87\xE0\xA6\xB6\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x95\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA6\xB2\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xA4\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA7\x87\xE0\xA6\xA4\xE0\xA6\xB6\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA4\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 I\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 II\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x86\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xB8\xE0\xA6\xBF\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\xA4\xE0\xA6\xBE\xE0\xA6\xAE\xE0\xA7\x81\xE0\xA6\x9C\xE0\xA6\x85\xE0\xA6\xAD\xE0\xA6\x8F\xE0\xA6\xB2\xE0\xA7\x81\xE0\xA6\xB2") })
                             }),
                         },
                         stand_alone: None,
@@ -4895,16 +4895,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x003\0B\0Q\0_\0k\0z\0\x89\0\x98\0\xA7\0\xAD\0\xB9\0\xE0\xA6\xA4\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB9\xE0\xA7\x87\xE0\xA6\xB6\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x95\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA6\xB2\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xA4\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA7\x87\xE0\xA6\xA4\xE0\xA6\xB6\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA4\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 I\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 II\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x86\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xA4\xE0\xA6\xBE\xE0\xA6\xAE\xE0\xA7\x81\xE0\xA6\x9C\xE0\xA6\x85\xE0\xA6\xAD\xE0\xA6\x8F\xE0\xA6\xB2\xE0\xA7\x81\xE0\xA6\xB2\xE0\xA6\xB8\xE0\xA6\xBF\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x003\0B\0Q\0_\0k\0z\0\x89\0\x98\0\xA7\0\xB6\0\xBC\0\xE0\xA6\xA4\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB9\xE0\xA7\x87\xE0\xA6\xB6\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x95\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA6\xB2\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xA4\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA7\x87\xE0\xA6\xA4\xE0\xA6\xB6\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA4\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 I\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 II\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x86\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xB8\xE0\xA6\xBF\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\xA4\xE0\xA6\xBE\xE0\xA6\xAE\xE0\xA7\x81\xE0\xA6\x9C\xE0\xA6\x85\xE0\xA6\xAD\xE0\xA6\x8F\xE0\xA6\xB2\xE0\xA7\x81\xE0\xA6\xB2") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\x15\0\x18\0\x1B\0\x1E\0$\0*\x000\0\xE0\xA7\xA7\xE0\xA7\xA8\xE0\xA7\xA9\xE0\xA7\xAA\xE0\xA7\xAB\xE0\xA7\xAC\xE0\xA7\xAD\xE0\xA7\xAD\xE0\xA7\xAE\xE0\xA7\xAF\xE0\xA7\xA7\xE0\xA7\xA7\xE0\xA7\xA7\xE0\xA7\xA8\xE0\xA7\xA7\xE0\xA7\xA9\xE0\xA7\xA7\xE0\xA7\xA6") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\x15\0\x18\0\x1B\0\x1E\0$\0*\x000\0\xE0\xA7\xA7\xE0\xA7\xA8\xE0\xA7\xA9\xE0\xA7\xAA\xE0\xA7\xAB\xE0\xA7\xAC\xE0\xA7\xAD\xE0\xA7\xAD\xE0\xA7\xAE\xE0\xA7\xAF\xE0\xA7\xA7\xE0\xA7\xA6\xE0\xA7\xA7\xE0\xA7\xA7\xE0\xA7\xA7\xE0\xA7\xA8\xE0\xA7\xA7\xE0\xA7\xA9") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x003\0B\0Q\0_\0k\0z\0\x89\0\x98\0\xA7\0\xAD\0\xB9\0\xE0\xA6\xA4\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB9\xE0\xA7\x87\xE0\xA6\xB6\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x95\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA6\xB2\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xA4\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA7\x87\xE0\xA6\xA4\xE0\xA6\xB6\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA4\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 I\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 II\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x86\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xA4\xE0\xA6\xBE\xE0\xA6\xAE\xE0\xA7\x81\xE0\xA6\x9C\xE0\xA6\x85\xE0\xA6\xAD\xE0\xA6\x8F\xE0\xA6\xB2\xE0\xA7\x81\xE0\xA6\xB2\xE0\xA6\xB8\xE0\xA6\xBF\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x003\0B\0Q\0_\0k\0z\0\x89\0\x98\0\xA7\0\xB6\0\xBC\0\xE0\xA6\xA4\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB9\xE0\xA7\x87\xE0\xA6\xB6\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x95\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA6\xB2\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xA4\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA7\x87\xE0\xA6\xA4\xE0\xA6\xB6\xE0\xA7\x87\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA4\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 I\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\x86\xE0\xA6\xA1\xE0\xA6\xBE\xE0\xA6\xB0 II\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\x86\xE0\xA6\xAF\xE0\xA6\xBC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xB8\xE0\xA6\xBF\xE0\xA6\xAD\xE0\xA6\xBE\xE0\xA6\xA8\xE0\xA6\xA4\xE0\xA6\xBE\xE0\xA6\xAE\xE0\xA7\x81\xE0\xA6\x9C\xE0\xA6\x85\xE0\xA6\xAD\xE0\xA6\x8F\xE0\xA6\xB2\xE0\xA7\x81\xE0\xA6\xB2") })
                             }),
                         },
                         stand_alone: None,
@@ -4930,16 +4930,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x006\0E\0T\0b\0n\0}\0\x8C\0\x98\0\xA7\0\xAD\0\xB9\0\xE0\xA4\xA4\xE0\xA4\xBF\xE0\xA4\xB6\xE0\xA4\xB0\xE0\xA5\x80\xE0\xA4\xB9\xE0\xA5\x87\xE0\xA4\xB6\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA4\x95\xE0\xA4\xBF\xE0\xA4\xB8\xE0\xA5\x8D\xE0\xA4\xB2\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA4\xA4\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA5\x87\xE0\xA4\xA4\xE0\xA4\xB6\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA4\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0 I\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0 II\xE0\xA4\xA8\xE0\xA4\xBF\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA4\x87\xE0\xA4\xAF\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\xA4\xE0\xA4\xBE\xE0\xA4\xAE\xE0\xA5\x81\xE0\xA4\x9D\xE0\xA4\x85\xE0\xA4\xB5\xE0\xA4\x87\xE0\xA4\xB2\xE0\xA5\x81\xE0\xA4\xB2\xE0\xA4\xB8\xE0\xA4\xBF\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA8") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x006\0E\0T\0b\0n\0}\0\x8C\0\x98\0\xA7\0\xB6\0\xBC\0\xE0\xA4\xA4\xE0\xA4\xBF\xE0\xA4\xB6\xE0\xA4\xB0\xE0\xA5\x80\xE0\xA4\xB9\xE0\xA5\x87\xE0\xA4\xB6\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA4\x95\xE0\xA4\xBF\xE0\xA4\xB8\xE0\xA5\x8D\xE0\xA4\xB2\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA4\xA4\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA5\x87\xE0\xA4\xA4\xE0\xA4\xB6\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA4\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0 I\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0 II\xE0\xA4\xA8\xE0\xA4\xBF\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA4\x87\xE0\xA4\xAF\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\xB8\xE0\xA4\xBF\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA4\xA4\xE0\xA4\xBE\xE0\xA4\xAE\xE0\xA5\x81\xE0\xA4\x9D\xE0\xA4\x85\xE0\xA4\xB5\xE0\xA4\x87\xE0\xA4\xB2\xE0\xA5\x81\xE0\xA4\xB2") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\x15\0\x18\0\x1B\0\x1E\0$\0*\x000\0\xE0\xA5\xA7\xE0\xA5\xA8\xE0\xA5\xA9\xE0\xA5\xAA\xE0\xA5\xAB\xE0\xA5\xAC\xE0\xA5\xAD\xE0\xA5\xAD\xE0\xA5\xAE\xE0\xA5\xAF\xE0\xA5\xA7\xE0\xA5\xA7\xE0\xA5\xA7\xE0\xA5\xA8\xE0\xA5\xA7\xE0\xA5\xA9\xE0\xA5\xA7\xE0\xA5\xA6") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\x15\0\x18\0\x1B\0\x1E\0$\0*\x000\0\xE0\xA5\xA7\xE0\xA5\xA8\xE0\xA5\xA9\xE0\xA5\xAA\xE0\xA5\xAB\xE0\xA5\xAC\xE0\xA5\xAD\xE0\xA5\xAD\xE0\xA5\xAE\xE0\xA5\xAF\xE0\xA5\xA7\xE0\xA5\xA6\xE0\xA5\xA7\xE0\xA5\xA7\xE0\xA5\xA7\xE0\xA5\xA8\xE0\xA5\xA7\xE0\xA5\xA9") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x006\0E\0T\0b\0n\0}\0\x8C\0\x98\0\xA7\0\xAD\0\xB9\0\xE0\xA4\xA4\xE0\xA4\xBF\xE0\xA4\xB6\xE0\xA4\xB0\xE0\xA5\x80\xE0\xA4\xB9\xE0\xA5\x87\xE0\xA4\xB6\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA4\x95\xE0\xA4\xBF\xE0\xA4\xB8\xE0\xA5\x8D\xE0\xA4\xB2\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA4\xA4\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA5\x87\xE0\xA4\xA4\xE0\xA4\xB6\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA4\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0 I\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0 II\xE0\xA4\xA8\xE0\xA4\xBF\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA4\x87\xE0\xA4\xAF\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\xA4\xE0\xA4\xBE\xE0\xA4\xAE\xE0\xA5\x81\xE0\xA4\x9D\xE0\xA4\x85\xE0\xA4\xB5\xE0\xA4\x87\xE0\xA4\xB2\xE0\xA5\x81\xE0\xA4\xB2\xE0\xA4\xB8\xE0\xA4\xBF\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA8") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0!\x006\0E\0T\0b\0n\0}\0\x8C\0\x98\0\xA7\0\xB6\0\xBC\0\xE0\xA4\xA4\xE0\xA4\xBF\xE0\xA4\xB6\xE0\xA4\xB0\xE0\xA5\x80\xE0\xA4\xB9\xE0\xA5\x87\xE0\xA4\xB6\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA4\x95\xE0\xA4\xBF\xE0\xA4\xB8\xE0\xA5\x8D\xE0\xA4\xB2\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA4\xA4\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA5\x87\xE0\xA4\xA4\xE0\xA4\xB6\xE0\xA5\x87\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA4\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0 I\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\x85\xE0\xA4\xA6\xE0\xA4\xBE\xE0\xA4\xB0 II\xE0\xA4\xA8\xE0\xA4\xBF\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA4\x87\xE0\xA4\xAF\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\xB8\xE0\xA4\xBF\xE0\xA4\xB5\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA4\xA4\xE0\xA4\xBE\xE0\xA4\xAE\xE0\xA5\x81\xE0\xA4\x9D\xE0\xA4\x85\xE0\xA4\xB5\xE0\xA4\x87\xE0\xA4\xB2\xE0\xA5\x81\xE0\xA4\xB2") })
                             }),
                         },
                         stand_alone: None,
@@ -4965,16 +4965,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0\x1E\x000\0?\0N\0b\0t\0\x89\0\x9B\0\xAD\0\xBC\0\xC5\0\xD7\0\xE0\xB8\x97\xE0\xB8\xB4\xE0\xB8\x8A\xE0\xB8\xA3\xE0\xB8\xB5\xE0\xB9\x80\xE0\xB8\xAE\xE0\xB8\xA7\xE0\xB8\xB2\xE0\xB8\x99\xE0\xB8\x81\xE0\xB8\xB5\xE0\xB8\xAA\xE0\xB9\x80\xE0\xB8\xA5\xE0\xB8\x9F\xE0\xB9\x80\xE0\xB8\x95\xE0\xB9\x80\xE0\xB8\xA7\xE0\xB8\x95\xE0\xB9\x80\xE0\xB8\x8A\xE0\xB8\xA7\xE0\xB8\xB1\xE0\xB8\x95\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C I\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C II\xE0\xB8\x99\xE0\xB8\xB4\xE0\xB8\xAA\xE0\xB8\x8B\xE0\xB8\xB2\xE0\xB8\x99\xE0\xB8\xAD\xE0\xB8\xB4\xE0\xB8\xA2\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C\xE0\xB8\x95\xE0\xB8\xB2\xE0\xB8\xA1\xE0\xB8\xB9\xE0\xB8\x8B\xE0\xB8\xAD\xE0\xB8\xB1\xE0\xB8\x9F\xE0\xB9\x80\xE0\xB8\xAD\xE0\xB8\xA5\xE0\xB8\xAD\xE0\xB8\xB8\xE0\xB8\xA5\xE0\xB8\xAA\xE0\xB8\xB5\xE0\xB8\xA7\xE0\xB8\xB1\xE0\xB8\x99") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0\x1E\x000\0?\0N\0b\0t\0\x89\0\x9B\0\xAD\0\xBC\0\xCB\0\xD4\0\xE0\xB8\x97\xE0\xB8\xB4\xE0\xB8\x8A\xE0\xB8\xA3\xE0\xB8\xB5\xE0\xB9\x80\xE0\xB8\xAE\xE0\xB8\xA7\xE0\xB8\xB2\xE0\xB8\x99\xE0\xB8\x81\xE0\xB8\xB5\xE0\xB8\xAA\xE0\xB9\x80\xE0\xB8\xA5\xE0\xB8\x9F\xE0\xB9\x80\xE0\xB8\x95\xE0\xB9\x80\xE0\xB8\xA7\xE0\xB8\x95\xE0\xB9\x80\xE0\xB8\x8A\xE0\xB8\xA7\xE0\xB8\xB1\xE0\xB8\x95\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C I\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C II\xE0\xB8\x99\xE0\xB8\xB4\xE0\xB8\xAA\xE0\xB8\x8B\xE0\xB8\xB2\xE0\xB8\x99\xE0\xB8\xAD\xE0\xB8\xB4\xE0\xB8\xA2\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C\xE0\xB8\xAA\xE0\xB8\xB5\xE0\xB8\xA7\xE0\xB8\xB1\xE0\xB8\x99\xE0\xB8\x95\xE0\xB8\xB2\xE0\xB8\xA1\xE0\xB8\xB9\xE0\xB8\x8B\xE0\xB8\xAD\xE0\xB8\xB1\xE0\xB8\x9F\xE0\xB9\x80\xE0\xB8\xAD\xE0\xB8\xA5\xE0\xB8\xAD\xE0\xB8\xB8\xE0\xB8\xA5") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0\x1E\x000\0?\0N\0b\0t\0\x89\0\x9B\0\xAD\0\xBC\0\xC5\0\xD7\0\xE0\xB8\x97\xE0\xB8\xB4\xE0\xB8\x8A\xE0\xB8\xA3\xE0\xB8\xB5\xE0\xB9\x80\xE0\xB8\xAE\xE0\xB8\xA7\xE0\xB8\xB2\xE0\xB8\x99\xE0\xB8\x81\xE0\xB8\xB5\xE0\xB8\xAA\xE0\xB9\x80\xE0\xB8\xA5\xE0\xB8\x9F\xE0\xB9\x80\xE0\xB8\x95\xE0\xB9\x80\xE0\xB8\xA7\xE0\xB8\x95\xE0\xB9\x80\xE0\xB8\x8A\xE0\xB8\xA7\xE0\xB8\xB1\xE0\xB8\x95\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C I\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C II\xE0\xB8\x99\xE0\xB8\xB4\xE0\xB8\xAA\xE0\xB8\x8B\xE0\xB8\xB2\xE0\xB8\x99\xE0\xB8\xAD\xE0\xB8\xB4\xE0\xB8\xA2\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C\xE0\xB8\x95\xE0\xB8\xB2\xE0\xB8\xA1\xE0\xB8\xB9\xE0\xB8\x8B\xE0\xB8\xAD\xE0\xB8\xB1\xE0\xB8\x9F\xE0\xB9\x80\xE0\xB8\xAD\xE0\xB8\xA5\xE0\xB8\xAD\xE0\xB8\xB8\xE0\xB8\xA5\xE0\xB8\xAA\xE0\xB8\xB5\xE0\xB8\xA7\xE0\xB8\xB1\xE0\xB8\x99") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x0F\0\x1E\x000\0?\0N\0b\0t\0\x89\0\x9B\0\xAD\0\xBC\0\xCB\0\xD4\0\xE0\xB8\x97\xE0\xB8\xB4\xE0\xB8\x8A\xE0\xB8\xA3\xE0\xB8\xB5\xE0\xB9\x80\xE0\xB8\xAE\xE0\xB8\xA7\xE0\xB8\xB2\xE0\xB8\x99\xE0\xB8\x81\xE0\xB8\xB5\xE0\xB8\xAA\xE0\xB9\x80\xE0\xB8\xA5\xE0\xB8\x9F\xE0\xB9\x80\xE0\xB8\x95\xE0\xB9\x80\xE0\xB8\xA7\xE0\xB8\x95\xE0\xB9\x80\xE0\xB8\x8A\xE0\xB8\xA7\xE0\xB8\xB1\xE0\xB8\x95\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C I\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C\xE0\xB8\xAD\xE0\xB8\xB2\xE0\xB8\x94\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C II\xE0\xB8\x99\xE0\xB8\xB4\xE0\xB8\xAA\xE0\xB8\x8B\xE0\xB8\xB2\xE0\xB8\x99\xE0\xB8\xAD\xE0\xB8\xB4\xE0\xB8\xA2\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB9\x8C\xE0\xB8\xAA\xE0\xB8\xB5\xE0\xB8\xA7\xE0\xB8\xB1\xE0\xB8\x99\xE0\xB8\x95\xE0\xB8\xB2\xE0\xB8\xA1\xE0\xB8\xB9\xE0\xB8\x8B\xE0\xB8\xAD\xE0\xB8\xB1\xE0\xB8\x9F\xE0\xB9\x80\xE0\xB8\xAD\xE0\xB8\xA5\xE0\xB8\xAD\xE0\xB8\xB8\xE0\xB8\xA5") })
                             }),
                         },
                         stand_alone: None,
@@ -5000,16 +5000,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0!\x003\0B\0Q\0_\0k\0z\0\x8C\0\x9B\0\xA7\0\xB0\0\xBC\0\xE0\xBA\x97\xE0\xBA\xA3\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBA\xA3\xE0\xBA\xB5\xE0\xBB\x80\xE0\xBA\xAE\xE0\xBA\xA7\xE0\xBA\xB2\xE0\xBA\x99\xE0\xBA\x81\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBB\x80\xE0\xBA\xA5\xE0\xBA\x9A\xE0\xBB\x80\xE0\xBA\x95\xE0\xBB\x80\xE0\xBA\xA7\xE0\xBA\x94\xE0\xBA\x8A\xE0\xBA\xB5\xE0\xBA\xA7\xE0\xBA\xB1\xE0\xBA\x94\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2 I\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2 II\xE0\xBA\x99\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBA\x8A\xE0\xBA\xB2\xE0\xBA\x99\xE0\xBA\xAD\xE0\xBA\xB5\xE0\xBA\x8D\xE0\xBA\xB2\xE0\xBA\xA3\xE0\xBA\x95\xE0\xBA\xB2\xE0\xBA\xA1\xE0\xBA\xB9\xE0\xBB\x80\xE0\xBA\xAD\xE0\xBA\x9A\xE0\xBA\xAD\xE0\xBA\xB5\xE0\xBA\xA5\xE0\xBA\xB9\xE0\xBA\xAA\xE0\xBA\xB5\xE0\xBA\xA7\xE0\xBA\xB2\xE0\xBA\x99") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0!\x003\0B\0Q\0_\0k\0z\0\x8C\0\x9B\0\xAA\0\xB6\0\xBF\0\xE0\xBA\x97\xE0\xBA\xA3\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBA\xA3\xE0\xBA\xB5\xE0\xBB\x80\xE0\xBA\xAE\xE0\xBA\xA7\xE0\xBA\xB2\xE0\xBA\x99\xE0\xBA\x81\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBB\x80\xE0\xBA\xA5\xE0\xBA\x9A\xE0\xBB\x80\xE0\xBA\x95\xE0\xBB\x80\xE0\xBA\xA7\xE0\xBA\x94\xE0\xBA\x8A\xE0\xBA\xB5\xE0\xBA\xA7\xE0\xBA\xB1\xE0\xBA\x94\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2 I\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2 II\xE0\xBA\x99\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBA\x8A\xE0\xBA\xB2\xE0\xBA\x99\xE0\xBA\xAD\xE0\xBA\xB5\xE0\xBA\x8D\xE0\xBA\xB2\xE0\xBA\xA3\xE0\xBA\xAA\xE0\xBA\xB5\xE0\xBA\xA7\xE0\xBA\xB2\xE0\xBA\x99\xE0\xBA\x95\xE0\xBA\xB2\xE0\xBA\xA1\xE0\xBA\xB9\xE0\xBB\x80\xE0\xBA\xAD\xE0\xBA\x9A\xE0\xBA\xAD\xE0\xBA\xB5\xE0\xBA\xA5\xE0\xBA\xB9") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0!\x003\0B\0Q\0_\0k\0z\0\x8C\0\x9B\0\xA7\0\xB0\0\xBC\0\xE0\xBA\x97\xE0\xBA\xA3\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBA\xA3\xE0\xBA\xB5\xE0\xBB\x80\xE0\xBA\xAE\xE0\xBA\xA7\xE0\xBA\xB2\xE0\xBA\x99\xE0\xBA\x81\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBB\x80\xE0\xBA\xA5\xE0\xBA\x9A\xE0\xBB\x80\xE0\xBA\x95\xE0\xBB\x80\xE0\xBA\xA7\xE0\xBA\x94\xE0\xBA\x8A\xE0\xBA\xB5\xE0\xBA\xA7\xE0\xBA\xB1\xE0\xBA\x94\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2 I\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2 II\xE0\xBA\x99\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBA\x8A\xE0\xBA\xB2\xE0\xBA\x99\xE0\xBA\xAD\xE0\xBA\xB5\xE0\xBA\x8D\xE0\xBA\xB2\xE0\xBA\xA3\xE0\xBA\x95\xE0\xBA\xB2\xE0\xBA\xA1\xE0\xBA\xB9\xE0\xBB\x80\xE0\xBA\xAD\xE0\xBA\x9A\xE0\xBA\xAD\xE0\xBA\xB5\xE0\xBA\xA5\xE0\xBA\xB9\xE0\xBA\xAA\xE0\xBA\xB5\xE0\xBA\xA7\xE0\xBA\xB2\xE0\xBA\x99") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0!\x003\0B\0Q\0_\0k\0z\0\x8C\0\x9B\0\xAA\0\xB6\0\xBF\0\xE0\xBA\x97\xE0\xBA\xA3\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBA\xA3\xE0\xBA\xB5\xE0\xBB\x80\xE0\xBA\xAE\xE0\xBA\xA7\xE0\xBA\xB2\xE0\xBA\x99\xE0\xBA\x81\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBB\x80\xE0\xBA\xA5\xE0\xBA\x9A\xE0\xBB\x80\xE0\xBA\x95\xE0\xBB\x80\xE0\xBA\xA7\xE0\xBA\x94\xE0\xBA\x8A\xE0\xBA\xB5\xE0\xBA\xA7\xE0\xBA\xB1\xE0\xBA\x94\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2 I\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2\xE0\xBA\xAD\xE0\xBA\xB2\xE0\xBA\x94\xE0\xBA\xB2 II\xE0\xBA\x99\xE0\xBA\xB4\xE0\xBA\x94\xE0\xBA\x8A\xE0\xBA\xB2\xE0\xBA\x99\xE0\xBA\xAD\xE0\xBA\xB5\xE0\xBA\x8D\xE0\xBA\xB2\xE0\xBA\xA3\xE0\xBA\xAA\xE0\xBA\xB5\xE0\xBA\xA7\xE0\xBA\xB2\xE0\xBA\x99\xE0\xBA\x95\xE0\xBA\xB2\xE0\xBA\xA1\xE0\xBA\xB9\xE0\xBB\x80\xE0\xBA\xAD\xE0\xBA\x9A\xE0\xBA\xAD\xE0\xBA\xB5\xE0\xBA\xA5\xE0\xBA\xB9") })
                             }),
                         },
                         stand_alone: None,
@@ -5035,16 +5035,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0$\09\0H\0W\0e\0q\0\x80\0\x8F\0\x9B\0\xAA\0\xB0\0\xBC\0\xE0\xAA\xA4\xE0\xAB\x80\xE0\xAA\xB6\xE0\xAB\x8D\xE0\xAA\xB0\xE0\xAB\x80\xE0\xAA\xB9\xE0\xAB\x87\xE0\xAA\xB6\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA8\xE0\xAA\x95\xE0\xAA\xBF\xE0\xAA\xB8\xE0\xAB\x8D\xE0\xAA\xB2\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAA\xA4\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAB\x87\xE0\xAA\x9F\xE0\xAA\xB6\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA4\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0 I\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0 II\xE0\xAA\xA8\xE0\xAA\xBF\xE0\xAA\xB8\xE0\xAA\xBE\xE0\xAA\xA8\xE0\xAA\x88\xE0\xAA\xAF\xE0\xAA\xBE\xE0\xAA\xB0\xE0\xAA\xA4\xE0\xAA\xBE\xE0\xAA\xAE\xE0\xAB\x81\xE0\xAA\x9D\xE0\xAA\x86\xE0\xAA\xB5\xE0\xAA\x88\xE0\xAA\xB2\xE0\xAB\x81\xE0\xAA\xB2\xE0\xAA\xB8\xE0\xAA\xBF\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA8") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0$\09\0H\0W\0e\0q\0\x80\0\x8F\0\x9B\0\xAA\0\xB9\0\xBF\0\xE0\xAA\xA4\xE0\xAB\x80\xE0\xAA\xB6\xE0\xAB\x8D\xE0\xAA\xB0\xE0\xAB\x80\xE0\xAA\xB9\xE0\xAB\x87\xE0\xAA\xB6\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA8\xE0\xAA\x95\xE0\xAA\xBF\xE0\xAA\xB8\xE0\xAB\x8D\xE0\xAA\xB2\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAA\xA4\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAB\x87\xE0\xAA\x9F\xE0\xAA\xB6\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA4\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0 I\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0 II\xE0\xAA\xA8\xE0\xAA\xBF\xE0\xAA\xB8\xE0\xAA\xBE\xE0\xAA\xA8\xE0\xAA\x88\xE0\xAA\xAF\xE0\xAA\xBE\xE0\xAA\xB0\xE0\xAA\xB8\xE0\xAA\xBF\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA8\xE0\xAA\xA4\xE0\xAA\xBE\xE0\xAA\xAE\xE0\xAB\x81\xE0\xAA\x9D\xE0\xAA\x86\xE0\xAA\xB5\xE0\xAA\x88\xE0\xAA\xB2\xE0\xAB\x81\xE0\xAA\xB2") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0$\09\0H\0W\0e\0q\0\x80\0\x8F\0\x9B\0\xAA\0\xB0\0\xBC\0\xE0\xAA\xA4\xE0\xAB\x80\xE0\xAA\xB6\xE0\xAB\x8D\xE0\xAA\xB0\xE0\xAB\x80\xE0\xAA\xB9\xE0\xAB\x87\xE0\xAA\xB6\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA8\xE0\xAA\x95\xE0\xAA\xBF\xE0\xAA\xB8\xE0\xAB\x8D\xE0\xAA\xB2\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAA\xA4\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAB\x87\xE0\xAA\x9F\xE0\xAA\xB6\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA4\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0 I\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0 II\xE0\xAA\xA8\xE0\xAA\xBF\xE0\xAA\xB8\xE0\xAA\xBE\xE0\xAA\xA8\xE0\xAA\x88\xE0\xAA\xAF\xE0\xAA\xBE\xE0\xAA\xB0\xE0\xAA\xA4\xE0\xAA\xBE\xE0\xAA\xAE\xE0\xAB\x81\xE0\xAA\x9D\xE0\xAA\x86\xE0\xAA\xB5\xE0\xAA\x88\xE0\xAA\xB2\xE0\xAB\x81\xE0\xAA\xB2\xE0\xAA\xB8\xE0\xAA\xBF\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA8") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0$\09\0H\0W\0e\0q\0\x80\0\x8F\0\x9B\0\xAA\0\xB9\0\xBF\0\xE0\xAA\xA4\xE0\xAB\x80\xE0\xAA\xB6\xE0\xAB\x8D\xE0\xAA\xB0\xE0\xAB\x80\xE0\xAA\xB9\xE0\xAB\x87\xE0\xAA\xB6\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA8\xE0\xAA\x95\xE0\xAA\xBF\xE0\xAA\xB8\xE0\xAB\x8D\xE0\xAA\xB2\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAA\xA4\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAB\x87\xE0\xAA\x9F\xE0\xAA\xB6\xE0\xAB\x87\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA4\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0 I\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0\xE0\xAA\x85\xE0\xAA\xA6\xE0\xAA\xBE\xE0\xAA\xB0 II\xE0\xAA\xA8\xE0\xAA\xBF\xE0\xAA\xB8\xE0\xAA\xBE\xE0\xAA\xA8\xE0\xAA\x88\xE0\xAA\xAF\xE0\xAA\xBE\xE0\xAA\xB0\xE0\xAA\xB8\xE0\xAA\xBF\xE0\xAA\xB5\xE0\xAA\xBE\xE0\xAA\xA8\xE0\xAA\xA4\xE0\xAA\xBE\xE0\xAA\xAE\xE0\xAB\x81\xE0\xAA\x9D\xE0\xAA\x86\xE0\xAA\xB5\xE0\xAA\x88\xE0\xAA\xB2\xE0\xAB\x81\xE0\xAA\xB2") })
                             }),
                         },
                         stand_alone: None,
@@ -5070,16 +5070,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0$\x006\0B\0Q\0\\\0e\0q\0\x80\0\x8C\0\x9E\0\xA4\0\xB0\0\xE0\xA8\xA4\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA8\xB0\xE0\xA9\x80\xE0\xA8\xB9\xE0\xA9\x87\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA8\xB5\xE0\xA8\xA8\xE0\xA8\x95\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xB2\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0 I\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0 II\xE0\xA8\xA8\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xBE\xE0\xA8\xA8\xE0\xA8\x85\xE0\xA8\x87\xE0\xA8\xAF\xE0\xA8\xB0\xE0\xA8\xA4\xE0\xA8\xBE\xE0\xA8\xAE\xE0\xA9\x81\xE0\xA8\x9C\xE0\xA8\xBC\xE0\xA8\x85\xE0\xA8\xB5\xE0\xA8\x8F\xE0\xA8\xB2\xE0\xA9\x81\xE0\xA8\xB2\xE0\xA8\xB8\xE0\xA8\xBF\xE0\xA8\xB5\xE0\xA8\xBE\xE0\xA8\xA8") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0$\x006\0B\0Q\0\\\0e\0q\0\x80\0\x8C\0\x9B\0\xAD\0\xB3\0\xE0\xA8\xA4\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA8\xB0\xE0\xA9\x80\xE0\xA8\xB9\xE0\xA9\x87\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA8\xB5\xE0\xA8\xA8\xE0\xA8\x95\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xB2\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0 I\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0 II\xE0\xA8\xA8\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xBE\xE0\xA8\xA8\xE0\xA8\x85\xE0\xA8\x87\xE0\xA8\xAF\xE0\xA8\xB0\xE0\xA8\xB8\xE0\xA8\xBF\xE0\xA8\xB5\xE0\xA8\xBE\xE0\xA8\xA8\xE0\xA8\xA4\xE0\xA8\xBE\xE0\xA8\xAE\xE0\xA9\x81\xE0\xA8\x9C\xE0\xA8\xBC\xE0\xA8\x85\xE0\xA8\xB5\xE0\xA8\x8F\xE0\xA8\xB2\xE0\xA9\x81\xE0\xA8\xB2") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0$\x006\0B\0Q\0\\\0e\0q\0\x80\0\x8C\0\x9E\0\xA4\0\xB0\0\xE0\xA8\xA4\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA8\xB0\xE0\xA9\x80\xE0\xA8\xB9\xE0\xA9\x87\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA8\xB5\xE0\xA8\xA8\xE0\xA8\x95\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xB2\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0 I\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0 II\xE0\xA8\xA8\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xBE\xE0\xA8\xA8\xE0\xA8\x85\xE0\xA8\x87\xE0\xA8\xAF\xE0\xA8\xB0\xE0\xA8\xA4\xE0\xA8\xBE\xE0\xA8\xAE\xE0\xA9\x81\xE0\xA8\x9C\xE0\xA8\xBC\xE0\xA8\x85\xE0\xA8\xB5\xE0\xA8\x8F\xE0\xA8\xB2\xE0\xA9\x81\xE0\xA8\xB2\xE0\xA8\xB8\xE0\xA8\xBF\xE0\xA8\xB5\xE0\xA8\xBE\xE0\xA8\xA8") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0$\x006\0B\0Q\0\\\0e\0q\0\x80\0\x8C\0\x9B\0\xAD\0\xB3\0\xE0\xA8\xA4\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA8\xB0\xE0\xA9\x80\xE0\xA8\xB9\xE0\xA9\x87\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA8\xB5\xE0\xA8\xA8\xE0\xA8\x95\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xB2\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA8\xB8\xE0\xA8\xBC\xE0\xA9\x87\xE0\xA8\xB5\xE0\xA8\x9F\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0 I\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0\xE0\xA8\x85\xE0\xA8\xA6\xE0\xA8\xB0 II\xE0\xA8\xA8\xE0\xA8\xBF\xE0\xA8\xB8\xE0\xA8\xBE\xE0\xA8\xA8\xE0\xA8\x85\xE0\xA8\x87\xE0\xA8\xAF\xE0\xA8\xB0\xE0\xA8\xB8\xE0\xA8\xBF\xE0\xA8\xB5\xE0\xA8\xBE\xE0\xA8\xA8\xE0\xA8\xA4\xE0\xA8\xBE\xE0\xA8\xAE\xE0\xA9\x81\xE0\xA8\x9C\xE0\xA8\xBC\xE0\xA8\x85\xE0\xA8\xB5\xE0\xA8\x8F\xE0\xA8\xB2\xE0\xA9\x81\xE0\xA8\xB2") })
                             }),
                         },
                         stand_alone: None,
@@ -5105,16 +5105,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0'\0B\0Z\0r\0\x80\0\x8C\0\x9B\0\xAA\0\xB6\0\xC8\0\xD1\0\xDD\0\xE0\xB4\xA4\xE0\xB4\xBF\xE0\xB4\xB7\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB4\xBF\xE0\xB4\xB9\xE0\xB5\x86\xE0\xB4\xB7\xE0\xB5\x8D\xE2\x80\x8C\xE0\xB4\xB5\xE0\xB5\xBB\xE0\xB4\x95\xE0\xB4\xBF\xE0\xB4\xB8\xE0\xB5\x8D\xE2\x80\x8C\xE0\xB4\xB2\xE0\xB5\x86\xE0\xB4\xB5\xE0\xB5\x8D\xE0\xB4\x9F\xE0\xB4\xBF\xE0\xB4\xB5\xE0\xB5\x86\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB8\xE0\xB5\x80\xE0\xB4\xAC\xE0\xB4\xBE\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC I\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC II\xE0\xB4\xA8\xE0\xB4\xBF\xE0\xB4\xB8\xE0\xB4\xBE\xE0\xB5\xBB\xE0\xB4\x87\xE0\xB4\xAF\xE0\xB4\xBE\xE0\xB5\xBC\xE0\xB4\xA4\xE0\xB4\xBE\xE0\xB4\xAE\xE0\xB5\x82\xE0\xB4\xB8\xE0\xB5\x8D\xE0\xB4\x85\xE0\xB4\xAC\xE0\xB5\x8D\xE0\xB4\x8F\xE0\xB4\xB2\xE0\xB5\x81\xE0\xB5\xBE\xE0\xB4\xB8\xE0\xB4\xBF\xE0\xB4\xB5\xE0\xB4\xBE\xE0\xB5\xBB") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0'\0B\0Z\0r\0\x80\0\x8C\0\x9B\0\xAA\0\xB6\0\xC5\0\xD7\0\xE0\0\xE0\xB4\xA4\xE0\xB4\xBF\xE0\xB4\xB7\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB4\xBF\xE0\xB4\xB9\xE0\xB5\x86\xE0\xB4\xB7\xE0\xB5\x8D\xE2\x80\x8C\xE0\xB4\xB5\xE0\xB5\xBB\xE0\xB4\x95\xE0\xB4\xBF\xE0\xB4\xB8\xE0\xB5\x8D\xE2\x80\x8C\xE0\xB4\xB2\xE0\xB5\x86\xE0\xB4\xB5\xE0\xB5\x8D\xE0\xB4\x9F\xE0\xB4\xBF\xE0\xB4\xB5\xE0\xB5\x86\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB8\xE0\xB5\x80\xE0\xB4\xAC\xE0\xB4\xBE\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC I\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC II\xE0\xB4\xA8\xE0\xB4\xBF\xE0\xB4\xB8\xE0\xB4\xBE\xE0\xB5\xBB\xE0\xB4\x87\xE0\xB4\xAF\xE0\xB4\xBE\xE0\xB5\xBC\xE0\xB4\xB8\xE0\xB4\xBF\xE0\xB4\xB5\xE0\xB4\xBE\xE0\xB5\xBB\xE0\xB4\xA4\xE0\xB4\xBE\xE0\xB4\xAE\xE0\xB5\x82\xE0\xB4\xB8\xE0\xB5\x8D\xE0\xB4\x85\xE0\xB4\xAC\xE0\xB5\x8D\xE0\xB4\x8F\xE0\xB4\xB2\xE0\xB5\x81\xE0\xB5\xBE") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0E\0\x15\0\x1C\0#\0(\0,\x002\09\0=\0D\0H\0L\0\xE0\xB4\xA4\xE0\xB4\xBF.\xE0\xB4\xB9\xE0\xB5\x86.\xE0\xB4\x95\xE0\xB4\xBF.\xE0\xB4\x9F\xE0\xB4\xBF.\xE0\xB4\xB8\xE0\xB5\x80.\xE0\xB4\x85 I\xE0\xB4\x85.\xE0\xB4\x85 II\xE0\xB4\xA8\xE0\xB4\xBF.\xE0\xB4\x87.\xE0\xB4\xA4\xE0\xB4\xBE.\xE0\xB4\x85.\xE0\xB4\x8F.\xE0\xB4\xB8\xE0\xB4\xBF.") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x07\0\x0E\0\x15\0\x1C\0#\0(\0,\x002\09\0=\0D\0K\0O\0\xE0\xB4\xA4\xE0\xB4\xBF.\xE0\xB4\xB9\xE0\xB5\x86.\xE0\xB4\x95\xE0\xB4\xBF.\xE0\xB4\x9F\xE0\xB4\xBF.\xE0\xB4\xB8\xE0\xB5\x80.\xE0\xB4\x85 I\xE0\xB4\x85.\xE0\xB4\x85 II\xE0\xB4\xA8\xE0\xB4\xBF.\xE0\xB4\x87.\xE0\xB4\xB8\xE0\xB4\xBF.\xE0\xB4\xA4\xE0\xB4\xBE.\xE0\xB4\x85.\xE0\xB4\x8F.") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0'\0B\0Z\0r\0\x80\0\x8C\0\x9B\0\xAA\0\xB6\0\xC8\0\xD1\0\xDD\0\xE0\xB4\xA4\xE0\xB4\xBF\xE0\xB4\xB7\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB4\xBF\xE0\xB4\xB9\xE0\xB5\x86\xE0\xB4\xB7\xE0\xB5\x8D\xE2\x80\x8C\xE0\xB4\xB5\xE0\xB5\xBB\xE0\xB4\x95\xE0\xB4\xBF\xE0\xB4\xB8\xE0\xB5\x8D\xE2\x80\x8C\xE0\xB4\xB2\xE0\xB5\x86\xE0\xB4\xB5\xE0\xB5\x8D\xE0\xB4\x9F\xE0\xB4\xBF\xE0\xB4\xB5\xE0\xB5\x86\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB8\xE0\xB5\x80\xE0\xB4\xAC\xE0\xB4\xBE\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC I\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC II\xE0\xB4\xA8\xE0\xB4\xBF\xE0\xB4\xB8\xE0\xB4\xBE\xE0\xB5\xBB\xE0\xB4\x87\xE0\xB4\xAF\xE0\xB4\xBE\xE0\xB5\xBC\xE0\xB4\xA4\xE0\xB4\xBE\xE0\xB4\xAE\xE0\xB5\x82\xE0\xB4\xB8\xE0\xB5\x8D\xE0\xB4\x85\xE0\xB4\xAC\xE0\xB5\x8D\xE0\xB4\x8F\xE0\xB4\xB2\xE0\xB5\x81\xE0\xB5\xBE\xE0\xB4\xB8\xE0\xB4\xBF\xE0\xB4\xB5\xE0\xB4\xBE\xE0\xB5\xBB") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0'\0B\0Z\0r\0\x80\0\x8C\0\x9B\0\xAA\0\xB6\0\xC5\0\xD7\0\xE0\0\xE0\xB4\xA4\xE0\xB4\xBF\xE0\xB4\xB7\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB4\xBF\xE0\xB4\xB9\xE0\xB5\x86\xE0\xB4\xB7\xE0\xB5\x8D\xE2\x80\x8C\xE0\xB4\xB5\xE0\xB5\xBB\xE0\xB4\x95\xE0\xB4\xBF\xE0\xB4\xB8\xE0\xB5\x8D\xE2\x80\x8C\xE0\xB4\xB2\xE0\xB5\x86\xE0\xB4\xB5\xE0\xB5\x8D\xE0\xB4\x9F\xE0\xB4\xBF\xE0\xB4\xB5\xE0\xB5\x86\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB8\xE0\xB5\x80\xE0\xB4\xAC\xE0\xB4\xBE\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\xB1\xE0\xB5\x8D\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC I\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC\xE0\xB4\x85\xE0\xB4\xA6\xE0\xB4\xBE\xE0\xB5\xBC II\xE0\xB4\xA8\xE0\xB4\xBF\xE0\xB4\xB8\xE0\xB4\xBE\xE0\xB5\xBB\xE0\xB4\x87\xE0\xB4\xAF\xE0\xB4\xBE\xE0\xB5\xBC\xE0\xB4\xB8\xE0\xB4\xBF\xE0\xB4\xB5\xE0\xB4\xBE\xE0\xB5\xBB\xE0\xB4\xA4\xE0\xB4\xBE\xE0\xB4\xAE\xE0\xB5\x82\xE0\xB4\xB8\xE0\xB5\x8D\xE0\xB4\x85\xE0\xB4\xAC\xE0\xB5\x8D\xE0\xB4\x8F\xE0\xB4\xB2\xE0\xB5\x81\xE0\xB5\xBE") })
                             }),
                         },
                         stand_alone: None,
@@ -5140,16 +5140,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0-\0E\0W\0f\0w\0\x86\0\x98\0\xAA\0\xB6\0\xC5\0\xCE\0\xDD\0\xE0\xB2\x9F\xE0\xB2\xBF\xE0\xB2\xB6\xE0\xB3\x8D\xE0\xB2\xB0\xE0\xB2\xBF\xE0\xB2\xB9\xE0\xB3\x86\xE0\xB2\xB6\xE0\xB3\x8D\xE2\x80\x8C\xE0\xB2\xB5\xE0\xB2\xBE\xE0\xB2\xA8\xE0\xB3\x8D\xE0\xB2\x95\xE0\xB2\xBF\xE0\xB2\xB8\xE0\xB3\x8D\xE0\xB2\xB2\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB3\x8D\xE0\xB2\x9F\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB3\x86\xE0\xB2\x9F\xE0\xB3\x8D\xE0\xB2\xB6\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB2\xA4\xE0\xB3\x8D\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D I\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D II\xE0\xB2\xA8\xE0\xB2\xBF\xE0\xB2\xB8\xE0\xB2\xBE\xE0\xB2\xA8\xE0\xB3\x8D\xE0\xB2\x87\xE0\xB2\xAF\xE0\xB2\xB0\xE0\xB3\x8D\xE0\xB2\xA4\xE0\xB2\xAE\xE0\xB3\x81\xE0\xB2\x9C\xE0\xB3\x8D\xE0\xB2\x8E\xE0\xB2\xB5\xE0\xB2\xBF\xE0\xB2\x8E\xE0\xB2\xB2\xE0\xB3\x81\xE0\xB2\xB2\xE0\xB3\x8D\xE0\xB2\xB8\xE0\xB2\xBF\xE0\xB2\xB5\xE0\xB2\xA8\xE0\xB3\x8D") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0-\0E\0W\0f\0w\0\x86\0\x98\0\xAA\0\xB6\0\xC5\0\xD4\0\xDD\0\xE0\xB2\x9F\xE0\xB2\xBF\xE0\xB2\xB6\xE0\xB3\x8D\xE0\xB2\xB0\xE0\xB2\xBF\xE0\xB2\xB9\xE0\xB3\x86\xE0\xB2\xB6\xE0\xB3\x8D\xE2\x80\x8C\xE0\xB2\xB5\xE0\xB2\xBE\xE0\xB2\xA8\xE0\xB3\x8D\xE0\xB2\x95\xE0\xB2\xBF\xE0\xB2\xB8\xE0\xB3\x8D\xE0\xB2\xB2\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB3\x8D\xE0\xB2\x9F\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB3\x86\xE0\xB2\x9F\xE0\xB3\x8D\xE0\xB2\xB6\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB2\xA4\xE0\xB3\x8D\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D I\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D II\xE0\xB2\xA8\xE0\xB2\xBF\xE0\xB2\xB8\xE0\xB2\xBE\xE0\xB2\xA8\xE0\xB3\x8D\xE0\xB2\x87\xE0\xB2\xAF\xE0\xB2\xB0\xE0\xB3\x8D\xE0\xB2\xB8\xE0\xB2\xBF\xE0\xB2\xB5\xE0\xB2\xA8\xE0\xB3\x8D\xE0\xB2\xA4\xE0\xB2\xAE\xE0\xB3\x81\xE0\xB2\x9C\xE0\xB3\x8D\xE0\xB2\x8E\xE0\xB2\xB5\xE0\xB2\xBF\xE0\xB2\x8E\xE0\xB2\xB2\xE0\xB3\x81\xE0\xB2\xB2\xE0\xB3\x8D") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0-\0E\0W\0f\0w\0\x86\0\x98\0\xAA\0\xB6\0\xC5\0\xCE\0\xDD\0\xE0\xB2\x9F\xE0\xB2\xBF\xE0\xB2\xB6\xE0\xB3\x8D\xE0\xB2\xB0\xE0\xB2\xBF\xE0\xB2\xB9\xE0\xB3\x86\xE0\xB2\xB6\xE0\xB3\x8D\xE2\x80\x8C\xE0\xB2\xB5\xE0\xB2\xBE\xE0\xB2\xA8\xE0\xB3\x8D\xE0\xB2\x95\xE0\xB2\xBF\xE0\xB2\xB8\xE0\xB3\x8D\xE0\xB2\xB2\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB3\x8D\xE0\xB2\x9F\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB3\x86\xE0\xB2\x9F\xE0\xB3\x8D\xE0\xB2\xB6\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB2\xA4\xE0\xB3\x8D\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D I\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D II\xE0\xB2\xA8\xE0\xB2\xBF\xE0\xB2\xB8\xE0\xB2\xBE\xE0\xB2\xA8\xE0\xB3\x8D\xE0\xB2\x87\xE0\xB2\xAF\xE0\xB2\xB0\xE0\xB3\x8D\xE0\xB2\xA4\xE0\xB2\xAE\xE0\xB3\x81\xE0\xB2\x9C\xE0\xB3\x8D\xE0\xB2\x8E\xE0\xB2\xB5\xE0\xB2\xBF\xE0\xB2\x8E\xE0\xB2\xB2\xE0\xB3\x81\xE0\xB2\xB2\xE0\xB3\x8D\xE0\xB2\xB8\xE0\xB2\xBF\xE0\xB2\xB5\xE0\xB2\xA8\xE0\xB3\x8D") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0-\0E\0W\0f\0w\0\x86\0\x98\0\xAA\0\xB6\0\xC5\0\xD4\0\xDD\0\xE0\xB2\x9F\xE0\xB2\xBF\xE0\xB2\xB6\xE0\xB3\x8D\xE0\xB2\xB0\xE0\xB2\xBF\xE0\xB2\xB9\xE0\xB3\x86\xE0\xB2\xB6\xE0\xB3\x8D\xE2\x80\x8C\xE0\xB2\xB5\xE0\xB2\xBE\xE0\xB2\xA8\xE0\xB3\x8D\xE0\xB2\x95\xE0\xB2\xBF\xE0\xB2\xB8\xE0\xB3\x8D\xE0\xB2\xB2\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB3\x8D\xE0\xB2\x9F\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB3\x86\xE0\xB2\x9F\xE0\xB3\x8D\xE0\xB2\xB6\xE0\xB3\x86\xE0\xB2\xB5\xE0\xB2\xA4\xE0\xB3\x8D\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D I\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D\xE0\xB2\x85\xE0\xB2\xA6\xE0\xB2\xBE\xE0\xB2\xB0\xE0\xB3\x8D II\xE0\xB2\xA8\xE0\xB2\xBF\xE0\xB2\xB8\xE0\xB2\xBE\xE0\xB2\xA8\xE0\xB3\x8D\xE0\xB2\x87\xE0\xB2\xAF\xE0\xB2\xB0\xE0\xB3\x8D\xE0\xB2\xB8\xE0\xB2\xBF\xE0\xB2\xB5\xE0\xB2\xA8\xE0\xB3\x8D\xE0\xB2\xA4\xE0\xB2\xAE\xE0\xB3\x81\xE0\xB2\x9C\xE0\xB3\x8D\xE0\xB2\x8E\xE0\xB2\xB5\xE0\xB2\xBF\xE0\xB2\x8E\xE0\xB2\xB2\xE0\xB3\x81\xE0\xB2\xB2\xE0\xB3\x8D") })
                             }),
                         },
                         stand_alone: None,
@@ -5175,16 +5175,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0-\0E\0W\0i\0w\0\x83\0\x92\0\xA4\0\xB0\0\xBF\0\xC5\0\xD4\0\xE0\xB0\x9F\xE0\xB0\xBF\xE0\xB0\xB6\xE0\xB1\x8D\xE0\xB0\xB0\xE0\xB1\x80\xE0\xB0\xB9\xE0\xB1\x87\xE0\xB0\xB7\xE0\xB1\x8D\xE2\x80\x8C\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D\xE0\xB0\x95\xE0\xB0\xBF\xE0\xB0\xB8\xE0\xB1\x8D\xE0\xB0\xB2\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB1\x8D\xE0\xB0\x9F\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB1\x86\xE0\xB0\x9F\xE0\xB1\x8D\xE0\xB0\xB7\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\x9F\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D I\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D II\xE0\xB0\xA8\xE0\xB0\xBF\xE0\xB0\xB8\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D\xE0\xB0\x90\xE0\xB0\xAF\xE0\xB0\xB0\xE0\xB1\x8D\xE0\xB0\xA4\xE0\xB0\xAE\xE0\xB1\x81\xE0\xB0\x9C\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xB5\xE0\xB0\x87\xE0\xB0\xB2\xE0\xB1\x81\xE0\xB0\xB2\xE0\xB1\x8D\xE0\xB0\xB8\xE0\xB0\xBF\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0-\0E\0W\0i\0w\0\x83\0\x92\0\xA4\0\xB0\0\xC2\0\xD1\0\xD7\0\xE0\xB0\x9F\xE0\xB0\xBF\xE0\xB0\xB6\xE0\xB1\x8D\xE0\xB0\xB0\xE0\xB1\x80\xE0\xB0\xB9\xE0\xB1\x87\xE0\xB0\xB7\xE0\xB1\x8D\xE2\x80\x8C\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D\xE0\xB0\x95\xE0\xB0\xBF\xE0\xB0\xB8\xE0\xB1\x8D\xE0\xB0\xB2\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB1\x8D\xE0\xB0\x9F\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB1\x86\xE0\xB0\x9F\xE0\xB1\x8D\xE0\xB0\xB7\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\x9F\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D I\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D II\xE0\xB0\xA8\xE0\xB0\xBF\xE0\xB0\xB8\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D\xE0\xB0\x90\xE0\xB0\xAF\xE0\xB0\xB0\xE0\xB1\x8D\xE0\xB0\xB8\xE0\xB0\xBF\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D\xE0\xB0\xA4\xE0\xB0\xAE\xE0\xB1\x81\xE0\xB0\x9C\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xB5\xE0\xB0\x87\xE0\xB0\xB2\xE0\xB1\x81\xE0\xB0\xB2\xE0\xB1\x8D") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778911121310") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0-\0E\0W\0i\0w\0\x83\0\x92\0\xA4\0\xB0\0\xBF\0\xC5\0\xD4\0\xE0\xB0\x9F\xE0\xB0\xBF\xE0\xB0\xB6\xE0\xB1\x8D\xE0\xB0\xB0\xE0\xB1\x80\xE0\xB0\xB9\xE0\xB1\x87\xE0\xB0\xB7\xE0\xB1\x8D\xE2\x80\x8C\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D\xE0\xB0\x95\xE0\xB0\xBF\xE0\xB0\xB8\xE0\xB1\x8D\xE0\xB0\xB2\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB1\x8D\xE0\xB0\x9F\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB1\x86\xE0\xB0\x9F\xE0\xB1\x8D\xE0\xB0\xB7\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\x9F\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D I\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D II\xE0\xB0\xA8\xE0\xB0\xBF\xE0\xB0\xB8\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D\xE0\xB0\x90\xE0\xB0\xAF\xE0\xB0\xB0\xE0\xB1\x8D\xE0\xB0\xA4\xE0\xB0\xAE\xE0\xB1\x81\xE0\xB0\x9C\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xB5\xE0\xB0\x87\xE0\xB0\xB2\xE0\xB1\x81\xE0\xB0\xB2\xE0\xB1\x8D\xE0\xB0\xB8\xE0\xB0\xBF\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x12\0-\0E\0W\0i\0w\0\x83\0\x92\0\xA4\0\xB0\0\xC2\0\xD1\0\xD7\0\xE0\xB0\x9F\xE0\xB0\xBF\xE0\xB0\xB6\xE0\xB1\x8D\xE0\xB0\xB0\xE0\xB1\x80\xE0\xB0\xB9\xE0\xB1\x87\xE0\xB0\xB7\xE0\xB1\x8D\xE2\x80\x8C\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D\xE0\xB0\x95\xE0\xB0\xBF\xE0\xB0\xB8\xE0\xB1\x8D\xE0\xB0\xB2\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB1\x8D\xE0\xB0\x9F\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB1\x86\xE0\xB0\x9F\xE0\xB1\x8D\xE0\xB0\xB7\xE0\xB1\x86\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\x9F\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D I\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB1\x8D II\xE0\xB0\xA8\xE0\xB0\xBF\xE0\xB0\xB8\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D\xE0\xB0\x90\xE0\xB0\xAF\xE0\xB0\xB0\xE0\xB1\x8D\xE0\xB0\xB8\xE0\xB0\xBF\xE0\xB0\xB5\xE0\xB0\xBE\xE0\xB0\xA8\xE0\xB1\x8D\xE0\xB0\xA4\xE0\xB0\xAE\xE0\xB1\x81\xE0\xB0\x9C\xE0\xB1\x8D\xE0\xB0\x85\xE0\xB0\xB5\xE0\xB0\x87\xE0\xB0\xB2\xE0\xB1\x81\xE0\xB0\xB2\xE0\xB1\x8D") })
                             }),
                         },
                         stand_alone: None,
@@ -5210,16 +5210,16 @@ macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
                         format: icu_datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x14\0,\0D\0X\0l\0\x81\0\x91\0\xA6\0\xBA\0\xCA\0\xDE\0\xE6\0\xF6\0\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x83\xF0\x9E\xA4\xAA\xF0\x9E\xA4\xAD\xF0\x9E\xA4\x96\xF0\x9E\xA4\xAB\xF0\x9E\xA5\x83\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2\xF0\x9E\xA4\x91\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBC\xF0\x9E\xA4\xA1\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xBC\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA \xF0\x9E\xA5\x91\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA \xF0\x9E\xA5\x92\xF0\x9E\xA4\x90\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2\xF0\x9E\xA4\x8B\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xB5\xF0\x9E\xA5\x81\xF0\x9E\xA4\x80\xF0\x9E\xA4\xBE\xF0\x9E\xA4\x89\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xB5\xF0\x9E\xA4\xA4\xF0\x9E\xA4\x85\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x14\0,\0D\0X\0l\0\x81\0\x91\0\xA6\0\xBA\0\xCA\0\xDE\0\xF2\0\xFA\0\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x83\xF0\x9E\xA4\xAA\xF0\x9E\xA4\xAD\xF0\x9E\xA4\x96\xF0\x9E\xA4\xAB\xF0\x9E\xA5\x83\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2\xF0\x9E\xA4\x91\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBC\xF0\x9E\xA4\xA1\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xBC\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA \xF0\x9E\xA5\x91\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA \xF0\x9E\xA5\x92\xF0\x9E\xA4\x90\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2\xF0\x9E\xA4\x8B\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x85\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xB5\xF0\x9E\xA5\x81\xF0\x9E\xA4\x80\xF0\x9E\xA4\xBE\xF0\x9E\xA4\x89\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xB5\xF0\x9E\xA4\xA4") })
                             }),
                             narrow: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x14\0\x18\0\x1C\0 \0$\0(\x000\08\0@\0\xF0\x9E\xA5\x91\xF0\x9E\xA5\x92\xF0\x9E\xA5\x93\xF0\x9E\xA5\x94\xF0\x9E\xA5\x95\xF0\x9E\xA5\x96\xF0\x9E\xA5\x97\xF0\x9E\xA5\x97\xF0\x9E\xA5\x98\xF0\x9E\xA5\x99\xF0\x9E\xA5\x91\xF0\x9E\xA5\x91\xF0\x9E\xA5\x91\xF0\x9E\xA5\x92\xF0\x9E\xA5\x91\xF0\x9E\xA5\x93\xF0\x9E\xA5\x91\xF0\x9E\xA5\x90") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x14\0\x18\0\x1C\0 \0$\0(\x000\08\0@\0\xF0\x9E\xA5\x91\xF0\x9E\xA5\x92\xF0\x9E\xA5\x93\xF0\x9E\xA5\x94\xF0\x9E\xA5\x95\xF0\x9E\xA5\x96\xF0\x9E\xA5\x97\xF0\x9E\xA5\x97\xF0\x9E\xA5\x98\xF0\x9E\xA5\x99\xF0\x9E\xA5\x91\xF0\x9E\xA5\x90\xF0\x9E\xA5\x91\xF0\x9E\xA5\x91\xF0\x9E\xA5\x91\xF0\x9E\xA5\x92\xF0\x9E\xA5\x91\xF0\x9E\xA5\x93") })
                             }),
                             short: None,
                             wide: icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
                                 #[allow(unused_unsafe)]
-                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M10\0M11\0M12\0M9\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x14\0,\0D\0X\0l\0\x81\0\x91\0\xA6\0\xBA\0\xCA\0\xDE\0\xE6\0\xF6\0\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x83\xF0\x9E\xA4\xAA\xF0\x9E\xA4\xAD\xF0\x9E\xA4\x96\xF0\x9E\xA4\xAB\xF0\x9E\xA5\x83\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2\xF0\x9E\xA4\x91\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBC\xF0\x9E\xA4\xA1\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xBC\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA \xF0\x9E\xA5\x91\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA \xF0\x9E\xA5\x92\xF0\x9E\xA4\x90\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2\xF0\x9E\xA4\x8B\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xB5\xF0\x9E\xA5\x81\xF0\x9E\xA4\x80\xF0\x9E\xA4\xBE\xF0\x9E\xA4\x89\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xB5\xF0\x9E\xA4\xA4\xF0\x9E\xA4\x85\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2") })
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x14\0,\0D\0X\0l\0\x81\0\x91\0\xA6\0\xBA\0\xCA\0\xDE\0\xF2\0\xFA\0\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x83\xF0\x9E\xA4\xAA\xF0\x9E\xA4\xAD\xF0\x9E\xA4\x96\xF0\x9E\xA4\xAB\xF0\x9E\xA5\x83\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2\xF0\x9E\xA4\x91\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBC\xF0\x9E\xA4\xA1\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xBC\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA \xF0\x9E\xA5\x91\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x80\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA \xF0\x9E\xA5\x92\xF0\x9E\xA4\x90\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2\xF0\x9E\xA4\x8B\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xAA\xF0\x9E\xA4\x85\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xBE\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB2\xF0\x9E\xA4\x9A\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xB5\xF0\x9E\xA5\x81\xF0\x9E\xA4\x80\xF0\x9E\xA4\xBE\xF0\x9E\xA4\x89\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xB5\xF0\x9E\xA4\xA4") })
                             }),
                         },
                         stand_alone: None,
