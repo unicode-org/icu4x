@@ -44,8 +44,8 @@ impl AsULE for CurrencyPatterns {
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
         let mut first_byte: u8 = 0;
-        let second_byte: u8;
-        let third_byte: u8;
+        
+        
         if self.short_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
             first_byte |= 0b0100_0000;
         }
@@ -55,7 +55,7 @@ impl AsULE for CurrencyPatterns {
 
         // For short_place_holder_index
         let first_index_byte = self.short_place_holder_index.to_be_bytes()[0];
-        second_byte = self.short_place_holder_index.to_be_bytes()[1];
+        let second_byte: u8 = self.short_place_holder_index.to_be_bytes()[1];
         if first_index_byte < 2_u8.pow(2) {
             first_byte |= first_index_byte << 2;
         } else {
@@ -67,7 +67,7 @@ impl AsULE for CurrencyPatterns {
 
         // For narrow_place_holder_index
         let first_index_byte = self.narrow_place_holder_index.to_be_bytes()[0];
-        third_byte = self.narrow_place_holder_index.to_be_bytes()[1];
+        let third_byte: u8 = self.narrow_place_holder_index.to_be_bytes()[1];
         if first_index_byte < 2_u8.pow(2) {
             first_byte |= first_index_byte;
         } else {
