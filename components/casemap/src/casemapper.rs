@@ -7,7 +7,7 @@ use crate::provider::data::MappingKind;
 use crate::provider::CaseMapV1;
 use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSink;
-use crate::titlecase::{LeadingAdjustment, TrailingCase, TitlecaseOptions};
+use crate::titlecase::{LeadingAdjustment, TitlecaseOptions, TrailingCase};
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -302,8 +302,9 @@ impl CaseMapper {
         self.uppercase(src, langid).write_to_string().into_owned()
     }
 
-    /// Returns the full titlecase mapping of the given string as a String, treating
-    /// the string as a single segment (and thus only titlecasing the beginning of it).
+    /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
+    /// the string as a single segment (and thus only titlecasing the beginning of it). Performs
+    /// the specified leading adjustment behavior from the options without loading additional data.
     ///
     /// This should typically be used as a lower-level helper to construct the titlecasing operation desired
     /// by the application, for example one can titlecase on a per-word basis by mixing this with
@@ -313,7 +314,9 @@ impl CaseMapper {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// This function performs legacy head adjustment behavior when [`LeadingAdjustment::Adjust`] is set. See
+    /// This function performs "adjust to cased" leading adjustment behavior when [`LeadingAdjustment::Auto`] or [`LeadingAdjustment::ToCased`]
+    /// is set. Auto mode is not able to pick the "adjust to letter/number/symbol" behavior as this type does not load
+    /// the data to do so, use [`TitlecaseMapper`] if such behavior is desired. See
     /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
     /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
     /// is [`LeadingAdjustment::NoAdjust`].
@@ -624,7 +627,11 @@ mod tests {
         );
         // but the YPOGEGRAMMENI should not titlecase
         assert_eq!(
-            cm.titlecase_segment_with_only_case_data_to_string("α\u{0313}\u{0345}", &root, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string(
+                "α\u{0313}\u{0345}",
+                &root,
+                default_options
+            ),
             "Α\u{0313}\u{0345}"
         );
 
