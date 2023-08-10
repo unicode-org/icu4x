@@ -42,15 +42,6 @@ class ICU4XTitlecaseMapper {
   static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
-   * Construct a new `ICU4XTitlecaseMapper` instance with legacy head-adjustment behavior
-   * 
-   * Behaves identically to using `titlecase_segment_legacy` on `CaseMapper`
-   * 
-   * See the [Rust documentation for `new_legacy`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy) for more information.
-   */
-  static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create_legacy(const ICU4XDataProvider& provider);
-
-  /**
    * Returns the full titlecase mapping of the given string
    * 
    * The `v1` refers to the version of the options struct, which may change as we add more options
@@ -83,16 +74,6 @@ class ICU4XTitlecaseMapper {
 
 inline diplomat::result<ICU4XTitlecaseMapper, ICU4XError> ICU4XTitlecaseMapper::create(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XTitlecaseMapper_create(provider.AsFFI());
-  diplomat::result<ICU4XTitlecaseMapper, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XTitlecaseMapper>(std::move(ICU4XTitlecaseMapper(diplomat_result_raw_out_value.ok)));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
-  }
-  return diplomat_result_out_value;
-}
-inline diplomat::result<ICU4XTitlecaseMapper, ICU4XError> ICU4XTitlecaseMapper::create_legacy(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XTitlecaseMapper_create_legacy(provider.AsFFI());
   diplomat::result<ICU4XTitlecaseMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XTitlecaseMapper>(std::move(ICU4XTitlecaseMapper(diplomat_result_raw_out_value.ok)));

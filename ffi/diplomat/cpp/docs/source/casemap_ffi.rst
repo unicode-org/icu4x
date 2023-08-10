@@ -203,15 +203,6 @@
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create_legacy(const ICU4XDataProvider& provider)
-
-        Construct a new ``ICU4XTitlecaseMapper`` instance with legacy head-adjustment behavior
-
-        Behaves identically to using ``titlecase_segment_legacy`` on ``CaseMapper``
-
-        See the `Rust documentation for new_legacy <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy>`__ for more information.
-
-
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const
 
         Returns the full titlecase mapping of the given string

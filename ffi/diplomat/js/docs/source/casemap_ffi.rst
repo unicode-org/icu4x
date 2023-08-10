@@ -158,15 +158,6 @@
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new>`__ for more information.
 
 
-    .. js:function:: create_legacy(provider)
-
-        Construct a new ``ICU4XTitlecaseMapper`` instance with legacy head-adjustment behavior
-
-        Behaves identically to using ``titlecase_segment_legacy`` on ``CaseMapper``
-
-        See the `Rust documentation for new_legacy <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy>`__ for more information.
-
-
     .. js:method:: titlecase_segment_v1(s, locale, options)
 
         Returns the full titlecase mapping of the given string

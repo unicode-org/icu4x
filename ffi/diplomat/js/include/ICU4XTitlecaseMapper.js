@@ -35,23 +35,6 @@ export class ICU4XTitlecaseMapper {
     })();
   }
 
-  static create_legacy(arg_provider) {
-    return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XTitlecaseMapper_create_legacy(diplomat_receive_buffer, arg_provider.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-      if (is_ok) {
-        const ok_value = new ICU4XTitlecaseMapper(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
-      }
-    })();
-  }
-
   titlecase_segment_v1(arg_s, arg_locale, arg_options) {
     const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
     const field_head_adjustment_arg_options = arg_options["head_adjustment"];
