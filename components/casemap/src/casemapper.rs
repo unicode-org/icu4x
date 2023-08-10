@@ -146,7 +146,9 @@ impl CaseMapper {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// This function performs legacy head adjustment behavior when [`LeadingAdjustment::Adjust`] is set. See
+    /// This function performs "adjust to cased" leading adjustment behavior when [`LeadingAdjustment::Auto`] or [`LeadingAdjustment::AdjustToCased`]
+    /// is set. Auto mode is not able to pick the "adjust to letter/number/symbol" behavioras this type does not load
+    /// the data to do so, use [`TitlecaseMapper`] if such behavior is desired. See
     /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
     /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
     /// is [`LeadingAdjustment::NoAdjust`].
@@ -164,9 +166,9 @@ impl CaseMapper {
         self.titlecase_segment_with_adjustment(src, langid, options, |data, ch| data.is_cased(ch))
     }
 
-    /// Helper to support different head adjustment behaviors,
-    /// `char_is_head` is a function that returns true for a character that is allowed to be the
-    /// titlecase head, when `leading_adjustment != None`
+    /// Helper to support different leading adjustment behaviors,
+    /// `char_is_lead` is a function that returns true for a character that is allowed to be the
+    /// first relevant character in a titlecasing string, when `leading_adjustment != None`
     ///
     /// We return a concrete type instead of `impl Trait` so the return value can be mixed with that of other calls
     /// to this function with different closures
@@ -175,12 +177,12 @@ impl CaseMapper {
         src: &'a str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
-        char_is_head: impl Fn(&CaseMapV1, char) -> bool,
+        char_is_lead: impl Fn(&CaseMapV1, char) -> bool,
     ) -> StringAndWriteable<FullCaseWriteable<'a, true>> {
         let data = self.data.get();
         let (head, rest) = match options.leading_adjustment {
             LeadingAdjustment::Auto | LeadingAdjustment::AdjustToCased => {
-                let first_cased = src.char_indices().find(|(_i, ch)| char_is_head(data, *ch));
+                let first_cased = src.char_indices().find(|(_i, ch)| char_is_lead(data, *ch));
                 if let Some((first_cased, _ch)) = first_cased {
                     (
                         src.get(..first_cased).unwrap_or(""),
