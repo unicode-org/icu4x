@@ -209,27 +209,27 @@ fn test_armenian() {
     let ew = "և";
     let yerevan = "Երևանի";
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string(ew, &root, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string(ew, &root, default_options),
         "Եւ"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string(yerevan, &root, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string(yerevan, &root, default_options),
         "Երևանի"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string(ew, &east, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string(ew, &east, default_options),
         "Եվ"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string(yerevan, &east, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string(yerevan, &east, default_options),
         "Երևանի"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string(ew, &west, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string(ew, &west, default_options),
         "Եւ"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string(yerevan, &west, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string(yerevan, &west, default_options),
         "Երևանի"
     );
 }
@@ -241,105 +241,105 @@ fn test_dutch() {
     let default_options = Default::default();
 
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("ijssel", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("ijssel", &nl, default_options),
         "IJssel"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("igloo", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("igloo", &nl, default_options),
         "Igloo"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("IJMUIDEN", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("IJMUIDEN", &nl, default_options),
         "IJmuiden"
     );
 
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("ij", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("ij", &nl, default_options),
         "IJ"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("IJ", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("IJ", &nl, default_options),
         "IJ"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("íj́", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("íj́", &nl, default_options),
         "ÍJ́"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("ÍJ́", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("ÍJ́", &nl, default_options),
         "ÍJ́"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("íJ́", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("íJ́", &nl, default_options),
         "ÍJ́"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("Ij́", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("Ij́", &nl, default_options),
         "Ij́"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("ij́", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("ij́", &nl, default_options),
         "Ij́"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("ïj́", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("ïj́", &nl, default_options),
         "Ïj́"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("íj\u{0308}", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("íj\u{0308}", &nl, default_options),
         "Íj\u{0308}"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("íj́\u{1D16E}", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("íj́\u{1D16E}", &nl, default_options),
         "Íj́\u{1D16E}"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("íj\u{1ABE}", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("íj\u{1ABE}", &nl, default_options),
         "Íj\u{1ABE}"
     );
 
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("ijabc", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("ijabc", &nl, default_options),
         "IJabc"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("IJabc", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("IJabc", &nl, default_options),
         "IJabc"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("íj́abc", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("íj́abc", &nl, default_options),
         "ÍJ́abc"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("ÍJ́abc", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("ÍJ́abc", &nl, default_options),
         "ÍJ́abc"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("íJ́abc", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("íJ́abc", &nl, default_options),
         "ÍJ́abc"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("Ij́abc", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("Ij́abc", &nl, default_options),
         "Ij́abc"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("ij́abc", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("ij́abc", &nl, default_options),
         "Ij́abc"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("ïj́abc", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("ïj́abc", &nl, default_options),
         "Ïj́abc"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("íjabc\u{0308}", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("íjabc\u{0308}", &nl, default_options),
         "Íjabc\u{0308}"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("íj́abc\u{1D16E}", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("íj́abc\u{1D16E}", &nl, default_options),
         "ÍJ́abc\u{1D16E}"
     );
     assert_eq!(
-        cm.titlecase_segment_legacy_to_string("íjabc\u{1ABE}", &nl, default_options),
+        cm.titlecase_segment_with_only_case_data_to_string("íjabc\u{1ABE}", &nl, default_options),
         "Íjabc\u{1ABE}"
     );
 }

@@ -136,7 +136,8 @@ impl CaseMapper {
     }
 
     /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
-    /// the string as a single segment (and thus only titlecasing the beginning of it).
+    /// the string as a single segment (and thus only titlecasing the beginning of it). Performs
+    /// the specified leading adjustment behavior from the options without loading additional data.
     ///
     /// This should typically be used as a lower-level helper to construct the titlecasing operation desired
     /// by the application, for example one can titlecase on a per-word basis by mixing this with
@@ -147,17 +148,17 @@ impl CaseMapper {
     /// `Default::default()` for the root locale.
     ///
     /// This function performs "adjust to cased" leading adjustment behavior when [`LeadingAdjustment::Auto`] or [`LeadingAdjustment::ToCased`]
-    /// is set. Auto mode is not able to pick the "adjust to letter/number/symbol" behavioras this type does not load
+    /// is set. Auto mode is not able to pick the "adjust to letter/number/symbol" behavior as this type does not load
     /// the data to do so, use [`TitlecaseMapper`] if such behavior is desired. See
     /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
     /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
     /// is [`LeadingAdjustment::NoAdjust`].
     ///
-    /// See [`Self::titlecase_segment_legacy_to_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::titlecase_segment_with_only_case_data_to_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
     ///
     /// [`TitlecaseMapper`]: crate::TitlecaseMapper
-    pub fn titlecase_segment_legacy<'a>(
+    pub fn titlecase_segment_with_only_case_data<'a>(
         &'a self,
         src: &'a str,
         langid: &LanguageIdentifier,
@@ -332,30 +333,30 @@ impl CaseMapper {
     ///
     /// // note that the subsequent words are not titlecased, this function assumes
     /// // that the entire string is a single segment and only titlecases at the beginning.
-    /// assert_eq!(cm.titlecase_segment_legacy_to_string("hEllO WorLd", &root, default_options), "Hello world");
-    /// assert_eq!(cm.titlecase_segment_legacy_to_string("Γειά σου Κόσμε", &root, default_options), "Γειά σου κόσμε");
-    /// assert_eq!(cm.titlecase_segment_legacy_to_string("नमस्ते दुनिया", &root, default_options), "नमस्ते दुनिया");
-    /// assert_eq!(cm.titlecase_segment_legacy_to_string("Привет мир", &root, default_options), "Привет мир");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("hEllO WorLd", &root, default_options), "Hello world");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("Γειά σου Κόσμε", &root, default_options), "Γειά σου κόσμε");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("नमस्ते दुनिया", &root, default_options), "नमस्ते दुनिया");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("Привет мир", &root, default_options), "Привет мир");
     ///
     /// // Some behavior is language-sensitive
-    /// assert_eq!(cm.titlecase_segment_legacy_to_string("istanbul", &root, default_options), "Istanbul");
-    /// assert_eq!(cm.titlecase_segment_legacy_to_string("istanbul", &langid!("tr"), default_options), "İstanbul"); // Turkish dotted i
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("istanbul", &root, default_options), "Istanbul");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("istanbul", &langid!("tr"), default_options), "İstanbul"); // Turkish dotted i
     ///
-    /// assert_eq!(cm.titlecase_segment_legacy_to_string("և Երևանի", &root, default_options), "Եւ երևանի");
-    /// assert_eq!(cm.titlecase_segment_legacy_to_string("և Երևանի", &langid!("hy"), default_options), "Եվ երևանի"); // Eastern Armenian ech-yiwn ligature
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("և Երևանի", &root, default_options), "Եւ երևանի");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("և Երևանի", &langid!("hy"), default_options), "Եվ երևանի"); // Eastern Armenian ech-yiwn ligature
     ///
-    /// assert_eq!(cm.titlecase_segment_legacy_to_string("ijkdijk", &root, default_options), "Ijkdijk");
-    /// assert_eq!(cm.titlecase_segment_legacy_to_string("ijkdijk", &langid!("nl"), default_options), "IJkdijk"); // Dutch IJ digraph
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("ijkdijk", &root, default_options), "Ijkdijk");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("ijkdijk", &langid!("nl"), default_options), "IJkdijk"); // Dutch IJ digraph
     /// ```
     ///
     /// [`TitlecaseMapper`]: crate::TitlecaseMapper
-    pub fn titlecase_segment_legacy_to_string(
+    pub fn titlecase_segment_with_only_case_data_to_string(
         &self,
         src: &str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
     ) -> String {
-        self.titlecase_segment_legacy(src, langid, options)
+        self.titlecase_segment_with_only_case_data(src, langid, options)
             .write_to_string()
             .into_owned()
     }
@@ -623,13 +624,13 @@ mod tests {
         );
         // but the YPOGEGRAMMENI should not titlecase
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("α\u{0313}\u{0345}", &root, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("α\u{0313}\u{0345}", &root, default_options),
             "Α\u{0313}\u{0345}"
         );
 
         // U+1F80 GREEK SMALL LETTER ALPHA WITH PSILI AND YPOGEGRAMMENI
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("ᾀ", &root, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("ᾀ", &root, default_options),
             "ᾈ"
         );
         assert_eq!(cm.uppercase_to_string("ᾀ", &root), "ἈΙ");
@@ -637,7 +638,7 @@ mod tests {
         // U+1FFC GREEK CAPITAL LETTER OMEGA WITH PROSGEGRAMMENI
         assert_eq!(cm.lowercase_to_string("ῼ", &root), "ῳ");
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("ῼ", &root, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("ῼ", &root, default_options),
             "ῼ"
         );
         assert_eq!(cm.uppercase_to_string("ῼ", &root), "ΩΙ");
@@ -645,7 +646,7 @@ mod tests {
         // U+1F98 GREEK CAPITAL LETTER ETA WITH PSILI AND PROSGEGRAMMENI
         assert_eq!(cm.lowercase_to_string("ᾘ", &root), "ᾐ");
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("ᾘ", &root, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("ᾘ", &root, default_options),
             "ᾘ"
         );
         assert_eq!(cm.uppercase_to_string("ᾘ", &root), "ἨΙ");
@@ -653,7 +654,7 @@ mod tests {
         // U+1FB2 GREEK SMALL LETTER ALPHA WITH VARIA AND YPOGEGRAMMENI
         assert_eq!(cm.lowercase_to_string("ᾲ", &root), "ᾲ");
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("ᾲ", &root, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("ᾲ", &root, default_options),
             "Ὰ\u{345}"
         );
         assert_eq!(cm.uppercase_to_string("ᾲ", &root), "ᾺΙ");
@@ -669,11 +670,11 @@ mod tests {
         assert_eq!(cm.lowercase_to_string("İ", &tr), "i");
         assert_eq!(cm.lowercase_to_string("İ", &az), "i");
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("İ", &tr, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("İ", &tr, default_options),
             "İ"
         );
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("İ", &az, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("İ", &az, default_options),
             "İ"
         );
         assert_eq!(cm.uppercase_to_string("İ", &tr), "İ");
@@ -683,11 +684,11 @@ mod tests {
         assert_eq!(cm.lowercase_to_string("I\u{0307}", &tr), "i");
         assert_eq!(cm.lowercase_to_string("I\u{0307}", &az), "i");
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("I\u{0307}", &tr, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("I\u{0307}", &tr, default_options),
             "I\u{0307}"
         );
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("I\u{0307}", &az, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("I\u{0307}", &az, default_options),
             "I\u{0307}"
         );
         assert_eq!(cm.uppercase_to_string("I\u{0307}", &tr), "I\u{0307}");
@@ -697,11 +698,11 @@ mod tests {
         assert_eq!(cm.lowercase_to_string("I", &tr), "ı");
         assert_eq!(cm.lowercase_to_string("I", &az), "ı");
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("I", &tr, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("I", &tr, default_options),
             "I"
         );
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("I", &az, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("I", &az, default_options),
             "I"
         );
         assert_eq!(cm.uppercase_to_string("I", &tr), "I");
@@ -711,11 +712,11 @@ mod tests {
         assert_eq!(cm.lowercase_to_string("i", &tr), "i");
         assert_eq!(cm.lowercase_to_string("i", &az), "i");
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("i", &tr, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("i", &tr, default_options),
             "İ"
         );
         assert_eq!(
-            cm.titlecase_segment_legacy_to_string("i", &az, default_options),
+            cm.titlecase_segment_with_only_case_data_to_string("i", &az, default_options),
             "İ"
         );
         assert_eq!(cm.uppercase_to_string("i", &tr), "İ");

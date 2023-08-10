@@ -36,7 +36,7 @@ pub enum LeadingAdjustment {
     /// Adjust the string to the first relevant character before beginning to apply casing
     /// ("'twixt" -> "'Twixt"). "Relevant" character is picked by best available algorithm,
     /// by default will adjust to first letter, number, symbol, or private use character,
-    /// but if no data is available (e.g. this API is being called via [`CaseMapper::titlecase_segment_legacy()`]),
+    /// but if no data is available (e.g. this API is being called via [`CaseMapper::titlecase_segment_with_only_case_data()`]),
     /// then may be equivalent to "adjust to cased".
     #[default]
     Auto,

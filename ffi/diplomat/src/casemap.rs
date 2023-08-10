@@ -99,17 +99,21 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Returns the full titlecase mapping of the given string, using legacy head adjustment behavior
+        /// Returns the full titlecase mapping of the given string, performing head adjustment without
+        /// loading additional data.
         /// (if head adjustment is enabled in the options)
         ///
         /// The `v1` refers to the version of the options struct, which may change as we add more options
-        #[diplomat::rust_link(icu::casemap::CaseMapper::titlecase_segment_legacy, FnInStruct)]
         #[diplomat::rust_link(
-            icu::casemap::CaseMapper::titlecase_segment_legacy_to_string,
+            icu::casemap::CaseMapper::titlecase_segment_with_only_case_data,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapper::titlecase_segment_with_only_case_data_to_string,
             FnInStruct,
             hidden
         )]
-        pub fn titlecase_segment_legacy_v1(
+        pub fn titlecase_segment_with_only_case_data_v1(
             &self,
             s: &str,
             locale: &ICU4XLocale,
@@ -121,7 +125,7 @@ pub mod ffi {
             core::str::from_utf8(s.as_bytes())
                 .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
             self.0
-                .titlecase_segment_legacy(s, &locale.0.id, options.into())
+                .titlecase_segment_with_only_case_data(s, &locale.0.id, options.into())
                 .write_to(write)?;
 
             Ok(())
