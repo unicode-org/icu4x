@@ -75,15 +75,15 @@ pub mod ffi {
             )))
         }
 
-        /// Unconditionally panics.
+        /// Deprecated
         ///
-        /// It used to provide a test data provider, but has been superseded by `create_compiled`.
+        /// Use `create_compiled()`.
         #[cfg(all(
             feature = "provider_test",
             any(feature = "any_provider", feature = "buffer_provider")
         ))]
         pub fn create_test() -> Box<ICU4XDataProvider> {
-            unimplemented!()
+            create_compiled()
         }
 
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].

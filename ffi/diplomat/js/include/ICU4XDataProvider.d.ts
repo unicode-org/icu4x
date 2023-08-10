@@ -31,9 +31,9 @@ export class ICU4XDataProvider {
 
   /**
 
-   * Unconditionally panics.
+   * Deprecated
 
-   * It used to provide a test data provider, but has been superseded by `create_compiled`.
+   * Use `create_compiled()`.
    */
   static create_test(): ICU4XDataProvider;
 
