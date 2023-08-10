@@ -334,7 +334,6 @@ impl DatagenProvider {
             let result = self.load_data(key, req);
             match result {
                 Ok(data_response) => {
-                    #[allow(clippy::unwrap_used)] // LocaleFallbackProvider populates it
                     if let Some(iter) = option_iter.as_ref() {
                         let iter = iter.as_ref().map_err(|x| *x)?;
                         if iter.get().is_empty() && !locale.is_empty() {
