@@ -44,8 +44,7 @@ impl AsULE for CurrencyPatterns {
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
         let mut first_byte: u8 = 0;
-        
-        
+
         if self.short_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
             first_byte |= 0b0100_0000;
         }
