@@ -83,7 +83,7 @@ pub mod ffi {
             any(feature = "any_provider", feature = "buffer_provider")
         ))]
         pub fn create_test() -> Box<ICU4XDataProvider> {
-            create_compiled()
+            Self::create_compiled()
         }
 
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
