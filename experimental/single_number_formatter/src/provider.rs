@@ -31,15 +31,20 @@ use zerovec::{VarZeroVec, ZeroMap};
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentialsV1<'data> {
+    /// Maps from currency iso code to currency patterns
+    /// which points to which pattern to use and the place holder index.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub currency_patterns_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
 
+    /// Represents the standard pattern.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub standard: Cow<'data, str>,
 
+    /// Represents the standard alpha_next_to_number pattern.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub standard_alpha_next_to_number: Cow<'data, str>,
 
+    /// Contains all the place holders.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub place_holders: VarZeroVec<'data, str>,
 }
