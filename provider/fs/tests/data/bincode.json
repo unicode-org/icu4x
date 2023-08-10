@@ -5,7 +5,7 @@
       ]
     },
     "locales": "All",
-    "cldr": "Latest",
+    "cldr": "None",
     "icu_export": "None",
     "segmenter_lstm": "None",
     "export": {

@@ -114,6 +114,7 @@ pub mod prelude {
 
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackConfig;
+use icu_locid_transform::fallback::LocaleFallbackIterator;
 use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -309,24 +310,36 @@ impl DatagenProvider {
         &self,
         key: DataKey,
         locale: &DataLocale,
-        fallbacker: &LocaleFallbacker,
+        fallbacker: &Lazy<
+            Result<LocaleFallbacker, DataError>,
+            impl FnOnce() -> Result<LocaleFallbacker, DataError>,
+        >,
     ) -> Result<Option<DataPayload<ExportMarker>>, DataError> {
         log::trace!("Generating key/locale: {key}/{locale:}");
         let mut metadata = DataRequestMetadata::default();
         metadata.silent = true;
-        let config = LocaleFallbackConfig::from_key(key);
-        let mut iter = fallbacker.for_config(config).fallback_for(locale.clone());
+        // Lazy-compute the fallback iterator so that we don't always require CLDR data
+        let mut option_iter: Option<Result<LocaleFallbackIterator, DataError>> = None;
         loop {
             let req = DataRequest {
-                locale: iter.get(),
+                locale: match option_iter.as_ref() {
+                    Some(iter) => {
+                        let iter = iter.as_ref().map_err(|x| *x)?;
+                        iter.get()
+                    }
+                    None => locale,
+                },
                 metadata,
             };
             let result = self.load_data(key, req);
             match result {
                 Ok(data_response) => {
                     #[allow(clippy::unwrap_used)] // LocaleFallbackProvider populates it
-                    if iter.get().is_empty() && !locale.is_empty() {
-                        log::debug!("Falling back to und: {key}/{locale}");
+                    if let Some(iter) = option_iter.as_ref() {
+                        let iter = iter.as_ref().map_err(|x| *x)?;
+                        if iter.get().is_empty() && !locale.is_empty() {
+                            log::debug!("Falling back to und: {key}/{locale}");
+                        }
                     }
                     return Ok(Some(data_response.take_payload()?));
                 }
@@ -334,11 +347,22 @@ impl DatagenProvider {
                     kind: DataErrorKind::MissingLocale,
                     ..
                 }) => {
-                    if iter.get().is_empty() {
-                        log::debug!("Could not find data for: {key}/{locale}");
-                        return Ok(None);
-                    }
-                    iter.step();
+                    match option_iter.as_mut() {
+                        Some(iter) => {
+                            let iter = iter.as_mut().map_err(|x| *x)?;
+                            if iter.get().is_empty() {
+                                log::debug!("Could not find data for: {key}/{locale}");
+                                return Ok(None);
+                            }
+                            iter.step();
+                        }
+                        None => (),
+                    };
+                    option_iter.get_or_insert_with(|| {
+                        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+                        let config = LocaleFallbackConfig::from_key(key);
+                        Ok(fallbacker.for_config(config).fallback_for(locale.clone()))
+                    });
                 }
                 Err(e) => return Err(e.with_req(key, req)),
             }
@@ -462,17 +486,17 @@ impl DatagenProvider {
 
                     match options.fallback {
                         options::FallbackMode::Runtime | options::FallbackMode::RuntimeManual => {
-                            let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                             let payloads = locales_to_export
                                 .into_par_iter()
                                 .flat_map(|locale| {
-                                    match provider.load_with_fallback(key, &locale, fallbacker) {
+                                    match provider.load_with_fallback(key, &locale, &fallbacker) {
                                         Ok(Some(payload)) => Some(Ok((locale, Box::new(payload)))),
                                         Ok(None) => None,
                                         Err(e) => Some(Err(e)),
                                     }
                                 })
                                 .collect::<Result<HashMap<_, _>, _>>()?;
+                            let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                             let fallbacker_with_config =
                                 fallbacker.for_config(LocaleFallbackConfig::from_key(key));
                             'outer: for (locale, payload) in payloads.iter() {
@@ -495,10 +519,9 @@ impl DatagenProvider {
                             }
                         }
                         options::FallbackMode::Hybrid | options::FallbackMode::Preresolved => {
-                            let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                             locales_to_export.into_par_iter().try_for_each(|locale| {
                                 let payload =
-                                    provider.load_with_fallback(key, &locale, fallbacker)?;
+                                    provider.load_with_fallback(key, &locale, &fallbacker)?;
                                 if let Some(payload) = payload {
                                     exporter.put_payload(key, &locale, &payload)?;
                                 }
