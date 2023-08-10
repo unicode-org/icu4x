@@ -136,7 +136,6 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
 
 // Represents a non-empty rule group for the forward direction.
 #[derive(Debug, Clone)]
-
 enum ForwardRuleGroup<'p> {
     Conversion(Vec<UniConversionRule<'p>>),
     Transform(Vec<Cow<'p, parse::SingleId>>),
@@ -182,7 +181,7 @@ impl<'p> ForwardRuleGroup<'p> {
 // contiguous C's keep the source order, but contiguous T's are reversed. Also the overall order
 // is reversed, of course.
 //
-// We do this by using VecDeque, push_back, and make_contiguous in the end.
+// We do this by using VecDeque, push_front, and make_contiguous in the end.
 #[derive(Debug, Clone)]
 pub(crate) struct ReverseRuleGroupAggregator<'p> {
     current: ReverseRuleGroup<'p>,
@@ -264,7 +263,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
                 };
                 let vec_transform_group = transform_group.into(); // non-allocating conversion
                 self.groups
-                    .push_back((vec_transform_group, associated_conv_group));
+                    .push_front((vec_transform_group, associated_conv_group));
             }
         }
     }
@@ -277,7 +276,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
         if let Some(conv_group) = self.preceding_conversion_group.take() {
             // a trailing conversion group in source order is the same as having a conversion
             // group as the first in-order group. we can just prepend an empty transform group.
-            self.groups.push_back((Vec::new(), conv_group));
+            self.groups.push_front((Vec::new(), conv_group));
         }
 
         self.groups.into() // non-allocating conversion
@@ -289,7 +288,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
 enum ReverseRuleGroup<'p> {
     // because contiguous C's are aggregated in source-order, we can just use a Vec
     Conversion(Vec<UniConversionRule<'p>>),
-    // but contiguous T's are aggregated in reverse-order, so we need to use a VecDeque and push_back
+    // but contiguous T's are aggregated in reverse-order, so we need to use a VecDeque and push_front
     Transform(VecDeque<Cow<'p, parse::SingleId>>),
 }
 
@@ -306,7 +305,7 @@ impl<'p> ReverseRuleGroup<'p> {
 
     fn new_transform(rule: Cow<'p, parse::SingleId>) -> Self {
         let mut group = VecDeque::new();
-        group.push_back(rule);
+        group.push_front(rule);
         Self::Transform(group)
     }
 
@@ -319,8 +318,8 @@ impl<'p> ReverseRuleGroup<'p> {
             }
             (Self::Transform(group), UniRule::Transform(rule)) => {
                 // we receive rules via `push` in source-order, which is the opposite order we want,
-                // so we push_back.
-                group.push_back(rule);
+                // so we push_front.
+                group.push_front(rule);
                 None
             }
             (Self::Conversion(_), UniRule::Transform(new_rule)) => {
