@@ -29,6 +29,8 @@
             "datetime/islamictabular/datesymbols@1",
             "datetime/persian/datelengths@1",
             "datetime/persian/datesymbols@1",
+            "datetime/hebrew/datelengths@1",
+            "datetime/hebrew/datesymbols@1",
             "datetime/skeletons@1",
             "datetime/timelengths@1",
             "datetime/timesymbols@1",

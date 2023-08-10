@@ -32,6 +32,7 @@ pub use symbols::*;
     marker(EthiopianDateLengthsV1Marker, "datetime/ethiopic/datelengths@1"),
     marker(RocDateLengthsV1Marker, "datetime/roc/datelengths@1"),
     marker(PersianDateLengthsV1Marker, "datetime/persian/datelengths@1"),
+    marker(HebrewDateLengthsV1Marker, "datetime/hebrew/datelengths@1"),
     marker(
         IslamicObservationalDateLengthsV1Marker,
         "datetime/islamicobservational/datelengths@1"

@@ -178,6 +178,7 @@ impl DateFormatter {
             + DataProvider<UmmAlQuraDateLengthsV1Marker>
             + DataProvider<IslamicTabularDateLengthsV1Marker>
             + DataProvider<PersianDateLengthsV1Marker>
+            + DataProvider<HebrewDateLengthsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
@@ -191,6 +192,7 @@ impl DateFormatter {
             + DataProvider<UmmAlQuraDateSymbolsV1Marker>
             + DataProvider<IslamicTabularDateSymbolsV1Marker>
             + DataProvider<PersianDateSymbolsV1Marker>
+            + DataProvider<HebrewDateSymbolsV1Marker>
             + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>

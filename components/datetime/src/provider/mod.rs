@@ -49,6 +49,8 @@ const _: () = {
     icu_datetime_data::impl_datetime_islamictabular_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_persian_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_persian_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_hebrew_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_hebrew_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_japanese_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_japanese_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_japanext_datelengths_v1!(Baked);
