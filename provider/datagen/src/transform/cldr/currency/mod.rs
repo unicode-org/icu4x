@@ -114,6 +114,7 @@ fn extract_currency_essentials<'data>(
 ) -> Result<CurrencyEssentialsV1<'data>, DataError> {
     let currencies = &currencies_resource.main.value.numbers.currencies;
 
+    // TODO(#3838): these patterns might be numbering system dependent.
     let currency_formats = &&numbers_resource
         .main
         .value
