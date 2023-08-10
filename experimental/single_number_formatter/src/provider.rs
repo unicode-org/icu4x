@@ -12,7 +12,7 @@
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
 use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::{VarZeroVec, ZeroMap};
+use zerovec::{maps::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap};
 
 /// This type contains all of the essential data for currency formatting.
 ///
@@ -72,8 +72,6 @@ pub enum PatternSelection {
 pub const USE_ISO_CODE: u16 = u16::MAX - 1;
 pub const NO_PLACE_HOLDER: u16 = u16::MAX;
 
-// TODO(#3737): Reduce the size of CurrencyPatternsULE.
-#[zerovec::make_ule(CurrencyPatternsULE)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -99,4 +97,11 @@ pub struct CurrencyPatterns {
     /// If the value is `NO_PLACE_HOLDER`, this means that the narrow pattern does not have a place holder.
     /// If the value is `USE_ISO_CODE`, this means that the narrow pattern equals to the iso code.
     pub narrow_place_holder_index: u16,
+}
+
+impl<'a> ZeroMapKV<'a> for CurrencyPatterns {
+    type Container = zerovec::ZeroVec<'a, CurrencyPatterns>;
+    type Slice = zerovec::ZeroSlice<CurrencyPatterns>;
+    type GetType = <CurrencyPatterns as AsULE>::ULE;
+    type OwnedType = CurrencyPatterns;
 }
