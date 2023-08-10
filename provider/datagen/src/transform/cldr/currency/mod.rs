@@ -253,8 +253,8 @@ fn test_basic() {
         let default = CurrencyPatterns {
             short_pattern_standard: PatternSelection::Standard,
             narrow_pattern_standard: PatternSelection::Standard,
-            short_place_holder_index: NO_PLACE_HOLDER.into(),
-            narrow_place_holder_index: NO_PLACE_HOLDER.into(),
+            short_place_holder_index: NO_PLACE_HOLDER,
+            narrow_place_holder_index: NO_PLACE_HOLDER,
         };
         let owned = locale.get().to_owned();
         let currency_pattern: CurrencyPatterns = owned
