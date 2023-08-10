@@ -2,7 +2,7 @@ import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 import { ICU4XHeadAdjustment_js_to_rust, ICU4XHeadAdjustment_rust_to_js } from "./ICU4XHeadAdjustment.js"
-import { ICU4XTailCasing_js_to_rust, ICU4XTailCasing_rust_to_js } from "./ICU4XTailCasing.js"
+import { ICU4XTrailingCase_js_to_rust, ICU4XTrailingCase_rust_to_js } from "./ICU4XTrailingCase.js"
 
 const ICU4XCaseMapper_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XCaseMapper_destroy(underlying);
@@ -86,7 +86,7 @@ export class ICU4XCaseMapper {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XCaseMapper_titlecase_segment_legacy_v1(diplomat_receive_buffer, this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_locale.underlying, ICU4XHeadAdjustment_js_to_rust[field_head_adjustment_arg_options], ICU4XTailCasing_js_to_rust[field_tail_casing_arg_options], writeable);
+        wasm.ICU4XCaseMapper_titlecase_segment_legacy_v1(diplomat_receive_buffer, this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_locale.underlying, ICU4XHeadAdjustment_js_to_rust[field_head_adjustment_arg_options], ICU4XTrailingCase_js_to_rust[field_tail_casing_arg_options], writeable);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

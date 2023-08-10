@@ -1,5 +1,5 @@
 import { ICU4XHeadAdjustment } from "./ICU4XHeadAdjustment";
-import { ICU4XTailCasing } from "./ICU4XTailCasing";
+import { ICU4XTrailingCase } from "./ICU4XTrailingCase";
 
 /**
 
@@ -7,7 +7,7 @@ import { ICU4XTailCasing } from "./ICU4XTailCasing";
  */
 export class ICU4XTitlecaseOptionsV1 {
   head_adjustment: ICU4XHeadAdjustment;
-  tail_casing: ICU4XTailCasing;
+  tail_casing: ICU4XTrailingCase;
 
   /**
 

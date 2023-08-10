@@ -7,20 +7,20 @@
 #include "diplomat_runtime.h"
 
 #include "ICU4XHeadAdjustment.h"
-#include "ICU4XTailCasing.h"
+#include "ICU4XTrailingCase.h"
 #ifdef __cplusplus
 namespace capi {
 #endif
 
 typedef struct ICU4XTitlecaseOptionsV1 {
     ICU4XHeadAdjustment head_adjustment;
-    ICU4XTailCasing tail_casing;
+    ICU4XTrailingCase tail_casing;
 } ICU4XTitlecaseOptionsV1;
 #ifdef __cplusplus
 } // namespace capi
 #endif
 #include "ICU4XHeadAdjustment.h"
-#include "ICU4XTailCasing.h"
+#include "ICU4XTrailingCase.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {

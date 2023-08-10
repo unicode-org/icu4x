@@ -17,12 +17,12 @@ use writeable::Writeable;
 /// string has been titlecased. See docs of [`TitlecaseMapper`] for examples.
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
-pub enum TailCasing {
+pub enum TrailingCase {
+    /// Preserve the casing of the rest of the string ("spoNgEBoB" -> "SpoNgEBoB")
+    Unchanged,
     /// Lowercase the rest of the string ("spoNgEBoB" -> "Spongebob")
     #[default]
-    Lowercase,
-    /// Preserve the casing of the rest of the string ("spoNgEBoB" -> "SpoNgEBoB")
-    PreserveCase,
+    Lower,
 }
 
 /// Whether to start casing at the beginning of the string or at the first
@@ -47,7 +47,7 @@ pub enum HeadAdjustment {
 pub struct TitlecaseOptions {
     /// How to handle the rest of the string once the head of the
     /// string has been titlecased
-    pub tail_casing: TailCasing,
+    pub tail_casing: TrailingCase,
     /// Whether to start casing at the beginning of the string or at the first
     /// relevant character.
     pub head_adjustment: HeadAdjustment,
@@ -336,7 +336,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// ```rust
     /// use icu_casemap::TitlecaseMapper;
-    /// use icu_casemap::titlecase::{TailCasing, TitlecaseOptions};
+    /// use icu_casemap::titlecase::{TrailingCase, TitlecaseOptions};
     /// use icu_locid::langid;
     ///
     /// let cm = TitlecaseMapper::new();
@@ -344,7 +344,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// let default_options = Default::default();
     /// let mut preserve_case: TitlecaseOptions = Default::default();
-    /// preserve_case.tail_casing = TailCasing::PreserveCase;
+    /// preserve_case.tail_casing = TrailingCase::PreserveCase;
     ///
     /// // Exhibits head adjustment when set:
     /// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, default_options), "Spongebob");

@@ -141,11 +141,6 @@
     See the `Rust documentation for HeadAdjustment <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.HeadAdjustment.html>`__ for more information.
 
 
-.. js:class:: ICU4XTailCasing
-
-    See the `Rust documentation for TailCasing <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TailCasing.html>`__ for more information.
-
-
 .. js:class:: ICU4XTitlecaseMapper
 
     See the `Rust documentation for TitlecaseMapper <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html>`__ for more information.
@@ -179,4 +174,9 @@
     .. js:function:: default_options()
 
         See the `Rust documentation for default <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default>`__ for more information.
+
+
+.. js:class:: ICU4XTrailingCase
+
+    See the `Rust documentation for TrailingCase <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TrailingCase.html>`__ for more information.
 

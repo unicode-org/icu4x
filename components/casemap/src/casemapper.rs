@@ -7,7 +7,7 @@ use crate::provider::data::MappingKind;
 use crate::provider::CaseMapV1;
 use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSink;
-use crate::titlecase::{HeadAdjustment, TailCasing, TitlecaseOptions};
+use crate::titlecase::{HeadAdjustment, TrailingCase, TitlecaseOptions};
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -111,7 +111,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Lower,
-            TailCasing::default(),
+            TrailingCase::default(),
         )
     }
 
@@ -131,7 +131,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Upper,
-            TailCasing::default(),
+            TrailingCase::default(),
         )
     }
 
@@ -215,7 +215,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::Root,
             MappingKind::Fold,
-            TailCasing::default(),
+            TrailingCase::default(),
         )
     }
 
@@ -232,7 +232,7 @@ impl CaseMapper {
             src,
             CaseMapLocale::Turkish,
             MappingKind::Fold,
-            TailCasing::default(),
+            TrailingCase::default(),
         )
     }
 

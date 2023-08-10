@@ -182,15 +182,6 @@
 
     .. cpp:enumerator:: NoAdjust
 
-.. cpp:enum-struct:: ICU4XTailCasing
-
-    See the `Rust documentation for TailCasing <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TailCasing.html>`__ for more information.
-
-
-    .. cpp:enumerator:: Lowercase
-
-    .. cpp:enumerator:: PreserveCase
-
 .. cpp:class:: ICU4XTitlecaseMapper
 
     See the `Rust documentation for TitlecaseMapper <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html>`__ for more information.
@@ -228,9 +219,18 @@
 
     .. cpp:member:: ICU4XHeadAdjustment head_adjustment
 
-    .. cpp:member:: ICU4XTailCasing tail_casing
+    .. cpp:member:: ICU4XTrailingCase tail_casing
 
     .. cpp:function:: static ICU4XTitlecaseOptionsV1 default_options()
 
         See the `Rust documentation for default <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default>`__ for more information.
 
+
+.. cpp:enum-struct:: ICU4XTrailingCase
+
+    See the `Rust documentation for TrailingCase <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TrailingCase.html>`__ for more information.
+
+
+    .. cpp:enumerator:: Unchanged
+
+    .. cpp:enumerator:: Lower
