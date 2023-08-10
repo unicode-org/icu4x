@@ -11,6 +11,7 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] All constructors should take arguments in the following order: Provider, Locale, Options
   - [ ] All constructors should have the standard set of overloads for provider types
   - [ ] Runtime dependencies should be minimal and able to be disabled with Cargo features if possible
+  - [ ] Any `TODO`, `FIXME`, `todo!`, `unimplemented!`, or other placeholders should either be resolved or link to an issue number. (It is okay to ship a small amount of code with tech debt comments, but anything having to do with code correctness should be resolved)
 - [ ] The crate should have a conventional Cargo.toml file:
   - [ ] Cargo.toml should use license, not license-file
   - [ ] The description should be useful
