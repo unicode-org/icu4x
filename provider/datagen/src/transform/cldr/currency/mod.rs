@@ -227,8 +227,8 @@ fn extract_currency_essentials<'data>(
         currency_patterns_map.insert(
             *iso,
             CurrencyPatterns {
-                short_pattern_standard: short_pattern_standard as u8,
-                narrow_pattern_standard: narrow_pattern_standard as u8,
+                short_pattern_standard,
+                narrow_pattern_standard,
                 short_place_holder_index,
                 narrow_place_holder_index,
             },
@@ -250,41 +250,39 @@ fn test_basic() {
         locale: &DataPayload<CurrencyEssentialsV1Marker>,
         place_holders: &VarZeroVec<'_, str>,
     ) -> (String, String) {
-        let default = CurrencyPatternsULE {
-            short_pattern_standard: PatternSelection::Standard as u8,
-            narrow_pattern_standard: PatternSelection::Standard as u8,
+        let default = CurrencyPatterns {
+            short_pattern_standard: PatternSelection::Standard,
+            narrow_pattern_standard: PatternSelection::Standard,
             short_place_holder_index: NO_PLACE_HOLDER.into(),
             narrow_place_holder_index: NO_PLACE_HOLDER.into(),
         };
         let owned = locale.get().to_owned();
-        let currency_pattern: &CurrencyPatternsULE = owned
+        let currency_pattern: CurrencyPatterns = owned
             .currency_patterns_map
-            .get(&iso_code)
-            .unwrap_or(&default);
+            .get_copied(&iso_code)
+            .unwrap_or(default);
 
-        let short_place_holder =
-            if currency_pattern.short_place_holder_index == NO_PLACE_HOLDER.into() {
-                "".to_string()
-            } else if currency_pattern.short_place_holder_index == USE_ISO_CODE.into() {
-                iso_code.try_into_tinystr().unwrap().to_string()
-            } else {
-                place_holders
-                    .get(currency_pattern.short_place_holder_index.as_unsigned_int() as usize)
-                    .unwrap()
-                    .to_string()
-            };
+        let short_place_holder = if currency_pattern.short_place_holder_index == NO_PLACE_HOLDER {
+            "".to_string()
+        } else if currency_pattern.short_place_holder_index == USE_ISO_CODE {
+            iso_code.try_into_tinystr().unwrap().to_string()
+        } else {
+            place_holders
+                .get(currency_pattern.short_place_holder_index as usize)
+                .unwrap()
+                .to_string()
+        };
 
-        let narrow_place_holder =
-            if currency_pattern.narrow_place_holder_index == NO_PLACE_HOLDER.into() {
-                "".to_string()
-            } else if currency_pattern.short_place_holder_index == USE_ISO_CODE.into() {
-                iso_code.try_into_tinystr().unwrap().to_string()
-            } else {
-                place_holders
-                    .get(currency_pattern.narrow_place_holder_index.as_unsigned_int() as usize)
-                    .unwrap()
-                    .to_string()
-            };
+        let narrow_place_holder = if currency_pattern.narrow_place_holder_index == NO_PLACE_HOLDER {
+            "".to_string()
+        } else if currency_pattern.short_place_holder_index == USE_ISO_CODE {
+            iso_code.try_into_tinystr().unwrap().to_string()
+        } else {
+            place_holders
+                .get(currency_pattern.narrow_place_holder_index as usize)
+                .unwrap()
+                .to_string()
+        };
 
         (short_place_holder, narrow_place_holder)
     }

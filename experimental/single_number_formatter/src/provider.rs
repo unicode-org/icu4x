@@ -50,17 +50,22 @@ pub struct CurrencyEssentialsV1<'data> {
 }
 
 #[zerovec::make_ule(PatternSelectionULE)]
-#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_singlenumberformatter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
 pub enum PatternSelection {
     /// Use the standard pattern.
+    #[default]
     Standard = 0,
 
     /// Use the standard_alpha_next_to_number pattern.
     StandardAlphaNextToNumber = 1,
 }
-
-type PatternSelectionMask = u8;
 
 // TODO(#3836): replace this with Option<PlaceHolder>, enum PlaceHolder { Index(usize), ISO }
 // and encapsulate the encoding in the ULE implementation.
@@ -79,11 +84,11 @@ pub const NO_PLACE_HOLDER: u16 = u16::MAX;
 pub struct CurrencyPatterns {
     /// If it is true, then use the standard pattern.
     /// Otherwise, use the standard_alpha_next_to_number pattern.
-    pub short_pattern_standard: PatternSelectionMask, // TODO: sffc@,  I got an error when I use `PatternSelectionULE` in `#[zerovec::make_ule(CurrencyPatternsULE)]`
+    pub short_pattern_standard: PatternSelection,
 
     /// If it is true, then use the standard pattern.
     /// Otherwise, use the standard_alpha_next_to_number pattern.
-    pub narrow_pattern_standard: PatternSelectionMask,
+    pub narrow_pattern_standard: PatternSelection,
 
     /// The index of the short pattern place holder in the place holders list.
     /// If the value is `NO_PLACE_HOLDER`, this means that the short pattern does not have a place holder.
