@@ -11,8 +11,8 @@ namespace capi {
 #endif
 
 typedef enum ICU4XTrailingCase {
-  ICU4XTrailingCase_Unchanged = 0,
-  ICU4XTrailingCase_Lower = 1,
+  ICU4XTrailingCase_Lower = 0,
+  ICU4XTrailingCase_Unchanged = 1,
 } ICU4XTrailingCase;
 #ifdef __cplusplus
 } // namespace capi

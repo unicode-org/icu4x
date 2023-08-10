@@ -18,16 +18,16 @@ pub mod ffi {
     #[diplomat::enum_convert(LeadingAdjustment, needs_wildcard)]
     #[diplomat::rust_link(icu::casemap::titlecase::LeadingAdjustment, Enum)]
     pub enum ICU4XLeadingAdjustment {
-        None,
         Auto,
+        None,
         ToCased,
     }
 
     #[diplomat::enum_convert(TrailingCase, needs_wildcard)]
     #[diplomat::rust_link(icu::casemap::titlecase::TrailingCase, Enum)]
     pub enum ICU4XTrailingCase {
-        Unchanged,
         Lower,
+        Unchanged,
     }
 
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]

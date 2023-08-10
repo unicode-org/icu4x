@@ -19,8 +19,8 @@
  * See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/latest/icu/casemap/titlecase/enum.LeadingAdjustment.html) for more information.
  */
 enum struct ICU4XLeadingAdjustment {
-  None = 0,
-  Auto = 1,
+  Auto = 0,
+  None = 1,
   ToCased = 2,
 };
 

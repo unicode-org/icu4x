@@ -6,10 +6,10 @@
 export enum ICU4XLeadingAdjustment {
   /**
    */
-  None = 'None',
+  Auto = 'Auto',
   /**
    */
-  Auto = 'Auto',
+  None = 'None',
   /**
    */
   ToCased = 'ToCased',

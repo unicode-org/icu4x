@@ -6,8 +6,8 @@
 export enum ICU4XTrailingCase {
   /**
    */
-  Unchanged = 'Unchanged',
+  Lower = 'Lower',
   /**
    */
-  Lower = 'Lower',
+  Unchanged = 'Unchanged',
 }

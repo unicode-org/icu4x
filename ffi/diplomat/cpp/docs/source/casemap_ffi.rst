@@ -178,9 +178,9 @@
     See the `Rust documentation for LeadingAdjustment <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.LeadingAdjustment.html>`__ for more information.
 
 
-    .. cpp:enumerator:: None
-
     .. cpp:enumerator:: Auto
+
+    .. cpp:enumerator:: None
 
     .. cpp:enumerator:: ToCased
 
@@ -233,6 +233,6 @@
     See the `Rust documentation for TrailingCase <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TrailingCase.html>`__ for more information.
 
 
-    .. cpp:enumerator:: Unchanged
-
     .. cpp:enumerator:: Lower
+
+    .. cpp:enumerator:: Unchanged
