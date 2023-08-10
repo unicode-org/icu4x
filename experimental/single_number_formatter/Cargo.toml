@@ -23,13 +23,6 @@ databake = { version = "0.1.0", path = "../../utils/databake", optional = true, 
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["zerovec"], default-features = false }
 
 
-[dev-dependencies]
-
-
-[lib]
-path = "src/lib.rs"
-
-
 [features]
 default = []
 serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
