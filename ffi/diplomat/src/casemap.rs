@@ -290,25 +290,6 @@ pub mod ffi {
                 provider,
             )?)))
         }
-        /// Construct a new `ICU4XTitlecaseMapper` instance with legacy head-adjustment behavior
-        ///
-        /// Behaves identically to using `titlecase_segment_legacy` on `CaseMapper`
-        #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_legacy, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::casemap::TitlecaseMapper::new_legacy_with_mapper,
-            FnInStruct,
-            hidden
-        )]
-        pub fn create_legacy(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XTitlecaseMapper>, ICU4XError> {
-            Ok(Box::new(ICU4XTitlecaseMapper(call_constructor!(
-                TitlecaseMapper::new [r => Ok(r)],
-                TitlecaseMapper::try_new_with_any_provider,
-                TitlecaseMapper::try_new_with_buffer_provider,
-                provider,
-            )?)))
-        }
 
         /// Returns the full titlecase mapping of the given string
         ///
