@@ -12,10 +12,10 @@ use zerovec::VarZeroVec;
 use icu_transliteration::provider as ds;
 
 macro_rules! impl_insert {
-    ($fn_name:ident, $field:ident, $elt_type:ty, $next_field:ident) => {
+    ($fn_name:ident, $field:ident, $elt_type:ty, $($next_field:tt)*) => {
         fn $fn_name(&mut self, elt: $elt_type) -> char {
             // pass 1 is responsible for this
-            debug_assert!(self.$field.current < self.$next_field.base - 1);
+            debug_assert!(self.$field.current < self.$($next_field)*);
             #[allow(clippy::unwrap_used)] // the whole PUP (15) consists of valid chars
             let standin = char::try_from(self.$field.current).unwrap();
             self.$field.vec.push(elt);
@@ -106,36 +106,38 @@ impl MutVarTable {
         })
     }
 
-    impl_insert!(insert_compound, compounds, String, quantifiers_opt);
+    impl_insert!(insert_compound, compounds, String, quantifiers_opt.base);
     impl_insert!(
         insert_quantifier_opt,
         quantifiers_opt,
         String,
-        quantifiers_kleene
+        quantifiers_kleene.base
     );
     impl_insert!(
         insert_quantifier_kleene,
         quantifiers_kleene,
         String,
-        quantifiers_kleene_plus
+        quantifiers_kleene_plus.base
     );
     impl_insert!(
         insert_quantifier_kleene_plus,
         quantifiers_kleene_plus,
         String,
-        segments
+        segments.base
     );
-    impl_insert!(insert_segment, segments, String, unicode_sets);
-    impl_insert!(insert_unicode_set, unicode_sets, UnicodeSet, function_calls);
-    fn insert_function_call(&mut self, elt: ds::FunctionCall<'static>) -> char {
-        // pass 1 is responsible for this
-        debug_assert!(self.function_calls.current < self.backref_base - 1);
-        #[allow(clippy::unwrap_used)] // the whole PUP (15) consists of valid chars
-        let standin = char::try_from(self.function_calls.current).unwrap();
-        self.function_calls.vec.push(elt);
-        self.function_calls.current += 1;
-        standin
-    }
+    impl_insert!(insert_segment, segments, String, unicode_sets.base);
+    impl_insert!(
+        insert_unicode_set,
+        unicode_sets,
+        UnicodeSet,
+        function_calls.base
+    );
+    impl_insert!(
+        insert_function_call,
+        function_calls,
+        ds::FunctionCall<'static>,
+        backref_base
+    );
 
     fn standin_for_backref(&self, backref_num: u32) -> char {
         debug_assert!(backref_num > 0);

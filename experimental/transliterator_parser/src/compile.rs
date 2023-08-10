@@ -975,6 +975,7 @@ mod tests {
                 num_segments: 1,
                 num_function_calls: 1,
                 num_unicode_sets: 1,
+                max_backref_num: 1,
                 ..Default::default()
             };
             let expected_fwd_data = pass1data_from_parts(
@@ -996,6 +997,7 @@ mod tests {
                 num_quantifiers_kleene_plus: 2,
                 num_segments: 2,
                 num_function_calls: 3,
+                max_backref_num: 2,
                 ..Default::default()
             };
             let expected_rev_data = pass1data_from_parts(
@@ -1111,6 +1113,7 @@ mod tests {
                 num_unicode_sets: 3,
                 num_function_calls: 1,
                 num_segments: 1,
+                max_backref_num: 1,
                 ..Default::default()
             };
             let fwd_data = pass1data_from_parts(
@@ -1131,6 +1134,7 @@ mod tests {
                 num_quantifiers_opt: 1,
                 num_segments: 2,
                 num_function_calls: 3,
+                max_backref_num: 2,
                 ..Default::default()
             };
             let rev_data = pass1data_from_parts(
