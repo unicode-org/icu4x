@@ -267,7 +267,17 @@ impl<'a, 'p> Pass2<'a, 'p> {
     }
 
     fn compile_single_id(&mut self, id: &parse::SingleId) -> ds::SimpleId<'static> {
-        let id_string = id.basic_id.source.clone(); // TODO(#3736): map legacy ID to internal ID and use here
+        // TODO(#3736): map legacy ID to internal ID and use here
+        let id_string = format!(
+            "{}-{}{}",
+            id.basic_id.source,
+            id.basic_id.target,
+            if id.basic_id.variant.is_empty() {
+                "".to_owned()
+            } else {
+                format!("/{}", id.basic_id.variant)
+            }
+        );
 
         ds::SimpleId {
             id: id_string.into(),

@@ -24,6 +24,9 @@ include = [
 [package.metadata.docs.rs]
 all-features = true
 
+[dev-dependencies]
+zerofrom = { version = "0.1.1", path = "../../utils/zerofrom" }
+
 [dependencies]
 icu_collections = { path = "../../components/collections" }
 icu_properties = { path = "../../components/properties", default-features = false }
