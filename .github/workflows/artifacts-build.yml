@@ -283,7 +283,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}
+          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
   # metrics will then be charted over time. See tools/benchmark/memory/README.md for
@@ -399,7 +399,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}
+          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
@@ -518,7 +518,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/binsize gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
+          gsutil -m cp -r benchmarks/binsize gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks
 
   # Data size benchmark: track size of provider/datagen/tests/data/testdata.postcard (total data size).
   bench-datasize:
@@ -582,7 +582,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/datasize gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize
+          gsutil -m cp -r benchmarks/datasize gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks
 
   gh-pages:
     name: "Deploy to GitHub Pages"
