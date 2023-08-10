@@ -126,10 +126,14 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let cache = ChineseBasedYearInfo::Cache(Inner::compute_cache(year));
+        let year_info = if let Some(data) = Self::get_compiled_data_for_year(year) {
+            ChineseBasedYearInfo::Data(data)
+        } else {
+            ChineseBasedYearInfo::Cache(Inner::compute_cache(year))
+        };
 
         let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code::<Chinese>(month_code, cache)
+            chinese_based_ordinal_lunar_month_from_code::<Chinese>(month_code, year_info)
         {
             ordinal
         } else {
@@ -143,8 +147,8 @@ impl Calendar for Chinese {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
-        Ok(ChineseDateInner(ChineseBasedDateInner(arithmetic?, cache)))
+        let arithmetic = Inner::new_from_ordinals(year, month, day, &year_info);
+        Ok(ChineseDateInner(ChineseBasedDateInner(arithmetic?, year_info)))
     }
 
     // Construct the date from an ISO date
