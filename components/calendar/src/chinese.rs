@@ -33,6 +33,8 @@
 //! assert_eq!(chinese_datetime.time.second.number(), 0);
 //! ```
 
+use core::num::NonZeroU8;
+
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::Location;
 use crate::calendar_arithmetic::CalendarArithmetic;
@@ -44,7 +46,7 @@ use crate::helpers::div_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
 use crate::types::{Era, FormattableYear};
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, chinese_data};
 use tinystr::tinystr;
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
@@ -381,8 +383,54 @@ impl ChineseBased for Chinese {
     const EPOCH: RataDie = CHINESE_EPOCH;
 
     fn get_compiled_data_for_year(year: i32) -> Option<ChineseBasedCompiledData> {
-        // TODO: Write this function
-        todo!()
+        if (chinese_data::MIN_YEAR..=chinese_data::MAX_YEAR).contains(&year) {
+            let packed_data = chinese_data::CHINESE_DATA_ARRAY[(year - chinese_data::MIN_YEAR) as usize];
+            let next_year_data = chinese_data::CHINESE_DATA_ARRAY[(year - chinese_data::MIN_YEAR + 1) as usize];
+
+            let new_year_iso_offset = (packed_data & 0o770000000) >> 21;
+            debug_assert!(((u16::MIN as i32)..=(u16::MAX as i32)).contains(&new_year_iso_offset));
+            let new_year_iso_offset = new_year_iso_offset as u16;
+            let iso_year = 2023 + (year - 4660);
+            let new_year = Iso::fixed_from_iso(Iso::iso_from_year_day(iso_year, new_year_iso_offset).inner);
+
+            let next_new_year_iso_offset = (packed_data & 0o770000000) >> 21;
+            debug_assert!(((u16::MIN as i32)..=(u16::MAX as i32)).contains(&next_new_year_iso_offset));
+            let next_new_year_iso_offset = next_new_year_iso_offset as u16;
+            let next_iso_year = 2023 + (year - 4660) + 1;
+            let next_new_year = Iso::fixed_from_iso(Iso::iso_from_year_day(iso_year, new_year_iso_offset).inner);
+
+            let mut month_lengths: [u8; 13] = [0; 13];
+            for bit_offset in 9..=20 {
+                month_lengths[(20 - bit_offset) as usize] = if (1 << bit_offset & packed_data) != 0 {
+                    30
+                } else {
+                    29
+                };
+            }
+            month_lengths[12] = if (1 << 6 & packed_data) != 0 {
+                30
+            } else {
+                29
+            };
+
+            let leap_month_bits = packed_data & 0o77;
+            let leap_month = if leap_month_bits == 0 {
+                None
+            } else {
+                debug_assert!(((u8::MIN as i32)..=(u8::MAX as i32)).contains(&leap_month_bits));
+                NonZeroU8::new(leap_month_bits as u8)
+            };
+
+
+            Some(ChineseBasedCompiledData {
+                new_year,
+                next_new_year,
+                month_lengths,
+                leap_month,
+            })
+        } else {
+            None
+        }
     }
 }
 
@@ -896,7 +944,7 @@ mod test {
         ];
         for ordinal_code_pair in codes {
             let code = MonthCode(ordinal_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(code, cache);
+            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(code, ChineseBasedYearInfo::Cache(cache));
             assert_eq!(
                 ordinal,
                 Some(ordinal_code_pair.0),
@@ -923,7 +971,7 @@ mod test {
             let year = year_code_pair.0;
             let cache = Inner::compute_cache(year);
             let code = MonthCode(year_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(code, cache);
+            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(code, ChineseBasedYearInfo::Cache(cache));
             assert_eq!(
                 ordinal, None,
                 "Invalid month code failed for year: {year}, code: {code}"
