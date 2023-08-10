@@ -771,7 +771,8 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4466
-    pub(crate) fn lunar_latitude(c: f64) -> f64 {
+    pub(crate) fn lunar_latitude(julian_centuries: f64) -> f64 {
+        let c = julian_centuries;
         let l = Self::mean_lunar_longitude(c);
         let d = Self::lunar_elongation(c);
         let ms = Self::solar_anomaly(c);
@@ -966,7 +967,8 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4215-L4278
-    pub(crate) fn lunar_longitude(moment: Moment, c: f64) -> f64 {
+    pub(crate) fn lunar_longitude(moment: Moment, julian_centuries: f64) -> f64 {
+        let c = julian_centuries;
         let l = Self::mean_lunar_longitude(c);
         let d = Self::lunar_elongation(c);
         let ms = Self::solar_anomaly(c);
