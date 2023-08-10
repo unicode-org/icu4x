@@ -97,8 +97,8 @@ impl AsULE for CurrencyPatterns {
         } else {
             PatternSelection::Standard
         };
-        let short_prefix = first_byte & 0b0011_1000;
-        let narrow_prefix = first_byte & 0b0000_0111;
+        let short_prefix = (first_byte & 0b0000_1100) >> 2;
+        let narrow_prefix = first_byte & 0b0000_0011;
 
         let short_place_holder_index = ((short_prefix as u16) << 8) | second_byte as u16;
         let narrow_place_holder_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
