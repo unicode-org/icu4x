@@ -62,12 +62,12 @@ pub enum PatternSelection {
 
 type PatternSelectionMask = u8;
 
-// TODO(younies): replace this with Option<PlaceHolder>, enum PlaceHolder { Index(usize), ISO }
+// TODO(#3836): replace this with Option<PlaceHolder>, enum PlaceHolder { Index(usize), ISO }
 // and encapsulate the encoding in the ULE implementation.
 pub const USE_ISO_CODE: u16 = u16::MAX - 1;
 pub const NO_PLACE_HOLDER: u16 = u16::MAX;
 
-// TODO(https://github.com/unicode-org/icu4x/issues/3737): Reduce the size of CurrencyPatternsULE.
+// TODO(#3737): Reduce the size of CurrencyPatternsULE.
 #[zerovec::make_ule(CurrencyPatternsULE)]
 #[cfg_attr(
     feature = "datagen",
