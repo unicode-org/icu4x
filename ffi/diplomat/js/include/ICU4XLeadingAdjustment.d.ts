@@ -12,5 +12,5 @@ export enum ICU4XLeadingAdjustment {
   Auto = 'Auto',
   /**
    */
-  AdjustToCased = 'AdjustToCased',
+  ToCased = 'ToCased',
 }

@@ -182,7 +182,7 @@
 
     .. cpp:enumerator:: Auto
 
-    .. cpp:enumerator:: AdjustToCased
+    .. cpp:enumerator:: ToCased
 
 .. cpp:class:: ICU4XTitlecaseMapper
 

@@ -13,7 +13,7 @@ namespace capi {
 typedef enum ICU4XLeadingAdjustment {
   ICU4XLeadingAdjustment_None = 0,
   ICU4XLeadingAdjustment_Auto = 1,
-  ICU4XLeadingAdjustment_AdjustToCased = 2,
+  ICU4XLeadingAdjustment_ToCased = 2,
 } ICU4XLeadingAdjustment;
 #ifdef __cplusplus
 } // namespace capi

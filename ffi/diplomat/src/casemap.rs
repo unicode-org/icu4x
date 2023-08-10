@@ -20,7 +20,7 @@ pub mod ffi {
     pub enum ICU4XLeadingAdjustment {
         None,
         Auto,
-        AdjustToCased,
+        ToCased,
     }
 
     #[diplomat::enum_convert(TrailingCase, needs_wildcard)]

@@ -42,7 +42,7 @@ pub enum LeadingAdjustment {
     Auto,
     /// Adjust the string to the first cased character before beginning to apply casing
     /// ("'twixt" -> "'Twixt")
-    AdjustToCased,
+    ToCased,
 }
 
 /// Various options for controlling titlecasing
@@ -123,7 +123,7 @@ pub struct TitlecaseOptions {
 /// let mut no_adjust: TitlecaseOptions = Default::default();
 /// let mut adjust_to_cased: TitlecaseOptions = Default::default();
 /// no_adjust.leading_adjustment = LeadingAdjustment::None;
-/// adjust_to_cased.leading_adjustment = LeadingAdjustment::AdjustToCased;
+/// adjust_to_cased.leading_adjustment = LeadingAdjustment::ToCased;
 ///
 /// // Exhibits leading adjustment when set:
 /// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");

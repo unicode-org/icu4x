@@ -146,7 +146,7 @@ impl CaseMapper {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// This function performs "adjust to cased" leading adjustment behavior when [`LeadingAdjustment::Auto`] or [`LeadingAdjustment::AdjustToCased`]
+    /// This function performs "adjust to cased" leading adjustment behavior when [`LeadingAdjustment::Auto`] or [`LeadingAdjustment::ToCased`]
     /// is set. Auto mode is not able to pick the "adjust to letter/number/symbol" behavioras this type does not load
     /// the data to do so, use [`TitlecaseMapper`] if such behavior is desired. See
     /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
@@ -181,7 +181,7 @@ impl CaseMapper {
     ) -> StringAndWriteable<FullCaseWriteable<'a, true>> {
         let data = self.data.get();
         let (head, rest) = match options.leading_adjustment {
-            LeadingAdjustment::Auto | LeadingAdjustment::AdjustToCased => {
+            LeadingAdjustment::Auto | LeadingAdjustment::ToCased => {
                 let first_cased = src.char_indices().find(|(_i, ch)| char_is_lead(data, *ch));
                 if let Some((first_cased, _ch)) = first_cased {
                     (

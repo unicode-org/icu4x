@@ -21,7 +21,7 @@
 enum struct ICU4XLeadingAdjustment {
   None = 0,
   Auto = 1,
-  AdjustToCased = 2,
+  ToCased = 2,
 };
 
 #endif
