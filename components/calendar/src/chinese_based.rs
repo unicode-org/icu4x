@@ -414,8 +414,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
 
     /// Calls day_in_year_cached on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_year_inner(&self) -> u16 {
-        let next_new_year = Self::new_year_on_or_before_fixed_date(self.1.new_year + 400, None).0;
-        Self::days_in_year(self.1.new_year, next_new_year)
+        Self::days_in_year(self.1.new_year, self.1.next_new_year)
     }
 
     /// Returns the number of day in the given year bounds
@@ -518,6 +517,8 @@ pub(crate) fn chinese_based_ordinal_lunar_month_from_code<C: ChineseBased>(
     let leap_month = if let Some(leap) = cache.leap_month {
         leap.get()
     } else {
+        // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
+        // it is impossible to actually have 14 months in a year.
         14
     };
 
