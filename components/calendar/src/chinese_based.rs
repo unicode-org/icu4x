@@ -52,20 +52,62 @@ pub(crate) trait ChineseBased: CalendarArithmetic + Sized {
     /// reflect traditional methods of year-tracking or eras, since Chinese-based calendars
     /// may not track years ordinally in the same way many western calendars do.
     const EPOCH: RataDie;
+
+    /// Get the compiled const data for a ChineseBased calendar; can return `None` if the given year 
+    /// does not correspond to any compiled data.
+    fn get_compiled_data_for_year(year: i32) -> Option<ChineseBasedCompiledData>;
 }
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub(crate) struct ChineseBasedDateInner<C: ChineseBased>(
     pub(crate) ArithmeticDate<C>,
-    pub(crate) ChineseBasedCache,
+    pub(crate) ChineseBasedYearInfo,
 );
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+pub(crate) enum ChineseBasedYearInfo {
+    Cache(ChineseBasedCache),
+    Data(ChineseBasedCompiledData),
+}
+
+impl ChineseBasedYearInfo {
+    pub(crate) fn get_new_year(&self) -> RataDie {
+        match self {
+            Self::Cache(cache) => cache.new_year,
+            Self::Data(data) => data.new_year,
+        }
+    }
+
+    pub(crate) fn get_next_new_year(&self) -> RataDie {
+        match self {
+            Self::Cache(cache) => cache.next_new_year,
+            Self::Data(data) => data.next_new_year,
+        }
+    }
+
+    pub(crate) fn get_leap_month(&self) -> Option<NonZeroU8> {
+        match self {
+            Self::Cache(cache) => cache.leap_month,
+            Self::Data(data) => data.leap_month,
+        }
+    }
+}
 
 /// A caching struct used to store information for ChineseBasedDates
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub(crate) struct ChineseBasedCache {
     pub(crate) new_year: RataDie,
     pub(crate) next_new_year: RataDie,
+    pub(crate) leap_month: Option<NonZeroU8>,
+}
+
+/// A data struct used to load and use information for a set of ChineseBasedDates
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+pub(crate) struct ChineseBasedCompiledData {
+    pub(crate) new_year: RataDie,
+    pub(crate) next_new_year: RataDie,
+    pub(crate) month_lengths: [u8; 12],
     pub(crate) leap_month: Option<NonZeroU8>,
 }
 
@@ -246,42 +288,75 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             "Year should be in range of i32"
         );
         let year = year_int.saturate();
-        let new_moon = Self::new_moon_before((date + 1).as_moment());
-        let month_i64 =
-            libm::round((new_moon - first_day_of_year) as f64 / MEAN_SYNODIC_MONTH) as i64 + 1;
-        debug_assert!(
-            ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
-            "Month should be in range of u8! Value {month_i64} failed for RD {date:?}"
-        );
-        let month = month_i64 as u8;
-        let day_i64 = date - new_moon + 1;
-        debug_assert!(
-            ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
-            "Day should be in range of u8! Value {month_i64} failed for RD {date:?}"
-        );
-        let day = day_i64 as u8;
-        let is_leap_year = Self::new_year_is_leap_year(
-            first_day_of_year,
-            Some(next_solstice),
-            Some(next_new_year),
-        );
-        let leap_month = if is_leap_year {
-            // This doesn't need to be checked for `None`, since `get_leap_month_from_new_year`
-            // will always return a number greater than or equal to 1, and less than 14.
-            NonZeroU8::new(Self::get_leap_month_from_new_year(first_day_of_year))
+        let data_option = C::get_compiled_data_for_year(year);
+        
+        if let Some(data) = data_option {
+            debug_assert!(first_day_of_year == data.new_year, "Calculated and stored new year RataDies do not match!");
+            debug_assert!(date < data.next_new_year, "Stored date out of bounds!");
+            let mut cur = data.new_year + data.month_lengths[0] as i64;
+            let mut month = 0;
+            let mut index = 0;
+            while cur <= date && index < 12 {
+                month += 1;
+                index += 1;
+                cur += data.month_lengths[index] as i64;
+            }
+            if cur <= date {
+                // If cur is still less than or equal to difference,
+                // there should be a thirteenth month.
+                debug_assert!(data.leap_month.is_some());
+                month = 13;
+            } else {
+                cur -= data.month_lengths[index] as i64;
+            }
+            let day = date - cur + 1;
+            debug_assert!((1..=30).contains(&day), "Day out of bounds!");
+            let day = day as u8;
+            
+            // This can use `new_unchecked` because this function is only ever called from functions which
+            // generate the year, month, and day; therefore, there should never be a situation where
+            // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
+            // are also used to check for valid ymd.
+            ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), ChineseBasedYearInfo::Data(data))
         } else {
-            None
-        };
-        let cache = ChineseBasedCache {
-            new_year: first_day_of_year,
-            next_new_year,
-            leap_month,
-        };
-        // This can use `new_unchecked` because this function is only ever called from functions which
-        // generate the year, month, and day; therefore, there should never be a situation where
-        // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
-        // are also used to check for valid ymd.
-        ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), cache)
+            let new_moon = Self::new_moon_before((date + 1).as_moment());
+            let month_i64 =
+                libm::round((new_moon - first_day_of_year) as f64 / MEAN_SYNODIC_MONTH) as i64 + 1;
+            debug_assert!(
+                ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
+                "Month should be in range of u8! Value {month_i64} failed for RD {date:?}"
+            );
+            let month = month_i64 as u8;
+            let day_i64 = date - new_moon + 1;
+            debug_assert!(
+                ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
+                "Day should be in range of u8! Value {month_i64} failed for RD {date:?}"
+            );
+            let day = day_i64 as u8;
+            let is_leap_year = Self::new_year_is_leap_year(
+                first_day_of_year,
+                Some(next_solstice),
+                Some(next_new_year),
+            );
+            let leap_month = if is_leap_year {
+                // This doesn't need to be checked for `None`, since `get_leap_month_from_new_year`
+                // will always return a number greater than or equal to 1, and less than 14.
+                NonZeroU8::new(Self::get_leap_month_from_new_year(first_day_of_year))
+            } else {
+                None
+            };
+            let cache = ChineseBasedCache {
+                new_year: first_day_of_year,
+                next_new_year,
+                leap_month,
+            };
+        
+            // This can use `new_unchecked` because this function is only ever called from functions which
+            // generate the year, month, and day; therefore, there should never be a situation where
+            // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
+            // are also used to check for valid ymd.
+            ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day), ChineseBasedYearInfo::Cache(cache))
+        }
     }
 
     /// Get a RataDie from a ChineseBasedDateInner
@@ -291,7 +366,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     pub(crate) fn fixed_from_chinese_based_date_inner(date: ChineseBasedDateInner<C>) -> RataDie {
         let month = date.0.month as i64;
         let day = date.0.day as i64;
-        let first_day_of_year = date.1.new_year;
+        let first_day_of_year = date.1.get_new_year();
         let month_approx = first_day_of_year + (month - 1) * 29;
         let prior_new_moon = Self::new_moon_on_or_after(month_approx.as_moment());
         prior_new_moon + day - 1
@@ -353,15 +428,15 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     }
 
     /// Create a new arithmetic date from a year, month ordinal, and day with bounds checking; returns the
-    /// result of creating this arithmetic date, as well as a ChineseBasedCache - either the one passed in
-    /// optionally as an argument, or a new ChineseBasedCache for the given year, month, and day args.
+    /// result of creating this arithmetic date, as well as a ChineseBasedYearInfo - either the one passed in
+    /// optionally as an argument, or a new ChineseBasedYearInfo for the given year, month, and day args.
     pub(crate) fn new_from_ordinals(
         year: i32,
         month: u8,
         day: u8,
-        cache: &ChineseBasedCache,
+        year_info: &ChineseBasedYearInfo,
     ) -> Result<ArithmeticDate<C>, CalendarError> {
-        let max_month = Self::months_in_year_cached(cache);
+        let max_month = Self::months_in_year_with_info(year_info);
         if month > max_month {
             return Err(CalendarError::Overflow {
                 field: "month",
@@ -369,7 +444,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             });
         }
 
-        let max_day = Self::days_in_month(month, cache.new_year, None).0;
+        let max_day = Self::days_in_month(month, year_info.get_new_year(), None).0;
         if day > max_day {
             return Err(CalendarError::Overflow {
                 field: "day",
@@ -382,15 +457,15 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         Ok(ArithmeticDate::<C>::new_unchecked(year, month, day))
     }
 
-    /// Call `months_in_year_cached` on a `ChineseBasedDateInner`
+    /// Call `months_in_year_with_info` on a `ChineseBasedDateInner`
     pub(crate) fn months_in_year_inner(&self) -> u8 {
-        Self::months_in_year_cached(&self.1)
+        Self::months_in_year_with_info(&self.1)
     }
 
     /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
     /// Also takes a `ChineseBasedCache` argument.
-    fn months_in_year_cached(cache: &ChineseBasedCache) -> u8 {
-        if cache.leap_month.is_some() {
+    fn months_in_year_with_info(year_info: &ChineseBasedYearInfo) -> u8 {
+        if year_info.get_leap_month().is_some() {
             13
         } else {
             12
@@ -399,7 +474,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
 
     /// Calls `days_in_month` on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_month_inner(&self) -> u8 {
-        Self::days_in_month(self.0.month, self.1.new_year, None).0
+        Self::days_in_month(self.0.month, self.1.get_new_year(), None).0
     }
 
     /// Returns the number of days in the given `month` after the given `new_year`.
@@ -413,10 +488,10 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         (result, next_new_moon)
     }
 
-    /// Calls day_in_year_cached on an instance of ChineseBasedDateInner
+    /// Calls days_in_year on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_year_inner(&self) -> u16 {
-        let next_new_year = Self::new_year_on_or_before_fixed_date(self.1.new_year + 400, None).0;
-        Self::days_in_year(self.1.new_year, next_new_year)
+        let next_new_year = Self::new_year_on_or_before_fixed_date(self.1.get_new_year() + 400, None).0;
+        Self::days_in_year(self.1.get_new_year(), next_new_year)
     }
 
     /// Returns the number of day in the given year bounds
@@ -435,7 +510,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let mut day_of_year = 0;
         let mut prev_new_moon = None;
         for month in 1..self.0.month {
-            let (days_in_month, next_new_moon) = Self::days_in_month(month, self.1.new_year, prev_new_moon);
+            let (days_in_month, next_new_moon) = Self::days_in_month(month, self.1.get_new_year(), prev_new_moon);
             day_of_year += days_in_month as u16;
             prev_new_moon = Some(next_new_moon);
         }
@@ -527,9 +602,9 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
 /// Get the ordinal lunar month from a code for chinese-based calendars.
 pub(crate) fn chinese_based_ordinal_lunar_month_from_code<C: ChineseBased>(
     code: MonthCode,
-    cache: ChineseBasedCache,
+    year_info: ChineseBasedYearInfo,
 ) -> Option<u8> {
-    let leap_month = if let Some(leap) = cache.leap_month {
+    let leap_month = if let Some(leap) = year_info.get_leap_month() {
         leap.get()
     } else {
         14

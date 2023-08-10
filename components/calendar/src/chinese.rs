@@ -37,7 +37,7 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::Location;
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::chinese_based::{
-    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedDateInner,
+    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedDateInner, ChineseBasedCompiledData, ChineseBasedYearInfo,
 };
 use crate::helpers::div_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
@@ -126,7 +126,7 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let cache = Inner::compute_cache(year);
+        let cache = ChineseBasedYearInfo::Cache(Inner::compute_cache(year));
 
         let month = if let Some(ordinal) =
             chinese_based_ordinal_lunar_month_from_code::<Chinese>(month_code, cache)
@@ -174,7 +174,7 @@ impl Calendar for Chinese {
         let year = date.0 .0.year;
         date.0 .0.offset_date(offset);
         if date.0 .0.year != year {
-            date.0 .1 = Inner::compute_cache(date.0 .0.year);
+            date.0 .1 = ChineseBasedYearInfo::Cache(Inner::compute_cache(date.0 .0.year));
         }
     }
 
@@ -211,7 +211,7 @@ impl Calendar for Chinese {
     /// month, the month codes for ordinal monts 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month_option = date.0 .1.leap_month;
+        let leap_month_option = date.0 .1.get_leap_month();
         let leap_month = if let Some(leap) = leap_month_option {
             leap.get()
         } else {
@@ -321,7 +321,7 @@ impl Date<Chinese> {
         month: u8,
         day: u8,
     ) -> Result<Date<Chinese>, CalendarError> {
-        let cache = Inner::compute_cache(year);
+        let cache = ChineseBasedYearInfo::Cache(Inner::compute_cache(year));
         let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
         Ok(Date::from_raw(
             ChineseDateInner(ChineseBasedDateInner(arithmetic?, cache)),
@@ -375,6 +375,11 @@ impl ChineseBased for Chinese {
     }
 
     const EPOCH: RataDie = CHINESE_EPOCH;
+
+    fn get_compiled_data_for_year(year: i32) -> Option<ChineseBasedCompiledData> {
+        // TODO: Write this function
+        todo!()
+    }
 }
 
 impl Chinese {

@@ -34,7 +34,7 @@
 //! ```
 
 use crate::calendar_arithmetic::CalendarArithmetic;
-use crate::chinese_based::chinese_based_ordinal_lunar_month_from_code;
+use crate::chinese_based::{chinese_based_ordinal_lunar_month_from_code, ChineseBasedCompiledData, ChineseBasedYearInfo};
 use crate::helpers::div_rem_euclid64;
 use crate::{
     astronomy::Location,
@@ -151,7 +151,7 @@ impl Calendar for Dangi {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, crate::Error> {
-        let cache = Inner::compute_cache(year);
+        let cache = ChineseBasedYearInfo::Cache(Inner::compute_cache(year));
 
         let month = if let Some(ordinal) =
             chinese_based_ordinal_lunar_month_from_code::<Dangi>(month_code, cache)
@@ -198,7 +198,7 @@ impl Calendar for Dangi {
         let year = date.0 .0.year;
         date.0 .0.offset_date(offset);
         if date.0 .0.year != year {
-            date.0 .1 = Inner::compute_cache(date.0 .0.year);
+            date.0 .1 = ChineseBasedYearInfo::Cache(Inner::compute_cache(date.0 .0.year));
         }
     }
 
@@ -223,7 +223,7 @@ impl Calendar for Dangi {
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month_option = date.0 .1.leap_month;
+        let leap_month_option = date.0 .1.get_leap_month();
         let leap_month = if let Some(leap) = leap_month_option {
             leap.get()
         } else {
@@ -326,7 +326,7 @@ impl Date<Dangi> {
     /// assert_eq!(date_dangi.day_of_month().0, 18);
     /// ```
     pub fn try_new_dangi_date(year: i32, month: u8, day: u8) -> Result<Date<Dangi>, CalendarError> {
-        let cache = Inner::compute_cache(year);
+        let cache = ChineseBasedYearInfo::Cache(Inner::compute_cache(year));
         let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
         Ok(Date::from_raw(
             DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)),
@@ -384,6 +384,11 @@ impl ChineseBased for Dangi {
     }
 
     const EPOCH: RataDie = KOREAN_EPOCH;
+
+    fn get_compiled_data_for_year(year: i32) -> Option<ChineseBasedCompiledData> {
+        // TODO: Write this fn
+        todo!()
+    }
 }
 
 impl Dangi {
