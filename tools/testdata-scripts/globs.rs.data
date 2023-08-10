@@ -21,6 +21,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-core/scriptMetadata.json",
     "cldr-core/supplemental/aliases.json",
     "cldr-core/supplemental/calendarData.json",
+    "cldr-core/supplemental/currencyData.json",
     "cldr-core/supplemental/likelySubtags.json",
     "cldr-core/supplemental/metaZones.json",
     "cldr-core/supplemental/numberingSystems.json",
@@ -41,6 +42,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-localenames-full/main/$LOCALES/variants.json",
     "cldr-misc-full/main/$LOCALES/characters.json",
     "cldr-misc-full/main/$LOCALES/listPatterns.json",
+    "cldr-numbers-full/main/$LOCALES/currencies.json",
     "cldr-numbers-full/main/$LOCALES/numbers.json",
     "cldr-person-names-full/main/$LOCALES/personNames.json",
 ];

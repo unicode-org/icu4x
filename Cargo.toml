@@ -42,6 +42,7 @@ members = [
     "experimental/ixdtf",
     "experimental/relativetime",
     "experimental/relativetime/data",
+    "experimental/single_number_formatter",
     "experimental/transliterator_parser",
     "experimental/transliteration",
     "experimental/unicodeset_parser",

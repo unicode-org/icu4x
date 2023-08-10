@@ -50,6 +50,8 @@ icu_properties = { version = "1.2.0", path = "../../components/properties", defa
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, features = ["datagen"], optional = true }
 icu_segmenter = { version = "1.2.0", path = "../../components/segmenter", default-features = false, features = ["datagen", "lstm"] }
 icu_timezone = { version = "1.2.0", path = "../../components/timezone", default-features = false, features = ["datagen"] }
+icu_singlenumberformatter = { version = "0.1.0", path = "../../experimental/single_number_formatter", default-features = false, features = ["datagen"], optional = true}
+
 
 # ICU infrastructure
 icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder", default-features = false }
@@ -117,6 +119,7 @@ networking = ["dep:ureq"]
 icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_relativetime = ["dep:icu_relativetime"]
+icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
 
 [[bin]]
 name = "icu4x-datagen"
@@ -134,6 +137,6 @@ skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # Always the experimental deps because we want to all-or-nothing them
 # and the nothing case is already tested in regular check CI
-always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime"]
+always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_singlenumberformatter"]
 # We have a *lot* of features here
 max_combination_size = 2
