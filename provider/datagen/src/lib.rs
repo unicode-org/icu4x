@@ -319,14 +319,11 @@ impl DatagenProvider {
         let mut metadata = DataRequestMetadata::default();
         metadata.silent = true;
         // Lazy-compute the fallback iterator so that we don't always require CLDR data
-        let mut option_iter: Option<Result<LocaleFallbackIterator, DataError>> = None;
+        let mut option_iter: Option<LocaleFallbackIterator> = None;
         loop {
             let req = DataRequest {
                 locale: match option_iter.as_ref() {
-                    Some(iter) => {
-                        let iter = iter.as_ref().map_err(|x| *x)?;
-                        iter.get()
-                    }
+                    Some(iter) => iter.get(),
                     None => locale,
                 },
                 metadata,
@@ -335,7 +332,6 @@ impl DatagenProvider {
             match result {
                 Ok(data_response) => {
                     if let Some(iter) = option_iter.as_ref() {
-                        let iter = iter.as_ref().map_err(|x| *x)?;
                         if iter.get().is_empty() && !locale.is_empty() {
                             log::debug!("Falling back to und: {key}/{locale}");
                         }
@@ -347,18 +343,17 @@ impl DatagenProvider {
                     ..
                 }) => {
                     if let Some(iter) = option_iter.as_mut() {
-                        let iter = iter.as_mut().map_err(|x| *x)?;
                         if iter.get().is_empty() {
                             log::debug!("Could not find data for: {key}/{locale}");
                             return Ok(None);
                         }
                         iter.step();
-                    }
-                    option_iter.get_or_insert_with(|| {
+                    } else {
                         let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                         let config = LocaleFallbackConfig::from_key(key);
-                        Ok(fallbacker.for_config(config).fallback_for(locale.clone()))
-                    });
+                        let iter = fallbacker.for_config(config).fallback_for(locale.clone());
+                        option_iter.replace(iter);
+                    }
                 }
                 Err(e) => return Err(e.with_req(key, req)),
             }
