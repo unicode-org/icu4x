@@ -11,7 +11,7 @@ use tinystr::{tinystr, TinyStr16, TinyStr4};
 
 pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
     DateSymbolsV1 {
-        months: other.months.get(&(get_month_code_map(calendar), calendar)),
+        months: other.months.get(&(&[], calendar)),
         weekdays: other.days.get(&()),
         eras: convert_eras(&other.eras, calendar),
     }
