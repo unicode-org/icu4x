@@ -64,6 +64,7 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc"
         | "islamic" | "islamicc" | "umalqura" | "tbla" => &SOLAR_MONTH_CODES[0..12],
         "coptic" | "ethiopic" | "chinese" => SOLAR_MONTH_CODES,
+        "hebrew" => &[], // special-cased in the get() function
         _ => panic!("Month map unknown for {calendar}"),
     }
 }
