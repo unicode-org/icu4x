@@ -346,17 +346,14 @@ impl DatagenProvider {
                     kind: DataErrorKind::MissingLocale,
                     ..
                 }) => {
-                    match option_iter.as_mut() {
-                        Some(iter) => {
-                            let iter = iter.as_mut().map_err(|x| *x)?;
-                            if iter.get().is_empty() {
-                                log::debug!("Could not find data for: {key}/{locale}");
-                                return Ok(None);
-                            }
-                            iter.step();
+                    if let Some(iter) = option_iter.as_mut() {
+                        let iter = iter.as_mut().map_err(|x| *x)?;
+                        if iter.get().is_empty() {
+                            log::debug!("Could not find data for: {key}/{locale}");
+                            return Ok(None);
                         }
-                        None => (),
-                    };
+                        iter.step();
+                    }
                     option_iter.get_or_insert_with(|| {
                         let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                         let config = LocaleFallbackConfig::from_key(key);
