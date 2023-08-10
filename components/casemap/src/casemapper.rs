@@ -7,7 +7,7 @@ use crate::provider::data::MappingKind;
 use crate::provider::CaseMapV1;
 use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSink;
-use crate::titlecase::{HeadAdjustment, TrailingCase, TitlecaseOptions};
+use crate::titlecase::{LeadingAdjustment, TrailingCase, TitlecaseOptions};
 use alloc::string::String;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -146,10 +146,10 @@ impl CaseMapper {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// This function performs legacy head adjustment behavior when [`HeadAdjustment::Adjust`] is set. See
+    /// This function performs legacy head adjustment behavior when [`LeadingAdjustment::Adjust`] is set. See
     /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
     /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
-    /// is [`HeadAdjustment::NoAdjust`].
+    /// is [`LeadingAdjustment::NoAdjust`].
     ///
     /// See [`Self::titlecase_segment_legacy_to_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
@@ -166,7 +166,7 @@ impl CaseMapper {
 
     /// Helper to support different head adjustment behaviors,
     /// `char_is_head` is a function that returns true for a character that is allowed to be the
-    /// titlecase head, when `head_adjustment = Adjust`
+    /// titlecase head, when `head_adjustment != None`
     ///
     /// We return a concrete type instead of `impl Trait` so the return value can be mixed with that of other calls
     /// to this function with different closures
@@ -179,7 +179,7 @@ impl CaseMapper {
     ) -> StringAndWriteable<FullCaseWriteable<'a, true>> {
         let data = self.data.get();
         let (head, rest) = match options.head_adjustment {
-            HeadAdjustment::Adjust => {
+            LeadingAdjustment::Auto | LeadingAdjustment::AdjustToCased => {
                 let first_cased = src.char_indices().find(|(_i, ch)| char_is_head(data, *ch));
                 if let Some((first_cased, _ch)) = first_cased {
                     (
@@ -190,7 +190,7 @@ impl CaseMapper {
                     (src, "")
                 }
             }
-            HeadAdjustment::NoAdjust => ("", src),
+            LeadingAdjustment::None => ("", src),
         };
         let writeable = data.full_helper_writeable::<true>(
             rest,
@@ -310,10 +310,10 @@ impl CaseMapper {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// This function performs legacy head adjustment behavior when [`HeadAdjustment::Adjust`] is set. See
+    /// This function performs legacy head adjustment behavior when [`LeadingAdjustment::Adjust`] is set. See
     /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
     /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
-    /// is [`HeadAdjustment::NoAdjust`].
+    /// is [`LeadingAdjustment::NoAdjust`].
     ///
     /// See [`Self::titlecase_segment_legacy()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///

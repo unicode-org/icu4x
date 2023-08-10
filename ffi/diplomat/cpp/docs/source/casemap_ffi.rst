@@ -173,14 +173,16 @@
         See the `Rust documentation for simple_fold_turkic <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold_turkic>`__ for more information.
 
 
-.. cpp:enum-struct:: ICU4XHeadAdjustment
+.. cpp:enum-struct:: ICU4XLeadingAdjustment
 
-    See the `Rust documentation for HeadAdjustment <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.HeadAdjustment.html>`__ for more information.
+    See the `Rust documentation for LeadingAdjustment <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.LeadingAdjustment.html>`__ for more information.
 
 
-    .. cpp:enumerator:: Adjust
+    .. cpp:enumerator:: None
 
-    .. cpp:enumerator:: NoAdjust
+    .. cpp:enumerator:: Auto
+
+    .. cpp:enumerator:: AdjustToCased
 
 .. cpp:class:: ICU4XTitlecaseMapper
 
@@ -217,7 +219,7 @@
     See the `Rust documentation for TitlecaseOptions <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html>`__ for more information.
 
 
-    .. cpp:member:: ICU4XHeadAdjustment head_adjustment
+    .. cpp:member:: ICU4XLeadingAdjustment head_adjustment
 
     .. cpp:member:: ICU4XTrailingCase tail_casing
 

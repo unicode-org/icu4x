@@ -29,14 +29,19 @@ pub enum TrailingCase {
 /// relevant character. See docs of [`TitlecaseMapper`] for examples.
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
-pub enum HeadAdjustment {
-    /// Adjust the string to the first relevant character before beginning to apply casing
-    /// ("'twixt" -> "'Twixt")
-    #[default]
-    Adjust,
+pub enum LeadingAdjustment {
     /// Start titlecasing immediately, even if the character is not one that is relevant for casing
     /// ("'twixt" -> "'twixt", "twixt" -> "Twixt")
-    NoAdjust,
+    None,
+    /// Adjust the string to the first relevant character before beginning to apply casing
+    /// ("'twixt" -> "'Twixt"). "Relevant" character is picked by best available algorithm,
+    /// may be "adjust to cased" when there is no data available, or will adjust to first letter,
+    /// number, symbol, or private use character. 
+    #[default]
+    Auto,
+    /// Adjust the string to the first cased character before beginning to apply casing
+    /// ("'twixt" -> "'Twixt")
+    AdjustToCased,
 }
 
 /// Various options for controlling titlecasing
@@ -50,7 +55,7 @@ pub struct TitlecaseOptions {
     pub tail_casing: TrailingCase,
     /// Whether to start casing at the beginning of the string or at the first
     /// relevant character.
-    pub head_adjustment: HeadAdjustment,
+    pub head_adjustment: LeadingAdjustment,
 }
 
 /// A wrapper around [`CaseMapper`] that can compute titlecasing stuff, and is able to load additional data
@@ -69,7 +74,7 @@ pub struct TitlecaseOptions {
 ///
 /// The normal mode requires additional data; which is the purpose of this being a separate type.
 ///
-/// If you are planning on only using [`HeadAdjustment::NoAdjust`], consider using [`CaseMapper`] directly; this
+/// If you are planning on only using [`LeadingAdjustment::NoAdjust`], consider using [`CaseMapper`] directly; this
 /// type will have no additional behavior.
 ///
 /// # Examples
@@ -107,7 +112,7 @@ pub struct TitlecaseOptions {
 ///
 /// ```rust
 /// use icu_casemap::TitlecaseMapper;
-/// use icu_casemap::titlecase::{HeadAdjustment, TitlecaseOptions};
+/// use icu_casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
 /// use icu_locid::langid;
 ///
 /// let cm_normal = TitlecaseMapper::new();
@@ -116,7 +121,7 @@ pub struct TitlecaseOptions {
 ///
 /// let default_options = Default::default();
 /// let mut no_adjust: TitlecaseOptions = Default::default();
-/// no_adjust.head_adjustment = HeadAdjustment::NoAdjust;
+/// no_adjust.head_adjustment = LeadingAdjustment::NoAdjust;
 ///
 /// // Exhibits head adjustment when set:
 /// assert_eq!(cm_normal.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
@@ -244,7 +249,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
     ) -> impl Writeable + 'a {
-        if true {
+        if options.head_adjustment == LeadingAdjustment::Auto {
             // todo
             // letter, number, symbol, or private use code point
             const HEAD_GROUPS: GeneralCategoryGroup = GeneralCategoryGroup::Letter
@@ -311,7 +316,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// ```rust
     /// use icu_casemap::TitlecaseMapper;
-    /// use icu_casemap::titlecase::{HeadAdjustment, TitlecaseOptions};
+    /// use icu_casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
     /// use icu_locid::langid;
     ///
     /// let cm = TitlecaseMapper::new();
@@ -319,7 +324,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// let default_options = Default::default();
     /// let mut no_adjust: TitlecaseOptions = Default::default();
-    /// no_adjust.head_adjustment = HeadAdjustment::NoAdjust;
+    /// no_adjust.head_adjustment = LeadingAdjustment::NoAdjust;
     ///
     /// // Exhibits head adjustment when set:
     /// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");

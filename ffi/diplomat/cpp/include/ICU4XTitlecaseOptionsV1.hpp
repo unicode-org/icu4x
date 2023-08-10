@@ -11,7 +11,7 @@
 
 #include "ICU4XTitlecaseOptionsV1.h"
 
-#include "ICU4XHeadAdjustment.hpp"
+#include "ICU4XLeadingAdjustment.hpp"
 #include "ICU4XTrailingCase.hpp"
 struct ICU4XTitlecaseOptionsV1;
 
@@ -23,7 +23,7 @@ struct ICU4XTitlecaseOptionsV1;
  */
 struct ICU4XTitlecaseOptionsV1 {
  public:
-  ICU4XHeadAdjustment head_adjustment;
+  ICU4XLeadingAdjustment head_adjustment;
   ICU4XTrailingCase tail_casing;
 
   /**
@@ -37,6 +37,6 @@ struct ICU4XTitlecaseOptionsV1 {
 
 inline ICU4XTitlecaseOptionsV1 ICU4XTitlecaseOptionsV1::default_options() {
   capi::ICU4XTitlecaseOptionsV1 diplomat_raw_struct_out_value = capi::ICU4XTitlecaseOptionsV1_default_options();
-  return ICU4XTitlecaseOptionsV1{ .head_adjustment = std::move(static_cast<ICU4XHeadAdjustment>(diplomat_raw_struct_out_value.head_adjustment)), .tail_casing = std::move(static_cast<ICU4XTrailingCase>(diplomat_raw_struct_out_value.tail_casing)) };
+  return ICU4XTitlecaseOptionsV1{ .head_adjustment = std::move(static_cast<ICU4XLeadingAdjustment>(diplomat_raw_struct_out_value.head_adjustment)), .tail_casing = std::move(static_cast<ICU4XTrailingCase>(diplomat_raw_struct_out_value.tail_casing)) };
 }
 #endif

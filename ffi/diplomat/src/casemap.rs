@@ -11,15 +11,16 @@ pub mod ffi {
     };
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatWriteable;
-    use icu_casemap::titlecase::{HeadAdjustment, TrailingCase};
+    use icu_casemap::titlecase::{LeadingAdjustment, TrailingCase};
     use icu_casemap::{CaseMapCloser, CaseMapper, TitlecaseMapper};
     use writeable::Writeable;
 
-    #[diplomat::enum_convert(HeadAdjustment, needs_wildcard)]
-    #[diplomat::rust_link(icu::casemap::titlecase::HeadAdjustment, Enum)]
-    pub enum ICU4XHeadAdjustment {
-        Adjust,
-        NoAdjust,
+    #[diplomat::enum_convert(LeadingAdjustment, needs_wildcard)]
+    #[diplomat::rust_link(icu::casemap::titlecase::LeadingAdjustment, Enum)]
+    pub enum ICU4XLeadingAdjustment {
+        None,
+        Auto,
+        AdjustToCased,
     }
 
     #[diplomat::enum_convert(TrailingCase, needs_wildcard)]
@@ -31,7 +32,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
     pub struct ICU4XTitlecaseOptionsV1 {
-        pub head_adjustment: ICU4XHeadAdjustment,
+        pub head_adjustment: ICU4XLeadingAdjustment,
         pub tail_casing: ICU4XTrailingCase,
     }
 
@@ -40,7 +41,7 @@ pub mod ffi {
         pub fn default_options() -> ICU4XTitlecaseOptionsV1 {
             // named default_options to avoid keyword clashes
             Self {
-                head_adjustment: ICU4XHeadAdjustment::Adjust,
+                head_adjustment: ICU4XLeadingAdjustment::Auto,
                 tail_casing: ICU4XTrailingCase::Lower,
             }
         }

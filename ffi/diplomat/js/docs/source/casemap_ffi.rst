@@ -136,9 +136,9 @@
         See the `Rust documentation for simple_fold_turkic <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold_turkic>`__ for more information.
 
 
-.. js:class:: ICU4XHeadAdjustment
+.. js:class:: ICU4XLeadingAdjustment
 
-    See the `Rust documentation for HeadAdjustment <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.HeadAdjustment.html>`__ for more information.
+    See the `Rust documentation for LeadingAdjustment <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.LeadingAdjustment.html>`__ for more information.
 
 
 .. js:class:: ICU4XTitlecaseMapper

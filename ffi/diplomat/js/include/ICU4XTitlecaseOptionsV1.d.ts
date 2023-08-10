@@ -1,4 +1,4 @@
-import { ICU4XHeadAdjustment } from "./ICU4XHeadAdjustment";
+import { ICU4XLeadingAdjustment } from "./ICU4XLeadingAdjustment";
 import { ICU4XTrailingCase } from "./ICU4XTrailingCase";
 
 /**
@@ -6,7 +6,7 @@ import { ICU4XTrailingCase } from "./ICU4XTrailingCase";
  * See the {@link https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html Rust documentation for `TitlecaseOptions`} for more information.
  */
 export class ICU4XTitlecaseOptionsV1 {
-  head_adjustment: ICU4XHeadAdjustment;
+  head_adjustment: ICU4XLeadingAdjustment;
   tail_casing: ICU4XTrailingCase;
 
   /**

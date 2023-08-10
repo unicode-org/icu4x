@@ -6,20 +6,20 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "ICU4XHeadAdjustment.h"
+#include "ICU4XLeadingAdjustment.h"
 #include "ICU4XTrailingCase.h"
 #ifdef __cplusplus
 namespace capi {
 #endif
 
 typedef struct ICU4XTitlecaseOptionsV1 {
-    ICU4XHeadAdjustment head_adjustment;
+    ICU4XLeadingAdjustment head_adjustment;
     ICU4XTrailingCase tail_casing;
 } ICU4XTitlecaseOptionsV1;
 #ifdef __cplusplus
 } // namespace capi
 #endif
-#include "ICU4XHeadAdjustment.h"
+#include "ICU4XLeadingAdjustment.h"
 #include "ICU4XTrailingCase.h"
 #ifdef __cplusplus
 namespace capi {
