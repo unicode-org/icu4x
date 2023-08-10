@@ -142,7 +142,7 @@ pub struct TitlecaseOptions {
 #[derive(Clone, Debug)]
 pub struct TitlecaseMapper<CM> {
     cm: CM,
-    gc: Option<CodePointMapData<GeneralCategory>>,
+    gc: CodePointMapData<GeneralCategory>,
 }
 
 impl TitlecaseMapper<CaseMapper> {
@@ -156,20 +156,7 @@ impl TitlecaseMapper<CaseMapper> {
     pub const fn new() -> Self {
         Self {
             cm: CaseMapper::new(),
-            gc: Some(icu_properties::maps::general_category().static_to_owned()),
-        }
-    }
-    /// A constructor which creates a [`TitlecaseMapper`] using compiled data, with the legacy head adjustment behavior.
-    /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior and usage examples.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub const fn new_legacy() -> Self {
-        Self {
-            cm: CaseMapper::new(),
-            gc: None,
+            gc: icu_properties::maps::general_category().static_to_owned(),
         }
     }
 
@@ -182,15 +169,6 @@ impl TitlecaseMapper<CaseMapper> {
         try_new_unstable,
         Self,
     ]);
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-    #[cfg(skip)]
-    functions: [
-        new_legacy,
-        try_new_legacy_with_any_provider,
-        try_new_legacy_with_buffer_provider,
-        try_new_legacy_unstable,
-        Self,
-    ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
@@ -198,21 +176,11 @@ impl TitlecaseMapper<CaseMapper> {
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
-        let gc = Some(
-            icu_properties::maps::load_general_category(provider).map_err(|e| {
-                let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
-                e
-            })?,
-        );
+        let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
+            let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
+            e
+        })?;
         Ok(Self { cm, gc })
-    }
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_legacy_unstable<P>(provider: &P) -> Result<Self, DataError>
-    where
-        P: DataProvider<CaseMapV1Marker> + ?Sized,
-    {
-        let cm = CaseMapper::try_new_unstable(provider)?;
-        Ok(Self { cm, gc: None })
     }
 }
 
@@ -239,20 +207,10 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     pub const fn new_with_mapper(casemapper: CM) -> Self {
         Self {
             cm: casemapper,
-            gc: Some(icu_properties::maps::general_category().static_to_owned()),
+            gc: icu_properties::maps::general_category().static_to_owned(),
         }
     }
-    /// A constructor which creates a [`TitlecaseMapper`] from an existing [`CaseMapper`]
-    /// (either owned or as a reference), with the legacy head adjustment behavior.
-    /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    pub const fn new_with_mapper_legacy(casemapper: CM) -> Self {
-        Self {
-            cm: casemapper,
-            gc: None,
-        }
-    }
+
     /// Construct this object to wrap an existing CaseMapper (or a reference to one), loading additional data as needed.
     ///
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_mapper)]
@@ -260,12 +218,10 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
-        let gc = Some(
-            icu_properties::maps::load_general_category(provider).map_err(|e| {
-                let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
-                e
-            })?,
-        );
+        let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
+            let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
+            e
+        })?;
         Ok(Self { cm: casemapper, gc })
     }
 
@@ -288,7 +244,8 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
     ) -> impl Writeable + 'a {
-        if let Some(gc) = self.gc.as_ref() {
+        if true {
+            // todo
             // letter, number, symbol, or private use code point
             const HEAD_GROUPS: GeneralCategoryGroup = GeneralCategoryGroup::Letter
                 .union(GeneralCategoryGroup::Number)
@@ -297,7 +254,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
             self.cm
                 .as_ref()
                 .titlecase_segment_with_adjustment(src, langid, options, |_data, ch| {
-                    HEAD_GROUPS.contains(gc.as_borrowed().get(ch))
+                    HEAD_GROUPS.contains(self.gc.as_borrowed().get(ch))
                 })
         } else {
             self.cm
