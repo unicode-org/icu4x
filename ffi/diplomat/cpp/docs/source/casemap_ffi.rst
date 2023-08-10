@@ -219,9 +219,9 @@
     See the `Rust documentation for TitlecaseOptions <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html>`__ for more information.
 
 
-    .. cpp:member:: ICU4XLeadingAdjustment head_adjustment
+    .. cpp:member:: ICU4XLeadingAdjustment leading_adjustment
 
-    .. cpp:member:: ICU4XTrailingCase tail_casing
+    .. cpp:member:: ICU4XTrailingCase trailing_case
 
     .. cpp:function:: static ICU4XTitlecaseOptionsV1 default_options()
 

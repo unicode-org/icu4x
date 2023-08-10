@@ -167,9 +167,9 @@
     See the `Rust documentation for TitlecaseOptions <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html>`__ for more information.
 
 
-    .. js:attribute:: head_adjustment
+    .. js:attribute:: leading_adjustment
 
-    .. js:attribute:: tail_casing
+    .. js:attribute:: trailing_case
 
     .. js:function:: default_options()
 

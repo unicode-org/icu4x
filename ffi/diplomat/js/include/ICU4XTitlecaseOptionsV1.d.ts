@@ -6,8 +6,8 @@ import { ICU4XTrailingCase } from "./ICU4XTrailingCase";
  * See the {@link https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html Rust documentation for `TitlecaseOptions`} for more information.
  */
 export class ICU4XTitlecaseOptionsV1 {
-  head_adjustment: ICU4XLeadingAdjustment;
-  tail_casing: ICU4XTrailingCase;
+  leading_adjustment: ICU4XLeadingAdjustment;
+  trailing_case: ICU4XTrailingCase;
 
   /**
 

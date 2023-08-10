@@ -166,7 +166,7 @@ impl CaseMapper {
 
     /// Helper to support different head adjustment behaviors,
     /// `char_is_head` is a function that returns true for a character that is allowed to be the
-    /// titlecase head, when `head_adjustment != None`
+    /// titlecase head, when `leading_adjustment != None`
     ///
     /// We return a concrete type instead of `impl Trait` so the return value can be mixed with that of other calls
     /// to this function with different closures
@@ -178,7 +178,7 @@ impl CaseMapper {
         char_is_head: impl Fn(&CaseMapV1, char) -> bool,
     ) -> StringAndWriteable<FullCaseWriteable<'a, true>> {
         let data = self.data.get();
-        let (head, rest) = match options.head_adjustment {
+        let (head, rest) = match options.leading_adjustment {
             LeadingAdjustment::Auto | LeadingAdjustment::AdjustToCased => {
                 let first_cased = src.char_indices().find(|(_i, ch)| char_is_head(data, *ch));
                 if let Some((first_cased, _ch)) = first_cased {
@@ -196,7 +196,7 @@ impl CaseMapper {
             rest,
             CaseMapLocale::from_langid(langid),
             MappingKind::Title,
-            options.tail_casing,
+            options.trailing_case,
         );
         StringAndWriteable {
             string: head,

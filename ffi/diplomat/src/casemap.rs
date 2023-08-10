@@ -32,8 +32,8 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
     pub struct ICU4XTitlecaseOptionsV1 {
-        pub head_adjustment: ICU4XLeadingAdjustment,
-        pub tail_casing: ICU4XTrailingCase,
+        pub leading_adjustment: ICU4XLeadingAdjustment,
+        pub trailing_case: ICU4XTrailingCase,
     }
 
     impl ICU4XTitlecaseOptionsV1 {
@@ -41,8 +41,8 @@ pub mod ffi {
         pub fn default_options() -> ICU4XTitlecaseOptionsV1 {
             // named default_options to avoid keyword clashes
             Self {
-                head_adjustment: ICU4XLeadingAdjustment::Auto,
-                tail_casing: ICU4XTrailingCase::Lower,
+                leading_adjustment: ICU4XLeadingAdjustment::Auto,
+                trailing_case: ICU4XTrailingCase::Lower,
             }
         }
     }
@@ -325,8 +325,8 @@ impl From<ffi::ICU4XTitlecaseOptionsV1> for TitlecaseOptions {
     fn from(other: ffi::ICU4XTitlecaseOptionsV1) -> Self {
         let mut ret = Self::default();
 
-        ret.head_adjustment = other.head_adjustment.into();
-        ret.tail_casing = other.tail_casing.into();
+        ret.leading_adjustment = other.leading_adjustment.into();
+        ret.trailing_case = other.trailing_case.into();
         ret
     }
 }

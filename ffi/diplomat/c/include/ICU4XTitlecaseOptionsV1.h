@@ -13,8 +13,8 @@ namespace capi {
 #endif
 
 typedef struct ICU4XTitlecaseOptionsV1 {
-    ICU4XLeadingAdjustment head_adjustment;
-    ICU4XTrailingCase tail_casing;
+    ICU4XLeadingAdjustment leading_adjustment;
+    ICU4XTrailingCase trailing_case;
 } ICU4XTitlecaseOptionsV1;
 #ifdef __cplusplus
 } // namespace capi

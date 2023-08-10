@@ -52,10 +52,10 @@ pub enum LeadingAdjustment {
 pub struct TitlecaseOptions {
     /// How to handle the rest of the string once the head of the
     /// string has been titlecased
-    pub tail_casing: TrailingCase,
+    pub trailing_case: TrailingCase,
     /// Whether to start casing at the beginning of the string or at the first
     /// relevant character.
-    pub head_adjustment: LeadingAdjustment,
+    pub leading_adjustment: LeadingAdjustment,
 }
 
 /// A wrapper around [`CaseMapper`] that can compute titlecasing stuff, and is able to load additional data
@@ -249,7 +249,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
     ) -> impl Writeable + 'a {
-        if options.head_adjustment == LeadingAdjustment::Auto {
+        if options.leading_adjustment == LeadingAdjustment::Auto {
             // todo
             // letter, number, symbol, or private use code point
             const HEAD_GROUPS: GeneralCategoryGroup = GeneralCategoryGroup::Letter

@@ -5,8 +5,8 @@ import { ICU4XTrailingCase_js_to_rust, ICU4XTrailingCase_rust_to_js } from "./IC
 
 export class ICU4XTitlecaseOptionsV1 {
   constructor(underlying) {
-    this.head_adjustment = ICU4XLeadingAdjustment_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying)];
-    this.tail_casing = ICU4XTrailingCase_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying + 4)];
+    this.leading_adjustment = ICU4XLeadingAdjustment_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying)];
+    this.trailing_case = ICU4XTrailingCase_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying + 4)];
   }
 
   static default_options() {
