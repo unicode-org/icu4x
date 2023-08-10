@@ -771,8 +771,7 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4466
-    pub(crate) fn lunar_latitude(moment: Moment) -> f64 {
-        let c = Self::julian_centuries(moment);
+    pub(crate) fn lunar_latitude(c: f64) -> f64 {
         let l = Self::mean_lunar_longitude(c);
         let d = Self::lunar_elongation(c);
         let ms = Self::solar_anomaly(c);
@@ -967,8 +966,7 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4215-L4278
-    pub(crate) fn lunar_longitude(moment: Moment) -> f64 {
-        let c = Self::julian_centuries(moment);
+    pub(crate) fn lunar_longitude(moment: Moment, c: f64) -> f64 {
         let l = Self::mean_lunar_longitude(c);
         let d = Self::lunar_elongation(c);
         let ms = Self::solar_anomaly(c);
@@ -1231,8 +1229,9 @@ impl Astronomical {
     pub(crate) fn lunar_altitude(moment: Moment, location: Location) -> f64 {
         let phi = location.latitude;
         let psi = location.longitude;
-        let lambda = Self::lunar_longitude(moment); // This works
-        let beta = Self::lunar_latitude(moment); // This works
+        let c = Self::julian_centuries(moment);
+        let lambda = Self::lunar_longitude(moment, c); // This works
+        let beta = Self::lunar_latitude(c); // This works
         let alpha = Self::right_ascension(moment, beta, lambda).unwrap(); // Safe value
         let delta = Self::declination(moment, beta, lambda);
         let theta0 = Self::sidereal_from_moment(moment);
@@ -1545,7 +1544,8 @@ impl Astronomical {
         );
         let n = maybe_n.saturate();
         let a = div_rem_euclid_f64(
-            Self::lunar_longitude(moment) - Self::solar_longitude(moment),
+            Self::lunar_longitude(moment, Self::julian_centuries(moment))
+                - Self::solar_longitude(moment),
             360.0,
         )
         .1;
@@ -1779,7 +1779,8 @@ impl Astronomical {
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7284-L7290
     fn arc_of_light(moment: Moment) -> f64 {
         arccos_degrees(
-            cos_degrees(Self::lunar_latitude(moment)) * cos_degrees(Self::lunar_phase(moment)),
+            cos_degrees(Self::lunar_latitude(Self::julian_centuries(moment)))
+                * cos_degrees(Self::lunar_phase(moment)),
         )
     }
 
@@ -2094,7 +2095,7 @@ mod tests {
 
         for (rd, expected_lunar_lat) in rd_vals.iter().zip(expected_lunar_lat.iter()) {
             let moment: Moment = Moment::new(*rd as f64);
-            let lunar_lat = Astronomical::lunar_latitude(moment);
+            let lunar_lat = Astronomical::lunar_latitude(Astronomical::julian_centuries(moment));
             let expected_lunar_lat_value = *expected_lunar_lat;
 
             assert_eq_f64!(expected_lunar_lat_value, lunar_lat, moment)
@@ -2147,7 +2148,8 @@ mod tests {
         ];
         for (rd, expected_lunar_long) in rd_vals.iter().zip(expected_lunar_long.iter()) {
             let moment: Moment = Moment::new(*rd as f64);
-            let lunar_long = Astronomical::lunar_longitude(moment);
+            let lunar_long =
+                Astronomical::lunar_longitude(moment, Astronomical::julian_centuries(moment));
             let expected_lunar_long_value = *expected_lunar_long;
 
             assert_eq_f64!(expected_lunar_long_value, lunar_long, moment)
