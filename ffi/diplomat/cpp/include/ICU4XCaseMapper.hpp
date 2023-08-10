@@ -15,6 +15,7 @@ class ICU4XDataProvider;
 class ICU4XCaseMapper;
 #include "ICU4XError.hpp"
 class ICU4XLocale;
+struct ICU4XTitlecaseOptionsV1;
 class ICU4XCodePointSetBuilder;
 
 /**
@@ -35,7 +36,7 @@ class ICU4XCaseMapper {
  public:
 
   /**
-   * Construct a new ICU4XCaseMapper instance for NFC
+   * Construct a new ICU4XCaseMapper instance
    * 
    * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
    */
@@ -70,18 +71,24 @@ class ICU4XCaseMapper {
   diplomat::result<std::string, ICU4XError> uppercase(const std::string_view s, const ICU4XLocale& locale) const;
 
   /**
-   * Returns the full titlecase mapping of the given string
+   * Returns the full titlecase mapping of the given string, using legacy head adjustment behavior
+   * (if head adjustment is enabled in the options)
    * 
-   * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment) for more information.
+   * The `v1` refers to the version of the options struct, which may change as we add more options
+   * 
+   * See the [Rust documentation for `titlecase_segment_legacy`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const;
+  template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_legacy_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const;
 
   /**
-   * Returns the full titlecase mapping of the given string
+   * Returns the full titlecase mapping of the given string, using legacy head adjustment behavior
+   * (if head adjustment is enabled in the options)
    * 
-   * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment) for more information.
+   * The `v1` refers to the version of the options struct, which may change as we add more options
+   * 
+   * See the [Rust documentation for `titlecase_segment_legacy`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_legacy) for more information.
    */
-  diplomat::result<std::string, ICU4XError> titlecase_segment(const std::string_view s, const ICU4XLocale& locale) const;
+  diplomat::result<std::string, ICU4XError> titlecase_segment_legacy_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const;
 
   /**
    * Case-folds the characters in the given string
@@ -121,27 +128,14 @@ class ICU4XCaseMapper {
    * well as all characters that may casemap to this one.
    * 
    * Note that since ICU4XCodePointSetBuilder does not contain strings, this will
-   * ignore string mappings
+   * ignore string mappings.
    * 
-   * See the [Rust documentation for `add_case_closure`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure) for more information.
+   * Identical to the similarly named method on `ICU4XCaseMapCloser`, use that if you
+   * plan on using string case closure mappings too.
+   * 
+   * See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to) for more information.
    */
-  void add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const;
-
-  /**
-   * Maps the string to single code points and adds the associated case closure
-   * mappings, if they exist.
-   * 
-   * The string is mapped to code points if it is their full case folding string.
-   * In other words, this performs a reverse full case folding and then
-   * adds the case closure items of the resulting code points.
-   * If the string is found and its closure applied, then
-   * the string itself is added as well as part of its code points' closure.
-   * 
-   * Returns true if the string was found
-   * 
-   * See the [Rust documentation for `add_string_case_closure`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_string_case_closure) for more information.
-   */
-  bool add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const;
+  void add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const;
 
   /**
    * Returns the simple lowercase mapping of the given character.
@@ -207,6 +201,7 @@ class ICU4XCaseMapper {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
+#include "ICU4XTitlecaseOptionsV1.hpp"
 #include "ICU4XCodePointSetBuilder.hpp"
 
 inline diplomat::result<ICU4XCaseMapper, ICU4XError> ICU4XCaseMapper::create(const ICU4XDataProvider& provider) {
@@ -265,9 +260,10 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::uppercase(cons
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCaseMapper::titlecase_segment_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const {
+template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCaseMapper::titlecase_segment_legacy_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const {
+  ICU4XTitlecaseOptionsV1 diplomat_wrapped_struct_options = options;
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_titlecase_segment(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &write_writer);
+  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_titlecase_segment_legacy_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .head_adjustment = static_cast<capi::ICU4XHeadAdjustment>(diplomat_wrapped_struct_options.head_adjustment), .tail_casing = static_cast<capi::ICU4XTailCasing>(diplomat_wrapped_struct_options.tail_casing) }, &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
@@ -276,10 +272,11 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCa
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::titlecase_segment(const std::string_view s, const ICU4XLocale& locale) const {
+inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::titlecase_segment_legacy_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const {
+  ICU4XTitlecaseOptionsV1 diplomat_wrapped_struct_options = options;
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_titlecase_segment(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &diplomat_writeable_out);
+  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_titlecase_segment_legacy_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .head_adjustment = static_cast<capi::ICU4XHeadAdjustment>(diplomat_wrapped_struct_options.head_adjustment), .tail_casing = static_cast<capi::ICU4XTailCasing>(diplomat_wrapped_struct_options.tail_casing) }, &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
@@ -334,11 +331,8 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::fold_turkic(co
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
-inline void ICU4XCaseMapper::add_case_closure(char32_t c, ICU4XCodePointSetBuilder& builder) const {
-  capi::ICU4XCaseMapper_add_case_closure(this->inner.get(), c, builder.AsFFIMut());
-}
-inline bool ICU4XCaseMapper::add_string_case_closure(const std::string_view s, ICU4XCodePointSetBuilder& builder) const {
-  return capi::ICU4XCaseMapper_add_string_case_closure(this->inner.get(), s.data(), s.size(), builder.AsFFIMut());
+inline void ICU4XCaseMapper::add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const {
+  capi::ICU4XCaseMapper_add_case_closure_to(this->inner.get(), c, builder.AsFFIMut());
 }
 inline char32_t ICU4XCaseMapper::simple_lowercase(char32_t ch) const {
   return capi::ICU4XCaseMapper_simple_lowercase(this->inner.get(), ch);

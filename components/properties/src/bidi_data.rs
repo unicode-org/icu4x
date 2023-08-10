@@ -161,15 +161,19 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 
 impl BidiAuxiliaryPropertiesBorrowed<'static> {
     /// Cheaply converts a `BidiAuxiliaryPropertiesBorrowed<'static>` into a `BidiAuxiliaryProperties`.
-    pub fn static_to_owned(self) -> BidiAuxiliaryProperties {
+    pub const fn static_to_owned(self) -> BidiAuxiliaryProperties {
         BidiAuxiliaryProperties {
             data: DataPayload::from_static_ref(self.data),
         }
     }
 }
 
-/// Returns a [`BidiAuxiliaryPropertiesV1`] struct that represents the data for certain
+/// Creates a [`BidiAuxiliaryPropertiesV1`] struct that represents the data for certain
 /// Bidi properties.
+///
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
+///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
 ///
 /// # Examples
 /// ```
@@ -181,8 +185,6 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
 /// assert_eq!(open_paren.mirroring_glyph, Some(')'));
 /// assert_eq!(open_paren.mirrored, true);
 /// ```
-///
-/// ✨ **Enabled with the `"compiled_data"` feature.**
 #[cfg(feature = "compiled_data")]
 pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'static> {
     BidiAuxiliaryPropertiesBorrowed {

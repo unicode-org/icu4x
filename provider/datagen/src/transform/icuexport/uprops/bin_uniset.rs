@@ -18,7 +18,7 @@ fn get_binary_prop_for_unicodeset<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.options.trie_type, key
+            source.trie_type, key
         ))?
         .binary_property
         .get(0)

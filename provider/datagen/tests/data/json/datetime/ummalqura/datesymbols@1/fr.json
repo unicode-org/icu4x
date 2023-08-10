@@ -1,0 +1,128 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "mouh.",
+          "saf.",
+          "rab. aw.",
+          "rab. th.",
+          "joum. oul.",
+          "joum. tha.",
+          "raj.",
+          "chaa.",
+          "ram.",
+          "chaw.",
+          "dhou. q.",
+          "dhou. h."
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "mouharram",
+          "safar",
+          "rabia al awal",
+          "rabia ath-thani",
+          "joumada al oula",
+          "joumada ath-thania",
+          "rajab",
+          "chaabane",
+          "ramadan",
+          "chawwal",
+          "dhou al qi`da",
+          "dhou al-hijja"
+        ]
+      }
+    },
+    "stand_alone": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "mouh.",
+          "saf.",
+          "rab. aw.",
+          "rab. th.",
+          "joum. ou.",
+          "joum. th.",
+          "raj.",
+          "chaa.",
+          "ram.",
+          "chaw.",
+          "dhou. qi.",
+          "dhou. hi."
+        ]
+      },
+      "narrow": null,
+      "short": null,
+      "wide": null
+    }
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dim.",
+        "lun.",
+        "mar.",
+        "mer.",
+        "jeu.",
+        "ven.",
+        "sam."
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "M",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "di",
+        "lu",
+        "ma",
+        "me",
+        "je",
+        "ve",
+        "sa"
+      ],
+      "wide": [
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "islamic": "ère de l’Hégire"
+    },
+    "abbr": {
+      "islamic": "AH"
+    },
+    "narrow": {
+      "islamic": "H"
+    }
+  }
+}

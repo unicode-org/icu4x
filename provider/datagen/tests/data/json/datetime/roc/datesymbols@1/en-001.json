@@ -1,0 +1,111 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sept",
+          "Oct",
+          "Nov",
+          "Dec"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "J",
+          "F",
+          "M",
+          "A",
+          "M",
+          "J",
+          "J",
+          "A",
+          "S",
+          "O",
+          "N",
+          "D"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+      ],
+      "narrow": [
+        "S",
+        "M",
+        "T",
+        "W",
+        "T",
+        "F",
+        "S"
+      ],
+      "short": [
+        "Su",
+        "Mo",
+        "Tu",
+        "We",
+        "Th",
+        "Fr",
+        "Sa"
+      ],
+      "wide": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "roc": "Minguo",
+      "roc-inverse": "B.R.O.C."
+    },
+    "abbr": {
+      "roc": "Minguo",
+      "roc-inverse": "B.R.O.C."
+    },
+    "narrow": {
+      "roc": "Minguo",
+      "roc-inverse": "B.R.O.C."
+    }
+  }
+}

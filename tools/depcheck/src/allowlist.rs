@@ -10,6 +10,7 @@
 pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     // ICU4X components
     "icu_calendar",
+    "icu_casemap",
     "icu_collator",
     "icu_collections",
     "icu_datetime",
@@ -68,6 +69,7 @@ pub const EXTRA_SERDE_DEPS: &[&str] = &["deduplicating_array", "serde", "serde_d
 /// Dependencies allowed when opting in to compiled data
 pub const EXTRA_DATA_DEPS: &[&str] = &[
     "icu_calendar_data",
+    "icu_casemap_data",
     "icu_collator_data",
     "icu_datetime_data",
     "icu_decimal_data",
@@ -83,7 +85,6 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
 /// Dependencies allowed when opting in to experimental code
 /// This will likely grow when we add experimental crates
 pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
-    "icu_casemap",
     "icu_displaynames",
     "icu_personnames",
     "icu_relativetime",
@@ -94,7 +95,6 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
 /// Dependencies allowed when opting in to compiled data
 /// for experimental crates.
 pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &[
-    "icu_casemap_data",
     "icu_displaynames_data",
     "icu_relativetime_data",
     "icu_compactdecimal_data",
@@ -141,12 +141,12 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "icu_codepointtrie_builder",
     "itertools",
     "itoa",
-    "lazy_static",
     "matrixmultiply",
     "ndarray",
     "num-complex",
     "num-integer",
     "num-traits",
+    "once_cell",
     "rawpointer",
     "regex-syntax",
     "ryu",

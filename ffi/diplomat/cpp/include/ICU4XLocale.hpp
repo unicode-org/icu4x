@@ -197,14 +197,14 @@ class ICU4XLocale {
   ICU4XOrdering strict_cmp(const std::string_view other) const;
 
   /**
-   * Unconditionally panics.
+   * Deprecated
    * 
    * Use `create_from_string("en").
    */
   static ICU4XLocale create_en();
 
   /**
-   * Unconditionally panics.
+   * Deprecated
    * 
    * Use `create_from_string("bn").
    */

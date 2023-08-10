@@ -3,6 +3,8 @@
         "Explicit": [
             "datetime/buddhist/datelengths@1",
             "datetime/buddhist/datesymbols@1",
+            "datetime/chinese/datelengths@1",
+            "datetime/chinese/datesymbols@1",
             "datetime/coptic/datelengths@1",
             "datetime/coptic/datesymbols@1",
             "datetime/ethiopic/datelengths@1",
@@ -15,6 +17,20 @@
             "datetime/japanese/datesymbols@1",
             "datetime/japanext/datelengths@1",
             "datetime/japanext/datesymbols@1",
+            "datetime/roc/datelengths@1",
+            "datetime/roc/datesymbols@1",
+            "datetime/islamicobservational/datelengths@1",
+            "datetime/islamicobservational/datesymbols@1",
+            "datetime/islamiccivil/datelengths@1",
+            "datetime/islamiccivil/datesymbols@1",
+            "datetime/ummalqura/datelengths@1",
+            "datetime/ummalqura/datesymbols@1",
+            "datetime/islamictabular/datelengths@1",
+            "datetime/islamictabular/datesymbols@1",
+            "datetime/persian/datelengths@1",
+            "datetime/persian/datesymbols@1",
+            "datetime/hebrew/datelengths@1",
+            "datetime/hebrew/datesymbols@1",
             "datetime/skeletons@1",
             "datetime/timelengths@1",
             "datetime/timesymbols@1",
@@ -33,8 +49,7 @@
     "segmenter_lstm": "Latest",
     "export": {
         "Baked": {
-            "output_path": "data",
-            "use_separate_crates": true,
+            "path": "data",
             "pretty": true
         }
     },

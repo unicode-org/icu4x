@@ -1,0 +1,22 @@
+{
+    "keys": {
+      "Explicit": [
+        "core/helloworld@1"
+      ]
+    },
+    "locales": {
+      "Explicit": [
+        "ro"
+      ]
+    },
+    "cldr": "None",
+    "icu_export": "None",
+    "segmenter_lstm": "None",
+    "export": {
+      "Fs": {
+        "path": "ro",
+        "syntax": "Json"
+      }
+    },
+    "overwrite": true
+  }

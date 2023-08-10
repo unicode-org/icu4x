@@ -8,11 +8,13 @@ use crate::transform::cldr::cldr_serde;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_relativetime::provider::*;
-use lazy_static::lazy_static;
+use once_cell::sync::OnceCell;
 use std::collections::{BTreeMap, HashMap};
 
-lazy_static! {
-    static ref DATAKEY_FILTERS: HashMap<DataKey, &'static str> = {
+pub static DATAKEY_FILTERS: OnceCell<HashMap<DataKey, &'static str>> = OnceCell::new();
+
+fn datakey_filters() -> &'static HashMap<DataKey, &'static str> {
+    DATAKEY_FILTERS.get_or_init(|| {
         [
             (LongSecondRelativeTimeFormatDataV1Marker::KEY, "second"),
             (
@@ -62,9 +64,8 @@ lazy_static! {
         ]
         .into_iter()
         .collect()
-    };
+    })
 }
-
 macro_rules! make_data_provider {
     ($($marker: ident),+ $(,)?) => {
         $(
@@ -82,13 +83,11 @@ macro_rules! make_data_provider {
                         .read_and_parse(&langid, "dateFields.json")?;
                     let fields = &resource
                         .main
-                        .0
-                        .get(&langid)
-                        .ok_or(DataErrorKind::MissingLocale.into_error())?
+                        .value
                         .dates
                         .fields;
 
-                    let field = DATAKEY_FILTERS
+                    let field = datakey_filters()
                         .get(&$marker::KEY)
                         .ok_or(DataErrorKind::MissingDataKey.into_error())?;
 
@@ -105,13 +104,13 @@ macro_rules! make_data_provider {
 
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                    Ok(self.filter_data_locales(self
+                    Ok(self
                         .source
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
                         .map(DataLocale::from)
-                        .collect()))
+                        .collect())
                 }
             }
 

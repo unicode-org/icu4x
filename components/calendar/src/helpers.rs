@@ -11,7 +11,7 @@ use crate::{
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///
 /// Also see [`i32::div_euclid`], [`i32::rem_euclid`].
-pub fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
+pub const fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
     debug_assert!(d > 0);
     let (a, b) = (n / d, n % d);
     if n >= 0 || b == 0 {
@@ -202,6 +202,7 @@ pub fn signum(x: f64) -> f64 {
     }
 }
 
+#[allow(dead_code)] // TODO: Remove dead_code tag after use
 pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     let varepsilon = 1.0 / 100000.0; // Desired accuracy
     binary_search(
@@ -212,7 +213,6 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     )
 }
 
-// Used for Umm-Al-Qura calculations
 pub(crate) fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
 where
     F: Fn(Moment, Location) -> bool,
@@ -224,7 +224,7 @@ where
         index += 1.0;
     }
 }
-#[allow(dead_code)]
+
 pub(crate) fn next<F>(mut index: RataDie, condition: F) -> RataDie
 where
     F: Fn(RataDie) -> bool,
@@ -235,6 +235,29 @@ where
         }
         index += 1;
     }
+}
+
+pub(crate) fn next_u8<F>(mut index: u8, condition: F) -> u8
+where
+    F: Fn(u8) -> bool,
+{
+    loop {
+        if condition(index) {
+            return index;
+        }
+        index += 1;
+    }
+}
+
+// "Final" is a reserved keyword in rust, which explains the naming convention here.
+pub(crate) fn final_func<F>(mut index: i32, condition: F) -> i32
+where
+    F: Fn(i32) -> bool,
+{
+    while condition(index) {
+        index += 1;
+    }
+    index - 1
 }
 
 #[test]
@@ -353,7 +376,57 @@ pub fn adjusted_rem_euclid(x: i32, y: i32) -> i32 {
     }
 }
 
-/// The value of x shifted into the range (a..b); returns x if a == b; for f64 types
+#[test]
+fn test_adjusted_rem_euclid() {
+    #[derive(Debug)]
+    struct TestCase {
+        x: i32,
+        y: i32,
+        expected: i32,
+    }
+
+    let cases = [
+        TestCase {
+            x: 3,
+            y: 7,
+            expected: 3,
+        },
+        TestCase {
+            x: 7,
+            y: 3,
+            expected: 1,
+        },
+        TestCase {
+            x: -11,
+            y: 9,
+            expected: 7,
+        },
+        TestCase {
+            x: 11,
+            y: 9,
+            expected: 2,
+        },
+        TestCase {
+            x: 11,
+            y: 11,
+            expected: 11,
+        },
+        TestCase {
+            x: -22,
+            y: 11,
+            expected: 11,
+        },
+    ];
+    for case in cases {
+        let result = adjusted_rem_euclid(case.x, case.y);
+        assert_eq!(
+            case.expected, result,
+            "Adjusted rem euclid failed for case: {case:?}"
+        );
+    }
+}
+
+/// The value of x shifted into the range [a..b); returns x if a == b; for f64 types
 pub fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
     if a == b {
         x
@@ -364,8 +437,66 @@ pub fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
 
 #[test]
 fn test_interval_mod() {
-    assert_eq!(interval_mod_f64(5.0, 10.0, 20.0), 15.0);
-    assert_eq!(interval_mod_f64(-5.0, 10.0, 20.0), 15.0);
+    #[derive(Debug)]
+    struct TestCase {
+        x: f64,
+        a: f64,
+        b: f64,
+        expected: f64,
+    }
+
+    let cases = [
+        TestCase {
+            x: 5.0,
+            a: 10.0,
+            b: 20.0,
+            expected: 15.0,
+        },
+        TestCase {
+            x: -5.0,
+            a: 10.0,
+            b: 20.0,
+            expected: 15.0,
+        },
+        TestCase {
+            x: 2.0,
+            a: 12.0,
+            b: 17.0,
+            expected: 12.0,
+        },
+        TestCase {
+            x: 9.0,
+            a: 9.0,
+            b: 10.0,
+            expected: 9.0,
+        },
+        TestCase {
+            x: 16.5,
+            a: 13.5,
+            b: 20.0,
+            expected: 16.5,
+        },
+        TestCase {
+            x: 9.0,
+            a: 3.0,
+            b: 9.0,
+            expected: 3.0,
+        },
+        TestCase {
+            x: 17.0,
+            a: 1.0,
+            b: 5.5,
+            expected: 3.5,
+        },
+    ];
+
+    for case in cases {
+        let result = interval_mod_f64(case.x, case.a, case.b);
+        assert_eq!(
+            case.expected, result,
+            "Interval mod test failed for case: {case:?}"
+        );
+    }
 }
 
 #[test]

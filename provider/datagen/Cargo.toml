@@ -6,7 +6,7 @@
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
 version = "1.2.5"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -36,7 +36,7 @@ all-features = true
 
 # ICU components
 icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, features = ["datagen"] }
-icu_casemap = { version = "0.7.1", path = "../../experimental/casemap", default-features = false, features = ["datagen"], optional = true }
+icu_casemap = { version = "1.2.0", path = "../../components/casemap", default-features = false, features = ["datagen"] }
 icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, features = ["datagen"] }
 icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, features = ["datagen"], optional = true }
 icu_datetime = { version = "1.2.0", path = "../../components/datetime", default-features = false, features = ["datagen"] }
@@ -50,6 +50,8 @@ icu_properties = { version = "1.2.0", path = "../../components/properties", defa
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, features = ["datagen"], optional = true }
 icu_segmenter = { version = "1.2.0", path = "../../components/segmenter", default-features = false, features = ["datagen", "lstm"] }
 icu_timezone = { version = "1.2.0", path = "../../components/timezone", default-features = false, features = ["datagen"] }
+icu_singlenumberformatter = { version = "0.1.0", path = "../../experimental/single_number_formatter", default-features = false, features = ["datagen"], optional = true}
+
 
 # ICU infrastructure
 icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder", default-features = false }
@@ -72,9 +74,9 @@ syn = {version = "2", features = ["parsing"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
 itertools = "0.10"
-lazy_static = "1"
 log = "0.4"
 memchr = "2.5.0"
+once_cell = "1"
 ndarray = { version = "0.15.5", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
@@ -91,9 +93,9 @@ eyre = { version = "0.6", optional = true }
 simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
+crlify = { version = "1.0.1", path = "../../utils/crlify" }
 icu = { path = "../../components/icu" }
-glob = "0.3.1"
-dhat = "0.3.0"
+postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
 [features]
@@ -103,6 +105,7 @@ provider_blob = ["dep:icu_provider_blob"]
 provider_fs = ["dep:icu_provider_fs"]
 legacy_api = ["provider_fs", "provider_blob", "provider_baked"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
+rayon = ["dep:rayon"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_codepointtrie_builder/wasm"]
 # Use local ICU4C libraries for building codepointtries
@@ -111,6 +114,12 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
+
+# experimental deps
+icu_compactdecimal = ["dep:icu_compactdecimal"]
+icu_displaynames = ["dep:icu_displaynames"]
+icu_relativetime = ["dep:icu_relativetime"]
+icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
 
 [[bin]]
 name = "icu4x-datagen"
@@ -125,5 +134,9 @@ required-features = ["provider_fs", "use_wasm"]
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
-always_include_features = ["icu_casemap", "icu_compactdecimal", "icu_displaynames", "icu_relativetime"]
-max_combination_size = 3
+skip_optional_dependencies = true
+# Always the experimental deps because we want to all-or-nothing them
+# and the nothing case is already tested in regular check CI
+always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_singlenumberformatter"]
+# We have a *lot* of features here
+max_combination_size = 2

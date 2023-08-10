@@ -14,6 +14,7 @@ use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::str::FromStr;
 use writeable::Writeable;
@@ -24,9 +25,6 @@ mod collator_serde;
 // Collations removed by default from ICU4X data, plus all starting with "search".
 static DEFAULT_REMOVED_COLLATIONS: &[&str] = &["big5han", "gb2312"];
 
-#[cfg(test)]
-mod test;
-
 /// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
 fn has_legacy_swedish_variants(source: &crate::SourceData) -> bool {
     source
@@ -34,7 +32,7 @@ fn has_legacy_swedish_variants(source: &crate::SourceData) -> bool {
         .and_then(|i| {
             i.file_exists(&format!(
                 "collation/{}/sv_reformed_meta.toml",
-                source.options.collation_han_database,
+                source.collation_han_database,
             ))
         })
         .unwrap_or(false)
@@ -110,20 +108,29 @@ fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Op
     Some(locale)
 }
 
-impl crate::DatagenProvider {
-    /// Whether to include the given collation value based on
-    /// the default excludes and explicit includes.
-    fn should_include_collation(&self, collation: &Value) -> bool {
-        let collation_str = &*collation.write_to_string();
-        if self.source.options.collations.contains(collation_str) {
-            true
-        } else if collation_str.starts_with("search") {
-            // Note: literal "search" and "searchjl" are handled above
-            self.source.options.collations.contains("search*")
-        } else {
-            !DEFAULT_REMOVED_COLLATIONS.contains(&collation_str)
-        }
-    }
+pub(crate) fn filter_data_locales(
+    locales: HashSet<DataLocale>,
+    collations: &HashSet<String>,
+) -> HashSet<DataLocale> {
+    locales
+        .into_iter()
+        .filter(|locale| {
+            locale
+                .get_unicode_ext(&key!("co"))
+                .and_then(|co| co.as_single_subtag().copied())
+                .map(|collation| {
+                    if collations.contains(collation.as_str()) {
+                        true
+                    } else if collation.starts_with("search") {
+                        // Note: literal "search" and "searchjl" are handled above
+                        collations.contains("search*")
+                    } else {
+                        !DEFAULT_REMOVED_COLLATIONS.contains(&collation.as_str())
+                    }
+                })
+                .unwrap_or(true)
+        })
+        .collect()
 }
 
 macro_rules! collation_provider {
@@ -137,7 +144,7 @@ macro_rules! collation_provider {
                         .icuexport()?
                         .read_and_parse_toml(&format!(
                             "collation/{}/{}{}.toml",
-                            self.source.options.collation_han_database,
+                            self.source.collation_han_database,
                             locale_to_file_name(&req.locale, has_legacy_swedish_variants(&self.source)),
                             $suffix
                         ))
@@ -164,12 +171,12 @@ macro_rules! collation_provider {
                     if <$marker>::KEY.metadata().singleton {
                         return Ok(vec![Default::default()])
                     }
-                    Ok(self.filter_data_locales(self
+                    Ok(self
                         .source
                         .icuexport()?
                         .list(&format!(
                             "collation/{}",
-                            self.source.options.collation_han_database
+                            self.source.collation_han_database
                         ))?
                         .filter_map(|mut file_name| {
                             file_name.truncate(file_name.len() - ".toml".len());
@@ -179,17 +186,8 @@ macro_rules! collation_provider {
                             })
                         })
                         .filter_map(|s| file_name_to_locale(&s, has_legacy_swedish_variants(&self.source)))
-                        .filter(|locale| {
-                            locale
-                                .extensions
-                                .unicode
-                                .keywords
-                                .get(&key!("co"))
-                                .map(|l| self.should_include_collation(l))
-                                .unwrap_or(true)
-                        })
                         .map(DataLocale::from)
-                        .collect()))
+                        .collect())
                 }
             }
         )+
@@ -254,3 +252,108 @@ collation_provider!(
     ),
     toml_data
 );
+
+#[test]
+fn test_collation_filtering() {
+    use crate::options;
+    use icu_locid::langid;
+    use std::collections::BTreeSet;
+
+    #[derive(Debug)]
+    struct TestCase<'a> {
+        include_collations: &'a [&'a str],
+        language: LanguageIdentifier,
+        expected: &'a [&'a str],
+    }
+    let cases = [
+        TestCase {
+            include_collations: &[],
+            language: langid!("zh"),
+            expected: &["zh", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"],
+        },
+        TestCase {
+            include_collations: &["gb2312"],
+            language: langid!("zh"),
+            expected: &[
+                "zh",
+                "zh-u-co-gb2312",
+                "zh-u-co-stroke",
+                "zh-u-co-unihan",
+                "zh-u-co-zhuyin",
+            ],
+        },
+        TestCase {
+            include_collations: &["big5han"],
+            language: langid!("zh"),
+            expected: &[
+                "zh",
+                "zh-u-co-big5han",
+                "zh-u-co-stroke",
+                "zh-u-co-unihan",
+                "zh-u-co-zhuyin",
+            ],
+        },
+        TestCase {
+            include_collations: &["gb2312", "search*"],
+            language: langid!("zh"),
+            expected: &[
+                "zh",
+                "zh-u-co-gb2312",
+                "zh-u-co-stroke",
+                "zh-u-co-unihan",
+                "zh-u-co-zhuyin",
+            ],
+        },
+        TestCase {
+            include_collations: &[],
+            language: langid!("ko"),
+            expected: &["ko", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search"],
+            language: langid!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["searchjl"],
+            language: langid!("ko"),
+            expected: &["ko", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search", "searchjl"],
+            language: langid!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search*", "big5han"],
+            language: langid!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+    ];
+    for cas in cases {
+        let provider = crate::DatagenProvider::for_test();
+        let mut options = options::Options::default();
+        options.collations = cas
+            .include_collations
+            .iter()
+            .copied()
+            .map(String::from)
+            .collect();
+        options.locales =
+            crate::options::LocaleInclude::Explicit([cas.language.clone()].into_iter().collect());
+
+        let resolved_locales = provider
+            .select_locales_for_key(CollationDataV1Marker::KEY, &options, None)
+            .unwrap()
+            .into_iter()
+            .map(|l| l.to_string())
+            .collect::<BTreeSet<_>>();
+        let expected_locales = cas
+            .expected
+            .iter()
+            .copied()
+            .map(String::from)
+            .collect::<BTreeSet<_>>();
+        assert_eq!(resolved_locales, expected_locales, "{cas:?}");
+    }
+}

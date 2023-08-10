@@ -42,12 +42,16 @@ use std::collections::HashSet;
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Options {
+    /// The set of keys to generate. See [`icu_datagen::keys`],
+    /// [`icu_datagen::all_keys`], [`icu_datagen::key`] and [`icu_datagen::keys_from_bin`].
+    ///
+    /// [`icu_datagen::keys`]: crate::keys
+    /// [`icu_datagen::all_keys`]: crate::all_keys
+    /// [`icu_datagen::key`]: crate::key
+    /// [`icu_datagen::keys_from_bin`]: crate::keys_from_bin
+    pub keys: HashSet<icu_provider::DataKey>,
     /// Defines the locales to include
     pub locales: LocaleInclude,
-    /// Whether to optimize tries for speed or size
-    pub trie_type: TrieType,
-    /// Which Han collation to use
-    pub collation_han_database: CollationHanDatabase,
     /// The collation types to include.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
@@ -55,6 +59,8 @@ pub struct Options {
     /// The type of fallback that the data should be generated for. If locale fallback is
     /// used at runtime, smaller data can be generated.
     pub fallback: FallbackMode,
+    /// The segmentation models to include
+    pub segmenter_models: SegmenterModelInclude,
 }
 
 /// Defines the locales to include
@@ -82,59 +88,42 @@ impl Default for LocaleInclude {
     }
 }
 
-/// Specifies the collation Han database to use.
-///
-/// Unihan is more precise but significantly increases data size. See
-/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
-pub enum CollationHanDatabase {
-    /// Implicit
-    #[serde(rename = "implicit")]
-    Implicit,
-    /// Unihan
-    #[serde(rename = "unihan")]
-    Unihan,
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+/// The segmentation models to include
+pub enum SegmenterModelInclude {
+    /// Include the recommended set of models. This will cover all languages supported
+    /// by ICU4X: Thai, Burmese, Khmer, Lao, Chinese, and Japanese. Both dictionary
+    /// and LSTM models will be included, to the extent required by the chosen data keys.
+    Recommended,
+    /// Include no dictionary or LSTM models. This will make line and word segmenters
+    /// behave like simple rule-based segmenters, which will be incorrect when handling text
+    /// that contains Thai, Burmese, Khmer, Lao, Chinese, or Japanese.
+    None,
+    /// Include an explicit list of LSTM or dictionary models, to the extent required by the
+    /// chosen data keys.
+    ///
+    /// The currently supported dictionary models are
+    /// * `cjdict`
+    /// * `burmesedict`
+    /// * `khmerdict`
+    /// * `laodict`
+    /// * `thaidict`
+    ///
+    /// The currently supported LSTM models are
+    /// * `Burmese_codepoints_exclusive_model4_heavy`
+    /// * `Khmer_codepoints_exclusive_model4_heavy`
+    /// * `Lao_codepoints_exclusive_model4_heavy`
+    /// * `Thai_codepoints_exclusive_model4_heavy`
+    ///
+    /// If a model is not included, the resulting line or word segmenter will apply rule-based
+    /// segmentation when encountering text in a script that requires the model, which will be
+    /// incorrect.
+    Explicit(Vec<String>),
 }
 
-impl std::fmt::Display for CollationHanDatabase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
-        }
-    }
-}
-
-impl Default for CollationHanDatabase {
+impl Default for SegmenterModelInclude {
     fn default() -> Self {
-        Self::Implicit
-    }
-}
-
-/// Specifies the trie type to use.
-#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
-#[non_exhaustive]
-pub enum TrieType {
-    /// Fast tries are optimized for speed
-    #[serde(rename = "fast")]
-    Fast,
-    /// Small tries are optimized for size
-    #[serde(rename = "small")]
-    Small,
-}
-
-impl std::fmt::Display for TrieType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            TrieType::Fast => write!(f, "fast"),
-            TrieType::Small => write!(f, "small"),
-        }
-    }
-}
-
-impl Default for TrieType {
-    fn default() -> Self {
-        Self::Small
+        Self::Recommended
     }
 }

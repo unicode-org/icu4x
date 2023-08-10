@@ -12,6 +12,7 @@ use core::convert::TryInto;
 use core::fmt;
 use core::ops::{Add, AddAssign, Sub, SubAssign};
 use core::str::FromStr;
+use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
@@ -92,6 +93,35 @@ impl FormattableYear {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MonthCode(pub TinyStr4);
 
+impl MonthCode {
+    /// Returns an option which is Some containing the non-month version of a leap month
+    /// if the MonthCode this method is called upon is a leap month, and None otherwise.
+    /// This method assumes the MonthCode is valid.
+    pub fn get_normal_if_leap(self) -> Option<MonthCode> {
+        let bytes = self.0.all_bytes();
+        if bytes[3] == b'L' {
+            Some(MonthCode(TinyAsciiStr::from_bytes(&bytes[0..3]).ok()?))
+        } else {
+            None
+        }
+    }
+}
+
+#[test]
+fn test_get_normal_month_code_if_leap() {
+    let mc1 = MonthCode(tinystr::tinystr!(4, "M01L"));
+    let result1 = mc1.get_normal_if_leap();
+    assert_eq!(result1, Some(MonthCode(tinystr::tinystr!(4, "M01"))));
+
+    let mc2 = MonthCode(tinystr::tinystr!(4, "M11L"));
+    let result2 = mc2.get_normal_if_leap();
+    assert_eq!(result2, Some(MonthCode(tinystr::tinystr!(4, "M11"))));
+
+    let mc_invalid = MonthCode(tinystr::tinystr!(4, "M10"));
+    let result_invalid = mc_invalid.get_normal_if_leap();
+    assert_eq!(result_invalid, None);
+}
+
 impl AsULE for MonthCode {
     type ULE = TinyStr4;
     fn to_unaligned(self) -> TinyStr4 {
@@ -148,13 +178,13 @@ pub struct FormattableMonth {
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
-    pub day_of_year: u32,
+    pub day_of_year: u16,
     /// The number of days in a year.
-    pub days_in_year: u32,
+    pub days_in_year: u16,
     /// The previous year.
     pub prev_year: FormattableYear,
     /// The number of days in the previous year.
-    pub days_in_prev_year: u32,
+    pub days_in_prev_year: u16,
     /// The next year.
     pub next_year: FormattableYear,
 }
@@ -718,7 +748,8 @@ impl From<usize> for IsoWeekday {
 /// NOTE: This should not cause overflow errors for most cases, but consider
 /// alternative implementations if necessary.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
-pub(crate) struct Moment(f64);
+#[doc(hidden)] // This type is unstable
+pub struct Moment(f64);
 
 /// Add a number of days to a Moment
 impl Add<f64> for Moment {
@@ -768,7 +799,7 @@ impl Moment {
     }
 
     /// Get the RataDie of a Moment
-    pub fn as_rata_die(&self) -> RataDie {
+    pub(crate) fn as_rata_die(&self) -> RataDie {
         RataDie::new(libm::floor(self.0) as i64)
     }
 }

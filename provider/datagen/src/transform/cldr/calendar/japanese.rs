@@ -30,11 +30,7 @@ impl crate::DatagenProvider {
             .dates("japanese")
             .read_and_parse::<cldr_serde::ca::Resource>(&langid!("en"), "ca-japanese.json")?
             .main
-            .0
-            .get(&langid!("en"))
-            .ok_or(DataError::custom(
-                "ca-japanese.json does not have en locale",
-            ))?
+            .value
             .dates
             .calendars
             .get("japanese")

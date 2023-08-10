@@ -156,11 +156,15 @@ pub struct WordSegmenter {
 }
 
 impl WordSegmenter {
-    /// Constructs a [`WordSegmenter`] with an invariant locale and the best available data for
+    /// Constructs a [`WordSegmenter`] with an invariant locale and the best available compiled data for
     /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
     ///
     /// The current behavior, which is subject to change, is to use the LSTM model when available
     /// and the dictionary model for Chinese and Japanese.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `auto` Cargo features.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -180,10 +184,6 @@ impl WordSegmenter {
     /// assert_eq!(th_bps, [0, 9, 18, 39]);
     /// assert_eq!(ja_bps, [0, 15, 21]);
     /// ```
-    ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
     pub fn new_auto() -> Self {
@@ -211,7 +211,7 @@ impl WordSegmenter {
     );
 
     #[cfg(feature = "auto")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_auto)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
@@ -226,7 +226,7 @@ impl WordSegmenter {
         })
     }
 
-    /// Constructs a [`WordSegmenter`] with an invariant locale and LSTM data for
+    /// Constructs a [`WordSegmenter`] with an invariant locale and compiled LSTM data for
     /// complex scripts (Burmese, Khmer, Lao, and Thai).
     ///
     /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
@@ -234,6 +234,10 @@ impl WordSegmenter {
     ///
     /// Warning: there is not currently an LSTM model for Chinese or Japanese, so the [`WordSegmenter`]
     /// created by this function will have unexpected behavior in spans of those scripts.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -255,10 +259,6 @@ impl WordSegmenter {
     /// // Note: We aren't able to find a suitable breakpoint in Chinese/Japanese.
     /// assert_eq!(ja_bps, [0, 21]);
     /// ```
-    ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "lstm")]
     pub fn new_lstm() -> Self {
@@ -286,7 +286,7 @@ impl WordSegmenter {
     );
 
     #[cfg(feature = "lstm")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_lstm)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
@@ -300,11 +300,15 @@ impl WordSegmenter {
         })
     }
 
-    /// Construct a [`WordSegmenter`] with an invariant locale and dictionary data for
+    /// Construct a [`WordSegmenter`] with an invariant locale and compiled dictionary data for
     /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
     ///
     /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
     /// faster than the LSTM model but requires more data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -324,10 +328,6 @@ impl WordSegmenter {
     /// assert_eq!(th_bps, [0, 9, 18, 39]);
     /// assert_eq!(ja_bps, [0, 15, 21]);
     /// ```
-    ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn new_dictionary() -> Self {
         Self {
@@ -352,7 +352,7 @@ impl WordSegmenter {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_dictionary)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>

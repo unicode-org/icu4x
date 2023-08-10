@@ -198,6 +198,10 @@ impl DataError {
     /// Sets the string context of a DataError to the given type name, returning a modified error.
     #[inline]
     pub fn with_type_context<T>(self) -> Self {
+        #[cfg(feature = "logging")]
+        if !self.silent {
+            log::warn!("{self}: Type context: {}", core::any::type_name::<T>());
+        }
         self.with_str_context(core::any::type_name::<T>())
     }
 

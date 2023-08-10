@@ -6,7 +6,7 @@
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
 version = "0.5.3"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -38,16 +38,19 @@ writeable = { version = "0.5.1", path = "../../utils/writeable" }
 ryu = { version = "1.0.5", features = ["small"], optional = true }
 
 [dev-dependencies]
-criterion = "0.4"
 getrandom = { version = "0.2", features = ["js"] }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 rand = "0.8"
 rand_distr = "0.4"
 rand_pcg = "0.3"
 
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
+
 [features]
 std = []
 bench = []
+ryu = ["dep:ryu"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

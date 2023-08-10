@@ -6,6 +6,8 @@
 
 #![allow(clippy::exhaustive_structs)] // data struct module
 
+use crate as icu_provider;
+
 use crate::prelude::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
@@ -48,7 +50,7 @@ impl DataMarker for HelloWorldV1Marker {
 }
 
 impl KeyedDataMarker for HelloWorldV1Marker {
-    const KEY: DataKey = crate::data_key!("core/helloworld@1");
+    const KEY: DataKey = icu_provider::data_key!("core/helloworld@1");
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -131,7 +133,7 @@ impl DataPayload<HelloWorldV1Marker> {
 
 // AnyProvider support.
 #[cfg(not(feature = "datagen"))]
-crate::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
+icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 
 #[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.
@@ -170,7 +172,7 @@ impl BufferProvider for HelloWorldJsonProvider {
         let result = HelloWorldProvider.load(req)?;
         let (mut metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
-        metadata.buffer_format = Some(crate::buf::BufferFormat::Json);
+        metadata.buffer_format = Some(icu_provider::buf::BufferFormat::Json);
         #[allow(clippy::unwrap_used)] // HelloWorldV1::serialize is infallible
         Ok(DataResponse {
             metadata,
@@ -185,7 +187,7 @@ impl BufferProvider for HelloWorldJsonProvider {
 }
 
 #[cfg(feature = "datagen")]
-impl crate::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
         Ok(Self::DATA
@@ -197,7 +199,7 @@ impl crate::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProv
 }
 
 #[cfg(feature = "datagen")]
-crate::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
+icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 /// A type that formats localized "hello world" strings.
 ///
@@ -234,13 +236,13 @@ pub struct FormattedHelloWorld<'l> {
 impl HelloWorldFormatter {
     /// Creates a new [`HelloWorldFormatter`] for the specified locale.
     ///
-    /// [📚 Help choosing a constructor](crate::constructors)
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
         Self::try_new_unstable(&HelloWorldProvider, locale)
     }
 
-    crate::gen_any_buffer_data_constructors!(locale: include, options: skip, error: DataError,
-        #[cfg(skip_new)]
+    icu_provider::gen_any_buffer_data_constructors!(locale: include, options: skip, error: DataError,
+        #[cfg(skip)]
         functions: [
             try_new,
             try_new_with_any_provider,
@@ -249,7 +251,7 @@ impl HelloWorldFormatter {
             Self,
     ]);
 
-    #[doc = crate::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
     where
         P: DataProvider<HelloWorldV1Marker>,

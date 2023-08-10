@@ -3,10 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub use icu_datagen::options::*;
+pub use icu_datagen::{CollationHanDatabase, TrieType};
 
 use icu_provider::prelude::*;
 use std::collections::HashSet;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct Config {
@@ -23,6 +24,8 @@ pub struct Config {
     pub collation_han_database: CollationHanDatabase,
     #[serde(default, skip_serializing_if = "is_default")]
     pub collations: HashSet<String>,
+    #[serde(default, skip_serializing_if = "is_default")]
+    pub segmenter_models: SegmenterModelInclude,
     pub export: Export,
     #[serde(default, skip_serializing_if = "is_default")]
     pub fallback: FallbackMode,
@@ -74,39 +77,34 @@ mod data_key_as_str {
 #[derive(Debug, serde::Serialize, serde::Deserialize, PartialEq)]
 pub enum PathOrTag {
     Path(PathBuf),
-    #[cfg(feature = "networking")]
     Tag(String),
-    #[cfg(feature = "networking")]
     Latest,
-    #[cfg(not(feature = "networking"))]
     None,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, PartialEq)]
 pub enum Export {
-    #[cfg(feature = "provider_fs")]
     Fs {
-        output_path: PathBuf,
+        path: PathBuf,
         syntax: FsSyntax,
         #[serde(default, skip_serializing_if = "is_default")]
         fingerprint: bool,
     },
-    #[cfg(feature = "provider_blob")]
-    Blob(PathBuf),
-    #[cfg(feature = "provider_baked")]
+    Blob {
+        path: PathBuf,
+    },
     Baked {
-        output_path: PathBuf,
+        path: PathBuf,
         #[serde(default, skip_serializing_if = "is_default")]
         pretty: bool,
         #[serde(default, skip_serializing_if = "is_default")]
         insert_feature_gates: bool,
         #[serde(default, skip_serializing_if = "is_default")]
-        use_separate_crates: bool,
+        use_meta_crate: bool,
     },
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, PartialEq)]
-#[cfg(feature = "provider_fs")]
 pub enum FsSyntax {
     Postcard,
     Json,

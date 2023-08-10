@@ -42,8 +42,10 @@ macro_rules! registry {
         /// );
         /// ```
         pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
-            lazy_static::lazy_static! {
-                static ref LOOKUP: std::collections::HashMap<&'static str, Result<DataKey, &'static str>> = [
+            use once_cell::sync::OnceCell;
+            static LOOKUP: OnceCell<std::collections::HashMap<&'static str, Result<DataKey, &'static str>>> = OnceCell::new();
+            let lookup = LOOKUP.get_or_init(|| {
+                [
                     ("core/helloworld@1", Ok(icu_provider::hello_world::HelloWorldV1Marker::KEY)),
                     $(
                         $(
@@ -55,10 +57,10 @@ macro_rules! registry {
                     )+
                 ]
                 .into_iter()
-                .collect();
-            }
+                .collect()
+            });
             let path = string.as_ref();
-            match LOOKUP.get(path).copied() {
+            match lookup.get(path).copied() {
                 None => {
                     log::warn!("Unknown key {path:?}");
                     None
@@ -113,17 +115,17 @@ macro_rules! registry {
         }
 
         #[doc(hidden)]
-        pub fn deserialize_and_discard<R>(key: DataKey, buf: DataPayload<BufferMarker>, r: impl Fn() -> R) -> Result<R, DataError> {
+        pub fn deserialize_and_measure<Measurement>(key: DataKey, buf: DataPayload<BufferMarker>, measure: impl Fn() -> Measurement) -> Result<(Measurement, DataPayload<icu_provider::datagen::ExportMarker>), DataError> {
             if key.path() == icu_provider::hello_world::HelloWorldV1Marker::KEY.path() {
-                let _reified_data: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
-                return Ok(r());
+                let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                return Ok((measure(), icu_provider::dynutil::UpcastDataPayload::upcast(deserialized)));
             }
             $(
                 $(
                     #[cfg($feature)]
                     if key == <$marker>::KEY {
-                        let _reified_data: DataPayload<$marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
-                        return Ok(r());
+                        let deserialized: DataPayload<$marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                        return Ok((measure(), icu_provider::dynutil::UpcastDataPayload::upcast(deserialized)));
                     }
                 )+
             )+
@@ -137,8 +139,9 @@ registry!(
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
-    #[cfg(feature = "icu_casemap")]
+    #[cfg(any(all(), feature = "icu_casemap"))]
     icu_casemap::provider::CaseMapV1Marker = "props/casemap@1",
+    icu_casemap::provider::CaseMapUnfoldV1Marker = "props/casemap_unfold@1",
     #[cfg(any(all(), feature = "icu_collator"))]
     icu_collator::provider::CollationDataV1Marker = "collator/data@1",
     icu_collator::provider::CollationDiacriticsV1Marker = "collator/dia@1",
@@ -154,6 +157,8 @@ registry!(
         "datetime/buddhist/datelengths@1",
     icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker =
         "datetime/buddhist/datesymbols@1",
+    icu_datetime::provider::calendar::ChineseDateLengthsV1Marker = "datetime/chinese/datelengths@1",
+    icu_datetime::provider::calendar::ChineseDateSymbolsV1Marker = "datetime/chinese/datesymbols@1",
     icu_datetime::provider::calendar::CopticDateLengthsV1Marker = "datetime/coptic/datelengths@1",
     icu_datetime::provider::calendar::CopticDateSymbolsV1Marker = "datetime/coptic/datesymbols@1",
     icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker = "datetime/skeletons@1",
@@ -175,6 +180,28 @@ registry!(
         "datetime/japanext/datelengths@1",
     icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker =
         "datetime/japanext/datesymbols@1",
+    icu_datetime::provider::calendar::PersianDateLengthsV1Marker = "datetime/persian/datelengths@1",
+    icu_datetime::provider::calendar::PersianDateSymbolsV1Marker = "datetime/persian/datesymbols@1",
+    icu_datetime::provider::calendar::HebrewDateLengthsV1Marker = "datetime/hebrew/datelengths@1",
+    icu_datetime::provider::calendar::HebrewDateSymbolsV1Marker = "datetime/hebrew/datesymbols@1",
+    icu_datetime::provider::calendar::RocDateLengthsV1Marker = "datetime/roc/datelengths@1",
+    icu_datetime::provider::calendar::RocDateSymbolsV1Marker = "datetime/roc/datesymbols@1",
+    icu_datetime::provider::calendar::IslamicObservationalDateLengthsV1Marker =
+        "datetime/islamicobservational/datelengths@1",
+    icu_datetime::provider::calendar::IslamicObservationalDateSymbolsV1Marker =
+        "datetime/islamicobservational/datesymbols@1",
+    icu_datetime::provider::calendar::IslamicCivilDateLengthsV1Marker =
+        "datetime/islamiccivil/datelengths@1",
+    icu_datetime::provider::calendar::IslamicCivilDateSymbolsV1Marker =
+        "datetime/islamiccivil/datesymbols@1",
+    icu_datetime::provider::calendar::UmmAlQuraDateLengthsV1Marker =
+        "datetime/ummalqura/datelengths@1",
+    icu_datetime::provider::calendar::UmmAlQuraDateSymbolsV1Marker =
+        "datetime/ummalqura/datesymbols@1",
+    icu_datetime::provider::calendar::IslamicTabularDateLengthsV1Marker =
+        "datetime/islamictabular/datelengths@1",
+    icu_datetime::provider::calendar::IslamicTabularDateSymbolsV1Marker =
+        "datetime/islamictabular/datesymbols@1",
     icu_datetime::provider::calendar::TimeLengthsV1Marker = "datetime/timelengths@1",
     icu_datetime::provider::calendar::TimeSymbolsV1Marker = "datetime/timesymbols@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker =
@@ -391,6 +418,8 @@ registry!(
         "relativetime/short/year@1",
     icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/year@1",
+    #[cfg(feature = "icu_singlenumberformatter")]
+    icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
     #[cfg(any(all(), feature = "icu_segmenter"))]
     icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker =
         "segmenter/dictionary/wl_ext@1",

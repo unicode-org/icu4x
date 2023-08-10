@@ -408,6 +408,10 @@ impl TimeZoneFormatter {
         /// To enable other time zone styles, use one of the `with` (compiled data) or `load` (runtime
         /// data provider) methods.
         ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
         /// # Examples
         ///
         /// Default format is Localized GMT:
@@ -843,19 +847,15 @@ pub(crate) enum ZeroPadding {
 /// An enum for time zone fallback formats.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[non_exhaustive]
+#[derive(Default)]
 pub enum FallbackFormat {
     /// The ISO 8601 format for time zone format fallback.
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
     /// The localized GMT format for time zone format fallback.
     ///
     /// See [UTS 35 on Dates](https://unicode.org/reports/tr35/tr35-dates.html#71-time-zone-format-terminology) for more information.
+    #[default]
     LocalizedGmt,
-}
-
-impl Default for FallbackFormat {
-    fn default() -> Self {
-        FallbackFormat::LocalizedGmt
-    }
 }
 
 /// A bag of options to define how time zone will be formatted.

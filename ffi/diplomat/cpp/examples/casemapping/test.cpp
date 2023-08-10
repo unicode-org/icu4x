@@ -6,6 +6,7 @@
 #include "../../include/ICU4XLogger.hpp"
 #include "../../include/ICU4XDataProvider.hpp"
 #include "../../include/ICU4XCodePointSetBuilder.hpp"
+#include "../../include/ICU4XTitlecaseOptionsV1.hpp"
 
 #include <iostream>
 
@@ -17,6 +18,8 @@ int main() {
     ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
 
     ICU4XCaseMapper cm = ICU4XCaseMapper::create(dp).ok().value();
+
+    ICU4XTitlecaseOptionsV1 tc_options = ICU4XTitlecaseOptionsV1::default_options();
 
     std::string out = cm.lowercase("hEllO WorLd", und).ok().value();
     std::cout << "Lowercased value is " << out << std::endl;
@@ -31,7 +34,7 @@ int main() {
         return 1;
     }
 
-    out = cm.titlecase_segment("hEllO WorLd", und).ok().value();
+    out = cm.titlecase_segment_legacy_v1("hEllO WorLd", und, tc_options).ok().value();
     std::cout << "Titlecased value is " << out << std::endl;
     if (out != "Hello world") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -86,7 +89,7 @@ int main() {
 
     ICU4XCodePointSetBuilder builder = ICU4XCodePointSetBuilder::create();
 
-    cm.add_case_closure('s', builder);
+    cm.add_case_closure_to('s', builder);
 
     auto set = builder.build();
 

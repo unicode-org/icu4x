@@ -49,7 +49,7 @@ uint8_t ICU4XIsoDate_months_in_year(const ICU4XIsoDate* self);
 
 uint8_t ICU4XIsoDate_days_in_month(const ICU4XIsoDate* self);
 
-uint32_t ICU4XIsoDate_days_in_year(const ICU4XIsoDate* self);
+uint16_t ICU4XIsoDate_days_in_year(const ICU4XIsoDate* self);
 void ICU4XIsoDate_destroy(ICU4XIsoDate* self);
 
 #ifdef __cplusplus

@@ -20,8 +20,11 @@
 //!
 //! // Export something
 //! DatagenProvider::default()
-//!     .export(
-//!         [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect(),
+//!     .export({
+//!             let mut options = options::Options::default();
+//!             options.keys = [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect();
+//!             options
+//!         },
 //!         exporter
 //!     ).unwrap();
 //! #
@@ -112,7 +115,7 @@ impl Default for Options {
         Self {
             pretty: false,
             insert_feature_gates: false,
-            use_separate_crates: false,
+            use_separate_crates: true,
             overwrite: false,
         }
     }
@@ -266,7 +269,7 @@ impl BakedExporter {
         ident: String,
     ) -> Result<(), DataError> {
         let doc = format!(
-            " Implement [`DataProvider<{}>`](icu_provider::DataProvider) on the given struct using the data",
+            " Implement `DataProvider<{}>` on the given struct using the data",
             marker.segments.iter().next_back().unwrap().ident
         );
 
@@ -361,14 +364,14 @@ impl DataExporter for BakedExporter {
         let bake = payload.tokenize(&self.dependencies);
 
         self.write_impl_macro(quote! {
-            #[clippy::msrv = "1.61"]
+            #[clippy::msrv = "1.65"]
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)]
                 pub const #singleton_ident: &'static <#marker as icu_provider::DataMarker>::Yokeable = &#bake;
             }
 
-            #[clippy::msrv = "1.61"]
+            #[clippy::msrv = "1.65"]
             impl icu_provider::DataProvider<#marker> for $provider {
                 fn load(
                     &self,
@@ -538,7 +541,7 @@ impl DataExporter for BakedExporter {
 
         self.write_impl_macro(
             quote! {
-                #[clippy::msrv = "1.61"]
+                #[clippy::msrv = "1.65"]
                 impl icu_provider::DataProvider<#marker> for $provider {
                     fn load(
                         &self,
@@ -615,7 +618,7 @@ impl DataExporter for BakedExporter {
             quote! {
                 include!("macros.rs");
 
-                /// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
+                /// Implement `DataProvider<M>` on the given struct using the data
                 /// hardcoded in this module. This allows the struct to be used with
                 /// `icu`'s `_unstable` constructors.
                 ///
@@ -637,7 +640,7 @@ impl DataExporter for BakedExporter {
                 #[doc(inline)]
                 pub use __impl_data_provider as impl_data_provider;
 
-                /// Implement [`AnyProvider`](icu_provider::AnyProvider) on the given struct using the data
+                /// Implement `AnyProvider` on the given struct using the data
                 /// hardcoded in this module. This allows the struct to be used with
                 /// `icu`'s `_any` constructors.
                 ///
@@ -650,7 +653,7 @@ impl DataExporter for BakedExporter {
                 #[macro_export]
                 macro_rules! __impl_any_provider {
                     ($provider:path) => {
-                        #[clippy::msrv = "1.61"]
+                        #[clippy::msrv = "1.65"]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 #(
@@ -676,7 +679,7 @@ impl DataExporter for BakedExporter {
                 #[doc(inline)]
                 pub use __impl_any_provider as impl_any_provider;
 
-                #[clippy::msrv = "1.61"]
+                #[clippy::msrv = "1.65"]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },

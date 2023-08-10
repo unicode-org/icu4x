@@ -1,12 +1,12 @@
 // @generated
-/// Implement [`DataProvider<OrdinalV1Marker>`](icu_provider::DataProvider) on the given struct using the data
+/// Implement `DataProvider<OrdinalV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_plurals_ordinal_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.61"]
+        #[clippy::msrv = "1.65"]
         impl icu_provider::DataProvider<icu_plurals::provider::OrdinalV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_plurals::provider::OrdinalV1Marker>, icu_provider::DataError> {
                 static AF: <icu_plurals::provider::OrdinalV1Marker as icu_provider::DataMarker>::Yokeable = icu_plurals::provider::PluralRulesV1 { zero: None, one: None, two: None, few: None, many: None };

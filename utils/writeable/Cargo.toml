@@ -6,7 +6,7 @@
 name = "writeable"
 description = "A more efficient alternative to fmt::Display"
 version = "0.5.2"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -30,9 +30,11 @@ independent = true
 all-features = true
 
 [dev-dependencies]
-criterion = "0.4"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 rand = { version = "0.8", features = ["small_rng"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
 
 [features]
 bench = []

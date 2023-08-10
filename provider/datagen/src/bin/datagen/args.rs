@@ -97,8 +97,10 @@ pub struct Cli {
     #[arg(help = "--format=mod, --format=dir only: pretty-print the Rust or JSON output files.")]
     pretty: bool,
 
-    #[arg(long)]
-    #[arg(help = "--format=dir only: whether to add a fingerprints file to the output.")]
+    #[arg(long, hide = true)]
+    #[arg(
+        help = "--format=dir only: whether to add a fingerprints file to the output. This feature will be removed in a future version."
+    )]
     fingerprint: bool,
 
     #[arg(short = 't', long, value_name = "TAG", default_value = "latest")]
@@ -234,12 +236,56 @@ pub struct Cli {
 
     #[arg(short, long, value_enum, default_value_t = Fallback::Legacy)]
     fallback: Fallback,
+
+    #[arg(long, num_args = 0.., default_value = "recommended")]
+    #[arg(
+        help = "Include these segmenter models in the output. Accepts multiple arguments. \
+                Defaults to 'recommended' for the recommended set of models. Use 'none' for no models"
+    )]
+    segmenter_models: Vec<String>,
 }
 
 impl Cli {
     pub fn as_config(&self) -> eyre::Result<config::Config> {
-        Ok(if let Some(ref path) = self.config {
-            serde_json::from_str(&std::fs::read_to_string(path)?)?
+        Ok(if let Some(ref config_path) = self.config {
+            let mut config: config::Config =
+                serde_json::from_str(&std::fs::read_to_string(config_path)?)?;
+            let parent = config_path.parent().unwrap();
+            // all paths in the JSON file are relative to its path, not to pwd.
+            for path_or_tag in [
+                &mut config.cldr,
+                &mut config.icu_export,
+                &mut config.segmenter_lstm,
+            ] {
+                if let config::PathOrTag::Path(ref mut path) = path_or_tag {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+            }
+            if let config::KeyInclude::ForBinary(path) = &mut config.keys {
+                if path.is_relative() {
+                    *path = parent.join(path.clone());
+                }
+            }
+            match &mut config.export {
+                config::Export::Fs { path, .. } => {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+                config::Export::Blob { path, .. } => {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+                config::Export::Baked { path, .. } => {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+            }
+            config
         } else {
             config::Config {
                 keys: self.make_keys()?,
@@ -268,6 +314,7 @@ impl Cli {
                     .iter()
                     .map(|c| c.to_datagen_value().to_owned())
                     .collect(),
+                segmenter_models: self.make_segmenter_models()?,
                 export: self.make_exporter()?,
                 fallback: match self.fallback {
                     Fallback::Legacy => config::FallbackMode::Legacy,
@@ -366,6 +413,16 @@ impl Cli {
         })
     }
 
+    fn make_segmenter_models(&self) -> eyre::Result<options::SegmenterModelInclude> {
+        Ok(if self.segmenter_models.as_slice() == ["none"] {
+            config::SegmenterModelInclude::None
+        } else if self.segmenter_models.as_slice() == ["recommended"] {
+            config::SegmenterModelInclude::Recommended
+        } else {
+            config::SegmenterModelInclude::Explicit(self.segmenter_models.clone())
+        })
+    }
+
     fn make_exporter(&self) -> eyre::Result<config::Export> {
         match self.format {
             v @ (Format::Dir | Format::DeprecatedDefault) => {
@@ -376,7 +433,7 @@ impl Cli {
                 eyre::bail!("FsDataProvider export requires the provider_fs Cargo feature.");
                 #[cfg(feature = "provider_fs")]
                 Ok(config::Export::Fs {
-                    output_path: if let Some(root) = self.output.as_ref() {
+                    path: if let Some(root) = self.output.as_ref() {
                         root.clone()
                     } else {
                         PathBuf::from("icu4x_data")
@@ -394,25 +451,27 @@ impl Cli {
                 #[cfg(not(feature = "provider_blob"))]
                 eyre::bail!("BlobDataProvider export requires the provider_blob Cargo feature.");
                 #[cfg(feature = "provider_blob")]
-                Ok(config::Export::Blob(if let Some(path) = &self.output {
-                    path.clone()
-                } else {
-                    PathBuf::from("/stdout")
-                }))
+                Ok(config::Export::Blob {
+                    path: if let Some(path) = &self.output {
+                        path.clone()
+                    } else {
+                        PathBuf::from("/stdout")
+                    },
+                })
             }
             Format::Mod => {
                 #[cfg(not(feature = "provider_baked"))]
                 eyre::bail!("Baked data export requires the provider_baked Cargo feature.");
                 #[cfg(feature = "provider_baked")]
                 Ok(config::Export::Baked {
-                    output_path: if let Some(mod_directory) = self.output.as_ref() {
+                    path: if let Some(mod_directory) = self.output.as_ref() {
                         mod_directory.clone()
                     } else {
                         PathBuf::from("icu4x_data")
                     },
                     pretty: self.pretty,
                     insert_feature_gates: self.insert_feature_gates,
-                    use_separate_crates: self.use_separate_crates,
+                    use_meta_crate: !self.use_separate_crates,
                 })
             }
         }

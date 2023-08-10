@@ -6,7 +6,7 @@
 name = "icu_provider"
 description = "Trait and struct definitions for the ICU data provider"
 version = "1.2.0"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -62,7 +62,6 @@ icu_locid_transform = { path = "../../components/locid_transform" }
 std = ["icu_locid/std"]
 sync = []
 macros = ["dep:icu_provider_macros"]
-
 # Enable logging of additional context of data errors
 logging = ["dep:log"]
 # Legacy name
@@ -81,3 +80,5 @@ datagen = ["serde", "dep:erased-serde", "dep:databake", "std", "sync"]
 
 [package.metadata.cargo-all-features]
 denylist = ["macros"]
+# We have tons of features here, limit the amount of tests we run
+max_combination_size = 3

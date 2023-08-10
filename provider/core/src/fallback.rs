@@ -68,8 +68,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = LocaleFallbackPriority::Language;
     /// let mut fallback_iterator = fallbacker.for_config(config).fallback_for(locale!("ca-ES-valencia").into());
@@ -98,8 +97,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = LocaleFallbackPriority::Region;
     /// let mut fallback_iterator = fallbacker.for_config(config).fallback_for(locale!("ca-ES-valencia").into());
@@ -135,8 +133,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.extension_key = Some(icu_locid::extensions::unicode::key!("nu"));
     /// let mut fallback_iterator = fallbacker
@@ -175,8 +172,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::new();
+    /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = LocaleFallbackPriority::Collation;
     /// config.fallback_supplement = Some(LocaleFallbackSupplement::Collation);

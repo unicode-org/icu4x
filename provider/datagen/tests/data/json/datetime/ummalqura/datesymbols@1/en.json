@@ -1,0 +1,108 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "Muh.",
+          "Saf.",
+          "Rab. I",
+          "Rab. II",
+          "Jum. I",
+          "Jum. II",
+          "Raj.",
+          "Sha.",
+          "Ram.",
+          "Shaw.",
+          "Dhuʻl-Q.",
+          "Dhuʻl-H."
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "Muharram",
+          "Safar",
+          "Rabiʻ I",
+          "Rabiʻ II",
+          "Jumada I",
+          "Jumada II",
+          "Rajab",
+          "Shaʻban",
+          "Ramadan",
+          "Shawwal",
+          "Dhuʻl-Qiʻdah",
+          "Dhuʻl-Hijjah"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+      ],
+      "narrow": [
+        "S",
+        "M",
+        "T",
+        "W",
+        "T",
+        "F",
+        "S"
+      ],
+      "short": [
+        "Su",
+        "Mo",
+        "Tu",
+        "We",
+        "Th",
+        "Fr",
+        "Sa"
+      ],
+      "wide": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "islamic": "AH"
+    },
+    "abbr": {
+      "islamic": "AH"
+    },
+    "narrow": {
+      "islamic": "AH"
+    }
+  }
+}

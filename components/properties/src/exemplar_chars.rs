@@ -45,7 +45,9 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         $(#[$attr:meta])*
         $vis2:vis fn $constname:ident();
     ) => {
-        #[doc = concat!("[`", stringify!($constname), "()`] with a runtime data provider argument.")]
+        #[doc = concat!("A version of [`", stringify!($constname), "()`] that uses custom data provided by a [`DataProvider`].")]
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized),
             locale: &DataLocale,
@@ -60,8 +62,6 @@ macro_rules! make_exemplar_chars_unicode_set_property {
             )
         }
         $(#[$attr])*
-        ///
-        /// ✨ **Enabled with the `"compiled_data"` feature.**
         #[cfg(feature = "compiled_data")]
         $vis2 fn $constname(
             locale: &DataLocale,
@@ -86,6 +86,10 @@ make_exemplar_chars_unicode_set_property!(
     pub fn load_exemplars_main();
 
     /// Get the "main" set of exemplar characters.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -115,6 +119,10 @@ make_exemplar_chars_unicode_set_property!(
 
     /// Get the "auxiliary" set of exemplar characters.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Examples
     ///
     /// ```
@@ -143,6 +151,10 @@ make_exemplar_chars_unicode_set_property!(
     pub fn load_exemplars_punctuation();
 
     /// Get the "punctuation" set of exemplar characters.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -174,6 +186,10 @@ make_exemplar_chars_unicode_set_property!(
 
     /// Get the "numbers" set of exemplar characters.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Examples
     ///
     /// ```
@@ -203,6 +219,10 @@ make_exemplar_chars_unicode_set_property!(
     pub fn load_exemplars_index();
 
     /// Get the "index" set of exemplar characters.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///

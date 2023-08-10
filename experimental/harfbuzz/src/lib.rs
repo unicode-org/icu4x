@@ -4,9 +4,7 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 
-// TODO(#3275) Make this no_std again
-//#![cfg_attr(not(any(test, feature = "std")), no_std)]
-
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -48,6 +46,7 @@ mod error;
 
 use crate::error::HarfBuzzError;
 use alloc::boxed::Box;
+use core::ffi::{c_char, c_void};
 use harfbuzz_sys::*;
 use icu_normalizer::properties::CanonicalCombiningClassMap;
 use icu_normalizer::properties::CanonicalComposition;
@@ -66,7 +65,6 @@ use icu_properties::provider::{
 };
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
-use std::os::raw::{c_char, c_void};
 use tinystr::{tinystr, TinyStr4};
 
 /// The total number of General Category values is fixed per
@@ -327,9 +325,13 @@ impl Drop for UnicodeFuncs {
     }
 }
 
-/// Sets up a `hb_unicode_funcs_t` with ICU4X as the back end as the Unicode
+/// Sets up a `hb_unicode_funcs_t` with ICU4X compiled data as the back end as the Unicode
 /// Database operations that HarfBuzz needs. The `hb_unicode_funcs_t` held
 /// by the returned `UnicodeFuncs` is marked immutable.
+///
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
+///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
 #[cfg(feature = "compiled_data")]
 pub fn new_hb_unicode_funcs() -> Result<UnicodeFuncs, HarfBuzzError> {
     create_ufuncs(
@@ -344,7 +346,7 @@ pub fn new_hb_unicode_funcs() -> Result<UnicodeFuncs, HarfBuzzError> {
 }
 
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, new_hb_unicode_funcs)]
-pub fn new_hb_unicode_funcs_unstable<D>(data_provider: &D) -> Result<UnicodeFuncs, HarfBuzzError>
+pub fn new_hb_unicode_funcs_unstable<D>(provider: &D) -> Result<UnicodeFuncs, HarfBuzzError>
 where
     D: DataProvider<BidiAuxiliaryPropertiesV1Marker>
         + DataProvider<CanonicalCompositionsV1Marker>
@@ -357,13 +359,13 @@ where
         + ?Sized,
 {
     create_ufuncs(
-        CanonicalCombiningClassMap::try_new_unstable(data_provider)?,
-        icu_properties::maps::load_general_category(data_provider)?,
-        icu_properties::bidi_data::load_bidi_auxiliary_properties_unstable(data_provider)?,
-        icu_properties::maps::load_script(data_provider)?,
-        Script::get_enum_to_short_name_mapper(data_provider)?,
-        CanonicalComposition::try_new_unstable(data_provider)?,
-        CanonicalDecomposition::try_new_unstable(data_provider)?,
+        CanonicalCombiningClassMap::try_new_unstable(provider)?,
+        icu_properties::maps::load_general_category(provider)?,
+        icu_properties::bidi_data::load_bidi_auxiliary_properties_unstable(provider)?,
+        icu_properties::maps::load_script(provider)?,
+        Script::get_enum_to_short_name_mapper(provider)?,
+        CanonicalComposition::try_new_unstable(provider)?,
+        CanonicalDecomposition::try_new_unstable(provider)?,
     )
 }
 

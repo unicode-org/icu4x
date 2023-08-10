@@ -68,7 +68,7 @@ pub struct LocaleFallbackerBorrowed<'a> {
 }
 
 /// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
@@ -100,9 +100,9 @@ pub struct LocaleFallbackIterator<'a, 'b> {
 }
 
 impl LocaleFallbacker {
-    /// Creates a [`LocaleFallbacker`] with fallback data (likely subtags and parent locales).
+    /// Creates a [`LocaleFallbacker`] with compiled fallback data (likely subtags and parent locales).
     ///
-    /// ✨ **Enabled with the `"compiled_data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -208,11 +208,14 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
 
 impl LocaleFallbackerBorrowed<'static> {
     /// Cheaply converts a `LocaleFallbackerBorrowed<'static>` into a `LocaleFallbacker`.
-    pub fn static_to_owned(self) -> LocaleFallbacker {
+    pub const fn static_to_owned(self) -> LocaleFallbacker {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_static_ref(self.likely_subtags),
             parents: DataPayload::from_static_ref(self.parents),
-            collation_supplement: self.collation_supplement.map(DataPayload::from_static_ref),
+            collation_supplement: match self.collation_supplement {
+                None => None,
+                Some(x) => Some(DataPayload::from_static_ref(x)),
+            },
         }
     }
 }
@@ -220,7 +223,7 @@ impl LocaleFallbackerBorrowed<'static> {
 impl<'a> LocaleFallbackerWithConfig<'a> {
     /// Creates an iterator based on a [`DataLocale`].
     ///
-    /// If you have a [`Locale`], call `.into()` to get a [`DataLocale`].
+    /// If you have a [`Locale`](icu_locid::Locale), call `.into()` to get a [`DataLocale`].
     ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
     pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {

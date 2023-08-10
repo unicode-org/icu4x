@@ -11,14 +11,47 @@ pub mod ffi {
     pub struct ICU4XLogger;
 
     impl ICU4XLogger {
-        /// Initialize the logger from the `simple_logger` crate, which simply logs to
-        /// stdout. Returns `false` if there was already a logger set, or if logging has not been
-        /// compiled into the platform
+        /// Initialize the logger using `simple_logger`
+        ///
+        /// Requires the `simple_logger` Cargo feature.
+        ///
+        /// Returns `false` if there was already a logger set.
+        #[cfg(all(not(target_arch = "wasm32"), feature = "simple_logger"))]
         pub fn init_simple_logger() -> bool {
-            #[cfg(not(all(not(target_arch = "wasm32"), feature = "simple_logger")))]
-            unimplemented!("ICU4X binary not compiled with simple_logger support");
-            #[cfg(all(not(target_arch = "wasm32"), feature = "simple_logger"))]
             simple_logger::init().is_ok()
+        }
+
+        /// Initialize the logger to use the WASM console.
+        ///
+        /// Only available on `wasm32` targets.
+        ///
+        /// Returns `false` if there was already a logger set.
+        #[cfg(target_arch = "wasm32")]
+        pub fn init_console_logger() -> bool {
+            // Define a custom `log::Log` that uses the `diplomat_runtime` bindings.
+            // TODO: Maybe this logger should be defined in `diplomat_runtime` and use
+            // console.{error, warn, log, debug, info} instead of just {warn, log}.
+            struct ConsoleLogger;
+            impl log::Log for ConsoleLogger {
+                fn enabled(&self, _: &log::Metadata) -> bool {
+                    true
+                }
+
+                fn log(&self, record: &log::Record) {
+                    let msg = alloc::format!("[{}] {}", record.level(), record.args());
+                    if record.level() <= log::Level::Warn {
+                        diplomat_runtime::console_warn(&msg);
+                    } else {
+                        diplomat_runtime::console_log(&msg);
+                    }
+                }
+
+                fn flush(&self) {}
+            }
+
+            log::set_logger(&ConsoleLogger)
+                .map(|()| log::set_max_level(log::LevelFilter::Debug))
+                .is_ok()
         }
     }
 }

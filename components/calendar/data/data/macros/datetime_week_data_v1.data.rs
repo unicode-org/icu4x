@@ -1,12 +1,12 @@
 // @generated
-/// Implement [`DataProvider<WeekDataV1Marker>`](icu_provider::DataProvider) on the given struct using the data
+/// Implement `DataProvider<WeekDataV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_datetime_week_data_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.61"]
+        #[clippy::msrv = "1.65"]
         impl icu_provider::DataProvider<icu_calendar::provider::WeekDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_calendar::provider::WeekDataV1Marker>, icu_provider::DataError> {
                 static UND_MV: <icu_calendar::provider::WeekDataV1Marker as icu_provider::DataMarker>::Yokeable = icu_calendar::provider::WeekDataV1 { first_weekday: icu_calendar::types::IsoWeekday::Friday, min_week_days: 1u8 };

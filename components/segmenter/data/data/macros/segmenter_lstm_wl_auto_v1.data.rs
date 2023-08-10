@@ -1,12 +1,12 @@
 // @generated
-/// Implement [`DataProvider<LstmForWordLineAutoV1Marker>`](icu_provider::DataProvider) on the given struct using the data
+/// Implement `DataProvider<LstmForWordLineAutoV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_segmenter_lstm_wl_auto_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.61"]
+        #[clippy::msrv = "1.65"]
         impl icu_provider::DataProvider<icu_segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_segmenter::provider::LstmForWordLineAutoV1Marker>, icu_provider::DataError> {
                 static LO: <icu_segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::DataMarker>::Yokeable = icu_segmenter::provider::LstmDataV1::Float32(icu_segmenter::provider::LstmDataFloat32::from_parts_unchecked(

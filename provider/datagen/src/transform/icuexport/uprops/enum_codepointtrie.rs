@@ -20,7 +20,7 @@ pub(crate) fn get_enumerated_prop<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::enumerated::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.options.trie_type, key
+            source.trie_type, key
         ))?
         .enum_property
         .get(0)
@@ -79,7 +79,7 @@ fn map_to_vec<'a>(
     } else {
         return Err(DataError::custom("Property has no values!").with_display_context(prop_name));
     };
-    let last = if let Some((&last, _)) = map.iter().rev().next() {
+    let last = if let Some((&last, _)) = map.iter().next_back() {
         let range = usize::from(1 + last - first);
         let count = map.len();
         let gaps = range - count;
@@ -379,7 +379,7 @@ fn get_mask_prop<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.options.trie_type,
+            source.trie_type,
             key
         ))?
         .mask_property

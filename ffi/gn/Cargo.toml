@@ -14,9 +14,6 @@ icu_capi = { version = "1.0", path = "../../ffi/diplomat", default-features = fa
 icu = { version = "1.0", path = "../../components/icu", default-features = false }
 icu_provider = { version = "1.0", path = "../../provider/core" }
 
-[gn.package.log."0.4.17"]
-rustflags = ["--cfg=atomic_cas", "--cfg=has_atomics"]
-
 # TODO: Determine the correct rustflags for memchr
 [gn.package.memchr."2.5.0"]
 rustflags = []

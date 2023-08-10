@@ -115,14 +115,14 @@
 
     .. js:function:: create_en()
 
-        Unconditionally panics.
+        Deprecated
 
         Use `create_from_string("en").
 
 
     .. js:function:: create_bn()
 
-        Unconditionally panics.
+        Deprecated
 
         Use `create_from_string("bn").
 

@@ -26,7 +26,7 @@ use zerovec::ZeroVecError;
 /// property data in a map-like form, ex: enumerated property value data keyed
 /// by code point. Access its data via the borrowed version,
 /// [`CodePointMapDataBorrowed`].
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CodePointMapData<T: TrieValue> {
     data: DataPayload<ErasedMaplikeMarker<T>>,
 }
@@ -262,7 +262,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
 
 impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
     /// Cheaply converts a `CodePointMapDataBorrowed<'static>` into a `CodePointMapData`.
-    pub fn static_to_owned(self) -> CodePointMapData<T> {
+    pub const fn static_to_owned(self) -> CodePointMapData<T> {
         CodePointMapData {
             data: DataPayload::from_static_ref(self.map),
         }
@@ -315,18 +315,18 @@ macro_rules! make_map_property {
         $vis2:vis const $constname:ident => $singleton:ident;
         $vis:vis fn $name:ident();
     ) => {
-        #[doc = concat!("[`", stringify!($constname), "()`] with a runtime data provider argument.")]
+        #[doc = concat!("A version of [`", stringify!($constname), "()`] that uses custom data provided by a [`DataProvider`].")]
         ///
         /// Note that this will return an owned version of the data. Functionality is available on
-        /// the borrowed version, accessible through `.as_borrowed()`.
+        /// the borrowed version, accessible through [`CodePointMapData::as_borrowed`].
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         $vis fn $name(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {
             Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
         }
         $(#[$doc])*
-        ///
-        /// ✨ **Enabled with the `"compiled_data"` feature.**
         #[cfg(feature = "compiled_data")]
         pub const fn $constname() -> CodePointMapDataBorrowed<'static, $value_ty> {
             CodePointMapDataBorrowed {
@@ -343,6 +343,10 @@ make_map_property! {
     keyed_data_marker: GeneralCategoryV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Example
     ///
@@ -363,6 +367,10 @@ make_map_property! {
     keyed_data_marker: BidiClassV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Example
     ///
@@ -389,6 +397,10 @@ make_map_property! {
     /// [`load_script_with_extensions_unstable`] and [`ScriptWithExtensionsBorrowed::has_script`]
     /// instead of this function.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Example
     ///
     /// ```
@@ -412,6 +424,10 @@ make_map_property! {
     /// Return a [`CodePointMapDataBorrowed`] for the East_Asian_Width Unicode enumerated
     /// property. See [`EastAsianWidth`].
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Example
     ///
     /// ```
@@ -432,6 +448,10 @@ make_map_property! {
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Line_Break Unicode enumerated
     /// property. See [`LineBreak`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
     ///
@@ -456,6 +476,10 @@ make_map_property! {
     /// Return a [`CodePointMapDataBorrowed`] for the Grapheme_Cluster_Break Unicode enumerated
     /// property. See [`GraphemeClusterBreak`].
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
     ///
     /// # Example
@@ -478,6 +502,10 @@ make_map_property! {
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Word_Break Unicode enumerated
     /// property. See [`WordBreak`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
     ///
@@ -502,6 +530,10 @@ make_map_property! {
     /// Return a [`CodePointMapDataBorrowed`] for the Sentence_Break Unicode enumerated
     /// property. See [`SentenceBreak`].
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
     ///
     /// # Example
@@ -524,6 +556,10 @@ make_map_property! {
     func:
     /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
     /// [`CanonicalCombiningClass`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// **Note:** See `icu_normalizer::CanonicalCombiningClassMap` for the preferred API
     /// to look up the Canonical_Combining_Class property by scalar value.

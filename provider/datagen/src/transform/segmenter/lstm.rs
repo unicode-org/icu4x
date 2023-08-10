@@ -4,12 +4,14 @@
 
 //! This module contains provider implementations backed by LSTM segmentation data.
 
+use crate::options;
 use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use zerovec::{ule::UnvalidatedStr, ZeroVec};
 
@@ -181,25 +183,52 @@ convert!(ndarray_to_lstm_matrix1, LstmMatrix1, 1);
 convert!(ndarray_to_lstm_matrix2, LstmMatrix2, 2);
 convert!(ndarray_to_lstm_matrix3, LstmMatrix3, 3);
 
+fn model_name_to_data_locale(name: &str) -> Option<DataLocale> {
+    match name {
+        "Burmese_codepoints_exclusive_model4_heavy" => Some(langid!("my").into()),
+        "Khmer_codepoints_exclusive_model4_heavy" => Some(langid!("km").into()),
+        "Lao_codepoints_exclusive_model4_heavy" => Some(langid!("lo").into()),
+        "Thai_codepoints_exclusive_model4_heavy" => Some(langid!("th").into()),
+        _ => None,
+    }
+}
+
+pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
+    match locale.get_langid() {
+        id if id == langid!("my") => Some("Burmese_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("km") => Some("Khmer_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("lo") => Some("Lao_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("th") => Some("Thai_codepoints_exclusive_model4_heavy"),
+        _ => None,
+    }
+}
+
+pub(crate) fn filter_data_locales(
+    locales: HashSet<DataLocale>,
+    segmenter_models: &options::SegmenterModelInclude,
+) -> HashSet<DataLocale> {
+    match &segmenter_models {
+        options::SegmenterModelInclude::Recommended => locales,
+        options::SegmenterModelInclude::None => Default::default(),
+        options::SegmenterModelInclude::Explicit(list) => locales
+            .into_iter()
+            .filter(|locale| {
+                list.iter()
+                    .any(|x| Some(x.as_str()) == data_locale_to_model_name(locale))
+            })
+            .collect(),
+    }
+}
+
 impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LstmForWordLineAutoV1Marker>, DataError> {
         self.check_req::<LstmForWordLineAutoV1Marker>(req)?;
-        let model = if req.locale.language() == langid!("th").language {
-            "Thai_codepoints_exclusive_model4_heavy"
-        } else if req.locale.language() == langid!("my").language {
-            "Burmese_codepoints_exclusive_model4_heavy"
-        } else if req.locale.language() == langid!("lo").language {
-            "Lao_codepoints_exclusive_model4_heavy"
-        } else if req.locale.language() == langid!("km").language {
-            "Khmer_codepoints_exclusive_model4_heavy"
-        } else {
-            return Err(
-                DataErrorKind::MissingLocale.with_req(LstmForWordLineAutoV1Marker::KEY, req)
-            );
-        };
+
+        let model = data_locale_to_model_name(req.locale)
+            .ok_or(DataErrorKind::MissingLocale.with_req(LstmForWordLineAutoV1Marker::KEY, req))?;
 
         let lstm_data = self
             .source
@@ -218,13 +247,15 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        // TODO(#3408): Do we actually want to filter these by the user-selected locales?
-        Ok(self.filter_data_locales(vec![
-            langid!("km").into(),
-            langid!("lo").into(),
-            langid!("my").into(),
-            langid!("th").into(),
-        ]))
+        Ok([
+            "Burmese_codepoints_exclusive_model4_heavy",
+            "Khmer_codepoints_exclusive_model4_heavy",
+            "Lao_codepoints_exclusive_model4_heavy",
+            "Thai_codepoints_exclusive_model4_heavy",
+        ]
+        .into_iter()
+        .filter_map(model_name_to_data_locale)
+        .collect())
     }
 }
 

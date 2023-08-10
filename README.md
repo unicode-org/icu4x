@@ -24,8 +24,6 @@ More information about the project can be found in [the docs subdirectory](docs/
 
 ## Quick Start
 
-### Current version (1.2)
-
 An example `ICU4X` powered application in Rust may look like below...
 
 `Cargo.toml`:
@@ -39,23 +37,24 @@ icu_testdata = "1.0.0"
 `src/main.rs`:
 
 ```rust
-use icu::calendar::DateTime;
-use icu::datetime::{options::length, DateTimeFormatter};
+use icu::calendar::{DateTime, indian::Indian};
+use icu::datetime::{options::length, TypedDateTimeFormatter};
 use icu::locid::locale;
 
 let options =
     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("es").into(), options)
+let dtf = TypedDateTimeFormatter::<Indian>::try_new_unstable(&icu_testdata::unstable(), &locale!("es").into(), options)
     .expect("Failed to create DateTimeFormatter instance.");
 
-let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("Failed to parse date.");
-let date = date.to_any();
+let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0)
+    .expect("Failed to parse date.")
+    .to_calendar(Indian);
 
-let formatted_date = dtf.format(&date).expect("Formatting failed");
+let formatted_date = dtf.format(&date);
 assert_eq!(
     formatted_date.to_string(),
-    "12 de septiembre de 2020, 12:35:00"
+    "21 de bhadra de 1942 saka, 12:35:00"
 );
 ```
 
