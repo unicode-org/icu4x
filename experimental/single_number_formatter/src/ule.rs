@@ -56,19 +56,25 @@ impl AsULE for CurrencyPatterns {
         // For short_place_holder_index
         let first_index_byte = self.short_place_holder_index.to_be_bytes()[0];
         second_byte = self.short_place_holder_index.to_be_bytes()[1];
-        if first_index_byte <= 2 ^ 2 {
+        if first_index_byte < 2_u8.pow(2) {
             first_byte |= first_index_byte << 2;
         } else {
-            panic!("short_place_holder_index is too large")
+            panic!(
+                "short_place_holder_index is too large {}, {}",
+                self.short_place_holder_index, first_index_byte
+            )
         }
 
         // For narrow_place_holder_index
-        let first_index_byte = self.short_place_holder_index.to_be_bytes()[0];
+        let first_index_byte = self.narrow_place_holder_index.to_be_bytes()[0];
         third_byte = self.narrow_place_holder_index.to_be_bytes()[1];
-        if first_index_byte <= 2 ^ 2 {
+        if first_index_byte < 2_u8.pow(2) {
             first_byte |= first_index_byte;
         } else {
-            panic!("narrow_place_holder_index is too large")
+            panic!(
+                "narrow_place_holder_index is too large {}, {}",
+                self.narrow_place_holder_index, first_index_byte
+            )
         }
         CurrencyPatternsULE([first_byte, second_byte, third_byte])
     }
@@ -91,8 +97,8 @@ impl AsULE for CurrencyPatterns {
         } else {
             PatternSelection::Standard
         };
-        let short_prefix = first_byte & 0b0000_1100;
-        let narrow_prefix = first_byte & 0b0000_0011;
+        let short_prefix = first_byte & 0b0011_1000;
+        let narrow_prefix = first_byte & 0b0000_0111;
 
         let short_place_holder_index = ((short_prefix as u16) << 8) | second_byte as u16;
         let narrow_place_holder_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
