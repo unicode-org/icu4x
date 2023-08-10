@@ -7,7 +7,7 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian,
+    buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, hebrew::Hebrew, indian::Indian,
     islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
     islamic::UmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
     Gregorian,
@@ -85,6 +85,12 @@ impl CldrCalendar for Persian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("persian");
     type DateSymbolsV1Marker = PersianDateSymbolsV1Marker;
     type DateLengthsV1Marker = PersianDateLengthsV1Marker;
+}
+
+impl CldrCalendar for Hebrew {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("hebrew");
+    type DateSymbolsV1Marker = HebrewDateSymbolsV1Marker;
+    type DateLengthsV1Marker = HebrewDateLengthsV1Marker;
 }
 
 impl CldrCalendar for IslamicObservational {
@@ -178,6 +184,7 @@ where
         + DataProvider<UmmAlQuraDateLengthsV1Marker>
         + DataProvider<IslamicTabularDateLengthsV1Marker>
         + DataProvider<PersianDateLengthsV1Marker>
+        + DataProvider<HebrewDateLengthsV1Marker>
         + DataProvider<EthiopianDateLengthsV1Marker>
         + DataProvider<RocDateLengthsV1Marker>
         + ?Sized,
@@ -242,6 +249,11 @@ where
                 .take_payload()?
                 .cast()
         }
+        AnyCalendarKind::Hebrew => {
+            DataProvider::<<Hebrew as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
         AnyCalendarKind::Coptic => {
             DataProvider::<<Coptic as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
@@ -290,6 +302,7 @@ where
         + DataProvider<UmmAlQuraDateSymbolsV1Marker>
         + DataProvider<IslamicTabularDateSymbolsV1Marker>
         + DataProvider<PersianDateSymbolsV1Marker>
+        + DataProvider<HebrewDateSymbolsV1Marker>
         + DataProvider<EthiopianDateSymbolsV1Marker>
         + DataProvider<RocDateSymbolsV1Marker>
         + ?Sized,
@@ -351,6 +364,11 @@ where
         .cast(),
         AnyCalendarKind::Persian => {
             DataProvider::<<Persian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Hebrew => {
+            DataProvider::<<Hebrew as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }

@@ -182,6 +182,8 @@ registry!(
         "datetime/japanext/datesymbols@1",
     icu_datetime::provider::calendar::PersianDateLengthsV1Marker = "datetime/persian/datelengths@1",
     icu_datetime::provider::calendar::PersianDateSymbolsV1Marker = "datetime/persian/datesymbols@1",
+    icu_datetime::provider::calendar::HebrewDateLengthsV1Marker = "datetime/hebrew/datelengths@1",
+    icu_datetime::provider::calendar::HebrewDateSymbolsV1Marker = "datetime/hebrew/datesymbols@1",
     icu_datetime::provider::calendar::RocDateLengthsV1Marker = "datetime/roc/datelengths@1",
     icu_datetime::provider::calendar::RocDateSymbolsV1Marker = "datetime/roc/datesymbols@1",
     icu_datetime::provider::calendar::IslamicObservationalDateLengthsV1Marker =

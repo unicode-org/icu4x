@@ -10,6 +10,7 @@ use crate::coptic::Coptic;
 use crate::dangi::Dangi;
 use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
 use crate::gregorian::Gregorian;
+use crate::hebrew::Hebrew;
 use crate::indian::Indian;
 use crate::islamic::{IslamicCivil, IslamicObservational, IslamicTabular, UmmAlQura};
 use crate::iso::Iso;
@@ -97,6 +98,8 @@ pub enum AnyCalendar {
     IslamicTabular(IslamicTabular),
     /// A [`Persian`] calendar
     Persian(Persian),
+    /// A [`Hebrew`] calendar
+    Hebrew(Hebrew),
     /// A [`Coptic`] calendar
     Coptic(Coptic),
     /// An [`Iso`] calendar
@@ -128,6 +131,8 @@ pub enum AnyDateInner {
     Indian(<Indian as Calendar>::DateInner),
     /// A date for a [`Persian`] calendar
     Persian(<Persian as Calendar>::DateInner),
+    /// A date for a [`Hebrew`] calendar
+    Hebrew(<Hebrew as Calendar>::DateInner),
     /// A date for a [`IslamicObservational`] calendar
     IslamicObservational(<IslamicObservational as Calendar>::DateInner),
     /// A date for a [`IslamicCivil`] calendar
@@ -175,7 +180,7 @@ macro_rules! match_cal_and_date {
                 &Self::IslamicTabular(ref $cal_matched),
                 &AnyDateInner::IslamicTabular(ref $date_matched),
             ) => $e,
-
+            (&Self::Hebrew(ref $cal_matched), &AnyDateInner::Hebrew(ref $date_matched)) => $e,
             (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
             (&Self::Roc(ref $cal_matched), &AnyDateInner::Roc(ref $date_matched)) => $e,
             (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $e,
@@ -231,6 +236,9 @@ impl Calendar for AnyCalendar {
             Self::Persian(ref c) => {
                 AnyDateInner::Persian(c.date_from_codes(era, year, month_code, day)?)
             }
+            Self::Hebrew(ref c) => {
+                AnyDateInner::Hebrew(c.date_from_codes(era, year, month_code, day)?)
+            }
             Self::Chinese(ref c) => {
                 AnyDateInner::Chinese(c.date_from_codes(era, year, month_code, day)?)
             }
@@ -262,6 +270,7 @@ impl Calendar for AnyCalendar {
             Self::UmmAlQura(ref c) => AnyDateInner::UmmAlQura(c.date_from_iso(iso)),
             Self::IslamicTabular(ref c) => AnyDateInner::IslamicTabular(c.date_from_iso(iso)),
             Self::Persian(ref c) => AnyDateInner::Persian(c.date_from_iso(iso)),
+            Self::Hebrew(ref c) => AnyDateInner::Hebrew(c.date_from_iso(iso)),
             Self::Chinese(ref c) => AnyDateInner::Chinese(c.date_from_iso(iso)),
             Self::Roc(ref c) => AnyDateInner::Roc(c.date_from_iso(iso)),
             Self::Dangi(ref c) => AnyDateInner::Dangi(c.date_from_iso(iso)),
@@ -326,6 +335,9 @@ impl Calendar for AnyCalendar {
                 c.offset_date(d, offset.cast_unit())
             }
             (Self::Persian(c), &mut AnyDateInner::Persian(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            (Self::Hebrew(c), &mut AnyDateInner::Hebrew(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             (Self::Roc(c), &mut AnyDateInner::Roc(ref mut d)) => {
@@ -446,6 +458,14 @@ impl Calendar for AnyCalendar {
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
+            (
+                Self::Hebrew(c1),
+                Self::Hebrew(c2),
+                AnyDateInner::Hebrew(d1),
+                AnyDateInner::Hebrew(d2),
+            ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
             (Self::Roc(c1), Self::Roc(c2), AnyDateInner::Roc(d1), AnyDateInner::Roc(d2)) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
@@ -510,6 +530,7 @@ impl Calendar for AnyCalendar {
             Self::UmmAlQura(_) => "AnyCalendar (UmmAlQura)",
             Self::IslamicTabular(_) => "AnyCalendar (IslamicTabular)",
             Self::Persian(_) => "AnyCalendar (Persian)",
+            Self::Hebrew(_) => "AnyCalendar (Hebrew)",
             Self::Chinese(_) => "AnyCalendar (Chinese)",
             Self::Roc(_) => "AnyCalendar (Roc)",
             Self::Dangi(_) => "AnyCalendar (Dangi)",
@@ -547,6 +568,7 @@ impl AnyCalendar {
             AnyCalendarKind::UmmAlQura => AnyCalendar::UmmAlQura(UmmAlQura),
             AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
+            AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
             AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
@@ -586,6 +608,7 @@ impl AnyCalendar {
             AnyCalendarKind::UmmAlQura => AnyCalendar::UmmAlQura(UmmAlQura),
             AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
+            AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
             AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
@@ -626,6 +649,7 @@ impl AnyCalendar {
             AnyCalendarKind::UmmAlQura => AnyCalendar::UmmAlQura(UmmAlQura),
             AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
+            AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
             AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
@@ -664,6 +688,7 @@ impl AnyCalendar {
             AnyCalendarKind::UmmAlQura => AnyCalendar::UmmAlQura(UmmAlQura),
             AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
+            AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
             AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
@@ -735,6 +760,7 @@ impl AnyCalendar {
             Self::UmmAlQura(_) => "UmmAlQura",
             Self::IslamicTabular(_) => "IslamicTabular",
             Self::Persian(_) => "Persian",
+            Self::Hebrew(_) => "Hebrew",
             Self::Chinese(_) => "Chinese",
             Self::Roc(_) => "Roc",
             Self::Dangi(_) => "Dangi",
@@ -760,6 +786,7 @@ impl AnyCalendar {
             Self::UmmAlQura(_) => AnyCalendarKind::UmmAlQura,
             Self::IslamicTabular(_) => AnyCalendarKind::IslamicTabular,
             Self::Persian(_) => AnyCalendarKind::Persian,
+            Self::Hebrew(_) => AnyCalendarKind::Hebrew,
             Self::Chinese(_) => AnyCalendarKind::Chinese,
             Self::Roc(_) => AnyCalendarKind::Roc,
             Self::Dangi(_) => AnyCalendarKind::Dangi,
@@ -811,6 +838,7 @@ impl AnyDateInner {
             AnyDateInner::UmmAlQura(_) => "UmmAlQura",
             AnyDateInner::IslamicTabular(_) => "IslamicTabular",
             AnyDateInner::Persian(_) => "Persian",
+            AnyDateInner::Hebrew(_) => "Hebrew",
             AnyDateInner::Chinese(_) => "Chinese",
             AnyDateInner::Roc(_) => "Roc",
             AnyDateInner::Dangi(_) => "Dangi",
@@ -850,6 +878,8 @@ pub enum AnyCalendarKind {
     IslamicTabular,
     /// The kind of a [`Persian`] calendar
     Persian,
+    /// The kind of a [`Hebrew`] calendar
+    Hebrew,
     /// The kind of a [`Chinese`] calendar
     Chinese,
     /// The kind of a [`Roc`] calendar
@@ -887,6 +917,7 @@ impl AnyCalendarKind {
             b"ethiopic" => AnyCalendarKind::Ethiopian,
             b"ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
             b"persian" => AnyCalendarKind::Persian,
+            b"hebrew" => AnyCalendarKind::Hebrew,
             b"roc" => AnyCalendarKind::Roc,
             _ => {
                 // Log a warning when a calendar value is passed in but doesn't match any calendars
@@ -930,6 +961,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::EthiopianAmeteAlem
         } else if *x == value!("persian") {
             AnyCalendarKind::Persian
+        } else if *x == value!("hebrew") {
+            AnyCalendarKind::Hebrew
         } else if *x == value!("roc") {
             AnyCalendarKind::Roc
         } else {
@@ -956,6 +989,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::UmmAlQura => "umalqura",
             AnyCalendarKind::IslamicTabular => "tbla",
             AnyCalendarKind::Persian => "persian",
+            AnyCalendarKind::Hebrew => "hebrew",
             AnyCalendarKind::Chinese => "chinese",
             AnyCalendarKind::Roc => "roc",
             AnyCalendarKind::Dangi => "dangi",
@@ -979,6 +1013,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Ethiopian => value!("ethiopic"),
             AnyCalendarKind::EthiopianAmeteAlem => value!("ethioaa"),
             AnyCalendarKind::Persian => value!("persian"),
+            AnyCalendarKind::Hebrew => value!("hebrew"),
             AnyCalendarKind::Chinese => value!("chinese"),
             AnyCalendarKind::Roc => value!("roc"),
             AnyCalendarKind::Dangi => value!("dangi"),
@@ -1165,6 +1200,18 @@ impl IntoAnyCalendar for Persian {
     }
 }
 
+impl IntoAnyCalendar for Hebrew {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Hebrew(Hebrew)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Hebrew(Hebrew)
+    }
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Hebrew(*d)
+    }
+}
+
 impl IntoAnyCalendar for IslamicObservational {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::IslamicObservational(IslamicObservational)
@@ -1322,6 +1369,7 @@ mod tests {
         let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
         let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
         let persian = AnyCalendar::new(AnyCalendarKind::Persian);
+        let hebrew = AnyCalendar::new(AnyCalendarKind::Hebrew);
         let islamic_observational: AnyCalendar =
             AnyCalendar::new(AnyCalendarKind::IslamicObservational);
         let islamic_civil: AnyCalendar = AnyCalendar::new(AnyCalendarKind::IslamicCivil);
@@ -1342,6 +1390,7 @@ mod tests {
         let islamic_civil = Ref(&islamic_civil);
         let umm_al_qura = Ref(&umm_al_qura);
         let islamic_tabular = Ref(&islamic_tabular);
+        let hebrew = Ref(&hebrew);
         let roc = Ref(&roc);
 
         single_test_roundtrip(buddhist, "be", 100, "M03", 1);
@@ -1496,6 +1545,18 @@ mod tests {
             "M9",
             1,
             CalendarError::UnknownMonthCode("M9".parse().unwrap(), "Persian"),
+        );
+
+        single_test_roundtrip(hebrew, "hebrew", 5773, "M03", 1);
+        single_test_roundtrip(hebrew, "hebrew", 4993, "M07", 21);
+        single_test_roundtrip(hebrew, "hebrew", 5012, "M12", 20);
+        single_test_error(
+            hebrew,
+            "hebrew",
+            100,
+            "M9",
+            1,
+            CalendarError::UnknownMonthCode("M9".parse().unwrap(), "Hebrew"),
         );
 
         single_test_roundtrip(roc, "roc", 10, "M05", 3);

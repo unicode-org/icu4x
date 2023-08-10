@@ -50,6 +50,16 @@ mod datetime_gregory_datesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_gregory_datesymbols_v1 as impl_datetime_gregory_datesymbols_v1;
 #[macro_use]
+#[path = "macros/datetime_hebrew_datelengths_v1.data.rs"]
+mod datetime_hebrew_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_hebrew_datelengths_v1 as impl_datetime_hebrew_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_hebrew_datesymbols_v1.data.rs"]
+mod datetime_hebrew_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_hebrew_datesymbols_v1 as impl_datetime_hebrew_datesymbols_v1;
+#[macro_use]
 #[path = "macros/datetime_indian_datelengths_v1.data.rs"]
 mod datetime_indian_datelengths_v1;
 #[doc(inline)]
