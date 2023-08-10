@@ -37,7 +37,8 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::Location;
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::chinese_based::{
-    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedDateInner, ChineseBasedCompiledData, ChineseBasedYearInfo,
+    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedCompiledData,
+    ChineseBasedDateInner, ChineseBasedYearInfo,
 };
 use crate::helpers::div_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
@@ -126,11 +127,7 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year_info = if let Some(data) = Self::get_compiled_data_for_year(year) {
-            ChineseBasedYearInfo::Data(data)
-        } else {
-            ChineseBasedYearInfo::Cache(Inner::compute_cache(year))
-        };
+        let year_info = ChineseBasedYearInfo::get_year_info::<Chinese>(year);
 
         let month = if let Some(ordinal) =
             chinese_based_ordinal_lunar_month_from_code::<Chinese>(month_code, year_info)
@@ -148,7 +145,10 @@ impl Calendar for Chinese {
         }
 
         let arithmetic = Inner::new_from_ordinals(year, month, day, &year_info);
-        Ok(ChineseDateInner(ChineseBasedDateInner(arithmetic?, year_info)))
+        Ok(ChineseDateInner(ChineseBasedDateInner(
+            arithmetic?,
+            year_info,
+        )))
     }
 
     // Construct the date from an ISO date
@@ -178,7 +178,7 @@ impl Calendar for Chinese {
         let year = date.0 .0.year;
         date.0 .0.offset_date(offset);
         if date.0 .0.year != year {
-            date.0 .1 = ChineseBasedYearInfo::Cache(Inner::compute_cache(date.0 .0.year));
+            date.0 .1 = ChineseBasedYearInfo::get_year_info::<Chinese>(year);
         }
     }
 
@@ -206,7 +206,7 @@ impl Calendar for Chinese {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::format_chinese_year(date.0 .0.year)
+        Self::format_chinese_year(date.0 .0.year, Some(date.0 .1))
     }
 
     /// The calendar-specific month code represented by `date`;
@@ -286,9 +286,9 @@ impl Calendar for Chinese {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year_inner(),
-            prev_year: Self::format_chinese_year(prev_year),
+            prev_year: Self::format_chinese_year(prev_year, None),
             days_in_prev_year: Self::days_in_provided_year(prev_year),
-            next_year: Self::format_chinese_year(next_year),
+            next_year: Self::format_chinese_year(next_year, None),
         }
     }
 
@@ -437,18 +437,26 @@ impl Chinese {
         Iso::iso_from_fixed(result_fixed)
     }
 
-    /// Get a FormattableYear from an integer Chinese year
+    /// Get a FormattableYear from an integer Chinese year; optionall, a `ChineseBasedYearInfo`
+    /// can be passed in for faster results.
     ///
     /// `era` is always `Era(tinystr!(16, "chinese"))`
     /// `number` is the year since the inception of the Chinese calendar (see [`Chinese`])
     /// `cyclic` is an option with the current year in the sexigesimal cycle (see [`Chinese`])
     /// `related_iso` is the ISO year in which the given Chinese year begins (see [`Chinese`])
-    fn format_chinese_year(year: i32) -> FormattableYear {
+    fn format_chinese_year(
+        year: i32,
+        year_info_option: Option<ChineseBasedYearInfo>,
+    ) -> FormattableYear {
         let era = Era(tinystr!(16, "chinese"));
         let number = year;
         let cyclic = Some(div_rem_euclid(number - 1, 60).1 + 1);
-        let mid_year = Inner::fixed_mid_year_from_year(number);
-        let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
+        let rata_die_in_year = if let Some(info) = year_info_option {
+            info.get_new_year()
+        } else {
+            Inner::fixed_mid_year_from_year(number)
+        };
+        let iso_formattable_year = Iso::iso_from_fixed(rata_die_in_year).year();
         let related_iso = Some(iso_formattable_year.number);
         types::FormattableYear {
             era,

@@ -34,7 +34,9 @@
 //! ```
 
 use crate::calendar_arithmetic::CalendarArithmetic;
-use crate::chinese_based::{chinese_based_ordinal_lunar_month_from_code, ChineseBasedCompiledData, ChineseBasedYearInfo};
+use crate::chinese_based::{
+    chinese_based_ordinal_lunar_month_from_code, ChineseBasedCompiledData, ChineseBasedYearInfo,
+};
 use crate::helpers::div_rem_euclid64;
 use crate::{
     astronomy::Location,
@@ -151,10 +153,10 @@ impl Calendar for Dangi {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, crate::Error> {
-        let cache = ChineseBasedYearInfo::Cache(Inner::compute_cache(year));
+        let year_info = ChineseBasedYearInfo::get_year_info::<Dangi>(year);
 
         let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code::<Dangi>(month_code, cache)
+            chinese_based_ordinal_lunar_month_from_code::<Dangi>(month_code, year_info)
         {
             ordinal
         } else {
@@ -168,8 +170,11 @@ impl Calendar for Dangi {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
-        Ok(DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)))
+        let arithmetic = Inner::new_from_ordinals(year, month, day, &year_info);
+        Ok(DangiDateInner(ChineseBasedDateInner(
+            arithmetic?,
+            year_info,
+        )))
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
@@ -198,7 +203,7 @@ impl Calendar for Dangi {
         let year = date.0 .0.year;
         date.0 .0.offset_date(offset);
         if date.0 .0.year != year {
-            date.0 .1 = ChineseBasedYearInfo::Cache(Inner::compute_cache(date.0 .0.year));
+            date.0 .1 = ChineseBasedYearInfo::get_year_info::<Dangi>(year);
         }
     }
 
@@ -218,7 +223,7 @@ impl Calendar for Dangi {
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
-        Self::format_dangi_year(date.0 .0.year)
+        Self::format_dangi_year(date.0 .0.year, Some(date.0 .1))
     }
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
@@ -292,9 +297,9 @@ impl Calendar for Dangi {
         types::DayOfYearInfo {
             day_of_year: date.0 .0.day_of_year(),
             days_in_year: date.0.days_in_year_inner(),
-            prev_year: Self::format_dangi_year(prev_year),
+            prev_year: Self::format_dangi_year(prev_year, None),
             days_in_prev_year: Self::days_in_provided_year(prev_year),
-            next_year: Self::format_dangi_year(next_year),
+            next_year: Self::format_dangi_year(next_year, None),
         }
     }
 
@@ -413,12 +418,21 @@ impl Dangi {
         Iso::iso_from_fixed(result_fixed)
     }
 
-    fn format_dangi_year(year: i32) -> FormattableYear {
+    /// Get a `FormattableYear` from an integer Dangi year; optionally, a `ChineseBasedYearInfo`
+    /// can be passed in for faster results.
+    fn format_dangi_year(
+        year: i32,
+        year_info_option: Option<ChineseBasedYearInfo>,
+    ) -> FormattableYear {
         let era = Era(tinystr!(16, "dangi"));
         let number = year;
         let cyclic = Some(div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32 + 1);
-        let mid_year = Inner::fixed_mid_year_from_year(number);
-        let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
+        let rata_die_in_year = if let Some(info) = year_info_option {
+            info.get_new_year()
+        } else {
+            Inner::fixed_mid_year_from_year(number)
+        };
+        let iso_formattable_year = Iso::iso_from_fixed(rata_die_in_year).year();
         let related_iso = Some(iso_formattable_year.number);
         types::FormattableYear {
             era,
