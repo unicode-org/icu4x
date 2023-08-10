@@ -139,9 +139,8 @@ registry!(
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
-    #[cfg(feature = "icu_casemap")]
+    #[cfg(any(all(), feature = "icu_casemap"))]
     icu_casemap::provider::CaseMapV1Marker = "props/casemap@1",
-    #[cfg(feature = "icu_casemap")]
     icu_casemap::provider::CaseMapUnfoldV1Marker = "props/casemap_unfold@1",
     #[cfg(any(all(), feature = "icu_collator"))]
     icu_collator::provider::CollationDataV1Marker = "collator/data@1",
@@ -185,6 +184,22 @@ registry!(
     icu_datetime::provider::calendar::PersianDateSymbolsV1Marker = "datetime/persian/datesymbols@1",
     icu_datetime::provider::calendar::RocDateLengthsV1Marker = "datetime/roc/datelengths@1",
     icu_datetime::provider::calendar::RocDateSymbolsV1Marker = "datetime/roc/datesymbols@1",
+    icu_datetime::provider::calendar::IslamicObservationalDateLengthsV1Marker =
+        "datetime/islamicobservational/datelengths@1",
+    icu_datetime::provider::calendar::IslamicObservationalDateSymbolsV1Marker =
+        "datetime/islamicobservational/datesymbols@1",
+    icu_datetime::provider::calendar::IslamicCivilDateLengthsV1Marker =
+        "datetime/islamiccivil/datelengths@1",
+    icu_datetime::provider::calendar::IslamicCivilDateSymbolsV1Marker =
+        "datetime/islamiccivil/datesymbols@1",
+    icu_datetime::provider::calendar::UmmAlQuraDateLengthsV1Marker =
+        "datetime/ummalqura/datelengths@1",
+    icu_datetime::provider::calendar::UmmAlQuraDateSymbolsV1Marker =
+        "datetime/ummalqura/datesymbols@1",
+    icu_datetime::provider::calendar::IslamicTabularDateLengthsV1Marker =
+        "datetime/islamictabular/datelengths@1",
+    icu_datetime::provider::calendar::IslamicTabularDateSymbolsV1Marker =
+        "datetime/islamictabular/datesymbols@1",
     icu_datetime::provider::calendar::TimeLengthsV1Marker = "datetime/timelengths@1",
     icu_datetime::provider::calendar::TimeSymbolsV1Marker = "datetime/timesymbols@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker =

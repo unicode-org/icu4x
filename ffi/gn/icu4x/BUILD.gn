@@ -16,25 +16,6 @@ group("icu_provider") {
   public_deps = [ ":icu_provider-v1_2_0" ]
 }
 
-rust_library("cfg-if-v1_0_0") {
-  crate_name = "cfg_if"
-  crate_root = "//ffi/gn/vendor/cfg-if/src/lib.rs"
-  output_name = "cfg_if-5f200286e6ae9b7a"
-
-  deps = []
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2018",
-    "-Cmetadata=5f200286e6ae9b7a",
-    "-Cextra-filename=-5f200286e6ae9b7a",
-  ]
-
-  visibility = [ ":*" ]
-}
-
 rust_proc_macro("diplomat-v0_5_2") {
   crate_name = "diplomat"
   crate_root = "//ffi/gn/vendor/diplomat/src/lib.rs"
@@ -175,6 +156,7 @@ rust_library("icu-v1_2_0") {
 
   deps = []
   deps += [ ":icu_calendar-v1_2_0" ]
+  deps += [ ":icu_casemap-v1_2_0" ]
   deps += [ ":icu_collator-v1_2_0" ]
   deps += [ ":icu_collections-v1_2_0" ]
   deps += [ ":icu_datetime-v1_2_1" ]
@@ -237,6 +219,7 @@ rust_library("icu_capi-v1_2_2") {
   deps += [ ":diplomat-runtime-v0_5_2" ]
   deps += [ ":fixed_decimal-v0_5_3" ]
   deps += [ ":icu_calendar-v1_2_0" ]
+  deps += [ ":icu_casemap-v1_2_0" ]
   deps += [ ":icu_collator-v1_2_0" ]
   deps += [ ":icu_collections-v1_2_0" ]
   deps += [ ":icu_datetime-v1_2_1" ]
@@ -254,9 +237,6 @@ rust_library("icu_capi-v1_2_2") {
   deps += [ ":tinystr-v0_7_1" ]
   deps += [ ":unicode-bidi-v0_3_13" ]
   deps += [ ":writeable-v0_5_2" ]
-  if (current_cpu == "wasm32") {
-    deps += [ ":log-v0_4_17" ]
-  }
 
   rustenv = []
 
@@ -267,6 +247,7 @@ rust_library("icu_capi-v1_2_2") {
     "-Cextra-filename=-7fdd0dfbc90c4949",
     "--cfg=feature=\"default_components\"",
     "--cfg=feature=\"icu_calendar\"",
+    "--cfg=feature=\"icu_casemap\"",
     "--cfg=feature=\"icu_collator\"",
     "--cfg=feature=\"icu_datetime\"",
     "--cfg=feature=\"icu_decimal\"",
@@ -277,6 +258,33 @@ rust_library("icu_capi-v1_2_2") {
     "--cfg=feature=\"icu_properties\"",
     "--cfg=feature=\"icu_segmenter\"",
     "--cfg=feature=\"icu_timezone\"",
+  ]
+
+  visibility = [ ":*" ]
+}
+
+rust_library("icu_casemap-v1_2_0") {
+  crate_name = "icu_casemap"
+  crate_root = "//components/casemap/src/lib.rs"
+  output_name = "icu_casemap-14fac046168d59e4"
+
+  deps = []
+  deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
+  deps += [ ":icu_collections-v1_2_0" ]
+  deps += [ ":icu_locid-v1_2_0" ]
+  deps += [ ":icu_properties-v1_2_0" ]
+  deps += [ ":icu_provider-v1_2_0" ]
+  deps += [ ":writeable-v0_5_2" ]
+  deps += [ ":yoke-v0_7_1" ]
+  deps += [ ":zerovec-v0_9_4" ]
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2021",
+    "-Cmetadata=14fac046168d59e4",
+    "-Cextra-filename=-14fac046168d59e4",
   ]
 
   visibility = [ ":*" ]
@@ -722,28 +730,6 @@ rust_library("litemap-v0_7_0") {
     "-Cextra-filename=-9af155724df6c491",
     "--cfg=feature=\"alloc\"",
     "--cfg=feature=\"default\"",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("log-v0_4_17") {
-  crate_name = "log"
-  crate_root = "//ffi/gn/vendor/log/src/lib.rs"
-  output_name = "log-69f3eb5ea5870c4"
-
-  deps = []
-  deps += [ ":cfg-if-v1_0_0" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2015",
-    "-Cmetadata=69f3eb5ea5870c4",
-    "-Cextra-filename=-69f3eb5ea5870c4",
-    "--cfg=atomic_cas",
-    "--cfg=has_atomics",
   ]
 
   visibility = [ ":*" ]
