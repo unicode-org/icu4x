@@ -1142,7 +1142,11 @@ impl Astronomical {
         let jupiter = 318.0 / 1000000.0 * libm::sin((53.09 + c * 479264.29).to_radians());
         let flat_earth = 1962.0 / 1000000.0 * libm::sin((l - f).to_radians());
         div_rem_euclid_f64(
-            l + correction + venus + jupiter + flat_earth + Self::nutation(moment, julian_centuries),
+            l + correction
+                + venus
+                + jupiter
+                + flat_earth
+                + Self::nutation(moment, julian_centuries),
             360.0,
         )
         .1
@@ -1572,11 +1576,14 @@ impl Astronomical {
     pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> Moment {
         let julian_centuries = Self::julian_centuries(moment);
         let tau = moment.inner()
-            - (MEAN_SYNODIC_MONTH / 360.0) * ((Self::lunar_phase(moment, julian_centuries) - phase) % 360.0);
+            - (MEAN_SYNODIC_MONTH / 360.0)
+                * ((Self::lunar_phase(moment, julian_centuries) - phase) % 360.0);
         let a = tau - 2.0;
         let b = libm::fmin(moment.inner(), tau + 2.0);
 
-        let lunar_phase_f64 = |x: f64| -> f64 { Self::lunar_phase(Moment::new(x), Self::julian_centuries(Moment::new(x))) };
+        let lunar_phase_f64 = |x: f64| -> f64 {
+            Self::lunar_phase(Moment::new(x), Self::julian_centuries(Moment::new(x)))
+        };
 
         Moment::new(invert_angular(lunar_phase_f64, phase, (a, b)))
     }
@@ -1760,7 +1767,11 @@ impl Astronomical {
             + lt.48;
         lambda *= 0.000005729577951308232;
         lambda += 282.7771834 + 36000.76953744 * c;
-        div_rem_euclid_f64(lambda + Self::aberration(c) + Self::nutation(moment, julian_centuries), 360.0).1
+        div_rem_euclid_f64(
+            lambda + Self::aberration(c) + Self::nutation(moment, julian_centuries),
+            360.0,
+        )
+        .1
     }
 
     /// The best viewing time (UT) in the evening for viewing the young moon from `location` on `date`. This is defined as
@@ -1831,9 +1842,18 @@ impl Astronomical {
     pub(crate) fn estimate_prior_solar_longitude(angle: f64, moment: Moment) -> Moment {
         let rate = MEAN_TROPICAL_YEAR / 360.0;
         let julian_centuries = Self::julian_centuries(moment);
-        let tau =
-            moment - rate * div_rem_euclid_f64(Self::solar_longitude(moment, julian_centuries) - angle, 360.0).1;
-        let delta = interval_mod_f64(Self::solar_longitude(tau, Self::julian_centuries(tau)) - angle, -180.0, 180.0);
+        let tau = moment
+            - rate
+                * div_rem_euclid_f64(
+                    Self::solar_longitude(moment, julian_centuries) - angle,
+                    360.0,
+                )
+                .1;
+        let delta = interval_mod_f64(
+            Self::solar_longitude(tau, Self::julian_centuries(tau)) - angle,
+            -180.0,
+            180.0,
+        );
         let result_rhs = tau - rate * delta;
         if moment < result_rhs {
             moment
@@ -1909,7 +1929,11 @@ impl Astronomical {
     pub(crate) fn sine_offset(moment: Moment, location: Location, alpha: f64) -> f64 {
         let phi = location.latitude;
         let tee_prime = Location::universal_from_local(moment, location);
-        let delta = Self::declination(tee_prime, 0.0, Self::solar_longitude(tee_prime, Self::julian_centuries(tee_prime)));
+        let delta = Self::declination(
+            tee_prime,
+            0.0,
+            Self::solar_longitude(tee_prime, Self::julian_centuries(tee_prime)),
+        );
 
         tan_degrees(phi) * tan_degrees(delta)
             + sin_degrees(alpha) / (cos_degrees(delta) * cos_degrees(phi))
@@ -2044,7 +2068,10 @@ mod tests {
         ];
         for (rd, expected_solar_long) in rd_vals.iter().zip(expected_solar_long.iter()) {
             let moment: Moment = Moment::new(*rd as f64);
-            let solar_long = Astronomical::solar_longitude(moment + 0.5, Astronomical::julian_centuries(moment + 0.5));
+            let solar_long = Astronomical::solar_longitude(
+                moment + 0.5,
+                Astronomical::julian_centuries(moment + 0.5),
+            );
             let expected_solar_long_value = expected_solar_long;
             assert!(solar_long > expected_solar_long_value * TEST_LOWER_BOUND_FACTOR, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
             assert!(solar_long < expected_solar_long_value * TEST_UPPER_BOUND_FACTOR, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
