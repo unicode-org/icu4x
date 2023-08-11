@@ -28,6 +28,7 @@ pub use symbols::*;
     marker(JapaneseDateLengthsV1Marker, "datetime/japanese/datelengths@1"),
     marker(JapaneseExtendedDateLengthsV1Marker, "datetime/japanext/datelengths@1"),
     marker(CopticDateLengthsV1Marker, "datetime/coptic/datelengths@1"),
+    marker(DangiDateLengthsV1Marker, "datetime/dangi/datelengths@1"),
     marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
     marker(EthiopianDateLengthsV1Marker, "datetime/ethiopic/datelengths@1"),
     marker(RocDateLengthsV1Marker, "datetime/roc/datelengths@1"),

@@ -30,6 +30,16 @@ mod datetime_coptic_datesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_coptic_datesymbols_v1 as impl_datetime_coptic_datesymbols_v1;
 #[macro_use]
+#[path = "macros/datetime_dangi_datelengths_v1.data.rs"]
+mod datetime_dangi_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_dangi_datelengths_v1 as impl_datetime_dangi_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_dangi_datesymbols_v1.data.rs"]
+mod datetime_dangi_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_dangi_datesymbols_v1 as impl_datetime_dangi_datesymbols_v1;
+#[macro_use]
 #[path = "macros/datetime_ethiopic_datelengths_v1.data.rs"]
 mod datetime_ethiopic_datelengths_v1;
 #[doc(inline)]

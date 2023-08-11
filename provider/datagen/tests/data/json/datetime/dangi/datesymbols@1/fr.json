@@ -1,0 +1,102 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "1yuè",
+          "M02": "2yuè",
+          "M03": "3yuè",
+          "M04": "4yuè",
+          "M05": "5yuè",
+          "M06": "6yuè",
+          "M07": "7yuè",
+          "M08": "8yuè",
+          "M09": "9yuè",
+          "M10": "10yuè",
+          "M11": "11yuè",
+          "M12": "12yuè"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M06": "6",
+          "M07": "7",
+          "M08": "8",
+          "M09": "9",
+          "M10": "10",
+          "M11": "11",
+          "M12": "12"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "zhēngyuè",
+          "M02": "èryuè",
+          "M03": "sānyuè",
+          "M04": "sìyuè",
+          "M05": "wǔyuè",
+          "M06": "liùyuè",
+          "M07": "qīyuè",
+          "M08": "bāyuè",
+          "M09": "jiǔyuè",
+          "M10": "shíyuè",
+          "M11": "shíyīyuè",
+          "M12": "shí’èryuè"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dim.",
+        "lun.",
+        "mar.",
+        "mer.",
+        "jeu.",
+        "ven.",
+        "sam."
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "M",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "di",
+        "lu",
+        "ma",
+        "me",
+        "je",
+        "ve",
+        "sa"
+      ],
+      "wide": [
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {},
+    "abbr": {},
+    "narrow": {}
+  }
+}

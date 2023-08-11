@@ -20,6 +20,7 @@ typedef enum ICU4XAnyCalendarKind {
   ICU4XAnyCalendarKind_EthiopianAmeteAlem = 6,
   ICU4XAnyCalendarKind_Indian = 7,
   ICU4XAnyCalendarKind_Coptic = 8,
+  ICU4XAnyCalendarKind_Dangi = 9,
 } ICU4XAnyCalendarKind;
 #ifdef __cplusplus
 } // namespace capi
