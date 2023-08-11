@@ -132,7 +132,7 @@ pub struct TitlecaseOptions {
 /// This is a separate type from [`CaseMapper`] because it loads the additional data
 /// required by [`LeadingAdjustment::Auto`] to perform the best possible leading adjustment.
 ///
-/// If you are planning on only using [`LeadingAdjustment::NoAdjust`] or [`LeadingAdjustment::AdjustToCased`], consider using [`CaseMapper`] directly; this
+/// If you are planning on only using [`LeadingAdjustment::None`] or [`LeadingAdjustment::ToCased`], consider using [`CaseMapper`] directly; this
 /// type will have no additional behavior.
 ///
 /// # Examples

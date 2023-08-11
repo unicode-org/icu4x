@@ -152,7 +152,7 @@ impl CaseMapper {
     /// the data to do so, use [`TitlecaseMapper`] if such behavior is desired. See
     /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
     /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
-    /// is [`LeadingAdjustment::NoAdjust`].
+    /// is [`LeadingAdjustment::None`].
     ///
     /// See [`Self::titlecase_segment_with_only_case_data_to_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
@@ -322,9 +322,9 @@ impl CaseMapper {
     /// the data to do so, use [`TitlecaseMapper`] if such behavior is desired. See
     /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
     /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
-    /// is [`LeadingAdjustment::NoAdjust`].
+    /// is [`LeadingAdjustment::None`].
     ///
-    /// See [`Self::titlecase_segment_legacy()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`Self::titlecase_segment_with_only_case_data()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
     /// # Examples
     ///
