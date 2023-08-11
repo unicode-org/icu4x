@@ -766,8 +766,8 @@ impl Astronomical {
         div_rem_euclid_f64(angle, 360.0).1
     }
 
-    /// Latitude of the moon (in degrees) at a given moment
-    ///
+    /// Latitude of the moon (in degrees)
+    /// `julian_centuries` is the result of calling `Self::julian_centuries(moment)`.
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4466
@@ -1176,6 +1176,7 @@ impl Astronomical {
     }
 
     /// Closest fixed date on or before `date` when crescent moon first became visible at `location`.
+    /// Lunar phase is the result of calling `lunar_phase(moment, julian_centuries) in an earlier function.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6868-L6881
@@ -1384,6 +1385,7 @@ impl Astronomical {
     }
 
     /// Topocentric altitude of the moon.
+    /// Arguments are the result of calling `lunar_altitude(moment, location)` and `lunar_parallax(lunar_altitude_val, moment)` in an earlier function.
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4630-L4636
     fn topocentric_lunar_altitude(lunar_altitude_val: f64, lunar_parallax_val: f64) -> f64 {
@@ -1524,6 +1526,7 @@ impl Astronomical {
     }
 
     /// Longitudinal nutation (periodic variation in the inclination of the Earth's axis) at a given Moment.
+    /// Argument comes from the result of calling `Self::julian_centuries(moment)` in an earlier function.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4037-L4047
@@ -1588,6 +1591,7 @@ impl Astronomical {
     }
 
     /// The longitude of the Sun at a given Moment in degrees.
+    /// Moment is not directly used but is enconded from the argument `julian_centuries` which is the result of calling `Self::julian_centuries(moment) in an earlier function`.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from "Planetary Programs and Tables from -4000 to +2800" by Bretagnon & Simon, 1986.
