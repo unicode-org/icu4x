@@ -115,7 +115,7 @@ impl Default for Options {
         Self {
             pretty: false,
             insert_feature_gates: false,
-            use_separate_crates: true,
+            use_separate_crates: false,
             overwrite: false,
         }
     }
