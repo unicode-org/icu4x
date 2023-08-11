@@ -27,6 +27,7 @@ use zerovec::{ule::UnvalidatedStr, ZeroMap};
     marker(JapaneseDateSymbolsV1Marker, "datetime/japanese/datesymbols@1"),
     marker(JapaneseExtendedDateSymbolsV1Marker, "datetime/japanext/datesymbols@1"),
     marker(CopticDateSymbolsV1Marker, "datetime/coptic/datesymbols@1"),
+    marker(DangiDateSymbolsV1Marker, "datetime/dangi/datesymbols@1"),
     marker(IndianDateSymbolsV1Marker, "datetime/indian/datesymbols@1"),
     marker(EthiopianDateSymbolsV1Marker, "datetime/ethiopic/datesymbols@1"),
     marker(RocDateSymbolsV1Marker, "datetime/roc/datesymbols@1"),

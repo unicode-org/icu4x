@@ -10,6 +10,7 @@ use icu_calendar::{
     buddhist::Buddhist,
     chinese::Chinese,
     coptic::Coptic,
+    dangi::Dangi,
     ethiopian::{Ethiopian, EthiopianEraStyle},
     indian::Indian,
     japanese::{Japanese, JapaneseExtended},
@@ -73,6 +74,7 @@ fn test_fixture(fixture_name: &str) {
         let input_japanese = input_value.to_calendar(japanese);
         let input_japanext = input_value.to_calendar(japanext);
         let input_coptic = input_value.to_calendar(Coptic);
+        let input_dangi = input_value.to_calendar(Dangi);
         let input_indian = input_value.to_calendar(Indian);
         let input_persian = input_value.to_calendar(Persian);
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
@@ -126,6 +128,14 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Coptic => assert_fixture_element(
                         &locale,
                         &input_coptic,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Dangi => assert_fixture_element(
+                        &locale,
+                        &input_dangi,
                         &input_iso,
                         &output_value,
                         options,

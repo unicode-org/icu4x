@@ -7,6 +7,8 @@
             "datetime/chinese/datesymbols@1",
             "datetime/coptic/datelengths@1",
             "datetime/coptic/datesymbols@1",
+            "datetime/dangi/datelengths@1",
+            "datetime/dangi/datesymbols@1",
             "datetime/ethiopic/datelengths@1",
             "datetime/ethiopic/datesymbols@1",
             "datetime/gregory/datelengths@1",

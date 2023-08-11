@@ -231,6 +231,7 @@ impl ZonedDateTimeFormatter {
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
+            + DataProvider<DangiDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
             + DataProvider<PersianDateLengthsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
@@ -240,6 +241,7 @@ impl ZonedDateTimeFormatter {
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<DangiDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<EthiopianDateSymbolsV1Marker>
@@ -377,6 +379,7 @@ impl ZonedDateTimeFormatter {
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
+            + DataProvider<DangiDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
             + DataProvider<PersianDateLengthsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
@@ -386,6 +389,7 @@ impl ZonedDateTimeFormatter {
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<DangiDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<EthiopianDateSymbolsV1Marker>

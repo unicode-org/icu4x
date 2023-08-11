@@ -161,6 +161,8 @@ registry!(
     icu_datetime::provider::calendar::ChineseDateSymbolsV1Marker = "datetime/chinese/datesymbols@1",
     icu_datetime::provider::calendar::CopticDateLengthsV1Marker = "datetime/coptic/datelengths@1",
     icu_datetime::provider::calendar::CopticDateSymbolsV1Marker = "datetime/coptic/datesymbols@1",
+    icu_datetime::provider::calendar::DangiDateLengthsV1Marker = "datetime/dangi/datelengths@1",
+    icu_datetime::provider::calendar::DangiDateSymbolsV1Marker = "datetime/dangi/datesymbols@1",
     icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker = "datetime/skeletons@1",
     icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker =
         "datetime/ethiopic/datelengths@1",

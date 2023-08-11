@@ -33,6 +33,7 @@ fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &
             (value!("japanese"), "japanese"),
             (value!("japanext"), "japanese"),
             (value!("coptic"), "coptic"),
+            (value!("dangi"), "dangi"),
             (value!("indian"), "indian"),
             (value!("persian"), "persian"),
             (value!("ethiopic"), "ethiopic"),
@@ -315,6 +316,11 @@ impl_data_provider!(
     calendared = "coptic"
 );
 impl_data_provider!(
+    DangiDateSymbolsV1Marker,
+    symbols::convert_dates,
+    calendared = "dangi"
+);
+impl_data_provider!(
     IndianDateSymbolsV1Marker,
     symbols::convert_dates,
     calendared = "indian"
@@ -373,6 +379,11 @@ impl_data_provider!(
     CopticDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
     calendared = "coptic"
+);
+impl_data_provider!(
+    DangiDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    calendared = "dangi"
 );
 impl_data_provider!(
     IndianDateLengthsV1Marker,
