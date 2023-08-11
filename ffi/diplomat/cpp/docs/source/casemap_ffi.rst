@@ -69,18 +69,22 @@
         See the `Rust documentation for uppercase <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_with_only_case_data_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const
 
-        Returns the full titlecase mapping of the given string
+        Returns the full titlecase mapping of the given string, performing head adjustment without loading additional data. (if head adjustment is enabled in the options)
 
-        See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment>`__ for more information.
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment_with_only_case_data <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment(const std::string_view s, const ICU4XLocale& locale) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment_with_only_case_data_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const
 
-        Returns the full titlecase mapping of the given string
+        Returns the full titlecase mapping of the given string, performing head adjustment without loading additional data. (if head adjustment is enabled in the options)
 
-        See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment>`__ for more information.
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment_with_only_case_data <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> fold_to_writeable(const std::string_view s, W& write) const
@@ -168,3 +172,67 @@
 
         See the `Rust documentation for simple_fold_turkic <https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold_turkic>`__ for more information.
 
+
+.. cpp:enum-struct:: ICU4XLeadingAdjustment
+
+    See the `Rust documentation for LeadingAdjustment <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.LeadingAdjustment.html>`__ for more information.
+
+
+    .. cpp:enumerator:: Auto
+
+    .. cpp:enumerator:: None
+
+    .. cpp:enumerator:: ToCased
+
+.. cpp:class:: ICU4XTitlecaseMapper
+
+    See the `Rust documentation for TitlecaseMapper <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XTitlecaseMapper, ICU4XError> create(const ICU4XDataProvider& provider)
+
+        Construct a new ``ICU4XTitlecaseMapper`` instance
+
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new>`__ for more information.
+
+
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const
+
+        Returns the full titlecase mapping of the given string
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> titlecase_segment_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const
+
+        Returns the full titlecase mapping of the given string
+
+        The ``v1`` refers to the version of the options struct, which may change as we add more options
+
+        See the `Rust documentation for titlecase_segment <https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment>`__ for more information.
+
+
+.. cpp:struct:: ICU4XTitlecaseOptionsV1
+
+    See the `Rust documentation for TitlecaseOptions <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html>`__ for more information.
+
+
+    .. cpp:member:: ICU4XLeadingAdjustment leading_adjustment
+
+    .. cpp:member:: ICU4XTrailingCase trailing_case
+
+    .. cpp:function:: static ICU4XTitlecaseOptionsV1 default_options()
+
+        See the `Rust documentation for default <https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default>`__ for more information.
+
+
+.. cpp:enum-struct:: ICU4XTrailingCase
+
+    See the `Rust documentation for TrailingCase <https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TrailingCase.html>`__ for more information.
+
+
+    .. cpp:enumerator:: Lower
+
+    .. cpp:enumerator:: Unchanged

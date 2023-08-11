@@ -128,6 +128,7 @@ mod duration;
 mod error;
 pub mod ethiopian;
 pub mod gregorian;
+pub mod hebrew;
 mod helpers;
 pub mod indian;
 pub mod islamic;

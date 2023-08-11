@@ -214,6 +214,7 @@ name = "icu"
 version = "1.2.0"
 dependencies = [
  "icu_calendar",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_datetime",
@@ -250,6 +251,7 @@ dependencies = [
  "diplomat-runtime",
  "fixed_decimal",
  "icu_calendar",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_datetime",
@@ -264,7 +266,6 @@ dependencies = [
  "icu_provider_adapters",
  "icu_segmenter",
  "icu_timezone",
- "log",
  "tinystr",
  "unicode-bidi",
  "writeable",
@@ -277,6 +278,20 @@ dependencies = [
  "icu",
  "icu_capi",
  "icu_provider",
+]
+
+[[package]]
+name = "icu_casemap"
+version = "1.2.0"
+dependencies = [
+ "displaydoc",
+ "icu_collections",
+ "icu_locid",
+ "icu_properties",
+ "icu_provider",
+ "writeable",
+ "yoke",
+ "zerovec",
 ]
 
 [[package]]
@@ -518,15 +533,6 @@ checksum = "d59d8c75012853d2e872fb56bc8a2e53718e2cafe1a4c823143141c6d90c322f"
 [[package]]
 name = "litemap"
 version = "0.7.0"
-
-[[package]]
-name = "log"
-version = "0.4.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "abb12e687cfb44aa40f41fc3978ef76448f9b6038cad6aef4259d3c095a2382e"
-dependencies = [
- "cfg-if",
-]
 
 [[package]]
 name = "memchr"

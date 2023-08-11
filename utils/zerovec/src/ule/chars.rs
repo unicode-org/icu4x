@@ -10,7 +10,7 @@ use crate::impl_ule_from_array;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 
-/// A u8 array of little-endian data corresponding to a Unicode code point.
+/// A u8 array of little-endian data corresponding to a Unicode scalar value.
 ///
 /// The bytes of a `CharULE` are guaranteed to represent a little-endian-encoded u32 that is a
 /// valid `char` and can be converted without validation.
@@ -92,7 +92,7 @@ impl AsULE for char {
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        // Safe because the bytes of CharULE are defined to represent a valid Unicode code point.
+        // Safe because the bytes of CharULE are defined to represent a valid Unicode scalar value.
         unsafe {
             Self::from_u32_unchecked(u32::from_le_bytes([
                 unaligned.0[0],

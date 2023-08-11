@@ -68,6 +68,10 @@ impl DateFormatter {
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Examples
     ///
     /// ```
@@ -96,10 +100,6 @@ impl DateFormatter {
     ///     "Sep 1, 2020"
     /// );
     /// ```
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
@@ -168,19 +168,31 @@ impl DateFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<GregorianDateLengthsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<IslamicObservationalDateLengthsV1Marker>
+            + DataProvider<IslamicCivilDateLengthsV1Marker>
+            + DataProvider<UmmAlQuraDateLengthsV1Marker>
+            + DataProvider<IslamicTabularDateLengthsV1Marker>
             + DataProvider<PersianDateLengthsV1Marker>
+            + DataProvider<HebrewDateLengthsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<IslamicObservationalDateSymbolsV1Marker>
+            + DataProvider<IslamicCivilDateSymbolsV1Marker>
+            + DataProvider<UmmAlQuraDateSymbolsV1Marker>
+            + DataProvider<IslamicTabularDateSymbolsV1Marker>
             + DataProvider<PersianDateSymbolsV1Marker>
+            + DataProvider<HebrewDateSymbolsV1Marker>
             + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>

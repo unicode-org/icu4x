@@ -29,11 +29,17 @@ fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &
         [
             (value!("gregory"), "gregorian"),
             (value!("buddhist"), "buddhist"),
+            (value!("chinese"), "chinese"),
             (value!("japanese"), "japanese"),
             (value!("japanext"), "japanese"),
             (value!("coptic"), "coptic"),
             (value!("indian"), "indian"),
+            (value!("islamic"), "islamic"),
+            (value!("islamicc"), "islamic"),
+            (value!("umalqura"), "islamic"),
+            (value!("tbla"), "islamic"),
             (value!("persian"), "persian"),
+            (value!("hebrew"), "hebrew"),
             (value!("ethiopic"), "ethiopic"),
             (value!("roc"), "roc"),
         ]
@@ -294,6 +300,11 @@ impl_data_provider!(
     calendared = "buddhist"
 );
 impl_data_provider!(
+    ChineseDateSymbolsV1Marker,
+    symbols::convert_dates,
+    calendared = "chinese"
+);
+impl_data_provider!(
     JapaneseDateSymbolsV1Marker,
     symbols::convert_dates,
     calendared = "japanese"
@@ -314,9 +325,34 @@ impl_data_provider!(
     calendared = "indian"
 );
 impl_data_provider!(
+    IslamicObservationalDateSymbolsV1Marker,
+    symbols::convert_dates,
+    calendared = "islamic"
+);
+impl_data_provider!(
+    IslamicCivilDateSymbolsV1Marker,
+    symbols::convert_dates,
+    calendared = "islamicc"
+);
+impl_data_provider!(
+    UmmAlQuraDateSymbolsV1Marker,
+    symbols::convert_dates,
+    calendared = "umalqura"
+);
+impl_data_provider!(
+    IslamicTabularDateSymbolsV1Marker,
+    symbols::convert_dates,
+    calendared = "tbla"
+);
+impl_data_provider!(
     PersianDateSymbolsV1Marker,
     symbols::convert_dates,
     calendared = "persian"
+);
+impl_data_provider!(
+    HebrewDateSymbolsV1Marker,
+    symbols::convert_dates,
+    calendared = "hebrew"
 );
 impl_data_provider!(
     EthiopianDateSymbolsV1Marker,
@@ -349,6 +385,11 @@ impl_data_provider!(
     calendared = "buddhist"
 );
 impl_data_provider!(
+    ChineseDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    calendared = "chinese"
+);
+impl_data_provider!(
     JapaneseDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
     calendared = "japanese"
@@ -369,6 +410,26 @@ impl_data_provider!(
     calendared = "indian"
 );
 impl_data_provider!(
+    IslamicObservationalDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    calendared = "islamic"
+);
+impl_data_provider!(
+    IslamicCivilDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    calendared = "islamicc"
+);
+impl_data_provider!(
+    UmmAlQuraDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    calendared = "umalqura"
+);
+impl_data_provider!(
+    IslamicTabularDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    calendared = "tbla"
+);
+impl_data_provider!(
     RocDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
     calendared = "roc"
@@ -377,6 +438,11 @@ impl_data_provider!(
     PersianDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
     calendared = "persian"
+);
+impl_data_provider!(
+    HebrewDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    calendared = "hebrew"
 );
 impl_data_provider!(
     EthiopianDateLengthsV1Marker,

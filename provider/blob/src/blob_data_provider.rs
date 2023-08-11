@@ -155,9 +155,7 @@ mod test {
         {
             let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
-            exporter
-                .flush_with_fallback(HelloWorldV1Marker::KEY, FallbackMode::None)
-                .unwrap();
+            exporter.flush(HelloWorldV1Marker::KEY).unwrap();
 
             exporter.close().unwrap();
         }
@@ -180,9 +178,7 @@ mod test {
         {
             let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
-            exporter
-                .flush_with_fallback(HelloSingletonV1Marker::KEY, FallbackMode::None)
-                .unwrap();
+            exporter.flush(HelloSingletonV1Marker::KEY).unwrap();
 
             exporter.close().unwrap();
         }

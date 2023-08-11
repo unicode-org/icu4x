@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_casemap::titlecase::TitlecaseOptions;
+
 #[diplomat::bridge]
 pub mod ffi {
     use crate::{
@@ -9,8 +11,41 @@ pub mod ffi {
     };
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatWriteable;
-    use icu_casemap::{CaseMapCloser, CaseMapper};
+    use icu_casemap::titlecase::{LeadingAdjustment, TrailingCase};
+    use icu_casemap::{CaseMapCloser, CaseMapper, TitlecaseMapper};
     use writeable::Writeable;
+
+    #[diplomat::enum_convert(LeadingAdjustment, needs_wildcard)]
+    #[diplomat::rust_link(icu::casemap::titlecase::LeadingAdjustment, Enum)]
+    pub enum ICU4XLeadingAdjustment {
+        Auto,
+        None,
+        ToCased,
+    }
+
+    #[diplomat::enum_convert(TrailingCase, needs_wildcard)]
+    #[diplomat::rust_link(icu::casemap::titlecase::TrailingCase, Enum)]
+    pub enum ICU4XTrailingCase {
+        Lower,
+        Unchanged,
+    }
+
+    #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
+    pub struct ICU4XTitlecaseOptionsV1 {
+        pub leading_adjustment: ICU4XLeadingAdjustment,
+        pub trailing_case: ICU4XTrailingCase,
+    }
+
+    impl ICU4XTitlecaseOptionsV1 {
+        #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
+        pub fn default_options() -> ICU4XTitlecaseOptionsV1 {
+            // named default_options to avoid keyword clashes
+            Self {
+                leading_adjustment: ICU4XLeadingAdjustment::Auto,
+                trailing_case: ICU4XTrailingCase::Lower,
+            }
+        }
+    }
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::casemap::CaseMapper, Struct)]
@@ -64,24 +99,34 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Returns the full titlecase mapping of the given string
-        #[diplomat::rust_link(icu::casemap::CaseMapper::titlecase_segment, FnInStruct)]
+        /// Returns the full titlecase mapping of the given string, performing head adjustment without
+        /// loading additional data.
+        /// (if head adjustment is enabled in the options)
+        ///
+        /// The `v1` refers to the version of the options struct, which may change as we add more options
         #[diplomat::rust_link(
-            icu::casemap::CaseMapper::titlecase_segment_to_string,
+            icu::casemap::CaseMapper::titlecase_segment_with_only_case_data,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapper::titlecase_segment_with_only_case_data_to_string,
             FnInStruct,
             hidden
         )]
-        pub fn titlecase_segment(
+        pub fn titlecase_segment_with_only_case_data_v1(
             &self,
             s: &str,
             locale: &ICU4XLocale,
+            options: ICU4XTitlecaseOptionsV1,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             // #2520
             // In the future we should be able to make assumptions based on backend
             core::str::from_utf8(s.as_bytes())
                 .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
-            self.0.titlecase_segment(s, &locale.0.id).write_to(write)?;
+            self.0
+                .titlecase_segment_with_only_case_data(s, &locale.0.id, options.into())
+                .write_to(write)?;
 
             Ok(())
         }
@@ -192,6 +237,7 @@ pub mod ffi {
     impl ICU4XCaseMapCloser {
         /// Construct a new ICU4XCaseMapper instance
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
         pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XCaseMapCloser>, ICU4XError> {
             Ok(Box::new(ICU4XCaseMapCloser(call_constructor!(
                 CaseMapCloser::new [r => Ok(r)],
@@ -229,5 +275,62 @@ pub mod ffi {
             let s = core::str::from_utf8(s.as_bytes()).unwrap_or("");
             self.0.add_string_case_closure_to(s, &mut builder.0)
         }
+    }
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::casemap::TitlecaseMapper, Struct)]
+    pub struct ICU4XTitlecaseMapper(pub TitlecaseMapper<CaseMapper>);
+
+    impl ICU4XTitlecaseMapper {
+        /// Construct a new `ICU4XTitlecaseMapper` instance
+        #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
+        pub fn create(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XTitlecaseMapper>, ICU4XError> {
+            Ok(Box::new(ICU4XTitlecaseMapper(call_constructor!(
+                TitlecaseMapper::new [r => Ok(r)],
+                TitlecaseMapper::try_new_with_any_provider,
+                TitlecaseMapper::try_new_with_buffer_provider,
+                provider,
+            )?)))
+        }
+
+        /// Returns the full titlecase mapping of the given string
+        ///
+        /// The `v1` refers to the version of the options struct, which may change as we add more options
+        #[diplomat::rust_link(icu::casemap::TitlecaseMapper::titlecase_segment, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::casemap::TitlecaseMapper::titlecase_segment_to_string,
+            FnInStruct,
+            hidden
+        )]
+        pub fn titlecase_segment_v1(
+            &self,
+            s: &str,
+            locale: &ICU4XLocale,
+            options: ICU4XTitlecaseOptionsV1,
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
+            // #2520
+            // In the future we should be able to make assumptions based on backend
+            core::str::from_utf8(s.as_bytes())
+                .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
+            self.0
+                .titlecase_segment(s, &locale.0.id, options.into())
+                .write_to(write)?;
+
+            Ok(())
+        }
+    }
+}
+
+impl From<ffi::ICU4XTitlecaseOptionsV1> for TitlecaseOptions {
+    fn from(other: ffi::ICU4XTitlecaseOptionsV1) -> Self {
+        let mut ret = Self::default();
+
+        ret.leading_adjustment = other.leading_adjustment.into();
+        ret.trailing_case = other.trailing_case.into();
+        ret
     }
 }
