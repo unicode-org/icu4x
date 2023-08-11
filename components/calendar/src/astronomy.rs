@@ -967,7 +967,7 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4215-L4278
-    pub(crate) fn lunar_longitude(moment: Moment, julian_centuries: f64) -> f64 {
+    pub(crate) fn lunar_longitude(julian_centuries: f64) -> f64 {
         let c = julian_centuries;
         let l = Self::mean_lunar_longitude(c);
         let d = Self::lunar_elongation(c);
@@ -1142,11 +1142,7 @@ impl Astronomical {
         let jupiter = 318.0 / 1000000.0 * libm::sin((53.09 + c * 479264.29).to_radians());
         let flat_earth = 1962.0 / 1000000.0 * libm::sin((l - f).to_radians());
         div_rem_euclid_f64(
-            l + correction
-                + venus
-                + jupiter
-                + flat_earth
-                + Self::nutation(moment, julian_centuries),
+            l + correction + venus + jupiter + flat_earth + Self::nutation(julian_centuries),
             360.0,
         )
         .1
@@ -1193,6 +1189,10 @@ impl Astronomical {
         next_moment(Moment::new(tau), location, Self::visible_crescent)
     }
 
+    fn calculate_lunar_phase_at_or_before(date: RataDie) -> f64 {
+        libm::floor(Self::lunar_phase_at_or_before(0.0, date.as_moment()).inner())
+    }
+
     /// Length of the lunar month containing `date` in days, based on observability at `location`.
     /// Calculates the month length for the Islamic Observational Calendar
     /// Can return 31 days due to the imprecise nature of trying to approximate an observational calendar. (See page 294 of the Calendrical Calculations book)
@@ -1201,8 +1201,7 @@ impl Astronomical {
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7068-L7074
     #[allow(clippy::unwrap_used)]
     pub(crate) fn month_length(date: RataDie, location: Location) -> u8 {
-        let lunar_phase =
-            libm::floor(Self::lunar_phase_at_or_before(0.0, date.as_moment()).inner());
+        let lunar_phase = Self::calculate_lunar_phase_at_or_before(date);
         let moon = Self::phasis_on_or_after(date + 1, location, lunar_phase);
         let prev = Self::phasis_on_or_before(date, location, lunar_phase);
 
@@ -1236,7 +1235,7 @@ impl Astronomical {
         let phi = location.latitude;
         let psi = location.longitude;
         let c = Self::julian_centuries(moment);
-        let lambda = Self::lunar_longitude(moment, c); // This works
+        let lambda = Self::lunar_longitude(c); // This works
         let beta = Self::lunar_latitude(c); // This works
         let alpha = Self::right_ascension(moment, beta, lambda).unwrap(); // Safe value
         let delta = Self::declination(moment, beta, lambda);
@@ -1373,6 +1372,7 @@ impl Astronomical {
 
     /// The parallax of the moon, meaning the difference in angle of the direction of the moon
     /// as measured from a given location and from the center of the Earth, in degrees.
+    /// Note: the location is encoded as the `lunar_altitude_val` which is the result of `lunar_altitude(moment,location)`.
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4619-L4628
@@ -1527,7 +1527,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4037-L4047
-    fn nutation(moment: Moment, julian_centuries: f64) -> f64 {
+    fn nutation(julian_centuries: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         let c = julian_centuries;
         let a = 124.90 - 1934.134 * c + 0.002063 * c * c;
@@ -1550,8 +1550,7 @@ impl Astronomical {
         );
         let n = maybe_n.saturate();
         let a = div_rem_euclid_f64(
-            Self::lunar_longitude(moment, julian_centuries)
-                - Self::solar_longitude(moment, julian_centuries),
+            Self::lunar_longitude(julian_centuries) - Self::solar_longitude(julian_centuries),
             360.0,
         )
         .1;
@@ -1593,7 +1592,7 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from "Planetary Programs and Tables from -4000 to +2800" by Bretagnon & Simon, 1986.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3985-L4035
-    pub(crate) fn solar_longitude(moment: Moment, julian_centuries: f64) -> f64 {
+    pub(crate) fn solar_longitude(julian_centuries: f64) -> f64 {
         let c: f64 = julian_centuries;
         let mut lt = (
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -1768,7 +1767,7 @@ impl Astronomical {
         lambda *= 0.000005729577951308232;
         lambda += 282.7771834 + 36000.76953744 * c;
         div_rem_euclid_f64(
-            lambda + Self::aberration(c) + Self::nutation(moment, julian_centuries),
+            lambda + Self::aberration(c) + Self::nutation(julian_centuries),
             360.0,
         )
         .1
@@ -1843,14 +1842,9 @@ impl Astronomical {
         let rate = MEAN_TROPICAL_YEAR / 360.0;
         let julian_centuries = Self::julian_centuries(moment);
         let tau = moment
-            - rate
-                * div_rem_euclid_f64(
-                    Self::solar_longitude(moment, julian_centuries) - angle,
-                    360.0,
-                )
-                .1;
+            - rate * div_rem_euclid_f64(Self::solar_longitude(julian_centuries) - angle, 360.0).1;
         let delta = interval_mod_f64(
-            Self::solar_longitude(tau, Self::julian_centuries(tau)) - angle,
+            Self::solar_longitude(Self::julian_centuries(tau)) - angle,
             -180.0,
             180.0,
         );
@@ -1932,7 +1926,7 @@ impl Astronomical {
         let delta = Self::declination(
             tee_prime,
             0.0,
-            Self::solar_longitude(tee_prime, Self::julian_centuries(tee_prime)),
+            Self::solar_longitude(Self::julian_centuries(tee_prime)),
         );
 
         tan_degrees(phi) * tan_degrees(delta)
@@ -2068,10 +2062,8 @@ mod tests {
         ];
         for (rd, expected_solar_long) in rd_vals.iter().zip(expected_solar_long.iter()) {
             let moment: Moment = Moment::new(*rd as f64);
-            let solar_long = Astronomical::solar_longitude(
-                moment + 0.5,
-                Astronomical::julian_centuries(moment + 0.5),
-            );
+            let solar_long =
+                Astronomical::solar_longitude(Astronomical::julian_centuries(moment + 0.5));
             let expected_solar_long_value = expected_solar_long;
             assert!(solar_long > expected_solar_long_value * TEST_LOWER_BOUND_FACTOR, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
             assert!(solar_long < expected_solar_long_value * TEST_UPPER_BOUND_FACTOR, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
@@ -2180,8 +2172,7 @@ mod tests {
         ];
         for (rd, expected_lunar_long) in rd_vals.iter().zip(expected_lunar_long.iter()) {
             let moment: Moment = Moment::new(*rd as f64);
-            let lunar_long =
-                Astronomical::lunar_longitude(moment, Astronomical::julian_centuries(moment));
+            let lunar_long = Astronomical::lunar_longitude(Astronomical::julian_centuries(moment));
             let expected_lunar_long_value = *expected_lunar_long;
 
             assert_eq_f64!(expected_lunar_long_value, lunar_long, moment)
