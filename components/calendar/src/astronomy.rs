@@ -1190,7 +1190,7 @@ impl Astronomical {
         next_moment(Moment::new(tau), location, Self::visible_crescent)
     }
 
-    fn calculate_lunar_phase_at_or_before(date: RataDie) -> f64 {
+    pub fn calculate_lunar_phase_at_or_before(date: RataDie) -> f64 {
         libm::floor(Self::lunar_phase_at_or_before(0.0, date.as_moment()).inner())
     }
 
@@ -1202,9 +1202,10 @@ impl Astronomical {
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7068-L7074
     #[allow(clippy::unwrap_used)]
     pub(crate) fn month_length(date: RataDie, location: Location) -> u8 {
-        let lunar_phase = Self::calculate_lunar_phase_at_or_before(date);
-        let moon = Self::phasis_on_or_after(date + 1, location, lunar_phase);
-        let prev = Self::phasis_on_or_before(date, location, lunar_phase);
+        let lunar_phase_before = Self::calculate_lunar_phase_at_or_before(date);
+        let lunar_phase_after = Self::calculate_lunar_phase_at_or_before(date + 1);
+        let moon = Self::phasis_on_or_after(date + 1, location, lunar_phase_after);
+        let prev = Self::phasis_on_or_before(date, location, lunar_phase_before);
 
         debug_assert!(moon > prev);
         debug_assert!(moon - prev < u8::MAX.into());
