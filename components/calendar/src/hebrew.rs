@@ -139,6 +139,7 @@ impl Calendar for Hebrew {
                 "M09" => 10,
                 "M10" => 11,
                 "M11" => 12,
+                "M12" => 13,
                 _ => {
                     return Err(CalendarError::UnknownMonthCode(
                         month_code.0,
