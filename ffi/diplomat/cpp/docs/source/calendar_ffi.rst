@@ -51,7 +51,8 @@
     .. cpp:enumerator:: Coptic
 
         The kind of a Coptic calendar
-    
+
+
     .. cpp:enumerator:: Dangi
 
         The kind of a Dangi calendar

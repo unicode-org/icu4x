@@ -66,7 +66,7 @@ enum struct ICU4XAnyCalendarKind {
   Coptic = 8,
 
   /**
-   * The kind of a Coptic calendar
+   * The kind of a Dangi calendar
    */
   Dangi = 9,
 };

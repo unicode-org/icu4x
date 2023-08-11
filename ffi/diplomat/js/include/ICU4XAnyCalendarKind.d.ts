@@ -55,7 +55,7 @@ export enum ICU4XAnyCalendarKind {
    */
   Coptic = 'Coptic',
   /**
-  
+
    * The kind of a Dangi calendar
    */
   Dangi = 'Dangi',
