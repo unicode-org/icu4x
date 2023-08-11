@@ -78,7 +78,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let moment: Moment = date.as_moment();
         let location = C::location(date);
         let universal: Moment = Location::universal_from_standard(moment, location);
-        let solar_longitude = i64_to_i32(Astronomical::solar_longitude(universal) as i64);
+        let solar_longitude = i64_to_i32(Astronomical::solar_longitude(universal, Astronomical::julian_centuries(universal)) as i64);
         debug_assert!(
             matches!(solar_longitude, I32Result::WithinRange(_)),
             "Solar longitude should be in range of i32"
@@ -107,7 +107,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let moment: Moment = date.as_moment();
         let location = C::location(date);
         let universal: Moment = Location::universal_from_standard(moment, location);
-        let solar_longitude = i64_to_i32(Astronomical::solar_longitude(universal) as i64);
+        let solar_longitude = i64_to_i32(Astronomical::solar_longitude(universal, Astronomical::julian_centuries(universal)) as i64);
         debug_assert!(
             matches!(solar_longitude, I32Result::WithinRange(_)),
             "Solar longitude should be in range of i32"
@@ -195,7 +195,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let mut iters = 0;
         let mut day = Moment::new(libm::floor(approx.inner() - 1.0));
         while iters < MAX_ITERS_FOR_DAYS_OF_YEAR
-            && astronomy::WINTER >= Astronomical::solar_longitude(Self::midnight(day + 1.0))
+            && astronomy::WINTER >= Astronomical::solar_longitude(Self::midnight(day + 1.0), Astronomical::julian_centuries(Self::midnight(day + 1.0)))
         {
             iters += 1;
             day += 1.0;

@@ -1142,7 +1142,7 @@ impl Astronomical {
         let jupiter = 318.0 / 1000000.0 * libm::sin((53.09 + c * 479264.29).to_radians());
         let flat_earth = 1962.0 / 1000000.0 * libm::sin((l - f).to_radians());
         div_rem_euclid_f64(
-            l + correction + venus + jupiter + flat_earth + Self::nutation(moment),
+            l + correction + venus + jupiter + flat_earth + Self::nutation(moment, julian_centuries),
             360.0,
         )
         .1
@@ -1454,7 +1454,7 @@ impl Astronomical {
     #[allow(dead_code)] // TODO: Remove dead code tag after use
     fn moonset(date: Moment, location: Location) -> Option<Moment> {
         let moment = Location::universal_from_standard(date, location);
-        let waxing = Self::lunar_phase(date) < 180.0;
+        let waxing = Self::lunar_phase(date, Self::julian_centuries(date)) < 180.0;
         let alt = Self::observed_lunar_altitude(moment, location);
         let lat = location.latitude;
         let offset = alt / (4.0 * (90.0 - libm::fabs(lat)));
@@ -1523,9 +1523,9 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4037-L4047
-    fn nutation(moment: Moment) -> f64 {
+    fn nutation(moment: Moment, julian_centuries: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
-        let c = Self::julian_centuries(moment);
+        let c = julian_centuries;
         let a = 124.90 - 1934.134 * c + 0.002063 * c * c;
         let b = 201.11 + 72001.5377 * c + 0.00057 * c * c;
         -0.004778 * libm::sin(a.to_radians()) - 0.0003667 * libm::sin(b.to_radians())
@@ -1536,7 +1536,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4397-L4414
-    pub(crate) fn lunar_phase(moment: Moment) -> f64 {
+    pub(crate) fn lunar_phase(moment: Moment, julian_centuries: f64) -> f64 {
         let t0 = NEW_MOON_ZERO;
         let maybe_n =
             i64_to_i32(libm::round(div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0) as i64);
@@ -1546,8 +1546,8 @@ impl Astronomical {
         );
         let n = maybe_n.saturate();
         let a = div_rem_euclid_f64(
-            Self::lunar_longitude(moment, Self::julian_centuries(moment))
-                - Self::solar_longitude(moment),
+            Self::lunar_longitude(moment, julian_centuries)
+                - Self::solar_longitude(moment, julian_centuries),
             360.0,
         )
         .1;
@@ -1570,12 +1570,13 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4416-L4427
     pub(crate) fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> Moment {
+        let julian_centuries = Self::julian_centuries(moment);
         let tau = moment.inner()
-            - (MEAN_SYNODIC_MONTH / 360.0) * ((Self::lunar_phase(moment) - phase) % 360.0);
+            - (MEAN_SYNODIC_MONTH / 360.0) * ((Self::lunar_phase(moment, julian_centuries) - phase) % 360.0);
         let a = tau - 2.0;
         let b = libm::fmin(moment.inner(), tau + 2.0);
 
-        let lunar_phase_f64 = |x: f64| -> f64 { Self::lunar_phase(Moment::new(x)) };
+        let lunar_phase_f64 = |x: f64| -> f64 { Self::lunar_phase(Moment::new(x), Self::julian_centuries(Moment::new(x))) };
 
         Moment::new(invert_angular(lunar_phase_f64, phase, (a, b)))
     }
@@ -1585,8 +1586,8 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from "Planetary Programs and Tables from -4000 to +2800" by Bretagnon & Simon, 1986.
     /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3985-L4035
-    pub(crate) fn solar_longitude(moment: Moment) -> f64 {
-        let c = Self::julian_centuries(moment);
+    pub(crate) fn solar_longitude(moment: Moment, julian_centuries: f64) -> f64 {
+        let c: f64 = julian_centuries;
         let mut lt = (
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -1759,7 +1760,7 @@ impl Astronomical {
             + lt.48;
         lambda *= 0.000005729577951308232;
         lambda += 282.7771834 + 36000.76953744 * c;
-        div_rem_euclid_f64(lambda + Self::aberration(c) + Self::nutation(moment), 360.0).1
+        div_rem_euclid_f64(lambda + Self::aberration(c) + Self::nutation(moment, julian_centuries), 360.0).1
     }
 
     /// The best viewing time (UT) in the evening for viewing the young moon from `location` on `date`. This is defined as
@@ -1780,9 +1781,10 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7284-L7290
     fn arc_of_light(moment: Moment) -> f64 {
+        let julian_centuries = Self::julian_centuries(moment);
         arccos_degrees(
-            cos_degrees(Self::lunar_latitude(Self::julian_centuries(moment)))
-                * cos_degrees(Self::lunar_phase(moment)),
+            cos_degrees(Self::lunar_latitude(julian_centuries))
+                * cos_degrees(Self::lunar_phase(moment, julian_centuries)),
         )
     }
 
@@ -1793,7 +1795,7 @@ impl Astronomical {
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7306-L7317
     pub(crate) fn shaukat_criterion(date: Moment, location: Location) -> bool {
         let tee = Self::simple_best_view((date - 1.0).as_rata_die(), location);
-        let phase = Self::lunar_phase(tee);
+        let phase = Self::lunar_phase(tee, Self::julian_centuries(tee));
         let h = Self::lunar_altitude(tee, location);
         let cap_arcl = Self::arc_of_light(tee);
 
@@ -1828,9 +1830,10 @@ impl Astronomical {
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4132-L4146
     pub(crate) fn estimate_prior_solar_longitude(angle: f64, moment: Moment) -> Moment {
         let rate = MEAN_TROPICAL_YEAR / 360.0;
+        let julian_centuries = Self::julian_centuries(moment);
         let tau =
-            moment - rate * div_rem_euclid_f64(Self::solar_longitude(moment) - angle, 360.0).1;
-        let delta = interval_mod_f64(Self::solar_longitude(tau) - angle, -180.0, 180.0);
+            moment - rate * div_rem_euclid_f64(Self::solar_longitude(moment, julian_centuries) - angle, 360.0).1;
+        let delta = interval_mod_f64(Self::solar_longitude(tau, Self::julian_centuries(tau)) - angle, -180.0, 180.0);
         let result_rhs = tau - rate * delta;
         if moment < result_rhs {
             moment
@@ -1879,7 +1882,7 @@ impl Astronomical {
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4379-L4395
     fn num_of_new_moon_at_or_after(moment: Moment) -> i32 {
         let t0: Moment = NEW_MOON_ZERO;
-        let phi = Self::lunar_phase(moment);
+        let phi = Self::lunar_phase(moment, Self::julian_centuries(moment));
         let maybe_n = i64_to_i32(libm::round(
             div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0 - phi / 360.0,
         ) as i64);
@@ -1906,7 +1909,7 @@ impl Astronomical {
     pub(crate) fn sine_offset(moment: Moment, location: Location, alpha: f64) -> f64 {
         let phi = location.latitude;
         let tee_prime = Location::universal_from_local(moment, location);
-        let delta = Self::declination(tee_prime, 0.0, Self::solar_longitude(tee_prime));
+        let delta = Self::declination(tee_prime, 0.0, Self::solar_longitude(tee_prime, Self::julian_centuries(tee_prime)));
 
         tan_degrees(phi) * tan_degrees(delta)
             + sin_degrees(alpha) / (cos_degrees(delta) * cos_degrees(phi))
@@ -2041,7 +2044,7 @@ mod tests {
         ];
         for (rd, expected_solar_long) in rd_vals.iter().zip(expected_solar_long.iter()) {
             let moment: Moment = Moment::new(*rd as f64);
-            let solar_long = Astronomical::solar_longitude(moment + 0.5);
+            let solar_long = Astronomical::solar_longitude(moment + 0.5, Astronomical::julian_centuries(moment + 0.5));
             let expected_solar_long_value = expected_solar_long;
             assert!(solar_long > expected_solar_long_value * TEST_LOWER_BOUND_FACTOR, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");
             assert!(solar_long < expected_solar_long_value * TEST_UPPER_BOUND_FACTOR, "Solar longitude calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_solar_long_value} and calculated: {solar_long}\n\n");

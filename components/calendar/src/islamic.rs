@@ -518,7 +518,7 @@ impl UmmAlQura {
     fn saudi_criterion(date: RataDie) -> Option<bool> {
         let sunset = Astronomical::sunset((date - 1).as_moment(), MECCA)?;
         let tee = Location::universal_from_standard(sunset, MECCA);
-        let phase = Astronomical::lunar_phase(tee);
+        let phase = Astronomical::lunar_phase(tee, Astronomical::julian_centuries(tee));
         let moonlag = Astronomical::moonlag((date - 1).as_moment(), MECCA)?;
 
         Some(phase > 0.0 && phase < 90.0 && moonlag > 0.0)
