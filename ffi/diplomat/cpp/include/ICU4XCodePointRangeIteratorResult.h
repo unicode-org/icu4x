@@ -1,5 +1,5 @@
-#ifndef CodePointRangeIterator_H
-#define CodePointRangeIterator_H
+#ifndef ICU4XCodePointRangeIteratorResult_H
+#define ICU4XCodePointRangeIteratorResult_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -10,18 +10,20 @@
 namespace capi {
 #endif
 
-typedef struct CodePointRangeIterator CodePointRangeIterator;
+typedef struct ICU4XCodePointRangeIteratorResult {
+    uint32_t start;
+    uint32_t end;
+    bool done;
+} ICU4XCodePointRangeIteratorResult;
 #ifdef __cplusplus
 } // namespace capi
 #endif
-#include "CodePointRangeIteratorResult.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
 #endif
 
-CodePointRangeIteratorResult CodePointRangeIterator_next(CodePointRangeIterator* self);
-void CodePointRangeIterator_destroy(CodePointRangeIterator* self);
+void ICU4XCodePointRangeIteratorResult_destroy(ICU4XCodePointRangeIteratorResult* self);
 
 #ifdef __cplusplus
 } // extern "C"

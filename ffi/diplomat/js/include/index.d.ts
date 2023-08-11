@@ -1,6 +1,4 @@
 export { FFIError, i8, u8, i16, u16, i32, u32, i64, u64, f32, f64, char } from './diplomat-runtime.js';
-export { CodePointRangeIterator } from './CodePointRangeIterator.js';
-export { CodePointRangeIteratorResult } from './CodePointRangeIteratorResult.js';
 export { ICU4XAnyCalendarKind } from './ICU4XAnyCalendarKind.js';
 export { ICU4XBidi } from './ICU4XBidi.js';
 export { ICU4XBidiDirection } from './ICU4XBidiDirection.js';
@@ -14,6 +12,8 @@ export { ICU4XCaseMapCloser } from './ICU4XCaseMapCloser.js';
 export { ICU4XCaseMapper } from './ICU4XCaseMapper.js';
 export { ICU4XCodePointMapData16 } from './ICU4XCodePointMapData16.js';
 export { ICU4XCodePointMapData8 } from './ICU4XCodePointMapData8.js';
+export { ICU4XCodePointRangeIterator } from './ICU4XCodePointRangeIterator.js';
+export { ICU4XCodePointRangeIteratorResult } from './ICU4XCodePointRangeIteratorResult.js';
 export { ICU4XCodePointSetBuilder } from './ICU4XCodePointSetBuilder.js';
 export { ICU4XCodePointSetData } from './ICU4XCodePointSetData.js';
 export { ICU4XCollator } from './ICU4XCollator.js';

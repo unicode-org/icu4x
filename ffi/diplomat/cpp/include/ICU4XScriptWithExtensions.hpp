@@ -15,7 +15,7 @@ class ICU4XDataProvider;
 class ICU4XScriptWithExtensions;
 #include "ICU4XError.hpp"
 class ICU4XScriptWithExtensionsBorrowed;
-class CodePointRangeIterator;
+class ICU4XCodePointRangeIterator;
 
 /**
  * A destruction policy for using ICU4XScriptWithExtensions with std::unique_ptr.
@@ -71,7 +71,7 @@ class ICU4XScriptWithExtensions {
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */
-  CodePointRangeIterator iter_ranges_for_script(uint16_t script) const;
+  ICU4XCodePointRangeIterator iter_ranges_for_script(uint16_t script) const;
   inline const capi::ICU4XScriptWithExtensions* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptWithExtensions* AsFFIMut() { return this->inner.get(); }
   inline ICU4XScriptWithExtensions(capi::ICU4XScriptWithExtensions* i) : inner(i) {}
@@ -84,7 +84,7 @@ class ICU4XScriptWithExtensions {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XScriptWithExtensionsBorrowed.hpp"
-#include "CodePointRangeIterator.hpp"
+#include "ICU4XCodePointRangeIterator.hpp"
 
 inline diplomat::result<ICU4XScriptWithExtensions, ICU4XError> ICU4XScriptWithExtensions::create(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XScriptWithExtensions_create(provider.AsFFI());
@@ -105,7 +105,7 @@ inline bool ICU4XScriptWithExtensions::has_script(uint32_t code_point, uint16_t 
 inline ICU4XScriptWithExtensionsBorrowed ICU4XScriptWithExtensions::as_borrowed() const {
   return ICU4XScriptWithExtensionsBorrowed(capi::ICU4XScriptWithExtensions_as_borrowed(this->inner.get()));
 }
-inline CodePointRangeIterator ICU4XScriptWithExtensions::iter_ranges_for_script(uint16_t script) const {
-  return CodePointRangeIterator(capi::ICU4XScriptWithExtensions_iter_ranges_for_script(this->inner.get(), script));
+inline ICU4XCodePointRangeIterator ICU4XScriptWithExtensions::iter_ranges_for_script(uint16_t script) const {
+  return ICU4XCodePointRangeIterator(capi::ICU4XScriptWithExtensions_iter_ranges_for_script(this->inner.get(), script));
 }
 #endif

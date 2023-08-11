@@ -10,7 +10,7 @@ pub mod ffi {
     use icu_properties::sets;
 
     use crate::errors::ffi::ICU4XError;
-    use crate::properties_iter::ffi::CodePointRangeIterator;
+    use crate::properties_iter::ffi::ICU4XCodePointRangeIterator;
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
@@ -44,8 +44,8 @@ pub mod ffi {
             icu::properties::sets::CodePointSetDataBorrowed::iter_ranges,
             FnInStruct
         )]
-        pub fn iter_ranges<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
+        pub fn iter_ranges<'a>(&'a self) -> Box<ICU4XCodePointRangeIterator<'a>> {
+            Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0.as_borrowed().iter_ranges(),
             )))
         }
@@ -55,8 +55,8 @@ pub mod ffi {
             icu::properties::sets::CodePointSetDataBorrowed::iter_ranges_complemented,
             FnInStruct
         )]
-        pub fn iter_ranges_complemented<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
+        pub fn iter_ranges_complemented<'a>(&'a self) -> Box<ICU4XCodePointRangeIterator<'a>> {
+            Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0.as_borrowed().iter_ranges_complemented(),
             )))
         }

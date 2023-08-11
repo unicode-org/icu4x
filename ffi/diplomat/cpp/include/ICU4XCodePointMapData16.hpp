@@ -11,7 +11,7 @@
 
 #include "ICU4XCodePointMapData16.h"
 
-class CodePointRangeIterator;
+class ICU4XCodePointRangeIterator;
 class ICU4XCodePointSetData;
 class ICU4XDataProvider;
 class ICU4XCodePointMapData16;
@@ -59,7 +59,7 @@ class ICU4XCodePointMapData16 {
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */
-  CodePointRangeIterator iter_ranges_for_value(uint16_t value) const;
+  ICU4XCodePointRangeIterator iter_ranges_for_value(uint16_t value) const;
 
   /**
    * Produces an iterator over ranges of code points that do not map to `value`
@@ -68,7 +68,7 @@ class ICU4XCodePointMapData16 {
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */
-  CodePointRangeIterator iter_ranges_for_value_complemented(uint16_t value) const;
+  ICU4XCodePointRangeIterator iter_ranges_for_value_complemented(uint16_t value) const;
 
   /**
    * Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
@@ -93,7 +93,7 @@ class ICU4XCodePointMapData16 {
   std::unique_ptr<capi::ICU4XCodePointMapData16, ICU4XCodePointMapData16Deleter> inner;
 };
 
-#include "CodePointRangeIterator.hpp"
+#include "ICU4XCodePointRangeIterator.hpp"
 #include "ICU4XCodePointSetData.hpp"
 #include "ICU4XDataProvider.hpp"
 
@@ -103,11 +103,11 @@ inline uint16_t ICU4XCodePointMapData16::get(char32_t cp) const {
 inline uint16_t ICU4XCodePointMapData16::get32(uint32_t cp) const {
   return capi::ICU4XCodePointMapData16_get32(this->inner.get(), cp);
 }
-inline CodePointRangeIterator ICU4XCodePointMapData16::iter_ranges_for_value(uint16_t value) const {
-  return CodePointRangeIterator(capi::ICU4XCodePointMapData16_iter_ranges_for_value(this->inner.get(), value));
+inline ICU4XCodePointRangeIterator ICU4XCodePointMapData16::iter_ranges_for_value(uint16_t value) const {
+  return ICU4XCodePointRangeIterator(capi::ICU4XCodePointMapData16_iter_ranges_for_value(this->inner.get(), value));
 }
-inline CodePointRangeIterator ICU4XCodePointMapData16::iter_ranges_for_value_complemented(uint16_t value) const {
-  return CodePointRangeIterator(capi::ICU4XCodePointMapData16_iter_ranges_for_value_complemented(this->inner.get(), value));
+inline ICU4XCodePointRangeIterator ICU4XCodePointMapData16::iter_ranges_for_value_complemented(uint16_t value) const {
+  return ICU4XCodePointRangeIterator(capi::ICU4XCodePointMapData16_iter_ranges_for_value_complemented(this->inner.get(), value));
 }
 inline ICU4XCodePointSetData ICU4XCodePointMapData16::get_set_for_value(uint16_t value) const {
   return ICU4XCodePointSetData(capi::ICU4XCodePointMapData16_get_set_for_value(this->inner.get(), value));

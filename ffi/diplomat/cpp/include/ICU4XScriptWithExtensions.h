@@ -17,7 +17,7 @@ typedef struct ICU4XScriptWithExtensions ICU4XScriptWithExtensions;
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XScriptWithExtensions_ICU4XError.h"
 #include "ICU4XScriptWithExtensionsBorrowed.h"
-#include "CodePointRangeIterator.h"
+#include "ICU4XCodePointRangeIterator.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -31,7 +31,7 @@ bool ICU4XScriptWithExtensions_has_script(const ICU4XScriptWithExtensions* self,
 
 ICU4XScriptWithExtensionsBorrowed* ICU4XScriptWithExtensions_as_borrowed(const ICU4XScriptWithExtensions* self);
 
-CodePointRangeIterator* ICU4XScriptWithExtensions_iter_ranges_for_script(const ICU4XScriptWithExtensions* self, uint16_t script);
+ICU4XCodePointRangeIterator* ICU4XScriptWithExtensions_iter_ranges_for_script(const ICU4XScriptWithExtensions* self, uint16_t script);
 void ICU4XScriptWithExtensions_destroy(ICU4XScriptWithExtensions* self);
 
 #ifdef __cplusplus

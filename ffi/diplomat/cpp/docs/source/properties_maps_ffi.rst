@@ -26,7 +26,7 @@
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
 
 
-    .. cpp:function:: CodePointRangeIterator iter_ranges_for_value(uint16_t value) const
+    .. cpp:function:: ICU4XCodePointRangeIterator iter_ranges_for_value(uint16_t value) const
 
         Produces an iterator over ranges of code points that map to ``value``
 
@@ -35,7 +35,7 @@
         Lifetimes: ``this`` must live at least as long as the output.
 
 
-    .. cpp:function:: CodePointRangeIterator iter_ranges_for_value_complemented(uint16_t value) const
+    .. cpp:function:: ICU4XCodePointRangeIterator iter_ranges_for_value_complemented(uint16_t value) const
 
         Produces an iterator over ranges of code points that do not map to ``value``
 
@@ -90,7 +90,7 @@
         See the `Rust documentation for GeneralCategoryGroup <https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html>`__ for more information.
 
 
-    .. cpp:function:: CodePointRangeIterator iter_ranges_for_value(uint8_t value) const
+    .. cpp:function:: ICU4XCodePointRangeIterator iter_ranges_for_value(uint8_t value) const
 
         Produces an iterator over ranges of code points that map to ``value``
 
@@ -99,7 +99,7 @@
         Lifetimes: ``this`` must live at least as long as the output.
 
 
-    .. cpp:function:: CodePointRangeIterator iter_ranges_for_value_complemented(uint8_t value) const
+    .. cpp:function:: ICU4XCodePointRangeIterator iter_ranges_for_value_complemented(uint8_t value) const
 
         Produces an iterator over ranges of code points that do not map to ``value``
 
@@ -108,7 +108,7 @@
         Lifetimes: ``this`` must live at least as long as the output.
 
 
-    .. cpp:function:: CodePointRangeIterator iter_ranges_for_mask(uint32_t mask) const
+    .. cpp:function:: ICU4XCodePointRangeIterator iter_ranges_for_mask(uint32_t mask) const
 
         Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points whose property values are contained in the mask.
 

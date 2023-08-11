@@ -1,6 +1,6 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
-import { CodePointRangeIterator } from "./CodePointRangeIterator.js"
+import { ICU4XCodePointRangeIterator } from "./ICU4XCodePointRangeIterator.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 import { ICU4XScriptWithExtensionsBorrowed } from "./ICU4XScriptWithExtensionsBorrowed.js"
 
@@ -48,6 +48,6 @@ export class ICU4XScriptWithExtensions {
   }
 
   iter_ranges_for_script(arg_script) {
-    return new CodePointRangeIterator(wasm.ICU4XScriptWithExtensions_iter_ranges_for_script(this.underlying, arg_script), true, [this]);
+    return new ICU4XCodePointRangeIterator(wasm.ICU4XScriptWithExtensions_iter_ranges_for_script(this.underlying, arg_script), true, [this]);
   }
 }

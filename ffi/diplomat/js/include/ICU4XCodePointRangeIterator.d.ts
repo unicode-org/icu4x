@@ -1,10 +1,10 @@
-import { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult";
+import { ICU4XCodePointRangeIteratorResult } from "./ICU4XCodePointRangeIteratorResult";
 
 /**
 
  * An iterator over code point ranges, produced by `ICU4XCodePointSetData` or one of the `ICU4XCodePointMapData` types
  */
-export class CodePointRangeIterator {
+export class ICU4XCodePointRangeIterator {
 
   /**
 
@@ -12,5 +12,5 @@ export class CodePointRangeIterator {
 
    * If the iterator is out of items, `done` will be true
    */
-  next(): CodePointRangeIteratorResult;
+  next(): ICU4XCodePointRangeIteratorResult;
 }

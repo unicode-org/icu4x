@@ -14,7 +14,7 @@ typedef struct ICU4XCodePointMapData16 ICU4XCodePointMapData16;
 #ifdef __cplusplus
 } // namespace capi
 #endif
-#include "CodePointRangeIterator.h"
+#include "ICU4XCodePointRangeIterator.h"
 #include "ICU4XCodePointSetData.h"
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XCodePointMapData16_ICU4XError.h"
@@ -27,9 +27,9 @@ uint16_t ICU4XCodePointMapData16_get(const ICU4XCodePointMapData16* self, char32
 
 uint16_t ICU4XCodePointMapData16_get32(const ICU4XCodePointMapData16* self, uint32_t cp);
 
-CodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value(const ICU4XCodePointMapData16* self, uint16_t value);
+ICU4XCodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value(const ICU4XCodePointMapData16* self, uint16_t value);
 
-CodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value_complemented(const ICU4XCodePointMapData16* self, uint16_t value);
+ICU4XCodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value_complemented(const ICU4XCodePointMapData16* self, uint16_t value);
 
 ICU4XCodePointSetData* ICU4XCodePointMapData16_get_set_for_value(const ICU4XCodePointMapData16* self, uint16_t value);
 

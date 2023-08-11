@@ -9,7 +9,7 @@ pub mod ffi {
     use icu_properties::{script, sets::CodePointSetData, Script};
 
     use crate::errors::ffi::ICU4XError;
-    use crate::properties_iter::ffi::CodePointRangeIterator;
+    use crate::properties_iter::ffi::ICU4XCodePointRangeIterator;
     use crate::properties_sets::ffi::ICU4XCodePointSetData;
 
     #[diplomat::opaque]
@@ -79,8 +79,8 @@ pub mod ffi {
         pub fn iter_ranges_for_script<'a>(
             &'a self,
             script: u16,
-        ) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
+        ) -> Box<ICU4XCodePointRangeIterator<'a>> {
+            Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0
                     .as_borrowed()
                     .get_script_extensions_ranges(Script(script)),

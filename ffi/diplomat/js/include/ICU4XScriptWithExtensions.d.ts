@@ -1,6 +1,6 @@
 import { u16, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
-import { CodePointRangeIterator } from "./CodePointRangeIterator";
+import { ICU4XCodePointRangeIterator } from "./ICU4XCodePointRangeIterator";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XScriptWithExtensionsBorrowed } from "./ICU4XScriptWithExtensionsBorrowed";
@@ -50,5 +50,5 @@ export class ICU4XScriptWithExtensions {
 
    * See the {@link https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges Rust documentation for `get_script_extensions_ranges`} for more information.
    */
-  iter_ranges_for_script(script: u16): CodePointRangeIterator;
+  iter_ranges_for_script(script: u16): ICU4XCodePointRangeIterator;
 }

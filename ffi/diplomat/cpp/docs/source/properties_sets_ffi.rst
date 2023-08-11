@@ -24,7 +24,7 @@
         Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
 
 
-    .. cpp:function:: CodePointRangeIterator iter_ranges() const
+    .. cpp:function:: ICU4XCodePointRangeIterator iter_ranges() const
 
         Produces an iterator over ranges of code points contained in this set
 
@@ -33,7 +33,7 @@
         Lifetimes: ``this`` must live at least as long as the output.
 
 
-    .. cpp:function:: CodePointRangeIterator iter_ranges_complemented() const
+    .. cpp:function:: ICU4XCodePointRangeIterator iter_ranges_complemented() const
 
         Produces an iterator over ranges of code points not contained in this set
 

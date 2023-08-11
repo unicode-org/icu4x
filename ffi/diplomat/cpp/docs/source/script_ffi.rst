@@ -64,7 +64,7 @@
         Lifetimes: ``this`` must live at least as long as the output.
 
 
-    .. cpp:function:: CodePointRangeIterator iter_ranges_for_script(uint16_t script) const
+    .. cpp:function:: ICU4XCodePointRangeIterator iter_ranges_for_script(uint16_t script) const
 
         Get a list of ranges of code points that contain this script in their Script_Extensions values
 
