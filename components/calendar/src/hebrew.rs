@@ -250,7 +250,7 @@ impl Calendar for Hebrew {
         };
 
         types::FormattableMonth {
-            ordinal: ordinal as u32,
+            ordinal: date.0.month as u32,
             code: types::MonthCode(code),
         }
     }
