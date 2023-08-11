@@ -38,7 +38,11 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_properties;
+    pub mod icu {
+        pub use crate as properties;
+        pub use icu_collections as collections;
+        pub use icu_locid_transform as locid_transform;
+    }
     icu_properties_data::impl_propnames_from_gcb_v1!(Baked);
     icu_properties_data::impl_propnames_from_bc_v1!(Baked);
     icu_properties_data::impl_propnames_from_ccc_v1!(Baked);

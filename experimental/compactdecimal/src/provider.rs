@@ -23,7 +23,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_compactdecimal;
+    pub mod icu {
+        pub use crate as compactdecimal;
+        pub use icu_locid_transform as locid_transform;
+    }
     icu_compactdecimal_data::impl_compactdecimal_long_v1!(Baked);
     icu_compactdecimal_data::impl_compactdecimal_short_v1!(Baked);
 };

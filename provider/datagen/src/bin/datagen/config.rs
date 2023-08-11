@@ -98,9 +98,9 @@ pub enum Export {
         #[serde(default, skip_serializing_if = "is_default")]
         pretty: bool,
         #[serde(default, skip_serializing_if = "is_default")]
-        insert_feature_gates: bool,
+        use_separate_crates: bool,
         #[serde(default, skip_serializing_if = "is_default")]
-        use_meta_crate: bool,
+        insert_feature_gates: bool,
     },
 }
 

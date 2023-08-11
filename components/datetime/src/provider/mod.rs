@@ -26,7 +26,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_datetime;
+    pub mod icu {
+        pub use crate as datetime;
+        pub use icu_locid_transform as locid_transform;
+    }
     icu_datetime_data::impl_datetime_buddhist_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_buddhist_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_chinese_datelengths_v1!(Baked);

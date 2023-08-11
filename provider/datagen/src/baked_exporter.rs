@@ -99,12 +99,12 @@ type SyncTokenStream = String;
 pub struct Options {
     /// Whether to run `rustfmt` on the generated files.
     pub pretty: bool,
+    /// Whether to use separate crates to name types instead of the `icu` metacrate.
+    pub use_separate_crates: bool,
     /// Whether to gate each key on its crate name. This allows using the module
     /// even if some keys are not required and their dependencies are not included.
-    /// Requires use_separate_crates.
+    /// Requires `use_separate_crates`.
     pub insert_feature_gates: bool,
-    /// Whether to use separate crates to name types instead of the `icu` metacrate
-    pub use_separate_crates: bool,
     /// Whether to overwrite existing data. By default, errors if it is present.
     pub overwrite: bool,
 }
