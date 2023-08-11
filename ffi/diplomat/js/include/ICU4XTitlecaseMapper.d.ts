@@ -21,17 +21,6 @@ export class ICU4XTitlecaseMapper {
 
   /**
 
-   * Construct a new `ICU4XTitlecaseMapper` instance with legacy head-adjustment behavior
-
-   * Behaves identically to using `titlecase_segment_legacy` on `CaseMapper`
-
-   * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new_legacy Rust documentation for `new_legacy`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
-   */
-  static create_legacy(provider: ICU4XDataProvider): ICU4XTitlecaseMapper | never;
-
-  /**
-
    * Returns the full titlecase mapping of the given string
 
    * The `v1` refers to the version of the options struct, which may change as we add more options

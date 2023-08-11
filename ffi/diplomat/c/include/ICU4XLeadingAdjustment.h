@@ -1,5 +1,5 @@
-#ifndef ICU4XHeadAdjustment_H
-#define ICU4XHeadAdjustment_H
+#ifndef ICU4XLeadingAdjustment_H
+#define ICU4XLeadingAdjustment_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -10,10 +10,11 @@
 namespace capi {
 #endif
 
-typedef enum ICU4XHeadAdjustment {
-  ICU4XHeadAdjustment_Adjust = 0,
-  ICU4XHeadAdjustment_NoAdjust = 1,
-} ICU4XHeadAdjustment;
+typedef enum ICU4XLeadingAdjustment {
+  ICU4XLeadingAdjustment_Auto = 0,
+  ICU4XLeadingAdjustment_None = 1,
+  ICU4XLeadingAdjustment_ToCased = 2,
+} ICU4XLeadingAdjustment;
 #ifdef __cplusplus
 } // namespace capi
 #endif
@@ -22,7 +23,7 @@ namespace capi {
 extern "C" {
 #endif
 
-void ICU4XHeadAdjustment_destroy(ICU4XHeadAdjustment* self);
+void ICU4XLeadingAdjustment_destroy(ICU4XLeadingAdjustment* self);
 
 #ifdef __cplusplus
 } // extern "C"
