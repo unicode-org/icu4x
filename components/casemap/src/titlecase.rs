@@ -14,7 +14,26 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 /// How to handle the rest of the string once the beginning of the
-/// string has been titlecased. See docs of [`TitlecaseMapper`] for examples.
+/// string has been titlecased.
+///
+/// # Examples
+///
+/// ```rust
+/// use icu_casemap::TitlecaseMapper;
+/// use icu_casemap::titlecase::{TrailingCase, TitlecaseOptions};
+/// use icu_locid::langid;
+///
+/// let cm = TitlecaseMapper::new();
+/// let root = langid!("und");
+///
+/// let default_options = Default::default();
+/// let mut preserve_case: TitlecaseOptions = Default::default();
+/// preserve_case.trailing_case = TrailingCase::Unchanged;
+///
+/// // Exhibits trailing case when set:
+/// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, default_options), "Spongebob");
+/// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, preserve_case), "SpOngeBoB");
+/// ```
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
 pub enum TrailingCase {
@@ -25,8 +44,48 @@ pub enum TrailingCase {
     Lower,
 }
 
-/// Whether to start casing at the beginning of the string or at the first
-/// relevant character. See docs of [`TitlecaseMapper`] for examples.
+/// Where to start casing the string.
+///
+/// [`TitlecaseMapper`] by default performs "leading adjustment", where it searches for the first "relevant" character
+/// in the string before initializing the actual titlecasing. For example, it will skip punctuation at the beginning
+/// of a string, allowing for strings like `'twas` or `«hello»` to be appropriately titlecased.
+///
+/// Opinions on exactly what is a "relevant" character may differ. In "adjust to cased" mode the first cased character is considered "relevant",
+/// whereas in the "auto" mode, it is the first character that is a letter, number, symbol, or private use character. This means
+/// that the strings `49ers` and `«丰(abc)»` will titlecase in "adjust to cased" mode to `49Ers` and `«丰(Abc)»`, whereas in the "auto" mode they stay unchanged.
+/// This difference largely matters for things that mix numbers and letters, or mix writing systems, within a single segment.
+///
+/// # Examples
+///
+/// ```rust
+/// use icu_casemap::TitlecaseMapper;
+/// use icu_casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
+/// use icu_locid::langid;
+///
+/// let cm = TitlecaseMapper::new();
+/// let root = langid!("und");
+///
+/// let default_options = Default::default(); // head adjustment set to Auto
+/// let mut no_adjust: TitlecaseOptions = Default::default();
+/// let mut adjust_to_cased: TitlecaseOptions = Default::default();
+/// no_adjust.leading_adjustment = LeadingAdjustment::None;
+/// adjust_to_cased.leading_adjustment = LeadingAdjustment::ToCased;
+///
+/// // Exhibits leading adjustment when set:
+/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
+/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, adjust_to_cased), "«Hello»");
+/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, no_adjust), "«hello»");
+///
+/// // Only changed in adjust-to-cased mode:
+/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, default_options), "丰(abc)");
+/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, adjust_to_cased), "丰(Abc)");
+/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, no_adjust), "丰(abc)");
+///
+/// // Only changed in adjust-to-cased mode:
+/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, default_options), "49ers");
+/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, adjust_to_cased), "49Ers");
+/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, no_adjust), "49ers");
+/// ```
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
 pub enum LeadingAdjustment {
@@ -38,6 +97,8 @@ pub enum LeadingAdjustment {
     /// by default will adjust to first letter, number, symbol, or private use character,
     /// but if no data is available (e.g. this API is being called via [`CaseMapper::titlecase_segment_with_only_case_data()`]),
     /// then may be equivalent to "adjust to cased".
+    ///
+    /// This is the default
     #[default]
     Auto,
     /// Adjust the string to the first cased character before beginning to apply casing
@@ -68,14 +129,10 @@ pub struct TitlecaseOptions {
 /// is ignored because the word starts at the first "t", which will get titlecased (producing `'Twixt`). Other punctuation will
 /// also be ignored, like in the string `«hello»`, which will get titlecased to `«Hello»`.
 ///
-/// Opinions on exactly what is a "relevant" character may differ. In "adjust to cased" mode the first cased character is considered "relevant",
-/// whereas in the "auto" mode, it is the first character that is a letter, number, symbol, or private use character. This means
-/// that the strings `49ers` and `«丰(abc)»` will titlecase in "adjust to cased" mode to `49Ers` and `«丰(Abc)»`, whereas in the "auto" mode they stay unchanged.
-/// This difference largely matters for things that mix numbers and letters, or mix writing systems, within a single segment.
+/// This is a separate type from [`CaseMapper`] because it loads the additional data
+/// required by [`LeadingAdjustment::Auto`] to perform the best possible leading adjustment.
 ///
-/// The "auto" mode requires additional data; which is the purpose of this being a separate type.
-///
-/// If you are planning on only using [`LeadingAdjustment::NoAdjust`], consider using [`CaseMapper`] directly; this
+/// If you are planning on only using [`LeadingAdjustment::NoAdjust`] or [`LeadingAdjustment::AdjustToCased`], consider using [`CaseMapper`] directly; this
 /// type will have no additional behavior.
 ///
 /// # Examples
@@ -109,37 +166,6 @@ pub struct TitlecaseOptions {
 /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &langid!("nl"), default_options), "IJkdijk"); // Dutch IJ digraph
 /// ```
 ///
-/// Leading adjustment behaviors:
-///
-/// ```rust
-/// use icu_casemap::TitlecaseMapper;
-/// use icu_casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
-/// use icu_locid::langid;
-///
-/// let cm = TitlecaseMapper::new();
-/// let root = langid!("und");
-///
-/// let default_options = Default::default();
-/// let mut no_adjust: TitlecaseOptions = Default::default();
-/// let mut adjust_to_cased: TitlecaseOptions = Default::default();
-/// no_adjust.leading_adjustment = LeadingAdjustment::None;
-/// adjust_to_cased.leading_adjustment = LeadingAdjustment::ToCased;
-///
-/// // Exhibits leading adjustment when set:
-/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
-/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, adjust_to_cased), "«Hello»");
-/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, no_adjust), "«hello»");
-///
-/// // Only changed in legacy mode:
-/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, default_options), "丰(abc)");
-/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, adjust_to_cased), "丰(Abc)");
-/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, no_adjust), "丰(abc)");
-///
-/// // Only changed in legacy mode:
-/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, default_options), "49ers");
-/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, adjust_to_cased), "49Ers");
-/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, no_adjust), "49ers");
-/// ```
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
@@ -250,7 +276,6 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
         options: TitlecaseOptions,
     ) -> impl Writeable + 'a {
         if options.leading_adjustment == LeadingAdjustment::Auto {
-            // todo
             // letter, number, symbol, or private use code point
             const HEAD_GROUPS: GeneralCategoryGroup = GeneralCategoryGroup::Letter
                 .union(GeneralCategoryGroup::Number)

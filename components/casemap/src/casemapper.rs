@@ -306,6 +306,9 @@ impl CaseMapper {
     /// the string as a single segment (and thus only titlecasing the beginning of it). Performs
     /// the specified leading adjustment behavior from the options without loading additional data.
     ///
+    /// Note that [`TitlecaseMapper`] has better behavior, most users should consider using
+    /// it instead. This method primarily exists for people who care about the amount of data being loaded.
+    ///
     /// This should typically be used as a lower-level helper to construct the titlecasing operation desired
     /// by the application, for example one can titlecase on a per-word basis by mixing this with
     /// a `WordSegmenter`.
