@@ -101,9 +101,7 @@ pub struct Options {
     pub pretty: bool,
     /// Whether to use separate crates to name types instead of the `icu` metacrate.
     pub use_separate_crates: bool,
-    /// Whether to gate each key on its crate name. This allows using the module
-    /// even if some keys are not required and their dependencies are not included.
-    /// Requires `use_separate_crates`.
+    #[doc(hidden)] // deprecated, used by legacy testdata
     pub insert_feature_gates: bool,
     /// Whether to overwrite existing data. By default, errors if it is present.
     pub overwrite: bool,
@@ -181,8 +179,8 @@ impl BakedExporter {
         Ok(Self {
             mod_directory,
             pretty,
-            insert_feature_gates: insert_feature_gates && use_separate_crates,
             use_separate_crates,
+            insert_feature_gates: insert_feature_gates && use_separate_crates,
             data: Default::default(),
             impl_data: Default::default(),
             dependencies: Default::default(),
