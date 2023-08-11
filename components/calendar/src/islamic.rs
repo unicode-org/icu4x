@@ -82,8 +82,11 @@ impl CalendarArithmetic for IslamicObservational {
 
         let lunar_phase: f64 =
             Astronomical::calculate_lunar_phase_at_or_before(RataDie::new(midmonth as i64));
-        let f_date =
-            Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO, lunar_phase);
+        let f_date = Astronomical::phasis_on_or_before(
+            RataDie::new(midmonth as i64),
+            CAIRO,
+            Some(lunar_phase),
+        );
 
         Astronomical::month_length(f_date, CAIRO)
     }
@@ -222,14 +225,15 @@ impl IslamicObservational {
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
         let lunar_phase =
             Astronomical::calculate_lunar_phase_at_or_before(RataDie::new(midmonth as i64));
-        Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO, lunar_phase) + day
+        Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO, Some(lunar_phase))
+            + day
             - 1
     }
 
     #[allow(clippy::unwrap_used)]
     fn islamic_from_fixed(date: RataDie) -> Date<IslamicObservational> {
         let lunar_phase = Astronomical::calculate_lunar_phase_at_or_before(date);
-        let crescent = Astronomical::phasis_on_or_before(date, CAIRO, lunar_phase);
+        let crescent = Astronomical::phasis_on_or_before(date, CAIRO, Some(lunar_phase));
         let elapsed_months =
             (libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH))
                 as i32;
@@ -324,8 +328,11 @@ impl CalendarArithmetic for UmmAlQura {
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
         let lunar_phase: f64 =
             Astronomical::calculate_lunar_phase_at_or_before(RataDie::new(midmonth as i64));
-        let f_date =
-            Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), MECCA, lunar_phase);
+        let f_date = Astronomical::phasis_on_or_before(
+            RataDie::new(midmonth as i64),
+            MECCA,
+            Some(lunar_phase),
+        );
 
         Astronomical::month_length(f_date, MECCA)
     }

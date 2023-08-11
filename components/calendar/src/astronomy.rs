@@ -1165,7 +1165,13 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6883-L6896
-    pub fn phasis_on_or_after(date: RataDie, location: Location, lunar_phase: f64) -> RataDie {
+    pub fn phasis_on_or_after(
+        date: RataDie,
+        location: Location,
+        lunar_phase: Option<f64>,
+    ) -> RataDie {
+        let lunar_phase =
+            lunar_phase.unwrap_or_else(|| Self::calculate_lunar_phase_at_or_before(date));
         let age = date.to_f64_date() - lunar_phase;
         let tau = if age <= 4.0 || Self::visible_crescent((date - 1).as_moment(), location) {
             lunar_phase + 29.0 // Next new moon
@@ -1180,7 +1186,13 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6868-L6881
-    pub fn phasis_on_or_before(date: RataDie, location: Location, lunar_phase: f64) -> RataDie {
+    pub fn phasis_on_or_before(
+        date: RataDie,
+        location: Location,
+        lunar_phase: Option<f64>,
+    ) -> RataDie {
+        let lunar_phase =
+            lunar_phase.unwrap_or_else(|| Self::calculate_lunar_phase_at_or_before(date));
         let age = date.to_f64_date() - lunar_phase;
         let tau = if age <= 3.0 && !Self::visible_crescent((date).as_moment(), location) {
             lunar_phase - 30.0 // Previous new moon
@@ -1190,7 +1202,7 @@ impl Astronomical {
         next_moment(Moment::new(tau), location, Self::visible_crescent)
     }
 
-    pub fn calculate_lunar_phase_at_or_before(date: RataDie) -> f64 {
+    pub(crate) fn calculate_lunar_phase_at_or_before(date: RataDie) -> f64 {
         libm::floor(Self::lunar_phase_at_or_before(0.0, date.as_moment()).inner())
     }
 
@@ -1202,10 +1214,8 @@ impl Astronomical {
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7068-L7074
     #[allow(clippy::unwrap_used)]
     pub(crate) fn month_length(date: RataDie, location: Location) -> u8 {
-        let lunar_phase_before = Self::calculate_lunar_phase_at_or_before(date);
-        let lunar_phase_after = Self::calculate_lunar_phase_at_or_before(date + 1);
-        let moon = Self::phasis_on_or_after(date + 1, location, lunar_phase_after);
-        let prev = Self::phasis_on_or_before(date, location, lunar_phase_before);
+        let moon = Self::phasis_on_or_after(date + 1, location, None);
+        let prev = Self::phasis_on_or_before(date, location, None);
 
         debug_assert!(moon > prev);
         debug_assert!(moon - prev < u8::MAX.into());
@@ -1386,20 +1396,19 @@ impl Astronomical {
     }
 
     /// Topocentric altitude of the moon.
-    /// Arguments are the result of calling `lunar_altitude(moment, location)` and `lunar_parallax(lunar_altitude_val, moment)` in an earlier function.
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4630-L4636
-    fn topocentric_lunar_altitude(lunar_altitude_val: f64, lunar_parallax_val: f64) -> f64 {
-        lunar_altitude_val - lunar_parallax_val
+    fn topocentric_lunar_altitude(moment: Moment, location: Location) -> f64 {
+        let lunar_altitude = Self::lunar_altitude(moment, location);
+        lunar_altitude - Self::lunar_parallax(lunar_altitude, moment)
     }
 
     /// Observed altitude of upper limb of moon at moment at location.
     /// /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4646-L4653
     fn observed_lunar_altitude(moment: Moment, location: Location) -> f64 {
-        let lunar_altitude_val = Self::lunar_altitude(moment, location);
-        let lunar_parallax_val = Self::lunar_parallax(lunar_altitude_val, moment);
-        let r = Self::topocentric_lunar_altitude(lunar_altitude_val, lunar_parallax_val);
+        let r = Self::topocentric_lunar_altitude(moment, location);
         let y = Self::refraction(location);
         let z = 16.0 / 60.0;
 
