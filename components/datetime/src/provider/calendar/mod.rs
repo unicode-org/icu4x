@@ -32,7 +32,18 @@ pub use symbols::*;
     marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
     marker(EthiopianDateLengthsV1Marker, "datetime/ethiopic/datelengths@1"),
     marker(RocDateLengthsV1Marker, "datetime/roc/datelengths@1"),
-    marker(PersianDateLengthsV1Marker, "datetime/persian/datelengths@1")
+    marker(PersianDateLengthsV1Marker, "datetime/persian/datelengths@1"),
+    marker(HebrewDateLengthsV1Marker, "datetime/hebrew/datelengths@1"),
+    marker(
+        IslamicObservationalDateLengthsV1Marker,
+        "datetime/islamicobservational/datelengths@1"
+    ),
+    marker(IslamicCivilDateLengthsV1Marker, "datetime/islamiccivil/datelengths@1"),
+    marker(UmmAlQuraDateLengthsV1Marker, "datetime/ummalqura/datelengths@1"),
+    marker(
+        IslamicTabularDateLengthsV1Marker,
+        "datetime/islamictabular/datelengths@1"
+    )
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(

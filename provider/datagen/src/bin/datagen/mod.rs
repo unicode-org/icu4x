@@ -21,6 +21,8 @@ fn main() -> eyre::Result<()> {
     if matches.verbose {
         SimpleLogger::new()
             .with_level(log::LevelFilter::Trace)
+            // wasmer logging is very noisy
+            .with_module_level("wasmer", log::LevelFilter::Warn)
             .init()
             .unwrap()
     } else {

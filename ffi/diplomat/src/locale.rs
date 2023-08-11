@@ -185,20 +185,20 @@ pub mod ffi {
             self.0.strict_cmp(other).into()
         }
 
-        /// Unconditionally panics.
+        /// Deprecated
         ///
         /// Use `create_from_string("en").
         #[cfg(feature = "provider_test")]
         pub fn create_en() -> Box<ICU4XLocale> {
-            unimplemented!()
+            Box::new(ICU4XLocale(icu_locid::locale!("en")))
         }
 
-        /// Unconditionally panics.
+        /// Deprecated
         ///
         /// Use `create_from_string("bn").
         #[cfg(feature = "provider_test")]
         pub fn create_bn() -> Box<ICU4XLocale> {
-            unimplemented!()
+            Box::new(ICU4XLocale(icu_locid::locale!("bn")))
         }
     }
 }

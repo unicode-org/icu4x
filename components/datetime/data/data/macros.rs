@@ -60,6 +60,16 @@ mod datetime_gregory_datesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_gregory_datesymbols_v1 as impl_datetime_gregory_datesymbols_v1;
 #[macro_use]
+#[path = "macros/datetime_hebrew_datelengths_v1.data.rs"]
+mod datetime_hebrew_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_hebrew_datelengths_v1 as impl_datetime_hebrew_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_hebrew_datesymbols_v1.data.rs"]
+mod datetime_hebrew_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_hebrew_datesymbols_v1 as impl_datetime_hebrew_datesymbols_v1;
+#[macro_use]
 #[path = "macros/datetime_indian_datelengths_v1.data.rs"]
 mod datetime_indian_datelengths_v1;
 #[doc(inline)]
@@ -69,6 +79,36 @@ pub use __impl_datetime_indian_datelengths_v1 as impl_datetime_indian_datelength
 mod datetime_indian_datesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_indian_datesymbols_v1 as impl_datetime_indian_datesymbols_v1;
+#[macro_use]
+#[path = "macros/datetime_islamiccivil_datelengths_v1.data.rs"]
+mod datetime_islamiccivil_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_islamiccivil_datelengths_v1 as impl_datetime_islamiccivil_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_islamiccivil_datesymbols_v1.data.rs"]
+mod datetime_islamiccivil_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_islamiccivil_datesymbols_v1 as impl_datetime_islamiccivil_datesymbols_v1;
+#[macro_use]
+#[path = "macros/datetime_islamicobservational_datelengths_v1.data.rs"]
+mod datetime_islamicobservational_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_islamicobservational_datelengths_v1 as impl_datetime_islamicobservational_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_islamicobservational_datesymbols_v1.data.rs"]
+mod datetime_islamicobservational_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_islamicobservational_datesymbols_v1 as impl_datetime_islamicobservational_datesymbols_v1;
+#[macro_use]
+#[path = "macros/datetime_islamictabular_datelengths_v1.data.rs"]
+mod datetime_islamictabular_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_islamictabular_datelengths_v1 as impl_datetime_islamictabular_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_islamictabular_datesymbols_v1.data.rs"]
+mod datetime_islamictabular_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_islamictabular_datesymbols_v1 as impl_datetime_islamictabular_datesymbols_v1;
 #[macro_use]
 #[path = "macros/datetime_japanese_datelengths_v1.data.rs"]
 mod datetime_japanese_datelengths_v1;
@@ -124,6 +164,16 @@ pub use __impl_datetime_timelengths_v1 as impl_datetime_timelengths_v1;
 mod datetime_timesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_timesymbols_v1 as impl_datetime_timesymbols_v1;
+#[macro_use]
+#[path = "macros/datetime_ummalqura_datelengths_v1.data.rs"]
+mod datetime_ummalqura_datelengths_v1;
+#[doc(inline)]
+pub use __impl_datetime_ummalqura_datelengths_v1 as impl_datetime_ummalqura_datelengths_v1;
+#[macro_use]
+#[path = "macros/datetime_ummalqura_datesymbols_v1.data.rs"]
+mod datetime_ummalqura_datesymbols_v1;
+#[doc(inline)]
+pub use __impl_datetime_ummalqura_datesymbols_v1 as impl_datetime_ummalqura_datesymbols_v1;
 #[macro_use]
 #[path = "macros/time_zone_exemplar_cities_v1.data.rs"]
 mod time_zone_exemplar_cities_v1;

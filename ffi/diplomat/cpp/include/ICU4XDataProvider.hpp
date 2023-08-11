@@ -52,9 +52,9 @@ class ICU4XDataProvider {
   static diplomat::result<ICU4XDataProvider, ICU4XError> create_fs(const std::string_view path);
 
   /**
-   * Unconditionally panics.
+   * Deprecated
    * 
-   * It used to provide a test data provider, but has been superseded by `create_compiled`.
+   * Use `create_compiled()`.
    */
   static ICU4XDataProvider create_test();
 

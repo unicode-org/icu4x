@@ -173,7 +173,7 @@ impl DataExporter for FilesystemExporter {
         Ok(())
     }
 
-    fn flush_with_fallback(&self, key: DataKey, _: FallbackMode) -> Result<(), DataError> {
+    fn flush(&self, key: DataKey) -> Result<(), DataError> {
         let mut path_buf = self.root.clone().into_os_string();
         write!(&mut path_buf, "/{key}").expect("infallible");
 

@@ -10,6 +10,8 @@
 pub mod aliases;
 pub mod ca;
 pub mod coverage_levels;
+pub mod currencies;
+pub mod currency_data;
 pub mod date_fields;
 pub mod directionality;
 pub mod displaynames;
