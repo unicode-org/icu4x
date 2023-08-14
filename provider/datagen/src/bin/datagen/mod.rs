@@ -153,7 +153,7 @@ fn main() -> eyre::Result<()> {
             path,
             pretty,
             insert_feature_gates,
-            use_meta_crate,
+            use_separate_crates,
         } => {
             #[cfg(not(feature = "provider_baked"))]
             eyre::bail!(
@@ -167,7 +167,7 @@ fn main() -> eyre::Result<()> {
                     let mut options = Options::default();
                     options.pretty = pretty;
                     options.insert_feature_gates = insert_feature_gates;
-                    options.use_separate_crates = !use_meta_crate;
+                    options.use_separate_crates = use_separate_crates;
                     options.overwrite = config.overwrite;
                     options
                 })?;

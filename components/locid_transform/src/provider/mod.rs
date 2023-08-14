@@ -31,7 +31,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_locid_transform;
+    pub mod icu {
+        pub use crate as locid_transform;
+        pub use icu_locid as locid;
+    }
     icu_locid_transform_data::impl_fallback_likelysubtags_v1!(Baked);
     icu_locid_transform_data::impl_fallback_parents_v1!(Baked);
     icu_locid_transform_data::impl_fallback_supplement_co_v1!(Baked);

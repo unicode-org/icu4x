@@ -676,8 +676,8 @@ pub enum Out {
     Module {
         mod_directory: std::path::PathBuf,
         pretty: bool,
-        insert_feature_gates: bool,
         use_separate_crates: bool,
+        insert_feature_gates: bool,
     },
 }
 
@@ -711,8 +711,8 @@ impl core::fmt::Debug for Out {
             Self::Module {
                 mod_directory,
                 pretty,
-                insert_feature_gates,
                 use_separate_crates,
+                insert_feature_gates,
             } => f
                 .debug_struct("Module")
                 .field("mod_directory", mod_directory)

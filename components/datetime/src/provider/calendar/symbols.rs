@@ -21,27 +21,34 @@ use zerovec::{ule::UnvalidatedStr, ZeroMap};
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(GregorianDateSymbolsV1Marker, "datetime/gregory/datesymbols@1"),
     marker(BuddhistDateSymbolsV1Marker, "datetime/buddhist/datesymbols@1"),
     marker(ChineseDateSymbolsV1Marker, "datetime/chinese/datesymbols@1"),
-    marker(JapaneseDateSymbolsV1Marker, "datetime/japanese/datesymbols@1"),
-    marker(JapaneseExtendedDateSymbolsV1Marker, "datetime/japanext/datesymbols@1"),
     marker(CopticDateSymbolsV1Marker, "datetime/coptic/datesymbols@1"),
-    marker(IndianDateSymbolsV1Marker, "datetime/indian/datesymbols@1"),
+    marker(DangiDateSymbolsV1Marker, "datetime/dangi/datesymbols@1"),
     marker(EthiopianDateSymbolsV1Marker, "datetime/ethiopic/datesymbols@1"),
-    marker(RocDateSymbolsV1Marker, "datetime/roc/datesymbols@1"),
-    marker(PersianDateSymbolsV1Marker, "datetime/persian/datesymbols@1"),
+    marker(GregorianDateSymbolsV1Marker, "datetime/gregory/datesymbols@1"),
     marker(HebrewDateSymbolsV1Marker, "datetime/hebrew/datesymbols@1"),
+    marker(IndianDateSymbolsV1Marker, "datetime/indian/datesymbols@1"),
+    marker(
+        IslamicCivilDateSymbolsV1Marker,
+        "datetime/islamic/civil/datesymbols@1"
+    ),
     marker(
         IslamicObservationalDateSymbolsV1Marker,
-        "datetime/islamicobservational/datesymbols@1"
+        "datetime/islamic/observational/datesymbols@1"
     ),
-    marker(IslamicCivilDateSymbolsV1Marker, "datetime/islamiccivil/datesymbols@1"),
-    marker(UmmAlQuraDateSymbolsV1Marker, "datetime/ummalqura/datesymbols@1"),
     marker(
         IslamicTabularDateSymbolsV1Marker,
-        "datetime/islamictabular/datesymbols@1"
-    )
+        "datetime/islamic/tabular/datesymbols@1"
+    ),
+    marker(
+        IslamicUmmAlQuraDateSymbolsV1Marker,
+        "datetime/islamic/ummalqura/datesymbols@1"
+    ),
+    marker(JapaneseDateSymbolsV1Marker, "datetime/japanese/datesymbols@1"),
+    marker(JapaneseExtendedDateSymbolsV1Marker, "datetime/japanext/datesymbols@1"),
+    marker(PersianDateSymbolsV1Marker, "datetime/persian/datesymbols@1"),
+    marker(RocDateSymbolsV1Marker, "datetime/roc/datesymbols@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(

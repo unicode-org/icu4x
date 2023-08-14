@@ -37,7 +37,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_casemap;
+    pub mod icu {
+        pub use crate as casemap;
+        pub use icu_collections as collections;
+    }
     icu_casemap_data::impl_props_casemap_v1!(Baked);
     icu_casemap_data::impl_props_casemap_unfold_v1!(Baked);
 };

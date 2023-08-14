@@ -19,7 +19,6 @@ baked_data/mod.rs: ../bin/icu4x-datagen
 	../bin/icu4x-datagen \
 		--format mod \
 		--keys all \
-		--use-separate-crates \
 		--locales ru \
 		--overwrite \
 		--out baked_data

@@ -80,7 +80,7 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     match calendar {
         "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc"
         | "islamic" | "islamicc" | "umalqura" | "tbla" => &SOLAR_MONTH_CODES[0..12],
-        "coptic" | "ethiopic" | "chinese" => SOLAR_MONTH_CODES,
+        "coptic" | "ethiopic" | "chinese" | "dangi" => SOLAR_MONTH_CODES,
         "hebrew" => HEBREW_MONTH_CODES,
         _ => panic!("Month map unknown for {calendar}"),
     }
@@ -107,6 +107,7 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         ]
         .into_iter()
         .collect(),
+        "dangi" => vec![].into_iter().collect(),
         "indian" => vec![("0".to_string(), tinystr!(16, "saka"))]
             .into_iter()
             .collect(),
