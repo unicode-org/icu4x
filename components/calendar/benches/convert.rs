@@ -86,7 +86,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/islamic/ummalqura",
-        icu::calendar::islamic::UmmAlQura,
+        icu::calendar::islamic::IslamicUmmAlQura,
     );
 
     #[cfg(feature = "bench")]

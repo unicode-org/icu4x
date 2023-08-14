@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __impl_datetime_islamicobservational_datelengths_v1 {
+macro_rules! __impl_datetime_islamic_observational_datelengths_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.65"]
         impl icu_provider::DataProvider<icu_datetime::provider::calendar::IslamicObservationalDateLengthsV1Marker> for $provider {
