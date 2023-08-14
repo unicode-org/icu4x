@@ -25,7 +25,7 @@
 //! // Export something
 //! DataExportDriver::default()
 //!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!   .export(&DatagenProvider::default(), exporter)
+//!   .export(&DatagenProvider::latest_tested(), exporter)
 //!   .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
