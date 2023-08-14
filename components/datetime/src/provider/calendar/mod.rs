@@ -30,10 +30,7 @@ pub use symbols::*;
     marker(GregorianDateLengthsV1Marker, "datetime/gregory/datelengths@1"),
     marker(HebrewDateLengthsV1Marker, "datetime/hebrew/datelengths@1"),
     marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
-    marker(
-        IslamicCivilDateLengthsV1Marker,
-        "datetime/islamic/datelengths@1"
-    ),
+    marker(IslamicDateLengthsV1Marker, "datetime/islamic/datelengths@1"),
     marker(JapaneseDateLengthsV1Marker, "datetime/japanese/datelengths@1"),
     marker(JapaneseExtendedDateLengthsV1Marker, "datetime/japanext/datelengths@1"),
     marker(PersianDateLengthsV1Marker, "datetime/persian/datelengths@1"),
