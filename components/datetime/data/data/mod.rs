@@ -29,14 +29,8 @@ macro_rules! __impl_data_provider {
         impl_datetime_hebrew_datesymbols_v1!($provider);
         impl_datetime_indian_datelengths_v1!($provider);
         impl_datetime_indian_datesymbols_v1!($provider);
-        impl_datetime_islamic_civil_datelengths_v1!($provider);
-        impl_datetime_islamic_civil_datesymbols_v1!($provider);
-        impl_datetime_islamic_observational_datelengths_v1!($provider);
-        impl_datetime_islamic_observational_datesymbols_v1!($provider);
-        impl_datetime_islamic_tabular_datelengths_v1!($provider);
-        impl_datetime_islamic_tabular_datesymbols_v1!($provider);
-        impl_datetime_islamic_ummalqura_datelengths_v1!($provider);
-        impl_datetime_islamic_ummalqura_datesymbols_v1!($provider);
+        impl_datetime_islamic_datelengths_v1!($provider);
+        impl_datetime_islamic_datesymbols_v1!($provider);
         impl_datetime_japanese_datelengths_v1!($provider);
         impl_datetime_japanese_datesymbols_v1!($provider);
         impl_datetime_japanext_datelengths_v1!($provider);
@@ -90,14 +84,8 @@ macro_rules! __impl_any_provider {
                 const DATETIME_HEBREW_DATESYMBOLS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::HebrewDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const DATETIME_INDIAN_DATELENGTHS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IndianDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const DATETIME_INDIAN_DATESYMBOLS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IndianDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DATETIME_ISLAMIC_CIVIL_DATELENGTHS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IslamicCivilDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DATETIME_ISLAMIC_CIVIL_DATESYMBOLS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IslamicCivilDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DATETIME_ISLAMIC_OBSERVATIONAL_DATELENGTHS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IslamicObservationalDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DATETIME_ISLAMIC_OBSERVATIONAL_DATESYMBOLS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IslamicObservationalDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DATETIME_ISLAMIC_TABULAR_DATELENGTHS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IslamicTabularDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DATETIME_ISLAMIC_TABULAR_DATESYMBOLS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IslamicTabularDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DATETIME_ISLAMIC_UMMALQURA_DATELENGTHS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IslamicUmmAlQuraDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DATETIME_ISLAMIC_UMMALQURA_DATESYMBOLS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IslamicUmmAlQuraDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const DATETIME_ISLAMIC_DATELENGTHS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IslamicDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const DATETIME_ISLAMIC_DATESYMBOLS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const DATETIME_JAPANESE_DATELENGTHS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::JapaneseDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const DATETIME_JAPANESE_DATESYMBOLS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::JapaneseDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const DATETIME_JAPANEXT_DATELENGTHS_V1: icu_provider::DataKeyHash = <icu::datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
@@ -132,14 +120,8 @@ macro_rules! __impl_any_provider {
                     DATETIME_HEBREW_DATESYMBOLS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::HebrewDateSymbolsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     DATETIME_INDIAN_DATELENGTHS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IndianDateLengthsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     DATETIME_INDIAN_DATESYMBOLS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IndianDateSymbolsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DATETIME_ISLAMIC_CIVIL_DATELENGTHS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicCivilDateLengthsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DATETIME_ISLAMIC_CIVIL_DATESYMBOLS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicCivilDateSymbolsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DATETIME_ISLAMIC_OBSERVATIONAL_DATELENGTHS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicObservationalDateLengthsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DATETIME_ISLAMIC_OBSERVATIONAL_DATESYMBOLS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicObservationalDateSymbolsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DATETIME_ISLAMIC_TABULAR_DATELENGTHS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicTabularDateLengthsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DATETIME_ISLAMIC_TABULAR_DATESYMBOLS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicTabularDateSymbolsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DATETIME_ISLAMIC_UMMALQURA_DATELENGTHS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicUmmAlQuraDateLengthsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DATETIME_ISLAMIC_UMMALQURA_DATESYMBOLS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicUmmAlQuraDateSymbolsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    DATETIME_ISLAMIC_DATELENGTHS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicDateLengthsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    DATETIME_ISLAMIC_DATESYMBOLS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     DATETIME_JAPANESE_DATELENGTHS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::JapaneseDateLengthsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     DATETIME_JAPANESE_DATESYMBOLS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::JapaneseDateSymbolsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     DATETIME_JAPANEXT_DATELENGTHS_V1 => icu_provider::DataProvider::<icu::datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
