@@ -21,11 +21,10 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvid
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
         self.check_req::<ScriptWithExtensionsPropertyV1Marker>(req)?;
         let scx_data = self
-            .source
             .icuexport()?
             .read_and_parse_toml::<super::uprops_serde::script_extensions::Main>(&format!(
                 "uprops/{}/scx.toml",
-                self.source.trie_type(),
+                self.trie_type(),
             ))?
             .script_extensions
             .get(0)

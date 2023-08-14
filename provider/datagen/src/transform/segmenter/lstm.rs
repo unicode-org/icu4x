@@ -213,7 +213,6 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
             .ok_or(DataErrorKind::MissingLocale.with_req(LstmForWordLineAutoV1Marker::KEY, req))?;
 
         let lstm_data = self
-            .source
             .segmenter_lstm()?
             .read_and_parse_json::<RawLstmData>(&format!("{model}/weights.json"))
             .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
@@ -252,7 +251,6 @@ mod tests {
     fn thai_word_break_with_grapheme_model() {
         let provider = crate::DatagenProvider::latest_tested_offline_subset();
         let raw_data = provider
-            .source
             .segmenter_lstm()
             .unwrap()
             .read_and_parse_json::<RawLstmData>("Thai_graphclust_model4_heavy/weights.json")

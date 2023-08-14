@@ -62,17 +62,18 @@
 
 mod driver;
 mod error;
+mod provider;
 mod registry;
 mod source;
 mod transform;
 
 pub use driver::DatagenDriver;
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
+pub use provider::DatagenProvider;
+#[doc(hidden)] // for CLI serde
+pub use provider::TrieType;
 #[allow(deprecated)] // ugh
 pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
-#[doc(hidden)] // for CLI serde
-pub use source::TrieType;
-pub use source::{CollationHanDatabase, CoverageLevel, SourceData};
 
 #[cfg(feature = "provider_baked")]
 pub mod baked_exporter;
@@ -86,7 +87,6 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
         CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, FallbackMode,
-        SourceData,
     };
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};
@@ -97,7 +97,7 @@ pub mod prelude {
     #[cfg(feature = "legacy_api")]
     #[allow(deprecated)]
     #[doc(hidden)]
-    pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out};
+    pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out, SourceData};
 }
 
 use icu_provider::prelude::*;
@@ -206,36 +206,50 @@ pub enum FallbackMode {
     Hybrid,
 }
 
-/// [`DataProvider`] backed by [`SourceData`]
+/// Specifies the collation Han database to use.
 ///
-/// If `source` does not contain a specific data source, `DataProvider::load` will
-/// error ([`is_missing_cldr_error`](crate::is_missing_cldr_error) /
-/// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)) if the data is
-/// required for that key.
-#[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
-#[derive(Debug, Clone)]
-pub struct DatagenProvider {
-    /// The underlying raw data
-    pub source: SourceData,
+/// Unihan is more precise but significantly increases data size. See
+/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
+pub enum CollationHanDatabase {
+    /// Implicit
+    #[serde(rename = "implicit")]
+    #[default]
+    Implicit,
+    /// Unihan
+    #[serde(rename = "unihan")]
+    Unihan,
 }
 
-impl DatagenProvider {
-    /// Returns a `DatagenProvider` backed by [`SourceData::latest_tested`].
-    ///
-    /// ✨ *Enabled with the `networking` Cargo feature.*
-    #[cfg(feature = "networking")]
-    pub fn latest_tested() -> Self {
-        Self {
-            source: SourceData::latest_tested(),
+impl std::fmt::Display for CollationHanDatabase {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        match self {
+            CollationHanDatabase::Implicit => write!(f, "implicithan"),
+            CollationHanDatabase::Unihan => write!(f, "unihan"),
         }
     }
+}
 
-    #[cfg(test)]
-    pub fn latest_tested_offline_subset() -> Self {
-        Self {
-            source: SourceData::latest_tested_offline_subset(),
-        }
-    }
+/// A language's CLDR coverage level.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
+#[non_exhaustive]
+pub enum CoverageLevel {
+    /// Locales listed as modern coverage targets by the CLDR subcomittee.
+    ///
+    /// This is the highest level of coverage.
+    #[serde(rename = "modern")]
+    Modern,
+    /// Locales listed as moderate coverage targets by the CLDR subcomittee.
+    ///
+    /// This is a medium level of coverage.
+    #[serde(rename = "moderate")]
+    Moderate,
+    /// Locales listed as basic coverage targets by the CLDR subcomittee.
+    ///
+    /// This is the lowest level of coverage.
+    #[serde(rename = "basic")]
+    Basic,
 }
 
 /// Parses a list of human-readable key identifiers and returns a
@@ -344,6 +358,11 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     Ok(result)
 }
 
+#[deprecated(since = "1.3.0", note = "use `DataExportDriver`")]
+#[allow(deprecated)]
+#[cfg(feature = "legacy_api")]
+pub use provider::SourceData;
+
 /// Requires `legacy_api` Cargo feature
 ///
 /// The output format.
@@ -448,7 +467,7 @@ pub fn datagen(
     let exporter = DatagenDriver::new()
         .with_keys(keys.iter().cloned())
         .with_fallback_mode(FallbackMode::Hybrid)
-        .with_collations(source.collations().to_vec());
+        .with_collations(source.collations.clone());
     match locales {
         Some(locales) => exporter
             .with_locales(

@@ -70,7 +70,7 @@ macro_rules! impl_data_provider {
                     .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
                 let resource: &cldr_serde::ca::Resource = self
-                    .source
+
                     .cldr()?
                     .dates(cldr_cal)
                     .read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
@@ -89,7 +89,7 @@ macro_rules! impl_data_provider {
                 // ethiopian.
                 if calendar == value!("ethiopic") {
                     let ethioaa: &cldr_serde::ca::Resource = self
-                        .source
+
                         .cldr()?
                         .dates("ethiopic")
                         .read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
@@ -130,7 +130,7 @@ macro_rules! impl_data_provider {
                     // Filter out non-modern eras
                     if calendar != value!("japanext") {
                         let era_dates: &cldr_serde::japanese::Resource = self
-                            .source
+
                             .cldr()?
                             .core()
                             .read_and_parse("supplemental/calendarData.json")?;
@@ -158,7 +158,7 @@ macro_rules! impl_data_provider {
 
                     // Splice in gregorian data for pre-meiji
                     let greg_resource: &cldr_serde::ca::Resource = self
-                        .source
+
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "ca-gregorian.json")?;
@@ -239,7 +239,7 @@ macro_rules! impl_data_provider {
                 if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     for (cal_value, cldr_cal) in supported_cals() {
                         r.extend(
-                            self.source
+                            self
                                 .cldr()?
                                 .dates(cldr_cal)
                                 .list_langs()?
@@ -259,7 +259,7 @@ macro_rules! impl_data_provider {
                         .get(&value!($calendar))
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
                     r.extend(
-                        self.source
+                        self
                             .cldr()?
                             .dates(cldr_cal)
                             .list_langs()?

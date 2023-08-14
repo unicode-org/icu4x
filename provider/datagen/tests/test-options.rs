@@ -62,13 +62,11 @@ fn test_fallback_options() {
 
     let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
 
-    let provider = DatagenProvider {
-        source: SourceData::default()
-            .with_cldr(data_root.join("cldr"), Default::default())
-            .unwrap()
-            .with_icuexport(data_root.join("icuexport"))
-            .unwrap(),
-    };
+    let provider = DatagenProvider::default()
+        .with_cldr(data_root.join("cldr"))
+        .unwrap()
+        .with_icuexport(data_root.join("icuexport"))
+        .unwrap();
 
     let mut testing_exporter = TestingExporter::default();
 

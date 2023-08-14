@@ -35,46 +35,46 @@ fn main() -> eyre::Result<()> {
 
     let config = matches.as_config()?;
 
-    let mut source = SourceData::default();
-    source = source.with_collation_han_database(config.collation_han_database);
+    let mut provider = DatagenProvider::default();
+    provider = provider.with_collation_han_database(config.collation_han_database);
     if config.trie_type == crate::config::TrieType::Fast {
-        source = source.with_fast_tries();
+        provider = provider.with_fast_tries();
     }
-    source = match config.cldr {
-        config::PathOrTag::Path(path) => source.with_cldr(path, Default::default())?,
+    provider = match config.cldr {
+        config::PathOrTag::Path(path) => provider.with_cldr(path)?,
         #[cfg(feature = "networking")]
         config::PathOrTag::Latest => {
-            source.with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, Default::default())?
+            provider.with_cldr_for_tag(DatagenProvider::LATEST_TESTED_CLDR_TAG)
         }
         #[cfg(feature = "networking")]
-        config::PathOrTag::Tag(tag) => source.with_cldr_for_tag(&tag, Default::default())?,
-        config::PathOrTag::None => source,
+        config::PathOrTag::Tag(tag) => provider.with_cldr_for_tag(&tag),
+        config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
         _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
     };
 
-    source = match config.icu_export {
-        config::PathOrTag::Path(path) => source.with_icuexport(path)?,
+    provider = match config.icu_export {
+        config::PathOrTag::Path(path) => provider.with_icuexport(path)?,
         #[cfg(feature = "networking")]
         config::PathOrTag::Latest => {
-            source.with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)?
+            provider.with_icuexport_for_tag(DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG)
         }
         #[cfg(feature = "networking")]
-        config::PathOrTag::Tag(tag) => source.with_icuexport_for_tag(&tag)?,
-        config::PathOrTag::None => source,
+        config::PathOrTag::Tag(tag) => provider.with_icuexport_for_tag(&tag),
+        config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
         _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
     };
 
-    source = match config.segmenter_lstm {
-        config::PathOrTag::Path(path) => source.with_icuexport(path)?,
+    provider = match config.segmenter_lstm {
+        config::PathOrTag::Path(path) => provider.with_icuexport(path)?,
         #[cfg(feature = "networking")]
         config::PathOrTag::Latest => {
-            source.with_segmenter_lstm_for_tag(SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG)?
+            provider.with_segmenter_lstm_for_tag(DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG)
         }
         #[cfg(feature = "networking")]
-        config::PathOrTag::Tag(tag) => source.with_segmenter_lstm_for_tag(&tag)?,
-        config::PathOrTag::None => source,
+        config::PathOrTag::Tag(tag) => provider.with_segmenter_lstm_for_tag(&tag),
+        config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
         _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
     };
@@ -93,13 +93,15 @@ fn main() -> eyre::Result<()> {
         config::LocaleInclude::None => driver.with_locales([]),
         config::LocaleInclude::Explicit(set) => driver.with_locales(set),
         config::LocaleInclude::CldrSet(levels) => {
-            driver.with_locales(source.locales(&levels.iter().copied().collect::<Vec<_>>())?)
+            driver.with_locales(provider.locales_for_coverage_levels(levels.iter().copied())?)
         }
-        config::LocaleInclude::Recommended => driver.with_locales(source.locales(&[
-            CoverageLevel::Modern,
-            CoverageLevel::Moderate,
-            CoverageLevel::Basic,
-        ])?),
+        config::LocaleInclude::Recommended => {
+            driver.with_locales(provider.locales_for_coverage_levels([
+                CoverageLevel::Modern,
+                CoverageLevel::Moderate,
+                CoverageLevel::Basic,
+            ])?)
+        }
     };
     driver = match config.segmenter_models {
         config::SegmenterModelInclude::None => driver.with_segmenter_models([]),
@@ -148,7 +150,7 @@ fn main() -> eyre::Result<()> {
                         options
                     },
                 )?;
-                Ok(driver.export(&DatagenProvider { source }, exporter)?)
+                Ok(driver.export(&provider, exporter)?)
             }
         }
         config::Export::Blob { ref path } => {
@@ -168,7 +170,7 @@ fn main() -> eyre::Result<()> {
                         )
                     },
                 );
-                Ok(driver.export(&DatagenProvider { source }, exporter)?)
+                Ok(driver.export(&provider, exporter)?)
             }
         }
         config::Export::Baked {
@@ -194,7 +196,7 @@ fn main() -> eyre::Result<()> {
                     options
                 })?;
 
-                Ok(driver.export(&DatagenProvider { source }, exporter)?)
+                Ok(driver.export(&provider, exporter)?)
             }
         }
     }

@@ -28,8 +28,8 @@ fn generate_json_and_verify_postcard() {
 
     let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
 
-    let source = SourceData::default()
-        .with_cldr(data_root.join("cldr"), Default::default())
+    let source = DatagenProvider::default()
+        .with_cldr(data_root.join("cldr"))
         .unwrap()
         .with_icuexport(data_root.join("icuexport"))
         .unwrap();
@@ -61,10 +61,7 @@ fn generate_json_and_verify_postcard() {
             "thaidict".into(),
             "Thai_codepoints_exclusive_model4_heavy".into(),
         ])
-        .export(
-            &DatagenProvider { source },
-            MultiExporter::new(vec![json_out, postcard_out]),
-        )
+        .export(&source, MultiExporter::new(vec![json_out, postcard_out]))
         .unwrap();
 }
 

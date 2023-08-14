@@ -17,11 +17,10 @@ impl DataProvider<CaseMapV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1Marker>, DataError> {
         self.check_req::<CaseMapV1Marker>(req)?;
         let toml = &self
-            .source
             .icuexport()?
             .read_and_parse_toml::<ucase_serde::Main>(&format!(
                 "ucase/{}/ucase.toml",
-                self.source.trie_type()
+                self.trie_type()
             ))?
             .ucase;
 
@@ -57,11 +56,10 @@ impl DataProvider<CaseMapUnfoldV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapUnfoldV1Marker>, DataError> {
         self.check_req::<CaseMapUnfoldV1Marker>(req)?;
         let toml = &self
-            .source
             .icuexport()?
             .read_and_parse_toml::<ucase_serde::Main>(&format!(
                 "ucase/{}/ucase.toml",
-                self.source.trie_type()
+                self.trie_type()
             ))?
             .ucase;
 

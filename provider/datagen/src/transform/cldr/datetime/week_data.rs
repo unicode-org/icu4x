@@ -15,7 +15,6 @@ use std::collections::HashSet;
 impl IterableDataProvider<WeekDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
-            .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/weekData.json")?;
@@ -47,7 +46,6 @@ impl DataProvider<WeekDataV1Marker> for crate::DatagenProvider {
             .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
 
         let week_data: &cldr_serde::week_data::Resource = self
-            .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/weekData.json")?;

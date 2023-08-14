@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::{cldr_serde, source::CoverageLevel};
-use crate::SourceData;
+use crate::transform::cldr::cldr_serde;
+use crate::CoverageLevel;
 use icu_locid::subtags::Language;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::*;
@@ -14,7 +14,7 @@ use std::collections::{BTreeMap, HashSet};
 impl DataProvider<LikelySubtagsV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
         self.check_req::<LikelySubtagsV1Marker>(req)?;
-        let resources = LikelySubtagsResources::try_from_source_data(&self.source)?;
+        let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -35,7 +35,7 @@ impl DataProvider<LikelySubtagsExtendedV1Marker> for crate::DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LikelySubtagsExtendedV1Marker>, DataError> {
         self.check_req::<LikelySubtagsExtendedV1Marker>(req)?;
-        let resources = LikelySubtagsResources::try_from_source_data(&self.source)?;
+        let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -98,29 +98,19 @@ pub(crate) struct LikelySubtagsResources<'a> {
 }
 
 impl<'a> LikelySubtagsResources<'a> {
-    pub fn try_from_source_data(
-        source_data: &'a SourceData,
+    pub fn try_from_cldr_cache(
+        cache: &'a super::super::source::CldrCache,
     ) -> Result<LikelySubtagsResources, DataError> {
-        let likely_subtags: &cldr_serde::likely_subtags::Resource = source_data
-            .cldr()?
+        let likely_subtags: &cldr_serde::likely_subtags::Resource = cache
             .core()
             .read_and_parse("supplemental/likelySubtags.json")?;
-        let coverage_levels: &cldr_serde::coverage_levels::Resource = source_data
-            .cldr()?
-            .core()
-            .read_and_parse("coverageLevels.json")?;
-        Ok(Self::from_resources(likely_subtags, coverage_levels))
-    }
-
-    pub fn from_resources(
-        likely_subtags: &'a cldr_serde::likely_subtags::Resource,
-        coverage_levels: &'a cldr_serde::coverage_levels::Resource,
-    ) -> Self {
+        let coverage_levels: &cldr_serde::coverage_levels::Resource =
+            cache.core().read_and_parse("coverageLevels.json")?;
         let basic_plus_languages = Self::get_basic_plus_languages(coverage_levels);
-        Self {
+        Ok(Self {
             likely_subtags,
             basic_plus_languages,
-        }
+        })
     }
 
     fn get_basic_plus_languages(

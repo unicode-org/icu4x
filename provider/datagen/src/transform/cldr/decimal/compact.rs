@@ -18,7 +18,6 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvi
         let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
@@ -67,7 +66,6 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvid
         let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;

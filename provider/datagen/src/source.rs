@@ -2,11 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::source::CldrCache;
-pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
-use once_cell::sync::OnceCell;
 use std::any::Any;
 use std::collections::{BTreeMap, HashSet};
 use std::fmt::Debug;
@@ -18,320 +15,8 @@ use std::io::Cursor;
 use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
-use std::sync::Arc;
 use std::sync::RwLock;
 use zip::ZipArchive;
-
-/// Bag of options for datagen source data.
-#[derive(Clone, Debug)]
-#[non_exhaustive]
-pub struct SourceData {
-    cldr_paths: Option<Arc<CldrCache>>,
-    icuexport_paths: Option<Arc<SerdeCache>>,
-    icuexport_fallback_paths: Arc<SerdeCache>,
-    segmenter_lstm_paths: Arc<SerdeCache>,
-    trie_type: TrieType,
-    collation_han_database: CollationHanDatabase,
-    #[cfg(feature = "legacy_api")]
-    collations: Vec<String>,
-}
-
-impl Default for SourceData {
-    fn default() -> Self {
-        Self {
-            cldr_paths: None,
-            icuexport_paths: None,
-            icuexport_fallback_paths: Arc::new(SerdeCache::new(
-                AbstractFs::new_icuexport_fallback(),
-            )),
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
-            trie_type: Default::default(),
-            collation_han_database: Default::default(),
-            #[cfg(feature = "legacy_api")]
-            collations: Default::default(),
-        }
-    }
-}
-
-impl SourceData {
-    /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "43.1.0";
-
-    /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-05-02/73.x";
-
-    /// The latest segmentation LSTM model tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
-
-    /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
-    ///
-    /// See [`SourceData::LATEST_TESTED_CLDR_TAG`], [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`], [`SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG`].
-    ///
-    /// ✨ *Enabled with the `networking` Cargo feature.*
-    #[cfg(feature = "networking")]
-    pub fn latest_tested() -> Self {
-        // Singleton so that all instantiations share the same cache.
-        static SINGLETON: OnceCell<SourceData> = OnceCell::new();
-        SINGLETON
-            .get_or_init(|| {
-                Self::default()
-                    .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
-                    .unwrap()
-                    .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
-                    .unwrap()
-                    .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
-                    .unwrap()
-            })
-            .clone()
-    }
-
-    #[cfg(test)]
-    pub fn latest_tested_offline_subset() -> Self {
-        // Singleton so that all instantiations share the same cache.
-        static SINGLETON: OnceCell<SourceData> = OnceCell::new();
-        SINGLETON
-            .get_or_init(|| {
-                // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
-                let data_root =
-                    std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
-                Self::default()
-                    .with_cldr(data_root.join("cldr"), Default::default())
-                    .unwrap()
-                    .with_icuexport(data_root.join("icuexport"))
-                    .unwrap()
-            })
-            .clone()
-    }
-
-    /// Adds CLDR data to this `SourceData`. The root should point to a local
-    /// `cldr-{tag}-json-full.zip` directory or ZIP file (see
-    /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
-    pub fn with_cldr(
-        self,
-        root: PathBuf,
-        _use_default_here: crate::CldrLocaleSubset,
-    ) -> Result<Self, DataError> {
-        let root = AbstractFs::new(root)?;
-        Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(root)))),
-            ..self
-        })
-    }
-
-    /// Adds ICU export data to this `SourceData`. The path should point to a local
-    /// `icuexportdata_{tag}.zip` directory or ZIP file (see [GitHub releases](
-    /// https://github.com/unicode-org/icu/releases)).
-    pub fn with_icuexport(self, root: PathBuf) -> Result<Self, DataError> {
-        Ok(Self {
-            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
-            ..self
-        })
-    }
-
-    /// Adds segmenter LSTM data to this `SourceData`. The path should point to a local
-    /// `models.zip` directory or ZIP file (see [GitHub releases](
-    /// https://github.com/unicode-org/lstm_word_segmentation/releases)).
-    pub fn with_segmenter_lstm(self, root: PathBuf) -> Result<Self, DataError> {
-        Ok(Self {
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new(root)?)),
-            ..self
-        })
-    }
-
-    /// Adds CLDR data to this `SourceData`. The data will be downloaded from GitHub
-    /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
-    ///
-    /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
-    ///
-    /// ✨ *Enabled with the `networking` Cargo feature.*
-    #[cfg(feature = "networking")]
-    pub fn with_cldr_for_tag(
-        self,
-        tag: &str,
-        _use_default_here: crate::CldrLocaleSubset,
-    ) -> Result<Self, DataError> {
-        Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::new_from_url(format!(
-                    "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
-                ))))
-            )),
-            ..self
-        })
-    }
-
-    /// Adds ICU export data to this `SourceData`. The data will be downloaded from GitHub
-    /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
-    ///
-    /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
-    ///
-    /// ✨ *Enabled with the `networking` Cargo feature.*
-    #[cfg(feature = "networking")]
-    pub fn with_icuexport_for_tag(self, mut tag: &str) -> Result<Self, DataError> {
-        if tag == "release-71-1" {
-            tag = "icu4x/2022-08-17/71.x";
-        }
-        Ok(Self {
-            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(
-                format!(
-                    "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
-                    tag.replace('/', "-")
-                ),
-            )))),
-            ..self
-        })
-    }
-
-    /// Adds segmenter LSTM data to this `SourceData`. The data will be downloaded from GitHub
-    /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/lstm_word_segmentation/releases)).
-    ///
-    /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
-    ///
-    /// ✨ *Enabled with the `networking` Cargo feature.*
-    #[cfg(feature = "networking")]
-    pub fn with_segmenter_lstm_for_tag(self, tag: &str) -> Result<Self, DataError> {
-        Ok(Self {
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
-                "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{tag}/models.zip"
-            )))),
-            ..self
-        })
-    }
-
-    #[deprecated(
-        since = "1.1.0",
-        note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
-    )]
-    #[cfg(feature = "networking")]
-    #[doc(hidden)]
-    pub fn with_cldr_latest(
-        self,
-        _use_default_here: crate::CldrLocaleSubset,
-    ) -> Result<Self, DataError> {
-        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
-    }
-
-    #[deprecated(
-        since = "1.1.0",
-        note = "Use `with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)`"
-    )]
-    #[cfg(feature = "networking")]
-    #[doc(hidden)]
-    pub fn with_icuexport_latest(self) -> Result<Self, DataError> {
-        self.with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
-    }
-
-    /// Set this to use tries optimized for speed instead of data size
-    pub fn with_fast_tries(self) -> Self {
-        Self {
-            trie_type: TrieType::Fast,
-            ..self
-        }
-    }
-
-    /// Set the [`CollationHanDatabase`] version.
-    pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
-        Self {
-            collation_han_database,
-            ..self
-        }
-    }
-
-    #[deprecated(note = "use crate::Options", since = "1.3.0")]
-    #[doc(hidden)]
-    #[cfg(feature = "legacy_api")]
-    pub fn with_collations(self, collations: Vec<String>) -> Self {
-        Self { collations, ..self }
-    }
-
-    pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
-        self.cldr_paths
-            .as_deref()
-            .ok_or(crate::error::MISSING_CLDR_ERROR)
-    }
-
-    pub(crate) fn icuexport(&self) -> Result<&SerdeCache, DataError> {
-        self.icuexport_paths
-            .as_deref()
-            .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
-    }
-
-    pub(crate) fn icuexport_fallback(&self) -> &SerdeCache {
-        &self.icuexport_fallback_paths
-    }
-
-    pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
-        Ok(&self.segmenter_lstm_paths)
-    }
-
-    pub(crate) fn trie_type(&self) -> TrieType {
-        self.trie_type
-    }
-
-    pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
-        self.collation_han_database
-    }
-
-    #[cfg(feature = "legacy_api")]
-    pub(crate) fn collations(&self) -> &[String] {
-        &self.collations
-    }
-
-    /// List the locales for the given CLDR coverage levels
-    pub fn locales(
-        &self,
-        levels: &[CoverageLevel],
-    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
-        self.cldr()?.locales(levels)
-    }
-}
-
-/// Specifies the trie type to use.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
-#[doc(hidden)]
-#[non_exhaustive]
-pub enum TrieType {
-    /// Fast tries are optimized for speed
-    #[serde(rename = "fast")]
-    Fast,
-    /// Small tries are optimized for size
-    #[serde(rename = "small")]
-    #[default]
-    Small,
-}
-
-impl std::fmt::Display for TrieType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            TrieType::Fast => write!(f, "fast"),
-            TrieType::Small => write!(f, "small"),
-        }
-    }
-}
-
-/// Specifies the collation Han database to use.
-///
-/// Unihan is more precise but significantly increases data size. See
-/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
-#[non_exhaustive]
-pub enum CollationHanDatabase {
-    /// Implicit
-    #[serde(rename = "implicit")]
-    #[default]
-    Implicit,
-    /// Unihan
-    #[serde(rename = "unihan")]
-    Unihan,
-}
-
-impl std::fmt::Display for CollationHanDatabase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
-        }
-    }
-}
 
 pub(crate) struct SerdeCache {
     root: AbstractFs,
@@ -424,7 +109,7 @@ impl Debug for AbstractFs {
 }
 
 impl AbstractFs {
-    fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
+    pub fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
         if std::fs::metadata(root.as_ref())
             .map_err(|e| DataError::from(e).with_path_context(root.as_ref()))?
             .is_dir()
@@ -441,7 +126,7 @@ impl AbstractFs {
         }
     }
 
-    fn new_icuexport_fallback() -> Self {
+    pub fn new_icuexport_fallback() -> Self {
         Self::Memory(
             [
                 (
@@ -470,7 +155,7 @@ impl AbstractFs {
         )
     }
 
-    fn new_lstm_fallback() -> Self {
+    pub fn new_lstm_fallback() -> Self {
         Self::Memory(
             [
                 (
@@ -513,7 +198,7 @@ impl AbstractFs {
     }
 
     #[cfg(feature = "networking")]
-    fn new_from_url(path: String) -> Self {
+    pub fn new_from_url(path: String) -> Self {
         Self::Zip(RwLock::new(Err(path)))
     }
 

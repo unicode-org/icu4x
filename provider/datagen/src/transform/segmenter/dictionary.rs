@@ -48,12 +48,10 @@ impl crate::DatagenProvider {
         let filename = format!("segmenter/dictionary/{model}.toml");
 
         let toml_data: &SegmenterDictionaryData = self
-            .source
             .icuexport()
             .and_then(|e| e.read_and_parse_toml(&filename))
             .or_else(|e| {
-                self.source
-                    .icuexport_fallback()
+                self.icuexport_fallback()
                     .read_and_parse_toml(&filename)
                     .map_err(|_| e)
             })?;

@@ -585,9 +585,9 @@ impl crate::DatagenProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: match self.source.trie_type() {
-                crate::source::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-                crate::source::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
+            trie_type: match self.trie_type() {
+                crate::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
+                crate::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
             },
         }
         .build();

@@ -77,7 +77,7 @@ macro_rules! make_data_provider {
                     self.check_req::<$marker>(req)?;
                     let langid = req.locale.get_langid();
                     let resource: &cldr_serde::date_fields::Resource = self
-                        .source
+
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "dateFields.json")?;
@@ -105,7 +105,7 @@ macro_rules! make_data_provider {
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     Ok(self
-                        .source
+
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?

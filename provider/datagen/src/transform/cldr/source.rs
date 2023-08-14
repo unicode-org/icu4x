@@ -4,8 +4,8 @@
 
 #![allow(dead_code)] // features
 
-use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use crate::source::SerdeCache;
+use crate::CoverageLevel;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker;
 use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
@@ -15,29 +15,9 @@ use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::ForkByKeyProvider;
 use once_cell::sync::OnceCell;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
-
-/// A language's CLDR coverage level.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
-#[non_exhaustive]
-pub enum CoverageLevel {
-    /// Locales listed as modern coverage targets by the CLDR subcomittee.
-    ///
-    /// This is the highest level of coverage.
-    #[serde(rename = "modern")]
-    Modern,
-    /// Locales listed as moderate coverage targets by the CLDR subcomittee.
-    ///
-    /// This is a medium level of coverage.
-    #[serde(rename = "moderate")]
-    Moderate,
-    /// Locales listed as basic coverage targets by the CLDR subcomittee.
-    ///
-    /// This is the lowest level of coverage.
-    #[serde(rename = "basic")]
-    Basic,
-}
 
 #[derive(Debug)]
 pub(crate) struct CldrCache {
@@ -88,8 +68,9 @@ impl CldrCache {
 
     pub fn locales(
         &self,
-        levels: &[CoverageLevel],
+        levels: impl IntoIterator<Item = CoverageLevel>,
     ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+        let levels = levels.into_iter().collect::<HashSet<_>>();
         Ok(self
             .serde_cache
             .read_and_parse_json::<crate::transform::cldr::cldr_serde::coverage_levels::Resource>(
@@ -117,15 +98,9 @@ impl CldrCache {
     }
 
     fn locale_expander(&self) -> Result<&LocaleExpander, DataError> {
+        use super::locale_canonicalizer::likely_subtags::*;
         self.locale_expander.get_or_try_init(|| {
-            let resources = LikelySubtagsResources::from_resources(
-                self.serde_cache
-                    .read_and_parse_json("cldr-core/supplemental/likelySubtags.json")?,
-                self.serde_cache
-                    .read_and_parse_json("cldr-core/coverageLevels.json")?,
-            );
-            let data =
-                super::locale_canonicalizer::likely_subtags::transform(resources.get_common());
+            let data = transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
             let provider = ForkByKeyProvider::new(
                 AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
                     data.clone().into(),

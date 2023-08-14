@@ -18,7 +18,6 @@ impl DataProvider<AliasesV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         self.check_req::<AliasesV1Marker>(req)?;
         let data: &cldr_serde::aliases::Resource = self
-            .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/aliases.json")?;

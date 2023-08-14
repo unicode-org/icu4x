@@ -21,17 +21,18 @@ use zerovec::ZeroVec;
 
 mod collator_serde;
 
-/// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
-fn has_legacy_swedish_variants(source: &crate::SourceData) -> bool {
-    source
-        .icuexport()
-        .and_then(|i| {
-            i.file_exists(&format!(
-                "collation/{}/sv_reformed_meta.toml",
-                source.collation_han_database(),
-            ))
-        })
-        .unwrap_or(false)
+impl crate::DatagenProvider {
+    /// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
+    fn has_legacy_swedish_variants(&self) -> bool {
+        self.icuexport()
+            .and_then(|i| {
+                i.file_exists(&format!(
+                    "collation/{}/sv_reformed_meta.toml",
+                    self.collation_han_database(),
+                ))
+            })
+            .unwrap_or(false)
+    }
 }
 
 fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -> String {
@@ -111,12 +112,11 @@ macro_rules! collation_provider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
                     let $toml_data: &collator_serde::$serde_struct = self
-                        .source
                         .icuexport()?
                         .read_and_parse_toml(&format!(
                             "collation/{}/{}{}.toml",
-                            self.source.collation_han_database(),
-                            locale_to_file_name(&req.locale, has_legacy_swedish_variants(&self.source)),
+                            self.collation_han_database(),
+                            locale_to_file_name(&req.locale, self.has_legacy_swedish_variants()),
                             $suffix
                         ))
                         .map_err(|e| match e.kind {
@@ -143,11 +143,11 @@ macro_rules! collation_provider {
                         return Ok(vec![Default::default()])
                     }
                     Ok(self
-                        .source
+
                         .icuexport()?
                         .list(&format!(
                             "collation/{}",
-                            self.source.collation_han_database()
+                            self.collation_han_database()
                         ))?
                         .filter_map(|mut file_name| {
                             file_name.truncate(file_name.len() - ".toml".len());
@@ -156,7 +156,7 @@ macro_rules! collation_provider {
                                 file_name
                             })
                         })
-                        .filter_map(|s| file_name_to_locale(&s, has_legacy_swedish_variants(&self.source)))
+                        .filter_map(|s| file_name_to_locale(&s, self.has_legacy_swedish_variants()))
                         .map(DataLocale::from)
                         .collect())
                 }
