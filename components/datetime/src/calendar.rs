@@ -7,8 +7,8 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, hebrew::Hebrew, indian::Indian,
-    islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
+    buddhist::Buddhist, coptic::Coptic, dangi::Dangi, ethiopian::Ethiopian, hebrew::Hebrew,
+    indian::Indian, islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
     islamic::UmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
     Gregorian,
 };
@@ -73,6 +73,12 @@ impl CldrCalendar for Coptic {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("coptic");
     type DateSymbolsV1Marker = CopticDateSymbolsV1Marker;
     type DateLengthsV1Marker = CopticDateLengthsV1Marker;
+}
+
+impl CldrCalendar for Dangi {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("dangi");
+    type DateSymbolsV1Marker = DangiDateSymbolsV1Marker;
+    type DateLengthsV1Marker = DangiDateLengthsV1Marker;
 }
 
 impl CldrCalendar for Indian {
@@ -178,6 +184,7 @@ where
         + DataProvider<JapaneseDateLengthsV1Marker>
         + DataProvider<JapaneseExtendedDateLengthsV1Marker>
         + DataProvider<CopticDateLengthsV1Marker>
+        + DataProvider<DangiDateLengthsV1Marker>
         + DataProvider<IndianDateLengthsV1Marker>
         + DataProvider<IslamicObservationalDateLengthsV1Marker>
         + DataProvider<IslamicCivilDateLengthsV1Marker>
@@ -259,6 +266,11 @@ where
                 .take_payload()?
                 .cast()
         }
+        AnyCalendarKind::Dangi => {
+            DataProvider::<<Dangi as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
         AnyCalendarKind::Ethiopian => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
@@ -296,6 +308,7 @@ where
         + DataProvider<JapaneseDateSymbolsV1Marker>
         + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
         + DataProvider<CopticDateSymbolsV1Marker>
+        + DataProvider<DangiDateSymbolsV1Marker>
         + DataProvider<IndianDateSymbolsV1Marker>
         + DataProvider<IslamicObservationalDateSymbolsV1Marker>
         + DataProvider<IslamicCivilDateSymbolsV1Marker>
@@ -374,6 +387,11 @@ where
         }
         AnyCalendarKind::Coptic => {
             DataProvider::<<Coptic as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+                .take_payload()?
+                .cast()
+        }
+        AnyCalendarKind::Dangi => {
+            DataProvider::<<Dangi as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }

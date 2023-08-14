@@ -64,6 +64,11 @@ enum struct ICU4XAnyCalendarKind {
    * The kind of a Coptic calendar
    */
   Coptic = 8,
+
+  /**
+   * The kind of a Dangi calendar
+   */
+  Dangi = 9,
 };
 class ICU4XLocale;
 #include "ICU4XError.hpp"

@@ -80,7 +80,13 @@ impl CalendarArithmetic for IslamicObservational {
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
 
-        let f_date = Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO);
+        let lunar_phase: f64 =
+            Astronomical::calculate_lunar_phase_at_or_before(RataDie::new(midmonth as i64));
+        let f_date = Astronomical::phasis_on_or_before(
+            RataDie::new(midmonth as i64),
+            CAIRO,
+            Some(lunar_phase),
+        );
 
         Astronomical::month_length(f_date, CAIRO)
     }
@@ -209,23 +215,25 @@ impl IslamicObservational {
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
     // The fixed date algorithms are from
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-    //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6904
+    #[allow(clippy::unwrap_used)]
     fn fixed_from_islamic(i_date: IslamicDateInner) -> RataDie {
         let year = i64::from(i_date.0.year);
         let month = i64::from(i_date.0.month);
         let day = i64::from(i_date.0.day);
-
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
-        // Midmonth can be casted down because we just want a date between the 30 day interval, precision is not important.
-        Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO) + day - 1
+        let lunar_phase =
+            Astronomical::calculate_lunar_phase_at_or_before(RataDie::new(midmonth as i64));
+        Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO, Some(lunar_phase))
+            + day
+            - 1
     }
 
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6920
     #[allow(clippy::unwrap_used)]
     fn islamic_from_fixed(date: RataDie) -> Date<IslamicObservational> {
-        let crescent = Astronomical::phasis_on_or_before(date, CAIRO);
+        let lunar_phase = Astronomical::calculate_lunar_phase_at_or_before(date);
+        let crescent = Astronomical::phasis_on_or_before(date, CAIRO, Some(lunar_phase));
         let elapsed_months =
             (libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH))
                 as i32;
@@ -318,8 +326,13 @@ impl CalendarArithmetic for UmmAlQura {
     fn month_days(year: i32, month: u8) -> u8 {
         let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
             + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
-
-        let f_date = Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), MECCA);
+        let lunar_phase: f64 =
+            Astronomical::calculate_lunar_phase_at_or_before(RataDie::new(midmonth as i64));
+        let f_date = Astronomical::phasis_on_or_before(
+            RataDie::new(midmonth as i64),
+            MECCA,
+            Some(lunar_phase),
+        );
 
         Astronomical::month_length(f_date, MECCA)
     }
@@ -505,7 +518,7 @@ impl UmmAlQura {
     fn saudi_criterion(date: RataDie) -> Option<bool> {
         let sunset = Astronomical::sunset((date - 1).as_moment(), MECCA)?;
         let tee = Location::universal_from_standard(sunset, MECCA);
-        let phase = Astronomical::lunar_phase(tee);
+        let phase = Astronomical::lunar_phase(tee, Astronomical::julian_centuries(tee));
         let moonlag = Astronomical::moonlag((date - 1).as_moment(), MECCA)?;
 
         Some(phase > 0.0 && phase < 90.0 && moonlag > 0.0)

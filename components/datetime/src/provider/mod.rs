@@ -36,6 +36,8 @@ const _: () = {
     icu_datetime_data::impl_datetime_chinese_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_coptic_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_coptic_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_dangi_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_dangi_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_ethiopic_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_ethiopic_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_gregory_datelengths_v1!(Baked);

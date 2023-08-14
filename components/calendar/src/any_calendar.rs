@@ -182,6 +182,7 @@ macro_rules! match_cal_and_date {
             ) => $e,
             (&Self::Hebrew(ref $cal_matched), &AnyDateInner::Hebrew(ref $date_matched)) => $e,
             (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
+            (&Self::Dangi(ref $cal_matched), &AnyDateInner::Dangi(ref $date_matched)) => $e,
             (&Self::Roc(ref $cal_matched), &AnyDateInner::Roc(ref $date_matched)) => $e,
             (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $e,
             _ => panic!(
@@ -317,6 +318,9 @@ impl Calendar for AnyCalendar {
                 c.offset_date(d, offset.cast_unit())
             }
             (Self::Coptic(c), &mut AnyDateInner::Coptic(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            (Self::Dangi(c), &mut AnyDateInner::Dangi(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             (Self::Iso(c), &mut AnyDateInner::Iso(ref mut d)) => {
@@ -474,6 +478,14 @@ impl Calendar for AnyCalendar {
                 Self::Coptic(c2),
                 AnyDateInner::Coptic(d1),
                 AnyDateInner::Coptic(d2),
+            ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
+            (
+                Self::Dangi(c1),
+                Self::Dangi(c2),
+                AnyDateInner::Dangi(d1),
+                AnyDateInner::Dangi(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
@@ -909,6 +921,7 @@ impl AnyCalendarKind {
             b"indian" => AnyCalendarKind::Indian,
             b"chinese" => AnyCalendarKind::Chinese,
             b"coptic" => AnyCalendarKind::Coptic,
+            b"dangi" => AnyCalendarKind::Dangi,
             b"iso" => AnyCalendarKind::Iso,
             b"islamic" => AnyCalendarKind::IslamicObservational,
             b"islamic_civil" => AnyCalendarKind::IslamicCivil,
@@ -945,6 +958,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::Chinese
         } else if *x == value!("coptic") {
             AnyCalendarKind::Coptic
+        } else if *x == value!("dangi") {
+            AnyCalendarKind::Dangi
         } else if *x == value!("iso") {
             AnyCalendarKind::Iso
         } else if *x == value!("islamic") {
@@ -1188,6 +1203,18 @@ impl IntoAnyCalendar for Coptic {
     }
 }
 
+impl IntoAnyCalendar for Dangi {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Dangi(Dangi)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Dangi(Dangi)
+    }
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Dangi(*d)
+    }
+}
+
 impl IntoAnyCalendar for Persian {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Persian(Persian)
@@ -1361,6 +1388,7 @@ mod tests {
     fn test_any_construction() {
         let buddhist = AnyCalendar::new(AnyCalendarKind::Buddhist);
         let coptic = AnyCalendar::new(AnyCalendarKind::Coptic);
+        let dangi = AnyCalendar::new(AnyCalendarKind::Dangi);
         let ethiopian = AnyCalendar::new(AnyCalendarKind::Ethiopian);
         let ethioaa = AnyCalendar::new(AnyCalendarKind::EthiopianAmeteAlem);
         let gregorian = AnyCalendar::new(AnyCalendarKind::Gregorian);
@@ -1378,6 +1406,7 @@ mod tests {
         let roc = AnyCalendar::new(AnyCalendarKind::Roc);
         let buddhist = Ref(&buddhist);
         let coptic = Ref(&coptic);
+        let dangi = Ref(&dangi);
         let ethiopian = Ref(&ethiopian);
         let ethioaa = Ref(&ethioaa);
         let gregorian = Ref(&gregorian);
@@ -1495,6 +1524,18 @@ mod tests {
             "M13",
             1,
             CalendarError::UnknownMonthCode("M13".parse().unwrap(), "Chinese"),
+        );
+
+        single_test_roundtrip(dangi, "dangi", 400, "M02", 5);
+        single_test_roundtrip(dangi, "dangi", 4660, "M08", 29);
+        single_test_roundtrip(dangi, "dangi", -1300, "M11", 12);
+        single_test_error(
+            dangi,
+            "dangi",
+            10393,
+            "M00L",
+            1,
+            CalendarError::UnknownMonthCode("M00L".parse().unwrap(), "Dangi"),
         );
 
         single_test_roundtrip(japanese, "reiwa", 3, "M03", 1);
