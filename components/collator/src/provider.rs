@@ -45,7 +45,11 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_collator;
+    pub mod icu {
+        pub use crate as collator;
+        pub use icu_collections as collections;
+        pub use icu_locid_transform as locid_transform;
+    }
     icu_collator_data::impl_collator_data_v1!(Baked);
     icu_collator_data::impl_collator_dia_v1!(Baked);
     icu_collator_data::impl_collator_jamo_v1!(Baked);

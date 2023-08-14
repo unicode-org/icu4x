@@ -33,7 +33,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_segmenter;
+    pub mod icu {
+        pub use crate as segmenter;
+        pub use icu_collections as collections;
+    }
     icu_segmenter_data::impl_segmenter_dictionary_w_auto_v1!(Baked);
     icu_segmenter_data::impl_segmenter_dictionary_wl_ext_v1!(Baked);
     icu_segmenter_data::impl_segmenter_grapheme_v1!(Baked);
