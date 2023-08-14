@@ -90,7 +90,7 @@ macro_rules! impl_data_provider {
                         .list_langs()?
                         .map(DataLocale::from)
                         .collect())
-}
+                    }
                 }
             }
         )+

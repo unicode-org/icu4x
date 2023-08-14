@@ -20,6 +20,6 @@
             "pretty": true
         }
     },
-    "fallback": "Legacy",
+    "fallback": "Hybrid",
     "overwrite": true
 }

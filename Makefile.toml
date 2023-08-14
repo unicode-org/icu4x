@@ -195,9 +195,6 @@ dependencies = [
 ]
 
 [tasks.ci-job-clippy]
-# Note: ci-job-clippy is not actually invoked by CI and instead exists
-# for symmetry and predictability. CI instead uses a special GitHub action
-# that allows it to integrate better with GitHub annotations
 description = "Run all tests for the CI 'clippy' job"
 category = "CI"
 dependencies = [
