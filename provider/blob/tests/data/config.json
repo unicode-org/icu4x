@@ -6,6 +6,9 @@
   },
   "fallback": "Hybrid",
   "locales": "All",
+  "cldr": "None",
+  "icu_export": "None",
+  "segmenter_lstm": "None",
   "export": {
     "Blob": {
       "path": "hello_world.postcard"
