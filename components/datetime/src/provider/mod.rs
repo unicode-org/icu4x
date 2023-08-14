@@ -26,7 +26,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_datetime;
+    pub mod icu {
+        pub use crate as datetime;
+        pub use icu_locid_transform as locid_transform;
+    }
     icu_datetime_data::impl_datetime_buddhist_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_buddhist_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_chinese_datelengths_v1!(Baked);
@@ -39,24 +42,24 @@ const _: () = {
     icu_datetime_data::impl_datetime_ethiopic_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_gregory_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_gregory_datesymbols_v1!(Baked);
-    icu_datetime_data::impl_datetime_indian_datelengths_v1!(Baked);
-    icu_datetime_data::impl_datetime_indian_datesymbols_v1!(Baked);
-    icu_datetime_data::impl_datetime_islamicobservational_datelengths_v1!(Baked);
-    icu_datetime_data::impl_datetime_islamicobservational_datesymbols_v1!(Baked);
-    icu_datetime_data::impl_datetime_islamiccivil_datelengths_v1!(Baked);
-    icu_datetime_data::impl_datetime_islamiccivil_datesymbols_v1!(Baked);
-    icu_datetime_data::impl_datetime_ummalqura_datelengths_v1!(Baked);
-    icu_datetime_data::impl_datetime_ummalqura_datesymbols_v1!(Baked);
-    icu_datetime_data::impl_datetime_islamictabular_datelengths_v1!(Baked);
-    icu_datetime_data::impl_datetime_islamictabular_datesymbols_v1!(Baked);
-    icu_datetime_data::impl_datetime_persian_datelengths_v1!(Baked);
-    icu_datetime_data::impl_datetime_persian_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_hebrew_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_hebrew_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_indian_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_indian_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamic_civil_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamic_civil_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamic_observational_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamic_observational_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamic_tabular_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamic_tabular_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamic_ummalqura_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_islamic_ummalqura_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_japanese_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_japanese_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_japanext_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_japanext_datesymbols_v1!(Baked);
+    icu_datetime_data::impl_datetime_persian_datelengths_v1!(Baked);
+    icu_datetime_data::impl_datetime_persian_datesymbols_v1!(Baked);
     icu_datetime_data::impl_datetime_roc_datelengths_v1!(Baked);
     icu_datetime_data::impl_datetime_roc_datesymbols_v1!(Baked);
     #[cfg(feature = "experimental")]

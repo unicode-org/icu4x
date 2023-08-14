@@ -159,7 +159,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/ummalqura",
         &fxs,
-        icu::calendar::islamic::UmmAlQura,
+        icu::calendar::islamic::IslamicUmmAlQura,
         |y, m, d| Date::try_new_ummalqura_date(y, m, d).unwrap(),
     );
 

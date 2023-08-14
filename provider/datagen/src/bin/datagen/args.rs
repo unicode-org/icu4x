@@ -220,7 +220,7 @@ pub struct Cli {
     )]
     output: Option<PathBuf>,
 
-    #[arg(long)]
+    #[arg(long, hide = true)]
     #[arg(
         help = "--format=mod only: insert feature gates for individual `icu_*` crates. Requires --use-separate-crates"
     )]
@@ -476,7 +476,7 @@ impl Cli {
                     },
                     pretty: self.pretty,
                     insert_feature_gates: self.insert_feature_gates,
-                    use_meta_crate: !self.use_separate_crates,
+                    use_separate_crates: self.use_separate_crates,
                 })
             }
         }

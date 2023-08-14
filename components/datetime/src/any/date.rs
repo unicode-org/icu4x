@@ -166,38 +166,38 @@ impl DateFormatter {
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
-            + DataProvider<GregorianDateLengthsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
-            + DataProvider<ChineseDateLengthsV1Marker>
-            + DataProvider<JapaneseDateLengthsV1Marker>
-            + DataProvider<JapaneseExtendedDateLengthsV1Marker>
-            + DataProvider<CopticDateLengthsV1Marker>
-            + DataProvider<DangiDateLengthsV1Marker>
-            + DataProvider<IndianDateLengthsV1Marker>
-            + DataProvider<IslamicObservationalDateLengthsV1Marker>
-            + DataProvider<IslamicCivilDateLengthsV1Marker>
-            + DataProvider<UmmAlQuraDateLengthsV1Marker>
-            + DataProvider<IslamicTabularDateLengthsV1Marker>
-            + DataProvider<PersianDateLengthsV1Marker>
-            + DataProvider<HebrewDateLengthsV1Marker>
-            + DataProvider<EthiopianDateLengthsV1Marker>
-            + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<ChineseDateSymbolsV1Marker>
-            + DataProvider<JapaneseDateSymbolsV1Marker>
-            + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
+            + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<DangiDateLengthsV1Marker>
             + DataProvider<DangiDateSymbolsV1Marker>
-            + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<IslamicObservationalDateSymbolsV1Marker>
-            + DataProvider<IslamicCivilDateSymbolsV1Marker>
-            + DataProvider<UmmAlQuraDateSymbolsV1Marker>
-            + DataProvider<IslamicTabularDateSymbolsV1Marker>
-            + DataProvider<PersianDateSymbolsV1Marker>
-            + DataProvider<HebrewDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<EthiopianDateSymbolsV1Marker>
+            + DataProvider<GregorianDateLengthsV1Marker>
+            + DataProvider<GregorianDateSymbolsV1Marker>
+            + DataProvider<HebrewDateLengthsV1Marker>
+            + DataProvider<HebrewDateSymbolsV1Marker>
+            + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<IslamicCivilDateLengthsV1Marker>
+            + DataProvider<IslamicCivilDateSymbolsV1Marker>
+            + DataProvider<IslamicObservationalDateLengthsV1Marker>
+            + DataProvider<IslamicObservationalDateSymbolsV1Marker>
+            + DataProvider<IslamicTabularDateLengthsV1Marker>
+            + DataProvider<IslamicTabularDateSymbolsV1Marker>
+            + DataProvider<IslamicUmmAlQuraDateLengthsV1Marker>
+            + DataProvider<IslamicUmmAlQuraDateSymbolsV1Marker>
+            + DataProvider<JapaneseDateLengthsV1Marker>
+            + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapaneseExtendedDateLengthsV1Marker>
+            + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
+            + DataProvider<PersianDateLengthsV1Marker>
+            + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<RocDateLengthsV1Marker>
             + DataProvider<RocDateSymbolsV1Marker>
             + ?Sized,

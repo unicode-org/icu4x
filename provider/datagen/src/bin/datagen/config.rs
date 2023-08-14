@@ -115,9 +115,10 @@ pub enum Export {
         #[serde(default, skip_serializing_if = "is_default")]
         pretty: bool,
         #[serde(default, skip_serializing_if = "is_default")]
+        use_separate_crates: bool,
+        #[doc(hidden)]
+        #[serde(default, skip_serializing, skip_deserializing)]
         insert_feature_gates: bool,
-        #[serde(default, skip_serializing_if = "is_default")]
-        use_meta_crate: bool,
     },
 }
 
