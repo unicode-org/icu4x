@@ -38,17 +38,17 @@ macro_rules! __impl_any_provider {
         #[clippy::msrv = "1.65"]
         impl icu_provider::AnyProvider for $provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                const DISPLAYNAMES_LANGUAGES_V1: icu_provider::DataKeyHash = <icu_displaynames::provider::LanguageDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DISPLAYNAMES_LOCALES_V1: icu_provider::DataKeyHash = <icu_displaynames::provider::LocaleDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DISPLAYNAMES_REGIONS_V1: icu_provider::DataKeyHash = <icu_displaynames::provider::RegionDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DISPLAYNAMES_SCRIPTS_V1: icu_provider::DataKeyHash = <icu_displaynames::provider::ScriptDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DISPLAYNAMES_VARIANTS_V1: icu_provider::DataKeyHash = <icu_displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const DISPLAYNAMES_LANGUAGES_V1: icu_provider::DataKeyHash = <icu::displaynames::provider::LanguageDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const DISPLAYNAMES_LOCALES_V1: icu_provider::DataKeyHash = <icu::displaynames::provider::LocaleDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const DISPLAYNAMES_REGIONS_V1: icu_provider::DataKeyHash = <icu::displaynames::provider::RegionDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const DISPLAYNAMES_SCRIPTS_V1: icu_provider::DataKeyHash = <icu::displaynames::provider::ScriptDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const DISPLAYNAMES_VARIANTS_V1: icu_provider::DataKeyHash = <icu::displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    DISPLAYNAMES_LANGUAGES_V1 => icu_provider::DataProvider::<icu_displaynames::provider::LanguageDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DISPLAYNAMES_LOCALES_V1 => icu_provider::DataProvider::<icu_displaynames::provider::LocaleDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DISPLAYNAMES_REGIONS_V1 => icu_provider::DataProvider::<icu_displaynames::provider::RegionDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DISPLAYNAMES_SCRIPTS_V1 => icu_provider::DataProvider::<icu_displaynames::provider::ScriptDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DISPLAYNAMES_VARIANTS_V1 => icu_provider::DataProvider::<icu_displaynames::provider::VariantDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    DISPLAYNAMES_LANGUAGES_V1 => icu_provider::DataProvider::<icu::displaynames::provider::LanguageDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    DISPLAYNAMES_LOCALES_V1 => icu_provider::DataProvider::<icu::displaynames::provider::LocaleDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    DISPLAYNAMES_REGIONS_V1 => icu_provider::DataProvider::<icu::displaynames::provider::RegionDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    DISPLAYNAMES_SCRIPTS_V1 => icu_provider::DataProvider::<icu::displaynames::provider::ScriptDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    DISPLAYNAMES_VARIANTS_V1 => icu_provider::DataProvider::<icu::displaynames::provider::VariantDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }

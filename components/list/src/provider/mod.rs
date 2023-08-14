@@ -30,7 +30,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_list;
+    pub mod icu {
+        pub use crate as list;
+        pub use icu_locid_transform as locid_transform;
+    }
     icu_list_data::impl_list_and_v1!(Baked);
     icu_list_data::impl_list_or_v1!(Baked);
     icu_list_data::impl_list_unit_v1!(Baked);

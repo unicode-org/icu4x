@@ -34,9 +34,9 @@ macro_rules! __impl_any_provider {
         #[clippy::msrv = "1.65"]
         impl icu_provider::AnyProvider for $provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                const DECIMAL_SYMBOLS_V1: icu_provider::DataKeyHash = <icu_decimal::provider::DecimalSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const DECIMAL_SYMBOLS_V1: icu_provider::DataKeyHash = <icu::decimal::provider::DecimalSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    DECIMAL_SYMBOLS_V1 => icu_provider::DataProvider::<icu_decimal::provider::DecimalSymbolsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    DECIMAL_SYMBOLS_V1 => icu_provider::DataProvider::<icu::decimal::provider::DecimalSymbolsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }
