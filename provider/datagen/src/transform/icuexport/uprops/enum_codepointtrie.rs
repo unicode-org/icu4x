@@ -524,7 +524,7 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
-        let provider = crate::DatagenProvider::latest_tested();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let payload: DataPayload<GeneralCategoryV1Marker> = provider
             .load(Default::default())
@@ -542,7 +542,7 @@ mod tests {
 
     #[test]
     fn test_script() {
-        let provider = crate::DatagenProvider::latest_tested();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let payload: DataPayload<ScriptV1Marker> = provider
             .load(Default::default())

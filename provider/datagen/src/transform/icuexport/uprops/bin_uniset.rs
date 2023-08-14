@@ -79,7 +79,7 @@ fn test_basic() {
     use icu_properties::provider::BasicEmojiV1Marker;
     use icu_properties::provider::PropertyUnicodeSetV1;
 
-    let provider = crate::DatagenProvider::latest_tested();
+    let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
     let payload: DataPayload<BasicEmojiV1Marker> = provider
         .load(Default::default())

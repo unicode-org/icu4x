@@ -20,6 +20,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::sync::RwLock;
 use zip::ZipArchive;
+use once_cell::sync::OnceCell;
 
 /// Bag of options for datagen source data.
 #[derive(Clone, Debug)]
@@ -67,35 +68,37 @@ impl SourceData {
     /// See [`SourceData::LATEST_TESTED_CLDR_TAG`], [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`], [`SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG`].
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
-    #[cfg(any(feature = "networking", test))]
+    #[cfg(feature = "networking")]
     pub fn latest_tested() -> Self {
-        use once_cell::sync::OnceCell;
-
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: OnceCell<SourceData> = OnceCell::new();
         SINGLETON
             .get_or_init(|| {
-                #[cfg(not(test))]
-                {
-                    Self::default()
-                        .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
-                        .unwrap()
-                        .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
-                        .unwrap()
-                        .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
-                        .unwrap()
-                }
-                #[cfg(test)]
-                {
-                    // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
-                    let data_root =
-                        std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
-                    SourceData::default()
-                        .with_cldr(data_root.join("cldr"), Default::default())
-                        .unwrap()
-                        .with_icuexport(data_root.join("icuexport"))
-                        .unwrap()
-                }
+                Self::default()
+                    .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
+                    .unwrap()
+                    .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
+                    .unwrap()
+                    .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+                    .unwrap()
+            })
+            .clone()
+    }
+
+    #[cfg(test)]
+    pub fn latest_tested_offline_subset() -> Self {
+        // Singleton so that all instantiations share the same cache.
+        static SINGLETON: OnceCell<SourceData> = OnceCell::new();
+        SINGLETON
+            .get_or_init(|| {
+                // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
+                let data_root =
+                    std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
+                Self::default()
+                    .with_cldr(data_root.join("cldr"), Default::default())
+                    .unwrap()
+                    .with_icuexport(data_root.join("icuexport"))
+                    .unwrap()
             })
             .clone()
     }

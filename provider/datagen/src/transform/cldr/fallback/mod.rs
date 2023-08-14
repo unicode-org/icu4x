@@ -205,7 +205,7 @@ fn test_basic() {
         subtags::{language, region, script},
     };
 
-    let provider = crate::DatagenProvider::latest_tested();
+    let provider = crate::DatagenProvider::latest_tested_offline_subset();
     let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider
         .load(Default::default())
         .unwrap()

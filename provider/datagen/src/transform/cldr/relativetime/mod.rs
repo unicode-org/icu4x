@@ -197,7 +197,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::latest_tested();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en").into(),
@@ -217,7 +217,7 @@ mod tests {
 
     #[test]
     fn test_singular_sub_pattern() {
-        let provider = crate::DatagenProvider::latest_tested();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
         let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("ar").into(),

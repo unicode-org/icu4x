@@ -126,7 +126,7 @@ mod tests {
 
     #[test]
     fn test_bidi_data_provider() {
-        let provider = crate::DatagenProvider::latest_tested();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let payload: DataPayload<BidiAuxiliaryPropertiesV1Marker> = provider
             .load(Default::default())

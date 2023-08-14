@@ -43,7 +43,7 @@ impl DatagenProvider {
 #[test]
 fn test_missing_locale() {
     use icu_locid::langid;
-    let provider = DatagenProvider::latest_tested();
+    let provider = DatagenProvider::latest_tested_offline_subset();
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {

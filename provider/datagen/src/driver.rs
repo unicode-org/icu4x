@@ -528,7 +528,7 @@ fn test_collation_filtering() {
             .with_locales([cas.language.clone()])
             .with_fallback_mode(FallbackMode::Preresolved)
             .select_locales_for_key(
-                &crate::DatagenProvider::latest_tested(),
+                &crate::DatagenProvider::latest_tested_offline_subset(),
                 icu_collator::provider::CollationDataV1Marker::KEY,
                 FallbackMode::Preresolved,
                 &once_cell::sync::Lazy::new(|| unreachable!()),

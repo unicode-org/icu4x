@@ -223,10 +223,17 @@ impl DatagenProvider {
     /// Returns a `DatagenProvider` backed by [`SourceData::latest_tested`].
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
-    #[cfg(any(feature = "networking", test))]
+    #[cfg(feature = "networking")]
     pub fn latest_tested() -> Self {
         Self {
             source: SourceData::latest_tested(),
+        }
+    }
+
+    #[cfg(test)]
+    pub fn latest_tested_offline_subset() -> Self {
+        Self {
+            source: SourceData::latest_tested_offline_subset(),
         }
     }
 }

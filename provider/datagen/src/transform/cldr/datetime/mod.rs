@@ -446,7 +446,7 @@ mod test {
 
     #[test]
     fn test_basic_patterns() {
-        let provider = crate::DatagenProvider::latest_tested();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
@@ -463,7 +463,7 @@ mod test {
 
     #[test]
     fn test_with_numbering_system() {
-        let provider = crate::DatagenProvider::latest_tested();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let locale: Locale = locale!("haw");
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
@@ -486,7 +486,7 @@ mod test {
         use icu_plurals::PluralCategory;
         use std::convert::TryFrom;
 
-        let provider = crate::DatagenProvider::latest_tested();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
@@ -530,7 +530,7 @@ mod test {
     fn test_basic_symbols() {
         use icu_calendar::types::MonthCode;
         use tinystr::tinystr;
-        let provider = crate::DatagenProvider::latest_tested();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
@@ -561,7 +561,7 @@ mod test {
 
     #[test]
     fn unalias_contexts() {
-        let provider = crate::DatagenProvider::latest_tested();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
