@@ -6,6 +6,7 @@ use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
+use once_cell::sync::OnceCell;
 use std::any::Any;
 use std::collections::{BTreeMap, HashSet};
 use std::fmt::Debug;
@@ -20,7 +21,6 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::sync::RwLock;
 use zip::ZipArchive;
-use once_cell::sync::OnceCell;
 
 /// Bag of options for datagen source data.
 #[derive(Clone, Debug)]
