@@ -932,7 +932,7 @@ mod tests {
             4,
             3,
             1,
-            CalendarError::UnknownEra("hakuho-672".parse().unwrap(), "Japanese (Modern eras only)"),
+            CalendarError::UnknownEra("hakuho-672".parse().unwrap(), "Japanese"),
         );
 
         // handle bce/ce

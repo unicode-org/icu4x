@@ -1033,7 +1033,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::IslamicUmmAlQura => IslamicUmmAlQura.debug_name(),
             AnyCalendarKind::Iso => Iso.debug_name(),
             AnyCalendarKind::Japanese => Japanese::DEBUG_NAME,
-            AnyCalendarKind::JapaneseExtended => Japanese::DEBUG_NAME,
+            AnyCalendarKind::JapaneseExtended => JapaneseExtended::DEBUG_NAME,
             AnyCalendarKind::Persian => Persian.debug_name(),
             AnyCalendarKind::Roc => Roc.debug_name(),
         }
