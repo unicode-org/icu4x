@@ -18,14 +18,10 @@
 //! let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 //!
 //! // Export something
-//! DatagenProvider::default()
-//!     .export({
-//!             let mut options = options::Options::default();
-//!             options.keys = [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect();
-//!             options
-//!         },
-//!         exporter
-//!     ).unwrap();
+//! DataExportDriver::default()
+//!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+//!   .export(&DatagenProvider::default(), exporter)
+//!   .unwrap();
 //!
 //! // communicate the blob to the client application (network, disk, etc.)
 //! ```

@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::options;
 use icu_locid::{langid, locale};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -35,23 +34,6 @@ pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static 
         id if id == langid!("my") => Some("burmesedict"),
         id if id == langid!("th") => Some("thaidict"),
         _ => None,
-    }
-}
-
-pub(crate) fn filter_data_locales(
-    locales: HashSet<DataLocale>,
-    segmenter_models: &options::SegmenterModelInclude,
-) -> HashSet<DataLocale> {
-    match segmenter_models {
-        options::SegmenterModelInclude::Recommended => locales,
-        options::SegmenterModelInclude::None => Default::default(),
-        options::SegmenterModelInclude::Explicit(list) => locales
-            .into_iter()
-            .filter(|locale| {
-                list.iter()
-                    .any(|x| Some(x.as_str()) == data_locale_to_model_name(locale))
-            })
-            .collect(),
     }
 }
 

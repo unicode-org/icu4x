@@ -291,7 +291,7 @@ fn test_basic() {
     use icu_locid::locale;
     use icu_singlenumberformatter::provider::*;
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::latest_tested();
 
     let en: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {

@@ -10,16 +10,13 @@
             "normalizer/uts46d@1"
         ]
     },
+    "fallback": "Runtime",
     "locales": "Recommended",
-    "cldr": "Latest",
-    "icu_export": "Latest",
-    "segmenter_lstm": "Latest",
     "export": {
         "Baked": {
             "path": "data",
             "pretty": true
         }
     },
-    "fallback": "Runtime",
     "overwrite": true
 }

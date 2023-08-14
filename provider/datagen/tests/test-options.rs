@@ -6,11 +6,9 @@ use std::collections::{BTreeMap, HashSet};
 use std::path::Path;
 
 use elsa::sync::FrozenMap;
-use icu_datagen::options::{FallbackMode, LocaleInclude, Options};
-use icu_datagen::{DatagenProvider, SourceData};
+use icu_datagen::prelude::*;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::{langid, LanguageIdentifier};
-use icu_provider::datagen::{DataExporter, ExportMarker};
+use icu_provider::datagen::ExportMarker;
 use icu_provider::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
 use writeable::Writeable;
@@ -64,18 +62,17 @@ fn test_fallback_options() {
 
     let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
 
-    let source = SourceData::offline()
-        .with_cldr(data_root.join("cldr"), Default::default())
-        .unwrap()
-        .with_icuexport(data_root.join("icuexport"))
-        .unwrap();
-
-    let decimal_symbols_key: HashSet<DataKey> = [DecimalSymbolsV1Marker::KEY].into_iter().collect();
+    let provider = DatagenProvider {
+        source: SourceData::default()
+            .with_cldr(data_root.join("cldr"), Default::default())
+            .unwrap()
+            .with_icuexport(data_root.join("icuexport"))
+            .unwrap(),
+    };
 
     let mut testing_exporter = TestingExporter::default();
 
-    let mut options = Options::default();
-    options.keys = decimal_symbols_key.clone();
+    let driver = DataExportDriver::default().with_keys([DecimalSymbolsV1Marker::KEY]);
 
     let explicit_locales: HashSet<LanguageIdentifier> = [
         langid!("arc"), // Aramaic, not in CLDR
@@ -91,10 +88,11 @@ fn test_fallback_options() {
     //
     // All+Hybrid
     //
-    options.locales = LocaleInclude::All;
-    options.fallback = FallbackMode::Hybrid;
-    DatagenProvider::new(source.clone())
-        .export(options.clone(), &mut testing_exporter)
+    driver
+        .clone()
+        .with_all_locales()
+        .with_fallback_mode(FallbackMode::Hybrid)
+        .export(&provider, &mut testing_exporter)
         .unwrap();
     let data_all_hybrid = testing_exporter.take_map_and_reset();
 
@@ -133,9 +131,11 @@ fn test_fallback_options() {
     // All+Runtime
     //
 
-    options.fallback = FallbackMode::RuntimeManual;
-    DatagenProvider::new(source.clone())
-        .export(options.clone(), &mut testing_exporter)
+    driver
+        .clone()
+        .with_all_locales()
+        .with_fallback_mode(FallbackMode::RuntimeManual)
+        .export(&provider, &mut testing_exporter)
         .unwrap();
     let data_all_runtime = testing_exporter.take_map_and_reset();
 
@@ -207,10 +207,11 @@ fn test_fallback_options() {
     // Explicit+Hybrid
     //
 
-    options.locales = LocaleInclude::Explicit(explicit_locales.clone());
-    options.fallback = FallbackMode::Hybrid;
-    DatagenProvider::new(source.clone())
-        .export(options.clone(), &mut testing_exporter)
+    driver
+        .clone()
+        .with_locales(explicit_locales.clone())
+        .with_fallback_mode(FallbackMode::Hybrid)
+        .export(&provider, &mut testing_exporter)
         .unwrap();
     let data_explicit_hybrid = testing_exporter.take_map_and_reset();
 
@@ -242,10 +243,11 @@ fn test_fallback_options() {
     // Explicit+Runtime
     //
 
-    options.locales = LocaleInclude::Explicit(explicit_locales.clone());
-    options.fallback = FallbackMode::RuntimeManual;
-    DatagenProvider::new(source.clone())
-        .export(options.clone(), &mut testing_exporter)
+    driver
+        .clone()
+        .with_locales(explicit_locales.clone())
+        .with_fallback_mode(FallbackMode::RuntimeManual)
+        .export(&provider, &mut testing_exporter)
         .unwrap();
     let data_explicit_runtime = testing_exporter.take_map_and_reset();
 
@@ -278,10 +280,11 @@ fn test_fallback_options() {
     // Explicit+Preresolved
     //
 
-    options.locales = LocaleInclude::Explicit(explicit_locales.clone());
-    options.fallback = FallbackMode::Preresolved;
-    DatagenProvider { source }
-        .export(options, &mut testing_exporter)
+    driver
+        .clone()
+        .with_locales(explicit_locales.clone())
+        .with_fallback_mode(FallbackMode::Preresolved)
+        .export(&provider, &mut testing_exporter)
         .unwrap();
     let data_explicit_preresolved = testing_exporter.take_map_and_reset();
 

@@ -4,6 +4,7 @@
         "core/helloworld@1"
       ]
     },
+    "fallback": "Hybrid",
     "locales": "All",
     "cldr": "None",
     "icu_export": "None",
@@ -15,4 +16,4 @@
       }
     },
     "overwrite": true
-  }
+}

@@ -20,7 +20,8 @@ pub(crate) fn get_enumerated_prop<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::enumerated::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.trie_type, key
+            source.trie_type(),
+            key
         ))?
         .enum_property
         .get(0)
@@ -379,7 +380,7 @@ fn get_mask_prop<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.trie_type,
+            source.trie_type(),
             key
         ))?
         .mask_property
@@ -523,7 +524,7 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let payload: DataPayload<GeneralCategoryV1Marker> = provider
             .load(Default::default())
@@ -541,7 +542,7 @@ mod tests {
 
     #[test]
     fn test_script() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let payload: DataPayload<ScriptV1Marker> = provider
             .load(Default::default())

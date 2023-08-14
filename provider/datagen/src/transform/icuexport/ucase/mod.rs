@@ -21,7 +21,7 @@ impl DataProvider<CaseMapV1Marker> for crate::DatagenProvider {
             .icuexport()?
             .read_and_parse_toml::<ucase_serde::Main>(&format!(
                 "ucase/{}/ucase.toml",
-                self.source.trie_type
+                self.source.trie_type()
             ))?
             .ucase;
 
@@ -61,7 +61,7 @@ impl DataProvider<CaseMapUnfoldV1Marker> for crate::DatagenProvider {
             .icuexport()?
             .read_and_parse_toml::<ucase_serde::Main>(&format!(
                 "ucase/{}/ucase.toml",
-                self.source.trie_type
+                self.source.trie_type()
             ))?
             .ucase;
 

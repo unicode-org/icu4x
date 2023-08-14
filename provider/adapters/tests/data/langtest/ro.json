@@ -4,6 +4,7 @@
         "core/helloworld@1"
       ]
     },
+    "fallback": "Preresolved",
     "locales": {
       "Explicit": [
         "ro"
@@ -18,6 +19,5 @@
         "syntax": "Json"
       }
     },
-    "fallback": "Preresolved",
     "overwrite": true
-  }
+}

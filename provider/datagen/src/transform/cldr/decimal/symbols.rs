@@ -96,7 +96,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 fn test_basic() {
     use icu_locid::locale;
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::latest_tested();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {

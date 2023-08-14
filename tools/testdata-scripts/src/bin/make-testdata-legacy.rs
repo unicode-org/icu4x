@@ -25,7 +25,7 @@ fn main() {
 
     std::fs::create_dir_all(data_root).unwrap();
 
-    let source = SourceData::offline()
+    let source = SourceData::default()
         .with_cldr_latest(Default::default())
         .unwrap()
         .with_icuexport_latest()

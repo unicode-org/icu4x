@@ -418,7 +418,7 @@ impl Cli {
         })
     }
 
-    fn make_segmenter_models(&self) -> eyre::Result<options::SegmenterModelInclude> {
+    fn make_segmenter_models(&self) -> eyre::Result<config::SegmenterModelInclude> {
         Ok(if self.segmenter_models.as_slice() == ["none"] {
             config::SegmenterModelInclude::None
         } else if self.segmenter_models.as_slice() == ["recommended"] {

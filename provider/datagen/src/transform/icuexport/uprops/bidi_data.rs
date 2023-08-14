@@ -18,7 +18,8 @@ fn get_code_point_prop_map<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::code_point_prop::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.trie_type, key
+            source.trie_type(),
+            key
         ))?
         .enum_property
         .get(0)
@@ -125,7 +126,7 @@ mod tests {
 
     #[test]
     fn test_bidi_data_provider() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let payload: DataPayload<BidiAuxiliaryPropertiesV1Marker> = provider
             .load(Default::default())

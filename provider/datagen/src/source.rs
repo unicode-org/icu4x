@@ -29,24 +29,26 @@ pub struct SourceData {
     icuexport_paths: Option<Arc<SerdeCache>>,
     icuexport_fallback_paths: Arc<SerdeCache>,
     segmenter_lstm_paths: Arc<SerdeCache>,
-    pub(crate) trie_type: TrieType,
-    pub(crate) collation_han_database: CollationHanDatabase,
-    pub(crate) collations: Vec<String>,
+    trie_type: TrieType,
+    collation_han_database: CollationHanDatabase,
+    #[cfg(feature = "legacy_api")]
+    collations: Vec<String>,
 }
 
-#[cfg(feature = "networking")]
-/// The default [`SourceData`] downloads the latest supported data.
-///
-/// Requires `networking` Cargo feature.
 impl Default for SourceData {
     fn default() -> Self {
-        Self::offline()
-            .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
-            .unwrap()
-            .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
-            .unwrap()
-            .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
-            .unwrap()
+        Self {
+            cldr_paths: None,
+            icuexport_paths: None,
+            icuexport_fallback_paths: Arc::new(SerdeCache::new(
+                AbstractFs::new_icuexport_fallback(),
+            )),
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
+            trie_type: Default::default(),
+            collation_han_database: Default::default(),
+            #[cfg(feature = "legacy_api")]
+            collations: Default::default(),
+        }
     }
 }
 
@@ -60,26 +62,42 @@ impl SourceData {
     /// The latest segmentation LSTM model tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
-    #[doc(hidden)]
-    #[cfg(feature = "networking")]
-    #[deprecated(since = "1.3.0", note = "use SourceData::default()")]
+    /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
+    ///
+    /// See [`SourceData::LATEST_TESTED_CLDR_TAG`], [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`], [`SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG`].
+    ///
+    /// ✨ *Enabled with the `networking` Cargo feature.*
+    #[cfg(any(feature = "networking", test))]
     pub fn latest_tested() -> Self {
-        Self::default()
-    }
+        use once_cell::sync::OnceCell;
 
-    /// Creates a `SourceData` that does not have CLDR or ICU export sources set.
-    pub fn offline() -> Self {
-        Self {
-            cldr_paths: None,
-            icuexport_paths: None,
-            icuexport_fallback_paths: Arc::new(SerdeCache::new(
-                AbstractFs::new_icuexport_fallback(),
-            )),
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
-            trie_type: Default::default(),
-            collation_han_database: Default::default(),
-            collations: Default::default(),
-        }
+        // Singleton so that all instantiations share the same cache.
+        static SINGLETON: OnceCell<SourceData> = OnceCell::new();
+        SINGLETON
+            .get_or_init(|| {
+                #[cfg(not(test))]
+                {
+                    Self::default()
+                        .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
+                        .unwrap()
+                        .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
+                        .unwrap()
+                        .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+                        .unwrap()
+                }
+                #[cfg(test)]
+                {
+                    // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
+                    let data_root =
+                        std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
+                    SourceData::default()
+                        .with_cldr(data_root.join("cldr"), Default::default())
+                        .unwrap()
+                        .with_icuexport(data_root.join("icuexport"))
+                        .unwrap()
+                }
+            })
+            .clone()
     }
 
     /// Adds CLDR data to this `SourceData`. The root should point to a local
@@ -122,7 +140,7 @@ impl SourceData {
     ///
     /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
     ///
-    /// Requires `networking` Cargo feature.
+    /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_cldr_for_tag(
         self,
@@ -143,7 +161,7 @@ impl SourceData {
     ///
     /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
     ///
-    /// Requires `networking` Cargo feature.
+    /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_icuexport_for_tag(self, mut tag: &str) -> Result<Self, DataError> {
         if tag == "release-71-1" {
@@ -165,7 +183,7 @@ impl SourceData {
     ///
     /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
     ///
-    /// Requires `networking` Cargo feature.
+    /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_segmenter_lstm_for_tag(self, tag: &str) -> Result<Self, DataError> {
         Ok(Self {
@@ -217,6 +235,7 @@ impl SourceData {
 
     #[deprecated(note = "use crate::Options", since = "1.3.0")]
     #[doc(hidden)]
+    #[cfg(feature = "legacy_api")]
     pub fn with_collations(self, collations: Vec<String>) -> Self {
         Self { collations, ..self }
     }
@@ -239,6 +258,19 @@ impl SourceData {
 
     pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
         Ok(&self.segmenter_lstm_paths)
+    }
+
+    pub(crate) fn trie_type(&self) -> TrieType {
+        self.trie_type
+    }
+
+    pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
+        self.collation_han_database
+    }
+
+    #[cfg(feature = "legacy_api")]
+    pub(crate) fn collations(&self) -> &[String] {
+        &self.collations
     }
 
     /// List the locales for the given CLDR coverage levels

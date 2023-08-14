@@ -25,7 +25,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvid
             .icuexport()?
             .read_and_parse_toml::<super::uprops_serde::script_extensions::Main>(&format!(
                 "uprops/{}/scx.toml",
-                self.source.trie_type,
+                self.source.trie_type(),
             ))?
             .script_extensions
             .get(0)
@@ -73,7 +73,7 @@ mod tests {
 
     #[test]
     fn test_script_val_from_script_extensions() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -93,7 +93,7 @@ mod tests {
 
     #[test]
     fn test_scx_array_from_script_extensions() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -167,7 +167,7 @@ mod tests {
 
     #[test]
     fn test_has_script() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -247,7 +247,7 @@ mod tests {
 
     #[test]
     fn test_get_script_extensions_set() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())

@@ -23,14 +23,10 @@
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export something
-//! DatagenProvider::default()
-//!     .export({
-//!             let mut options = options::Options::default();
-//!             options.keys = [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect();
-//!             options
-//!         },
-//!         exporter
-//!     ).unwrap();
+//! DataExportDriver::default()
+//!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+//!   .export(&DatagenProvider::default(), exporter)
+//!   .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```

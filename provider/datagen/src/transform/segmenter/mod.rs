@@ -585,7 +585,7 @@ impl crate::DatagenProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: match self.source.trie_type {
+            trie_type: match self.source.trie_type() {
                 crate::source::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
                 crate::source::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
             },
@@ -679,7 +679,7 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!")

@@ -10,16 +10,13 @@
             "segmenter/word@1"
         ]
     },
+    "fallback": "Hybrid",
     "locales": "Recommended",
-    "cldr": "Latest",
-    "icu_export": "Latest",
-    "segmenter_lstm": "Latest",
     "export": {
         "Baked": {
             "path": "data",
             "pretty": true
         }
     },
-    "fallback": "Hybrid",
     "overwrite": true
 }

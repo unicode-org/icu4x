@@ -467,7 +467,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
             .load(DataRequest {

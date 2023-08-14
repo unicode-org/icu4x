@@ -218,7 +218,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -240,7 +240,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_short_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -262,7 +262,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_long_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -284,7 +284,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_menu_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -306,7 +306,7 @@ mod tests {
 
     #[test]
     fn test_basic_locale_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
             .load(DataRequest {

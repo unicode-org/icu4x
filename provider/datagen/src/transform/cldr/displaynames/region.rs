@@ -97,7 +97,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -119,7 +119,7 @@ mod tests {
 
     #[test]
     fn test_basic_short_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {

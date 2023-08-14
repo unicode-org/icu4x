@@ -99,6 +99,8 @@ impl CldrCache {
             .iter()
             .filter_map(|(locale, c)| levels.contains(c).then_some(locale))
             .cloned()
+            // `und` needs to be part of every set
+            .chain([Default::default()])
             .collect())
     }
 

@@ -7,15 +7,12 @@
             "core/helloworld@1"
         ]
     },
+    "fallback": "RuntimeManual",
     "locales": "All",
-    "cldr": "Latest",
-    "icu_export": "None",
-    "segmenter_lstm": "None",
     "export": {
         "Blob": {
             "path": "blob.postcard"
         }
     },
-    "fallback": "RuntimeManual",
     "overwrite": true
 }

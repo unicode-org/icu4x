@@ -18,7 +18,8 @@ fn get_binary_prop_for_unicodeset<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.trie_type, key
+            source.trie_type(),
+            key
         ))?
         .binary_property
         .get(0)
@@ -78,7 +79,7 @@ fn test_basic() {
     use icu_properties::provider::BasicEmojiV1Marker;
     use icu_properties::provider::PropertyUnicodeSetV1;
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::latest_tested();
 
     let payload: DataPayload<BasicEmojiV1Marker> = provider
         .load(Default::default())

@@ -119,7 +119,7 @@ mod tests {
     fn basic_cldr_time_zones() {
         use icu_locid::langid;
 
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested();
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
             .load(DataRequest {
