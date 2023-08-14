@@ -178,5 +178,9 @@
   {
     "input": "und-latn-AQ",
     "output": "und-Latn-AQ"
+  },
+  {
+    "input": "und-Adlm-BF",
+    "output": "fr-Adlm-BF"
   }
 ]
