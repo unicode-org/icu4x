@@ -29,22 +29,7 @@ use zerovec::{ule::UnvalidatedStr, ZeroMap};
     marker(GregorianDateSymbolsV1Marker, "datetime/gregory/datesymbols@1"),
     marker(HebrewDateSymbolsV1Marker, "datetime/hebrew/datesymbols@1"),
     marker(IndianDateSymbolsV1Marker, "datetime/indian/datesymbols@1"),
-    marker(
-        IslamicCivilDateSymbolsV1Marker,
-        "datetime/islamic/civil/datesymbols@1"
-    ),
-    marker(
-        IslamicObservationalDateSymbolsV1Marker,
-        "datetime/islamic/observational/datesymbols@1"
-    ),
-    marker(
-        IslamicTabularDateSymbolsV1Marker,
-        "datetime/islamic/tabular/datesymbols@1"
-    ),
-    marker(
-        IslamicUmmAlQuraDateSymbolsV1Marker,
-        "datetime/islamic/ummalqura/datesymbols@1"
-    ),
+    marker(IslamicDateSymbolsV1Marker, "datetime/islamic/datesymbols@1"),
     marker(JapaneseDateSymbolsV1Marker, "datetime/japanese/datesymbols@1"),
     marker(JapaneseExtendedDateSymbolsV1Marker, "datetime/japanext/datesymbols@1"),
     marker(PersianDateSymbolsV1Marker, "datetime/persian/datesymbols@1"),

@@ -346,44 +346,14 @@ impl_data_provider!(
 );
 impl_data_provider!(IndianDateSymbolsV1Marker, symbols::convert_dates, "indian");
 impl_data_provider!(
-    IslamicCivilDateLengthsV1Marker,
+    IslamicDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
     "islamicc"
 );
 impl_data_provider!(
-    IslamicCivilDateSymbolsV1Marker,
+    IslamicDateSymbolsV1Marker,
     symbols::convert_dates,
     "islamicc"
-);
-impl_data_provider!(
-    IslamicObservationalDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    "islamic"
-);
-impl_data_provider!(
-    IslamicObservationalDateSymbolsV1Marker,
-    symbols::convert_dates,
-    "islamic"
-);
-impl_data_provider!(
-    IslamicTabularDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    "tbla"
-);
-impl_data_provider!(
-    IslamicTabularDateSymbolsV1Marker,
-    symbols::convert_dates,
-    "tbla"
-);
-impl_data_provider!(
-    IslamicUmmAlQuraDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    "umalqura"
-);
-impl_data_provider!(
-    IslamicUmmAlQuraDateSymbolsV1Marker,
-    symbols::convert_dates,
-    "umalqura"
 );
 impl_data_provider!(
     JapaneseDateLengthsV1Marker,
