@@ -303,8 +303,6 @@ impl DatagenDriver {
                     locales_to_export.into_par_iter().try_for_each(|locale| {
                         if let Some(payload) = load_with_fallback(key, &locale) {
                             sink.put_payload(key, &locale, &payload?)
-                        } else if self.fallback == FallbackMode::Preresolved {
-                            Err(DataErrorKind::MissingLocale.into_error())
                         } else {
                             Ok(())
                         }
