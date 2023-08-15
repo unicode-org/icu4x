@@ -2,7 +2,7 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-# PLEASE KEEP THIS FILE IN SYNC WITH ../segmenter_tiny/Makefile
+# PLEASE KEEP THIS FILE IN SYNC WITH ../fixeddecimal_tiny/Makefile
 
 .DEFAULT_GOAL := test
 .PHONY: build test
@@ -17,23 +17,20 @@ GCC := gcc
 CLANG := clang-15
 LLD := lld-15
 
-baked_data/macros.rs:
-	cargo run -p icu_datagen -- --locales en bn --keys all --fallback expand --format mod --use-separate-crates --out baked_data
-
 ../../../../../target/debug/libicu_capi_staticlib.a: FORCE
 	cargo build -p icu_capi_staticlib --no-default-features --features compiled_data,default_components
 
-icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib_tiny.a: FORCE baked_data/macros.rs
+icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib_tiny.a: FORCE
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	cd icu_capi_staticlib_tiny && \
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" ICU4X_DATA_DIR=$(shell pwd)/baked_data cargo +${ICU4X_NIGHTLY_TOOLCHAIN} panic-abort-build --target x86_64-unknown-linux-gnu
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} panic-abort-build --target x86_64-unknown-linux-gnu
 
-icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_tiny.a: FORCE baked_data/macros.rs
+icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_tiny.a: FORCE
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	cd icu_capi_staticlib_tiny && \
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" ICU4X_DATA_DIR=$(shell pwd)/baked_data cargo +${ICU4X_NIGHTLY_TOOLCHAIN} panic-abort-build --target x86_64-unknown-linux-gnu --profile=release-opt-size
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} panic-abort-build --target x86_64-unknown-linux-gnu --profile=release-opt-size
 
 # Naive target: no optimizations, full std
 optim0.elf: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.c
@@ -71,12 +68,12 @@ optim5.elf: optim5.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/rel
 build: optim0.elf optim1.elf optim2.elf optim3.elf optim4.elf optim5.elf
 
 test: build
-	./optim0.elf bn
-	./optim1.elf bn
-	./optim2.elf bn
-	./optim2.elf bn
-	./optim4.elf bn
-	./optim5.elf bn
+	./optim0.elf
+	./optim1.elf
+	./optim2.elf
+	./optim2.elf
+	./optim4.elf
+	./optim5.elf
 
 clean:
 	git clean -xf *
