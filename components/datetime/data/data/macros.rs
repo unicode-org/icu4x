@@ -80,45 +80,15 @@ mod datetime_indian_datesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_indian_datesymbols_v1 as impl_datetime_indian_datesymbols_v1;
 #[macro_use]
-#[path = "macros/datetime_islamic_civil_datelengths_v1.data.rs"]
-mod datetime_islamic_civil_datelengths_v1;
+#[path = "macros/datetime_islamic_datelengths_v1.data.rs"]
+mod datetime_islamic_datelengths_v1;
 #[doc(inline)]
-pub use __impl_datetime_islamic_civil_datelengths_v1 as impl_datetime_islamic_civil_datelengths_v1;
+pub use __impl_datetime_islamic_datelengths_v1 as impl_datetime_islamic_datelengths_v1;
 #[macro_use]
-#[path = "macros/datetime_islamic_civil_datesymbols_v1.data.rs"]
-mod datetime_islamic_civil_datesymbols_v1;
+#[path = "macros/datetime_islamic_datesymbols_v1.data.rs"]
+mod datetime_islamic_datesymbols_v1;
 #[doc(inline)]
-pub use __impl_datetime_islamic_civil_datesymbols_v1 as impl_datetime_islamic_civil_datesymbols_v1;
-#[macro_use]
-#[path = "macros/datetime_islamic_observational_datelengths_v1.data.rs"]
-mod datetime_islamic_observational_datelengths_v1;
-#[doc(inline)]
-pub use __impl_datetime_islamic_observational_datelengths_v1 as impl_datetime_islamic_observational_datelengths_v1;
-#[macro_use]
-#[path = "macros/datetime_islamic_observational_datesymbols_v1.data.rs"]
-mod datetime_islamic_observational_datesymbols_v1;
-#[doc(inline)]
-pub use __impl_datetime_islamic_observational_datesymbols_v1 as impl_datetime_islamic_observational_datesymbols_v1;
-#[macro_use]
-#[path = "macros/datetime_islamic_tabular_datelengths_v1.data.rs"]
-mod datetime_islamic_tabular_datelengths_v1;
-#[doc(inline)]
-pub use __impl_datetime_islamic_tabular_datelengths_v1 as impl_datetime_islamic_tabular_datelengths_v1;
-#[macro_use]
-#[path = "macros/datetime_islamic_tabular_datesymbols_v1.data.rs"]
-mod datetime_islamic_tabular_datesymbols_v1;
-#[doc(inline)]
-pub use __impl_datetime_islamic_tabular_datesymbols_v1 as impl_datetime_islamic_tabular_datesymbols_v1;
-#[macro_use]
-#[path = "macros/datetime_islamic_ummalqura_datelengths_v1.data.rs"]
-mod datetime_islamic_ummalqura_datelengths_v1;
-#[doc(inline)]
-pub use __impl_datetime_islamic_ummalqura_datelengths_v1 as impl_datetime_islamic_ummalqura_datelengths_v1;
-#[macro_use]
-#[path = "macros/datetime_islamic_ummalqura_datesymbols_v1.data.rs"]
-mod datetime_islamic_ummalqura_datesymbols_v1;
-#[doc(inline)]
-pub use __impl_datetime_islamic_ummalqura_datesymbols_v1 as impl_datetime_islamic_ummalqura_datesymbols_v1;
+pub use __impl_datetime_islamic_datesymbols_v1 as impl_datetime_islamic_datesymbols_v1;
 #[macro_use]
 #[path = "macros/datetime_japanese_datelengths_v1.data.rs"]
 mod datetime_japanese_datelengths_v1;
