@@ -20,9 +20,11 @@ use tinystr::{tinystr, TinyAsciiStr};
 /// New implementors of this trait will likely also wish to modify `get_era_code_map()`
 /// in the CLDR transformer to support any new era maps.
 pub trait CldrCalendar {
-    /// The Unicode BCP 47 identifier for the calendar
+    /// The Unicode BCP 47 identifier for the calendar's skeleton
     /// If multiple BCP 47 identifiers work, this should be
     /// the default one when no others are provided
+    ///
+    /// If `is_identifier_allowed_for_calendar()` is set, this only is used for loading skeletons data
     const DEFAULT_BCP_47_IDENTIFIER: Value;
 
     /// The data marker for loading symbols for this calendar.
@@ -46,7 +48,7 @@ fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
         return false;
     }
     if let (Some(first), Some(second)) = (slice.get(0), slice.get(1)) {
-        return *first == tinystr!(8, "islamic") && *second == subcal
+        return *first == tinystr!(8, "islamic") && *second == subcal;
     }
 
     false
@@ -103,7 +105,10 @@ impl CldrCalendar for Indian {
 }
 
 impl CldrCalendar for IslamicCivil {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamicc");
+    // this value is not actually a valid identifier for this calendar,
+    // however since we are overriding is_identifier_allowed_for_calendar we are using
+    // this solely for its effects on skeleton data loading
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
@@ -118,7 +123,10 @@ impl CldrCalendar for IslamicObservational {
 }
 
 impl CldrCalendar for IslamicTabular {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("tbla");
+    // this value is not actually a valid identifier for this calendar,
+    // however since we are overriding is_identifier_allowed_for_calendar we are using
+    // this solely for its effects on skeleton data loading
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
@@ -127,7 +135,10 @@ impl CldrCalendar for IslamicTabular {
 }
 
 impl CldrCalendar for IslamicUmmAlQura {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("umalqura");
+    // this value is not actually a valid identifier for this calendar,
+    // however since we are overriding is_identifier_allowed_for_calendar we are using
+    // this solely for its effects on skeleton data loading
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
