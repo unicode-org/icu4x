@@ -60,6 +60,11 @@ const ROC_ERA_OFFSET: i32 = 1911;
 /// This calendar supports two era codes: `"roc"`, corresponding to years in the 民國 (minguo) era (CE year 1912 and
 /// after), and `"roc-inverse"`, corresponding to years before the 民國 (minguo) era (CE year 1911 and before).
 ///
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
+///
 /// [`Chinese`]: crate::chinese::Chinese
 /// [`Gregorian`]: crate::Gregorian
 #[derive(Copy, Clone, Debug, Default)]
