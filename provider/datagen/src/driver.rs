@@ -133,12 +133,10 @@ impl DatagenDriver {
     /// and [`BakedExporter`](crate::baked_exporter).
     pub fn export(
         self,
-        provider: &(impl IterableDynamicDataProvider<ExportMarker>
+        provider: &(impl ExportableProvider
               + DataProvider<LocaleFallbackLikelySubtagsV1Marker>
               + DataProvider<LocaleFallbackParentsV1Marker>
-              + DataProvider<CollationFallbackSupplementV1Marker>
-              + Sync
-              + Send),
+              + DataProvider<CollationFallbackSupplementV1Marker>),
         mut sink: impl DataExporter,
     ) -> Result<(), DataError> {
         self.export_dyn(provider, &mut sink)
@@ -147,12 +145,10 @@ impl DatagenDriver {
     // Avoids multiple monomorphizations
     fn export_dyn(
         mut self,
-        provider: &(impl IterableDynamicDataProvider<ExportMarker>
+        provider: &(impl ExportableProvider
               + DataProvider<LocaleFallbackLikelySubtagsV1Marker>
               + DataProvider<LocaleFallbackParentsV1Marker>
-              + DataProvider<CollationFallbackSupplementV1Marker>
-              + Sync
-              + Send),
+              + DataProvider<CollationFallbackSupplementV1Marker>),
         sink: &mut dyn DataExporter,
     ) -> Result<(), DataError> {
         if self.keys.is_empty() {
@@ -333,7 +329,7 @@ impl DatagenDriver {
     /// provider's options bag. The locales may be later optionally deduplicated for fallback.
     fn select_locales_for_key(
         &self,
-        provider: &(impl IterableDynamicDataProvider<ExportMarker> + Sync + Send),
+        provider: &impl ExportableProvider,
         key: DataKey,
         fallbacker: &Lazy<
             Result<LocaleFallbacker, DataError>,
