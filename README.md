@@ -78,3 +78,9 @@ ICU4X, or "ICU for X", will be built from the start with several key design cons
 4. Written by internationalization experts to encourage best practices.
 
 ICU4X will provide an ECMA-402-compatible API surface in the target client-side platforms, including the web platform, iOS, Android, WearOS, WatchOS, Flutter, and Fuchsia, supported in programming languages including Rust, JavaScript, Objective-C, Java, Dart, and C++.
+
+Copyright © 2020-2023 Unicode, Inc. Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the United States and other countries.
+
+The project is released under [LICENSE](./LICENSE).
+
+A CLA is required to contribute to this project - please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file (or start a Pull Request) for more information.
