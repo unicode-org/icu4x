@@ -32,6 +32,8 @@ fn generate_json_and_verify_postcard() {
         .with_cldr(data_root.join("cldr"))
         .unwrap()
         .with_icuexport(data_root.join("icuexport"))
+        .unwrap()
+        .with_segmenter_lstm(data_root.join("lstm"))
         .unwrap();
 
     let json_out = Box::new(

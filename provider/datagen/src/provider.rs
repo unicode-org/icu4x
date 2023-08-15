@@ -93,6 +93,8 @@ impl DatagenProvider {
                     .unwrap()
                     .with_icuexport(data_root.join("icuexport"))
                     .unwrap()
+                    .with_segmenter_lstm(data_root.join("lstm"))
+                    .unwrap()
             })
             .clone()
     }
@@ -306,23 +308,23 @@ impl Default for SourceData {
                 [
                     (
                         "segmenter/dictionary/cjdict.toml",
-                        include_bytes!("../data/segmenter/dictionary/cjdict.toml").as_slice(),
+                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/cjdict.toml").as_slice(),
                     ),
                     (
                         "segmenter/dictionary/khmerdict.toml",
-                        include_bytes!("../data/segmenter/dictionary/khmerdict.toml").as_slice(),
+                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/khmerdict.toml").as_slice(),
                     ),
                     (
                         "segmenter/dictionary/laodict.toml",
-                        include_bytes!("../data/segmenter/dictionary/laodict.toml").as_slice(),
+                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/laodict.toml").as_slice(),
                     ),
                     (
                         "segmenter/dictionary/burmesedict.toml",
-                        include_bytes!("../data/segmenter/dictionary/burmesedict.toml").as_slice(),
+                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/burmesedict.toml").as_slice(),
                     ),
                     (
                         "segmenter/dictionary/thaidict.toml",
-                        include_bytes!("../data/segmenter/dictionary/thaidict.toml").as_slice(),
+                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/thaidict.toml").as_slice(),
                     ),
                 ]
                 .into_iter()
@@ -333,34 +335,34 @@ impl Default for SourceData {
                     (
                         "Khmer_codepoints_exclusive_model4_heavy/weights.json",
                         include_bytes!(
-                            "../data/lstm/Khmer_codepoints_exclusive_model4_heavy/weights.json"
+                            "../tests/data/lstm/Khmer_codepoints_exclusive_model4_heavy/weights.json"
                         )
                         .as_slice(),
                     ),
                     (
                         "Lao_codepoints_exclusive_model4_heavy/weights.json",
                         include_bytes!(
-                            "../data/lstm/Lao_codepoints_exclusive_model4_heavy/weights.json"
+                            "../tests/data/lstm/Lao_codepoints_exclusive_model4_heavy/weights.json"
                         )
                         .as_slice(),
                     ),
                     (
                         "Burmese_codepoints_exclusive_model4_heavy/weights.json",
                         include_bytes!(
-                            "../data/lstm/Burmese_codepoints_exclusive_model4_heavy/weights.json"
+                            "../tests/data/lstm/Burmese_codepoints_exclusive_model4_heavy/weights.json"
                         )
                         .as_slice(),
                     ),
                     (
                         "Thai_codepoints_exclusive_model4_heavy/weights.json",
                         include_bytes!(
-                            "../data/lstm/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                            "../tests/data/lstm/Thai_codepoints_exclusive_model4_heavy/weights.json"
                         )
                         .as_slice(),
                     ),
                     (
                         "Thai_graphclust_model4_heavy/weights.json",
-                        include_bytes!("../data/lstm/Thai_graphclust_model4_heavy/weights.json")
+                        include_bytes!("../tests/data/lstm/Thai_graphclust_model4_heavy/weights.json")
                             .as_slice(),
                     ),
                 ]

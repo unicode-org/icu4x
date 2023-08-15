@@ -142,23 +142,7 @@ fn main() -> eyre::Result<()> {
         out_root.join("tests/data/icuexport"),
     )?;
 
-    std::fs::remove_dir_all(out_root.join("data/segmenter/dictionary"))?;
-    extract(
-        cached(&format!(
-            "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-            DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG,
-            DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
-        ))
-        .with_context(|| "Failed to download ICU ZIP".to_owned())?,
-        ICUEXPORTDATA_SEGMENTER_GLOB
-            .iter()
-            .copied()
-            .map(String::from)
-            .collect(),
-        out_root.join("data"),
-    )?;
-
-    std::fs::remove_dir_all(out_root.join("data/lstm"))?;
+    std::fs::remove_dir_all(out_root.join("tests/data/lstm"))?;
     extract(
         cached(&format!(
             "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
@@ -166,7 +150,7 @@ fn main() -> eyre::Result<()> {
         ))
         .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
         LSTM_GLOB.iter().copied().map(String::from).collect(),
-        out_root.join("data/lstm"),
+        out_root.join("tests/data/lstm"),
     )?;
 
     Ok(())
