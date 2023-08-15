@@ -75,6 +75,29 @@
     },
     {
         "input": {
+            "value": "2011-04-03T14:15:07.123",
+            "options": {
+                "components": {
+                    "weekday": "long",
+                    "month": "long",
+                    "day": "two-digit-day-of-month",
+                    "era": "long",
+                    "year": "numeric",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "numeric"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en-u-ca-hebrew": "Sunday, 28 Adar II 5771 AM, 14:15:07",
+                "fr-u-ca-hebrew": "dimanche 28 adar II 5771 Anno Mundi 14:15:07"
+            }
+        }
+    },
+    {
+        "input": {
             "value": "2022-05-03T14:15:07.123",
             "options": {
                 "components": {

@@ -133,7 +133,8 @@ impl Calendar for Hebrew {
                 "M04" => 4,
                 "M05" => 5,
                 "M05L" => 6,
-                "M06" => 7,
+                // M06L is the formatting era code used for Adar II
+                "M06" | "M06L" => 7,
                 "M07" => 8,
                 "M08" => 9,
                 "M09" => 10,
@@ -222,11 +223,18 @@ impl Calendar for Hebrew {
         let mut ordinal = date.0.month;
         let is_leap_year = Self::is_leap_year(date.0.year);
 
-        if is_leap_year && ordinal == 6 {
-            return types::FormattableMonth {
-                ordinal: ordinal as u32,
-                code: types::MonthCode(tinystr!(4, "M05L")),
-            };
+        if is_leap_year {
+            if ordinal == 6 {
+                return types::FormattableMonth {
+                    ordinal: ordinal as u32,
+                    code: types::MonthCode(tinystr!(4, "M05L")),
+                };
+            } else if ordinal == 7 {
+                return types::FormattableMonth {
+                    ordinal: ordinal as u32,
+                    code: types::MonthCode(tinystr!(4, "M06L")),
+                };
+            }
         }
 
         if is_leap_year && ordinal > 6 {
