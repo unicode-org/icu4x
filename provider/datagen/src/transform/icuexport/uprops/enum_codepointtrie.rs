@@ -30,17 +30,18 @@ impl crate::DatagenProvider {
         &'a self,
         key: &str,
     ) -> Result<&'a super::uprops_serde::mask::MaskPropertyMap, DataError> {
-        self
-        .icuexport()?
-        .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
-            "uprops/{}/{}.toml",
-            self.trie_type(),
-            key
-        ))?
-        .mask_property
-        .get(0)
-        .ok_or(DataError::custom("Loading icuexport property data failed: \
-                                  Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))
+        self.icuexport()?
+            .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
+                "uprops/{}/{}.toml",
+                self.trie_type(),
+                key
+            ))?
+            .mask_property
+            .get(0)
+            .ok_or(DataError::custom(
+                "Loading icuexport property data failed: \
+                 Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)",
+            ))
     }
 }
 
