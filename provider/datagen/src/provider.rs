@@ -147,11 +147,11 @@ impl DatagenProvider {
     pub fn with_cldr_for_tag(self, tag: &str) -> Self {
         Self {
             source: SourceData {
-            cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::new_from_url(format!(
+                cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::new_from_url(format!(
                     "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
-                ))))
-            )),
-            ..self.source}
+                )))))),
+                ..self.source
+            }
         }
     }
 
@@ -168,13 +168,12 @@ impl DatagenProvider {
         }
         Self {
             source: SourceData {
-            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(
-                format!(
+                icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
                     "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
                     tag.replace('/', "-")
-                ),
-            )))),
-            ..self.source}
+                ))))),
+                ..self.source
+            }
         }
     }
 
