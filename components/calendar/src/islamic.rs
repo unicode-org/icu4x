@@ -123,7 +123,7 @@ impl Calendar for IslamicObservational {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "islamic") {
+        let year = if era.0 == tinystr!(16, "islamic") || era.0 == tinystr!(16, "ah") {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
@@ -369,7 +369,7 @@ impl Calendar for IslamicUmmAlQura {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "islamic") {
+        let year = if era.0 == tinystr!(16, "islamic-umalqura") || era.0 == tinystr!(16, "islamic") || era.0 == tinystr!(16, "ah")  {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
@@ -644,7 +644,7 @@ impl Calendar for IslamicCivil {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "islamic") {
+        let year = if era.0 == tinystr!(16, "islamic-civil") || era.0 == tinystr!(16, "islamicc") || era.0 == tinystr!(16, "islamic") || era.0 == tinystr!(16, "ah")  {
             // TODO: Check name and alias
             year
         } else {
@@ -889,7 +889,7 @@ impl Calendar for IslamicTabular {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "islamic") {
+        let year = if era.0 == tinystr!(16, "islamic-tbla") || era.0 == tinystr!(16, "islamic") || era.0 == tinystr!(16, "ah")  {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
