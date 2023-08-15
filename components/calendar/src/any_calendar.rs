@@ -927,7 +927,6 @@ impl AnyCalendarKind {
     pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
         let slice = x.as_tinystr_slice();
 
-
         if slice.len() <= 2 {
             if let Some(first) = slice.get(0) {
                 if let Some(second) = slice.get(1) {
@@ -936,7 +935,7 @@ impl AnyCalendarKind {
                             "civil" => return Some(AnyCalendarKind::IslamicCivil),
                             "tbla" => return Some(AnyCalendarKind::IslamicTabular),
                             "umalqura" => return Some(AnyCalendarKind::IslamicUmmAlQura),
-                            _ => ()
+                            _ => (),
                         }
                     }
                 } else {
@@ -957,7 +956,7 @@ impl AnyCalendarKind {
                         "japanext" => return Some(AnyCalendarKind::JapaneseExtended),
                         "persian" => return Some(AnyCalendarKind::Persian),
                         "roc" => return Some(AnyCalendarKind::Roc),
-                        _ => ()
+                        _ => (),
                     }
                 }
             }
@@ -1008,7 +1007,9 @@ impl AnyCalendarKind {
             AnyCalendarKind::IslamicCivil => Value::try_from_bytes(b"islamic-civil").unwrap(),
             AnyCalendarKind::IslamicObservational => value!("islamic"),
             AnyCalendarKind::IslamicTabular => Value::try_from_bytes(b"islamic-tbla").unwrap(),
-            AnyCalendarKind::IslamicUmmAlQura => Value::try_from_bytes(b"islamic-umalqura").unwrap(),
+            AnyCalendarKind::IslamicUmmAlQura => {
+                Value::try_from_bytes(b"islamic-umalqura").unwrap()
+            }
             AnyCalendarKind::Iso => value!("iso"),
             AnyCalendarKind::Japanese => value!("japanese"),
             AnyCalendarKind::JapaneseExtended => value!("japanext"),
