@@ -947,6 +947,7 @@ impl AnyCalendarKind {
                         "dangi" => return Some(AnyCalendarKind::Dangi),
                         "ethioaa" => return Some(AnyCalendarKind::EthiopianAmeteAlem),
                         "ethiopic" => return Some(AnyCalendarKind::Ethiopian),
+                        "gregory" => return Some(AnyCalendarKind::Gregorian),
                         "hebrew" => return Some(AnyCalendarKind::Hebrew),
                         "indian" => return Some(AnyCalendarKind::Indian),
                         "islamic" => return Some(AnyCalendarKind::IslamicObservational),
