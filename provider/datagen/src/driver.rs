@@ -6,7 +6,6 @@ use crate::rayon_prelude::*;
 use crate::FallbackMode;
 use icu_locid::extensions::unicode::key;
 use icu_locid::LanguageIdentifier;
-use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbackIterator;
 use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_locid_transform::provider::{
@@ -233,7 +232,7 @@ impl DatagenDriver {
                                 Ok(fallbacker) => {
                                     locale_iter = Some(
                                         fallbacker
-                                            .for_config(LocaleFallbackConfig::from_key(key))
+                                            .for_config(key.fallback_config())
                                             .fallback_for(locale.clone()),
                                     )
                                 }
@@ -272,8 +271,7 @@ impl DatagenDriver {
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
                     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                    let fallbacker_with_config =
-                        fallbacker.for_config(LocaleFallbackConfig::from_key(key));
+                    let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
                     payloads.iter().try_for_each(|(locale, payload)| {
                         let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                         while !iter.get().is_empty() {
@@ -410,8 +408,7 @@ impl DatagenDriver {
                 // TODO: Make including the default locale configurable
                 implicit.insert(DataLocale::default());
                 let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                let fallbacker_with_config =
-                    fallbacker.for_config(LocaleFallbackConfig::from_key(key));
+                let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
                 for locale in explicit.iter() {
                     let mut iter = fallbacker_with_config.fallback_for(locale.clone());
@@ -436,7 +433,7 @@ impl DatagenDriver {
                         }
                         if locale.language().is_empty()
                             && matches!(
-                                key.metadata().fallback_priority,
+                                key.fallback_config().priority,
                                 icu_provider::FallbackPriority::Region
                             )
                         {

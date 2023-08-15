@@ -184,6 +184,42 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 if let Some(item) = &krate.index.get(import.id.as_ref().unwrap()) {
                     recurse(item, krate, types, path, true, None);
                 } else if let Some(item) = &krate.paths.get(import.id.as_ref().unwrap()) {
+                    // This is a reexport of a hidden module, which works fine in HTML doc but
+                    // doesn't seem to be reachable anywhere in JSON.
+                    if matches!(import.source.as_str(), "icu_provider::fallback") {
+                        insert_ty(
+                            types,
+                            vec![
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
+                                "fallback".to_string(),
+                                "LocaleFallbackConfig".to_string(),
+                            ],
+                            ast::DocType::Struct,
+                        );
+                        insert_ty(
+                            types,
+                            vec![
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
+                                "fallback".to_string(),
+                                "LocaleFallbackPriority".to_string(),
+                            ],
+                            ast::DocType::Enum,
+                        );
+                        insert_ty(
+                            types,
+                            vec![
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
+                                "fallback".to_string(),
+                                "LocaleFallbackSupplement".to_string(),
+                            ],
+                            ast::DocType::Enum,
+                        );
+                        return;
+                    }
+
                     // External crate. This is quite complicated and while it works, I'm not sure
                     // it's correct. This basically handles the case `pub use other_crate::module::Struct`,
                     // which means we have to parse `other_crate`, then look for `module`, then look
@@ -209,7 +245,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                         }
                                         _ => item.name.as_deref() == Some(segment),
                                     })
-                                    .unwrap();
+                                    .expect(&import.source);
                             }
                             _ => unreachable!(),
                         }
@@ -357,6 +393,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         };
                         insert_ty(types, path, doc_type);
                     }
+                    ItemEnum::ProcMacro(..) => {}
                     _ => todo!("{:?}", item),
                 }
             }
