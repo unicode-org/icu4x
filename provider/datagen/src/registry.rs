@@ -184,22 +184,8 @@ registry!(
         "datetime/japanext/datesymbols@1",
     icu_datetime::provider::calendar::HebrewDateLengthsV1Marker = "datetime/hebrew/datelengths@1",
     icu_datetime::provider::calendar::HebrewDateSymbolsV1Marker = "datetime/hebrew/datesymbols@1",
-    icu_datetime::provider::calendar::IslamicCivilDateLengthsV1Marker =
-        "datetime/islamic/civil/datelengths@1",
-    icu_datetime::provider::calendar::IslamicCivilDateSymbolsV1Marker =
-        "datetime/islamic/civil/datesymbols@1",
-    icu_datetime::provider::calendar::IslamicObservationalDateLengthsV1Marker =
-        "datetime/islamic/observational/datelengths@1",
-    icu_datetime::provider::calendar::IslamicObservationalDateSymbolsV1Marker =
-        "datetime/islamic/observational/datesymbols@1",
-    icu_datetime::provider::calendar::IslamicTabularDateLengthsV1Marker =
-        "datetime/islamic/tabular/datelengths@1",
-    icu_datetime::provider::calendar::IslamicTabularDateSymbolsV1Marker =
-        "datetime/islamic/tabular/datesymbols@1",
-    icu_datetime::provider::calendar::IslamicUmmAlQuraDateLengthsV1Marker =
-        "datetime/islamic/ummalqura/datelengths@1",
-    icu_datetime::provider::calendar::IslamicUmmAlQuraDateSymbolsV1Marker =
-        "datetime/islamic/ummalqura/datesymbols@1",
+    icu_datetime::provider::calendar::IslamicDateLengthsV1Marker = "datetime/islamic/datelengths@1",
+    icu_datetime::provider::calendar::IslamicDateSymbolsV1Marker = "datetime/islamic/datesymbols@1",
     icu_datetime::provider::calendar::PersianDateLengthsV1Marker = "datetime/persian/datelengths@1",
     icu_datetime::provider::calendar::PersianDateSymbolsV1Marker = "datetime/persian/datesymbols@1",
     icu_datetime::provider::calendar::RocDateLengthsV1Marker = "datetime/roc/datelengths@1",

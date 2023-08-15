@@ -92,26 +92,26 @@ impl CldrCalendar for Indian {
 
 impl CldrCalendar for IslamicCivil {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamicc");
-    type DateSymbolsV1Marker = IslamicCivilDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicCivilDateLengthsV1Marker;
+    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
 }
 
 impl CldrCalendar for IslamicObservational {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
-    type DateSymbolsV1Marker = IslamicObservationalDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicObservationalDateLengthsV1Marker;
+    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
 }
 
 impl CldrCalendar for IslamicTabular {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("tbla");
-    type DateSymbolsV1Marker = IslamicTabularDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicTabularDateLengthsV1Marker;
+    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
 }
 
 impl CldrCalendar for IslamicUmmAlQura {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("umalqura");
-    type DateSymbolsV1Marker = IslamicUmmAlQuraDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicUmmAlQuraDateLengthsV1Marker;
+    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
 }
 
 impl CldrCalendar for Japanese {
@@ -186,10 +186,7 @@ where
         + DataProvider<GregorianDateLengthsV1Marker>
         + DataProvider<HebrewDateLengthsV1Marker>
         + DataProvider<IndianDateLengthsV1Marker>
-        + DataProvider<IslamicCivilDateLengthsV1Marker>
-        + DataProvider<IslamicObservationalDateLengthsV1Marker>
-        + DataProvider<IslamicTabularDateLengthsV1Marker>
-        + DataProvider<IslamicUmmAlQuraDateLengthsV1Marker>
+        + DataProvider<IslamicDateLengthsV1Marker>
         + DataProvider<JapaneseDateLengthsV1Marker>
         + DataProvider<JapaneseExtendedDateLengthsV1Marker>
         + DataProvider<PersianDateLengthsV1Marker>
@@ -310,10 +307,7 @@ where
         + DataProvider<GregorianDateSymbolsV1Marker>
         + DataProvider<HebrewDateSymbolsV1Marker>
         + DataProvider<IndianDateSymbolsV1Marker>
-        + DataProvider<IslamicCivilDateSymbolsV1Marker>
-        + DataProvider<IslamicObservationalDateSymbolsV1Marker>
-        + DataProvider<IslamicTabularDateSymbolsV1Marker>
-        + DataProvider<IslamicUmmAlQuraDateSymbolsV1Marker>
+        + DataProvider<IslamicDateSymbolsV1Marker>
         + DataProvider<JapaneseDateSymbolsV1Marker>
         + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
         + DataProvider<PersianDateSymbolsV1Marker>
