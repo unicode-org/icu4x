@@ -133,7 +133,7 @@ impl DatagenDriver {
     /// [`FileSystemExporter`](icu_provider_fs::export),
     /// and [`BakedExporter`](crate::baked_exporter).
     pub fn export(
-        &self,
+        self,
         provider: &(impl IterableDynamicDataProvider<ExportMarker>
               + DataProvider<LocaleFallbackLikelySubtagsV1Marker>
               + DataProvider<LocaleFallbackParentsV1Marker>
@@ -147,7 +147,7 @@ impl DatagenDriver {
 
     // Avoids multiple monomorphizations
     fn export_dyn(
-        &self,
+        mut self,
         provider: &(impl IterableDynamicDataProvider<ExportMarker>
               + DataProvider<LocaleFallbackLikelySubtagsV1Marker>
               + DataProvider<LocaleFallbackParentsV1Marker>
@@ -162,11 +162,11 @@ impl DatagenDriver {
 
         if matches!(self.fallback, FallbackMode::Preresolved) && self.locales.is_none() {
             return Err(DataError::custom(
-                "FallbackMode::Preresolved requires a locale set to be set",
+                "FallbackMode::Preresolved requires an explicit locale set",
             ));
         }
 
-        let fallback = match self.fallback {
+        self.fallback = match self.fallback {
             FallbackMode::PreferredForExporter => {
                 if sink.supports_built_in_fallback() {
                     FallbackMode::Runtime
@@ -179,7 +179,7 @@ impl DatagenDriver {
 
         log::info!(
             "Datagen configured with fallback mode {:?} and these locales: {}",
-            fallback,
+            self.fallback,
             match self.locales {
                 None => "ALL".to_string(),
                 Some(ref set) => {
@@ -212,7 +212,11 @@ impl DatagenDriver {
                                 log::debug!("Falling back to und: {key}/{locale}");
                             }
                         }
-                        return Some(data_response.take_payload());
+                        return Some(
+                            data_response
+                                .take_payload()
+                                .map_err(|e| e.with_req(key, req)),
+                        );
                     }
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
@@ -256,10 +260,9 @@ impl DatagenDriver {
                     .map_err(|e| e.with_req(key, Default::default()));
             }
 
-            let locales_to_export =
-                self.select_locales_for_key(provider, key, fallback, &fallbacker)?;
+            let locales_to_export = self.select_locales_for_key(provider, key, &fallbacker)?;
 
-            match fallback {
+            match self.fallback {
                 FallbackMode::Runtime | FallbackMode::RuntimeManual => {
                     let payloads = locales_to_export
                         .into_par_iter()
@@ -271,41 +274,58 @@ impl DatagenDriver {
                     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                     let fallbacker_with_config =
                         fallbacker.for_config(LocaleFallbackConfig::from_key(key));
-                    'outer: for (locale, payload) in payloads.iter() {
+                    payloads.iter().try_for_each(|(locale, payload)| {
                         let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                         while !iter.get().is_empty() {
                             iter.step();
-                            if let Some(parent_payload) = payloads.get(iter.get()) {
-                                if parent_payload == payload && locale != iter.get() {
-                                    // Found a match: don't need to write anything
-                                    log::trace!(
-                                        "Deduplicating {key}/{locale} (inherits from {})",
-                                        iter.get()
-                                    );
-                                    continue 'outer;
-                                }
+                            if payloads.get(iter.get()) == Some(payload) {
+                                // Found a match: don't need to write anything
+                                log::trace!(
+                                    "Deduplicating {key}/{locale} (inherits from {})",
+                                    iter.get()
+                                );
+                                return Ok(());
                             }
                         }
                         // Did not find a match: export this payload
-                        sink.put_payload(key, locale, payload)?;
-                    }
+                        sink.put_payload(key, locale, payload).map_err(|e| {
+                            e.with_req(
+                                key,
+                                DataRequest {
+                                    locale,
+                                    metadata: Default::default(),
+                                },
+                            )
+                        })
+                    })?
                 }
                 FallbackMode::Hybrid | FallbackMode::Preresolved => {
                     locales_to_export.into_par_iter().try_for_each(|locale| {
                         if let Some(payload) = load_with_fallback(key, &locale) {
-                            sink.put_payload(key, &locale, &payload?)?;
+                            sink.put_payload(key, &locale, &payload?)
+                        } else if self.fallback == FallbackMode::Preresolved {
+                            Err(DataErrorKind::MissingLocale.into_error())
+                        } else {
+                            Ok(())
                         }
-                        Ok::<(), DataError>(())
-                    })?;
+                        .map_err(|e| {
+                            e.with_req(
+                                key,
+                                DataRequest {
+                                    locale: &locale,
+                                    metadata: Default::default(),
+                                },
+                            )
+                        })
+                    })?
                 }
                 FallbackMode::PreferredForExporter => unreachable!("resolved"),
             };
 
-            match fallback {
-                FallbackMode::Runtime => {
-                    sink.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard)
-                }
-                _ => sink.flush(key),
+            if self.fallback == FallbackMode::Runtime {
+                sink.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard)
+            } else {
+                sink.flush(key)
             }
             .map_err(|e| e.with_key(key))
         })?;
@@ -319,7 +339,6 @@ impl DatagenDriver {
         &self,
         provider: &(impl IterableDynamicDataProvider<ExportMarker> + Sync + Send),
         key: DataKey,
-        fallback: FallbackMode,
         fallbacker: &Lazy<
             Result<LocaleFallbacker, DataError>,
             impl FnOnce() -> Result<LocaleFallbacker, DataError>,
@@ -373,7 +392,7 @@ impl DatagenDriver {
             });
         }
 
-        locales = match (&self.locales, fallback) {
+        locales = match (&self.locales, self.fallback) {
             // Case 1: `None` simply exports all supported locales for this key.
             (None, _) => locales,
             // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
@@ -535,7 +554,6 @@ fn test_collation_filtering() {
             .select_locales_for_key(
                 &crate::DatagenProvider::latest_tested_offline_subset(),
                 icu_collator::provider::CollationDataV1Marker::KEY,
-                FallbackMode::Preresolved,
                 &once_cell::sync::Lazy::new(|| unreachable!()),
             )
             .unwrap()
