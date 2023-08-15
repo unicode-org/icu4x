@@ -113,7 +113,6 @@ pub mod prelude {
 }
 
 use icu_locid::LanguageIdentifier;
-use icu_locid_transform::fallback::LocaleFallbackConfig;
 use icu_locid_transform::fallback::LocaleFallbackIterator;
 use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::datagen::*;
@@ -247,8 +246,7 @@ impl DatagenProvider {
                 // TODO: Make including the default locale configurable
                 implicit.insert(DataLocale::default());
                 let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                let fallbacker_with_config =
-                    fallbacker.for_config(LocaleFallbackConfig::from_key(key));
+                let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
                 for locale in explicit.iter() {
                     let mut iter = fallbacker_with_config.fallback_for(locale.clone());
@@ -273,7 +271,7 @@ impl DatagenProvider {
                         }
                         if locale.language().is_empty()
                             && matches!(
-                                key.metadata().fallback_priority,
+                                key.fallback_config().priority,
                                 icu_provider::FallbackPriority::Region
                             )
                         {
@@ -350,8 +348,9 @@ impl DatagenProvider {
                         iter.step();
                     } else {
                         let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                        let config = LocaleFallbackConfig::from_key(key);
-                        let iter = fallbacker.for_config(config).fallback_for(locale.clone());
+                        let iter = fallbacker
+                            .for_config(key.fallback_config())
+                            .fallback_for(locale.clone());
                         option_iter.replace(iter);
                     }
                 }
@@ -489,7 +488,7 @@ impl DatagenProvider {
                                 .collect::<Result<HashMap<_, _>, _>>()?;
                             let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                             let fallbacker_with_config =
-                                fallbacker.for_config(LocaleFallbackConfig::from_key(key));
+                                fallbacker.for_config(key.fallback_config());
                             'outer: for (locale, payload) in payloads.iter() {
                                 let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                                 while !iter.get().is_empty() {

@@ -1783,6 +1783,7 @@ dependencies = [
  "displaydoc",
  "erased-serde",
  "icu_locid",
+ "icu_locid_transform",
  "icu_provider_adapters",
  "icu_provider_macros",
  "log",
