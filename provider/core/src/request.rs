@@ -172,6 +172,22 @@ impl Writeable for DataLocale {
 
 writeable::impl_display_with_writeable!(DataLocale);
 
+/// An error involving parsing a [`DataLocale`].
+#[derive(Clone, Copy, PartialEq, Display, Debug)]
+#[non_exhaustive]
+pub enum DataLocaleParseError {
+    /// Syntax error when parsing an [`AuxiliaryKey`]. The set of characters allowed in an
+    /// [`AuxiliaryKey`] is very limited.
+    #[displaydoc("Auxiliary key syntax error")]
+    AuxiliaryKeySyntax,
+    /// TODO
+    MissingLocale,
+    /// TODO
+    TooManyParts,
+    /// TODO
+    Locale(icu_locid::ParserError),
+}
+
 impl From<LanguageIdentifier> for DataLocale {
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
@@ -209,6 +225,25 @@ impl From<&Locale> for DataLocale {
             keywords: locale.extensions.unicode.keywords.clone(),
             aux: None,
         }
+    }
+}
+
+impl FromStr for DataLocale {
+    type Err = DataLocaleParseError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut split_iter = s.split('|');
+        let locale_str = split_iter.next().ok_or(DataLocaleParseError::MissingLocale)?;
+        let aux_str = split_iter.next();
+        if split_iter.next().is_some() {
+            return Err(DataLocaleParseError::TooManyParts);
+        }
+        let locale = Locale::from_str(locale_str).map_err(|e| DataLocaleParseError::Locale(e))?;
+        let mut data_locale = DataLocale::from(locale);
+        if let Some(aux_str) = aux_str {
+            let aux = AuxiliaryKey::from_str(aux_str)?;
+            data_locale.set_aux(aux);
+        }
+        Ok(data_locale)
     }
 }
 
@@ -569,16 +604,6 @@ pub struct AuxiliaryKey {
 
 writeable::impl_display_with_writeable!(AuxiliaryKey);
 
-/// An error involving an [`AuxiliaryKey`].
-#[derive(Clone, Copy, Eq, PartialEq, Display, Debug)]
-#[non_exhaustive]
-pub enum AuxiliaryKeyError {
-    /// Syntax error when parsing an [`AuxiliaryKey`]. The set of characters allowed in an
-    /// [`AuxiliaryKey`] is very limited.
-    #[displaydoc("Auxiliary key syntax error")]
-    Syntax,
-}
-
 impl Writeable for AuxiliaryKey {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         self.value.write_to(sink)
@@ -592,7 +617,7 @@ impl Writeable for AuxiliaryKey {
 }
 
 impl FromStr for AuxiliaryKey {
-    type Err = AuxiliaryKeyError;
+    type Err = DataLocaleParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if Self::validate_str(s) {
@@ -600,18 +625,18 @@ impl FromStr for AuxiliaryKey {
                 value: String::from(s),
             })
         } else {
-            Err(AuxiliaryKeyError::Syntax)
+            Err(DataLocaleParseError::AuxiliaryKeySyntax)
         }
     }
 }
 
 impl AuxiliaryKey {
     /// Creates an [`AuxiliaryKey`] from a [`String`] without allocations.
-    pub fn try_from_string(value: String) -> Result<Self, AuxiliaryKeyError> {
+    pub fn try_from_string(value: String) -> Result<Self, DataLocaleParseError> {
         if Self::validate_str(&value) {
             Ok(Self { value })
         } else {
-            Err(AuxiliaryKeyError::Syntax)
+            Err(DataLocaleParseError::AuxiliaryKeySyntax)
         }
     }
 

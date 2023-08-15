@@ -162,7 +162,7 @@ pub use crate::key::DataKeyHash;
 pub use crate::key::DataKeyMetadata;
 pub use crate::key::DataKeyPath;
 pub use crate::request::AuxiliaryKey;
-pub use crate::request::AuxiliaryKeyError;
+pub use crate::request::DataLocaleParseError;
 pub use crate::request::DataLocale;
 pub use crate::request::DataRequest;
 pub use crate::request::DataRequestMetadata;
