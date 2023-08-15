@@ -15,7 +15,11 @@ pub struct Config {
     pub locales: LocaleInclude,
     #[serde(default, skip_serializing_if = "is_default")]
     pub collations: HashSet<String>,
-    #[serde(default, skip_serializing_if = "is_default", rename = "segmenterModels")]
+    #[serde(
+        default,
+        skip_serializing_if = "is_default",
+        rename = "segmenterModels"
+    )]
     pub segmenter_models: SegmenterModelInclude,
 
     #[serde(default)]
@@ -26,7 +30,11 @@ pub struct Config {
     pub segmenter_lstm: PathOrTag,
     #[serde(default, skip_serializing_if = "is_default", rename = "trieType")]
     pub trie_type: TrieType,
-    #[serde(default, skip_serializing_if = "is_default", rename = "collationHanDatabase")]
+    #[serde(
+        default,
+        skip_serializing_if = "is_default",
+        rename = "collationHanDatabase"
+    )]
     pub collation_han_database: CollationHanDatabase,
 
     pub export: Export,
@@ -87,7 +95,10 @@ pub enum LocaleInclude {
     CldrSet(HashSet<CoverageLevel>),
 }
 
-pub fn ordered_set<S: serde::Serializer>(selff: &HashSet<LanguageIdentifier>, ser: S) -> Result<S::Ok, S::Error> {
+pub fn ordered_set<S: serde::Serializer>(
+    selff: &HashSet<LanguageIdentifier>,
+    ser: S,
+) -> Result<S::Ok, S::Error> {
     use serde::Serialize;
     let mut sorted = selff.iter().collect::<Vec<_>>();
     sorted.sort_by_key(|l| l.to_string());
@@ -132,15 +143,17 @@ pub enum Export {
         fingerprint: bool,
     },
     #[serde(rename = "blob")]
-    Blob {
-        path: PathBuf,
-    },
+    Blob { path: PathBuf },
     #[serde(rename = "baked")]
     Baked {
         path: PathBuf,
         #[serde(default, skip_serializing_if = "is_default")]
         pretty: bool,
-        #[serde(default, skip_serializing_if = "is_default", rename = "useSeparateCrates")]
+        #[serde(
+            default,
+            skip_serializing_if = "is_default",
+            rename = "useSeparateCrates"
+        )]
         use_separate_crates: bool,
         #[doc(hidden)] // we don't want this on the JSON API, but the CLI API goes through this struct
         #[serde(default, skip_serializing, skip_deserializing)]
