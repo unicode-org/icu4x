@@ -68,7 +68,9 @@ mod source;
 mod transform;
 
 pub use driver::DatagenDriver;
-pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
+pub use error::{
+    is_missing_cldr_error, is_missing_icuexport_error, is_missing_segmenter_lstm_error,
+};
 pub use provider::DatagenProvider;
 #[doc(hidden)] // for CLI serde
 pub use provider::TrieType;
@@ -358,7 +360,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     Ok(result)
 }
 
-#[deprecated(since = "1.3.0", note = "use `DataExportDriver`")]
+#[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
 #[allow(deprecated)]
 #[cfg(feature = "legacy_api")]
 pub use provider::SourceData;

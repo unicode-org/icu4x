@@ -15,12 +15,13 @@ use std::sync::Arc;
 /// A [`DataProvider`] backed by raw CLDR and ICU data.
 ///
 /// This provider covers all keys that are used by ICU4X. It is intended as the canonical
-/// provider for [`DataExportDriver::export`](crate::DataExportDriver::export).
+/// provider for [`DatagenDriver::export`](crate::DatagenDriver::export).
 ///
 /// If a specific data source has not been set, `DataProvider::load` will
 /// error ([`is_missing_cldr_error`](crate::is_missing_cldr_error) /
-/// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)) if the data is
-/// required for that key.
+/// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)) /
+/// [`is_missing_segmenter_lstm_error`](crate::is_missing_segmenter_lstm_error))
+/// if the data is required for that key.
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
 #[derive(Debug, Clone)]
 pub struct DatagenProvider {
@@ -34,12 +35,11 @@ impl Default for DatagenProvider {
             source: SourceData {
                 cldr_paths: None,
                 icuexport_paths: None,
-                icuexport_fallback_paths: Arc::new(SerdeCache::new(
-                    AbstractFs::new_icuexport_fallback(),
-                )),
-                segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
+                segmenter_lstm_paths: None,
                 trie_type: Default::default(),
                 collation_han_database: Default::default(),
+                #[cfg(feature = "legacy_api")]
+                icuexport_dictionary_fallback: None,
                 #[cfg(feature = "legacy_api")]
                 collations: Default::default(),
             },
@@ -129,7 +129,7 @@ impl DatagenProvider {
     pub fn with_segmenter_lstm(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
             source: SourceData {
-                segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new(root)?)),
+                segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
                 ..self.source
             },
         })
@@ -185,9 +185,9 @@ impl DatagenProvider {
     #[cfg(feature = "networking")]
     pub fn with_segmenter_lstm_for_tag(self, tag: &str) -> Self {
         Self { source: SourceData {
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
+            segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
                 "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{tag}/models.zip"
-            )))),
+            ))))),
             ..self.source }
         }
     }
@@ -226,12 +226,11 @@ impl DatagenProvider {
             .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
     }
 
-    pub(crate) fn icuexport_fallback(&self) -> &SerdeCache {
-        &self.source.icuexport_fallback_paths
-    }
-
     pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
-        Ok(&self.source.segmenter_lstm_paths)
+        self.source
+            .segmenter_lstm_paths
+            .as_deref()
+            .ok_or(crate::error::MISSING_SEGMENTER_LSTM_ERROR)
     }
 
     pub(crate) fn trie_type(&self) -> TrieType {
@@ -279,28 +278,101 @@ impl std::fmt::Display for TrieType {
 /// Requires `legacy_api` Cargo feature
 ///
 /// Bag of options for datagen source data.
+///
+/// Warning: this includes hardcoded segmentation data for backwards compatibility.
+/// It is strongly discouraged to keep using this API, instead use [`DatagenProvider`]
+/// and set segmentation data explicitly.
 #[derive(Clone, Debug)]
 #[non_exhaustive]
-#[deprecated(since = "1.3.0", note = "use `DataExportDriver`")]
+#[deprecated(since = "1.3.0", note = "use `DatagenProvider`")]
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
-    icuexport_fallback_paths: Arc<SerdeCache>,
-    segmenter_lstm_paths: Arc<SerdeCache>,
+    segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
+    #[cfg(feature = "legacy_api")]
+    // populated if constructed through `SourceData` constructor only
+    pub(crate) icuexport_dictionary_fallback: Option<Arc<SerdeCache>>,
     #[cfg(feature = "legacy_api")]
     pub(crate) collations: Vec<String>,
 }
 
-// The following functions don't contain any logic, they all redirect to the `DatagenProvider` equivalents
-
+#[cfg(feature = "legacy_api")]
 impl Default for SourceData {
     fn default() -> Self {
-        DatagenProvider::default().source
+        Self {
+            icuexport_dictionary_fallback: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
+                [
+                    (
+                        "segmenter/dictionary/cjdict.toml",
+                        include_bytes!("../data/segmenter/dictionary/cjdict.toml").as_slice(),
+                    ),
+                    (
+                        "segmenter/dictionary/khmerdict.toml",
+                        include_bytes!("../data/segmenter/dictionary/khmerdict.toml").as_slice(),
+                    ),
+                    (
+                        "segmenter/dictionary/laodict.toml",
+                        include_bytes!("../data/segmenter/dictionary/laodict.toml").as_slice(),
+                    ),
+                    (
+                        "segmenter/dictionary/burmesedict.toml",
+                        include_bytes!("../data/segmenter/dictionary/burmesedict.toml").as_slice(),
+                    ),
+                    (
+                        "segmenter/dictionary/thaidict.toml",
+                        include_bytes!("../data/segmenter/dictionary/thaidict.toml").as_slice(),
+                    ),
+                ]
+                .into_iter()
+                .collect(),
+            )))),
+            segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
+                [
+                    (
+                        "Khmer_codepoints_exclusive_model4_heavy/weights.json",
+                        include_bytes!(
+                            "../data/lstm/Khmer_codepoints_exclusive_model4_heavy/weights.json"
+                        )
+                        .as_slice(),
+                    ),
+                    (
+                        "Lao_codepoints_exclusive_model4_heavy/weights.json",
+                        include_bytes!(
+                            "../data/lstm/Lao_codepoints_exclusive_model4_heavy/weights.json"
+                        )
+                        .as_slice(),
+                    ),
+                    (
+                        "Burmese_codepoints_exclusive_model4_heavy/weights.json",
+                        include_bytes!(
+                            "../data/lstm/Burmese_codepoints_exclusive_model4_heavy/weights.json"
+                        )
+                        .as_slice(),
+                    ),
+                    (
+                        "Thai_codepoints_exclusive_model4_heavy/weights.json",
+                        include_bytes!(
+                            "../data/lstm/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                        )
+                        .as_slice(),
+                    ),
+                    (
+                        "Thai_graphclust_model4_heavy/weights.json",
+                        include_bytes!("../data/lstm/Thai_graphclust_model4_heavy/weights.json")
+                            .as_slice(),
+                    ),
+                ]
+                .into_iter()
+                .collect(),
+            )))),
+            ..DatagenProvider::default().source
+        }
     }
 }
 
+#[cfg(feature = "legacy_api")]
 impl SourceData {
     /// See [`DatagenProvider::LATEST_TESTED_CLDR_TAG`]
     pub const LATEST_TESTED_CLDR_TAG: &'static str = DatagenProvider::LATEST_TESTED_CLDR_TAG;
@@ -387,7 +459,7 @@ impl SourceData {
     }
 
     #[cfg(feature = "legacy_api")]
-    /// See [`DataExportDriver::with_collations`](crate::DataExportDriver::with_collations)
+    /// See [`DatagenDriver::with_collations`](crate::DatagenDriver::with_collations)
     pub fn with_collations(self, collations: Vec<String>) -> Self {
         Self { collations, ..self }
     }

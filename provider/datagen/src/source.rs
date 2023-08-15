@@ -5,7 +5,9 @@
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
 use std::any::Any;
-use std::collections::{BTreeMap, HashSet};
+#[cfg(feature = "legacy_api")]
+use std::collections::BTreeMap;
+use std::collections::HashSet;
 use std::fmt::Debug;
 #[cfg(feature = "networking")]
 use std::fs::File;
@@ -99,6 +101,7 @@ pub(crate) struct ZipData {
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<Result<ZipData, String>>),
+    #[cfg(feature = "legacy_api")]
     Memory(BTreeMap<&'static str, &'static [u8]>),
 }
 
@@ -124,77 +127,6 @@ impl AbstractFs {
             let file_list = archive.file_names().map(String::from).collect();
             Ok(Self::Zip(RwLock::new(Ok(ZipData { archive, file_list }))))
         }
-    }
-
-    pub fn new_icuexport_fallback() -> Self {
-        Self::Memory(
-            [
-                (
-                    "segmenter/dictionary/cjdict.toml",
-                    include_bytes!("../data/segmenter/dictionary/cjdict.toml").as_slice(),
-                ),
-                (
-                    "segmenter/dictionary/khmerdict.toml",
-                    include_bytes!("../data/segmenter/dictionary/khmerdict.toml").as_slice(),
-                ),
-                (
-                    "segmenter/dictionary/laodict.toml",
-                    include_bytes!("../data/segmenter/dictionary/laodict.toml").as_slice(),
-                ),
-                (
-                    "segmenter/dictionary/burmesedict.toml",
-                    include_bytes!("../data/segmenter/dictionary/burmesedict.toml").as_slice(),
-                ),
-                (
-                    "segmenter/dictionary/thaidict.toml",
-                    include_bytes!("../data/segmenter/dictionary/thaidict.toml").as_slice(),
-                ),
-            ]
-            .into_iter()
-            .collect(),
-        )
-    }
-
-    pub fn new_lstm_fallback() -> Self {
-        Self::Memory(
-            [
-                (
-                    "Khmer_codepoints_exclusive_model4_heavy/weights.json",
-                    include_bytes!(
-                        "../data/lstm/Khmer_codepoints_exclusive_model4_heavy/weights.json"
-                    )
-                    .as_slice(),
-                ),
-                (
-                    "Lao_codepoints_exclusive_model4_heavy/weights.json",
-                    include_bytes!(
-                        "../data/lstm/Lao_codepoints_exclusive_model4_heavy/weights.json"
-                    )
-                    .as_slice(),
-                ),
-                (
-                    "Burmese_codepoints_exclusive_model4_heavy/weights.json",
-                    include_bytes!(
-                        "../data/lstm/Burmese_codepoints_exclusive_model4_heavy/weights.json"
-                    )
-                    .as_slice(),
-                ),
-                (
-                    "Thai_codepoints_exclusive_model4_heavy/weights.json",
-                    include_bytes!(
-                        "../data/lstm/Thai_codepoints_exclusive_model4_heavy/weights.json"
-                    )
-                    .as_slice(),
-                ),
-                (
-                    "Thai_graphclust_model4_heavy/weights.json",
-                    include_bytes!("../data/lstm/Thai_graphclust_model4_heavy/weights.json")
-                        .as_slice(),
-                ),
-            ]
-            .into_iter()
-            .collect(),
-        )
     }
 
     #[cfg(feature = "networking")]
@@ -272,6 +204,7 @@ impl AbstractFs {
                     .read_to_end(&mut buf)?;
                 Ok(buf)
             }
+            #[cfg(feature = "legacy_api")]
             Self::Memory(map) => map.get(path).copied().map(Vec::from).ok_or_else(|| {
                 DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
             }),
@@ -299,6 +232,7 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
+            #[cfg(feature = "legacy_api")]
             Self::Memory(map) => map
                 .keys()
                 .copied()
@@ -320,6 +254,7 @@ impl AbstractFs {
                 .unwrap() // init called
                 .file_list
                 .contains(path),
+            #[cfg(feature = "legacy_api")]
             Self::Memory(map) => map.contains_key(path),
         })
     }
