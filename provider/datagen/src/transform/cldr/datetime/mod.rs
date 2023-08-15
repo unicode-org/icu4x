@@ -70,7 +70,6 @@ macro_rules! impl_data_provider {
                     .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
                 let resource: &cldr_serde::ca::Resource = self
-
                     .cldr()?
                     .dates(cldr_cal)
                     .read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
@@ -89,7 +88,6 @@ macro_rules! impl_data_provider {
                 // ethiopian.
                 if calendar == value!("ethiopic") {
                     let ethioaa: &cldr_serde::ca::Resource = self
-
                         .cldr()?
                         .dates("ethiopic")
                         .read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
@@ -130,16 +128,18 @@ macro_rules! impl_data_provider {
                     // Filter out non-modern eras
                     if calendar != value!("japanext") {
                         let era_dates: &cldr_serde::japanese::Resource = self
-
                             .cldr()?
                             .core()
                             .read_and_parse("supplemental/calendarData.json")?;
                         let mut set = HashSet::<String>::new();
-                        for (era_index, date) in
-                            era_dates.supplemental.calendar_data.japanese.eras.iter()
-                        {
+                        for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
                             let start_date =
-                                EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() { start_date } else { continue }).map_err(|_| {
+                                EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() {
+                                    start_date
+                                } else {
+                                    continue;
+                                })
+                                .map_err(|_| {
                                     DataError::custom(
                                         "calendarData.json contains unparseable data for a japanese era",
                                     )
@@ -158,7 +158,6 @@ macro_rules! impl_data_provider {
 
                     // Splice in gregorian data for pre-meiji
                     let greg_resource: &cldr_serde::ca::Resource = self
-
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "ca-gregorian.json")?;
@@ -238,41 +237,32 @@ macro_rules! impl_data_provider {
                 let mut r = Vec::new();
                 if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     for (cal_value, cldr_cal) in supported_cals() {
-                        r.extend(
-                            self
-                                .cldr()?
-                                .dates(cldr_cal)
-                                .list_langs()?
-                                .map(|lid| {
-                                    let mut locale: Locale = lid.into();
-                                    locale
-                                        .extensions
-                                        .unicode
-                                        .keywords
-                                        .set(key!("ca"), cal_value.clone());
-                                    DataLocale::from(locale)
-                                }),
-                        );
+                        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
+                            let mut locale: Locale = lid.into();
+                            locale
+                                .extensions
+                                .unicode
+                                .keywords
+                                .set(key!("ca"), cal_value.clone());
+                            DataLocale::from(locale)
+                        }));
                     }
                 } else {
                     let cldr_cal = supported_cals()
                         .get(&value!($calendar))
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-                    r.extend(
-                        self
-                            .cldr()?
-                            .dates(cldr_cal)
-                            .list_langs()?
-                            .map(|lid| {
-                                let locale: Locale = lid.into();
-                                DataLocale::from(locale)
-                            }),
-                    );
+                    r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
+                        let locale: Locale = lid.into();
+                        DataLocale::from(locale)
+                    }));
                 }
 
                 // TODO(#3212): Remove
                 if $marker::KEY == TimeLengthsV1Marker::KEY {
-                    r.retain(|l| l.get_langid() != icu_locid::langid!("byn") && l.get_langid() != icu_locid::langid!("ssy"));
+                    r.retain(|l| {
+                        l.get_langid() != icu_locid::langid!("byn")
+                            && l.get_langid() != icu_locid::langid!("ssy")
+                    });
                 }
 
                 Ok(r)

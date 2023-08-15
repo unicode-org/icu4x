@@ -70,22 +70,14 @@ macro_rules! make_data_provider {
     ($($marker: ident),+ $(,)?) => {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
-                fn load(
-                    &self,
-                    req: DataRequest,
-                ) -> Result<DataResponse<$marker>, DataError> {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
                     let langid = req.locale.get_langid();
                     let resource: &cldr_serde::date_fields::Resource = self
-
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "dateFields.json")?;
-                    let fields = &resource
-                        .main
-                        .value
-                        .dates
-                        .fields;
+                    let fields = &resource.main.value.dates.fields;
 
                     let field = datakey_filters()
                         .get(&$marker::KEY)
@@ -105,7 +97,6 @@ macro_rules! make_data_provider {
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     Ok(self
-
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
@@ -113,7 +104,6 @@ macro_rules! make_data_provider {
                         .collect())
                 }
             }
-
         )+
     };
 }

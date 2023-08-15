@@ -40,7 +40,7 @@ impl crate::DatagenProvider {
         .mask_property
         .get(0)
         .ok_or(DataError::custom("Loading icuexport property data failed: \
-                                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))
+                                  Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))
     }
 }
 

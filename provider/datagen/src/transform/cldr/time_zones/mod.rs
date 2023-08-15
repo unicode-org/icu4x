@@ -33,34 +33,26 @@ macro_rules! impl_data_provider {
                     let langid = req.locale.get_langid();
 
                     let resource: &cldr_serde::time_zones::time_zone_names::Resource = self
-
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "timeZoneNames.json")?;
 
-                    let time_zone_names_resource = &resource
-                        .main
-                        .value
-                        .dates
-                        .time_zone_names;
+                    let time_zone_names_resource = &resource.main.value.dates.time_zone_names;
 
-                    let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = self
-
-                        .cldr()?
-                        .bcp47()
-                        .read_and_parse("timezone.json")?;
+                    let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
+                        self.cldr()?.bcp47().read_and_parse("timezone.json")?;
 
                     let bcp47_tzids_resource = &resource.keyword.u.time_zones.values;
 
                     let resource: &cldr_serde::time_zones::meta_zones::Resource = self
-
                         .cldr()?
                         .core()
                         .read_and_parse("supplemental/metaZones.json")?;
 
                     let meta_zone_ids_resource = &resource.supplemental.meta_zones.meta_zone_ids.0;
 
-                    let meta_zone_periods_resource = &resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
+                    let meta_zone_periods_resource =
+                        &resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
@@ -82,19 +74,16 @@ macro_rules! impl_data_provider {
                         // MetazonePeriodV1 does not require localized time zone data
                         Ok(vec![Default::default()])
                     } else {
-
-                    Ok(self
-
-                        .cldr()?
-                        .dates("gregorian")
-                        .list_langs()?
-                        .map(DataLocale::from)
-                        .collect())
+                        Ok(self
+                            .cldr()?
+                            .dates("gregorian")
+                            .list_langs()?
+                            .map(DataLocale::from)
+                            .collect())
                     }
                 }
             }
         )+
-
     };
 }
 
