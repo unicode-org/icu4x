@@ -13,7 +13,11 @@ pub struct Config {
     pub keys: KeyInclude,
     pub fallback: FallbackMode,
     pub locales: LocaleInclude,
-    #[serde(default, skip_serializing_if = "is_default", serialize_with = "sorted_set")]
+    #[serde(
+        default,
+        skip_serializing_if = "is_default",
+        serialize_with = "sorted_set"
+    )]
     pub collations: HashSet<String>,
     #[serde(
         default,
