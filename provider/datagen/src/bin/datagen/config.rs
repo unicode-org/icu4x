@@ -13,7 +13,7 @@ pub struct Config {
     pub keys: KeyInclude,
     pub fallback: FallbackMode,
     pub locales: LocaleInclude,
-    #[serde(default, skip_serializing_if = "is_default")]
+    #[serde(default, skip_serializing_if = "is_default", serialize_with = "sorted_set")]
     pub collations: HashSet<String>,
     #[serde(
         default,
@@ -90,18 +90,18 @@ pub enum LocaleInclude {
     #[serde(rename = "none")]
     None,
     #[serde(rename = "explicit")]
-    Explicit(#[serde(serialize_with = "ordered_set")] HashSet<LanguageIdentifier>),
+    Explicit(#[serde(serialize_with = "sorted_set")] HashSet<LanguageIdentifier>),
     #[serde(rename = "cldrSet")]
-    CldrSet(HashSet<CoverageLevel>),
+    CldrSet(#[serde(serialize_with = "sorted_set")] HashSet<CoverageLevel>),
 }
 
-pub fn ordered_set<S: serde::Serializer>(
-    selff: &HashSet<LanguageIdentifier>,
+pub fn sorted_set<S: serde::Serializer>(
+    selff: &HashSet<impl core::fmt::Debug + serde::Serialize>,
     ser: S,
 ) -> Result<S::Ok, S::Error> {
     use serde::Serialize;
     let mut sorted = selff.iter().collect::<Vec<_>>();
-    sorted.sort_by_key(|l| l.to_string());
+    sorted.sort_by_key(|l| format!("{l:?}"));
     sorted.serialize(ser)
 }
 
