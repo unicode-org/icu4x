@@ -31,6 +31,11 @@ fn test_concatenate() {
             input_1: &Locale::from_str("en-Latn-GB-fonipa-scouse").unwrap(),
             expected: "English (Latin, United Kingdom, IPA Phonetics, Scouse)",
         },
+        // TODO: Uncomment this when the fallback is properly supported.
+        // TestCase {
+        //     input_1: &locale!("xx-YY"),
+        //     expected: "xx (YY)",
+        // },
     ];
     for cas in &cases {
         // TODO: Add tests for different data locales.

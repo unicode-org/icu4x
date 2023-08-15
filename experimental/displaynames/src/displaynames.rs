@@ -4,10 +4,10 @@
 
 //! This module contains types and implementations for the Displaynames component.
 
-use crate::alloc::string::ToString;
 use crate::options::*;
 use crate::provider::*;
 use alloc::borrow::Cow;
+use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use icu_locid::{
@@ -15,7 +15,6 @@ use icu_locid::{
     Locale,
 };
 use icu_provider::prelude::*;
-
 /// Lookup of the locale-specific display names by region code.
 ///
 /// # Example
@@ -116,7 +115,6 @@ pub struct ScriptDisplayNames {
     script_data: DataPayload<ScriptDisplayNamesV1Marker>,
 }
 
-#[allow(dead_code)] // not public at the moment
 impl ScriptDisplayNames {
     /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag.
     ///
@@ -193,7 +191,6 @@ pub struct VariantDisplayNames {
     variant_data: DataPayload<VariantDisplayNamesV1Marker>,
 }
 
-#[allow(dead_code)] // not public at the moment
 impl VariantDisplayNames {
     /// Creates a new [`VariantDisplayNames`] from locale data and an options bag.
     ///
@@ -346,10 +343,8 @@ pub struct LocaleDisplayNamesFormatter {
     locale_data: DataPayload<LocaleDisplayNamesV1Marker>,
 
     language_data: DataPayload<LanguageDisplayNamesV1Marker>,
-    #[allow(dead_code)] // TODO use this
     script_data: DataPayload<ScriptDisplayNamesV1Marker>,
     region_data: DataPayload<RegionDisplayNamesV1Marker>,
-    #[allow(dead_code)] // TODO add support for variants
     variant_data: DataPayload<VariantDisplayNamesV1Marker>,
     // key_data: DataPayload<KeyDisplayNamesV1Marker>,
     // measuerment_data: DataPayload<MeasurementSystemsDisplayNamesV1Marker>,
@@ -359,7 +354,7 @@ pub struct LocaleDisplayNamesFormatter {
 
 // LongestMatching subtag is a longest substring of a given locale that exists as a key in the CLDR locale data.
 // This is used for implementing Locale Display Name Algorithm.
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 enum LongestMatchingSubtag {
     // Longest matching subtag of type ${lang}-${region}.
     // Example: "de-ET", "en-GB"
@@ -370,6 +365,46 @@ enum LongestMatchingSubtag {
     // Longest matching subtag of type ${lang}
     // Example: "en", "hi"
     Lang,
+}
+
+impl LongestMatchingSubtag {
+    /// For a given locale and the data, find the longest prefix of the string that exists as a key in the CLDR locale data.
+    pub fn find_longest_matching_subtag<'a>(
+        locale: &Locale,
+        locale_dn_formatter: &'a LocaleDisplayNamesFormatter,
+    ) -> Self {
+        let LocaleDisplayNamesFormatter { locale_data, .. } = locale_dn_formatter;
+
+        // NOTE: The subtag ordering of the canonical locale is `language_script_region + variants + extensions`.
+        // The logic to find the longest matching subtag is based on this ordering.
+        if let Some(script) = locale.id.script {
+            let lang_script_identifier: LanguageIdentifier =
+                (locale.id.language, Some(script), None).into();
+            if locale_data
+                .get()
+                .names
+                .get_by(|uvstr| lang_script_identifier.strict_cmp(uvstr).reverse())
+                .is_some()
+            {
+                return LongestMatchingSubtag::LangScript;
+            }
+        }
+        if let Some(region) = locale.id.region {
+            if locale.id.script.is_none() {
+                let lang_region_identifier: LanguageIdentifier =
+                    (locale.id.language, None, Some(region)).into();
+                if locale_data
+                    .get()
+                    .names
+                    .get_by(|uvstr| lang_region_identifier.strict_cmp(uvstr).reverse())
+                    .is_some()
+                {
+                    return LongestMatchingSubtag::LangRegion;
+                }
+            }
+        }
+        return LongestMatchingSubtag::Lang;
+    }
 }
 
 impl LocaleDisplayNamesFormatter {
@@ -423,64 +458,42 @@ impl LocaleDisplayNamesFormatter {
     ///
     // TODO: Make this return a writeable instead of using alloc
     pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, locale: &'c Locale) -> Cow<'a, str> {
-        let longest_matching_subtag = find_longest_matching_subtag(&locale, &self);
+        let longest_matching_subtag =
+            LongestMatchingSubtag::find_longest_matching_subtag(&locale, &self);
 
         // Step - 1: Construct a locale display name string (LDN).
         // Find the displayname for the longest_matching_subtag which was derived above.
-        let ldn = get_locale_display_name(&locale, &longest_matching_subtag, &self);
+        let ldn = get_locale_display_name(&locale, longest_matching_subtag, &self);
 
         // Step - 2: Construct a vector of longest qualifying substrings (LQS).
         // Find the displayname for the remaining locale if exists.
-        let lqs = get_longest_qualifying_substrings(&locale, &longest_matching_subtag, &self);
+        let lqs = get_longest_qualifying_substrings(&locale, longest_matching_subtag, &self);
 
         // Step - 3: Return the displayname based on the size of LQS.
-        if lqs.len() == 0 {
-            return ldn.to_string().into();
-        } else {
-            return Cow::Owned(alloc::format!("{} ({})", ldn, lqs.join(", ")));
-        }
-    }
-}
-
-/// For a given locale and the data, find the longest prefix of the string that exists as a key in the CLDR locale data.
-fn find_longest_matching_subtag<'a>(
-    locale: &Locale,
-    locale_dn_formatter: &'a LocaleDisplayNamesFormatter,
-) -> LongestMatchingSubtag {
-    let LocaleDisplayNamesFormatter { locale_data, .. } = locale_dn_formatter;
-
-    // NOTE: The subtag ordering of the canonical locale is `languageᵣ_scriptᵣ_regionᵣ + variants + extensions`.
-    // The logic to find the longest matching subtag is based on this ordering.
-    if let Some(script) = locale.id.script {
-        let lang_script_identifier: LanguageIdentifier = (locale.id.language, script).into();
-        if locale_data
-            .get()
-            .names
-            .get_by(|uvstr| lang_script_identifier.strict_cmp(uvstr).reverse())
-            .is_some()
-        {
-            return LongestMatchingSubtag::LangScript;
-        }
-    }
-    if let Some(region) = locale.id.region {
-        if locale.id.script.is_none() {
-            let lang_region_identifier: LanguageIdentifier = (locale.id.language, region).into();
-            if locale_data
-                .get()
-                .names
-                .get_by(|uvstr| lang_region_identifier.strict_cmp(uvstr).reverse())
-                .is_some()
-            {
-                return LongestMatchingSubtag::LangRegion;
+        let mut result = Cow::Borrowed(ldn);
+        if lqs.len() > 0 {
+            let mut output = String::with_capacity(
+                result.len() + " (".len() + lqs.iter().map(|s| ", ".len() + s.len()).sum::<usize>()
+                    - ", ".len()
+                    + ")".len(),
+            );
+            output.push_str(&result);
+            output.push_str(" (");
+            output.push_str(lqs[0]);
+            for lqs in &lqs[1..] {
+                output.push_str(", ");
+                output.push_str(lqs);
             }
+            output.push_str(")");
+            result = Cow::Owned(output);
         }
+        result
     }
-    return LongestMatchingSubtag::Lang;
 }
 
 fn get_locale_display_name<'a>(
     locale: &Locale,
-    longest_matching_subtag: &LongestMatchingSubtag,
+    longest_matching_subtag: LongestMatchingSubtag,
     locale_dn_formatter: &'a LocaleDisplayNamesFormatter,
 ) -> &'a str {
     let LocaleDisplayNamesFormatter {
@@ -490,9 +503,9 @@ fn get_locale_display_name<'a>(
         ..
     } = locale_dn_formatter;
 
-    let lang_id: LanguageIdentifier = match *longest_matching_subtag {
-        LongestMatchingSubtag::LangRegion => (locale.id.language, locale.id.region.unwrap()).into(),
-        LongestMatchingSubtag::LangScript => (locale.id.language, locale.id.script.unwrap()).into(),
+    let lang_id: LanguageIdentifier = match longest_matching_subtag {
+        LongestMatchingSubtag::LangRegion => (locale.id.language, None, locale.id.region).into(),
+        LongestMatchingSubtag::LangScript => (locale.id.language, locale.id.script, None).into(),
         LongestMatchingSubtag::Lang => locale.id.language.into(),
     };
 
@@ -545,14 +558,13 @@ fn get_locale_display_name<'a>(
                 .get(&lang_id.language.into_tinystr().to_unvalidated())
         });
     }
-
     // Throw an error if the LDN is none as it is not possible to have a locale string without the language.
     return ldn.expect("cannot parse locale displayname.");
 }
 
 fn get_longest_qualifying_substrings<'a>(
     locale: &Locale,
-    longest_matching_subtag: &LongestMatchingSubtag,
+    longest_matching_subtag: LongestMatchingSubtag,
     locale_dn_formatter: &'a LocaleDisplayNamesFormatter,
 ) -> Vec<&'a str> {
     let LocaleDisplayNamesFormatter {
@@ -567,7 +579,7 @@ fn get_longest_qualifying_substrings<'a>(
 
     if let Some(script) = locale.id.script {
         // Ignore if the script was used to derive LDN.
-        if *longest_matching_subtag != LongestMatchingSubtag::LangScript {
+        if longest_matching_subtag != LongestMatchingSubtag::LangScript {
             let scriptdisplay = match options.style {
                 Some(Style::Short) => script_data
                     .get()
@@ -589,7 +601,7 @@ fn get_longest_qualifying_substrings<'a>(
 
     if let Some(region) = locale.id.region {
         // Ignore if the region was used to derive LDN.
-        if *longest_matching_subtag != LongestMatchingSubtag::LangRegion {
+        if longest_matching_subtag != LongestMatchingSubtag::LangRegion {
             let regiondisplay = match options.style {
                 Some(Style::Short) => region_data
                     .get()
