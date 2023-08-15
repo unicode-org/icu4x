@@ -242,7 +242,11 @@ impl IslamicObservational {
         let month = div_rem_euclid(elapsed_months, 12).1 + 1;
         let day = (date - crescent + 1) as u8;
 
-        Date::try_new_observational_islamic_date(year, month as u8, day).unwrap()
+        debug_assert!(Date::try_new_observational_islamic_date(year, month as u8, day).is_ok());
+        Date::from_raw(
+            IslamicDateInner(ArithmeticDate::new_unchecked(year, month as u8, day)),
+            IslamicObservational,
+        )
     }
 
     // pub(crate) fn fixed_from_islamic_integers(year: i32, month: u8, day: u8) -> Option<RataDie> {
@@ -328,15 +332,20 @@ impl CalendarArithmetic for IslamicUmmAlQura {
         // We cannot use month_days from the book here, that is for the observational calendar
         //
         // Instead we subtract the two new months calculated using the saudi criterion
-        let midmonth = types::Moment::new(FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
-            + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH);
+        let midmonth = types::Moment::new(
+            FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
+                + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH,
+        );
         let midmonth_next = midmonth + MEAN_SYNODIC_MONTH;
 
         let month_start = Self::saudi_new_month_on_or_before(midmonth.as_rata_die());
         let next_month_start = Self::saudi_new_month_on_or_before(midmonth_next.as_rata_die());
 
         let diff = next_month_start - month_start;
-        debug_assert!(diff <= 30, "umm-al-qura months must not be more than 30 days");
+        debug_assert!(
+            diff <= 30,
+            "umm-al-qura months must not be more than 30 days"
+        );
         u8::try_from(diff).unwrap_or(30)
     }
 
@@ -561,7 +570,11 @@ impl IslamicUmmAlQura {
         let month = ((div_rem_euclid64(elapsed_months, 12).1) + 1) as u8;
         let day = ((date - crescent) + 1) as u8;
 
-        Date::try_new_ummalqura_date(year, month, day).unwrap()
+        debug_assert!(Date::try_new_ummalqura_date(year, month, day).is_ok());
+        Date::from_raw(
+            IslamicUmmAlQuraDateInner(ArithmeticDate::new_unchecked(year, month, day)),
+            IslamicUmmAlQura,
+        )
     }
 
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
@@ -770,7 +783,11 @@ impl IslamicCivil {
             .to_f64_date())
             + 1.0) as u8; // The value will always be number between 1-30 because of the difference between the date and lunar ordinals function.
 
-        Date::try_new_islamic_civil_date(year, month, day).unwrap() // Safe value
+        debug_assert!(Date::try_new_islamic_civil_date(year, month, day).is_ok());
+        Date::from_raw(
+            IslamicCivilDateInner(ArithmeticDate::new_unchecked(year, month, day)),
+            IslamicCivil,
+        )
     }
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
@@ -1014,7 +1031,11 @@ impl IslamicTabular {
             .to_f64_date())
             + 1.0) as u8; // The value will always be number between 1-30 because of the difference between the date and lunar ordinals function.
 
-        Date::try_new_islamic_tabular_date(year, month, day).unwrap() // Safe value
+        debug_assert!(Date::try_new_islamic_tabular_date(year, month, day).is_ok());
+        Date::from_raw(
+            IslamicTabularDateInner(ArithmeticDate::new_unchecked(year, month, day)),
+            IslamicTabular,
+        )
     }
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
