@@ -325,17 +325,19 @@ pub struct IslamicUmmAlQuraDateInner(ArithmeticDate<IslamicUmmAlQura>);
 
 impl CalendarArithmetic for IslamicUmmAlQura {
     fn month_days(year: i32, month: u8) -> u8 {
-        let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
-            + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
-        let lunar_phase: f64 =
-            Astronomical::calculate_lunar_phase_at_or_before(RataDie::new(midmonth as i64));
-        let f_date = Astronomical::phasis_on_or_before(
-            RataDie::new(midmonth as i64),
-            MECCA,
-            Some(lunar_phase),
-        );
+        // We cannot use month_days from the book here, that is for the observational calendar
+        //
+        // Instead we subtract the two new months calculated using the saudi criterion
+        let midmonth = types::Moment::new(FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
+            + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH);
+        let midmonth_next = midmonth + MEAN_SYNODIC_MONTH;
 
-        Astronomical::month_length(f_date, MECCA)
+        let month_start = Self::saudi_new_month_on_or_before(midmonth.as_rata_die());
+        let next_month_start = Self::saudi_new_month_on_or_before(midmonth_next.as_rata_die());
+
+        let diff = next_month_start - month_start;
+        debug_assert!(diff <= 30, "umm-al-qura months must not be more than 30 days");
+        u8::try_from(diff).unwrap_or(30)
     }
 
     fn months_for_every_year(_year: i32) -> u8 {
