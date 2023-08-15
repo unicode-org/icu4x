@@ -1971,4 +1971,15 @@ mod test {
 
         assert_eq!(sum_days_in_year, expected_number_of_days);
     }
+
+    #[test]
+    fn test_regression_3868() {
+        // This date used to panic on creation
+        let iso = Date::try_new_iso_date(2011, 4, 4).unwrap();
+        let islamic = iso.to_calendar(IslamicUmmAlQura);
+        // Data from https://www.ummulqura.org.sa/Index.aspx
+        assert_eq!(islamic.day_of_month().0, 30);
+        assert_eq!(islamic.month().ordinal, 4);
+        assert_eq!(islamic.year().number, 1432);
+    }
 }
