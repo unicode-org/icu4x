@@ -904,9 +904,9 @@ impl AnyCalendarKind {
             b"gregory" => AnyCalendarKind::Gregorian,
             b"hebrew" => AnyCalendarKind::Hebrew,
             b"indian" => AnyCalendarKind::Indian,
-            b"islamic_civil" => AnyCalendarKind::IslamicCivil,
-            b"islamic_tbla" => AnyCalendarKind::IslamicTabular,
-            b"islamic_umalqura" => AnyCalendarKind::IslamicUmmAlQura,
+            b"islamic-civil" | b"islamicc" => AnyCalendarKind::IslamicCivil,
+            b"islamic-tbla" => AnyCalendarKind::IslamicTabular,
+            b"islamic-umalqura" => AnyCalendarKind::IslamicUmmAlQura,
             b"islamic" => AnyCalendarKind::IslamicObservational,
             b"iso" => AnyCalendarKind::Iso,
             b"japanese" => AnyCalendarKind::Japanese,
@@ -925,47 +925,46 @@ impl AnyCalendarKind {
     /// Returns None if the calendar is unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
     pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
-        Some(if *x == value!("buddhist") {
-            AnyCalendarKind::Buddhist
-        } else if *x == value!("chinese") {
-            AnyCalendarKind::Chinese
-        } else if *x == value!("coptic") {
-            AnyCalendarKind::Coptic
-        } else if *x == value!("dangi") {
-            AnyCalendarKind::Dangi
-        } else if *x == value!("ethioaa") {
-            AnyCalendarKind::EthiopianAmeteAlem
-        } else if *x == value!("ethiopic") {
-            AnyCalendarKind::Ethiopian
-        } else if *x == value!("gregory") {
-            AnyCalendarKind::Gregorian
-        } else if *x == value!("hebrew") {
-            AnyCalendarKind::Hebrew
-        } else if *x == value!("indian") {
-            AnyCalendarKind::Indian
-        } else if *x == value!("islamic") {
-            AnyCalendarKind::IslamicObservational
-        } else if *x == value!("islamicc") {
-            AnyCalendarKind::IslamicCivil
-        } else if *x == value!("iso") {
-            AnyCalendarKind::Iso
-        } else if *x == value!("japanese") {
-            AnyCalendarKind::Japanese
-        } else if *x == value!("japanext") {
-            AnyCalendarKind::JapaneseExtended
-        } else if *x == value!("persian") {
-            AnyCalendarKind::Persian
-        } else if *x == value!("roc") {
-            AnyCalendarKind::Roc
-        } else if *x == value!("tbla") {
-            AnyCalendarKind::IslamicTabular
-        } else if *x == value!("umalqura") {
-            AnyCalendarKind::IslamicUmmAlQura
-        } else {
-            // Log a warning when a calendar value is passed in but doesn't match any calendars
-            DataError::custom("bcp47_value did not match any calendars").with_display_context(x);
-            return None;
-        })
+        let slice = x.as_tinystr_slice();
+
+
+        if slice.len() <= 2 {
+            if let Some(first) = slice.get(0) {
+                if let Some(second) = slice.get(1) {
+                    if first == "islamic" {
+                        match second.as_str() {
+                            "civil" => return Some(AnyCalendarKind::IslamicCivil),
+                            "tbla" => return Some(AnyCalendarKind::IslamicTabular),
+                            "umalqura" => return Some(AnyCalendarKind::IslamicUmmAlQura),
+                            _ => ()
+                        }
+                    }
+                } else {
+                    match first.as_str() {
+                        "buddhist" => return Some(AnyCalendarKind::Buddhist),
+                        "chinese" => return Some(AnyCalendarKind::Chinese),
+                        "coptic" => return Some(AnyCalendarKind::Coptic),
+                        "dangi" => return Some(AnyCalendarKind::Dangi),
+                        "ethioaa" => return Some(AnyCalendarKind::EthiopianAmeteAlem),
+                        "ethiopic" => return Some(AnyCalendarKind::Ethiopian),
+                        "hebrew" => return Some(AnyCalendarKind::Hebrew),
+                        "indian" => return Some(AnyCalendarKind::Indian),
+                        "islamic" => return Some(AnyCalendarKind::IslamicObservational),
+                        "islamicc" => return Some(AnyCalendarKind::IslamicCivil),
+                        "iso" => return Some(AnyCalendarKind::Iso),
+                        "japanese" => return Some(AnyCalendarKind::Japanese),
+                        "japanext" => return Some(AnyCalendarKind::JapaneseExtended),
+                        "persian" => return Some(AnyCalendarKind::Persian),
+                        "roc" => return Some(AnyCalendarKind::Roc),
+                        _ => ()
+                    }
+                }
+            }
+        }
+
+        // Log a warning when a calendar value is passed in but doesn't match any calendars
+        DataError::custom("bcp47_value did not match any calendars").with_display_context(x);
+        None
     }
 
     /// Convert to a BCP-47 string
@@ -980,10 +979,10 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => "gregory",
             AnyCalendarKind::Hebrew => "hebrew",
             AnyCalendarKind::Indian => "indian",
-            AnyCalendarKind::IslamicCivil => "islamicc",
+            AnyCalendarKind::IslamicCivil => "islamic-civil",
             AnyCalendarKind::IslamicObservational => "islamic",
-            AnyCalendarKind::IslamicTabular => "tbla",
-            AnyCalendarKind::IslamicUmmAlQura => "umalqura",
+            AnyCalendarKind::IslamicTabular => "islamic-tbla",
+            AnyCalendarKind::IslamicUmmAlQura => "islamic-umalqura",
             AnyCalendarKind::Iso => "iso",
             AnyCalendarKind::Japanese => "japanese",
             AnyCalendarKind::JapaneseExtended => "japanext",
@@ -1004,10 +1003,10 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => value!("gregory"),
             AnyCalendarKind::Hebrew => value!("hebrew"),
             AnyCalendarKind::Indian => value!("indian"),
-            AnyCalendarKind::IslamicCivil => value!("islamicc"),
+            AnyCalendarKind::IslamicCivil => Value::try_from_bytes(b"islamic-civil").unwrap(),
             AnyCalendarKind::IslamicObservational => value!("islamic"),
-            AnyCalendarKind::IslamicTabular => value!("tbla"),
-            AnyCalendarKind::IslamicUmmAlQura => value!("umalqura"),
+            AnyCalendarKind::IslamicTabular => Value::try_from_bytes(b"islamic-tbla").unwrap(),
+            AnyCalendarKind::IslamicUmmAlQura => Value::try_from_bytes(b"islamic-umalqura").unwrap(),
             AnyCalendarKind::Iso => value!("iso"),
             AnyCalendarKind::Japanese => value!("japanese"),
             AnyCalendarKind::JapaneseExtended => value!("japanext"),

@@ -14,7 +14,7 @@ use icu_calendar::{
 };
 use icu_locid::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
-
+use tinystr::{tinystr, TinyAsciiStr};
 /// A calendar that can be found in CLDR
 ///
 /// New implementors of this trait will likely also wish to modify `get_era_code_map()`
@@ -39,6 +39,18 @@ pub trait CldrCalendar {
     }
 }
 
+/// Check if the provided value is of the form `islamic-{subcal}`
+fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
+    let slice = value.as_tinystr_slice();
+    if slice.len() > 2 {
+        return false;
+    }
+    if let (Some(first), Some(second)) = (slice.get(0), slice.get(1)) {
+        return *first == tinystr!(8, "islamic") && *second == subcal
+    }
+
+    false
+}
 impl CldrCalendar for Buddhist {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("buddhist");
     type DateSymbolsV1Marker = BuddhistDateSymbolsV1Marker;
@@ -94,6 +106,9 @@ impl CldrCalendar for IslamicCivil {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamicc");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
+    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
+        *value == value!("islamicc") || is_islamic_subcal(value, tinystr!(8, "civil"))
+    }
 }
 
 impl CldrCalendar for IslamicObservational {
@@ -106,12 +121,18 @@ impl CldrCalendar for IslamicTabular {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("tbla");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
+    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
+        is_islamic_subcal(value, tinystr!(8, "tbla"))
+    }
 }
 
 impl CldrCalendar for IslamicUmmAlQura {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("umalqura");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
+    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
+        is_islamic_subcal(value, tinystr!(8, "umalqura"))
+    }
 }
 
 impl CldrCalendar for Japanese {
