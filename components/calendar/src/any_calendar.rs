@@ -993,6 +993,7 @@ impl AnyCalendarKind {
     }
 
     /// Convert to a BCP-47 `Value`
+    #[allow(clippy::unwrap_used)] // these are known-good BCP47 unicode extension values
     pub fn as_bcp47_value(self) -> Value {
         match self {
             AnyCalendarKind::Buddhist => value!("buddhist"),
