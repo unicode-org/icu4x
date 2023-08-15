@@ -9,6 +9,7 @@ use std::collections::{BTreeSet, HashSet};
 use std::path::{Path, PathBuf};
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Config {
     pub keys: KeyInclude,
     pub fallback: FallbackMode,
@@ -19,26 +20,18 @@ pub struct Config {
         serialize_with = "sorted_set"
     )]
     pub collations: HashSet<String>,
-    #[serde(
-        default,
-        skip_serializing_if = "is_default",
-        rename = "segmenterModels"
-    )]
+    #[serde(default, skip_serializing_if = "is_default")]
     pub segmenter_models: SegmenterModelInclude,
 
     #[serde(default)]
     pub cldr: PathOrTag,
-    #[serde(default, rename = "icuExport")]
+    #[serde(default)]
     pub icu_export: PathOrTag,
-    #[serde(default, rename = "segmenterLstm")]
+    #[serde(default)]
     pub segmenter_lstm: PathOrTag,
-    #[serde(default, skip_serializing_if = "is_default", rename = "trieType")]
+    #[serde(default, skip_serializing_if = "is_default")]
     pub trie_type: TrieType,
-    #[serde(
-        default,
-        skip_serializing_if = "is_default",
-        rename = "collationHanDatabase"
-    )]
+    #[serde(default, skip_serializing_if = "is_default")]
     pub collation_han_database: CollationHanDatabase,
 
     pub export: Export,
@@ -52,14 +45,11 @@ fn is_default<T: Default + PartialEq>(value: &T) -> bool {
 
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum KeyInclude {
-    #[serde(rename = "none")]
     None,
-    #[serde(rename = "all")]
     All,
-    #[serde(rename = "explicit")]
     Explicit(#[serde(with = "data_key_as_str")] HashSet<DataKey>),
-    #[serde(rename = "forBinary")]
     ForBinary(PathBuf),
 }
 
@@ -86,16 +76,12 @@ mod data_key_as_str {
 }
 
 #[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum LocaleInclude {
-    #[serde(rename = "recommended")]
     Recommended,
-    #[serde(rename = "all")]
     All,
-    #[serde(rename = "none")]
     None,
-    #[serde(rename = "explicit")]
     Explicit(#[serde(serialize_with = "sorted_set")] HashSet<LanguageIdentifier>),
-    #[serde(rename = "cldrSet")]
     CldrSet(#[serde(serialize_with = "sorted_set")] HashSet<CoverageLevel>),
 }
 
@@ -111,44 +97,39 @@ pub fn sorted_set<S: serde::Serializer>(
 
 #[non_exhaustive]
 #[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub enum SegmenterModelInclude {
     #[default]
     /// Set this data driver to generate the recommended set of segmenter models. This will cover
     /// all languages supported by ICU4X: Thai, Burmese, Khmer, Lao, Chinese, and Japanese.
     /// Both dictionary and LSTM models will be included, to the extent required by the chosen data keys.
-    #[serde(rename = "recommended")]
     Recommended,
-    #[serde(rename = "none")]
     None,
-    #[serde(rename = "explicit")]
     Explicit(Vec<String>),
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, PartialEq, Default)]
+#[serde(rename_all = "camelCase")]
 pub enum PathOrTag {
-    #[serde(rename = "path")]
     Path(PathBuf),
-    #[serde(rename = "tag")]
     Tag(String),
     #[default]
-    #[serde(rename = "latest")]
     Latest,
-    #[serde(rename = "none")]
     None,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub enum Export {
-    #[serde(rename = "fileSystem")]
-    Fs {
+    FileSystem {
         path: PathBuf,
         syntax: FsSyntax,
         #[serde(default, skip_serializing_if = "is_default")]
         fingerprint: bool,
     },
-    #[serde(rename = "blob")]
-    Blob { path: PathBuf },
-    #[serde(rename = "baked")]
+    Blob {
+        path: PathBuf,
+    },
     Baked {
         path: PathBuf,
         #[serde(default, skip_serializing_if = "is_default")]
@@ -166,13 +147,10 @@ pub enum Export {
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub enum FsSyntax {
-    #[serde(rename = "postcard")]
     Postcard,
-    #[serde(rename = "json")]
     Json,
-    #[serde(rename = "bincode")]
     Bincode,
-    #[serde(rename = "jsonPretty")]
     JsonPretty,
 }

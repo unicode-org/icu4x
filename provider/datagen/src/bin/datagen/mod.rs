@@ -120,7 +120,7 @@ fn main() -> eyre::Result<()> {
     };
 
     match config.export {
-        config::Export::Fs {
+        config::Export::FileSystem {
             path,
             syntax,
             fingerprint,
