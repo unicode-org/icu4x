@@ -151,6 +151,7 @@ pub enum FallbackMode {
     /// [`Runtime`]: Self::Runtime
     /// [`Hybrid`]: Self::Hybrid
     #[default]
+    #[serde(rename = "preferredForExporter")]
     PreferredForExporter,
     /// This mode generates the minimal set of locales that cover the requested locales when
     /// fallback is used at runtime. For example, if "en" and "en-US" are both requested but
@@ -168,6 +169,7 @@ pub enum FallbackMode {
     /// logic, use [`FallbackMode::RuntimeManual`] or [`FallbackMode::Hybrid`].
     ///
     /// This is the default fallback mode for the baked provider.
+    #[serde(rename = "runtime")]
     Runtime,
     /// Same as [`FallbackMode::Runtime`] except that the fallback logic is not included in the
     /// generated code. It must be enabled manually with a [`LocaleFallbackProvider`].
@@ -175,6 +177,7 @@ pub enum FallbackMode {
     /// This mode is supported on all data provider implementations.
     ///
     /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
+    #[serde(rename = "runtimeManual")]
     RuntimeManual,
     /// This mode generates data for exactly the supplied locales. If data doesn't exist for a
     /// locale, fallback will be performed and the fallback value will be exported.
@@ -188,6 +191,7 @@ pub enum FallbackMode {
     /// Data generated in this mode can be used without runtime fallback and guarantees that all
     /// locales are present. If you wish to also support locales that were not explicitly listed
     /// with runtime fallback, see [`FallbackMode::Hybrid`].
+    #[serde(rename = "preresolved")]
     Preresolved,
     /// This mode passes through CLDR data without performing locale deduplication.
     ///
@@ -205,6 +209,7 @@ pub enum FallbackMode {
     /// This is the default fallback mode for the blob and filesystem providers.
     ///
     /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
+    #[serde(rename = "hybrid")]
     Hybrid,
 }
 

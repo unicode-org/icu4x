@@ -1,23 +1,26 @@
 {
-    "keys": {
-        "Explicit": [
-            "fallback/likelysubtags@1",
-            "fallback/parents@1",
-            "fallback/supplement/co@1",
-            "locid_transform/aliases@1",
-            "locid_transform/likelysubtags_ext@1",
-            "locid_transform/likelysubtags_l@1",
-            "locid_transform/likelysubtags_sr@1",
-            "locid_transform/script_dir@1"
-        ]
-    },
-    "fallback": "Runtime",
-    "locales": "Recommended",
-    "export": {
-        "Baked": {
-            "path": "data",
-            "pretty": true
-        }
-    },
-    "overwrite": true
+  "keys": {
+    "explicit": [
+      "fallback/likelysubtags@1",
+      "fallback/parents@1",
+      "fallback/supplement/co@1",
+      "locid_transform/aliases@1",
+      "locid_transform/likelysubtags_ext@1",
+      "locid_transform/likelysubtags_l@1",
+      "locid_transform/likelysubtags_sr@1",
+      "locid_transform/script_dir@1"
+    ]
+  },
+  "fallback": "runtime",
+  "locales": "recommended",
+  "cldr": "latest",
+  "icuExport": "latest",
+  "segmenterLstm": "latest",
+  "export": {
+    "baked": {
+      "path": "data",
+      "pretty": true
+    }
+  },
+  "overwrite": true
 }

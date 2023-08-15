@@ -1,19 +1,19 @@
 {
-    "keys": {
-      "Explicit": [
-        "core/helloworld@1"
-      ]
-    },
-    "fallback": "Hybrid",
-    "locales": "All",
-    "cldr": "None",
-    "icu_export": "None",
-    "segmenter_lstm": "None",
-    "export": {
-      "Fs": {
-        "path": "json",
-        "syntax": "Json"
-      }
-    },
-    "overwrite": true
+  "keys": {
+    "explicit": [
+      "core/helloworld@1"
+    ]
+  },
+  "fallback": "hybrid",
+  "locales": "all",
+  "cldr": "none",
+  "icuExport": "none",
+  "segmenterLstm": "none",
+  "export": {
+    "fileSystem": {
+      "path": "json",
+      "syntax": "json"
+    }
+  },
+  "overwrite": true
 }

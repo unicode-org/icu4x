@@ -253,6 +253,8 @@ impl Cli {
         Ok(if let Some(ref config_path) = self.config {
             let mut config: config::Config =
                 serde_json::from_str(&std::fs::read_to_string(config_path)?)?;
+            // write back to normalize the config
+            std::fs::write(config_path, &serde_json::to_string_pretty(&config).unwrap())?;
             let parent = config_path.parent().unwrap();
             // all paths in the JSON file are relative to its path, not to pwd.
             for path_or_tag in [

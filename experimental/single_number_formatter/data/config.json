@@ -1,13 +1,13 @@
 {
     "keys": {
-        "Explicit": [
+        "explicit": [
             "currency/essentials@1"
         ]
     },
-    "fallback": "Runtime",
-    "locales": "Recommended",
+    "fallback": "runtime",
+    "locales": "recommended",
     "export": {
-        "Baked": {
+        "baked": {
             "path": "data",
             "pretty": true
         }
