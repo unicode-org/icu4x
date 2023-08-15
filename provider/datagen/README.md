@@ -17,7 +17,7 @@ use icu_datagen::prelude::*;
 use icu_datagen::blob_exporter::*;
 use std::fs::File;
 
-DataExportDriver::default()
+DatagenDriver::new()
       .with_keys([icu::list::provider::AndListV1Marker::KEY])
       .export(&DatagenProvider::latest_tested(), BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())))
       .unwrap();

@@ -18,7 +18,7 @@
 //! let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 //!
 //! // Export something
-//! DataExportDriver::default()
+//! DatagenDriver::new()
 //!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
 //!   .export(&DatagenProvider::latest_tested(), exporter)
 //!   .unwrap();

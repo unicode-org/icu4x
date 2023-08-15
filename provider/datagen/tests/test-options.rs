@@ -72,7 +72,7 @@ fn test_fallback_options() {
 
     let mut testing_exporter = TestingExporter::default();
 
-    let driver = DataExportDriver::default().with_keys([DecimalSymbolsV1Marker::KEY]);
+    let driver = DatagenDriver::new().with_keys([DecimalSymbolsV1Marker::KEY]);
 
     let explicit_locales: HashSet<LanguageIdentifier> = [
         langid!("arc"), // Aramaic, not in CLDR

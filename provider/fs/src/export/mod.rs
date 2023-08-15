@@ -23,7 +23,7 @@
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export something
-//! DataExportDriver::default()
+//! DatagenDriver::new()
 //!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
 //!   .export(&DatagenProvider::latest_tested(), exporter)
 //!   .unwrap();

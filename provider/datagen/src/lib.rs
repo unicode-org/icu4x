@@ -20,7 +20,7 @@
 //! use icu_datagen::blob_exporter::*;
 //! use std::fs::File;
 //!
-//! DataExportDriver::default()
+//! DatagenDriver::new()
 //!       .with_keys([icu::list::provider::AndListV1Marker::KEY])
 //!       .export(&DatagenProvider::latest_tested(), BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())))
 //!       .unwrap();
@@ -66,7 +66,7 @@ mod registry;
 mod source;
 mod transform;
 
-pub use driver::DataExportDriver;
+pub use driver::DatagenDriver;
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
 #[allow(deprecated)] // ugh
 pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
@@ -85,7 +85,7 @@ pub use icu_provider_fs::export as fs_exporter;
 pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
-        CollationHanDatabase, CoverageLevel, DataExportDriver, DatagenProvider, FallbackMode,
+        CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, FallbackMode,
         SourceData,
     };
     #[doc(no_inline)]
@@ -347,7 +347,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
 /// Requires `legacy_api` Cargo feature
 ///
 /// The output format.
-#[deprecated(since = "1.3.0", note = "use `DataExportDriver`")]
+#[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
 #[non_exhaustive]
 #[cfg(feature = "legacy_api")]
 pub enum Out {
@@ -425,7 +425,7 @@ impl core::fmt::Debug for Out {
     }
 }
 
-#[deprecated(since = "1.3.0", note = "use `DataExportDriver`")]
+#[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
 #[cfg(feature = "legacy_api")]
 #[allow(deprecated)]
 /// Requires `legacy_api` Cargo feature
@@ -445,7 +445,7 @@ pub fn datagen(
     source: &SourceData,
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
-    let exporter = DataExportDriver::default()
+    let exporter = DatagenDriver::new()
         .with_keys(keys.iter().cloned())
         .with_fallback_mode(FallbackMode::Hybrid)
         .with_collations(source.collations().to_vec());

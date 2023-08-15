@@ -29,13 +29,13 @@ use writeable::Writeable;
 /// use icu_datagen::prelude::*;
 /// use icu_datagen::blob_exporter::*;
 ///
-/// DataExportDriver::default()
+/// DatagenDriver::new()
 ///       .with_keys([icu::list::provider::AndListV1Marker::KEY])
 ///       .export(&DatagenProvider::latest_tested(), BlobExporter::new_with_sink(Box::new(&mut Vec::new())))
 ///       .unwrap();
 /// ```
 #[derive(Debug, Clone, Default)]
-pub struct DataExportDriver {
+pub struct DatagenDriver {
     keys: HashSet<DataKey>,
     // `None` means all
     locales: Option<HashSet<LanguageIdentifier>>,
@@ -44,7 +44,12 @@ pub struct DataExportDriver {
     segmenter_models: Vec<String>,
 }
 
-impl DataExportDriver {
+impl DatagenDriver {
+    /// Creates an empty [`DatagenDriver`].
+    pub fn new() -> Self {
+        Self::default()
+    }
+
     /// Sets this driver to generate the given keys. See [`icu_datagen::keys`],
     /// [`icu_datagen::all_keys`], [`icu_datagen::key`] and [`icu_datagen::keys_from_bin`].
     ///
@@ -523,7 +528,7 @@ fn test_collation_filtering() {
         },
     ];
     for cas in cases {
-        let resolved_locales = DataExportDriver::default()
+        let resolved_locales = DatagenDriver::new()
             .with_collations(cas.include_collations.iter().copied().map(String::from))
             .with_locales([cas.language.clone()])
             .with_fallback_mode(FallbackMode::Preresolved)

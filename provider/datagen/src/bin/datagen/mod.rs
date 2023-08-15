@@ -79,7 +79,7 @@ fn main() -> eyre::Result<()> {
         _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
     };
 
-    let mut driver = DataExportDriver::default();
+    let mut driver = DatagenDriver::new();
     driver = match config.keys {
         config::KeyInclude::None => driver.with_keys([]),
         config::KeyInclude::All => driver.with_keys(icu_datagen::all_keys()),

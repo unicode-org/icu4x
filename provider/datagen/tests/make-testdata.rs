@@ -54,7 +54,7 @@ fn generate_json_and_verify_postcard() {
         ),
     });
 
-    DataExportDriver::default()
+    DatagenDriver::new()
         .with_keys(icu_datagen::all_keys())
         .with_locales(LOCALES.iter().cloned())
         .with_segmenter_models(vec![
