@@ -104,7 +104,7 @@ provider_baked = ["dep:crlify", "dep:databake", "dep:syn"]
 provider_blob = ["dep:icu_provider_blob"]
 provider_fs = ["dep:icu_provider_fs"]
 legacy_api = ["provider_fs", "provider_blob", "provider_baked"]
-bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
+bin = ["dep:clap", "dep:eyre", "dep:simple_logger", "dep:crlify"]
 rayon = ["dep:rayon"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_codepointtrie_builder/wasm"]
