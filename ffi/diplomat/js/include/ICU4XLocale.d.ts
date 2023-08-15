@@ -143,7 +143,7 @@ export class ICU4XLocale {
 
   /**
 
-   * Unconditionally panics.
+   * Deprecated
 
    * Use `create_from_string("en").
    */
@@ -151,7 +151,7 @@ export class ICU4XLocale {
 
   /**
 
-   * Unconditionally panics.
+   * Deprecated
 
    * Use `create_from_string("bn").
    */

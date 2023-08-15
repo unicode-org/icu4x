@@ -7,9 +7,9 @@
 macro_rules! __impl_time_zone_formats_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.65"]
-        impl icu_provider::DataProvider<icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>, icu_provider::DataError> {
-                static FI: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+        impl icu_provider::DataProvider<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker>, icu_provider::DataError> {
+                static FI: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+H.mm"), alloc::borrow::Cow::Borrowed("-H.mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
@@ -21,7 +21,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static CS: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static CS: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+H:mm"), alloc::borrow::Cow::Borrowed("-H:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -33,7 +33,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static MS_ID: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static MS_ID: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -45,7 +45,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static ID: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static ID: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -57,7 +57,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SL: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SL: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -69,7 +69,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static DA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static DA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -81,7 +81,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SI: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SI: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("ග\u{dca}\u{200d}ර\u{dd2}මවේ{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("ග\u{dca}\u{200d}ර\u{dd2}මවේ"),
@@ -93,7 +93,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static BS: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static BS: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed(" -HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -105,7 +105,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static HR: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static HR: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed(" -HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -117,7 +117,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static CEB: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static CEB: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -129,7 +129,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} {0}"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SW: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SW: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -141,7 +141,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static UR: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static UR: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -153,7 +153,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static BN: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static BN: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -165,7 +165,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static CY: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static CY: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -177,7 +177,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static DSB: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static DSB: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -189,7 +189,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static VI: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static VI: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -201,7 +201,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static PT_AO: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static PT_PT: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -213,7 +213,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static AST: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static AST: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -225,7 +225,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static CA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static CA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -237,7 +237,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static PT: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static PT: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -249,7 +249,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static YRL: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static YRL: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -261,7 +261,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static ZU: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static ZU: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -273,7 +273,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static LV: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static LV: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -285,7 +285,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{0} ({1})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static IG: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static IG: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -297,7 +297,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KEA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KEA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -309,7 +309,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static RO: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static RO: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -321,7 +321,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SC: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SC: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -333,7 +333,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static IT: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static IT: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -345,7 +345,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SQ: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SQ: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -357,7 +357,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static FIL: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static FIL: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -369,7 +369,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static TO: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static TO: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -381,7 +381,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static MS: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static MS: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -393,7 +393,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SO: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SO: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -405,7 +405,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static JV: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static JV: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -417,7 +417,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static PL: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static PL: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -429,7 +429,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static BR: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static BR: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -441,7 +441,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static IA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static IA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -453,7 +453,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static ES_419: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static ES_419: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -465,7 +465,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static ES: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static ES: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -477,7 +477,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static GL: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static GL: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -489,7 +489,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static RM: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static RM: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -501,7 +501,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static NN: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static NN: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -513,7 +513,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static NB: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static NO: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -525,7 +525,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static DE: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static DE: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -537,7 +537,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static HA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static HA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -549,7 +549,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static TR: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static TR: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -561,7 +561,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static PCM: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static PCM: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -573,7 +573,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static EN: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static EN: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -585,7 +585,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static EN_CA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static EN_CA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -597,7 +597,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static AZ: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static AZ: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -609,7 +609,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static MI: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static MI: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -621,7 +621,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static EU: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static EU: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -633,7 +633,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static HU: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static HU: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -645,7 +645,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static FO: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static FO: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -657,7 +657,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static TK: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static TK: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -669,7 +669,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static TT: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static TT: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -681,7 +681,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static UZ_CYRL: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static UZ_CYRL: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -693,7 +693,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KK: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KK: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -705,7 +705,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KY: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KY: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -717,7 +717,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static UR_IN: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static UR_IN: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -729,7 +729,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SD: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SD: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -741,7 +741,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static BHO: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static BHO: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -753,7 +753,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KOK: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KOK: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -765,7 +765,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static HI: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static HI: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -777,7 +777,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static NE: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static NE: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -789,7 +789,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static BGC: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static BGC: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -801,7 +801,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static DOI: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static DOI: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -813,7 +813,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static AS: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static AS: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -825,7 +825,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static PA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static PA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -837,7 +837,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static GU: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static GU: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -849,7 +849,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static OR: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static OR: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -861,7 +861,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static TA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static TA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -873,7 +873,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static TE: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static TE: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -885,7 +885,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KN: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KN: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -897,7 +897,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static MY: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static MY: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -909,7 +909,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static CHR: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static CHR: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -921,7 +921,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KO: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KO: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -933,7 +933,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1}({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static HY: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static UND: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -945,7 +945,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static IS: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static IS: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -957,7 +957,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SR_LATN: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SR_LATN: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -969,7 +969,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static GD: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static GD: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -981,7 +981,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SR_LATN_BA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SR_LATN_BA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -993,7 +993,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SR: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SR: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1005,7 +1005,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static RU: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static RU: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1017,7 +1017,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SR_BA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SR_BA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1029,7 +1029,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static CV: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static CV: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1041,7 +1041,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static NL: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static NL: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1053,7 +1053,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static AF: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static AF: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1065,7 +1065,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static MN: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static MN: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1077,7 +1077,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static YUE_HANS: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static YUE_HANS: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1089,7 +1089,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static ZH: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static ZH: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1101,7 +1101,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1}（{0}）"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static ZH_HANT: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static ZH_HANT: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1113,7 +1113,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1}（{0}）"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static JA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static JA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1125,7 +1125,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1}（{0}）"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static YUE: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static YUE: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1137,7 +1137,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static ZH_HK: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static ZH_HK: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1149,7 +1149,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1}（{0}）"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KGP: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KGP: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1161,7 +1161,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SK: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SK: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1173,7 +1173,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static HSB: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static HSB: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1185,7 +1185,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static EL: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static EL: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1197,7 +1197,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("[{1} ({0})]"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static MK: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static MK: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1209,7 +1209,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static BS_CYRL: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static BS_CYRL: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1221,7 +1221,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static BE: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static BE: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1233,7 +1233,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static UK: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static UK: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1245,7 +1245,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static PS: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static PS: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1257,7 +1257,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static TH: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static TH: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1269,7 +1269,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static LO: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static LO: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1281,7 +1281,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1293,7 +1293,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static TI: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static TI: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1305,7 +1305,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KS: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KS: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("جی ایم ٹی"),
@@ -1317,7 +1317,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static GA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static GA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("MAG{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("MAG"),
@@ -1329,7 +1329,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static YO_BJ: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static YO_BJ: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("WAT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("WAT"),
@@ -1341,7 +1341,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static YO: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static YO: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("WAT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("WAT"),
@@ -1353,7 +1353,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static MR: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static MR: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("[GMT]{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("[GMT]"),
@@ -1365,7 +1365,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static TG: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static TG: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("Вақти GMT {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("Вақти GMT"),
@@ -1377,7 +1377,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static BG: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static BG: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("Гринуич{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("Гринуич"),
@@ -1389,7 +1389,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static AR: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static AR: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("غرينتش{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("غرينتش"),
@@ -1401,7 +1401,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static BRX: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static BRX: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("जि.एम.ति {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("जि.एम.ति"),
@@ -1413,7 +1413,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KS_DEVA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KS_DEVA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("जी एम टी {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("जी एम टी"),
@@ -1425,7 +1425,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("जी.एम.टी. {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("जी.एम.टी."),
@@ -1437,7 +1437,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SD_DEVA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SD_DEVA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("जीएमटी{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("जीएमटी"),
@@ -1449,7 +1449,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static MAI: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static MAI: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("जीएमटी{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("जीएमटी"),
@@ -1461,7 +1461,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static MNI: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static MNI: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("জি এম টি {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("জি এম টি"),
@@ -1473,7 +1473,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static ML: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static ML: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("ജിഎംടി {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("ജിഎംടി"),
@@ -1485,7 +1485,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static KM: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static KM: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("ម\u{17c9}ោង\u{200b}សកល {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("ម\u{17c9}ោង\u{200b}សកល"),
@@ -1497,7 +1497,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SAT: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SAT: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("ᱡᱤᱮᱢᱴᱤ{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("ᱡᱤᱮᱢᱴᱤ"),
@@ -1509,7 +1509,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static FF_ADLM: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static FF_ADLM: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("𞤑𞤖𞤘{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("𞤑𞤖𞤘"),
@@ -1521,7 +1521,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static ET: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static ET: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1533,7 +1533,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static LT: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static LT: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1545,7 +1545,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static SV: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static SV: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1557,7 +1557,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static FR_CA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static FR_CA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
@@ -1569,7 +1569,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static FR: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static FR: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
@@ -1581,7 +1581,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static AM: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static AM: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HHmm"), alloc::borrow::Cow::Borrowed("-HHmm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("ጂ ኤም ቲ{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("ጂ ኤም ቲ"),
@@ -1593,7 +1593,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static HE: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static HE: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("\u{200e}+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm\u{200e}")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}\u{200e}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1605,7 +1605,7 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static FA: <icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static FA: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("\u{200e}+HH:mm"), alloc::borrow::Cow::Borrowed("\u{200e}−HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("{0} گرینویچ"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("گرینویچ"),
@@ -1617,13 +1617,13 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static VALUES: [&<icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable; 432usize] = [&AF, &AF, &AM, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AR, &AS, &AST, &AZ, &BE, &BE, &BG, &BGC, &BHO, &BN, &BN, &BR, &BRX, &BS, &BS_CYRL, &CA, &CA, &CA, &CA, &CA, &CEB, &CHR, &CS, &CV, &CY, &DA, &DA, &DE, &DE, &DE, &DE, &DE, &DE, &DE, &DOI, &DSB, &EL, &EL, &EL, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN_CA, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &EN, &ES, &ES_419, &ES_419, &ES_419, &ES_419, &ES_419, &ES_419, &ES_419, &ES_419, &ES_419, &ES_419, &ES, &ES_419, &ES, &ES_419, &ES_419, &ES, &ES_419, &ES_419, &ES_419, &ES_419, &ES, &ES_419, &ES_419, &ES_419, &ES_419, &ES_419, &ES_419, &ET, &EU, &FA, &FA, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FF_ADLM, &FI, &FIL, &FO, &FO, &FR, &FR, &FR, &FR, &FR, &FR, &FR_CA, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &FR, &GA, &GA, &GD, &GL, &GU, &HA, &HA, &HA, &HE, &HI, &EN, &HR, &HR, &HSB, &HU, &HY, &IA, &ID, &IG, &IS, &IT, &IT, &IT, &IT, &JA, &JV, &KA, &KEA, &KGP, &KK, &KM, &KN, &KO, &KO, &KOK, &KS, &KS_DEVA, &KY, &LO, &LT, &LV, &MAI, &MI, &MK, &ML, &MN, &MNI, &MR, &MS, &MS, &MS_ID, &MS, &MY, &NB, &NB, &NE, &NE, &NL, &NL, &NL, &NL, &NL, &NL, &NL, &NN, &NB, &OR, &PA, &PCM, &PL, &PS, &PS, &PT, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &PT_AO, &HY, &HY, &HY, &HY, &RM, &RO, &RO, &RU, &RU, &RU, &RU, &RU, &RU, &SA, &SAT, &SC, &SD, &SD_DEVA, &SI, &SK, &SL, &SO, &SO, &SO, &SO, &SQ, &SQ, &SQ, &SR, &SR_BA, &SR_LATN, &SR_LATN_BA, &SR_LATN, &SR_LATN, &SR, &HY, &SV, &SV, &SV, &SW, &SW, &SW, &SW, &TA, &TA, &TA, &TA, &TE, &TG, &TH, &TI, &TI, &TK, &TO, &TR, &TR, &TT, &UK, &HY, &UR, &UR_IN, &HY, &UZ_CYRL, &VI, &HY, &EN, &YO, &YO_BJ, &YRL, &YRL, &YRL, &YUE, &YUE_HANS, &ZH, &ZH_HK, &ZH_HANT, &ZH_HK, &ZH, &ZU];
-                static KEYS: [&str; 432usize] = ["af", "af-NA", "am", "ar", "ar-AE", "ar-BH", "ar-DJ", "ar-DZ", "ar-EG", "ar-EH", "ar-ER", "ar-IL", "ar-IQ", "ar-JO", "ar-KM", "ar-KW", "ar-LB", "ar-LY", "ar-MA", "ar-MR", "ar-OM", "ar-PS", "ar-QA", "ar-SA", "ar-SD", "ar-SO", "ar-SS", "ar-SY", "ar-TD", "ar-TN", "ar-YE", "as", "ast", "az", "be", "be-tarask", "bg", "bgc", "bho", "bn", "bn-IN", "br", "brx", "bs", "bs-Cyrl", "ca", "ca-AD", "ca-ES-valencia", "ca-FR", "ca-IT", "ceb", "chr", "cs", "cv", "cy", "da", "da-GL", "de", "de-AT", "de-BE", "de-CH", "de-IT", "de-LI", "de-LU", "doi", "dsb", "el", "el-CY", "el-polyton", "en", "en-001", "en-150", "en-AE", "en-AG", "en-AI", "en-AS", "en-AT", "en-AU", "en-BB", "en-BE", "en-BI", "en-BM", "en-BS", "en-BW", "en-BZ", "en-CA", "en-CC", "en-CH", "en-CK", "en-CM", "en-CX", "en-CY", "en-DE", "en-DG", "en-DK", "en-DM", "en-ER", "en-FI", "en-FJ", "en-FK", "en-FM", "en-GB", "en-GD", "en-GG", "en-GH", "en-GI", "en-GM", "en-GU", "en-GY", "en-HK", "en-IE", "en-IL", "en-IM", "en-IN", "en-IO", "en-JE", "en-JM", "en-KE", "en-KI", "en-KN", "en-KY", "en-LC", "en-LR", "en-LS", "en-MG", "en-MH", "en-MO", "en-MP", "en-MS", "en-MT", "en-MU", "en-MV", "en-MW", "en-MY", "en-NA", "en-NF", "en-NG", "en-NL", "en-NR", "en-NU", "en-NZ", "en-PG", "en-PH", "en-PK", "en-PN", "en-PR", "en-PW", "en-RW", "en-SB", "en-SC", "en-SD", "en-SE", "en-SG", "en-SH", "en-SI", "en-SL", "en-SS", "en-SX", "en-SZ", "en-TC", "en-TK", "en-TO", "en-TT", "en-TV", "en-TZ", "en-UG", "en-UM", "en-VC", "en-VG", "en-VI", "en-VU", "en-WS", "en-ZA", "en-ZM", "en-ZW", "es", "es-419", "es-AR", "es-BO", "es-BR", "es-BZ", "es-CL", "es-CO", "es-CR", "es-CU", "es-DO", "es-EA", "es-EC", "es-GQ", "es-GT", "es-HN", "es-IC", "es-MX", "es-NI", "es-PA", "es-PE", "es-PH", "es-PR", "es-PY", "es-SV", "es-US", "es-UY", "es-VE", "et", "eu", "fa", "fa-AF", "ff-Adlm", "ff-Adlm-BF", "ff-Adlm-CM", "ff-Adlm-GH", "ff-Adlm-GM", "ff-Adlm-GW", "ff-Adlm-LR", "ff-Adlm-MR", "ff-Adlm-NE", "ff-Adlm-NG", "ff-Adlm-SL", "ff-Adlm-SN", "fi", "fil", "fo", "fo-DK", "fr", "fr-BE", "fr-BF", "fr-BI", "fr-BJ", "fr-BL", "fr-CA", "fr-CD", "fr-CF", "fr-CG", "fr-CH", "fr-CI", "fr-CM", "fr-DJ", "fr-DZ", "fr-GA", "fr-GF", "fr-GN", "fr-GP", "fr-GQ", "fr-HT", "fr-KM", "fr-LU", "fr-MA", "fr-MC", "fr-MF", "fr-MG", "fr-ML", "fr-MQ", "fr-MR", "fr-MU", "fr-NC", "fr-NE", "fr-PF", "fr-PM", "fr-RE", "fr-RW", "fr-SC", "fr-SN", "fr-SY", "fr-TD", "fr-TG", "fr-TN", "fr-VU", "fr-WF", "fr-YT", "ga", "ga-GB", "gd", "gl", "gu", "ha", "ha-GH", "ha-NE", "he", "hi", "hi-Latn", "hr", "hr-BA", "hsb", "hu", "hy", "ia", "id", "ig", "is", "it", "it-CH", "it-SM", "it-VA", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "ko-KP", "kok", "ks", "ks-Deva", "ky", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "ms-BN", "ms-ID", "ms-SG", "my", "nb", "nb-SJ", "ne", "ne-IN", "nl", "nl-AW", "nl-BE", "nl-BQ", "nl-CW", "nl-SR", "nl-SX", "nn", "no", "or", "pa", "pcm", "pl", "ps", "ps-PK", "pt", "pt-AO", "pt-CH", "pt-CV", "pt-GQ", "pt-GW", "pt-LU", "pt-MO", "pt-MZ", "pt-PT", "pt-ST", "pt-TL", "qu", "qu-BO", "qu-EC", "raj", "rm", "ro", "ro-MD", "ru", "ru-BY", "ru-KG", "ru-KZ", "ru-MD", "ru-UA", "sa", "sat", "sc", "sd", "sd-Deva", "si", "sk", "sl", "so", "so-DJ", "so-ET", "so-KE", "sq", "sq-MK", "sq-XK", "sr", "sr-BA", "sr-Latn", "sr-Latn-BA", "sr-Latn-XK", "sr-ME", "sr-XK", "su", "sv", "sv-AX", "sv-FI", "sw", "sw-CD", "sw-KE", "sw-UG", "ta", "ta-LK", "ta-MY", "ta-SG", "te", "tg", "th", "ti", "ti-ER", "tk", "to", "tr", "tr-CY", "tt", "uk", "und", "ur", "ur-IN", "uz", "uz-Cyrl", "vi", "wo", "xh", "yo", "yo-BJ", "yrl", "yrl-CO", "yrl-VE", "yue", "yue-Hans", "zh", "zh-HK", "zh-Hant", "zh-MO", "zh-SG", "zu"];
+                static VALUES: [&<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable; 136usize] = [&AF, &AM, &AR, &AS, &AST, &AZ, &BE, &BG, &BGC, &BHO, &BN, &BR, &BRX, &BS, &BS_CYRL, &CA, &CEB, &CHR, &CS, &CV, &CY, &DA, &DE, &DOI, &DSB, &EL, &EN, &EN_CA, &ES, &ES_419, &ET, &EU, &FA, &FF_ADLM, &FI, &FIL, &FO, &FR, &FR_CA, &GA, &GD, &GL, &GU, &HA, &HE, &HI, &HR, &HSB, &HU, &IA, &ID, &IG, &IS, &IT, &JA, &JV, &KA, &KEA, &KGP, &KK, &KM, &KN, &KO, &KOK, &KS, &KS_DEVA, &KY, &LO, &LT, &LV, &MAI, &MI, &MK, &ML, &MN, &MNI, &MR, &MS, &MS_ID, &MY, &NE, &NL, &NN, &NO, &OR, &PA, &PCM, &PL, &PS, &PT, &PT_PT, &RM, &RO, &RU, &SA, &SAT, &SC, &SD, &SD_DEVA, &SI, &SK, &SL, &SO, &SQ, &SR, &SR_BA, &SR_LATN, &SR_LATN_BA, &SV, &SW, &TA, &TE, &TG, &TH, &TI, &TK, &TO, &TR, &TT, &UK, &UND, &UR, &UR_IN, &UZ_CYRL, &VI, &EN, &YO, &YO_BJ, &YRL, &YUE, &YUE_HANS, &ZH, &ZH_HK, &ZH_HANT, &ZH_HK, &ZU];
+                static KEYS: [&str; 136usize] = ["af", "am", "ar", "as", "ast", "az", "be", "bg", "bgc", "bho", "bn", "br", "brx", "bs", "bs-Cyrl", "ca", "ceb", "chr", "cs", "cv", "cy", "da", "de", "doi", "dsb", "el", "en", "en-CA", "es", "es-419", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fr-CA", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hr", "hsb", "hu", "ia", "id", "ig", "is", "it", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ks", "ks-Deva", "ky", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "ms-ID", "my", "ne", "nl", "nn", "no", "or", "pa", "pcm", "pl", "ps", "pt", "pt-PT", "rm", "ro", "ru", "sa", "sat", "sc", "sd", "sd-Deva", "si", "sk", "sl", "so", "sq", "sr", "sr-BA", "sr-Latn", "sr-Latn-BA", "sv", "sw", "ta", "te", "tg", "th", "ti", "tk", "to", "tr", "tt", "uk", "und", "ur", "ur-IN", "uz-Cyrl", "vi", "xh", "yo", "yo-BJ", "yrl", "yue", "yue-Hans", "zh", "zh-HK", "zh-Hant", "zh-MO", "zu"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu_locid_transform::fallback::LocaleFallbacker::new().for_config(icu_locid_transform::fallback::LocaleFallbackConfig::from_key(<icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::KeyedDataMarker>::KEY));
+                    const FALLBACKER: icu::locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu::locid_transform::fallback::LocaleFallbacker::new().for_config(icu::locid_transform::fallback::LocaleFallbackConfig::from_key(<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::KeyedDataMarker>::KEY));
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {

@@ -28,7 +28,9 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_timezone;
+    pub mod icu {
+        pub use crate as timezone;
+    }
     icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
 };
 

@@ -27,7 +27,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_normalizer;
+    pub mod icu {
+        pub use crate as normalizer;
+        pub use icu_collections as collections;
+    }
     icu_normalizer_data::impl_normalizer_comp_v1!(Baked);
     icu_normalizer_data::impl_normalizer_decomp_v1!(Baked);
     icu_normalizer_data::impl_normalizer_nfd_v1!(Baked);

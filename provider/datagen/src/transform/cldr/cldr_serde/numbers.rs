@@ -86,12 +86,24 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
     }
 }
 
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct CurrencyFormattingPatterns {
+    /// Standard pattern
+    pub standard: String,
+
+    /// Standard alphaNextToNumber pattern
+    #[serde(rename = "standard-alphaNextToNumber")]
+    pub standard_alpha_next_to_number: Option<String>,
+}
+
 #[derive(PartialEq, Debug, Default)]
 pub struct NumberingSystemData {
     /// Map from numbering system to symbols
     pub symbols: HashMap<TinyStr8, Symbols>,
     /// Map from numbering system to decimal formats
     pub formats: HashMap<TinyStr8, DecimalFormats>,
+    /// Map from numbering system to patterns
+    pub currency_patterns: HashMap<TinyStr8, CurrencyFormattingPatterns>,
 }
 
 pub struct NumberingSystemDataVisitor;
@@ -126,6 +138,10 @@ impl<'de> Visitor<'de> for NumberingSystemDataVisitor {
                 "decimalFormats" => {
                     let value: DecimalFormats = access.next_value()?;
                     result.formats.insert(numsys, value);
+                }
+                "currencyFormats" => {
+                    let value: CurrencyFormattingPatterns = access.next_value()?;
+                    result.currency_patterns.insert(numsys, value);
                 }
                 _ => {
                     // When needed, consume "scientificFormats", "percentFormats", ...

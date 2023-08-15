@@ -65,7 +65,7 @@ logging = ["icu_provider/logging", "dep:log"]
 simple_logger = ["dep:simple_logger", "logging"]
 
 # Legacy features
-provider_test = []
+provider_test = ["compiled_data"]
 cpp_default = ["logging"]
 wasm_default = ["logging"]
 

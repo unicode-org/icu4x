@@ -23,7 +23,7 @@ use zerovec::ZeroMap;
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_casemap::provider::unfold),
+    databake(path = icu_casemap::provider),
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[yoke(prove_covariance_manually)]
