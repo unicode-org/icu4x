@@ -6,6 +6,8 @@ use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Debug;
+use core::str::FromStr;
+use displaydoc::Display;
 use icu_locid::extensions::unicode as unicode_ext;
 use icu_locid::subtags::{Language, Region, Script, Variants};
 use icu_locid::{LanguageIdentifier, Locale, SubtagOrderingResult};
@@ -109,6 +111,7 @@ pub struct DataRequestMetadata {
 pub struct DataLocale {
     langid: LanguageIdentifier,
     keywords: unicode_ext::Keywords,
+    aux: Option<AuxiliaryKey>,
 }
 
 impl<'a> Default for &'a DataLocale {
@@ -116,6 +119,7 @@ impl<'a> Default for &'a DataLocale {
         static DEFAULT: DataLocale = DataLocale {
             langid: LanguageIdentifier::UND,
             keywords: unicode_ext::Keywords::new(),
+            aux: None,
         };
         &DEFAULT
     }
@@ -134,6 +138,10 @@ impl Writeable for DataLocale {
             sink.write_str("-u-")?;
             self.keywords.write_to(sink)?;
         }
+        if let Some(aux) = self.aux.as_ref() {
+            sink.write_char('|')?;
+            aux.write_to(sink)?;
+        }
         Ok(())
     }
 
@@ -144,10 +152,15 @@ impl Writeable for DataLocale {
             } else {
                 LengthHint::exact(0)
             }
+            + if let Some(aux) = self.aux.as_ref() {
+                aux.writeable_length_hint() + 1
+            } else {
+                LengthHint::exact(0)
+            }
     }
 
     fn write_to_string(&self) -> alloc::borrow::Cow<str> {
-        if self.keywords.is_empty() {
+        if self.keywords.is_empty() && self.aux.is_none() {
             return self.langid.write_to_string();
         }
         let mut string =
@@ -164,6 +177,7 @@ impl From<LanguageIdentifier> for DataLocale {
         Self {
             langid,
             keywords: unicode_ext::Keywords::new(),
+            aux: None,
         }
     }
 }
@@ -173,6 +187,7 @@ impl From<Locale> for DataLocale {
         Self {
             langid: locale.id,
             keywords: locale.extensions.unicode.keywords,
+            aux: None,
         }
     }
 }
@@ -182,6 +197,7 @@ impl From<&LanguageIdentifier> for DataLocale {
         Self {
             langid: langid.clone(),
             keywords: unicode_ext::Keywords::new(),
+            aux: None,
         }
     }
 }
@@ -191,6 +207,7 @@ impl From<&Locale> for DataLocale {
         Self {
             langid: locale.id.clone(),
             keywords: locale.extensions.unicode.keywords.clone(),
+            aux: None,
         }
     }
 }
@@ -213,13 +230,17 @@ impl DataLocale {
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "ca-ES",
+    ///     "ca-ES|USD", // TODO: Support parsing of this
     ///     "ca-ES-u-ca-buddhist",
     ///     "ca-ES-valencia",
+    ///     "cat",
+    ///     "ca|EUR",
     ///     "pl-Latn-PL",
     ///     "und",
     ///     "und-fonipa",
     ///     "und-u-ca-hebrew",
     ///     "und-u-ca-japanese",
+    ///     "und|MXN",
     ///     "zh",
     /// ];
     ///
@@ -256,6 +277,7 @@ impl DataLocale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
+        // TODO: Make this work with aux keys
         let subtags = other.split(|b| *b == b'-');
         let mut subtag_result = self.langid.strict_cmp_iter(subtags);
         if self.has_unicode_ext() {
@@ -481,6 +503,122 @@ impl DataLocale {
     {
         self.keywords.retain_by_key(predicate)
     }
+
+    /// Sets an auxiliary key on this [`DataLocale`].
+    ///
+    /// Returns the previous auxiliary key if present.
+    ///
+    /// For more information and examples, see [`AuxiliaryKey`].
+    pub fn set_aux(&mut self, value: AuxiliaryKey) -> Option<AuxiliaryKey> {
+        self.aux.replace(value)
+    }
+
+    /// Remove an auxiliary key, if present. Returns the removed auxiliary key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locid::locale;
+    /// use icu_provider::prelude::*;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut data_locale: DataLocale = locale!("ar-EG").into();
+    /// let aux = "GBP".parse::<AuxiliaryKey>().expect("contains valid characters");
+    /// data_locale.set_aux(aux);
+    /// assert_writeable_eq!(data_locale, "ar-EG|GBP");
+    ///
+    /// let maybe_aux = data_locale.remove_aux();
+    /// assert_writeable_eq!(data_locale, "ar-EG");
+    /// assert_writeable_eq!(maybe_aux.unwrap(), "GBP");
+    /// ```
+    pub fn remove_aux(&mut self) -> Option<AuxiliaryKey> {
+        self.aux.take()
+    }
+}
+
+/// The "auxiliary key" is an annotation on [`DataLocale`] that can contain an arbitrary
+/// information that does not fit into the [`LanguageIdentifier`] or [`Keywords`].
+///
+/// It is represented as a string separated from the BCP-47 ID with a `|`.
+///
+/// An auxiliary key currently allows alphanumerics and `-`.
+///
+/// # Examples
+///
+/// ```
+/// use icu_locid::locale;
+/// use icu_provider::prelude::*;
+/// use writeable::assert_writeable_eq;
+///
+/// let mut data_locale: DataLocale = locale!("ar-EG").into();
+/// assert_writeable_eq!(data_locale, "ar-EG");
+///
+/// let aux = "GBP".parse::<AuxiliaryKey>().expect("contains valid characters");
+///
+/// data_locale.set_aux(aux);
+/// assert_writeable_eq!(data_locale, "ar-EG|GBP");
+/// ```
+///
+/// [`Keywords`]: unicode_ext::Keywords
+#[derive(Debug, PartialEq, Clone, Default, Eq, Hash)]
+pub struct AuxiliaryKey {
+    // DISCUSS: SmallStr? TinyStrAuto?
+    // DISCUSS: Make this a dynamically sized type so references can be taken?
+    value: String,
+}
+
+writeable::impl_display_with_writeable!(AuxiliaryKey);
+
+/// An error involving an [`AuxiliaryKey`].
+#[derive(Clone, Copy, Eq, PartialEq, Display, Debug)]
+#[non_exhaustive]
+pub enum AuxiliaryKeyError {
+    /// Syntax error when parsing an [`AuxiliaryKey`]. The set of characters allowed in an
+    /// [`AuxiliaryKey`] is very limited.
+    #[displaydoc("Auxiliary key syntax error")]
+    Syntax,
+}
+
+impl Writeable for AuxiliaryKey {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        self.value.write_to(sink)
+    }
+    fn writeable_length_hint(&self) -> LengthHint {
+        self.value.writeable_length_hint()
+    }
+    fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+        self.value.write_to_string()
+    }
+}
+
+impl FromStr for AuxiliaryKey {
+    type Err = AuxiliaryKeyError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if Self::validate_str(s) {
+            Ok(Self {
+                value: String::from(s),
+            })
+        } else {
+            Err(AuxiliaryKeyError::Syntax)
+        }
+    }
+}
+
+impl AuxiliaryKey {
+    /// Creates an [`AuxiliaryKey`] from a [`String`] without allocations.
+    pub fn try_from_string(value: String) -> Result<Self, AuxiliaryKeyError> {
+        if Self::validate_str(&value) {
+            Ok(Self { value })
+        } else {
+            Err(AuxiliaryKeyError::Syntax)
+        }
+    }
+
+    fn validate_str(s: &str) -> bool {
+        s.bytes()
+            .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-'))
+    }
 }
 
 #[test]
@@ -488,24 +626,37 @@ fn test_data_locale_to_string() {
     use icu_locid::locale;
 
     struct TestCase {
-        pub locale: DataLocale,
+        pub locale: Locale,
+        pub aux: Option<&'static str>,
         pub expected: &'static str,
     }
 
     for cas in [
         TestCase {
-            locale: Locale::UND.into(),
+            locale: Locale::UND,
+            aux: None,
             expected: "und",
         },
         TestCase {
-            locale: locale!("und-u-cu-gbp").into(),
+            locale: locale!("und-u-cu-gbp"),
+            aux: None,
             expected: "und-u-cu-gbp",
         },
         TestCase {
-            locale: locale!("en-ZA-u-cu-gbp").into(),
+            locale: locale!("en-ZA-u-cu-gbp"),
+            aux: None,
             expected: "en-ZA-u-cu-gbp",
         },
+        TestCase {
+            locale: locale!("en-ZA-u-nu-arab"),
+            aux: Some("GBP"),
+            expected: "en-ZA-u-nu-arab|GBP",
+        },
     ] {
-        writeable::assert_writeable_eq!(cas.locale, cas.expected);
+        let mut data_locale = DataLocale::from(cas.locale);
+        if let Some(aux) = cas.aux {
+            data_locale.set_aux(aux.parse().unwrap());
+        }
+        writeable::assert_writeable_eq!(data_locale, cas.expected);
     }
 }
