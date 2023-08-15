@@ -34,7 +34,7 @@ int main() {
         return 1;
     }
 
-    out = cm.titlecase_segment_legacy_v1("hEllO WorLd", und, tc_options).ok().value();
+    out = cm.titlecase_segment_with_only_case_data_v1("hEllO WorLd", und, tc_options).ok().value();
     std::cout << "Titlecased value is " << out << std::endl;
     if (out != "Hello world") {
         std::cout << "Output does not match expected output" << std::endl;

@@ -136,6 +136,42 @@ fn date_benches(c: &mut Criterion) {
         |y, m, d| Date::try_new_gregorian_date(y, m, d).unwrap(),
     );
 
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/civil",
+        &fxs,
+        icu::calendar::islamic::IslamicCivil,
+        |y, m, d| Date::try_new_islamic_civil_date(y, m, d).unwrap(),
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/tabular",
+        &fxs,
+        icu::calendar::islamic::IslamicTabular,
+        |y, m, d| Date::try_new_islamic_tabular_date(y, m, d).unwrap(),
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/ummalqura",
+        &fxs,
+        icu::calendar::islamic::IslamicUmmAlQura,
+        |y, m, d| Date::try_new_ummalqura_date(y, m, d).unwrap(),
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/observational",
+        &fxs,
+        icu::calendar::islamic::IslamicObservational,
+        |y, m, d| Date::try_new_observational_islamic_date(y, m, d).unwrap(),
+    );
+
     group.finish();
 }
 

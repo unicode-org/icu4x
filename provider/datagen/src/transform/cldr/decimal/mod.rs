@@ -13,7 +13,7 @@ use tinystr::TinyAsciiStr;
 mod compact;
 #[cfg(feature = "icu_compactdecimal")]
 mod compact_decimal_pattern;
-mod decimal_pattern;
+pub(crate) mod decimal_pattern;
 mod symbols;
 
 impl crate::DatagenProvider {

@@ -42,6 +42,7 @@ members = [
     "experimental/ixdtf",
     "experimental/relativetime",
     "experimental/relativetime/data",
+    "experimental/single_number_formatter",
     "experimental/transliterator_parser",
     "experimental/transliteration",
     "experimental/transliterator_parser",
@@ -111,3 +112,8 @@ opt-level = "s"
 [profile.bench]
 debug = true
 debug-assertions = false
+
+[profile.windows-test-ci]
+inherits = "dev"
+debug-assertions = true
+debug = false

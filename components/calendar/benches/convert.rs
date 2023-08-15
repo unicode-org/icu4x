@@ -68,6 +68,34 @@ fn convert_benches(c: &mut Criterion) {
         icu::calendar::gregorian::Gregorian,
     );
 
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/observational",
+        icu::calendar::islamic::IslamicObservational,
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/civil",
+        icu::calendar::islamic::IslamicCivil,
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/ummalqura",
+        icu::calendar::islamic::IslamicUmmAlQura,
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/tabular",
+        icu::calendar::islamic::IslamicTabular,
+    );
+
     group.finish();
 }
 

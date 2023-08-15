@@ -34,6 +34,13 @@ category = "ICU4X Development"
 command = "cargo"
 args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
 
+[tasks.test-all-features-windows]
+description = "Run all Rust tests with all features and targets (with special changes to reduce Windows disk space)"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--all-features", "--all-targets", "--no-fail-fast", "--profile", "windows-test-ci"]
+
+
 [tasks.test-docs]
 description = "Run all Rust doctests with all features"
 category = "ICU4X Development"

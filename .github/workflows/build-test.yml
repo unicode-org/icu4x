@@ -123,7 +123,11 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test`
+      if: matrix.os != 'windows-latest'
       run: cargo make ci-job-test
+    - name: Run `cargo make ci-job-test-windows`
+      if: matrix.os == 'windows-latest'
+      run: cargo make ci-job-test-windows
 
   # ci-job-test-tutorials
   test-tutorials:
@@ -664,13 +668,8 @@ jobs:
       run: rustup component add clippy
 
     # Actual job
-    # Note: this does not use ci-job-clippy, as the GH Action can create code
-    # annotations (although not in PRs: https://github.com/actions-rs/clippy-check/issues/2)
-    - uses: actions-rs/clippy-check@v1.0.7
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        # keep args in sync with `clippy-all` in .cargo/config.toml
-        args: --all-targets --all-features -- -D warnings
+    - name: Run `ci-job-clippy`
+      run: cargo make ci-job-clippy
 
   # ci-job-doc
   doc:
