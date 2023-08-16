@@ -76,6 +76,25 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
+///
+/// Load the reverse string using an auxiliary key:
+///
+/// ```
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+///
+/// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
+///     HelloWorldProvider
+///         .load(DataRequest {
+///             locale: &"en$reverse".parse().unwrap(),
+///             metadata: Default::default(),
+///         })
+///         .expect("Loading should succeed")
+///         .take_payload()
+///         .expect("Data should be present");
+///
+/// assert_eq!("Olleh Dlrow", reverse_hello_world.get().message);
+/// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider;
 
@@ -88,11 +107,13 @@ impl HelloWorldProvider {
         ("de", "Hallo Welt"),
         ("el", "Καλημέρα κόσμε"),
         ("en", "Hello World"),
+        ("en$reverse", "Olleh Dlrow"),
         ("eo", "Saluton, Mondo"),
         ("fa", "سلام دنیا‎"),
         ("fi", "hei maailma"),
         ("is", "Halló, heimur"),
         ("ja", "こんにちは世界"),
+        ("ja$reverse", "界世はちにんこ"),
         ("la", "Ave, munde"),
         ("pt", "Olá, mundo"),
         ("ro", "Salut, lume"),
@@ -190,11 +211,7 @@ impl BufferProvider for HelloWorldJsonProvider {
 impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
-        Ok(Self::DATA
-            .iter()
-            .map(|(s, _)| s.parse::<icu_locid::LanguageIdentifier>().unwrap())
-            .map(DataLocale::from)
-            .collect())
+        Ok(Self::DATA.iter().map(|(s, _)| s.parse().unwrap()).collect())
     }
 }
 
@@ -309,11 +326,13 @@ fn test_iter() {
             locale!("de").into(),
             locale!("el").into(),
             locale!("en").into(),
+            "en$reverse".parse().unwrap(),
             locale!("eo").into(),
             locale!("fa").into(),
             locale!("fi").into(),
             locale!("is").into(),
             locale!("ja").into(),
+            "ja$reverse".parse().unwrap(),
             locale!("la").into(),
             locale!("pt").into(),
             locale!("ro").into(),
