@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::string::String;
 use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
@@ -139,7 +140,7 @@ impl Writeable for DataLocale {
             self.keywords.write_to(sink)?;
         }
         if let Some(aux) = self.aux.as_ref() {
-            sink.write_char('|')?;
+            sink.write_char('$')?;
             aux.write_to(sink)?;
         }
         Ok(())
@@ -231,8 +232,10 @@ impl From<&Locale> for DataLocale {
 impl FromStr for DataLocale {
     type Err = DataLocaleParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut split_iter = s.split('|');
-        let locale_str = split_iter.next().ok_or(DataLocaleParseError::MissingLocale)?;
+        let mut split_iter = s.split('$');
+        let locale_str = split_iter
+            .next()
+            .ok_or(DataLocaleParseError::MissingLocale)?;
         let aux_str = split_iter.next();
         if split_iter.next().is_some() {
             return Err(DataLocaleParseError::TooManyParts);
@@ -264,56 +267,68 @@ impl DataLocale {
     /// use std::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] = &[
+    ///     "ca",
+    ///     "ca$EUR",
     ///     "ca-ES",
-    ///     "ca-ES|USD", // TODO: Support parsing of this
+    ///     "ca-ES$GBP",
+    ///     "ca-ES$USD",
     ///     "ca-ES-u-ca-buddhist",
     ///     "ca-ES-valencia",
     ///     "cat",
-    ///     "ca|EUR",
     ///     "pl-Latn-PL",
     ///     "und",
+    ///     "und$MXN",
     ///     "und-fonipa",
     ///     "und-u-ca-hebrew",
     ///     "und-u-ca-japanese",
-    ///     "und|MXN",
     ///     "zh",
     /// ];
     ///
     /// for ab in bcp47_strings.windows(2) {
     ///     let a = ab[0];
     ///     let b = ab[1];
-    ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_loc: DataLocale = a.parse::<Locale>().unwrap().into();
-    ///     assert!(
-    ///         a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal,
-    ///         "{} == {}",
-    ///         a,
+    ///     assert_eq!(a.cmp(b), Ordering::Less, "strings: {} < {}", a, b);
+    ///     let a_loc: DataLocale = a.parse().unwrap();
+    ///     assert_eq!(
+    ///         a_loc.strict_cmp(a.as_bytes()),
+    ///         Ordering::Equal,
+    ///         "strict_cmp: {} == {}",
+    ///         a_loc,
     ///         a
     ///     );
-    ///     assert!(
-    ///         a_loc.strict_cmp(b.as_bytes()) == Ordering::Less,
-    ///         "{} < {}",
-    ///         a,
+    ///     assert_eq!(
+    ///         a_loc.strict_cmp(b.as_bytes()),
+    ///         Ordering::Less,
+    ///         "strict_cmp: {} < {}",
+    ///         a_loc,
     ///         b
     ///     );
-    ///     let b_loc: DataLocale = b.parse::<Locale>().unwrap().into();
-    ///     assert!(
-    ///         b_loc.strict_cmp(b.as_bytes()) == Ordering::Equal,
-    ///         "{} == {}",
-    ///         b,
+    ///     let b_loc: DataLocale = b.parse().unwrap();
+    ///     assert_eq!(
+    ///         b_loc.strict_cmp(b.as_bytes()),
+    ///         Ordering::Equal,
+    ///         "strict_cmp: {} == {}",
+    ///         b_loc,
     ///         b
     ///     );
-    ///     assert!(
-    ///         b_loc.strict_cmp(a.as_bytes()) == Ordering::Greater,
-    ///         "{} > {}",
-    ///         b,
+    ///     assert_eq!(
+    ///         b_loc.strict_cmp(a.as_bytes()),
+    ///         Ordering::Greater,
+    ///         "strict_cmp: {} > {}",
+    ///         b_loc,
     ///         a
     ///     );
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        // TODO: Make this work with aux keys
-        let subtags = other.split(|b| *b == b'-');
+        let mut pipe_iter = other.split(|b| *b == b'$');
+        let Some(locale_str) = pipe_iter.next() else {
+            debug_assert!(other.is_empty());
+            return Ordering::Greater;
+        };
+        let aux_str = pipe_iter.next();
+        let has_multiple_pipes = pipe_iter.next().is_some();
+        let subtags = locale_str.split(|b| *b == b'-');
         let mut subtag_result = self.langid.strict_cmp_iter(subtags);
         if self.has_unicode_ext() {
             let mut subtags = match subtag_result {
@@ -327,7 +342,42 @@ impl DataLocale {
             }
             subtag_result = self.keywords.strict_cmp_iter(subtags);
         }
-        subtag_result.end()
+        let has_more_subtags = match subtag_result {
+            SubtagOrderingResult::Subtags(mut s) => s.next().is_some(),
+            SubtagOrderingResult::Ordering(o) => return o,
+        };
+        // If we get here, `self` has equal or fewer subtags than the `other`.
+        // There are 2^3 = 8 cases to handle for auxiliary keys, expanded below.
+        match (has_more_subtags, self.get_aux(), aux_str) {
+            (false, None, None) => {
+                // foo == foo
+                Ordering::Equal
+            }
+            (false, Some(self_aux), Some(other_aux)) => {
+                // foo$BAR1 ?= foo$BAR2
+                let aux_ordering = self_aux.as_bytes().cmp(other_aux);
+                if aux_ordering != Ordering::Equal {
+                    return aux_ordering;
+                }
+                if has_multiple_pipes {
+                    Ordering::Less
+                } else {
+                    Ordering::Equal
+                }
+            }
+            (false, Some(_), None) => {
+                // foo$BAR > foo
+                Ordering::Greater
+            }
+            (_, _, _) => {
+                // foo < foo-bar
+                // foo < foo-bar$BAR
+                // foo < foo$BAR
+                // foo$BAR < foo-bar
+                // foo$BAR < foo-bar$BAR
+                Ordering::Less
+            }
+        }
     }
 }
 
@@ -539,6 +589,14 @@ impl DataLocale {
         self.keywords.retain_by_key(predicate)
     }
 
+    pub fn get_aux(&self) -> Option<&str> {
+        self.aux.as_ref().map(|aux| aux.as_str())
+    }
+
+    pub fn has_aux(&self) -> bool {
+        self.aux.is_some()
+    }
+
     /// Sets an auxiliary key on this [`DataLocale`].
     ///
     /// Returns the previous auxiliary key if present.
@@ -560,7 +618,7 @@ impl DataLocale {
     /// let mut data_locale: DataLocale = locale!("ar-EG").into();
     /// let aux = "GBP".parse::<AuxiliaryKey>().expect("contains valid characters");
     /// data_locale.set_aux(aux);
-    /// assert_writeable_eq!(data_locale, "ar-EG|GBP");
+    /// assert_writeable_eq!(data_locale, "ar-EG$GBP");
     ///
     /// let maybe_aux = data_locale.remove_aux();
     /// assert_writeable_eq!(data_locale, "ar-EG");
@@ -574,7 +632,7 @@ impl DataLocale {
 /// The "auxiliary key" is an annotation on [`DataLocale`] that can contain an arbitrary
 /// information that does not fit into the [`LanguageIdentifier`] or [`Keywords`].
 ///
-/// It is represented as a string separated from the BCP-47 ID with a `|`.
+/// It is represented as a string separated from the BCP-47 ID with a `$`.
 ///
 /// An auxiliary key currently allows alphanumerics and `-`.
 ///
@@ -591,7 +649,7 @@ impl DataLocale {
 /// let aux = "GBP".parse::<AuxiliaryKey>().expect("contains valid characters");
 ///
 /// data_locale.set_aux(aux);
-/// assert_writeable_eq!(data_locale, "ar-EG|GBP");
+/// assert_writeable_eq!(data_locale, "ar-EG$GBP");
 /// ```
 ///
 /// [`Keywords`]: unicode_ext::Keywords
@@ -631,6 +689,10 @@ impl FromStr for AuxiliaryKey {
 }
 
 impl AuxiliaryKey {
+    pub fn as_str(&self) -> &str {
+        self.value.as_str()
+    }
+
     /// Creates an [`AuxiliaryKey`] from a [`String`] without allocations.
     pub fn try_from_string(value: String) -> Result<Self, DataLocaleParseError> {
         if Self::validate_str(&value) {
@@ -675,7 +737,7 @@ fn test_data_locale_to_string() {
         TestCase {
             locale: locale!("en-ZA-u-nu-arab"),
             aux: Some("GBP"),
-            expected: "en-ZA-u-nu-arab|GBP",
+            expected: "en-ZA-u-nu-arab$GBP",
         },
     ] {
         let mut data_locale = DataLocale::from(cas.locale);
