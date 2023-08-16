@@ -223,7 +223,7 @@ impl<P> LocaleFallbackProvider<P> {
                     });
             }
             // If we just checked und, break out of the loop.
-            if fallback_iterator.get().is_empty() {
+            if fallback_iterator.get().is_und() {
                 break;
             }
             fallback_iterator.step();

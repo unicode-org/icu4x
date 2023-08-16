@@ -518,7 +518,7 @@ impl BakedExporter {
                     } else {
                         // We have to manually break the loop
                         quote! {
-                            if fallback_iterator.get().is_empty() {
+                            if fallback_iterator.get().is_und() {
                                 return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req));
                             }
                         }

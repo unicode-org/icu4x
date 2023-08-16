@@ -250,7 +250,7 @@ impl DatagenProvider {
 
                 for locale in explicit.iter() {
                     let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                    while !iter.get().is_empty() {
+                    while !iter.get().is_und() {
                         implicit.insert(iter.get().clone());
                         iter.step();
                     }
@@ -286,7 +286,7 @@ impl DatagenProvider {
                             return false;
                         }
                         let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                        while !iter.get().is_empty() {
+                        while !iter.get().is_und() {
                             if explicit.contains(iter.get()) {
                                 return true;
                             }
@@ -330,7 +330,7 @@ impl DatagenProvider {
             match result {
                 Ok(data_response) => {
                     if let Some(iter) = option_iter.as_ref() {
-                        if iter.get().is_empty() && !locale.is_empty() {
+                        if iter.get().is_und() && !locale.is_empty() {
                             log::debug!("Falling back to und: {key}/{locale}");
                         }
                     }
@@ -341,7 +341,7 @@ impl DatagenProvider {
                     ..
                 }) => {
                     if let Some(iter) = option_iter.as_mut() {
-                        if iter.get().is_empty() {
+                        if iter.get().is_und() {
                             log::debug!("Could not find data for: {key}/{locale}");
                             return Ok(None);
                         }
