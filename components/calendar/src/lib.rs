@@ -125,7 +125,6 @@ mod chinese_based;
 mod chinese_data;
 pub mod coptic;
 pub mod dangi;
-mod dangi_data;
 mod duration;
 mod error;
 pub mod ethiopian;

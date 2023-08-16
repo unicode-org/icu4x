@@ -303,9 +303,10 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let data_option = C::get_compiled_data_for_year(year);
 
         if let Some(data) = data_option {
+            let data_new_year = data.new_year;
             debug_assert!(
-                first_day_of_year == data.new_year,
-                "Calculated and stored new year RataDies do not match!"
+                first_day_of_year == data_new_year,
+                "Calculated and stored new year RataDies do not match! {first_day_of_year:?}, {data_new_year:?}"
             );
             debug_assert!(date < data.next_new_year, "Stored date out of bounds!");
             let mut cur = data.new_year - 1;
@@ -392,7 +393,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             } else {
                 debug_assert!((1..=13).contains(&month), "Month out of bounds!");
                 let mut index = 0;
-                let mut result = first_day_of_year - 1;
+                let mut result = first_day_of_year;
                 while (index as i64) < month - 1 {
                     result += data.month_lengths[index] as i64;
                     index += 1;

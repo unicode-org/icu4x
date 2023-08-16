@@ -42,11 +42,14 @@ use crate::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedCompiledData,
     ChineseBasedDateInner, ChineseBasedYearInfo,
 };
+use crate::chinese_data::ChineseData;
 use crate::helpers::div_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
 use crate::types::{Era, FormattableYear};
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, chinese_data};
+use crate::{
+    chinese_data, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
+};
 use tinystr::tinystr;
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
@@ -384,50 +387,11 @@ impl ChineseBased for Chinese {
 
     fn get_compiled_data_for_year(year: i32) -> Option<ChineseBasedCompiledData> {
         if (chinese_data::MIN_YEAR..=chinese_data::MAX_YEAR).contains(&year) {
-            let packed_data = chinese_data::CHINESE_DATA_ARRAY[(year - chinese_data::MIN_YEAR) as usize];
-            let next_year_data = chinese_data::CHINESE_DATA_ARRAY[(year - chinese_data::MIN_YEAR + 1) as usize];
-
-            let new_year_iso_offset = (packed_data & 0o770000000) >> 21;
-            debug_assert!(((u16::MIN as i32)..=(u16::MAX as i32)).contains(&new_year_iso_offset));
-            let new_year_iso_offset = new_year_iso_offset as u16;
-            let iso_year = 2023 + (year - 4660);
-            let new_year = Iso::fixed_from_iso(Iso::iso_from_year_day(iso_year, new_year_iso_offset).inner);
-
-            let next_new_year_iso_offset = (packed_data & 0o770000000) >> 21;
-            debug_assert!(((u16::MIN as i32)..=(u16::MAX as i32)).contains(&next_new_year_iso_offset));
-            let next_new_year_iso_offset = next_new_year_iso_offset as u16;
-            let next_iso_year = 2023 + (year - 4660) + 1;
-            let next_new_year = Iso::fixed_from_iso(Iso::iso_from_year_day(iso_year, new_year_iso_offset).inner);
-
-            let mut month_lengths: [u8; 13] = [0; 13];
-            for bit_offset in 9..=20 {
-                month_lengths[(20 - bit_offset) as usize] = if (1 << bit_offset & packed_data) != 0 {
-                    30
-                } else {
-                    29
-                };
-            }
-            month_lengths[12] = if (1 << 6 & packed_data) != 0 {
-                30
-            } else {
-                29
-            };
-
-            let leap_month_bits = packed_data & 0o77;
-            let leap_month = if leap_month_bits == 0 {
-                None
-            } else {
-                debug_assert!(((u8::MIN as i32)..=(u8::MAX as i32)).contains(&leap_month_bits));
-                NonZeroU8::new(leap_month_bits as u8)
-            };
-
-
-            Some(ChineseBasedCompiledData {
-                new_year,
-                next_new_year,
-                month_lengths,
-                leap_month,
-            })
+            let packed_data =
+                chinese_data::CHINESE_DATA_ARRAY[(year - chinese_data::MIN_YEAR) as usize];
+            let next_year_data =
+                chinese_data::CHINESE_DATA_ARRAY[(year - chinese_data::MIN_YEAR + 1) as usize];
+            Some(Self::unpack_chinese_data(year, packed_data, next_year_data))
         } else {
             None
         }
@@ -511,6 +475,62 @@ impl Chinese {
             number,
             cyclic,
             related_iso,
+        }
+    }
+
+    fn unpack_chinese_data(
+        year: i32,
+        packed_data: ChineseData,
+        next_year_data: ChineseData,
+    ) -> ChineseBasedCompiledData {
+        let new_year_offset = ((packed_data.0 & 0b11111000) >> 3) as u16;
+        let iso_year = 2023 + (year - 4660);
+        let new_year =
+            Iso::fixed_from_iso(Iso::iso_from_year_day(iso_year, 21 + new_year_offset).inner);
+
+        let next_new_year_offset = ((next_year_data.0 & 0b11111000) >> 3) as u16;
+        let next_iso_year = iso_year + 1;
+        let next_new_year = Iso::fixed_from_iso(
+            Iso::iso_from_year_day(next_iso_year, 21 + next_new_year_offset).inner,
+        );
+
+        let mut month_lengths: [u8; 13] = [0; 13];
+        month_lengths[0] = if packed_data.0 & 0b100 != 0 { 30 } else { 29 };
+        month_lengths[1] = if packed_data.0 & 0b010 != 0 { 30 } else { 29 };
+        month_lengths[2] = if packed_data.0 & 0b001 != 0 { 30 } else { 29 };
+        for bit_offset in 0..=7 {
+            month_lengths[10 - bit_offset] = if (1 << bit_offset & packed_data.1) != 0 {
+                30
+            } else {
+                29
+            };
+        }
+        month_lengths[11] = if packed_data.2 & 0b10000000 != 0 {
+            30
+        } else {
+            29
+        };
+
+        let leap_month_bits = packed_data.2 & 0o77;
+        let leap_month = if leap_month_bits == 0 {
+            None
+        } else {
+            NonZeroU8::new(leap_month_bits as u8)
+        };
+
+        if leap_month.is_some() {
+            month_lengths[12] = if packed_data.2 & 0b01000000 != 0 {
+                30
+            } else {
+                29
+            };
+        }
+
+        ChineseBasedCompiledData {
+            new_year,
+            next_new_year,
+            month_lengths,
+            leap_month,
         }
     }
 }
@@ -944,7 +964,10 @@ mod test {
         ];
         for ordinal_code_pair in codes {
             let code = MonthCode(ordinal_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(code, ChineseBasedYearInfo::Cache(cache));
+            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(
+                code,
+                ChineseBasedYearInfo::Cache(cache),
+            );
             assert_eq!(
                 ordinal,
                 Some(ordinal_code_pair.0),
@@ -971,7 +994,10 @@ mod test {
             let year = year_code_pair.0;
             let cache = Inner::compute_cache(year);
             let code = MonthCode(year_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(code, ChineseBasedYearInfo::Cache(cache));
+            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(
+                code,
+                ChineseBasedYearInfo::Cache(cache),
+            );
             assert_eq!(
                 ordinal, None,
                 "Invalid month code failed for year: {year}, code: {code}"

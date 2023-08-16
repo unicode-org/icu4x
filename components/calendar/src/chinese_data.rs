@@ -1,20 +1,26 @@
 //! Compiled and compressed data for Chinese calendar years; includes `RataDie` types for the beginning of years
-//! TODO: More docs
 
 /// The minimum year present in CHINESE_DATA_ARRAY
-pub(crate) const MIN_YEAR: i32 = 4560;
+pub(crate) const MIN_YEAR: i32 = 4660;
 
 /// The maximum year present in CHINESE_DATA_ARRAY
-pub(crate) const MAX_YEAR: i32 = 4760;
+pub(crate) const MAX_YEAR: i32 = 4660;
 
-/// The array of year data for Chinese years between MIN_YEAR and MAX_YEAR
-/// 
-/// Each data entry is an i32 storing 24 bits of information with 5 bits available for later use.
-/// The first 5 bits are currently unused;
-/// the next 6 bits represent which day of the ISO year marks the Chinese New Year (ex. for 4660 (ISO 2023), New Year was Jan. 22, so the value would be 22);
-/// the next 12 bits correspond to the month lengths of the first 12 ordinal months in the year, 0 meaning 29 days long, and 1 meaning 30;
-/// the next 2 bits are empty bits, followed by 1 bit representing the length of the 13th month in a similar way;
-/// the final 6 bits store which ordinal month is a leap month (2..=13), or equals zero if there is no leap month.
-pub(crate) const CHINESE_DATA_ARRAY: [i32; 200] = [
+/// The struct containing compiled ChineseData
+#[derive(Debug, Copy, Clone)]
+pub(crate) struct ChineseData(pub(crate) u8, pub(crate) u8, pub(crate) u8);
 
+/// The array of year data for Chinese years between MIN_YEAR and MAX_YEAR; currently, this array must also have
+/// an entry for the year after max year, since the function for unpacking this data also uses the next entry's new year.
+///
+/// Each data entry consists of a `ChineseData`, which in turn is composed of three bytes of data.
+/// The first 5 bits represents the offset of the Chinese New Year in the given year from Jan 21 of that year.
+/// The next 13 bits are used to indicate the month lengths of the 13 months; a 1 represents 30 days, and a 0 represents 29 days;
+/// if there is no 13th month, the 13th in this sequence will be set to 0, but this does not represent 29 days in this case.
+/// The final 6 bits indicate which ordinal month is a leap month, or is set to zero if the year is not a leap year.
+///
+/// TODO: Generate this data
+pub(crate) const CHINESE_DATA_ARRAY: [ChineseData; 2] = [
+    ChineseData(0b_00001_010, 0b_01101101, 0b_01_000011),
+    ChineseData(0b_10101_010, 0b_01011011, 0b_00_000000),
 ];

@@ -390,9 +390,8 @@ impl ChineseBased for Dangi {
 
     const EPOCH: RataDie = KOREAN_EPOCH;
 
-    fn get_compiled_data_for_year(year: i32) -> Option<ChineseBasedCompiledData> {
-        // TODO: Write this fn
-        todo!()
+    fn get_compiled_data_for_year(_year: i32) -> Option<ChineseBasedCompiledData> {
+        None
     }
 }
 
