@@ -27,13 +27,6 @@ unsafe impl ULE for CurrencyPatternsULE {
             return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
 
-        // #[allow(clippy::indexing_slicing)] // chunks
-        // if !bytes
-        //     .chunks(3)
-        //     .all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
-        // {
-        //     return Err(ZeroVecError::parse::<Self>());
-        // }
         Ok(())
     }
 }
@@ -43,20 +36,19 @@ impl AsULE for CurrencyPatterns {
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        let mut first_byte: u8 = 0;
+        let mut first_byte_ule: u8 = 0;
 
         if self.short_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
-            first_byte |= 0b0100_0000;
+            first_byte_ule |= 0b0100_0000;
         }
         if self.narrow_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
-            first_byte |= 0b0001_0000;
+            first_byte_ule |= 0b0001_0000;
         }
 
         // For short_place_holder_index
-        let first_index_byte = self.short_place_holder_index.to_be_bytes()[0];
-        let second_byte: u8 = self.short_place_holder_index.to_be_bytes()[1];
-        if first_index_byte < 2_u8.pow(2) {
-            first_byte |= first_index_byte << 2;
+        let [first_index_byte, second_byte_ule] = self.short_place_holder_index.to_be_bytes();
+        if first_index_byte < 0b0100 {
+            first_byte_ule |= first_index_byte << 2;
         } else {
             panic!(
                 "short_place_holder_index is too large {}, {}",
@@ -65,25 +57,21 @@ impl AsULE for CurrencyPatterns {
         }
 
         // For narrow_place_holder_index
-        let first_index_byte = self.narrow_place_holder_index.to_be_bytes()[0];
-        let third_byte: u8 = self.narrow_place_holder_index.to_be_bytes()[1];
-        if first_index_byte < 2_u8.pow(2) {
-            first_byte |= first_index_byte;
+        let [first_index_byte, third_byte_ule] = self.narrow_place_holder_index.to_be_bytes();
+        if first_index_byte < 0b0100 {
+            first_byte_ule |= first_index_byte;
         } else {
             panic!(
                 "narrow_place_holder_index is too large {}, {}",
                 self.narrow_place_holder_index, first_index_byte
             )
         }
-        CurrencyPatternsULE([first_byte, second_byte, third_byte])
+        CurrencyPatternsULE([first_byte_ule, second_byte_ule, third_byte_ule])
     }
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        let value = unaligned.0;
-        let first_byte = value[0];
-        let second_byte = value[1];
-        let third_byte = value[2];
+        let [first_byte, second_byte, third_byte] = unaligned.0;
 
         let short_pattern_standard = if first_byte & 0b0100_0000 != 0 {
             PatternSelection::StandardAlphaNextToNumber
