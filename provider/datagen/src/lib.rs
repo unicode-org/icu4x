@@ -491,7 +491,7 @@ impl DatagenProvider {
                                 fallbacker.for_config(key.fallback_config());
                             'outer: for (locale, payload) in payloads.iter() {
                                 let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                                while !iter.get().is_empty() {
+                                while !iter.get().is_und() {
                                     iter.step();
                                     if let Some(parent_payload) = payloads.get(iter.get()) {
                                         if parent_payload == payload && locale != iter.get() {

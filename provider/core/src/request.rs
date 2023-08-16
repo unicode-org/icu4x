@@ -397,14 +397,68 @@ impl DataLocale {
 
 impl DataLocale {
     /// Returns whether this [`DataLocale`] has all empty fields (no components).
+    ///
+    /// See also:
+    ///
+    /// - [`DataLocale::is_und()`]
+    /// - [`DataLocale::is_langid_und()`]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::DataLocale;
+    ///
+    /// assert!("und".parse::<DataLocale>().unwrap().is_empty());
+    /// assert!(!"und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_empty());
+    /// assert!(!"und$auxiliary".parse::<DataLocale>().unwrap().is_empty());
+    /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_empty());
+    /// ```
     pub fn is_empty(&self) -> bool {
         self == <&DataLocale>::default()
     }
 
+    /// Returns whether this [`DataLocale`] is `und` in the locale and extensions portion.
+    ///
+    /// This ignores auxiliary keys.
+    ///
+    /// See also:
+    ///
+    /// - [`DataLocale::is_empty()`]
+    /// - [`DataLocale::is_langid_und()`]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::DataLocale;
+    ///
+    /// assert!("und".parse::<DataLocale>().unwrap().is_und());
+    /// assert!(!"und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_und());
+    /// assert!("und$auxiliary".parse::<DataLocale>().unwrap().is_und());
+    /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_und());
+    /// ```
+    pub fn is_und(&self) -> bool {
+        self.langid == LanguageIdentifier::UND && self.keywords.is_empty()
+    }
+
     /// Returns whether the [`LanguageIdentifier`] associated with this request is `und`.
     ///
-    /// Note that this only checks the language identifier; extension keywords may also be set.
-    /// To check the entire `DataLocale`, use [`DataLocale::is_empty()`].
+    /// This ignores extension keywords and auxiliary keys.
+    ///
+    /// See also:
+    ///
+    /// - [`DataLocale::is_empty()`]
+    /// - [`DataLocale::is_und()`]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::DataLocale;
+    ///
+    /// assert!("und".parse::<DataLocale>().unwrap().is_langid_und());
+    /// assert!("und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_langid_und());
+    /// assert!("und$auxiliary".parse::<DataLocale>().unwrap().is_langid_und());
+    /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_langid_und());
+    /// ```
     pub fn is_langid_und(&self) -> bool {
         self.langid == LanguageIdentifier::UND
     }
