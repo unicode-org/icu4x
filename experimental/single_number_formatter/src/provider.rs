@@ -69,8 +69,9 @@ pub enum PatternSelection {
 
 // TODO(#3836): replace this with Option<PlaceHolder>, enum PlaceHolder { Index(usize), ISO }
 // and encapsulate the encoding in the ULE implementation.
-pub const USE_ISO_CODE: u16 = 0b0011_1111_1110;
 pub const NO_PLACE_HOLDER: u16 = 0b0011_1111_1111;
+pub const USE_ISO_CODE: u16 = 0b0011_1111_1110;
+pub const MAX_PLACE_HOLDER_INDEX: u16 = 0b0011_1111_1101;
 
 #[cfg_attr(
     feature = "datagen",
