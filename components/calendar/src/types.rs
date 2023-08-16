@@ -177,14 +177,14 @@ pub struct FormattableMonth {
     /// the leap month will end up with an incremented number.
     ///
     /// In general, prefer using the month code in generic code.
+    pub ordinal: u32,
+
+    /// The month code, used to distinguish months during leap years.
     ///
     /// This may not necessarily be the canonical month code for a month in cases where a month has different
     /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
     /// the code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
     /// differently.
-    pub ordinal: u32,
-
-    /// The month code, used to distinguish months during leap years.
     pub code: MonthCode,
 }
 
