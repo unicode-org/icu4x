@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::{DataError, DataErrorKind};
 use alloc::string::String;
 use core::cmp::Ordering;
 use core::default::Default;
@@ -173,22 +174,6 @@ impl Writeable for DataLocale {
 
 writeable::impl_display_with_writeable!(DataLocale);
 
-/// An error involving parsing a [`DataLocale`].
-#[derive(Clone, Copy, PartialEq, Display, Debug)]
-#[non_exhaustive]
-pub enum DataLocaleParseError {
-    /// Syntax error when parsing an [`AuxiliaryKey`]. The set of characters allowed in an
-    /// [`AuxiliaryKey`] is very limited.
-    #[displaydoc("Auxiliary key syntax error")]
-    AuxiliaryKeySyntax,
-    /// TODO
-    MissingLocale,
-    /// TODO
-    TooManyParts,
-    /// TODO
-    Locale(icu_locid::ParserError),
-}
-
 impl From<LanguageIdentifier> for DataLocale {
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
@@ -230,17 +215,24 @@ impl From<&Locale> for DataLocale {
 }
 
 impl FromStr for DataLocale {
-    type Err = DataLocaleParseError;
+    type Err = DataError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut split_iter = s.split('$');
-        let locale_str = split_iter
-            .next()
-            .ok_or(DataLocaleParseError::MissingLocale)?;
-        let aux_str = split_iter.next();
-        if split_iter.next().is_some() {
-            return Err(DataLocaleParseError::TooManyParts);
-        }
-        let locale = Locale::from_str(locale_str).map_err(|e| DataLocaleParseError::Locale(e))?;
+        let (locale_str, aux_str) = match (split_iter.next(), split_iter.next(), split_iter.next())
+        {
+            (Some(locale_str), aux_str, None) => (locale_str, aux_str),
+            (_, _, _) => {
+                return Err(DataErrorKind::KeyLocaleSyntax
+                    .into_error()
+                    .with_display_context(s))
+            }
+        };
+        let locale = Locale::from_str(locale_str).map_err(|e| {
+            DataErrorKind::KeyLocaleSyntax
+                .into_error()
+                .with_display_context(s)
+                .with_display_context(&e)
+        })?;
         let mut data_locale = DataLocale::from(locale);
         if let Some(aux_str) = aux_str {
             let aux = AuxiliaryKey::from_str(aux_str)?;
@@ -675,7 +667,7 @@ impl Writeable for AuxiliaryKey {
 }
 
 impl FromStr for AuxiliaryKey {
-    type Err = DataLocaleParseError;
+    type Err = DataError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if Self::validate_str(s) {
@@ -683,7 +675,9 @@ impl FromStr for AuxiliaryKey {
                 value: String::from(s),
             })
         } else {
-            Err(DataLocaleParseError::AuxiliaryKeySyntax)
+            Err(DataErrorKind::KeyLocaleSyntax
+                .into_error()
+                .with_display_context(s))
         }
     }
 }
@@ -691,15 +685,6 @@ impl FromStr for AuxiliaryKey {
 impl AuxiliaryKey {
     pub fn as_str(&self) -> &str {
         self.value.as_str()
-    }
-
-    /// Creates an [`AuxiliaryKey`] from a [`String`] without allocations.
-    pub fn try_from_string(value: String) -> Result<Self, DataLocaleParseError> {
-        if Self::validate_str(&value) {
-            Ok(Self { value })
-        } else {
-            Err(DataLocaleParseError::AuxiliaryKeySyntax)
-        }
     }
 
     fn validate_str(s: &str) -> bool {
