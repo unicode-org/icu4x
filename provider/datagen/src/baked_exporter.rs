@@ -471,7 +471,7 @@ impl BakedExporter {
             for (bake, locales) in values {
                 let first_locale = locales.iter().next().unwrap();
                 let anchor = syn::parse_str::<syn::Ident>(
-                    &first_locale.to_ascii_uppercase().replace('-', "_"),
+                    &first_locale.to_ascii_uppercase().replace('-', "_").replace('$', "__"),
                 )
                 .unwrap();
                 let bake = bake.parse::<TokenStream>().unwrap();
