@@ -6,37 +6,97 @@
 
 pub use crate::transform::cldr::source::CoverageLevel;
 
-/// Defines how fallback will apply to the generated data.
-#[derive(Debug, PartialEq, Clone, Copy, serde::Serialize, serde::Deserialize)]
-#[non_exhaustive]
-pub enum FallbackMode {
-    /// This mode tries to generate data for the supplied locales. If data doesn't exist for a locale, it will be skipped.
-    ///
-    /// This is the pre-1.2 behavior, and requires manual runtime fallback.
-    Legacy,
-    /// This mode generates a minimum set of data that is sufficient under fallback at runtime. For example if en and en-US have
-    /// the same values, en-US will not be included, as it is available through fallback.
-    ///
-    /// Data generated in this mode automatically uses runtime fallback, it is not possible to use such data without fallback.
-    Runtime,
-    /// This mode generates data for *exactly* the supplied locales. If data doesn't exist for a locale, fallback will be
-    /// performed and the fallback value will be exported. Note that for data exporters that deduplicate values (such as
-    /// `BakedExporter` and `BlobDataExporter`), the only impact on data size will be additional keys (i.e `en-US`).
-    ///
-    /// Requires using `LocaleInclude::Explicit`.
-    ///
-    /// Data generated in this mode can be used without runtime fallback and guarantees that all locales are present.
-    Expand,
-}
-
-impl Default for FallbackMode {
-    fn default() -> Self {
-        Self::Legacy
-    }
-}
-
 use icu_locid::LanguageIdentifier;
 use std::collections::HashSet;
+
+/// Defines how fallback will apply to the generated data. If in doubt, use
+/// [`FallbackMode::PreferredForExporter`], which selects the best mode for your
+/// chosen data provider.
+///
+/// # Fallback Mode Comparison
+///
+/// The modes differ primarily in their approaches to runtime fallback and data size.
+///
+/// | Mode | Runtime Fallback | Data Size |
+/// |---|---|---|
+/// | [`Runtime`] | Yes, Automatic | Smallest |
+/// | [`RuntimeManual`] | Yes, Manual | Smallest |
+/// | [`Preresolved`] | No | Small |
+/// | [`Hybrid`] | Optional | Medium |
+///
+/// If you are not 100% certain of the closed set of locales you need at runtime, you should
+/// use a provider with runtime fallback enabled.
+///
+/// [`Runtime`]: FallbackMode::Runtime
+/// [`RuntimeManual`]: FallbackMode::RuntimeManual
+/// [`Preresolved`]: FallbackMode::Preresolved
+/// [`Hybrid`]: FallbackMode::Hybrid
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
+pub enum FallbackMode {
+    /// Selects the fallback mode based on [`DataExporter::supports_built_in_fallback()`](
+    /// icu_provider::datagen::DataExporter::supports_built_in_fallback()), resolving to either
+    /// [`Runtime`] or [`Hybrid`].
+    ///
+    /// [`Runtime`]: Self::Runtime
+    /// [`Hybrid`]: Self::Hybrid
+    #[default]
+    PreferredForExporter,
+    /// This mode generates the minimal set of locales that cover the requested locales when
+    /// fallback is used at runtime. For example, if "en" and "en-US" are both requested but
+    /// they contain the same value, only "en" will be included, since "en-US" falls back to
+    /// "en" at runtime.
+    ///
+    /// If [`LocaleInclude::Explicit`] is used, this mode includes all ancestors and descendants
+    /// (usually regional variants) of the explicitly listed locales. For example, if "pt-PT" is
+    /// requested, then "pt", "pt-PT", and children like "pt-MO" will be included. Note that the
+    /// children of "pt-PT" usually inherit from it and therefore don't take up a significant
+    /// amount of space in the data file.
+    ///
+    /// This mode is only supported with the baked data provider, and it builds fallback logic
+    /// into the generated code. To use this mode with other providers that don't bundle fallback
+    /// logic, use [`FallbackMode::RuntimeManual`] or [`FallbackMode::Hybrid`].
+    ///
+    /// This is the default fallback mode for the baked provider.
+    Runtime,
+    /// Same as [`FallbackMode::Runtime`] except that the fallback logic is not included in the
+    /// generated code. It must be enabled manually with a [`LocaleFallbackProvider`].
+    ///
+    /// This mode is supported on all data provider implementations.
+    ///
+    /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
+    RuntimeManual,
+    /// This mode generates data for exactly the supplied locales. If data doesn't exist for a
+    /// locale, fallback will be performed and the fallback value will be exported.
+    ///
+    /// Requires using [`LocaleInclude::Explicit`].
+    ///
+    /// Note: in data exporters that deduplicate values (such as `BakedExporter` and
+    /// `BlobDataExporter`), the impact on data size as compared to [`FallbackMode::Runtime`]
+    /// is limited to the pointers in the explicitly listed locales.
+    ///
+    /// Data generated in this mode can be used without runtime fallback and guarantees that all
+    /// locales are present. If you wish to also support locales that were not explicitly listed
+    /// with runtime fallback, see [`FallbackMode::Hybrid`].
+    Preresolved,
+    /// This mode passes through CLDR data without performing locale deduplication.
+    ///
+    /// If [`LocaleInclude::Explicit`] is used, this mode includes all ancestors and descendants
+    /// (usually regional variants) of the explicitly listed locales. For example, if "pt-PT" is
+    /// requested, then "pt", "pt-PT", and children like "pt-MO" will be included.
+    ///
+    /// Note: in data exporters that deduplicate values (such as `BakedExporter` and
+    /// `BlobDataExporter`), the impact on data size as compared to [`FallbackMode::Runtime`]
+    /// is limited to the pointers in the explicitly listed locales.
+    ///
+    /// Data generated in this mode is suitable for use with or without runtime fallback. To
+    /// enable runtime fallback, use a [`LocaleFallbackProvider`].
+    ///
+    /// This is the default fallback mode for the blob and filesystem providers.
+    ///
+    /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
+    Hybrid,
+}
 
 /// Options bag for [`DatagenProvider`](crate::DatagenProvider).
 #[non_exhaustive]

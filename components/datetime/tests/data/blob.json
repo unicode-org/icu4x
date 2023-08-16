@@ -21,6 +21,6 @@
     "export": {
         "Blob": "blob.postcard"
     },
-    "fallback": "Legacy",
+    "fallback": "Hybrid",
     "overwrite": true
 }

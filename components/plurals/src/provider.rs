@@ -26,7 +26,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_plurals;
+    pub mod icu {
+        pub use crate as plurals;
+        pub use icu_locid_transform as locid_transform;
+    }
     icu_plurals_data::impl_plurals_ordinal_v1!(Baked);
     icu_plurals_data::impl_plurals_cardinal_v1!(Baked);
 };

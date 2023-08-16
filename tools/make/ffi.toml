@@ -126,6 +126,9 @@ else
     cd ffi/diplomat/c/examples/fixeddecimal_tiny
     exec --fail-on-error make
     exec ls -l
+    cd ../segmenter_tiny
+    exec --fail-on-error make
+    exec ls -l
 end
 '''
 
