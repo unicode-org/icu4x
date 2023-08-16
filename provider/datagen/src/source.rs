@@ -299,7 +299,7 @@ impl std::fmt::Display for CollationHanDatabase {
 }
 
 pub(crate) struct SerdeCache {
-    root: AbstractFs,
+    pub(crate) root: AbstractFs,
     cache: FrozenMap<String, Box<dyn Any + Send + Sync>>,
 }
 
@@ -525,7 +525,7 @@ impl AbstractFs {
         Ok(())
     }
 
-    fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
+    pub(crate) fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         self.init()?;
         match self {
             Self::Fs(root) => {

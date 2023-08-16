@@ -25,6 +25,7 @@ pub mod numbers;
 pub mod parent_locales;
 pub mod plurals;
 pub mod time_zones;
+pub mod transforms;
 pub mod week_data;
 
 use locale_resource::LocaleResource;

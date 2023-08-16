@@ -50,6 +50,7 @@ icu_properties = { version = "1.2.0", path = "../../components/properties", defa
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, features = ["datagen"], optional = true }
 icu_segmenter = { version = "1.2.0", path = "../../components/segmenter", default-features = false, features = ["datagen", "lstm"] }
 icu_timezone = { version = "1.2.0", path = "../../components/timezone", default-features = false, features = ["datagen"] }
+icu_transliteration = { version = "0.0.0", path = "../../experimental/transliteration", default-features = false, features = [], optional = true }
 icu_singlenumberformatter = { version = "0.1.0", path = "../../experimental/single_number_formatter", default-features = false, features = ["datagen"], optional = true}
 
 
@@ -120,6 +121,7 @@ icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_relativetime = ["dep:icu_relativetime"]
 icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
+icu_transliteration = ["dep:icu_transliteration"]
 
 [[bin]]
 name = "icu4x-datagen"
