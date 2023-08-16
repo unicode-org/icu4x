@@ -31,6 +31,9 @@ unsafe impl ULE for CurrencyPatternsULE {
     }
 }
 
+const SHORT_PATTERN_PLACE: u8 = 6;
+const NARROW_PATTERN_PLACE: u8 = 4;
+
 impl AsULE for CurrencyPatterns {
     type ULE = CurrencyPatternsULE;
 
@@ -39,10 +42,10 @@ impl AsULE for CurrencyPatterns {
         let mut first_byte_ule: u8 = 0;
 
         if self.short_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
-            first_byte_ule |= 0b0100_0000;
+            first_byte_ule |= 0b01 << SHORT_PATTERN_PLACE;
         }
         if self.narrow_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
-            first_byte_ule |= 0b0001_0000;
+            first_byte_ule |= 0b01 << NARROW_PATTERN_PLACE;
         }
 
         // For short_place_holder_index
@@ -73,17 +76,19 @@ impl AsULE for CurrencyPatterns {
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let [first_byte, second_byte, third_byte] = unaligned.0;
 
-        let short_pattern_standard = if (first_byte & 0b11 << 6) >> 6 == 1 {
-            PatternSelection::StandardAlphaNextToNumber
-        } else {
-            PatternSelection::Standard
-        };
+        let short_pattern_standard =
+            if (first_byte & 0b11 << SHORT_PATTERN_PLACE) >> SHORT_PATTERN_PLACE == 1 {
+                PatternSelection::StandardAlphaNextToNumber
+            } else {
+                PatternSelection::Standard
+            };
 
-        let narrow_pattern_standard = if (first_byte & 0b11 << 4) >> 4 == 1 {
-            PatternSelection::StandardAlphaNextToNumber
-        } else {
-            PatternSelection::Standard
-        };
+        let narrow_pattern_standard =
+            if (first_byte & 0b11 << NARROW_PATTERN_PLACE) >> NARROW_PATTERN_PLACE == 1 {
+                PatternSelection::StandardAlphaNextToNumber
+            } else {
+                PatternSelection::Standard
+            };
         let short_prefix = (first_byte & 0b0000_1100) >> 2;
         let narrow_prefix = first_byte & 0b0000_0011;
 
