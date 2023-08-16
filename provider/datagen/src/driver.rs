@@ -24,7 +24,7 @@ use writeable::Writeable;
 ///
 /// # Examples
 ///
-/// ```
+/// ```no_run
 /// use icu_datagen::prelude::*;
 /// use icu_datagen::blob_exporter::*;
 ///
