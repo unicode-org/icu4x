@@ -25,8 +25,6 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X TimeFormatter object capable of formatting an [`ICU4XTime`] type (and others) as a string
     #[diplomat::rust_link(icu::datetime::TimeFormatter, Struct)]
-    // TODO(#2153) - Rename to ICU4XTimeFormatter when we remove the dependency on calendar
-    // from TimeFormatter.
     pub struct ICU4XTimeFormatter(pub TimeFormatter);
 
     #[diplomat::enum_convert(length::Time, needs_wildcard)]

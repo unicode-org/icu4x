@@ -2,6 +2,8 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+# PLEASE KEEP THIS FILE IN SYNC WITH ../segmenter_tiny/Makefile
+
 .DEFAULT_GOAL := test
 .PHONY: build test
 FORCE:
@@ -16,7 +18,7 @@ CLANG := clang-15
 LLD := lld-15
 
 baked_data/macros.rs:
-	cargo run -p icu_datagen -- --locales en bn --keys all --fallback expand --format mod --use-separate-crates --out baked_data
+	cargo run -p icu_datagen -- --locales en bn --keys all --fallback preresolved --format mod --out baked_data
 
 ../../../../../target/debug/libicu_capi_staticlib.a: FORCE
 	cargo build -p icu_capi_staticlib --no-default-features --features compiled_data,default_components

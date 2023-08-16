@@ -341,9 +341,14 @@ fn test_collation_filtering() {
             .collect();
         options.locales =
             crate::options::LocaleInclude::Explicit([cas.language.clone()].into_iter().collect());
+        options.fallback = crate::options::FallbackMode::Preresolved;
 
         let resolved_locales = provider
-            .select_locales_for_key(CollationDataV1Marker::KEY, &options, None)
+            .select_locales_for_key(
+                CollationDataV1Marker::KEY,
+                &options,
+                &once_cell::sync::Lazy::new(|| unreachable!()),
+            )
             .unwrap()
             .into_iter()
             .map(|l| l.to_string())

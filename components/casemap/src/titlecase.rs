@@ -13,30 +13,97 @@ use icu_properties::{GeneralCategory, GeneralCategoryGroup, PropertiesError};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
-/// How to handle the rest of the string once the head of the
-/// string has been titlecased. See docs of [`TitlecaseMapper`] for examples.
+/// How to handle the rest of the string once the beginning of the
+/// string has been titlecased.
+///
+/// # Examples
+///
+/// ```rust
+/// use icu_casemap::TitlecaseMapper;
+/// use icu_casemap::titlecase::{TrailingCase, TitlecaseOptions};
+/// use icu_locid::langid;
+///
+/// let cm = TitlecaseMapper::new();
+/// let root = langid!("und");
+///
+/// let default_options = Default::default();
+/// let mut preserve_case: TitlecaseOptions = Default::default();
+/// preserve_case.trailing_case = TrailingCase::Unchanged;
+///
+/// // Exhibits trailing case when set:
+/// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, default_options), "Spongebob");
+/// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, preserve_case), "SpOngeBoB");
+/// ```
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
-pub enum TailCasing {
+pub enum TrailingCase {
+    /// Preserve the casing of the rest of the string ("spoNgEBoB" -> "SpoNgEBoB")
+    Unchanged,
     /// Lowercase the rest of the string ("spoNgEBoB" -> "Spongebob")
     #[default]
-    Lowercase,
-    /// Preserve the casing of the rest of the string ("spoNgEBoB" -> "SpoNgEBoB")
-    PreserveCase,
+    Lower,
 }
 
-/// Whether to start casing at the beginning of the string or at the first
-/// relevant character. See docs of [`TitlecaseMapper`] for examples.
+/// Where to start casing the string.
+///
+/// [`TitlecaseMapper`] by default performs "leading adjustment", where it searches for the first "relevant" character
+/// in the string before initializing the actual titlecasing. For example, it will skip punctuation at the beginning
+/// of a string, allowing for strings like `'twas` or `«hello»` to be appropriately titlecased.
+///
+/// Opinions on exactly what is a "relevant" character may differ. In "adjust to cased" mode the first cased character is considered "relevant",
+/// whereas in the "auto" mode, it is the first character that is a letter, number, symbol, or private use character. This means
+/// that the strings `49ers` and `«丰(abc)»` will titlecase in "adjust to cased" mode to `49Ers` and `«丰(Abc)»`, whereas in the "auto" mode they stay unchanged.
+/// This difference largely matters for things that mix numbers and letters, or mix writing systems, within a single segment.
+///
+/// # Examples
+///
+/// ```rust
+/// use icu_casemap::TitlecaseMapper;
+/// use icu_casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
+/// use icu_locid::langid;
+///
+/// let cm = TitlecaseMapper::new();
+/// let root = langid!("und");
+///
+/// let default_options = Default::default(); // head adjustment set to Auto
+/// let mut no_adjust: TitlecaseOptions = Default::default();
+/// let mut adjust_to_cased: TitlecaseOptions = Default::default();
+/// no_adjust.leading_adjustment = LeadingAdjustment::None;
+/// adjust_to_cased.leading_adjustment = LeadingAdjustment::ToCased;
+///
+/// // Exhibits leading adjustment when set:
+/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
+/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, adjust_to_cased), "«Hello»");
+/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, no_adjust), "«hello»");
+///
+/// // Only changed in adjust-to-cased mode:
+/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, default_options), "丰(abc)");
+/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, adjust_to_cased), "丰(Abc)");
+/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, no_adjust), "丰(abc)");
+///
+/// // Only changed in adjust-to-cased mode:
+/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, default_options), "49ers");
+/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, adjust_to_cased), "49Ers");
+/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, no_adjust), "49ers");
+/// ```
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
-pub enum HeadAdjustment {
-    /// Adjust the string to the first relevant character before beginning to apply casing
-    /// ("'twixt" -> "'Twixt")
-    #[default]
-    Adjust,
+pub enum LeadingAdjustment {
     /// Start titlecasing immediately, even if the character is not one that is relevant for casing
     /// ("'twixt" -> "'twixt", "twixt" -> "Twixt")
-    NoAdjust,
+    None,
+    /// Adjust the string to the first relevant character before beginning to apply casing
+    /// ("'twixt" -> "'Twixt"). "Relevant" character is picked by best available algorithm,
+    /// by default will adjust to first letter, number, symbol, or private use character,
+    /// but if no data is available (e.g. this API is being called via [`CaseMapper::titlecase_segment_with_only_case_data()`]),
+    /// then may be equivalent to "adjust to cased".
+    ///
+    /// This is the default
+    #[default]
+    Auto,
+    /// Adjust the string to the first cased character before beginning to apply casing
+    /// ("'twixt" -> "'Twixt")
+    ToCased,
 }
 
 /// Various options for controlling titlecasing
@@ -47,29 +114,25 @@ pub enum HeadAdjustment {
 pub struct TitlecaseOptions {
     /// How to handle the rest of the string once the head of the
     /// string has been titlecased
-    pub tail_casing: TailCasing,
+    pub trailing_case: TrailingCase,
     /// Whether to start casing at the beginning of the string or at the first
     /// relevant character.
-    pub head_adjustment: HeadAdjustment,
+    pub leading_adjustment: LeadingAdjustment,
 }
 
 /// A wrapper around [`CaseMapper`] that can compute titlecasing stuff, and is able to load additional data
 /// to support the non-legacy "head adjustment" behavior.
 ///
 ///
-/// By default, [`Self::titlecase_segment()`] and [`Self::titlecase_segment_to_string()`] perform "head adjustment",
+/// By default, [`Self::titlecase_segment()`] and [`Self::titlecase_segment_to_string()`] perform "leading adjustment",
 /// where they wait till the first relevant character to begin titlecasing. For example, in the string `'twixt`, the apostrophe
 /// is ignored because the word starts at the first "t", which will get titlecased (producing `'Twixt`). Other punctuation will
 /// also be ignored, like in the string `«hello»`, which will get titlecased to `«Hello»`.
 ///
-/// Opinions on exactly what is a "relevant" character may differ. In "legacy" mode the first cased character is considered "relevant",
-/// whereas in the normal mode, it is the first character that is a letter, number, symbol, or private use character. This means
-/// that the strings `49ers` and `«丰(abc)»` will titlecase to `49Ers` and `«丰(Abc)»`, whereas in the normal mode they stay unchanged.
-/// This difference largely matters for things that mix numbers and letters, or mix writing systems, within a single segment.
+/// This is a separate type from [`CaseMapper`] because it loads the additional data
+/// required by [`LeadingAdjustment::Auto`] to perform the best possible leading adjustment.
 ///
-/// The normal mode requires additional data; which is the purpose of this being a separate type.
-///
-/// If you are planning on only using [`HeadAdjustment::NoAdjust`], consider using [`CaseMapper`] directly; this
+/// If you are planning on only using [`LeadingAdjustment::None`] or [`LeadingAdjustment::ToCased`], consider using [`CaseMapper`] directly; this
 /// type will have no additional behavior.
 ///
 /// # Examples
@@ -103,36 +166,6 @@ pub struct TitlecaseOptions {
 /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &langid!("nl"), default_options), "IJkdijk"); // Dutch IJ digraph
 /// ```
 ///
-/// Head adjustment behaviors:
-///
-/// ```rust
-/// use icu_casemap::TitlecaseMapper;
-/// use icu_casemap::titlecase::{HeadAdjustment, TitlecaseOptions};
-/// use icu_locid::langid;
-///
-/// let cm_normal = TitlecaseMapper::new();
-/// let cm_legacy = TitlecaseMapper::new_legacy();
-/// let root = langid!("und");
-///
-/// let default_options = Default::default();
-/// let mut no_adjust: TitlecaseOptions = Default::default();
-/// no_adjust.head_adjustment = HeadAdjustment::NoAdjust;
-///
-/// // Exhibits head adjustment when set:
-/// assert_eq!(cm_normal.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
-/// assert_eq!(cm_legacy.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
-/// assert_eq!(cm_normal.titlecase_segment_to_string("«hello»", &root, no_adjust), "«hello»");
-///
-/// // Only changed in legacy mode:
-/// assert_eq!(cm_normal.titlecase_segment_to_string("丰(abc)", &root, default_options), "丰(abc)");
-/// assert_eq!(cm_legacy.titlecase_segment_to_string("丰(abc)", &root, default_options), "丰(Abc)");
-/// assert_eq!(cm_normal.titlecase_segment_to_string("丰(abc)", &root, no_adjust), "丰(abc)");
-///
-/// // Only changed in legacy mode:
-/// assert_eq!(cm_normal.titlecase_segment_to_string("49ers", &root, default_options), "49ers");
-/// assert_eq!(cm_legacy.titlecase_segment_to_string("49ers", &root, default_options), "49Ers");
-/// assert_eq!(cm_normal.titlecase_segment_to_string("49ers", &root, no_adjust), "49ers");
-/// ```
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
@@ -142,12 +175,11 @@ pub struct TitlecaseOptions {
 #[derive(Clone, Debug)]
 pub struct TitlecaseMapper<CM> {
     cm: CM,
-    gc: Option<CodePointMapData<GeneralCategory>>,
+    gc: CodePointMapData<GeneralCategory>,
 }
 
 impl TitlecaseMapper<CaseMapper> {
-    /// A constructor which creates a [`TitlecaseMapper`] using compiled data, with the normal (non-legacy) head adjustment behavior.
-    /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior and usage examples.
+    /// A constructor which creates a [`TitlecaseMapper`] using compiled data
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -156,20 +188,7 @@ impl TitlecaseMapper<CaseMapper> {
     pub const fn new() -> Self {
         Self {
             cm: CaseMapper::new(),
-            gc: Some(icu_properties::maps::general_category().static_to_owned()),
-        }
-    }
-    /// A constructor which creates a [`TitlecaseMapper`] using compiled data, with the legacy head adjustment behavior.
-    /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior and usage examples.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub const fn new_legacy() -> Self {
-        Self {
-            cm: CaseMapper::new(),
-            gc: None,
+            gc: icu_properties::maps::general_category().static_to_owned(),
         }
     }
 
@@ -182,15 +201,6 @@ impl TitlecaseMapper<CaseMapper> {
         try_new_unstable,
         Self,
     ]);
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-    #[cfg(skip)]
-    functions: [
-        new_legacy,
-        try_new_legacy_with_any_provider,
-        try_new_legacy_with_buffer_provider,
-        try_new_legacy_unstable,
-        Self,
-    ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
@@ -198,21 +208,11 @@ impl TitlecaseMapper<CaseMapper> {
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
-        let gc = Some(
-            icu_properties::maps::load_general_category(provider).map_err(|e| {
-                let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
-                e
-            })?,
-        );
+        let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
+            let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
+            e
+        })?;
         Ok(Self { cm, gc })
-    }
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_legacy_unstable<P>(provider: &P) -> Result<Self, DataError>
-    where
-        P: DataProvider<CaseMapV1Marker> + ?Sized,
-    {
-        let cm = CaseMapper::try_new_unstable(provider)?;
-        Ok(Self { cm, gc: None })
     }
 }
 
@@ -229,8 +229,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ]);
 
     /// A constructor which creates a [`TitlecaseMapper`] from an existing [`CaseMapper`]
-    /// (either owned or as a reference) and compiled data, with the normal (non-legacy) head adjustment behavior.
-    /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior.
+    /// (either owned or as a reference) and compiled data
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -239,20 +238,10 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     pub const fn new_with_mapper(casemapper: CM) -> Self {
         Self {
             cm: casemapper,
-            gc: Some(icu_properties::maps::general_category().static_to_owned()),
+            gc: icu_properties::maps::general_category().static_to_owned(),
         }
     }
-    /// A constructor which creates a [`TitlecaseMapper`] from an existing [`CaseMapper`]
-    /// (either owned or as a reference), with the legacy head adjustment behavior.
-    /// See struct docs on [`TitlecaseMapper`] for more information on head adjustment behavior.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    pub const fn new_with_mapper_legacy(casemapper: CM) -> Self {
-        Self {
-            cm: casemapper,
-            gc: None,
-        }
-    }
+
     /// Construct this object to wrap an existing CaseMapper (or a reference to one), loading additional data as needed.
     ///
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_mapper)]
@@ -260,12 +249,10 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
-        let gc = Some(
-            icu_properties::maps::load_general_category(provider).map_err(|e| {
-                let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
-                e
-            })?,
-        );
+        let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
+            let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
+            e
+        })?;
         Ok(Self { cm: casemapper, gc })
     }
 
@@ -288,7 +275,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
     ) -> impl Writeable + 'a {
-        if let Some(gc) = self.gc.as_ref() {
+        if options.leading_adjustment == LeadingAdjustment::Auto {
             // letter, number, symbol, or private use code point
             const HEAD_GROUPS: GeneralCategoryGroup = GeneralCategoryGroup::Letter
                 .union(GeneralCategoryGroup::Number)
@@ -297,7 +284,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
             self.cm
                 .as_ref()
                 .titlecase_segment_with_adjustment(src, langid, options, |_data, ch| {
-                    HEAD_GROUPS.contains(gc.as_borrowed().get(ch))
+                    HEAD_GROUPS.contains(self.gc.as_borrowed().get(ch))
                 })
         } else {
             self.cm
@@ -350,11 +337,11 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &langid!("nl"), default_options), "IJkdijk"); // Dutch IJ digraph
     /// ```
     ///
-    /// Head adjustment behaviors:
+    /// Leading adjustment behaviors:
     ///
     /// ```rust
     /// use icu_casemap::TitlecaseMapper;
-    /// use icu_casemap::titlecase::{HeadAdjustment, TitlecaseOptions};
+    /// use icu_casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
     /// use icu_locid::langid;
     ///
     /// let cm = TitlecaseMapper::new();
@@ -362,9 +349,9 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// let default_options = Default::default();
     /// let mut no_adjust: TitlecaseOptions = Default::default();
-    /// no_adjust.head_adjustment = HeadAdjustment::NoAdjust;
+    /// no_adjust.leading_adjustment = LeadingAdjustment::None;
     ///
-    /// // Exhibits head adjustment when set:
+    /// // Exhibits leading adjustment when set:
     /// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
     /// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, no_adjust), "«hello»");
     ///
@@ -379,7 +366,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// ```rust
     /// use icu_casemap::TitlecaseMapper;
-    /// use icu_casemap::titlecase::{TailCasing, TitlecaseOptions};
+    /// use icu_casemap::titlecase::{TrailingCase, TitlecaseOptions};
     /// use icu_locid::langid;
     ///
     /// let cm = TitlecaseMapper::new();
@@ -387,9 +374,9 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// let default_options = Default::default();
     /// let mut preserve_case: TitlecaseOptions = Default::default();
-    /// preserve_case.tail_casing = TailCasing::PreserveCase;
+    /// preserve_case.trailing_case = TrailingCase::Unchanged;
     ///
-    /// // Exhibits head adjustment when set:
+    /// // Exhibits trailing case when set:
     /// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, default_options), "Spongebob");
     /// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, preserve_case), "SpOngeBoB");
     /// ```

@@ -463,8 +463,7 @@ checksum = "7fcaabb2fef8c910e7f4c7ce9f67a1283a1715879a7c230ca9d6d1ae31f16d91"
 [[package]]
 name = "elsa"
 version = "1.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5e0aca8dce8856e420195bd13b6a64de3334235ccc9214e824b86b12bf26283"
+source = "git+https://github.com/Manishearth/elsa?rev=56d05375eea36596432a0843721d26edf3b0ec75#56d05375eea36596432a0843721d26edf3b0ec75"
 dependencies = [
  "stable_deref_trait",
 ]
@@ -742,8 +741,9 @@ version = "1.3.0"
 
 [[package]]
 name = "icu_casemap"
-version = "0.7.2"
+version = "1.2.0"
 dependencies = [
+ "databake",
  "displaydoc",
  "icu_casemap_data",
  "icu_collections",
@@ -837,6 +837,7 @@ dependencies = [
  "elsa",
  "eyre",
  "icu_calendar",
+ "icu_casemap",
  "icu_codepointtrie_builder",
  "icu_collator",
  "icu_collections",

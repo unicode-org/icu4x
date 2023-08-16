@@ -43,7 +43,7 @@
 
     Priority mode for the ICU4X fallback algorithm.
 
-    See the `Rust documentation for FallbackPriority <https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.FallbackPriority.html>`__ for more information.
+    See the `Rust documentation for LocaleFallbackPriority <https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.LocaleFallbackPriority.html>`__ for more information.
 
 
 .. js:class:: ICU4XLocaleFallbacker

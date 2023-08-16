@@ -11,7 +11,7 @@ use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
 use crate::set::ClosureSink;
-use crate::titlecase::TailCasing;
+use crate::titlecase::TrailingCase;
 use core::fmt;
 use icu_locid::LanguageIdentifier;
 use writeable::Writeable;
@@ -54,7 +54,7 @@ pub(crate) struct FullCaseWriteable<'a, const IS_TITLE_CONTEXT: bool> {
     src: &'a str,
     locale: CaseMapLocale,
     mapping: MappingKind,
-    titlecase_tail_casing: TailCasing,
+    titlecase_tail_casing: TrailingCase,
 }
 
 impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
@@ -68,7 +68,7 @@ impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TI
             self.data
                 .full_helper::<IS_TITLE_CONTEXT, W>(c, context, self.locale, mapping, sink)?;
             if IS_TITLE_CONTEXT {
-                if self.titlecase_tail_casing == TailCasing::Lowercase {
+                if self.titlecase_tail_casing == TrailingCase::Lower {
                     mapping = MappingKind::Lower;
                 } else {
                     break;
@@ -76,7 +76,7 @@ impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TI
             }
         }
         // Write the rest of the string
-        if IS_TITLE_CONTEXT && self.titlecase_tail_casing == TailCasing::PreserveCase {
+        if IS_TITLE_CONTEXT && self.titlecase_tail_casing == TrailingCase::Unchanged {
             sink.write_str(iter.as_str())?;
         }
         Ok(())
@@ -516,7 +516,7 @@ impl<'data> CaseMapV1<'data> {
         src: &'a str,
         locale: CaseMapLocale,
         mapping: MappingKind,
-        titlecase_tail_casing: TailCasing,
+        titlecase_tail_casing: TrailingCase,
     ) -> FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
         // Ensure that they are either both true or both false, i.e. an XNOR operation
         debug_assert!(!(IS_TITLE_CONTEXT ^ (mapping == MappingKind::Title)));

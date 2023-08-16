@@ -59,12 +59,29 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         tinystr!(4, "M12"),
         tinystr!(4, "M13"),
     ];
-
+    // CLDR labels the regular months and M05L by their ordinals
+    // whereas M06L is stored as 7-yeartype-leap
+    static HEBREW_MONTH_CODES: &[TinyStr4] = &[
+        tinystr!(4, "M01"),
+        tinystr!(4, "M02"),
+        tinystr!(4, "M03"),
+        tinystr!(4, "M04"),
+        tinystr!(4, "M05"),
+        tinystr!(4, "M05L"),
+        tinystr!(4, "M06"),
+        tinystr!(4, "M07"),
+        tinystr!(4, "M08"),
+        tinystr!(4, "M09"),
+        tinystr!(4, "M10"),
+        tinystr!(4, "M11"),
+        tinystr!(4, "M12"),
+        // M06L is handled separately in MonthSymbols code
+    ];
     match calendar {
         "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc"
         | "islamic" | "islamicc" | "umalqura" | "tbla" => &SOLAR_MONTH_CODES[0..12],
-        "coptic" | "ethiopic" | "chinese" => SOLAR_MONTH_CODES,
-        "hebrew" => &[], // special-cased in the get() function
+        "coptic" | "ethiopic" | "chinese" | "dangi" => SOLAR_MONTH_CODES,
+        "hebrew" => HEBREW_MONTH_CODES,
         _ => panic!("Month map unknown for {calendar}"),
     }
 }
@@ -90,6 +107,7 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         ]
         .into_iter()
         .collect(),
+        "dangi" => vec![].into_iter().collect(),
         "indian" => vec![("0".to_string(), tinystr!(16, "saka"))]
             .into_iter()
             .collect(),
@@ -231,30 +249,7 @@ symbols_from!(
 
 impl cldr_serde::ca::MonthSymbols {
     fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::SymbolsV1<'static> {
-        if ctx.1 == "hebrew" {
-            let mut map = BTreeMap::new();
-            for (k, v) in self.0.iter() {
-                let keys = match k.as_str() {
-                    "1" => tinystr!(4, "M01"),
-                    "2" => tinystr!(4, "M02"),
-                    "3" => tinystr!(4, "M03"),
-                    "4" => tinystr!(4, "M04"),
-                    "5" => tinystr!(4, "M05"),
-                    "6" => tinystr!(4, "M05L"),
-                    "7" => tinystr!(4, "M06"),
-                    "7-yeartype-leap" => tinystr!(4, "M06L"),
-                    "8" => tinystr!(4, "M07"),
-                    "9" => tinystr!(4, "M08"),
-                    "10" => tinystr!(4, "M09"),
-                    "11" => tinystr!(4, "M10"),
-                    "12" => tinystr!(4, "M11"),
-                    "13" => tinystr!(4, "M12"),
-                    _ => panic!("Unexpected month for Hebrew calendar"),
-                };
-                map.insert(MonthCode(keys), v.as_ref());
-            }
-            months::SymbolsV1::Other(map.into_iter().collect())
-        } else if ctx.0.len() == 12 && self.0.len() == 12 {
+        if ctx.0.len() == 12 && self.0.len() == 12 {
             let mut arr: [Cow<'static, str>; 12] = Default::default();
             for (k, v) in self.0.iter() {
                 let index: usize = k
@@ -276,18 +271,22 @@ impl cldr_serde::ca::MonthSymbols {
         } else {
             let mut map = BTreeMap::new();
             for (k, v) in self.0.iter() {
-                let index: usize = k
-                    .parse()
-                    .expect("CLDR month indices must parse as numbers!");
-                if index == 0 {
-                    panic!("CLDR month indices cannot be zero");
-                }
-                let code = ctx
-                    .0
-                    .get(index - 1)
-                    .expect("Found out of bounds month index for calendar");
+                let code = if k == "7-yeartype-leap" && ctx.1 == "hebrew" {
+                    tinystr!(4, "M06L")
+                } else {
+                    let index: usize = k
+                        .parse()
+                        .expect("CLDR month indices must parse as numbers!");
 
-                map.insert(MonthCode(*code), v.as_ref());
+                    if index == 0 {
+                        panic!("CLDR month indices cannot be zero");
+                    }
+                    *ctx.0
+                        .get(index - 1)
+                        .expect("Found out of bounds month index for calendar")
+                };
+
+                map.insert(MonthCode(code), v.as_ref());
             }
             months::SymbolsV1::Other(map.into_iter().collect())
         }

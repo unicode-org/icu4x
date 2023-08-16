@@ -11,28 +11,29 @@ pub mod ffi {
     };
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatWriteable;
-    use icu_casemap::titlecase::{HeadAdjustment, TailCasing};
+    use icu_casemap::titlecase::{LeadingAdjustment, TrailingCase};
     use icu_casemap::{CaseMapCloser, CaseMapper, TitlecaseMapper};
     use writeable::Writeable;
 
-    #[diplomat::enum_convert(HeadAdjustment, needs_wildcard)]
-    #[diplomat::rust_link(icu::casemap::titlecase::HeadAdjustment, Enum)]
-    pub enum ICU4XHeadAdjustment {
-        Adjust,
-        NoAdjust,
+    #[diplomat::enum_convert(LeadingAdjustment, needs_wildcard)]
+    #[diplomat::rust_link(icu::casemap::titlecase::LeadingAdjustment, Enum)]
+    pub enum ICU4XLeadingAdjustment {
+        Auto,
+        None,
+        ToCased,
     }
 
-    #[diplomat::enum_convert(TailCasing, needs_wildcard)]
-    #[diplomat::rust_link(icu::casemap::titlecase::TailCasing, Enum)]
-    pub enum ICU4XTailCasing {
-        Lowercase,
-        PreserveCase,
+    #[diplomat::enum_convert(TrailingCase, needs_wildcard)]
+    #[diplomat::rust_link(icu::casemap::titlecase::TrailingCase, Enum)]
+    pub enum ICU4XTrailingCase {
+        Lower,
+        Unchanged,
     }
 
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
     pub struct ICU4XTitlecaseOptionsV1 {
-        pub head_adjustment: ICU4XHeadAdjustment,
-        pub tail_casing: ICU4XTailCasing,
+        pub leading_adjustment: ICU4XLeadingAdjustment,
+        pub trailing_case: ICU4XTrailingCase,
     }
 
     impl ICU4XTitlecaseOptionsV1 {
@@ -40,8 +41,8 @@ pub mod ffi {
         pub fn default_options() -> ICU4XTitlecaseOptionsV1 {
             // named default_options to avoid keyword clashes
             Self {
-                head_adjustment: ICU4XHeadAdjustment::Adjust,
-                tail_casing: ICU4XTailCasing::Lowercase,
+                leading_adjustment: ICU4XLeadingAdjustment::Auto,
+                trailing_case: ICU4XTrailingCase::Lower,
             }
         }
     }
@@ -98,17 +99,21 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Returns the full titlecase mapping of the given string, using legacy head adjustment behavior
+        /// Returns the full titlecase mapping of the given string, performing head adjustment without
+        /// loading additional data.
         /// (if head adjustment is enabled in the options)
         ///
         /// The `v1` refers to the version of the options struct, which may change as we add more options
-        #[diplomat::rust_link(icu::casemap::CaseMapper::titlecase_segment_legacy, FnInStruct)]
         #[diplomat::rust_link(
-            icu::casemap::CaseMapper::titlecase_segment_legacy_to_string,
+            icu::casemap::CaseMapper::titlecase_segment_with_only_case_data,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapper::titlecase_segment_with_only_case_data_to_string,
             FnInStruct,
             hidden
         )]
-        pub fn titlecase_segment_legacy_v1(
+        pub fn titlecase_segment_with_only_case_data_v1(
             &self,
             s: &str,
             locale: &ICU4XLocale,
@@ -120,7 +125,7 @@ pub mod ffi {
             core::str::from_utf8(s.as_bytes())
                 .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
             self.0
-                .titlecase_segment_legacy(s, &locale.0.id, options.into())
+                .titlecase_segment_with_only_case_data(s, &locale.0.id, options.into())
                 .write_to(write)?;
 
             Ok(())
@@ -290,25 +295,6 @@ pub mod ffi {
                 provider,
             )?)))
         }
-        /// Construct a new `ICU4XTitlecaseMapper` instance with legacy head-adjustment behavior
-        ///
-        /// Behaves identically to using `titlecase_segment_legacy` on `CaseMapper`
-        #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_legacy, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::casemap::TitlecaseMapper::new_legacy_with_mapper,
-            FnInStruct,
-            hidden
-        )]
-        pub fn create_legacy(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XTitlecaseMapper>, ICU4XError> {
-            Ok(Box::new(ICU4XTitlecaseMapper(call_constructor!(
-                TitlecaseMapper::new [r => Ok(r)],
-                TitlecaseMapper::try_new_with_any_provider,
-                TitlecaseMapper::try_new_with_buffer_provider,
-                provider,
-            )?)))
-        }
 
         /// Returns the full titlecase mapping of the given string
         ///
@@ -343,8 +329,8 @@ impl From<ffi::ICU4XTitlecaseOptionsV1> for TitlecaseOptions {
     fn from(other: ffi::ICU4XTitlecaseOptionsV1) -> Self {
         let mut ret = Self::default();
 
-        ret.head_adjustment = other.head_adjustment.into();
-        ret.tail_casing = other.tail_casing.into();
+        ret.leading_adjustment = other.leading_adjustment.into();
+        ret.trailing_case = other.trailing_case.into();
         ret
     }
 }
