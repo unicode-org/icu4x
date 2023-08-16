@@ -685,6 +685,7 @@ impl DataLocale {
 /// assert!("ABC123".parse::<AuxiliaryKey>().is_ok());
 /// assert!("abc-xyz".parse::<AuxiliaryKey>().is_ok());
 ///
+/// assert!("".parse::<AuxiliaryKey>().is_err());
 /// assert!("!@#$%".parse::<AuxiliaryKey>().is_err());
 /// assert!("abc_xyz".parse::<AuxiliaryKey>().is_err());
 /// assert!("abc$xyz".parse::<AuxiliaryKey>().is_err());
@@ -760,8 +761,9 @@ impl AuxiliaryKey {
     }
 
     fn validate_str(s: &str) -> bool {
-        s.bytes()
-            .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-'))
+        !s.is_empty()
+            && s.bytes()
+                .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-'))
     }
 }
 
