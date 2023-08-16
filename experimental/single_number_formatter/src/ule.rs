@@ -73,13 +73,13 @@ impl AsULE for CurrencyPatterns {
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let [first_byte, second_byte, third_byte] = unaligned.0;
 
-        let short_pattern_standard = if first_byte & 0b0100_0000 != 0 {
+        let short_pattern_standard = if (first_byte & 0b11 << 6) >> 6 == 1 {
             PatternSelection::StandardAlphaNextToNumber
         } else {
             PatternSelection::Standard
         };
 
-        let narrow_pattern_standard = if first_byte & 0b0001_0000 != 0 {
+        let narrow_pattern_standard = if (first_byte & 0b11 << 4) >> 4 == 1 {
             PatternSelection::StandardAlphaNextToNumber
         } else {
             PatternSelection::Standard
