@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerovec::ule::{AsULE, ZeroVecError, ULE};
+use zerovec::{ule::{AsULE, ZeroVecError, ULE}, maps::ZeroMapKV};
 
 use crate::provider::{CurrencyPatterns, PatternSelection};
 
@@ -118,3 +118,12 @@ impl AsULE for CurrencyPatterns {
         }
     }
 }
+
+
+impl<'a> ZeroMapKV<'a> for CurrencyPatterns {
+    type Container = zerovec::ZeroVec<'a, CurrencyPatterns>;
+    type Slice = zerovec::ZeroSlice<CurrencyPatterns>;
+    type GetType = <CurrencyPatterns as AsULE>::ULE;
+    type OwnedType = CurrencyPatterns;
+}
+

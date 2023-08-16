@@ -12,7 +12,7 @@
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
 use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::{maps::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap};
+use zerovec::{VarZeroVec, ZeroMap};
 
 /// This type contains all of the essential data for currency formatting.
 ///
@@ -98,11 +98,4 @@ pub struct CurrencyPatterns {
     /// If the value is `NO_PLACE_HOLDER`, this means that the narrow pattern does not have a place holder.
     /// If the value is `USE_ISO_CODE`, this means that the narrow pattern equals to the iso code.
     pub narrow_place_holder_index: u16,
-}
-
-impl<'a> ZeroMapKV<'a> for CurrencyPatterns {
-    type Container = zerovec::ZeroVec<'a, CurrencyPatterns>;
-    type Slice = zerovec::ZeroSlice<CurrencyPatterns>;
-    type GetType = <CurrencyPatterns as AsULE>::ULE;
-    type OwnedType = CurrencyPatterns;
 }
