@@ -105,7 +105,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
                 "{0} \u{05D5}{1}", // ״{0} ו {1}״
                 // Starts with a non-Hebrew letter
                 &non_hebrew,
-                "{0} \u{05D5}-{1}", // ״{0} ו- {1}״
+                "{0} \u{05D5}‑{1}", // ״{0} ו‑ {1}״
             )
             .expect("valid pattern");
     }
