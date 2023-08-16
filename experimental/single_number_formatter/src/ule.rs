@@ -6,6 +6,19 @@ use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
 use crate::provider::{CurrencyPatterns, PatternSelection};
 
+/// `CurrencyPatternsULE` is a type optimized for efficient storing and
+/// deserialization of `CurrencyPatterns` using the `ZeroVec` model.
+///
+/// The serialization model packages the pattern item in three bytes.
+///
+/// The first two bits is used to determine the short_pattern_standard. If the bits are `00`, then, the value will be `Standard`.
+/// If the bits are `01`, then, the value will be `StandardAlphaNextToNumber`.
+///
+/// The second two bits is used to determine the narrow_pattern_standard. If the bits are `00`, then, the value will be `Standard`.
+/// If the bits are `01`, then, the value will be `StandardAlphaNextToNumber`.
+///
+/// The third two bits with the second byte is used to determine the short_place_holder_index.
+/// The fourth two bits with the third byte is used to determine the narrow_place_holder_index.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(transparent)]
 pub struct CurrencyPatternsULE([u8; 3]);
