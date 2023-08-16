@@ -8,10 +8,6 @@ use icu_locid::extensions::unicode::key;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackIterator;
 use icu_locid_transform::fallback::LocaleFallbacker;
-use icu_locid_transform::provider::{
-    CollationFallbackSupplementV1Marker, LocaleFallbackLikelySubtagsV1Marker,
-    LocaleFallbackParentsV1Marker,
-};
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use once_cell::sync::Lazy;
@@ -133,10 +129,7 @@ impl DatagenDriver {
     /// and [`BakedExporter`](crate::baked_exporter).
     pub fn export(
         self,
-        provider: &(impl ExportableProvider
-              + DataProvider<LocaleFallbackLikelySubtagsV1Marker>
-              + DataProvider<LocaleFallbackParentsV1Marker>
-              + DataProvider<CollationFallbackSupplementV1Marker>),
+        provider: &impl ExportableProvider,
         mut sink: impl DataExporter,
     ) -> Result<(), DataError> {
         self.export_dyn(provider, &mut sink)
@@ -145,10 +138,7 @@ impl DatagenDriver {
     // Avoids multiple monomorphizations
     fn export_dyn(
         mut self,
-        provider: &(impl ExportableProvider
-              + DataProvider<LocaleFallbackLikelySubtagsV1Marker>
-              + DataProvider<LocaleFallbackParentsV1Marker>
-              + DataProvider<CollationFallbackSupplementV1Marker>),
+        provider: &impl ExportableProvider,
         sink: &mut dyn DataExporter,
     ) -> Result<(), DataError> {
         if self.keys.is_empty() {
@@ -186,8 +176,9 @@ impl DatagenDriver {
             }
         );
 
-        let fallbacker =
-            once_cell::sync::Lazy::new(|| LocaleFallbacker::try_new_unstable(provider));
+        let fallbacker = once_cell::sync::Lazy::new(|| {
+            LocaleFallbacker::try_new_unstable(&provider.as_downcasting())
+        });
 
         let load_with_fallback = |key, locale: &_| {
             log::trace!("Generating key/locale: {key}/{locale:}");
