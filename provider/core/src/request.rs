@@ -9,7 +9,6 @@ use core::default::Default;
 use core::fmt;
 use core::fmt::Debug;
 use core::str::FromStr;
-use displaydoc::Display;
 use icu_locid::extensions::unicode as unicode_ext;
 use icu_locid::subtags::{Language, Region, Script, Variants};
 use icu_locid::{LanguageIdentifier, Locale, SubtagOrderingResult};
@@ -312,6 +311,29 @@ impl DataLocale {
     ///     );
     /// }
     /// ```
+    ///
+    /// Comparison against invalid strings:
+    ///
+    /// ```
+    /// use icu_provider::DataLocale;
+    ///
+    /// let invalid_strings: &[&str] = &[
+    ///     // Less than "ca-ES"
+    ///     "CA",
+    ///     "ar$GBP$FOO",
+    ///     // Greater than "ca-ES$GBP"
+    ///     "ca_ES",
+    ///     "ca-ES$GBP$FOO",
+    /// ];
+    ///
+    /// let data_locale = "ca-ES$GBP".parse::<DataLocale>().unwrap();
+    ///
+    /// for s in invalid_strings.iter() {
+    ///     let expected_ordering = "ca-ES$GBP".cmp(s);
+    ///     let actual_ordering = data_locale.strict_cmp(s.as_bytes());
+    ///     assert_eq!(expected_ordering, actual_ordering, "{}", s);
+    /// }
+    /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
         let mut pipe_iter = other.split(|b| *b == b'$');
         let Some(locale_str) = pipe_iter.next() else {
@@ -581,10 +603,16 @@ impl DataLocale {
         self.keywords.retain_by_key(predicate)
     }
 
-    pub fn get_aux(&self) -> Option<&str> {
-        self.aux.as_ref().map(|aux| aux.as_str())
+    /// Gets the auxiliary key for this [`DataLocale`].
+    ///
+    /// For more information and examples, see [`AuxiliaryKey`].
+    pub fn get_aux(&self) -> Option<&AuxiliaryKey> {
+        self.aux.as_ref()
     }
 
+    /// Returns whether this [`DataLocale`] has an auxiliary key.
+    ///
+    /// For more information and examples, see [`AuxiliaryKey`].
     pub fn has_aux(&self) -> bool {
         self.aux.is_some()
     }
@@ -637,11 +665,29 @@ impl DataLocale {
 ///
 /// let mut data_locale: DataLocale = locale!("ar-EG").into();
 /// assert_writeable_eq!(data_locale, "ar-EG");
+/// assert!(!data_locale.has_aux());
+/// assert_eq!(data_locale.get_aux(), None);
 ///
 /// let aux = "GBP".parse::<AuxiliaryKey>().expect("contains valid characters");
 ///
 /// data_locale.set_aux(aux);
 /// assert_writeable_eq!(data_locale, "ar-EG$GBP");
+/// assert!(data_locale.has_aux());
+/// assert_eq!(data_locale.get_aux(), Some(&"GBP".parse().unwrap()));
+/// ```
+///
+/// Not all strings are valid auxiliary keys:
+///
+/// ```
+/// use icu_provider::prelude::*;
+///
+/// assert!("abcdefg".parse::<AuxiliaryKey>().is_ok());
+/// assert!("ABC123".parse::<AuxiliaryKey>().is_ok());
+/// assert!("abc-xyz".parse::<AuxiliaryKey>().is_ok());
+///
+/// assert!("!@#$%".parse::<AuxiliaryKey>().is_err());
+/// assert!("abc_xyz".parse::<AuxiliaryKey>().is_err());
+/// assert!("abc$xyz".parse::<AuxiliaryKey>().is_err());
 /// ```
 ///
 /// [`Keywords`]: unicode_ext::Keywords
@@ -683,8 +729,34 @@ impl FromStr for AuxiliaryKey {
 }
 
 impl AuxiliaryKey {
+    /// Returns this [`AuxiliaryKey`] as a string slice.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let aux: AuxiliaryKey = "abcdefg".parse().unwrap();
+    /// assert_eq!(aux.as_str(), "abcdefg");
+    /// ```
+    #[inline]
     pub fn as_str(&self) -> &str {
         self.value.as_str()
+    }
+
+    /// Returns this [`AuxiliaryKey`] as a byte slice.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let aux: AuxiliaryKey = "abcdefg".parse().unwrap();
+    /// assert_eq!(aux.as_bytes(), b"abcdefg");
+    /// ```
+    #[inline]
+    pub fn as_bytes(&self) -> &[u8] {
+        self.value.as_str().as_bytes()
     }
 
     fn validate_str(s: &str) -> bool {
