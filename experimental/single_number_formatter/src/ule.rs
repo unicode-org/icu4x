@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerovec::{ule::{AsULE, ZeroVecError, ULE}, maps::ZeroMapKV};
+use zerovec::{
+    maps::ZeroMapKV,
+    ule::{AsULE, ZeroVecError, ULE},
+};
 
 use crate::provider::{CurrencyPatterns, PatternSelection};
 
@@ -104,8 +107,8 @@ impl AsULE for CurrencyPatterns {
             } else {
                 PatternSelection::Standard
             };
-        let short_prefix = (first_byte & 0b0000_1100) >> INDEX_SHORT_POSITION;
-        let narrow_prefix = (first_byte & 0b0000_0011) >> INDEX_NARROW_POSITION;
+        let short_prefix = (first_byte & 0b11 << INDEX_SHORT_POSITION) >> INDEX_SHORT_POSITION;
+        let narrow_prefix = (first_byte & 0b11 << INDEX_NARROW_POSITION) >> INDEX_NARROW_POSITION;
 
         let short_place_holder_index = ((short_prefix as u16) << 8) | second_byte as u16;
         let narrow_place_holder_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
@@ -119,11 +122,9 @@ impl AsULE for CurrencyPatterns {
     }
 }
 
-
 impl<'a> ZeroMapKV<'a> for CurrencyPatterns {
     type Container = zerovec::ZeroVec<'a, CurrencyPatterns>;
     type Slice = zerovec::ZeroSlice<CurrencyPatterns>;
     type GetType = <CurrencyPatterns as AsULE>::ULE;
     type OwnedType = CurrencyPatterns;
 }
-
