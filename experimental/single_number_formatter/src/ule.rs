@@ -44,8 +44,10 @@ unsafe impl ULE for CurrencyPatternsULE {
     }
 }
 
-const SHORT_PATTERN_PLACE: u8 = 6;
-const NARROW_PATTERN_PLACE: u8 = 4;
+const PATTERN_SHORT_POSITION: u8 = 6;
+const PATTERN_NARROW_POSITION: u8 = 4;
+const INDEX_SHORT_POSITION: u8 = 2;
+const INDEX_NARROW_POSITION: u8 = 0;
 
 impl AsULE for CurrencyPatterns {
     type ULE = CurrencyPatternsULE;
@@ -55,16 +57,16 @@ impl AsULE for CurrencyPatterns {
         let mut first_byte_ule: u8 = 0;
 
         if self.short_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
-            first_byte_ule |= 0b01 << SHORT_PATTERN_PLACE;
+            first_byte_ule |= 0b01 << PATTERN_SHORT_POSITION;
         }
         if self.narrow_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
-            first_byte_ule |= 0b01 << NARROW_PATTERN_PLACE;
+            first_byte_ule |= 0b01 << PATTERN_NARROW_POSITION;
         }
 
         // For short_place_holder_index
         let [first_index_byte, second_byte_ule] = self.short_place_holder_index.to_be_bytes();
         if first_index_byte < 0b0100 {
-            first_byte_ule |= first_index_byte << 2;
+            first_byte_ule |= first_index_byte << INDEX_SHORT_POSITION;
         } else {
             panic!(
                 "short_place_holder_index is too large {}, {}",
@@ -75,7 +77,7 @@ impl AsULE for CurrencyPatterns {
         // For narrow_place_holder_index
         let [first_index_byte, third_byte_ule] = self.narrow_place_holder_index.to_be_bytes();
         if first_index_byte < 0b0100 {
-            first_byte_ule |= first_index_byte;
+            first_byte_ule |= first_index_byte << INDEX_NARROW_POSITION;
         } else {
             panic!(
                 "narrow_place_holder_index is too large {}, {}",
@@ -90,20 +92,20 @@ impl AsULE for CurrencyPatterns {
         let [first_byte, second_byte, third_byte] = unaligned.0;
 
         let short_pattern_standard =
-            if (first_byte & 0b11 << SHORT_PATTERN_PLACE) >> SHORT_PATTERN_PLACE == 1 {
+            if (first_byte & 0b11 << PATTERN_SHORT_POSITION) >> PATTERN_SHORT_POSITION == 1 {
                 PatternSelection::StandardAlphaNextToNumber
             } else {
                 PatternSelection::Standard
             };
 
         let narrow_pattern_standard =
-            if (first_byte & 0b11 << NARROW_PATTERN_PLACE) >> NARROW_PATTERN_PLACE == 1 {
+            if (first_byte & 0b11 << PATTERN_NARROW_POSITION) >> PATTERN_NARROW_POSITION == 1 {
                 PatternSelection::StandardAlphaNextToNumber
             } else {
                 PatternSelection::Standard
             };
-        let short_prefix = (first_byte & 0b0000_1100) >> 2;
-        let narrow_prefix = first_byte & 0b0000_0011;
+        let short_prefix = (first_byte & 0b0000_1100) >> INDEX_SHORT_POSITION;
+        let narrow_prefix = (first_byte & 0b0000_0011) >> INDEX_NARROW_POSITION;
 
         let short_place_holder_index = ((short_prefix as u16) << 8) | second_byte as u16;
         let narrow_place_holder_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
