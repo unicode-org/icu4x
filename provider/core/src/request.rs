@@ -140,7 +140,7 @@ impl Writeable for DataLocale {
             self.keywords.write_to(sink)?;
         }
         if let Some(aux) = self.aux.as_ref() {
-            sink.write_char('$')?;
+            sink.write_char(AuxiliaryKey::separator() as char)?;
             aux.write_to(sink)?;
         }
         Ok(())
@@ -216,7 +216,7 @@ impl From<&Locale> for DataLocale {
 impl FromStr for DataLocale {
     type Err = DataError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut split_iter = s.split('$');
+        let mut split_iter = s.split(AuxiliaryKey::separator() as char);
         let (locale_str, aux_str) = match (split_iter.next(), split_iter.next(), split_iter.next())
         {
             (Some(locale_str), aux_str, None) => (locale_str, aux_str),
@@ -335,7 +335,7 @@ impl DataLocale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        let mut pipe_iter = other.split(|b| *b == b'$');
+        let mut pipe_iter = other.split(|b| *b == AuxiliaryKey::separator());
         let Some(locale_str) = pipe_iter.next() else {
             debug_assert!(other.is_empty());
             return Ordering::Greater;
@@ -706,7 +706,8 @@ impl DataLocale {
 /// The "auxiliary key" is an annotation on [`DataLocale`] that can contain an arbitrary
 /// information that does not fit into the [`LanguageIdentifier`] or [`Keywords`].
 ///
-/// It is represented as a string separated from the BCP-47 ID with a `$`.
+/// It is represented as a string separated from the BCP-47 ID with the character returned by
+/// [`AuxiliaryKey::separator()`].
 ///
 /// An auxiliary key currently allows alphanumerics and `-`.
 ///
@@ -812,6 +813,20 @@ impl AuxiliaryKey {
     #[inline]
     pub fn as_bytes(&self) -> &[u8] {
         self.value.as_str().as_bytes()
+    }
+
+    /// Returns the separator byte used for auxiliary keys in data locales.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::AuxiliaryKey;
+    ///
+    /// assert_eq!(AuxiliaryKey::separator(), b'$');
+    /// ```
+    #[inline]
+    pub const fn separator() -> u8 {
+        b'$'
     }
 
     fn validate_str(s: &str) -> bool {
