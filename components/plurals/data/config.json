@@ -1,20 +1,20 @@
 {
-    "keys": {
-        "Explicit": [
-            "plurals/ordinal@1",
-            "plurals/cardinal@1"
-        ]
-    },
-    "locales": "Recommended",
-    "cldr": "Latest",
-    "icu_export": "Latest",
-    "segmenter_lstm": "Latest",
-    "export": {
-        "Baked": {
-            "path": "data",
-            "pretty": true
-        }
-    },
-    "fallback": "Runtime",
-    "overwrite": true
+  "keys": {
+    "explicit": [
+      "plurals/cardinal@1",
+      "plurals/ordinal@1"
+    ]
+  },
+  "fallback": "runtime",
+  "locales": "recommended",
+  "cldr": "latest",
+  "icuExport": "latest",
+  "segmenterLstm": "latest",
+  "export": {
+    "baked": {
+      "path": "data",
+      "pretty": true
+    }
+  },
+  "overwrite": true
 }

@@ -28,10 +28,12 @@ fn generate_json_and_verify_postcard() {
 
     let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
 
-    let source = SourceData::offline()
-        .with_cldr(data_root.join("cldr"), Default::default())
+    let source = DatagenProvider::default()
+        .with_cldr(data_root.join("cldr"))
         .unwrap()
         .with_icuexport(data_root.join("icuexport"))
+        .unwrap()
+        .with_segmenter_lstm(data_root.join("lstm"))
         .unwrap();
 
     let json_out = Box::new(
@@ -54,16 +56,14 @@ fn generate_json_and_verify_postcard() {
         ),
     });
 
-    let mut options = options::Options::default();
-    options.keys = icu_datagen::all_keys().into_iter().collect();
-    options.locales = options::LocaleInclude::Explicit(LOCALES.iter().cloned().collect());
-    options.segmenter_models = options::SegmenterModelInclude::Explicit(vec![
-        "thaidict".into(),
-        "Thai_codepoints_exclusive_model4_heavy".into(),
-    ]);
-
-    DatagenProvider::new(source)
-        .export(options, MultiExporter::new(vec![json_out, postcard_out]))
+    DatagenDriver::new()
+        .with_keys(icu_datagen::all_keys())
+        .with_locales(LOCALES.iter().cloned())
+        .with_segmenter_models(vec![
+            "thaidict".into(),
+            "Thai_codepoints_exclusive_model4_heavy".into(),
+        ])
+        .export(&source, MultiExporter::new(vec![json_out, postcard_out]))
         .unwrap();
 }
 

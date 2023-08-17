@@ -4,7 +4,7 @@
 
 use clap::{ArgAction, Parser};
 use eyre::WrapErr;
-use icu_datagen::SourceData;
+use icu_datagen::DatagenProvider;
 use icu_locid::*;
 use icu_provider::DataError;
 use simple_logger::SimpleLogger;
@@ -122,8 +122,8 @@ fn main() -> eyre::Result<()> {
     extract(
         cached(&format!(
             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
-            SourceData::LATEST_TESTED_CLDR_TAG,
-            SourceData::LATEST_TESTED_CLDR_TAG
+            DatagenProvider::LATEST_TESTED_CLDR_TAG,
+            DatagenProvider::LATEST_TESTED_CLDR_TAG
         ))
         .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
         expand_paths(CLDR_JSON_GLOB, false),
@@ -134,39 +134,23 @@ fn main() -> eyre::Result<()> {
     extract(
         cached(&format!(
             "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-            SourceData::LATEST_TESTED_ICUEXPORT_TAG,
-            SourceData::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
+            DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG,
+            DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
         ))
         .with_context(|| "Failed to download ICU ZIP".to_owned())?,
         expand_paths(ICUEXPORTDATA_GLOB, true),
         out_root.join("tests/data/icuexport"),
     )?;
 
-    std::fs::remove_dir_all(out_root.join("data/segmenter/dictionary"))?;
-    extract(
-        cached(&format!(
-            "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-            SourceData::LATEST_TESTED_ICUEXPORT_TAG,
-            SourceData::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
-        ))
-        .with_context(|| "Failed to download ICU ZIP".to_owned())?,
-        ICUEXPORTDATA_SEGMENTER_GLOB
-            .iter()
-            .copied()
-            .map(String::from)
-            .collect(),
-        out_root.join("data"),
-    )?;
-
-    std::fs::remove_dir_all(out_root.join("data/lstm"))?;
+    std::fs::remove_dir_all(out_root.join("tests/data/lstm"))?;
     extract(
         cached(&format!(
             "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
-            SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+            DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
         ))
         .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
         LSTM_GLOB.iter().copied().map(String::from).collect(),
-        out_root.join("data/lstm"),
+        out_root.join("tests/data/lstm"),
     )?;
 
     Ok(())

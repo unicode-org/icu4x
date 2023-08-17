@@ -1978,6 +1978,8 @@ dependencies = [
  "icu_transliteration",
  "icu_unicodeset_parser",
  "log",
+ "zerofrom",
+ "zerovec",
 ]
 
 [[package]]
