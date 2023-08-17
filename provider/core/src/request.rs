@@ -754,7 +754,7 @@ impl DataLocale {
 /// ```
 ///
 /// [`Keywords`]: unicode_ext::Keywords
-#[derive(Debug, PartialEq, Clone, Default, Eq, Hash)]
+#[derive(Debug, PartialEq, Clone, Eq, Hash)]
 pub struct AuxiliaryKeys {
     // DISCUSS: SmallStr? TinyStrAuto?
     // DISCUSS: Make this a dynamically sized type so references can be taken?
@@ -800,13 +800,6 @@ impl Hash for AuxiliaryKeysInner {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.deref().hash(state)
-    }
-}
-
-// TODO: Remove this impl; empty AuxiliaryKeys not allowed
-impl Default for AuxiliaryKeysInner {
-    fn default() -> Self {
-        Self::Static("")
     }
 }
 
