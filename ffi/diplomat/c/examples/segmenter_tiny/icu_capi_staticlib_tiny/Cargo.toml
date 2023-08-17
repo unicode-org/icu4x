@@ -1,0 +1,25 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_capi_staticlib_tiny"
+publish = false
+version = "0.0.0"
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+icu_capi = { path = "../../../..", default-features = false, features = ["compiled_data", "icu_segmenter"] }
+dlmalloc = { version = "0.2", features = ["global"] }
+
+[profile.release]
+lto = true
+
+[profile.release-opt-size]
+inherits = "release"
+opt-level = "s"
+
+[workspace]

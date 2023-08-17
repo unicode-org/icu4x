@@ -102,10 +102,10 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         // https://unicode.org/reports/tr35/tr35-general.html#:~:text=is%20not%20mute.-,Hebrew,AND,-Use%20%E2%80%98%2D%D7%95%E2%80%99%20instead
         patterns
             .make_conditional(
-                "{0} \u{05D5}{1}", // ״{0} ו {1}״
+                "{0} \u{05D5}{1}", // ״{0} ו{1}״
                 // Starts with a non-Hebrew letter
                 &non_hebrew,
-                "{0} \u{05D5}-{1}", // ״{0} ו- {1}״
+                "{0} \u{05D5}‑{1}", // ״{0} ו‑{1}״
             )
             .expect("valid pattern");
     }

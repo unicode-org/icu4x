@@ -26,9 +26,9 @@
 
     .. js:function:: create_test()
 
-        Unconditionally panics.
+        Deprecated
 
-        It used to provide a test data provider, but has been superseded by ``create_compiled``.
+        Use ``create_compiled()``.
 
 
     .. js:function:: create_from_byte_slice(blob)

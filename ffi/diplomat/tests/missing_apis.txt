@@ -43,9 +43,9 @@ icu::calendar::islamic::IslamicDateInner#Struct
 icu::calendar::islamic::IslamicObservational#Struct
 icu::calendar::islamic::IslamicObservational::new#FnInStruct
 icu::calendar::islamic::IslamicTabular#Struct
-icu::calendar::islamic::UmmalQura#Struct
-icu::calendar::islamic::UmmalQura::new#FnInStruct
-icu::calendar::islamic::UmmalQuraDateInner#Struct
+icu::calendar::islamic::IslamicUmmalQura#Struct
+icu::calendar::islamic::IslamicUmmalQura::new#FnInStruct
+icu::calendar::islamic::IslamicUmmalQuraDateInner#Struct
 icu::calendar::persian::Persian#Struct
 icu::calendar::persian::Persian::new#FnInStruct
 icu::calendar::persian::PersianDateInner#Struct
@@ -58,7 +58,7 @@ icu::locid_transform::LocaleDirectionality::is_left_to_right#FnInStruct
 icu::locid_transform::LocaleDirectionality::is_right_to_left#FnInStruct
 icu::locid_transform::LocaleDirectionality::new#FnInStruct
 icu::locid_transform::LocaleDirectionality::new_with_expander#FnInStruct
-icu::locid_transform::fallback::FallbackSupplement#Enum
+icu::locid_transform::fallback::LocaleFallbackSupplement#Enum
 icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
 icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed#Struct

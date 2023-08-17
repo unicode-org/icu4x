@@ -1,0 +1,14 @@
+{
+  "date": {
+    "full": "EEEE, MMMM d, r(U)",
+    "long": "MMMM d, r(U)",
+    "medium": "MMM d, r",
+    "short": "M/d/r"
+  },
+  "length_combinations": {
+    "full": "{1}, {0}",
+    "long": "{1}, {0}",
+    "medium": "{1}, {0}",
+    "short": "{1}, {0}"
+  }
+}

@@ -72,6 +72,13 @@ dependencies = [
     "test-all-features",
 ]
 
+[tasks.ci-job-test-windows]
+description = "Run all tests for the CI 'test' job (with special changes to reduce Windows disk space)"
+category = "CI"
+dependencies = [
+    "test-all-features-windows",
+]
+
 [tasks.ci-job-test-tutorials-local]
 description = "Run all checks for the CI 'test-tutorials' job"
 category = "CI"
@@ -188,9 +195,6 @@ dependencies = [
 ]
 
 [tasks.ci-job-clippy]
-# Note: ci-job-clippy is not actually invoked by CI and instead exists
-# for symmetry and predictability. CI instead uses a special GitHub action
-# that allows it to integrate better with GitHub annotations
 description = "Run all tests for the CI 'clippy' job"
 category = "CI"
 dependencies = [

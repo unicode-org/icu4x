@@ -150,6 +150,46 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_julian_datetime(y, m, d, h, min, s).unwrap(),
     );
 
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/civil",
+        &fxs,
+        icu::calendar::islamic::IslamicCivil,
+        |y, m, d, h, min, s| DateTime::try_new_islamic_civil_datetime(y, m, d, h, min, s).unwrap(),
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/tabular",
+        &fxs,
+        icu::calendar::islamic::IslamicTabular,
+        |y, m, d, h, min, s| {
+            DateTime::try_new_islamic_tabular_datetime(y, m, d, h, min, s).unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/ummalqura",
+        &fxs,
+        icu::calendar::islamic::IslamicUmmAlQura,
+        |y, m, d, h, min, s| DateTime::try_new_ummalqura_datetime(y, m, d, h, min, s).unwrap(),
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/observational",
+        &fxs,
+        icu::calendar::islamic::IslamicObservational,
+        |y, m, d, h, min, s| {
+            DateTime::try_new_observational_islamic_datetime(y, m, d, h, min, s).unwrap()
+        },
+    );
+
     group.finish();
 }
 

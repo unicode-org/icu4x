@@ -99,12 +99,10 @@ type SyncTokenStream = String;
 pub struct Options {
     /// Whether to run `rustfmt` on the generated files.
     pub pretty: bool,
-    /// Whether to gate each key on its crate name. This allows using the module
-    /// even if some keys are not required and their dependencies are not included.
-    /// Requires use_separate_crates.
-    pub insert_feature_gates: bool,
-    /// Whether to use separate crates to name types instead of the `icu` metacrate
+    /// Whether to use separate crates to name types instead of the `icu` metacrate.
     pub use_separate_crates: bool,
+    #[doc(hidden)] // deprecated, used by legacy testdata
+    pub insert_feature_gates: bool,
     /// Whether to overwrite existing data. By default, errors if it is present.
     pub overwrite: bool,
 }
@@ -115,7 +113,7 @@ impl Default for Options {
         Self {
             pretty: false,
             insert_feature_gates: false,
-            use_separate_crates: true,
+            use_separate_crates: false,
             overwrite: false,
         }
     }
@@ -181,8 +179,8 @@ impl BakedExporter {
         Ok(Self {
             mod_directory,
             pretty,
-            insert_feature_gates: insert_feature_gates && use_separate_crates,
             use_separate_crates,
+            insert_feature_gates: insert_feature_gates && use_separate_crates,
             data: Default::default(),
             impl_data: Default::default(),
             dependencies: Default::default(),
@@ -390,10 +388,32 @@ impl DataExporter for BakedExporter {
         }, key, marker, ident)
     }
 
-    fn flush_with_fallback(
+    fn flush(&self, key: DataKey) -> Result<(), DataError> {
+        self.flush_internal(key, None)
+    }
+
+    fn flush_with_built_in_fallback(
         &self,
         key: DataKey,
-        fallback_mode: FallbackMode,
+        fallback_mode: BuiltInFallbackMode,
+    ) -> Result<(), DataError> {
+        self.flush_internal(key, Some(fallback_mode))
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        self.close_internal()
+    }
+
+    fn supports_built_in_fallback(&self) -> bool {
+        true
+    }
+}
+
+impl BakedExporter {
+    fn flush_internal(
+        &self,
+        key: DataKey,
+        fallback_mode: Option<BuiltInFallbackMode>,
     ) -> Result<(), DataError> {
         let marker =
             syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
@@ -474,7 +494,7 @@ impl DataExporter for BakedExporter {
             };
 
             match fallback_mode {
-                FallbackMode::None => {
+                None => {
                     let search = search(quote!(req.locale));
                     quote! {
                         #(#statics)*
@@ -488,7 +508,7 @@ impl DataExporter for BakedExporter {
                         }
                     }
                 }
-                FallbackMode::Full => {
+                Some(BuiltInFallbackMode::Standard) => {
                     self.dependencies.insert("icu_locid_transform/data");
                     let search_direct = search(quote!(req.locale));
                     let search_iterator = search(quote!(fallback_iterator.get()));
@@ -513,8 +533,7 @@ impl DataExporter for BakedExporter {
                         } else {
                             const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> =
                                 icu_locid_transform::fallback::LocaleFallbacker::new()
-                                    .for_config(icu_locid_transform::fallback::LocaleFallbackConfig::from_key(
-                                        <#marker as icu_provider::KeyedDataMarker>::KEY));
+                                    .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                             let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
                                 #maybe_err
@@ -558,7 +577,7 @@ impl DataExporter for BakedExporter {
         )
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close_internal(&mut self) -> Result<(), DataError> {
         log::info!("Writing macros module...");
 
         let data = move_out!(self.impl_data).into_inner().expect("poison");
