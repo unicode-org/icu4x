@@ -8,13 +8,14 @@ use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Debug;
+use core::hash::Hash;
 use core::ops::Deref;
 use core::str::FromStr;
 use icu_locid::extensions::unicode as unicode_ext;
 use icu_locid::subtags::{Language, Region, Script, Variants};
 use icu_locid::{LanguageIdentifier, Locale, SubtagOrderingResult};
-use writeable::{LengthHint, Writeable};
 use tinystr::TinyAsciiStr;
+use writeable::{LengthHint, Writeable};
 
 #[cfg(doc)]
 use icu_locid::subtags::Variant;
@@ -760,8 +761,7 @@ pub struct AuxiliaryKeys {
     value: AuxiliaryKeysInner,
 }
 
-// FIXME: Can't derive Eq/PartialEq/Hash; needs to be custom impl based on Deref
-#[derive(Debug, PartialEq, Clone, Eq, Hash)]
+#[derive(Clone)]
 enum AuxiliaryKeysInner {
     Boxed(alloc::boxed::Box<str>),
     Static(&'static str),
@@ -777,6 +777,29 @@ impl Deref for AuxiliaryKeysInner {
             Self::Static(s) => s,
             Self::Stack(s) => s.as_str(),
         }
+    }
+}
+
+impl PartialEq for AuxiliaryKeysInner {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        self.deref() == other.deref()
+    }
+}
+
+impl Eq for AuxiliaryKeysInner {}
+
+impl Debug for AuxiliaryKeysInner {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.deref().fmt(f)
+    }
+}
+
+impl Hash for AuxiliaryKeysInner {
+    #[inline]
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.deref().hash(state)
     }
 }
 
@@ -863,7 +886,9 @@ impl AuxiliaryKeys {
                     .with_display_context(item));
             }
         }
-        Ok(Self { value: AuxiliaryKeysInner::Boxed(value.into_boxed_str()) })
+        Ok(Self {
+            value: AuxiliaryKeysInner::Boxed(value.into_boxed_str()),
+        })
     }
 
     pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
@@ -872,7 +897,7 @@ impl AuxiliaryKeys {
                 .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'+'))
         {
             Ok(Self {
-                value: AuxiliaryKeysInner::Boxed(s.into())
+                value: AuxiliaryKeysInner::Boxed(s.into()),
             })
         } else {
             Err(DataErrorKind::KeyLocaleSyntax
