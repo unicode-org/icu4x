@@ -86,7 +86,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             locale: &"en$reverse".parse().unwrap(),
+///             locale: &"en+reverse".parse().unwrap(),
 ///             metadata: Default::default(),
 ///         })
 ///         .expect("Loading should succeed")
@@ -107,13 +107,13 @@ impl HelloWorldProvider {
         ("de", "Hallo Welt"),
         ("el", "Καλημέρα κόσμε"),
         ("en", "Hello World"),
-        ("en$reverse", "Olleh Dlrow"),
+        ("en+reverse", "Olleh Dlrow"),
         ("eo", "Saluton, Mondo"),
         ("fa", "سلام دنیا‎"),
         ("fi", "hei maailma"),
         ("is", "Halló, heimur"),
         ("ja", "こんにちは世界"),
-        ("ja$reverse", "界世はちにんこ"),
+        ("ja+reverse", "界世はちにんこ"),
         ("la", "Ave, munde"),
         ("pt", "Olá, mundo"),
         ("ro", "Salut, lume"),
@@ -326,13 +326,13 @@ fn test_iter() {
             locale!("de").into(),
             locale!("el").into(),
             locale!("en").into(),
-            "en$reverse".parse().unwrap(),
+            "en+reverse".parse().unwrap(),
             locale!("eo").into(),
             locale!("fa").into(),
             locale!("fi").into(),
             locale!("is").into(),
             locale!("ja").into(),
-            "ja$reverse".parse().unwrap(),
+            "ja+reverse".parse().unwrap(),
             locale!("la").into(),
             locale!("pt").into(),
             locale!("ro").into(),

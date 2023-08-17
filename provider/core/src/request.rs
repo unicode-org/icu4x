@@ -259,16 +259,16 @@ impl DataLocale {
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "ca",
-    ///     "ca$EUR",
+    ///     "ca+EUR",
     ///     "ca-ES",
-    ///     "ca-ES$GBP",
-    ///     "ca-ES$USD",
+    ///     "ca-ES+GBP",
+    ///     "ca-ES+USD",
     ///     "ca-ES-u-ca-buddhist",
     ///     "ca-ES-valencia",
     ///     "cat",
     ///     "pl-Latn-PL",
     ///     "und",
-    ///     "und$MXN",
+    ///     "und+MXN",
     ///     "und-fonipa",
     ///     "und-u-ca-hebrew",
     ///     "und-u-ca-japanese",
@@ -320,16 +320,16 @@ impl DataLocale {
     /// let invalid_strings: &[&str] = &[
     ///     // Less than "ca-ES"
     ///     "CA",
-    ///     "ar$GBP$FOO",
-    ///     // Greater than "ca-ES$GBP"
+    ///     "ar+GBP+FOO",
+    ///     // Greater than "ca-ES+GBP"
     ///     "ca_ES",
-    ///     "ca-ES$GBP$FOO",
+    ///     "ca-ES+GBP+FOO",
     /// ];
     ///
-    /// let data_locale = "ca-ES$GBP".parse::<DataLocale>().unwrap();
+    /// let data_locale = "ca-ES+GBP".parse::<DataLocale>().unwrap();
     ///
     /// for s in invalid_strings.iter() {
-    ///     let expected_ordering = "ca-ES$GBP".cmp(s);
+    ///     let expected_ordering = "ca-ES+GBP".cmp(s);
     ///     let actual_ordering = data_locale.strict_cmp(s.as_bytes());
     ///     assert_eq!(expected_ordering, actual_ordering, "{}", s);
     /// }
@@ -368,7 +368,7 @@ impl DataLocale {
                 Ordering::Equal
             }
             (false, Some(self_aux), Some(other_aux)) => {
-                // foo$BAR1 ?= foo$BAR2
+                // foo+BAR1 ?= foo+BAR2
                 let aux_ordering = self_aux.as_bytes().cmp(other_aux);
                 if aux_ordering != Ordering::Equal {
                     return aux_ordering;
@@ -380,15 +380,15 @@ impl DataLocale {
                 }
             }
             (false, Some(_), None) => {
-                // foo$BAR > foo
+                // foo+BAR > foo
                 Ordering::Greater
             }
             (_, _, _) => {
                 // foo < foo-bar
-                // foo < foo-bar$BAR
-                // foo < foo$BAR
-                // foo$BAR < foo-bar
-                // foo$BAR < foo-bar$BAR
+                // foo < foo-bar+BAR
+                // foo < foo+BAR
+                // foo+BAR < foo-bar
+                // foo+BAR < foo-bar+BAR
                 Ordering::Less
             }
         }
@@ -410,7 +410,7 @@ impl DataLocale {
     ///
     /// assert!("und".parse::<DataLocale>().unwrap().is_empty());
     /// assert!(!"und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_empty());
-    /// assert!(!"und$auxiliary".parse::<DataLocale>().unwrap().is_empty());
+    /// assert!(!"und+auxiliary".parse::<DataLocale>().unwrap().is_empty());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
@@ -433,7 +433,7 @@ impl DataLocale {
     ///
     /// assert!("und".parse::<DataLocale>().unwrap().is_und());
     /// assert!(!"und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_und());
-    /// assert!("und$auxiliary".parse::<DataLocale>().unwrap().is_und());
+    /// assert!("und+auxiliary".parse::<DataLocale>().unwrap().is_und());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_und());
     /// ```
     pub fn is_und(&self) -> bool {
@@ -456,7 +456,7 @@ impl DataLocale {
     ///
     /// assert!("und".parse::<DataLocale>().unwrap().is_langid_und());
     /// assert!("und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_langid_und());
-    /// assert!("und$auxiliary".parse::<DataLocale>().unwrap().is_langid_und());
+    /// assert!("und+auxiliary".parse::<DataLocale>().unwrap().is_langid_und());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_langid_und());
     /// ```
     pub fn is_langid_und(&self) -> bool {
@@ -692,7 +692,7 @@ impl DataLocale {
     /// let mut data_locale: DataLocale = locale!("ar-EG").into();
     /// let aux = "GBP".parse::<AuxiliaryKey>().expect("contains valid characters");
     /// data_locale.set_aux(aux);
-    /// assert_writeable_eq!(data_locale, "ar-EG$GBP");
+    /// assert_writeable_eq!(data_locale, "ar-EG+GBP");
     ///
     /// let maybe_aux = data_locale.remove_aux();
     /// assert_writeable_eq!(data_locale, "ar-EG");
@@ -726,7 +726,7 @@ impl DataLocale {
 /// let aux = "GBP".parse::<AuxiliaryKey>().expect("contains valid characters");
 ///
 /// data_locale.set_aux(aux);
-/// assert_writeable_eq!(data_locale, "ar-EG$GBP");
+/// assert_writeable_eq!(data_locale, "ar-EG+GBP");
 /// assert!(data_locale.has_aux());
 /// assert_eq!(data_locale.get_aux(), Some(&"GBP".parse().unwrap()));
 /// ```
@@ -743,7 +743,7 @@ impl DataLocale {
 /// assert!("".parse::<AuxiliaryKey>().is_err());
 /// assert!("!@#$%".parse::<AuxiliaryKey>().is_err());
 /// assert!("abc_xyz".parse::<AuxiliaryKey>().is_err());
-/// assert!("abc$xyz".parse::<AuxiliaryKey>().is_err());
+/// assert!("abc+xyz".parse::<AuxiliaryKey>().is_err());
 /// ```
 ///
 /// [`Keywords`]: unicode_ext::Keywords
@@ -822,11 +822,11 @@ impl AuxiliaryKey {
     /// ```
     /// use icu_provider::AuxiliaryKey;
     ///
-    /// assert_eq!(AuxiliaryKey::separator(), b'$');
+    /// assert_eq!(AuxiliaryKey::separator(), b'+');
     /// ```
     #[inline]
     pub const fn separator() -> u8 {
-        b'$'
+        b'+'
     }
 
     fn validate_str(s: &str) -> bool {
@@ -865,7 +865,7 @@ fn test_data_locale_to_string() {
         TestCase {
             locale: locale!("en-ZA-u-nu-arab"),
             aux: Some("GBP"),
-            expected: "en-ZA-u-nu-arab$GBP",
+            expected: "en-ZA-u-nu-arab+GBP",
         },
     ] {
         let mut data_locale = DataLocale::from(cas.locale);
