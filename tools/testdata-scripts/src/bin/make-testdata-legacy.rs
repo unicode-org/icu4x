@@ -25,7 +25,7 @@ fn main() {
 
     std::fs::create_dir_all(data_root).unwrap();
 
-    let source = SourceData::offline()
+    let source = SourceData::default()
         .with_cldr_latest(Default::default())
         .unwrap()
         .with_icuexport_latest()
@@ -73,7 +73,6 @@ fn main() {
     let locales = databake::Bake::bake(LOCALES, &Default::default());
     let cldr_tag = SourceData::LATEST_TESTED_CLDR_TAG;
     let icu_tag = SourceData::LATEST_TESTED_ICUEXPORT_TAG;
-    let lstm_tag = SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG;
 
     metadata
         .write_all(
@@ -81,7 +80,6 @@ fn main() {
                 pub const LOCALES: &[icu_locid::LanguageIdentifier] = &#locales;
                 pub const CLDR_TAG: &str = #cldr_tag;
                 pub const ICUEXPORT_TAG: &str = #icu_tag;
-                pub const SEGMENTER_LSTM_TAG: &str = #lstm_tag;
             }
             .to_string()
             .as_bytes(),

@@ -20,7 +20,6 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::displaynames::region::Resource = self
-            .source
             .cldr()?
             .displaynames()
             .read_and_parse(&langid, "territories.json")?;
@@ -39,14 +38,12 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
 impl IterableDataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
-            .source
             .cldr()?
             .displaynames()
             .list_langs()?
             .filter(|langid| {
                 // The directory might exist without territories.json
-                self.source
-                    .cldr()
+                self.cldr()
                     .unwrap()
                     .displaynames()
                     .file_exists(langid, "territories.json")
@@ -97,7 +94,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -119,7 +116,7 @@ mod tests {
 
     #[test]
     fn test_basic_short_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
