@@ -272,7 +272,7 @@ impl Cli {
                 }
             }
             match &mut config.export {
-                config::Export::Fs { path, .. } => {
+                config::Export::FileSystem { path, .. } => {
                     if path.is_relative() {
                         *path = parent.join(path.clone());
                     }
@@ -418,7 +418,7 @@ impl Cli {
         })
     }
 
-    fn make_segmenter_models(&self) -> eyre::Result<options::SegmenterModelInclude> {
+    fn make_segmenter_models(&self) -> eyre::Result<config::SegmenterModelInclude> {
         Ok(if self.segmenter_models.as_slice() == ["none"] {
             config::SegmenterModelInclude::None
         } else if self.segmenter_models.as_slice() == ["recommended"] {
@@ -437,7 +437,7 @@ impl Cli {
                 #[cfg(not(feature = "provider_fs"))]
                 eyre::bail!("FsDataProvider export requires the provider_fs Cargo feature.");
                 #[cfg(feature = "provider_fs")]
-                Ok(config::Export::Fs {
+                Ok(config::Export::FileSystem {
                     path: if let Some(root) = self.output.as_ref() {
                         root.clone()
                     } else {

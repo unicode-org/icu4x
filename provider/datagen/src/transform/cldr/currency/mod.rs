@@ -75,13 +75,11 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
         let langid = req.locale.get_langid();
 
         let currencies_resource: &cldr_serde::currencies::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "currencies.json")?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
@@ -98,7 +96,6 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
 impl IterableDataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
-            .source
             .cldr()?
             .numbers()
             .list_langs()?
@@ -291,7 +288,7 @@ fn test_basic() {
     use icu_locid::locale;
     use icu_singlenumberformatter::provider::*;
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
     let en: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {

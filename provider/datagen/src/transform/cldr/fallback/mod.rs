@@ -24,7 +24,7 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvide
         req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
         self.check_req::<LocaleFallbackLikelySubtagsV1Marker>(req)?;
-        let resources = LikelySubtagsResources::try_from_source_data(&self.source)?;
+        let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
 
         let metadata = DataResponseMetadata::default();
         Ok(DataResponse {
@@ -41,7 +41,6 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
     ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
         self.check_req::<LocaleFallbackParentsV1Marker>(req)?;
         let parents_data: &cldr_serde::parent_locales::Resource = self
-            .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/parentLocales.json")?;
@@ -205,7 +204,7 @@ fn test_basic() {
         subtags::{language, region, script},
     };
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::latest_tested_offline_subset();
     let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider
         .load(Default::default())
         .unwrap()

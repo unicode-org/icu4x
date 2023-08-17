@@ -25,7 +25,6 @@ impl crate::DatagenProvider {
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
         let era_name_map = &self
-            .source
             .cldr()?
             .dates("japanese")
             .read_and_parse::<cldr_serde::ca::Resource>(&langid!("en"), "ca-japanese.json")?
@@ -41,7 +40,6 @@ impl crate::DatagenProvider {
             .abbr;
 
         let era_dates_map = &self
-            .source
             .cldr()?
             .core()
             .read_and_parse::<cldr_serde::japanese::Resource>("supplemental/calendarData.json")?
