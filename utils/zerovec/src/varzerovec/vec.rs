@@ -503,3 +503,8 @@ impl<'a, T: VarULE + ?Sized + Ord, F: VarZeroVecFormat> Ord for VarZeroVec<'a, T
         self.iter().cmp(other.iter())
     }
 }
+
+#[test]
+fn single_empty_representation() {
+    assert_eq!(VarZeroVec::<str>::new().as_bytes(), VarZeroVec::<str>::from(&[] as &[&str]).as_bytes());
+}
