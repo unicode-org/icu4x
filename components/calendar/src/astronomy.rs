@@ -380,7 +380,7 @@ impl Astronomical {
         angle + poly(c, coefs)
     }
 
-    /// Calculates the declination at a given [`Moment`] of UTC time of an object at latitude `beta` and longitude `lambda`; all angles are in degrees.
+    /// Calculates the declination at a given [`Moment`] of UTC time of an object at ecliptic latitude `beta` and ecliptic longitude `lambda`; all angles are in degrees.
     /// the declination is the angular distance north or south of an object in the sky with respect to the plane
     /// of the Earth's equator; analogous to latitude.
     ///
@@ -394,14 +394,13 @@ impl Astronomical {
         )
     }
 
-    /// Calculates the right ascension at a given [`Moment`] of UTC time of an object at celestial latitude `beta` and celestial longitude `lambda`; all angles are in degrees.
+    /// Calculates the right ascension at a given [`Moment`] of UTC time of an object at ecliptic latitude `beta` and ecliptic longitude `lambda`; all angles are in degrees.
     /// the right ascension is the angular distance east or west of an object in the sky with respect to the plane
     /// of the vernal equinox, which is the celestial coordinate point at which the ecliptic intersects the celestial
     /// equator marking spring in the northern hemisphere; analogous to longitude.
     ///
-    /// This will return None for an object at the celestial pole. Note that this is not when latitude = 90°,
-    /// since the celestial pole is at 90° from the celestial equator, not from the plane of the ecliptic (which
-    /// is what latitude is relative to)
+    /// This will return None for an object at the ecliptic pole. Note that this is not when latitude = 90°,
+    /// since that point is 90° from the celestial equator, not from the plane of the ecliptic.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3578-L3588
@@ -771,7 +770,7 @@ impl Astronomical {
         div_rem_euclid_f64(angle, 360.0).1
     }
 
-    /// Celestial latitude of the moon (in degrees)
+    /// Ecliptic (aka celestial) latitude of the moon (in degrees)
     ///
     /// This is not a geocentric or geodetic latitude, it does not take into account the
     /// rotation of the Earth and is instead measured from the ecliptic.
@@ -971,7 +970,7 @@ impl Astronomical {
         correction + venus + flat_earth + extra
     }
 
-    /// Celestial longitude of the moon (in degrees)
+    /// Ecliptic (aka celestial) longitude of the moon (in degrees)
     ///
     /// This is not a geocentric or geodetic longitude, it does not take into account the
     /// rotation of the Earth and is instead measured from the ecliptic and the vernal equinox.
@@ -1257,10 +1256,13 @@ impl Astronomical {
         let phi = location.latitude;
         let psi = location.longitude;
         let c = Self::julian_centuries(moment);
-        let lambda = Self::lunar_longitude(c); // This works
-        let beta = Self::lunar_latitude(c); // This works
+        let lambda = Self::lunar_longitude(c);
+        let beta = Self::lunar_latitude(c);
         let alpha = Self::right_ascension(moment, beta, lambda);
-        // If the moon is at the celestial poles, we have a problem. We use a dummy value to limit the impact of bugs
+        // If the moon is at the celestial poles, we have a problem.
+        // We use a dummy value to avoid panicking
+        // In this case the declination will be ±90° anyway, so ultimately the value
+        // used here is irrelevant since the term involving alpha is multiplied by cos(delta)
         debug_assert!(alpha.is_some(), "please put the moon back");
         let alpha = alpha.unwrap_or(0.);
         let delta = Self::declination(moment, beta, lambda);
