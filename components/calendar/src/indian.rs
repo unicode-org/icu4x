@@ -48,6 +48,10 @@ use tinystr::tinystr;
 /// # Era codes
 ///
 /// This calendar has a single era: `"saka"`, with Saka 0 being 78 CE. Dates before this era use negative years.
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;
@@ -109,7 +113,7 @@ impl Calendar for Indian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        if era.0 != tinystr!(16, "saka") {
+        if era.0 != tinystr!(16, "saka") && era.0 != tinystr!(16, "indian") {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
