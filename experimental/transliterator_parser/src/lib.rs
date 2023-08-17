@@ -30,12 +30,11 @@ use icu_provider::prelude::*;
 use icu_transliteration::provider::RuleBasedTransliterator;
 
 mod compile;
+mod errors;
 mod parse;
 
-pub use parse::ElementKind;
-pub use parse::ElementLocation;
-pub use parse::ParseError;
-pub use parse::ParseErrorKind;
+pub use errors::ParseError;
+pub use errors::ParseErrorKind;
 
 /// Parse a rule based transliterator definition into a `TransliteratorDataStruct`.
 ///
@@ -48,7 +47,7 @@ pub fn parse(
         Option<RuleBasedTransliterator<'static>>,
         Option<RuleBasedTransliterator<'static>>,
     ),
-    parse::ParseError,
+    ParseError,
 > {
     parse_unstable(source, &icu_properties::provider::Baked)
 }
@@ -62,7 +61,7 @@ pub fn parse_unstable<P>(
         Option<RuleBasedTransliterator<'static>>,
         Option<RuleBasedTransliterator<'static>>,
     ),
-    parse::ParseError,
+    ParseError,
 >
 where
     P: ?Sized

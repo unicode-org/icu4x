@@ -113,11 +113,10 @@ as described in the zero-copy format, and the maps here are just arrays)
     ]
 */
 
+use crate::errors::{Result, PEK};
 use crate::parse;
 use crate::parse::{FilterSet, HalfRule, QuantifierKind};
 use icu_transliteration::provider::RuleBasedTransliterator;
-use parse::Result;
-use parse::PEK;
 use std::collections::{HashMap, HashSet};
 
 mod pass2;
