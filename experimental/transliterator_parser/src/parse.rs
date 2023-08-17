@@ -51,6 +51,21 @@ impl ElementKind {
             _ => false,
         }
     }
+
+    pub(crate) fn debug_str(&self) -> &'static str {
+        match self {
+            ElementKind::Literal => "literal",
+            ElementKind::VariableReference => "variable reference",
+            ElementKind::BackReference => "back reference",
+            ElementKind::Quantifier => "quantifier",
+            ElementKind::Segment => "segment",
+            ElementKind::UnicodeSet => "unicodeset",
+            ElementKind::FunctionCall => "function call",
+            ElementKind::Cursor => "cursor",
+            ElementKind::AnchorStart => "start anchor",
+            ElementKind::AnchorEnd => "end anchor",
+        }
+    }
 }
 
 /// The location in which an element can appear. Used for error reporting in [`ParseError`].
@@ -98,8 +113,12 @@ pub enum ParseErrorKind {
     UnexpectedGlobalFilter,
     /// A global filter (forward or backward) may not contain strings.
     GlobalFilterWithStrings,
-    /// An element of [`ElementKind`] appeared in the given [`ElementLocation`], but that is prohibited.
-    UnexpectedElement(ElementKind, ElementLocation),
+    /// An element appeared on the source side of a rule, but that is prohibited.
+    UnexpectedElementInSource(&'static str),
+    /// An element appeared on the target side of a rule, but that is prohibited.
+    UnexpectedElementInTarget(&'static str),
+    /// An element appeared in a variable definition, but that is prohibited.
+    UnexpectedElementInVariableDefinition(&'static str),
     /// The start anchor `^` was not placed at the beginning of a source.
     AnchorStartNotAtStart,
     /// The end anchor `$` was not placed at the end of a source.

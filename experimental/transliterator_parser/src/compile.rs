@@ -114,7 +114,7 @@ as described in the zero-copy format, and the maps here are just arrays)
 */
 
 use crate::parse;
-use crate::parse::{ElementLocation as EL, FilterSet, HalfRule, QuantifierKind};
+use crate::parse::{FilterSet, HalfRule, QuantifierKind};
 use icu_transliteration::provider::RuleBasedTransliterator;
 use parse::Result;
 use parse::PEK;
@@ -506,7 +506,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
                 return Err(PEK::AnchorEndNotAtEnd.into());
             }
             elt => {
-                return Err(PEK::UnexpectedElement(elt.kind(), EL::Source).into());
+                return Err(PEK::UnexpectedElementInSource(elt.kind().debug_str()).into());
             }
         }
         Ok(())
@@ -633,7 +633,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 // while anchors have no effect on the target side, they may still appear
             }
             elt => {
-                return Err(PEK::UnexpectedElement(elt.kind(), EL::Target).into());
+                return Err(PEK::UnexpectedElementInTarget(elt.kind().debug_str()).into());
             }
         }
         Ok(())
@@ -716,7 +716,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
                 self.data.counts.num_unicode_sets += 1;
             }
             elt => {
-                return Err(PEK::UnexpectedElement(elt.kind(), EL::VariableDefinition).into());
+                return Err(PEK::UnexpectedElementInVariableDefinition(elt.kind().debug_str()).into());
             }
         }
         Ok(())
