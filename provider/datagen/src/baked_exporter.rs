@@ -73,6 +73,7 @@
 //! # }
 //! ```
 
+use crate::helpers::ZeroOneOrTwo;
 use databake::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -468,35 +469,11 @@ impl BakedExporter {
             let mut map = BTreeMap::new();
             let mut statics = Vec::new();
 
-            #[derive(Copy, Clone)]
-            enum ZeroOneOrTwo<T> {
-                Zero,
-                One(T),
-                Two(T, T)
-            }
-            impl<T: Copy> Iterator for ZeroOneOrTwo<T> {
-                type Item = T;
-                fn next(&mut self) -> Option<Self::Item> {
-                    match *self {
-                        ZeroOneOrTwo::Zero => None,
-                        ZeroOneOrTwo::One(a) => {
-                            *self = ZeroOneOrTwo::Zero;
-                            Some(a)
-                        }
-                        ZeroOneOrTwo::Two(a, b) => {
-                            *self = ZeroOneOrTwo::One(b);
-                            Some(a)
-                        }
-                    }
-                }
-            }
-
             for (bake, locales) in values {
                 let first_locale = locales.iter().next().unwrap();
                 let anchor = syn::parse_str::<syn::Ident>(
                     &first_locale
                         .chars()
-                        .map(|b| b.to_ascii_uppercase())
                         .flat_map(|ch| {
                             if ch == AuxiliaryKey::separator() as char {
                                 // Replace the aux key separator with double-underscore
@@ -504,7 +481,7 @@ impl BakedExporter {
                             } else if ch == '-' {
                                 ZeroOneOrTwo::One('_')
                             } else {
-                                ZeroOneOrTwo::One(ch)
+                                ZeroOneOrTwo::One(ch.to_ascii_uppercase())
                             }
                         })
                         .collect::<String>(),

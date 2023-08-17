@@ -69,6 +69,7 @@
 #![warn(missing_docs)]
 
 mod error;
+mod helpers;
 mod registry;
 mod source;
 mod transform;
