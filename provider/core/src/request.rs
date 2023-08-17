@@ -764,8 +764,9 @@ pub struct AuxiliaryKeys {
 #[derive(Clone)]
 enum AuxiliaryKeysInner {
     Boxed(alloc::boxed::Box<str>),
-    Static(&'static str),
     Stack(TinyAsciiStr<23>),
+    // NOTE: In the future, a `Static` variant could be added to allow `data_locale!("...")`
+    // Static(&'static str),
 }
 
 impl Deref for AuxiliaryKeysInner {
@@ -774,7 +775,6 @@ impl Deref for AuxiliaryKeysInner {
     fn deref(&self) -> &Self::Target {
         match self {
             Self::Boxed(s) => s.deref(),
-            Self::Static(s) => s,
             Self::Stack(s) => s.as_str(),
         }
     }
@@ -862,26 +862,33 @@ impl AuxiliaryKeys {
     /// assert!(AuxiliaryKeys::try_from_iter(["AB$C"]).is_err());
     /// ```
     pub fn try_from_iter<'a>(iter: impl IntoIterator<Item = &'a str>) -> Result<Self, DataError> {
-        let mut value = String::new();
+        let mut builder = String::new();
         for item in iter.into_iter() {
             if !item.is_empty()
                 && item
                     .bytes()
                     .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-'))
             {
-                if !value.is_empty() {
-                    value.push(AuxiliaryKeys::separator() as char);
+                if !builder.is_empty() {
+                    builder.push(AuxiliaryKeys::separator() as char);
                 }
-                value.push_str(item)
+                builder.push_str(item)
             } else {
                 return Err(DataErrorKind::KeyLocaleSyntax
                     .into_error()
                     .with_display_context(item));
             }
         }
-        Ok(Self {
-            value: AuxiliaryKeysInner::Boxed(value.into_boxed_str()),
-        })
+        if builder.len() <= 23 {
+            Ok(Self {
+                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
+                value: AuxiliaryKeysInner::Stack(builder.parse().unwrap())
+            })
+        } else {
+            Ok(Self {
+                value: AuxiliaryKeysInner::Boxed(builder.into()),
+            })
+        }
     }
 
     pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
@@ -889,9 +896,16 @@ impl AuxiliaryKeys {
             && s.bytes()
                 .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'+'))
         {
-            Ok(Self {
-                value: AuxiliaryKeysInner::Boxed(s.into()),
-            })
+            if s.len() <= 23 {
+                Ok(Self {
+                    #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
+                    value: AuxiliaryKeysInner::Stack(s.parse().unwrap())
+                })
+            } else {
+                Ok(Self {
+                    value: AuxiliaryKeysInner::Boxed(s.into()),
+                })
+            }
         } else {
             Err(DataErrorKind::KeyLocaleSyntax
                 .into_error()
