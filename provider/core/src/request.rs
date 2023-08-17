@@ -112,7 +112,7 @@ pub struct DataRequestMetadata {
 pub struct DataLocale {
     langid: LanguageIdentifier,
     keywords: unicode_ext::Keywords,
-    aux: Option<AuxiliaryKey>,
+    aux: Option<AuxiliaryKeys>,
 }
 
 impl<'a> Default for &'a DataLocale {
@@ -140,7 +140,7 @@ impl Writeable for DataLocale {
             self.keywords.write_to(sink)?;
         }
         if let Some(aux) = self.aux.as_ref() {
-            sink.write_char(AuxiliaryKey::separator() as char)?;
+            sink.write_char(AuxiliaryKeys::separator() as char)?;
             aux.write_to(sink)?;
         }
         Ok(())
@@ -216,15 +216,11 @@ impl From<&Locale> for DataLocale {
 impl FromStr for DataLocale {
     type Err = DataError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut split_iter = s.split(AuxiliaryKey::separator() as char);
-        let (locale_str, aux_str) = match (split_iter.next(), split_iter.next(), split_iter.next())
-        {
-            (Some(locale_str), aux_str, None) => (locale_str, aux_str),
-            (_, _, _) => {
-                return Err(DataErrorKind::KeyLocaleSyntax
-                    .into_error()
-                    .with_display_context(s))
-            }
+        let mut aux_iter = s.splitn(2, AuxiliaryKeys::separator() as char);
+        let Some(locale_str) = aux_iter.next() else {
+            return Err(DataErrorKind::KeyLocaleSyntax
+                .into_error()
+                .with_display_context(s))
         };
         let locale = Locale::from_str(locale_str).map_err(|e| {
             DataErrorKind::KeyLocaleSyntax
@@ -233,8 +229,8 @@ impl FromStr for DataLocale {
                 .with_display_context(&e)
         })?;
         let mut data_locale = DataLocale::from(locale);
-        if let Some(aux_str) = aux_str {
-            let aux = AuxiliaryKey::from_str(aux_str)?;
+        if let Some(aux_str) = aux_iter.next() {
+            let aux = AuxiliaryKeys::from_str(aux_str)?;
             data_locale.set_aux(aux);
         }
         Ok(data_locale)
@@ -262,6 +258,7 @@ impl DataLocale {
     ///     "ca+EUR",
     ///     "ca-ES",
     ///     "ca-ES+GBP",
+    ///     "ca-ES+GBP+short",
     ///     "ca-ES+USD",
     ///     "ca-ES-u-ca-buddhist",
     ///     "ca-ES-valencia",
@@ -335,13 +332,12 @@ impl DataLocale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        let mut pipe_iter = other.split(|b| *b == AuxiliaryKey::separator());
-        let Some(locale_str) = pipe_iter.next() else {
+        let mut aux_iter = other.splitn(2, |b| *b == AuxiliaryKeys::separator());
+        let Some(locale_str) = aux_iter.next() else {
             debug_assert!(other.is_empty());
             return Ordering::Greater;
         };
-        let aux_str = pipe_iter.next();
-        let has_multiple_pipes = pipe_iter.next().is_some();
+        let aux_str = aux_iter.next();
         let subtags = locale_str.split(|b| *b == b'-');
         let mut subtag_result = self.langid.strict_cmp_iter(subtags);
         if self.has_unicode_ext() {
@@ -373,11 +369,7 @@ impl DataLocale {
                 if aux_ordering != Ordering::Equal {
                     return aux_ordering;
                 }
-                if has_multiple_pipes {
-                    Ordering::Less
-                } else {
-                    Ordering::Equal
-                }
+                Ordering::Equal
             }
             (false, Some(_), None) => {
                 // foo+BAR > foo
@@ -659,14 +651,14 @@ impl DataLocale {
 
     /// Gets the auxiliary key for this [`DataLocale`].
     ///
-    /// For more information and examples, see [`AuxiliaryKey`].
-    pub fn get_aux(&self) -> Option<&AuxiliaryKey> {
+    /// For more information and examples, see [`AuxiliaryKeys`].
+    pub fn get_aux(&self) -> Option<&AuxiliaryKeys> {
         self.aux.as_ref()
     }
 
     /// Returns whether this [`DataLocale`] has an auxiliary key.
     ///
-    /// For more information and examples, see [`AuxiliaryKey`].
+    /// For more information and examples, see [`AuxiliaryKeys`].
     pub fn has_aux(&self) -> bool {
         self.aux.is_some()
     }
@@ -675,8 +667,8 @@ impl DataLocale {
     ///
     /// Returns the previous auxiliary key if present.
     ///
-    /// For more information and examples, see [`AuxiliaryKey`].
-    pub fn set_aux(&mut self, value: AuxiliaryKey) -> Option<AuxiliaryKey> {
+    /// For more information and examples, see [`AuxiliaryKeys`].
+    pub fn set_aux(&mut self, value: AuxiliaryKeys) -> Option<AuxiliaryKeys> {
         self.aux.replace(value)
     }
 
@@ -690,7 +682,7 @@ impl DataLocale {
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut data_locale: DataLocale = locale!("ar-EG").into();
-    /// let aux = "GBP".parse::<AuxiliaryKey>().expect("contains valid characters");
+    /// let aux = "GBP".parse::<AuxiliaryKeys>().expect("contains valid characters");
     /// data_locale.set_aux(aux);
     /// assert_writeable_eq!(data_locale, "ar-EG+GBP");
     ///
@@ -698,7 +690,7 @@ impl DataLocale {
     /// assert_writeable_eq!(data_locale, "ar-EG");
     /// assert_writeable_eq!(maybe_aux.unwrap(), "GBP");
     /// ```
-    pub fn remove_aux(&mut self) -> Option<AuxiliaryKey> {
+    pub fn remove_aux(&mut self) -> Option<AuxiliaryKeys> {
         self.aux.take()
     }
 }
@@ -706,8 +698,9 @@ impl DataLocale {
 /// The "auxiliary key" is an annotation on [`DataLocale`] that can contain an arbitrary
 /// information that does not fit into the [`LanguageIdentifier`] or [`Keywords`].
 ///
-/// It is represented as a string separated from the BCP-47 ID with the character returned by
-/// [`AuxiliaryKey::separator()`].
+/// A [`DataLocale`] can have multiple auxiliary keys, represented by this struct. The auxiliary
+/// keys are separated from the BCP-47 locale and from each other with the character returned by
+/// [`AuxiliaryKeys::separator()`].
 ///
 /// An auxiliary key currently allows alphanumerics and `-`.
 ///
@@ -723,7 +716,7 @@ impl DataLocale {
 /// assert!(!data_locale.has_aux());
 /// assert_eq!(data_locale.get_aux(), None);
 ///
-/// let aux = "GBP".parse::<AuxiliaryKey>().expect("contains valid characters");
+/// let aux = "GBP".parse::<AuxiliaryKeys>().expect("contains valid characters");
 ///
 /// data_locale.set_aux(aux);
 /// assert_writeable_eq!(data_locale, "ar-EG+GBP");
@@ -731,32 +724,43 @@ impl DataLocale {
 /// assert_eq!(data_locale.get_aux(), Some(&"GBP".parse().unwrap()));
 /// ```
 ///
+/// Multiple auxiliary keys are allowed:
+///
+/// ```
+/// use icu_locid::locale;
+/// use icu_provider::prelude::*;
+/// use writeable::assert_writeable_eq;
+///
+/// let data_locale = "ar-EG+GBP+long".parse::<DataLocale>().unwrap();
+/// assert_writeable_eq!(data_locale, "ar-EG+GBP+long");
+/// assert_eq!(data_locale.get_aux().unwrap().iter().count(), 2);
+/// ```
+///
 /// Not all strings are valid auxiliary keys:
 ///
 /// ```
 /// use icu_provider::prelude::*;
 ///
-/// assert!("abcdefg".parse::<AuxiliaryKey>().is_ok());
-/// assert!("ABC123".parse::<AuxiliaryKey>().is_ok());
-/// assert!("abc-xyz".parse::<AuxiliaryKey>().is_ok());
+/// assert!("abcdefg".parse::<AuxiliaryKeys>().is_ok());
+/// assert!("ABC123".parse::<AuxiliaryKeys>().is_ok());
+/// assert!("abc-xyz".parse::<AuxiliaryKeys>().is_ok());
 ///
-/// assert!("".parse::<AuxiliaryKey>().is_err());
-/// assert!("!@#$%".parse::<AuxiliaryKey>().is_err());
-/// assert!("abc_xyz".parse::<AuxiliaryKey>().is_err());
-/// assert!("abc+xyz".parse::<AuxiliaryKey>().is_err());
+/// assert!("".parse::<AuxiliaryKeys>().is_err());
+/// assert!("!@#$%".parse::<AuxiliaryKeys>().is_err());
+/// assert!("abc_xyz".parse::<AuxiliaryKeys>().is_err());
 /// ```
 ///
 /// [`Keywords`]: unicode_ext::Keywords
 #[derive(Debug, PartialEq, Clone, Default, Eq, Hash)]
-pub struct AuxiliaryKey {
+pub struct AuxiliaryKeys {
     // DISCUSS: SmallStr? TinyStrAuto?
     // DISCUSS: Make this a dynamically sized type so references can be taken?
     value: String,
 }
 
-writeable::impl_display_with_writeable!(AuxiliaryKey);
+writeable::impl_display_with_writeable!(AuxiliaryKeys);
 
-impl Writeable for AuxiliaryKey {
+impl Writeable for AuxiliaryKeys {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         self.value.write_to(sink)
     }
@@ -768,11 +772,76 @@ impl Writeable for AuxiliaryKey {
     }
 }
 
-impl FromStr for AuxiliaryKey {
+impl FromStr for AuxiliaryKeys {
     type Err = DataError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if Self::validate_str(s) {
+        Self::try_from_str(s)
+    }
+}
+
+impl AuxiliaryKeys {
+    /// Returns this [`AuxiliaryKeys`] as a single byte slice.
+    ///
+    /// NOTE: Do not make this public because we might not always store these in a single string.
+    /// External clients who need this can use `<Self as Writeable>::write_to_string`.
+    #[inline]
+    pub(crate) fn as_bytes(&self) -> &[u8] {
+        self.value.as_str().as_bytes()
+    }
+
+    /// Creates an [`AuxiliaryKeys`] from an iterator of individual keys.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// // Single auxiliary key:
+    /// let a = AuxiliaryKeys::try_from_iter(["abc"]).unwrap();
+    /// let b = "abc".parse::<AuxiliaryKeys>().unwrap();
+    /// assert_eq!(a, b);
+    ///
+    /// // Multiple auxiliary keys:
+    /// let a = AuxiliaryKeys::try_from_iter(["abc", "defg"]).unwrap();
+    /// let b = "abc+defg".parse::<AuxiliaryKeys>().unwrap();
+    /// assert_eq!(a, b);
+    /// ```
+    ///
+    /// Don't include the auxiliary key separator or other invalid chars in the iterator strings:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// assert!(AuxiliaryKeys::try_from_iter(["abc+defg"]).is_err());
+    /// assert!(AuxiliaryKeys::try_from_iter(["AB$C"]).is_err());
+    /// ```
+    pub fn try_from_iter<'a>(iter: impl IntoIterator<Item = &'a str>) -> Result<Self, DataError> {
+        let mut value = String::new();
+        for item in iter.into_iter() {
+            if !item.is_empty()
+                && item
+                    .bytes()
+                    .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-'))
+            {
+                if !value.is_empty() {
+                    value.push(AuxiliaryKeys::separator() as char);
+                }
+                value.push_str(item)
+            } else {
+                return Err(DataErrorKind::KeyLocaleSyntax
+                    .into_error()
+                    .with_display_context(item));
+            }
+        }
+        Ok(Self { value })
+    }
+
+    pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
+        if !s.is_empty()
+            && s.bytes()
+                .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'+'))
+        {
             Ok(Self {
                 value: String::from(s),
             })
@@ -782,37 +851,19 @@ impl FromStr for AuxiliaryKey {
                 .with_display_context(s))
         }
     }
-}
 
-impl AuxiliaryKey {
-    /// Returns this [`AuxiliaryKey`] as a string slice.
+    /// Iterates over the components of the auxiliary key.
     ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// let aux: AuxiliaryKey = "abcdefg".parse().unwrap();
-    /// assert_eq!(aux.as_str(), "abcdefg");
-    /// ```
-    #[inline]
-    pub fn as_str(&self) -> &str {
-        self.value.as_str()
-    }
-
-    /// Returns this [`AuxiliaryKey`] as a byte slice.
-    ///
-    /// # Examples
+    /// # Example
     ///
     /// ```
-    /// use icu_provider::prelude::*;
+    /// use icu_provider::AuxiliaryKeys;
     ///
-    /// let aux: AuxiliaryKey = "abcdefg".parse().unwrap();
-    /// assert_eq!(aux.as_bytes(), b"abcdefg");
+    /// let aux: AuxiliaryKeys = "abc+defg".parse().unwrap();
+    /// assert_eq!(aux.iter().collect::<Vec<_>>(), vec!["abc", "defg"]);
     /// ```
-    #[inline]
-    pub fn as_bytes(&self) -> &[u8] {
-        self.value.as_str().as_bytes()
+    pub fn iter(&self) -> impl Iterator<Item = &str> + '_ {
+        self.value.as_str().split(Self::separator() as char)
     }
 
     /// Returns the separator byte used for auxiliary keys in data locales.
@@ -820,19 +871,13 @@ impl AuxiliaryKey {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::AuxiliaryKey;
+    /// use icu_provider::AuxiliaryKeys;
     ///
-    /// assert_eq!(AuxiliaryKey::separator(), b'+');
+    /// assert_eq!(AuxiliaryKeys::separator(), b'+');
     /// ```
     #[inline]
     pub const fn separator() -> u8 {
         b'+'
-    }
-
-    fn validate_str(s: &str) -> bool {
-        !s.is_empty()
-            && s.bytes()
-                .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-'))
     }
 }
 

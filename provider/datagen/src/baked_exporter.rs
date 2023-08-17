@@ -471,7 +471,7 @@ impl BakedExporter {
                     &first_locale
                         .chars()
                         .flat_map(|ch| {
-                            if ch == AuxiliaryKey::separator() as char {
+                            if ch == AuxiliaryKeys::separator() as char {
                                 // Replace the aux key separator with double-underscore
                                 ZeroOneOrTwo::Two('_', '_')
                             } else if ch == '-' {
