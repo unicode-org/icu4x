@@ -286,8 +286,8 @@ impl<'a, 'p> Pass2<'a, 'p> {
 
     // returns the standin char
     fn compile_variable(&mut self, var: &str) -> char {
-        if let Some(c) = self.var_to_char.get(var) {
-            return *c;
+        if let Some(&c) = self.var_to_char.get(var) {
+            return c;
         }
         // the first pass ensures that all variables are defined
         #[allow(clippy::indexing_slicing)]
@@ -338,8 +338,8 @@ impl<'a, 'p> Pass2<'a, 'p> {
                 };
                 LiteralOrStandin::Standin(standin)
             }
-            parse::Element::BackRef(num) => {
-                LiteralOrStandin::Standin(self.var_table.standin_for_backref(*num))
+            &parse::Element::BackRef(num) => {
+                LiteralOrStandin::Standin(self.var_table.standin_for_backref(num))
             }
             parse::Element::AnchorEnd => {
                 LiteralOrStandin::Standin(MutVarTable::RESERVED_ANCHOR_END)
