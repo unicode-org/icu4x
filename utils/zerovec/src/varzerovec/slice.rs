@@ -108,8 +108,8 @@ pub struct VarZeroSlice<T: ?Sized, F = Index16> {
 impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// Construct a new empty VarZeroSlice
     pub const fn new_empty() -> &'static Self {
-        let arr: &[u8] = &[];
-        unsafe { mem::transmute(arr) }
+        // The empty VZV is special-cased to the empty slice
+        unsafe { mem::transmute(&[] as &[u8]) }
     }
 
     /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
