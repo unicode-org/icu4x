@@ -40,6 +40,19 @@ pub enum ElementKind {
     AnchorEnd,
 }
 
+impl ElementKind {
+    // returns true if the element has no effect in the location. this is not equivalent to
+    // syntactically being allowed in that location.
+    pub(crate) fn skipped_in(self, location: ElementLocation) -> bool {
+        #[allow(clippy::match_like_matches_macro)] // I think the explicit match is clearer here
+        match (location, self) {
+            (ElementLocation::Source, Self::Cursor) => true,
+            (ElementLocation::Target, Self::AnchorStart | Self::AnchorEnd) => true,
+            _ => false,
+        }
+    }
+}
+
 /// The location in which an element can appear. Used for error reporting in [`ParseError`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]
@@ -99,6 +112,8 @@ pub enum ParseErrorKind {
     InvalidCursor,
     /// Multiple cursors were defined.
     DuplicateCursor,
+    /// There are too many special matchers/replacers/variables in the source.
+    TooManySpecials,
 }
 pub(crate) use ParseErrorKind as PEK;
 
