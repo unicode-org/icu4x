@@ -716,7 +716,9 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
                 self.data.counts.num_unicode_sets += 1;
             }
             elt => {
-                return Err(PEK::UnexpectedElementInVariableDefinition(elt.kind().debug_str()).into());
+                return Err(
+                    PEK::UnexpectedElementInVariableDefinition(elt.kind().debug_str()).into(),
+                );
             }
         }
         Ok(())
@@ -809,28 +811,28 @@ impl Pass1ResultGenerator {
         // will need to take into account recursive dependencies from `used_vars` as well
         let used_transliterators = seed_transliterators.clone();
 
-        let counts = used_variables
-            .iter()
-            .try_fold(seed_data.counts, |mut counts, var| {
-                // we check for unknown variables during the first pass, so these should exist
-                let var_data = var_data_map.get(var).ok_or(PEK::Internal)?;
-                counts.num_compounds += var_data.counts.num_compounds;
-                counts.num_segments += var_data.counts.num_segments;
-                counts.num_quantifiers_opt += var_data.counts.num_quantifiers_opt;
-                counts.num_quantifiers_kleene += var_data.counts.num_quantifiers_kleene;
-                counts.num_quantifiers_kleene_plus += var_data.counts.num_quantifiers_kleene_plus;
-                counts.num_unicode_sets += var_data.counts.num_unicode_sets;
-                counts.num_function_calls += var_data.counts.num_function_calls;
-                counts.max_backref_num =
-                    counts.max_backref_num.max(var_data.counts.max_backref_num);
+        let mut combined_counts = seed_data.counts;
 
-                Ok::<_, crate::ParseError>(counts)
-            })?;
+        for var in &used_variables {
+            // we check for unknown variables during the first pass, so these should exist
+            let var_data = var_data_map.get(var).ok_or(PEK::Internal)?;
+            let var_counts: SpecialConstructCounts = var_data.counts;
+            combined_counts.num_compounds += var_counts.num_compounds;
+            combined_counts.num_segments += var_counts.num_segments;
+            combined_counts.num_quantifiers_opt += var_counts.num_quantifiers_opt;
+            combined_counts.num_quantifiers_kleene += var_counts.num_quantifiers_kleene;
+            combined_counts.num_quantifiers_kleene_plus += var_counts.num_quantifiers_kleene_plus;
+            combined_counts.num_unicode_sets += var_counts.num_unicode_sets;
+            combined_counts.num_function_calls += var_counts.num_function_calls;
+            combined_counts.max_backref_num = combined_counts
+                .max_backref_num
+                .max(var_counts.max_backref_num);
+        }
 
         Ok(Pass1Data {
             used_transliterators,
             used_variables,
-            counts,
+            counts: combined_counts,
         })
     }
 
