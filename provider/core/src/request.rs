@@ -8,11 +8,13 @@ use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Debug;
+use core::ops::Deref;
 use core::str::FromStr;
 use icu_locid::extensions::unicode as unicode_ext;
 use icu_locid::subtags::{Language, Region, Script, Variants};
 use icu_locid::{LanguageIdentifier, Locale, SubtagOrderingResult};
 use writeable::{LengthHint, Writeable};
+use tinystr::TinyAsciiStr;
 
 #[cfg(doc)]
 use icu_locid::subtags::Variant;
@@ -755,7 +757,34 @@ impl DataLocale {
 pub struct AuxiliaryKeys {
     // DISCUSS: SmallStr? TinyStrAuto?
     // DISCUSS: Make this a dynamically sized type so references can be taken?
-    value: String,
+    value: AuxiliaryKeysInner,
+}
+
+// FIXME: Can't derive Eq/PartialEq/Hash; needs to be custom impl based on Deref
+#[derive(Debug, PartialEq, Clone, Eq, Hash)]
+enum AuxiliaryKeysInner {
+    Boxed(alloc::boxed::Box<str>),
+    Static(&'static str),
+    Stack(TinyAsciiStr<23>),
+}
+
+impl Deref for AuxiliaryKeysInner {
+    type Target = str;
+    #[inline]
+    fn deref(&self) -> &Self::Target {
+        match self {
+            Self::Boxed(s) => s.deref(),
+            Self::Static(s) => s,
+            Self::Stack(s) => s.as_str(),
+        }
+    }
+}
+
+// TODO: Remove this impl; empty AuxiliaryKeys not allowed
+impl Default for AuxiliaryKeysInner {
+    fn default() -> Self {
+        Self::Static("")
+    }
 }
 
 writeable::impl_display_with_writeable!(AuxiliaryKeys);
@@ -787,7 +816,7 @@ impl AuxiliaryKeys {
     /// External clients who need this can use `<Self as Writeable>::write_to_string`.
     #[inline]
     pub(crate) fn as_bytes(&self) -> &[u8] {
-        self.value.as_str().as_bytes()
+        self.value.as_bytes()
     }
 
     /// Creates an [`AuxiliaryKeys`] from an iterator of individual keys.
@@ -834,7 +863,7 @@ impl AuxiliaryKeys {
                     .with_display_context(item));
             }
         }
-        Ok(Self { value })
+        Ok(Self { value: AuxiliaryKeysInner::Boxed(value.into_boxed_str()) })
     }
 
     pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
@@ -843,7 +872,7 @@ impl AuxiliaryKeys {
                 .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'+'))
         {
             Ok(Self {
-                value: String::from(s),
+                value: AuxiliaryKeysInner::Boxed(s.into())
             })
         } else {
             Err(DataErrorKind::KeyLocaleSyntax
@@ -863,7 +892,7 @@ impl AuxiliaryKeys {
     /// assert_eq!(aux.iter().collect::<Vec<_>>(), vec!["abc", "defg"]);
     /// ```
     pub fn iter(&self) -> impl Iterator<Item = &str> + '_ {
-        self.value.as_str().split(Self::separator() as char)
+        self.value.split(Self::separator() as char)
     }
 
     /// Returns the separator byte used for auxiliary keys in data locales.
