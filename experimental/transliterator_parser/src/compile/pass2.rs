@@ -228,7 +228,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
         for (transform_group, conversion_group) in rule_groups {
             let compiled_transform_group: Vec<_> = transform_group
                 .into_iter()
-                .map(|id| self.compile_single_id(id.into_owned()))
+                .map(|id| Pass2::compile_single_id(id.into_owned()))
                 .collect();
             compiled_transform_groups.push(VarZeroVec::from(&compiled_transform_group));
 
@@ -262,25 +262,6 @@ impl<'a, 'p> Pass2<'a, 'p> {
             post: post.into(),
             replacer: replacer.into(),
             cursor_offset,
-        }
-    }
-
-    fn compile_single_id(&mut self, id: parse::SingleId) -> ds::SimpleId<'static> {
-        // TODO(#3736): map legacy ID to internal ID and use here
-        let id_string = format!(
-            "{}-{}{}",
-            id.basic_id.source,
-            id.basic_id.target,
-            if let Some(v) = id.basic_id.variant {
-                format!("/{}", v)
-            } else {
-                "".to_owned()
-            }
-        );
-
-        ds::SimpleId {
-            id: id_string.into(),
-            filter: id.filter.unwrap_or(CodePointInversionList::all()),
         }
     }
 
@@ -358,7 +339,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
             }
             parse::Element::FunctionCall(id, inner) => {
                 let inner = self.compile_section(inner, loc);
-                let id = self.compile_single_id(id.clone());
+                let id = Pass2::compile_single_id(id.clone());
                 let standin = self.var_table.insert_function_call(ds::FunctionCall {
                     translit: id,
                     arg: inner.into(),
@@ -369,6 +350,25 @@ impl<'a, 'p> Pass2<'a, 'p> {
                 // TODO(#3736): compile this
                 LiteralOrStandin::Literal("")
             }
+        }
+    }
+
+    fn compile_single_id(id: parse::SingleId) -> ds::SimpleId<'static> {
+        // TODO(#3736): map legacy ID to internal ID and use here
+        let id_string = format!(
+            "{}-{}{}",
+            id.basic_id.source,
+            id.basic_id.target,
+            if let Some(v) = id.basic_id.variant {
+                format!("/{}", v)
+            } else {
+                "".to_owned()
+            }
+        );
+
+        ds::SimpleId {
+            id: id_string.into(),
+            filter: id.filter.unwrap_or(CodePointInversionList::all()),
         }
     }
 }
