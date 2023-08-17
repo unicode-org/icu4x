@@ -428,6 +428,7 @@ dependencies = [
  "icu_locid",
  "icu_provider_macros",
  "stable_deref_trait",
+ "tinystr",
  "writeable",
  "yoke",
  "zerofrom",
