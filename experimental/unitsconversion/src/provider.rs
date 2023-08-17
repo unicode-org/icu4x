@@ -9,26 +9,11 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use std::borrow::Cow;
-
 use icu_provider::{yoke, zerofrom};
 use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 use Default;
 
-#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[repr(u8)]
-pub enum ConstantType {
-    /// The constant value is exact.
-    #[default]
-    EXACT = 0,
-
-    /// The constant value is approximate.
-    APPROXIMATE = 1,
-}
-
-type ConstantTypeMask = u8;
-
-#[icu_provider::data_struct(UnitsConstantsV1Maker = "units/constants@1")]
+#[icu_provider::data_struct(marker(UnitsConstantsV1Marker, "units/constants@1", singleton))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -41,26 +26,8 @@ pub struct UnitsConstantsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub constants_map: ZeroMap<'data, str, u16>,
 
+    // TODO(#3882): Use a more efficient representation for the values with numerators and denominators.
+    // Also, the constant types.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub constants_values: ZeroVec<'data, ConstantValue>,
-}
-
-#[zerovec::make_ule(ConstantValueULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
-pub struct ConstantValue {
-    pub simple_constant_index: u8,
-
-    pub repetition: u8,
-
-    pub numerator: u32,
-
-    pub dominator: u32,
-
-    pub const_type: ConstantTypeMask,
+    pub constants_values: VarZeroVec<'data, str>,
 }

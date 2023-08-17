@@ -17,110 +17,20 @@
     "speed_of_light_meters_per_second": 14
   },
   "constants_values": [
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    },
-    {
-      "simple_constant_index": 0,
-      "repetition": 0,
-      "numerator": 0,
-      "dominator": 0,
-      "const_type": 0
-    }
+    "G",
+    "PI",
+    "ft2_to_m2",
+    "ft3_to_m3",
+    "ft_to_m",
+    "gal_imp_to_m3",
+    "gal_to_m3",
+    "glucose_molar_mass",
+    "gravity",
+    "in3_to_m3",
+    "item_per_mole",
+    "lb_to_kg",
+    "meters_per_AU",
+    "sec_per_julian_year",
+    "speed_of_light_meters_per_second"
   ]
 }

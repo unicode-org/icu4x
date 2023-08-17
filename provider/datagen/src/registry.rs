@@ -408,7 +408,7 @@ registry!(
         "relativetime/narrow/year@1",
     #[cfg(feature = "icu_singlenumberformatter")]
     icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
-    icu_unitsconversion::provider::UnitsConstantsV1Maker = "units/constants@1",
+    icu_unitsconversion::provider::UnitsConstantsV1Marker = "units/constants@1",
     #[cfg(any(all(), feature = "icu_segmenter"))]
     icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker =
         "segmenter/dictionary/wl_ext@1",
