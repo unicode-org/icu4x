@@ -6,4 +6,3 @@ optim*
 *.o
 a.out.dSYM
 baked_data
-icu_capi_staticlib_tiny/Cargo.lock
