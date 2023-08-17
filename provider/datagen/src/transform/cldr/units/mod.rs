@@ -10,7 +10,7 @@ use icu_provider::{
     DataResponse,
 };
 use icu_unitsconversion::provider::{UnitsConstantsV1, UnitsConstantsV1Marker};
-use zerovec::{maps::MutableZeroVecLike, VarZeroVec, ZeroMap};
+use zerovec::{VarZeroVec, ZeroMap};
 
 impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsConstantsV1Marker>, DataError> {
@@ -25,9 +25,9 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         let mut constants_map = BTreeMap::<&str, u16>::new();
 
         let constants = &_units_data.supplemental.unit_constants.constants;
-        for (key, value) in constants {
+        for (key, constant) in constants {
             let index = constants_values.len() as u16;
-            constants_values.push(key);
+            constants_values.push(&constant.value);
             constants_map.insert(key, index);
         }
 

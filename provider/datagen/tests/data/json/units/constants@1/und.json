@@ -17,20 +17,20 @@
     "speed_of_light_meters_per_second": 14
   },
   "constants_values": [
-    "G",
-    "PI",
-    "ft2_to_m2",
-    "ft3_to_m3",
-    "ft_to_m",
-    "gal_imp_to_m3",
-    "gal_to_m3",
-    "glucose_molar_mass",
-    "gravity",
-    "in3_to_m3",
-    "item_per_mole",
-    "lb_to_kg",
-    "meters_per_AU",
-    "sec_per_julian_year",
-    "speed_of_light_meters_per_second"
+    "6.67408E-11",
+    "411557987 / 131002976",
+    "ft_to_m*ft_to_m",
+    "ft_to_m*ft_to_m*ft_to_m",
+    "0.3048",
+    "0.00454609",
+    "231*in3_to_m3",
+    "180.1557",
+    "9.80665",
+    "ft3_to_m3/12*12*12",
+    "6.02214076E+23",
+    "0.45359237",
+    "149597870700",
+    "31557600",
+    "299792458"
   ]
 }

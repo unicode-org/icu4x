@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::{yoke, zerofrom};
-use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::{VarZeroVec, ZeroMap};
 use Default;
 
 #[icu_provider::data_struct(marker(UnitsConstantsV1Marker, "units/constants@1", singleton))]
