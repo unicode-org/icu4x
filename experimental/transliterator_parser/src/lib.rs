@@ -128,17 +128,25 @@ where
 
 #[cfg(test)]
 mod tests {
+    use std::borrow::Cow;
+
     use super::*;
-    use crate::parse::UnicodeSet;
-    use icu_collections::codepointinvlist::CodePointInversionList;
-    use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+    use crate::parse::{FilterSet, UnicodeSet};
     use icu_transliteration::provider as ds;
-    use zerofrom::ZeroFrom;
+    use zerovec::VarZeroVec;
 
     fn parse_set(source: &str) -> UnicodeSet {
         icu_unicodeset_parser::parse_unstable(source, &icu_properties::provider::Baked)
             .expect("Parsing failed")
             .0
+    }
+
+    fn parse_set_cp(source: &str) -> FilterSet {
+        icu_unicodeset_parser::parse_unstable(source, &icu_properties::provider::Baked)
+            .expect("Parsing failed")
+            .0
+            .code_points()
+            .clone()
     }
 
     #[test]
@@ -164,134 +172,183 @@ mod tests {
         let reverse = reverse.expect("reverse transliterator expected");
 
         {
-            assert_eq!(&forward.filter, parse_set("[1]").code_points());
+            let expected_filter = parse_set_cp("[1]");
 
-            let vt = &forward.variable_table;
-            assert_eq!(vt.compounds.len(), 1);
-            assert_eq!(vt.quantifiers_opt.len(), 0);
-            assert_eq!(vt.quantifiers_kleene.len(), 0);
-            assert_eq!(vt.quantifiers_kleene_plus.len(), 1);
-            assert_eq!(vt.segments.len(), 0);
-            assert_eq!(vt.unicode_sets.len(), 3);
-            assert_eq!(vt.function_calls.len(), 0);
+            let expected_id_group1 = vec![ds::SimpleId {
+                filter: FilterSet::all(),
+                id: Cow::Borrowed("Latin-InterIndic"),
+            }];
+            let expected_id_group2 = vec![ds::SimpleId {
+                filter: parse_set_cp(r"[\ ]"),
+                id: Cow::Borrowed("Any-Remove"),
+            }];
+            let expected_id_group3 = vec![ds::SimpleId {
+                filter: FilterSet::all(),
+                id: Cow::Borrowed("InterIndic-Devanagari"),
+            }];
 
-            assert_eq!(&vt.compounds[0], "\u{F0003}\u{F0001}"); // [a] and [b]+ (the quantifier contains [b])
-            assert_eq!(&vt.quantifiers_kleene_plus[0], "\u{F0004}"); // [b] from [b]+
-            let uset1 = CodePointInversionListAndStringList::zero_from(&vt.unicode_sets[0]);
-            assert_eq!(uset1, parse_set("[a-z]"));
-            let uset2 = CodePointInversionListAndStringList::zero_from(&vt.unicode_sets[1]);
-            assert_eq!(uset2, parse_set("[a]"));
-            let uset3 = CodePointInversionListAndStringList::zero_from(&vt.unicode_sets[2]);
-            assert_eq!(uset3, parse_set("[b]"));
+            let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
+                VarZeroVec::from(&expected_id_group1),
+                VarZeroVec::from(&expected_id_group2),
+                VarZeroVec::from(&expected_id_group3),
+            ];
 
-            assert_eq!(forward.id_group_list.len(), 3);
-            assert_eq!(forward.rule_group_list.len(), 3);
+            let expected_rule_group1 = vec![
+                ds::Rule {
+                    ante: Cow::Borrowed(""),
+                    key: Cow::Borrowed("x"),
+                    post: Cow::Borrowed("\u{F0002}"),
+                    replacer: Cow::Borrowed("y"),
+                    cursor_offset: 0,
+                },
+                ds::Rule {
+                    ante: Cow::Borrowed(""),
+                    key: Cow::Borrowed("\u{F0000}"),
+                    post: Cow::Borrowed(""),
+                    replacer: Cow::Borrowed("ab"),
+                    cursor_offset: 0,
+                },
+                ds::Rule {
+                    ante: Cow::Borrowed(""),
+                    key: Cow::Borrowed("\u{FFFFC}left"),
+                    post: Cow::Borrowed("\u{FFFFD}"),
+                    replacer: Cow::Borrowed("right"),
+                    cursor_offset: 0,
+                },
+            ];
+            let expected_rule_group2 = vec![ds::Rule {
+                ante: Cow::Borrowed(""),
+                key: Cow::Borrowed("forwardrulethat"),
+                post: Cow::Borrowed(""),
+                replacer: Cow::Borrowed("splitsuprulegroups"),
+                cursor_offset: 0,
+            }];
 
-            assert_eq!(forward.id_group_list[0].len(), 1);
-            assert_eq!(forward.id_group_list[1].len(), 1);
-            assert_eq!(forward.id_group_list[2].len(), 1);
+            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> = vec![
+                VarZeroVec::from(&expected_rule_group1),
+                VarZeroVec::from(&expected_rule_group2),
+                VarZeroVec::new(), // empty rule group after the last transform rule
+            ];
 
-            assert_eq!(forward.rule_group_list[0].len(), 3);
-            assert_eq!(forward.rule_group_list[1].len(), 1);
-            assert_eq!(forward.rule_group_list[2].len(), 0);
+            let expected_compounds = vec![
+                "\u{F0003}\u{F0001}", // [a] and [b]+ (the quantifier contains [b])
+            ];
 
-            let rule1_1 = ds::Rule::zero_from(&forward.rule_group_list[0][0]);
-            assert_eq!(rule1_1.ante, "");
-            assert_eq!(rule1_1.key, "x");
-            assert_eq!(rule1_1.post, "\u{F0002}"); // [a-z]
-            assert_eq!(rule1_1.replacer, "y");
+            let expected_quantifiers_kleene_plus = vec![
+                "\u{F0004}", // [b] from [b]+
+            ];
 
-            let rule1_2 = ds::Rule::zero_from(&forward.rule_group_list[0][1]);
-            assert_eq!(rule1_2.ante, "");
-            assert_eq!(rule1_2.key, "\u{F0000}"); // $a
-            assert_eq!(rule1_2.post, "");
-            assert_eq!(rule1_2.replacer, "ab");
+            let expected_unicode_sets =
+                vec![parse_set("[a-z]"), parse_set("[a]"), parse_set("[b]")];
 
-            let rule1_3 = ds::Rule::zero_from(&forward.rule_group_list[0][2]);
-            assert_eq!(rule1_3.ante, "");
-            assert_eq!(rule1_3.key, "\u{FFFFC}left"); // start anchor
-            assert_eq!(rule1_3.post, "\u{FFFFD}"); // end anchor
-            assert_eq!(rule1_3.replacer, "right");
+            let expected_var_table = ds::VarTable {
+                compounds: VarZeroVec::from(&expected_compounds),
+                quantifiers_opt: VarZeroVec::new(),
+                quantifiers_kleene: VarZeroVec::new(),
+                quantifiers_kleene_plus: VarZeroVec::from(&expected_quantifiers_kleene_plus),
+                segments: VarZeroVec::new(),
+                unicode_sets: VarZeroVec::from(&expected_unicode_sets),
+                function_calls: VarZeroVec::new(),
+            };
 
-            let rule2_1 = ds::Rule::zero_from(&forward.rule_group_list[1][0]);
-            assert_eq!(rule2_1.ante, "");
-            assert_eq!(rule2_1.key, "forwardrulethat");
-            assert_eq!(rule2_1.post, "");
-            assert_eq!(rule2_1.replacer, "splitsuprulegroups");
-
-            let id1 = ds::SimpleId::zero_from(&forward.id_group_list[0][0]);
-            assert_eq!(id1.id, "Latin-InterIndic");
-            assert_eq!(id1.filter, CodePointInversionList::all());
-
-            let id2 = ds::SimpleId::zero_from(&forward.id_group_list[1][0]);
-            assert_eq!(id2.id, "Any-Remove");
-            assert_eq!(&id2.filter, parse_set(r"[\ ]").code_points());
-
-            let id3 = ds::SimpleId::zero_from(&forward.id_group_list[2][0]);
-            assert_eq!(id3.id, "InterIndic-Devanagari");
-            assert_eq!(id3.filter, CodePointInversionList::all());
+            let expected_rbt = ds::RuleBasedTransliterator {
+                filter: expected_filter,
+                id_group_list: VarZeroVec::from(&expected_id_group_list),
+                rule_group_list: VarZeroVec::from(&expected_rule_group_list),
+                variable_table: expected_var_table,
+                visibility: true,
+            };
+            assert_eq!(forward, expected_rbt);
         }
         {
-            assert_eq!(&reverse.filter, &CodePointInversionList::all());
+            let expected_filter = FilterSet::all();
 
-            let vt = &reverse.variable_table;
-            assert_eq!(vt.compounds.len(), 2); // base: \u{F0000}
-            assert_eq!(vt.quantifiers_opt.len(), 1); // base: \u{F0002}
-            assert_eq!(vt.quantifiers_kleene.len(), 0); // base: \u{F0003}
-            assert_eq!(vt.quantifiers_kleene_plus.len(), 1); // base: \u{F0003}
-            assert_eq!(vt.segments.len(), 1); // base: \u{F0004}
-            assert_eq!(vt.unicode_sets.len(), 3); // base: \u{F0005}
-            assert_eq!(vt.function_calls.len(), 1); // base: \u{F0008}
-                                                    // backref base: \u{F0009}
+            let expected_id_group1 = vec![
+                ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("Devanagari-InterIndic"),
+                },
+                ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("AnyRev-AddRandomSpaces/FiftyPercent"),
+                },
+            ];
+            let expected_id_group2 = vec![ds::SimpleId {
+                filter: FilterSet::all(),
+                id: Cow::Borrowed("InterIndic-Latin"),
+            }];
 
-            assert_eq!(&vt.compounds[0], "\u{F0005}\u{F0003}"); // $a = [a] [b]+ (quantifier contains [b])
-            assert_eq!(&vt.compounds[1], "\u{F0002}literal chars"); // $b = $a? (quantifier contains $a)
-            assert_eq!(&vt.quantifiers_opt[0], "\u{F0000}"); // $a from $a?
-            assert_eq!(&vt.quantifiers_kleene_plus[0], "\u{F0006}"); // [b] from [b]+
-            assert_eq!(&vt.segments[0], "\u{F0001}"); // $b from ($b)
-            let uset1 = CodePointInversionListAndStringList::zero_from(&vt.unicode_sets[0]);
-            assert_eq!(uset1, parse_set("[a]"));
-            let uset2 = CodePointInversionListAndStringList::zero_from(&vt.unicode_sets[1]);
-            assert_eq!(uset2, parse_set("[b]"));
-            let uset3 = CodePointInversionListAndStringList::zero_from(&vt.unicode_sets[2]);
-            assert_eq!(uset3, parse_set("[0-9]"));
-            let fcall = ds::FunctionCall::zero_from(&vt.function_calls[0]);
-            assert_eq!(fcall.translit.id, "Any-RevFnCall");
-            assert_eq!(fcall.translit.filter, CodePointInversionList::all());
-            assert_eq!(fcall.arg, "\u{F0009}padding"); // $1 and 'padding'
+            let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
+                VarZeroVec::from(&expected_id_group1),
+                VarZeroVec::from(&expected_id_group2),
+            ];
 
-            assert_eq!(reverse.id_group_list.len(), 2);
-            assert_eq!(reverse.rule_group_list.len(), 2);
+            let expected_rule_group1 = vec![
+                ds::Rule {
+                    ante: Cow::Borrowed(""),
+                    key: Cow::Borrowed("\u{F0004}"),
+                    post: Cow::Borrowed(""),
+                    replacer: Cow::Borrowed("reverse output:\u{F0008}"), // function call
+                    cursor_offset: 0,
+                },
+                ds::Rule {
+                    ante: Cow::Borrowed("\u{FFFFC}"), // start anchor
+                    key: Cow::Borrowed("right"),
+                    post: Cow::Borrowed("\u{F0007}\u{FFFFD}"), // [0-9] and end anchor
+                    replacer: Cow::Borrowed("left"),
+                    cursor_offset: 0,
+                },
+            ];
 
-            assert_eq!(reverse.id_group_list[0].len(), 2);
-            assert_eq!(reverse.id_group_list[1].len(), 1);
+            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> =
+                vec![VarZeroVec::from(&expected_rule_group1), VarZeroVec::new()];
 
-            assert_eq!(reverse.rule_group_list[0].len(), 2);
-            assert_eq!(reverse.rule_group_list[1].len(), 0);
+            let expected_compounds = vec![
+                "\u{F0005}\u{F0003}",     // $a = [a] [b]+ (quantifier contains [b])
+                "\u{F0002}literal chars", // $b = $a? (quantifier contains $a)
+            ];
 
-            let rule1_1 = ds::Rule::zero_from(&reverse.rule_group_list[0][0]);
-            assert_eq!(rule1_1.ante, "");
-            assert_eq!(rule1_1.key, "\u{F0004}");
-            assert_eq!(rule1_1.post, ""); // [a-z]
-            assert_eq!(rule1_1.replacer, "reverse output:\u{F0008}"); // function call
+            let expected_quantifers_opt = vec![
+                "\u{F0000}", // $a from $a?
+            ];
 
-            let rule1_2 = ds::Rule::zero_from(&reverse.rule_group_list[0][1]);
-            assert_eq!(rule1_2.ante, "\u{FFFFC}"); // start anchor
-            assert_eq!(rule1_2.key, "right");
-            assert_eq!(rule1_2.post, "\u{F0007}\u{FFFFD}"); // [0-9] and end anchor
-            assert_eq!(rule1_2.replacer, "left");
+            let expected_quantifiers_kleene_plus = vec![
+                "\u{F0006}", // [b] from [b]+
+            ];
 
-            let id1_1 = ds::SimpleId::zero_from(&reverse.id_group_list[0][0]);
-            assert_eq!(id1_1.id, "Devanagari-InterIndic");
-            assert_eq!(id1_1.filter, CodePointInversionList::all());
+            let expected_segments = vec![
+                "\u{F0001}", // $b from ($b)
+            ];
 
-            let id1_2 = ds::SimpleId::zero_from(&reverse.id_group_list[0][1]);
-            assert_eq!(id1_2.id, "AnyRev-AddRandomSpaces/FiftyPercent");
-            assert_eq!(id1_2.filter, CodePointInversionList::all());
+            let expected_unicode_sets =
+                vec![parse_set("[a]"), parse_set("[b]"), parse_set("[0-9]")];
 
-            let id2_1 = ds::SimpleId::zero_from(&reverse.id_group_list[1][0]);
-            assert_eq!(id2_1.id, "InterIndic-Latin");
-            assert_eq!(id2_1.filter, CodePointInversionList::all());
+            let expected_function_calls = vec![ds::FunctionCall {
+                arg: Cow::Borrowed("\u{F0009}padding"), // $1 and 'padding'
+                translit: ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("Any-RevFnCall"),
+                },
+            }];
+
+            let expected_var_table = ds::VarTable {
+                compounds: VarZeroVec::from(&expected_compounds),
+                quantifiers_opt: VarZeroVec::from(&expected_quantifers_opt),
+                quantifiers_kleene: VarZeroVec::new(),
+                quantifiers_kleene_plus: VarZeroVec::from(&expected_quantifiers_kleene_plus),
+                segments: VarZeroVec::from(&expected_segments),
+                unicode_sets: VarZeroVec::from(&expected_unicode_sets),
+                function_calls: VarZeroVec::from(&expected_function_calls),
+            };
+
+            let expected_rbt = ds::RuleBasedTransliterator {
+                filter: expected_filter,
+                id_group_list: VarZeroVec::from(&expected_id_group_list),
+                rule_group_list: VarZeroVec::from(&expected_rule_group_list),
+                variable_table: expected_var_table,
+                visibility: true,
+            };
+            assert_eq!(reverse, expected_rbt);
         }
     }
 }

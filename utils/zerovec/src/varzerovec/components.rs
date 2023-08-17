@@ -491,6 +491,9 @@ where
     A: EncodeAsVarULE<T>,
     F: VarZeroVecFormat,
 {
+    if elements.is_empty() {
+        return Some(Default::default());
+    }
     let len = compute_serializable_len::<T, A, F>(elements)?;
     debug_assert!(len >= LENGTH_WIDTH as u32);
     let mut output: Vec<u8> = alloc::vec![0; len as usize];
