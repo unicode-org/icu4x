@@ -194,7 +194,7 @@ impl DatagenDriver {
                 match provider.load_data(key, req) {
                     Ok(data_response) => {
                         if let Some(iter) = locale_iter.as_ref() {
-                            if iter.get().is_und() && !locale.is_empty() {
+                            if iter.get().is_und() && !locale.is_und() {
                                 log::debug!("Falling back to und: {key}/{locale}");
                             }
                         }
